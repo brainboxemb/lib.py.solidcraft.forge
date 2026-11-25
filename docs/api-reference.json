@@ -337,7 +337,7 @@
       "guide": "guide/assembly-basics/#drawings",
       "reference": "reference/Occurrence.with_drawing/",
       "use_when": "Create a native part drawing for a standalone component occurrence while keeping the reusable component definition drawing-free.",
-      "limits": "Returns a one-occurrence Assembly carrying final design presentation state. The initial slice uses a native part template and standard views; dimensions, balloons, parts lists and other annotations are not exposed yet.",
+      "limits": "Returns a one-occurrence Assembly carrying final design presentation state. A normal SCPF build publishes a native vector PDF below drawings/. A4 is the default template; select iso-a3-part explicitly for a larger sheet. Dimensions, balloons, parts lists and other annotations are not exposed yet.",
       "parameters": [
         {
           "name": "name",
@@ -345,7 +345,7 @@
         },
         {
           "name": "template",
-          "description": "Native SolidCraft drawing template. Defaults to 'iso-a3-part'."
+          "description": "Native SolidCraft drawing template. Defaults to 'iso-a4-part'; use 'iso-a3-part' for a larger sheet."
         },
         {
           "name": "sheet_name",
@@ -353,7 +353,7 @@
         }
       ],
       "example": "part = Bracket().with_drawing(name=\"Bracket drawing\")",
-      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a3-part\", sheet_name=\"Sheet 1\")"
+      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\")"
     },
     {
       "kind": "callable",
@@ -391,7 +391,7 @@
       "guide": "guide/assembly-basics/#drawings",
       "reference": "reference/Assembly.with_drawing/",
       "use_when": "Document one selected physical component occurrence after composing the final Assembly.",
-      "limits": "target must already belong to the Assembly. Drawing intent is final presentation state, so add it after assembly composition. SolidCraft owns standard-view layout and fitted scale; a component selected from a much larger assembly may receive a conservative scale in this first slice.",
+      "limits": "target must already belong to the Assembly. Drawing intent is final presentation state, so add it after assembly composition. SolidCraft owns standard-view layout and fitted scale; a component selected from a much larger assembly may receive a conservative scale. A normal SCPF build also publishes the drawing as a native vector PDF below drawings/. A4 is the default; iso-a3-part remains available explicitly.",
       "parameters": [
         {
           "name": "target",
@@ -403,7 +403,7 @@
         },
         {
           "name": "template",
-          "description": "Native SolidCraft drawing template. Defaults to 'iso-a3-part'."
+          "description": "Native SolidCraft drawing template. Defaults to 'iso-a4-part'; use 'iso-a3-part' for a larger sheet."
         },
         {
           "name": "sheet_name",
@@ -411,7 +411,7 @@
         }
       ],
       "example": "assembly = (left + right).with_drawing(left, name=\"Block drawing\")",
-      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a3-part\", sheet_name=\"Sheet 1\")"
+      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\")"
     },
     {
       "kind": "callable",
