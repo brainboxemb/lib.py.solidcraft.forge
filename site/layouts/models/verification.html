@@ -6,7 +6,12 @@
     <h1>{{ .Title }}</h1>
     <p>{{ .Description }}</p>
   </section>
-  {{ $catalog := hugo.Data.cad.verification_sections }}
+  {{ $catalog := dict }}
+  {{ with resources.Get "cad/verification_sections.json" }}
+    {{ $catalog = . | transform.Unmarshal }}
+  {{ else }}
+    {{ errorf "missing generated verification catalogue resource" }}
+  {{ end }}
   {{ range $section := index $catalog "sections" }}
     {{ $models := index $section "models" }}
     {{ if gt (len $models) 0 }}
