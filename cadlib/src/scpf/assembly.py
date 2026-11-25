@@ -668,7 +668,11 @@ def _compile_assembly_with_dependencies(value, name):
         parent_occurrence = occurrence_refs[parent_id]
         child_label = occurrence_labels[child_id]
         parent_label = occurrence_labels[parent_id]
-        joint_name = (\n            attachment.name\n            or f"Attach {child_label} to {parent_label}"\n        )\n
+        joint_name = (
+            attachment.name
+            or f"Attach {child_label} to {parent_label}"
+        )
+
         if attachment.as_built:
             commands.append(_command(
                 "joint.as_built",
