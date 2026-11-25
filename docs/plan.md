@@ -56,26 +56,29 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge release infrastructure and the first public Pages cleanup set are
-accepted:
+Forge release infrastructure and the identified public Pages content fixes are
+accepted or in final qualification:
 
-- stable-main release-flow implementation is accepted on Forge `main`;
-- #57 global development warning is accepted on `dev`;
-- #58 Forge/SCPF product landing is accepted on `dev`;
-- #106 canonical API Reference landing wording is accepted on `dev`;
-- #107 Joint anatomy derives the tested SolidCraft version from source;
-- #109 canonical Guide landing wording is accepted on `dev`;
-- #68 obsolete CadCraft Joint-anatomy sources/links are removed while SVG/DXF
-  assets remain versioned.
+- #57 global development warning;
+- #58 Forge/SCPF product landing;
+- #106 canonical API Reference landing wording;
+- #107 source-owned Joint anatomy SolidCraft version;
+- #109 canonical Guide landing wording;
+- #68 CadCraft removal while retaining SVG/DXF engineering assets;
+- #112 complete `Use when` / `Limits` guidance across public callables.
 
-The active Pages audit work is:
+The active Pages task is #113: make the Examples and Verification landing copy
+user-facing instead of exposing internal model-owner projection mechanics.
 
-1. #112 — complete missing `Use when` / `Limits` guidance on four public API
-   callable routes and enforce the contract across all callables.
-2. #113 — make Examples and Verification landing copy user-facing instead of
-   exposing model-owner implementation mechanics.
-3. Continue the remaining visual/content audit after those fixes and create one
-   issue per independent defect before changing it.
+After #113, finish the audit rather than starting another broad rewrite:
+
+1. review desktop/mobile evidence for Guide chapter detail routes;
+2. review API Reference detail routes;
+3. review Cheatsheet;
+4. review Examples model pages;
+5. review Verification model pages and Coverage/Results/Joint anatomy;
+6. create one issue per independent remaining defect before changing it;
+7. if no new defects remain, reconcile the Pages phase as complete.
 
 CAD project work continues independently and is not a prerequisite for this
 Pages phase.
