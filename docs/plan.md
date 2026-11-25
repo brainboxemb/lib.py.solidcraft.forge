@@ -21,7 +21,7 @@ The accepted baseline now has:
 - durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
   `gh-pages`;
 - the historical nine-chapter Guide and Cheatsheet;
-- 44 case-sensitive public SCPF API Reference routes, statically validated
+- 45 case-sensitive public SCPF API Reference routes, statically validated
   against `cadlib/src/scpf` without importing or executing the package;
 - Verification `coverage`, `joint-anatomy` and `results` projections from
   source declarations and durable build evidence;
@@ -51,37 +51,39 @@ archival/A-B reference rather than an unfinished migration gate.
 
 ## Now
 
-1. Unblock the active CAD consumer through #74:
-   - expose native associative Sketch-line/curve input for `Shape.fold()`;
-   - retain the existing fixed-points fold form;
-   - add a Forge-owned sheet-metal qualification fixture whose fold line follows
-     an editable native length parameter.
-2. Qualify SolidCraft 0.49.0 as the next immutable runtime through
-   `docker.cad.solidcraft#29` before the first migrated Forge release:
-   - pin upstream `v0.49.0` exactly;
-   - preserve the existing two runtime roles and all v0.3.5 owner smokes;
-   - run the Forge component/joined-Cylinder, #73 retained sheet regression and
-     #74 associative-fold qualification against the candidate runtime;
-   - re-run the downstream Mounting Rail M8 / Simple MFT consumer on 0.49.0;
-   - publish a new immutable runtime release only after owner and external
-     qualification are green.
-3. Treat #73 as retained engine/runtime regression evidence, not as a Forge
-   replay-workaround target. The flat-first consumer construction order is
-   accepted; do not force `plane.fixed=true`, move physical holes, or change
-   replay semantics merely to mask the historical SolidCraft sheet-state
-   behavior.
-4. After #74 and the 0.49.0 consumer/runtime qualification are green,
-   canonicalize repository identity under #76:
-   - rename the historical repository to an explicit `.OLD` archival name;
-   - archive the historical repository;
+1. Qualify Forge against SolidCraft 0.49.0 through #79 and
+   `docker.cad.solidcraft#29`:
+   - runtime v0.3.6 candidate is SolidCraft 0.49.0 with the existing two-role
+     composition unchanged;
+   - use runtime-main `:edge` only in a short-lived, unmerged Forge
+     qualification PR;
+   - require the full Forge graph, including the component/joined-Cylinder
+     regression, #73 retained sheet evidence, and the accepted #74
+     associative-fold saved-design mutation;
+   - record the exact runtime-main commit and Forge qualification run before any
+     immutable runtime release.
+2. If the `:edge` qualification is green:
+   - publish immutable runtime v0.3.6 from the exact qualified runtime-main
+     commit;
+   - replace temporary `:edge` pins with
+     `cad-solidcraft:v0.3.6` / `cad-reference:v0.3.6`;
+   - set the tested SolidCraft contract to 0.49.0 and rerun the same Forge
+     qualification before merging permanent runtime adoption.
+3. Requalify the active Mounting Rail M8 / Simple MFT CAD consumer against the
+   immutable Forge/runtime pair. The rail must use the accepted #74
+   `Sketch.line(...)` fold path so native length edits remain associative.
+4. Only after the API/runtime/consumer chain is green, create the dedicated
+   repository-canonicalization change:
+   - rename the historical `brainboxemb/lib.py.solidcraft.forge` to an
+     explicit `.OLD` archival name and archive it;
    - rename this repository from `.NEW` to canonical
      `brainboxemb/lib.py.solidcraft.forge`;
-   - update active consumer/template references explicitly instead of relying on
-     GitHub rename redirects;
+   - update active consumer/template references explicitly rather than relying
+     on GitHub rename redirects;
    - verify branch policy, build evidence, Pages provenance, package metadata
      and release workflows after the rename.
 5. Publish the first actual migrated Forge release from canonical stable
-   `main`, qualified against the new SolidCraft 0.49.0 immutable runtime:
+   `main`, qualified against SolidCraft 0.49.0:
    - bump the package above the historical `0.15.0` baseline;
    - add the required dated changelog section;
    - require exact full stable `build/main` evidence;
@@ -95,6 +97,11 @@ archival/A-B reference rather than an unfinished migration gate.
    - visually/content-audit landing, Guide, API Reference, Cheatsheet, Examples
      and Verification;
    - create one issue per remaining independent Pages defect before changing it.
+
+#73 remains retained engine/runtime regression evidence. The accepted flat-first
+consumer construction order is not a Forge replay workaround target; do not
+force `plane.fixed=true`, move physical holes, or change replay semantics merely
+to mask the historical SolidCraft sheet-state behavior.
 
 ## Later
 
