@@ -12,12 +12,12 @@ class Leaf:
     def anchors(self):
         return {
             "hinge_positive": AnchorFrame(
-                origin=(0, self.depth / 2, self.thickness / 2),
+                origin=(0, 15, 1.5),
                 z=(1, 0, 0),
                 x=(0, 0, 1),
             ),
             "hinge_negative": AnchorFrame(
-                origin=(0, -self.depth / 2, self.thickness / 2),
+                origin=(0, -15, 1.5),
                 z=(1, 0, 0),
                 x=(0, 0, 1),
             ),
