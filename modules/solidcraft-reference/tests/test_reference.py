@@ -113,13 +113,32 @@ class SolidCraftReferenceTests(unittest.TestCase):
         self.assertIn("cad-solidcraft:v0.3.5", source)
         self.assertIn("0.48.1", source)
 
+    def test_checked_049_catalog_covers_canonical_registry(self):
+        reference = ROOT / "docs" / "reference" / "solidcraft" / "0.49.0"
+        raw = json.loads(
+            (reference / "commands.json").read_text(encoding="utf-8")
+        )
+        commands = validate_registry(raw)
+        self.assertEqual(len(commands), 886)
+        markdown = (reference / "commands.md").read_text(encoding="utf-8")
+        self.assertIn(
+            "Total registered commands: **886**.",
+            markdown,
+        )
+        for row in commands:
+            self.assertIn(f"`{row['id']}`", markdown)
+        source = (reference / "SOURCE.md").read_text(encoding="utf-8")
+        self.assertIn("Registered commands: `886`", source)
+        self.assertIn("cad-solidcraft:v0.3.6", source)
+        self.assertIn("solidcraft-cli 0.49.0", source)
+
     def test_root_pin_selects_checked_reference(self):
         image, version = root_runtime_pin(ROOT)
         self.assertEqual(
             image,
-            "ghcr.io/brainboxemb/cad-solidcraft:v0.3.5",
+            "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
         )
-        self.assertEqual(version, "0.48.1")
+        self.assertEqual(version, "0.49.0")
         self.assertTrue(
             (
                 ROOT
