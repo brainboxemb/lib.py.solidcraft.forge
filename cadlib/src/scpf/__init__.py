@@ -9,7 +9,13 @@ from .core import (
 from .compiler import compile_model, ModelError
 from .explicit_sketch import Sketch
 from .runner import run_script, component, assembly, ModelParameterWarning
-from .model_objects import Placement
+from .model_objects import (
+    DrawingDimension,
+    DrawingNote,
+    DrawingRevision,
+    DrawingView,
+    Placement,
+)
 
 __all__ = [
     "Box", "Cylinder", "Cone", "Sphere", "Hole", "CounterboreHole", "CountersinkHole", "ThreadedHole", "Lip", "SnapFit", "Boss", "Rest",
@@ -17,5 +23,7 @@ __all__ = [
     "SlotCenterToCenter2D", "SlotOverall2D", "SlotCenterPoint2D",
     "SlotArcThreePoint2D", "SlotArcCenter2D", "Shape", "Parameter",
     "Edges", "Faces", "Anchor", "AnchorFrame", "AnchorTopology", "Axis", "X", "Y", "Z", "CENTER", "TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK", "up", "down", "left", "right", "front", "back", "half", "midpoint", "pv",
-    "Sketch", "Placement", "compile_model", "run_script", "component", "assembly", "ModelParameterWarning", "ModelError",
+    "Sketch", "Placement", "DrawingView", "DrawingNote", "DrawingRevision",
+    "DrawingDimension", "compile_model", "run_script", "component", "assembly",
+    "ModelParameterWarning", "ModelError",
 ]

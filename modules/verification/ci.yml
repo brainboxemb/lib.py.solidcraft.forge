@@ -13,3 +13,6 @@ verifier:
     solidcraft-visual:
       runtime: solidcraft
       entrypoint: cad_verification.runtime:run
+    image-regression:
+      runtime: reference
+      entrypoint: cad_verification.runtime:run

@@ -204,16 +204,44 @@ groups:
   - heading: Drawings
     items:
       - title: "model.with_drawing(...)"
-        description: "Attach a native SolidCraft technical drawing to the completed design; ISO A4 landscape is the default sheet."
+        description: "Attach a native SolidCraft engineering drawing to the completed design; ISO A4 landscape is the default."
         snippet: "part.with_drawing(name='Sample Plate Drawing')"
         example: sample-plate-drawing
+      - title: "DrawingView(at=..., scale=...)"
+        description: "Place one native front/top/right/iso view in paper millimetres and optionally give it an explicit native scale."
+        snippet: "DrawingView(at=(62, 128), scale='1:1')"
+        example: sample-plate-drawing
+      - title: "DrawingDimension.faces(...)"
+        description: "Dimension two real planar model faces; prefer this for overall sizes when fillets remove corners."
+        snippet: "DrawingDimension.faces('front', (-40,0,4), (40,0,4), direction='horizontal', offset_mm=12)"
+        example: sample-plate-drawing
+      - title: "DrawingDimension.linear(...)"
+        description: "Create a native linear dimension between two model-space point/corner picks."
+        snippet: "DrawingDimension.linear('front', (0,0,0), (20,0,0), direction='horizontal')"
+        example: sample-plate-drawing
+      - title: "DrawingDimension.radial(...)"
+        description: "Create a native radial/diameter dimension from a circular model-edge pick; override_text may form a hole callout."
+        snippet: "DrawingDimension.radial('top', (-25.17,2.83,8), diameter=True, override_text='2× {value} THRU')"
+        example: sample-plate-drawing
+      - title: "DrawingNote(...)"
+        description: "Add native sheet notes at an explicit paper position."
+        snippet: "DrawingNote('NOTES\\n1. ALL DIMENSIONS IN MM.', at=(156,88), cap_mm=2.5)"
+        example: sample-plate-drawing
+      - title: "DrawingRevision(...)"
+        description: "Add one native revision row and drive matching title-block revision fields."
+        snippet: "DrawingRevision(revision='A', description='Initial drawing', designer='Forge', checker='CI')"
+        example: sample-plate-drawing
+      - title: "properties=... / title_block=..."
+        description: "Populate native drawing properties and explicit cells in the selected SolidCraft title-block template."
+        snippet: "properties={'part_number':'BRK-001'}, title_block={'title':'Bracket','material':'PETG'}"
+        example: sample-plate-drawing
       - title: "template='iso-a3-part'"
-        description: "Select native ISO A3 explicitly when the documented part needs more sheet area."
+        description: "Select native ISO A3 explicitly when the documented part needs more sheet area; Forge keeps it landscape."
         snippet: "part.with_drawing(name='Large part', template='iso-a3-part')"
         example: sample-plate-drawing
-      - title: "Native vector PDF"
-        description: "The SCPF builder exports a vector PDF plus native static PNG sheet preview; Pages loads the PNG and opens the PDF only on explicit action."
-        snippet: "drawings/Sample-Plate-Drawing.pdf"
+      - title: "Native PDF + PNG + inspect JSON"
+        description: "builder-scpf publishes vector PDF, static native sheet PNG and final native drawing.inspect evidence; Pages loads only the PNG."
+        snippet: "drawings/Sample-Plate-Drawing.{pdf,png,json}"
         example: sample-plate-drawing
 
   - heading: Compile and inspect

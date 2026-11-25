@@ -82,44 +82,42 @@ Accepted stable state:
 - stable-to-development synchronization #154 / PR #155 returned the release
   metadata to `dev` without rebasing shared history.
 
-### Active: #166 / #167 promote and release drawing-quality patch
+### Active: #168 consumer-grade drawing authoring
 
-PR #165 qualified the drawing correction for integration to `dev`:
+PR #165 established the drawing runtime/presentation foundation on `dev`:
 - A4/A3 native part drawings preserve paper size and use landscape;
 - final orientation is read back through native `drawing.inspect`;
 - builder-scpf publishes vector PDF + native 144 dpi sheet PNG;
-- Pages loads only the static preview and never auto-embeds the PDF;
-- Sample Plate Drawing remains the Forge-owned example + verification owner;
-- native CI and Pages qualification are green.
+- Pages loads only the static preview and never auto-embeds the PDF.
 
-Next:
-1. merge #165 to `dev` through policy and require the permanent dev build;
-2. #166 promotes exact `dev -> main` with full stable qualification;
-3. #167 publishes metadata-only Forge v0.18.1 from that stable baseline;
-4. synchronize stable release metadata back `main -> dev`;
-5. only after v0.18.1, evaluate missing generic drawing authoring API against
-   the real CAD Wall Hook use case; do not change CAD as part of this release.
+That foundation is **not** the release boundary.
 
-### Active: #169 native revolute-joint authoring
+Before #166/#167 may proceed, #168 must qualify a Forge-owned consumer
+simulation showing that the public API can author a Wall-Hook-quality
+engineering drawing without Forge-local/model-specific hacks:
 
-The Basic Hinge consumer in the CAD repository requires a real native
-revolute relationship rather than a rigid/planar approximation.
+- explicit orthographic/isometric view selection, placement and scale;
+- linear and hole/radius/diameter dimension/callout authoring supported by
+  SolidCraft;
+- centre marks/centre lines where supported;
+- notes block;
+- drawing/title-block metadata and revision information where supported;
+- native PDF + PNG evidence;
+- structural/native verification plus an explicit expected visual baseline;
+- Guide/Cheatsheet/API Reference sufficient for an external CAD consumer to
+  reproduce the same authoring workflow.
 
-Scope:
+Do not modify the CAD repository during #168. The real CAD Wall Hook is the
+post-qualification consumer check, not the place where Forge capability is
+invented.
 
-- extend `Occurrence.attach(...)` with explicit `kind="revolute"`;
-- accept a fixed initial angle in degrees, optional min/max limits, native
-  joint-origin flip and an optional joint name;
-- preserve the existing automatic rigid/planar behavior when `kind` is
-  omitted;
-- lower the relationship to SolidCraft `joint.create(type="revolute")`;
-- qualify the public API with library tests and a native hinge fixture before
-  integration;
-- do not add unrelated slider/cylindrical/ball authoring until a consumer
-  demonstrates that need.
+### Blocked: #166 / #167 promote and release drawing work
 
-This work is consumer-driven by CAD #125 and remains separate from drawing
-authoring/release work #166-#168.
+#166 promotion and #167 Forge v0.18.1 are blocked until #168 is complete and
+qualified on permanent `dev`. Only then:
+1. promote exact `dev -> main` with full stable qualification;
+2. publish metadata-only v0.18.1 from that stable product baseline;
+3. synchronize `main -> dev` through merge policy.
 
 ### Active: #156 release-only stable push selection regression
 

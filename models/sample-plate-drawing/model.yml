@@ -3,15 +3,20 @@ purpose: [example, verification]
 section: drawings
 priority: 80
 title: Sample Plate Drawing
-tagline: A reusable component with a native ISO A4 landscape technical drawing
+tagline: Consumer-grade native A4 engineering drawing with layout, dimensions, notes and title data
 description: >
   Builds a small parameterized plate with two repeated holes, a raised boss
-  and central bore, then adds one native SolidCraft drawing only to the final
-  design presentation.
+  and central bore, then uses only the public Forge drawing API to author a
+  native SolidCraft engineering sheet with deliberate view layout, overall
+  dimensions, diameter callouts, notes, drawing properties, title-block data
+  and revision information.
 parameters: 80 × 50 × 8 mm plate; R6 corners; Ø8 repeated holes; Ø24 × 14 boss; Ø12 bore
 stages:
   - Build the reusable SamplePlate component
   - Keep drawing intent out of the reusable component definition
   - Attach a native ISO A4 landscape part drawing to the final design
-  - Generate SolidCraft standard orthographic and isometric views
-  - Publish the native vector PDF and static native sheet PNG below the implementation drawings directory
+  - Place the native front, top, right and isometric views explicitly on the sheet
+  - Add native overall dimensions and diameter callouts from model-space topology picks
+  - Populate native notes, drawing properties, title-block values and revision information
+  - Publish vector PDF, static native PNG and final drawing.inspect JSON below the implementation drawings directory
+  - Compare the generated sheet against the approved engineering-drawing visual baseline

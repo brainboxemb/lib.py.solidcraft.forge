@@ -195,6 +195,15 @@ class SCPFBuilderTests(unittest.TestCase):
                         "orientation": "$drawing_1_orientation",
                         "pdf": "drawings/Part-drawing.pdf",
                         "png": "drawings/Part-drawing.png",
+                        "inspect": "drawings/Part-drawing.json",
+                        "expected": {
+                            "orientation": "landscape",
+                            "view_count": 4,
+                            "dimension_count": 0,
+                            "note_count": 0,
+                            "properties": {},
+                            "title_block": {},
+                        },
                     }
                 ]
             },
@@ -214,7 +223,27 @@ class SCPFBuilderTests(unittest.TestCase):
             save.parent.mkdir(parents=True, exist_ok=True)
             save.write_bytes(b"sc")
             export.write_bytes(b"stl")
-            results_out.write_text("[]")
+            results_out.write_text(json.dumps([
+                {
+                    "name": "Part drawing",
+                    "properties": {},
+                    "revisions": {"rows": []},
+                    "sheets": [
+                        {
+                            "orientation": "landscape",
+                            "views": [
+                                {"dimensions": []},
+                                {"dimensions": []},
+                                {"dimensions": []},
+                                {"dimensions": []},
+                            ],
+                            "notes": [],
+                            "title_block_overrides": {},
+                            "title_block_cells": [],
+                        }
+                    ],
+                }
+            ]))
             replay_log_out.write_text("{}")
             work_dir.mkdir(parents=True, exist_ok=True)
             return {
@@ -269,10 +298,15 @@ class SCPFBuilderTests(unittest.TestCase):
 
             pdf = output.parent / "drawings/Part-drawing.pdf"
             png = output.parent / "drawings/Part-drawing.png"
+            inspect = output.parent / "drawings/Part-drawing.json"
             self.assertEqual(pdf.read_bytes(), b"%PDF-test")
             self.assertEqual(
                 png.read_bytes()[:8],
                 b"\x89PNG\r\n\x1a\n",
+            )
+            self.assertEqual(
+                json.loads(inspect.read_text())["name"],
+                "Part drawing",
             )
             export_run = next(
                 args for args in calls
@@ -303,6 +337,15 @@ class SCPFBuilderTests(unittest.TestCase):
                         "orientation": "$drawing_1_orientation",
                         "pdf": "drawings/Part-drawing.pdf",
                         "png": "drawings/Part-drawing.png",
+                        "inspect": "drawings/Part-drawing.json",
+                        "expected": {
+                            "orientation": "landscape",
+                            "view_count": 4,
+                            "dimension_count": 0,
+                            "note_count": 0,
+                            "properties": {},
+                            "title_block": {},
+                        },
                     }
                 ]
             },

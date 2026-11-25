@@ -352,28 +352,290 @@
     },
     {
       "kind": "callable",
+      "name": "DrawingView",
+      "summary": "Describe explicit paper placement and optional scale for one native standard drawing view.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingView/",
+      "use_when": "Place a front, top, right or isometric native SolidCraft view at a deliberate paper coordinate and optionally override that view's scale.",
+      "limits": "at is paper-space millimetres. scale is SolidCraft scale text such as '1:1' or '2:1'. DrawingView does not create a new arbitrary camera; it configures one of the standard native views.",
+      "parameters": [
+        {
+          "name": "at",
+          "description": "Optional (x, y) paper position in millimetres."
+        },
+        {
+          "name": "scale",
+          "description": "Optional native drawing scale text such as '1:1'."
+        }
+      ],
+      "example": "DrawingView(at=(220, 128), scale=\"1:1\")",
+      "signature": "DrawingView(at=None, scale=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingNote",
+      "summary": "Author one native SolidCraft sheet note.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingNote/",
+      "use_when": "Add engineering notes or instructions to a drawing sheet at an explicit paper position.",
+      "limits": "content must be non-empty text; at is paper-space millimetres; cap_mm must be 0.5..100; align is left, centre or right.",
+      "parameters": [
+        {
+          "name": "content",
+          "description": "Native note text; newline characters create multiple lines."
+        },
+        {
+          "name": "at",
+          "description": "(x, y) paper position in millimetres."
+        },
+        {
+          "name": "cap_mm",
+          "description": "Text cap height in millimetres; default 3.5."
+        },
+        {
+          "name": "align",
+          "description": "Text alignment: left, centre or right."
+        }
+      ],
+      "example": "DrawingNote(\"NOTES\\n1. ALL DIMENSIONS IN MM.\", at=(156, 88), cap_mm=2.5)",
+      "signature": "DrawingNote(content, at, cap_mm=3.5, align=\"left\")"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingRevision",
+      "summary": "Describe one native drawing revision row.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingRevision/",
+      "use_when": "Populate the native revision table and its linked title-block fields for a consumer-authored engineering drawing.",
+      "limits": "At least one text field is required. The qualified drawing slice supports one revision row per with_drawing() call.",
+      "parameters": [
+        {
+          "name": "revision",
+          "description": "Revision identifier such as A or 01."
+        },
+        {
+          "name": "description",
+          "description": "Revision description."
+        },
+        {
+          "name": "designer",
+          "description": "Designer/created-by text."
+        },
+        {
+          "name": "checker",
+          "description": "Checker/approved-by text."
+        },
+        {
+          "name": "date",
+          "description": "Issue date text accepted by the native template."
+        },
+        {
+          "name": "hidden",
+          "description": "Whether the native revision row is hidden."
+        }
+      ],
+      "example": "DrawingRevision(revision=\"A\", description=\"Initial drawing\", designer=\"Forge\", checker=\"CI\", date=\"2026-11-25\")",
+      "signature": "DrawingRevision(revision=None, description=None, designer=None, checker=None, date=None, hidden=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingDimension",
+      "summary": "Native drawing-dimension intent resolved by SolidCraft from model-space picks.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingDimension/",
+      "use_when": "Create linear, parallel-face or radial/diameter dimensions through the class constructors linear(), faces() and radial().",
+      "limits": "Do not instantiate arbitrary kind payloads for normal use. Model-space picks must resolve to unique native topology; invalid or ambiguous picks fail rather than being approximated.",
+      "parameters": [],
+      "example": "DrawingDimension.faces(\"front\", (-40, 0, 4), (40, 0, 4), direction=\"horizontal\", offset_mm=12)",
+      "signature": "DrawingDimension(...)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingDimension.linear",
+      "summary": "Create a native linear dimension between two model-space point/corner picks.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingDimension.linear/",
+      "use_when": "Dimension between two real model points/corners that remain uniquely selectable in the authored topology.",
+      "limits": "Filleted-away corners are not valid picks. Prefer DrawingDimension.faces() for overall sizes on filleted parts.",
+      "parameters": [
+        {
+          "name": "view",
+          "description": "Standard view name: front, top, right or iso."
+        },
+        {
+          "name": "a",
+          "description": "First model-space XYZ pick."
+        },
+        {
+          "name": "b",
+          "description": "Second model-space XYZ pick."
+        },
+        {
+          "name": "direction",
+          "description": "aligned, horizontal or vertical."
+        },
+        {
+          "name": "offset_mm",
+          "description": "Native dimension offset in paper millimetres."
+        },
+        {
+          "name": "override_text",
+          "description": "Optional native dimension text override."
+        },
+        {
+          "name": "decimals",
+          "description": "Displayed decimal count, 0..6."
+        },
+        {
+          "name": "line_through_mm",
+          "description": "Optional explicit paper point for the dimension line."
+        }
+      ],
+      "example": "DrawingDimension.linear(\"front\", (0,0,0), (20,0,0), direction=\"horizontal\", offset_mm=12)",
+      "signature": "DrawingDimension.linear(view, a, b, *, direction=\"aligned\", offset_mm=10, override_text=None, decimals=2, line_through_mm=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingDimension.faces",
+      "summary": "Create a native dimension between two parallel planar model faces.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingDimension.faces/",
+      "use_when": "Dimension overall width, depth or thickness robustly when fillets/chamfers mean the nominal outer corners no longer exist.",
+      "limits": "Each XYZ pick must lie on a unique planar face and the native backend must accept the requested direction for that view.",
+      "parameters": [
+        {
+          "name": "view",
+          "description": "Standard view name: front, top, right or iso."
+        },
+        {
+          "name": "a",
+          "description": "XYZ point on the first planar face."
+        },
+        {
+          "name": "b",
+          "description": "XYZ point on the second planar face."
+        },
+        {
+          "name": "direction",
+          "description": "aligned, horizontal or vertical."
+        },
+        {
+          "name": "offset_mm",
+          "description": "Native dimension offset in paper millimetres."
+        },
+        {
+          "name": "override_text",
+          "description": "Optional native dimension text override."
+        },
+        {
+          "name": "decimals",
+          "description": "Displayed decimal count, 0..6."
+        },
+        {
+          "name": "line_through_mm",
+          "description": "Optional explicit paper point for the dimension line."
+        }
+      ],
+      "example": "DrawingDimension.faces(\"front\", (-40,0,4), (40,0,4), direction=\"horizontal\", offset_mm=12, decimals=0)",
+      "signature": "DrawingDimension.faces(view, a, b, *, direction=\"aligned\", offset_mm=10, override_text=None, decimals=2, line_through_mm=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingDimension.radial",
+      "summary": "Create a native radial or diameter dimension from a circular model-edge pick.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingDimension.radial/",
+      "use_when": "Dimension holes, bosses or other circular edges and optionally turn the displayed value into a native engineering callout.",
+      "limits": "The XYZ pick must resolve to one circular edge. Avoid the seam point where a circle may expose multiple coincident edge segments. Centre marks are not currently authored because SolidCraft 0.49 exposes no native centre-mark command.",
+      "parameters": [
+        {
+          "name": "view",
+          "description": "Standard view name: front, top, right or iso."
+        },
+        {
+          "name": "edge",
+          "description": "XYZ pick on the circular model edge."
+        },
+        {
+          "name": "diameter",
+          "description": "True for diameter presentation, false/None for native radial behavior."
+        },
+        {
+          "name": "offset_mm",
+          "description": "Native dimension offset in paper millimetres."
+        },
+        {
+          "name": "override_text",
+          "description": "Optional native text override such as '2× {value} THRU'."
+        },
+        {
+          "name": "decimals",
+          "description": "Displayed decimal count, 0..6."
+        },
+        {
+          "name": "line_through_mm",
+          "description": "Optional explicit paper point for the dimension line."
+        }
+      ],
+      "example": "DrawingDimension.radial(\"top\", (-25.17,2.83,8), diameter=True, override_text=\"2× {value} THRU\", line_through_mm=(92,88))",
+      "signature": "DrawingDimension.radial(view, edge, *, diameter=None, offset_mm=10, override_text=None, decimals=2, line_through_mm=None)"
+    },
+    {
+      "kind": "callable",
       "name": "Occurrence.with_drawing",
-      "summary": "Add a native SolidCraft technical drawing for this standalone component occurrence.",
-      "guide": "guide/assembly-basics/#drawings",
+      "summary": "Add a consumer-authored native SolidCraft engineering drawing for this standalone occurrence.",
+      "guide": "guide/drawings/#authoring",
       "reference": "reference/Occurrence.with_drawing/",
-      "use_when": "Create a native part drawing for a standalone component occurrence while keeping the reusable component definition drawing-free.",
-      "limits": "Returns a one-occurrence Assembly carrying final design presentation state. A normal SCPF build publishes a native vector PDF below drawings/. A4 is the default template; select iso-a3-part explicitly for a larger sheet. Dimensions, balloons, parts lists and other annotations are not exposed yet.",
+      "use_when": "Create a complete native engineering drawing for a standalone part while keeping reusable component geometry drawing-free.",
+      "limits": "Returns a one-occurrence Assembly. Views are limited to the native front/top/right/iso standard set. Dimension picks must resolve to real native topology. Centre marks/centre lines, balloons and parts lists are not currently authored.",
       "parameters": [
         {
           "name": "name",
-          "description": "Optional drawing name. Defaults to '<component> drawing'."
+          "description": "Optional drawing name; also drives deterministic drawing artifact filenames."
         },
         {
           "name": "template",
-          "description": "Native SolidCraft drawing template. Defaults to 'iso-a4-part'; use 'iso-a3-part' for a larger sheet."
+          "description": "Native SolidCraft part template; defaults to iso-a4-part, with iso-a3-part available explicitly."
         },
         {
           "name": "sheet_name",
-          "description": "Name of the first sheet. Defaults to 'Sheet 1'."
+          "description": "First native sheet name; defaults to Sheet 1."
+        },
+        {
+          "name": "scale",
+          "description": "Optional common standard-view scale such as 1:1."
+        },
+        {
+          "name": "gap_mm",
+          "description": "Native standard-view spacing before explicit view edits; default 20."
+        },
+        {
+          "name": "views",
+          "description": "Mapping of front/top/right/iso to DrawingView placement/scale overrides."
+        },
+        {
+          "name": "properties",
+          "description": "Native drawing properties: project, part_number, revision, author, organization, description, license."
+        },
+        {
+          "name": "title_block",
+          "description": "Native title-block cell overrides supported by the selected SolidCraft template."
+        },
+        {
+          "name": "revision",
+          "description": "Optional DrawingRevision row."
+        },
+        {
+          "name": "notes",
+          "description": "Iterable of DrawingNote objects."
+        },
+        {
+          "name": "dimensions",
+          "description": "Iterable of DrawingDimension objects."
         }
       ],
-      "example": "part = Bracket().with_drawing(name=\"Bracket drawing\")",
-      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\")"
+      "example": "part.with_drawing(name=\"Bracket drawing\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
+      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
     },
     {
       "kind": "callable",
@@ -407,31 +669,63 @@
     {
       "kind": "callable",
       "name": "Assembly.with_drawing",
-      "summary": "Add a native SolidCraft technical drawing documenting one component occurrence in the completed Assembly.",
-      "guide": "guide/assembly-basics/#drawings",
+      "summary": "Add a consumer-authored native SolidCraft engineering drawing for one occurrence in the completed Assembly.",
+      "guide": "guide/drawings/#authoring",
       "reference": "reference/Assembly.with_drawing/",
-      "use_when": "Document one selected physical component occurrence after composing the final Assembly. The first native sheet is landscape; A3 remains an explicit template choice.",
-      "limits": "target must already belong to the Assembly. Drawing intent is final presentation state, so add it after assembly composition. SolidCraft owns standard-view layout and fitted scale; a component selected from a much larger assembly may receive a conservative scale. A normal SCPF build also publishes the drawing as a native vector PDF below drawings/. A4 is the default; iso-a3-part remains available explicitly. The current patch does not add note, dimension, title-block override or explicit view-layout authoring.",
+      "use_when": "Document one selected occurrence after composing the final Assembly, including deliberate standard-view layout, dimensions, notes and native title information.",
+      "limits": "target must already belong to the Assembly. Views are limited to the native front/top/right/iso standard set. Dimension picks must resolve to real native topology. Centre marks/centre lines, balloons and parts lists are not currently authored.",
       "parameters": [
         {
           "name": "target",
-          "description": "Component occurrence in this Assembly to document."
+          "description": "Component occurrence already owned by this Assembly to document."
         },
         {
           "name": "name",
-          "description": "Optional drawing name. Defaults to '<component> drawing'."
+          "description": "Optional drawing name; also drives deterministic drawing artifact filenames."
         },
         {
           "name": "template",
-          "description": "Native SolidCraft part-drawing template. Defaults to iso-a4-part; Forge preserves the selected paper size and sets the first sheet to landscape."
+          "description": "Native SolidCraft part template; defaults to iso-a4-part, with iso-a3-part available explicitly."
         },
         {
           "name": "sheet_name",
-          "description": "Name of the first sheet. Defaults to 'Sheet 1'."
+          "description": "First native sheet name; defaults to Sheet 1."
+        },
+        {
+          "name": "scale",
+          "description": "Optional common standard-view scale such as 1:1."
+        },
+        {
+          "name": "gap_mm",
+          "description": "Native standard-view spacing before explicit view edits; default 20."
+        },
+        {
+          "name": "views",
+          "description": "Mapping of front/top/right/iso to DrawingView placement/scale overrides."
+        },
+        {
+          "name": "properties",
+          "description": "Native drawing properties: project, part_number, revision, author, organization, description, license."
+        },
+        {
+          "name": "title_block",
+          "description": "Native title-block cell overrides supported by the selected SolidCraft template."
+        },
+        {
+          "name": "revision",
+          "description": "Optional DrawingRevision row."
+        },
+        {
+          "name": "notes",
+          "description": "Iterable of DrawingNote objects."
+        },
+        {
+          "name": "dimensions",
+          "description": "Iterable of DrawingDimension objects."
         }
       ],
-      "example": "assembly = (left + right).with_drawing(left, name=\"Block drawing\")",
-      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\")"
+      "example": "assembly.with_drawing(left, name=\"Left bracket\", views={\"front\": DrawingView(at=(62,128))}, dimensions=(DrawingDimension.faces(\"front\", (-20,0,5), (20,0,5)),))",
+      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
     },
     {
       "kind": "callable",
