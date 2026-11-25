@@ -390,8 +390,8 @@
       "summary": "Add a native SolidCraft technical drawing documenting one component occurrence in the completed Assembly.",
       "guide": "guide/assembly-basics/#drawings",
       "reference": "reference/Assembly.with_drawing/",
-      "use_when": "Document one selected physical component occurrence after composing the final Assembly.",
-      "limits": "target must already belong to the Assembly. Drawing intent is final presentation state, so add it after assembly composition. SolidCraft owns standard-view layout and fitted scale; a component selected from a much larger assembly may receive a conservative scale. A normal SCPF build also publishes the drawing as a native vector PDF below drawings/. A4 is the default; iso-a3-part remains available explicitly.",
+      "use_when": "Document one selected physical component occurrence after composing the final Assembly. The first native sheet is landscape; A3 remains an explicit template choice.",
+      "limits": "target must already belong to the Assembly. Drawing intent is final presentation state, so add it after assembly composition. SolidCraft owns standard-view layout and fitted scale; a component selected from a much larger assembly may receive a conservative scale. A normal SCPF build also publishes the drawing as a native vector PDF below drawings/. A4 is the default; iso-a3-part remains available explicitly. The current patch does not add note, dimension, title-block override or explicit view-layout authoring.",
       "parameters": [
         {
           "name": "target",
@@ -403,7 +403,7 @@
         },
         {
           "name": "template",
-          "description": "Native SolidCraft drawing template. Defaults to 'iso-a4-part'; use 'iso-a3-part' for a larger sheet."
+          "description": "Native SolidCraft part-drawing template. Defaults to iso-a4-part; Forge preserves the selected paper size and sets the first sheet to landscape."
         },
         {
           "name": "sheet_name",
