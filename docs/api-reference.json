@@ -609,7 +609,7 @@
           "description": "Fold to the opposite side when True. Defaults to False."
         }
       ],
-      "example": "with Sketch(name=\"Fold line\", plane=\"XY\") as fold_sketch:\n    fold_line = fold_sketch.line(\n        start=(20, -depth / 2),\n        end=(20, depth / 2),\n    )\nsheet.fold(\n    line=fold_line,\n    angle=90,\n    fixed=(-20, 0, 0),\n)",
+      "example": "with Sketch(name=\"Fold line\", plane=\"XY\") as fold_sketch:\n    fold_line = fold_sketch.line(\n        start=(20, -(depth / 2)),\n        end=(20, depth / 2),\n    )\nsheet.fold(\n    line=fold_line,\n    angle=90,\n    fixed=(-20, 0, 0),\n)",
       "signature": "Shape.fold(self, *, line, angle=90, fixed=None, position='centerline', flip=False)"
     },
     {
@@ -926,7 +926,7 @@
           "description": "Sketch-local (x, y) end point. Coordinates may retain Parameter/Expression dependencies."
         }
       ],
-      "example": "with Sketch(name=\"Fold line\", plane=\"XY\") as sketch:\n    fold_line = sketch.line(\n        start=(20, -depth / 2),\n        end=(20, depth / 2),\n    )",
+      "example": "with Sketch(name=\"Fold line\", plane=\"XY\") as sketch:\n    fold_line = sketch.line(\n        start=(20, -(depth / 2)),\n        end=(20, depth / 2),\n    )",
       "signature": "Sketch.line(self, *, start, end)"
     },
     {
