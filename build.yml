@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/169-revolute-joints
-modules: []
+branch: feature/168-consumer-drawing-authoring-v2
+modules: [builder-scpf, pages, verification]
 library: true
-models: [revolute-joint]
+models: [sample-plate-drawing]
 tasks: [test]
