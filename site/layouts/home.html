@@ -1,97 +1,82 @@
 {{ define "main" }}
-{{ $forge := site.Data.forge }}
-<main class="cad-page-shell cad-home">
+{{ $home := site.Data.home }}
+<main class="cad-page-shell cad-home" data-generated-homepage>
   {{ partial "cad/development-warning.html" . }}
 
-  <section class="cad-hero cad-forge-hero">
-    <p class="cad-eyebrow">Python API/compiler for SolidCraft</p>
-    <h1>{{ site.Title }}</h1>
-    <p class="cad-hero-lead">
-      Write editable CAD intent in Python with <strong>SCPF</strong>. Forge lowers
-      that intent into SolidCraft commands and native SolidCraft geometry, so
-      SolidCraft remains the CAD engine and editable model owner.
-    </p>
-    <div class="cad-forge-meta" aria-label="Qualified versions">
-      <span>SCPF {{ $forge.package_version }}</span>
-      <span>Tested with SolidCraft {{ $forge.tested_solidcraft_version }}</span>
-    </div>
-    <div class="cad-actions">
-      <a class="cad-button" href="{{ "guide/" | relURL }}">Start with the Guide</a>
-      <a class="cad-button cad-button-secondary" href="{{ "reference/" | relURL }}">API Reference</a>
-      <a class="cad-button cad-button-secondary" href="{{ "cheatsheet/" | relURL }}">Cheatsheet</a>
-    </div>
-  </section>
-
-  <section class="cad-section cad-forge-explainer">
-    <div class="cad-section-heading">
-      <h2>From Python intent to native SolidCraft</h2>
-      <p>Forge is the authoring/compiler layer; it is not a separate CAD engine.</p>
-    </div>
-    <div class="cad-forge-flow" aria-label="Forge compilation flow">
-      <div class="cad-forge-flow-step">
-        <span class="cad-forge-flow-number">1</span>
-        <h3>SCPF model</h3>
-        <p>Python expresses parameters, shapes, features, assemblies and native references.</p>
-      </div>
-      <div class="cad-forge-flow-arrow" aria-hidden="true">→</div>
-      <div class="cad-forge-flow-step">
-        <span class="cad-forge-flow-number">2</span>
-        <h3>Forge compiler</h3>
-        <p>Forge validates the model intent and lowers it to explicit SolidCraft commands.</p>
-      </div>
-      <div class="cad-forge-flow-arrow" aria-hidden="true">→</div>
-      <div class="cad-forge-flow-step">
-        <span class="cad-forge-flow-number">3</span>
-        <h3>SolidCraft</h3>
-        <p>SolidCraft creates the native editable geometry, history and saved design.</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="cad-section">
-    <div class="cad-section-heading">
-      <h2>Choose where to start</h2>
-      <p>Learn the authoring surface, inspect working models, or review the evidence behind supported behavior.</p>
-    </div>
-    <div class="cad-forge-start-grid">
-      <a class="cad-forge-start-card" href="{{ "guide/" | relURL }}">
-        <span class="cad-forge-start-kicker">Learn</span>
-        <strong>Guide</strong>
-        <span>Concepts and workflows for writing SCPF models.</span>
-      </a>
-      <a class="cad-forge-start-card" href="{{ "reference/" | relURL }}">
-        <span class="cad-forge-start-kicker">Look up</span>
-        <strong>API Reference</strong>
-        <span>The public SCPF surface, statically checked against the package source.</span>
-      </a>
-      <a class="cad-forge-start-card" href="{{ "examples/" | relURL }}">
-        <span class="cad-forge-start-kicker">See it work</span>
-        <strong>Examples</strong>
-        <span>Selected physical model owners with source and published geometry.</span>
-      </a>
-      <a class="cad-forge-start-card" href="{{ "verification/" | relURL }}">
-        <span class="cad-forge-start-kicker">Inspect evidence</span>
-        <strong>Verification</strong>
-        <span>Native, geometry and reference evidence for declared Forge behavior.</span>
-      </a>
-    </div>
-    <p class="cad-forge-project-link">
-      Using Forge in context?
-      <a href="{{ site.Params.cadProjectsURL }}" target="_blank" rel="noopener noreferrer">View real SolidCraft CAD projects →</a>
-    </p>
-  </section>
-
-  {{ $examples := where site.RegularPages "Section" "examples" }}
-  {{ if $examples }}
-  <section class="cad-section">
-    <div class="cad-section-heading">
-      <h2>Featured examples</h2>
-      <p>Practical SCPF patterns backed by published model and verification evidence.</p>
-    </div>
-    <div class="cad-model-grid">
-      {{ range $examples.ByWeight }}{{ partial "cad/model-card.html" . }}{{ end }}
-    </div>
-  </section>
+  {{ range $block := $home.blocks }}
+    {{ if eq $block.type "hero" }}
+      <section class="cad-hero cad-forge-hero">
+        <p class="cad-eyebrow">{{ $block.eyebrow }}</p>
+        <h1>{{ $block.title }}</h1>
+        <p class="cad-hero-lead">{{ $block.lead }}</p>
+        {{ with $block.badges }}
+          {{ if gt (len .) 0 }}
+            <div class="cad-badges">
+              {{ range . }}<span>{{ . }}</span>{{ end }}
+            </div>
+          {{ end }}
+        {{ end }}
+        {{ with $block.actions }}
+          {{ if gt (len .) 0 }}
+            <div class="cad-actions">
+              {{ range . }}
+                {{ $href := .url }}
+                {{ if .route }}{{ $href = (.route | relURL) }}{{ end }}
+                <a class="cad-button{{ if not .primary }} cad-button-secondary{{ end }}"
+                   href="{{ $href }}"{{ if .external }} target="_blank" rel="noopener noreferrer"{{ end }}>{{ .label }}</a>
+              {{ end }}
+            </div>
+          {{ end }}
+        {{ end }}
+      </section>
+    {{ else if eq $block.type "flow" }}
+      <section class="cad-section">
+        <div class="cad-section-heading">
+          <h2>{{ $block.title }}</h2>
+          <p>{{ $block.description }}</p>
+        </div>
+        <div class="cad-home-flow">
+          {{ range $index, $step := $block.steps }}
+            <div class="cad-home-flow-step">
+              <span class="cad-home-flow-number">{{ add $index 1 }}</span>
+              <h3>{{ $step.title }}</h3>
+              <p>{{ $step.description }}</p>
+            </div>
+          {{ end }}
+        </div>
+      </section>
+    {{ else if eq $block.type "links" }}
+      <section class="cad-section">
+        <div class="cad-section-heading">
+          <h2>{{ $block.title }}</h2>
+          <p>{{ $block.description }}</p>
+        </div>
+        <div class="cad-home-link-grid">
+          {{ range $item := $block.items }}
+            {{ $href := $item.url }}
+            {{ if $item.route }}{{ $href = ($item.route | relURL) }}{{ end }}
+            <a class="cad-home-link-card" href="{{ $href }}"{{ if $item.external }} target="_blank" rel="noopener noreferrer"{{ end }}>
+              {{ with $item.kicker }}<span class="cad-home-link-kicker">{{ . }}</span>{{ end }}
+              <strong>{{ $item.label }}</strong>
+              <span>{{ $item.description }}</span>
+            </a>
+          {{ end }}
+        </div>
+      </section>
+    {{ else if eq $block.type "catalogue" }}
+      {{ $pages := where site.RegularPages "Section" $block.section }}
+      {{ if $pages }}
+        <section class="cad-section">
+          <div class="cad-section-heading">
+            <h2>{{ $block.title }}</h2>
+            <p>{{ $block.description }}</p>
+          </div>
+          <div class="cad-model-grid">
+            {{ range $pages.ByWeight }}{{ partial "cad/model-card.html" . }}{{ end }}
+          </div>
+        </section>
+      {{ end }}
+    {{ end }}
   {{ end }}
 </main>
 {{ end }}
