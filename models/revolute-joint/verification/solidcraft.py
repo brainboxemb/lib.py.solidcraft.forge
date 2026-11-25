@@ -67,12 +67,12 @@ VERIFICATION = SolidCraftVerification(
                 ),
                 SolidCraftInspectionCheck(
                     id="unit",
-                    path=("values", 0, "unit"),
+                    path=(0, "values", 0, "unit"),
                     expected="deg",
                 ),
                 SolidCraftInspectionCheck(
                     id="limits",
-                    path=("values", 0, "limits"),
+                    path=(0, "values", 0, "limits"),
                     expected=[0.0, 180.0],
                 ),
             ),
