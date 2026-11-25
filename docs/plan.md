@@ -56,7 +56,7 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge release infrastructure and the migration-era Pages cleanup set are
+Forge release infrastructure and the first public Pages cleanup set are
 accepted:
 
 - stable-main release-flow implementation is accepted on Forge `main`;
@@ -64,17 +64,17 @@ accepted:
 - #58 Forge/SCPF product landing is accepted on `dev`;
 - #106 canonical API Reference landing wording is accepted on `dev`;
 - #107 Joint anatomy derives the tested SolidCraft version from source;
-- #109 canonical Guide landing wording is accepted on `dev`.
+- #109 canonical Guide landing wording is accepted on `dev`;
+- #68 obsolete CadCraft Joint-anatomy sources/links are removed while SVG/DXF
+  assets remain versioned.
 
 The active Pages audit work is:
 
-1. #68 — remove the remaining six obsolete CadCraft Joint-anatomy sources and
-   public source links while retaining committed/versioned SVG + DXF assets.
-2. #112 — complete missing `Use when` / `Limits` guidance on four public API
-   callable routes.
-3. #113 — make Examples and Verification landing copy user-facing instead of
+1. #112 — complete missing `Use when` / `Limits` guidance on four public API
+   callable routes and enforce the contract across all callables.
+2. #113 — make Examples and Verification landing copy user-facing instead of
    exposing model-owner implementation mechanics.
-4. Continue the remaining visual/content audit after those fixes and create one
+3. Continue the remaining visual/content audit after those fixes and create one
    issue per independent defect before changing it.
 
 CAD project work continues independently and is not a prerequisite for this
