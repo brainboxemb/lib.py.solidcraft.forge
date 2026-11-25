@@ -118,7 +118,7 @@ class ModelPagesTests(unittest.TestCase):
             self.assertTrue(verification_box.is_file())
             self.assertIn('"verificationsection": "fundamentals"', verification_box.read_text())
             catalog = json.loads(
-                (site / "data/cad/verification_sections.json").read_text()
+                (site / "assets/cad/verification_sections.json").read_text()
             )
             self.assertEqual(
                 catalog["sections"],
