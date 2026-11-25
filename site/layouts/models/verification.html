@@ -12,6 +12,7 @@
   {{ else }}
     {{ errorf "missing generated verification catalogue resource" }}
   {{ end }}
+  {{ warnf "verification-catalog=%s" (jsonify $catalog) }}
   {{ range $section := index $catalog "sections" }}
     {{ $models := index $section "models" }}
     <section class="cad-section cad-catalog-section" data-verification-section="{{ index $section "id" }}" data-verification-model-count="{{ len $models }}">
