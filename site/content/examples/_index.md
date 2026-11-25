@@ -1,8 +1,8 @@
 ---
 title: Examples
 type: models
-description: Practical Forge examples selected from physical model owners.
+description: Practical Forge/SCPF models with readable source and published CAD evidence.
 aliases: ["/models/"]
 ---
 
-Examples are a presentation of owners whose `model.yml.purpose` contains `example`; Pages does not duplicate CAD ownership or generated artifacts.
+Examples are small, practical Forge/SCPF models you can read end to end. Use them to learn modelling patterns, compare source with the generated/native result, and see how the public API fits together before applying the same ideas in larger CAD projects.
