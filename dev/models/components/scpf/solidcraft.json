@@ -2,7 +2,8 @@
   "commands": [
     {
       "bind": {
-        "$block_occurrence_1": "occurrence"
+        "$block_occurrence_1": "occurrence",
+        "$component_1": "component"
       },
       "command": "component.create",
       "params": {
@@ -43,6 +44,85 @@
           0.0
         ]
       }
+    },
+    {
+      "bind": {
+        "$drawing_1_sheet": {
+          "field": "sheets",
+          "select": "id",
+          "where": {
+            "name": "Sheet 1"
+          }
+        },
+        "$drawing_1_source": {
+          "field": "sources",
+          "select": "id",
+          "where": {
+            "path": null
+          }
+        }
+      },
+      "command": "drawing.create",
+      "params": {
+        "first_sheet_name": "Sheet 1",
+        "name": "Block drawing",
+        "template": "iso-a3-part"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "documents": {
+          "component": "$component_1",
+          "source": "$drawing_1_source"
+        },
+        "sheet": "$drawing_1_sheet"
+      }
+    },
+    {
+      "bind": {
+        "$drawing_1_front": "view",
+        "$drawing_1_iso": "iso"
+      },
+      "command": "drawing.view.standard",
+      "params": {
+        "iso": true,
+        "sheet": "$drawing_1_sheet"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                "$block_occurrence_1"
+              ]
+            ]
+          }
+        },
+        "view": "$drawing_1_front"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                "$block_occurrence_1"
+              ]
+            ]
+          }
+        },
+        "view": "$drawing_1_iso"
+      }
+    },
+    {
+      "command": "drawing.close",
+      "params": {}
     }
   ],
   "format": "scpf-replay",

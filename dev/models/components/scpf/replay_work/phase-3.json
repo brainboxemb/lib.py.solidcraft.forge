@@ -1,0 +1,44 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "037hq01h43amh"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "view": "3e3a67wdjwfah",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "view": "97wmsmhbb1a0h",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "command": "drawing.close",
+      "params": {}
+    }
+  ]
+}
