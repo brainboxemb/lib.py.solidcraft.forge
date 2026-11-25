@@ -1,6 +1,6 @@
 schema: 1
 branch: issue/134-component-drawings
-modules: [ci]
+modules: [ci, pages]
 library: true
 models: [components]
 tasks: [test]
