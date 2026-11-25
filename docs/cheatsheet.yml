@@ -80,6 +80,10 @@ groups:
 
   - heading: Features and placement
     items:
+      - title: "Display appearance"
+        description: "Give the finished body a visual color without changing material/BOM semantics."
+        snippet: 'body.with_appearance("#FFD21A")'
+        example: appearance-color
       - title: "sketch.extrude(distance)"
         description: "Extrude an explicitly authored Sketch into editable native solid history."
         snippet: |
@@ -258,8 +262,3 @@ groups:
         description: "Execute a model in an open SolidCraft GUI document."
         snippet: "python -m scpf examples/simple-box/scpf/model.py --connect"
         example:
-
-  - title: "Display appearance"
-    description: "Give the finished body a visual color without changing material/BOM semantics."
-    snippet: 'body.with_appearance("#FFD21A")'
-    example: appearance-color
