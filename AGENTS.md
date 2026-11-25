@@ -77,14 +77,18 @@ Preserve exactly two released CAD runtime roles:
 
 SolidCraft builds in the lightweight SolidCraft role; generic mesh verification runs in the reference role. Do not add a third verification image.
 
-## Migration discipline
+## Historical migration evidence
 
-The old `lib.py.solidcraft.forge` repository is a read-only migration reference during this work.
+The archived `brainboxemb/lib.py.solidcraft.forge.OLD` repository is a
+read-only A/B and provenance reference. It is not an active integration target.
 
-Migrate physical models in controlled slices: one, then five, then ten, then the remaining graph. At each slice compare SCPF behavior, generated commands, native/STL output, verification evidence and presentation before expanding.
+The completed migration established the current owner/module architecture. New
+work must preserve the accepted boundaries rather than reviving historical
+Forge-local CI/scripts/site machinery.
 
-Reference-engine implementations belong inside the same model owner as the SCPF/SolidCraft path.
+Reference-engine implementations belong inside the same model owner as the
+SCPF/SolidCraft path.
 
-Do not bulk-copy old Forge CI/scripts/site machinery. First determine whether a corrected template capability replaces it.
-
-Generated CAD artifacts remain owned by `build/<scope>/models/...`. Pages links them; it must not duplicate generated STL/PNG/SC/command evidence into `gh-pages`.
+Generated CAD artifacts remain owned by `build/<scope>/models/...`. Pages
+links them; it must not duplicate generated STL/PNG/SC/command evidence into
+`gh-pages`.
