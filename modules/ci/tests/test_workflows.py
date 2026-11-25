@@ -7,6 +7,9 @@ class WorkflowTests(unittest.TestCase):
         pages = Path(".github/workflows/pages.yml").read_text()
         release = Path(".github/workflows/release.yml").read_text()
         self.assertIn("cancel-in-progress: true", ci)
+        self.assertIn("Validate release metadata delta", ci)
+        self.assertIn("cad_library_release.delta", ci)
+        self.assertIn("--base-ref origin/main", ci)
         self.assertIn("gh workflow run pages.yml --ref main", ci)
         self.assertIn("branches: [dev, main]", ci)
         self.assertNotIn("actions-hugo", ci)
@@ -21,4 +24,7 @@ class WorkflowTests(unittest.TestCase):
             release,
         )
         self.assertIn("validator_path: cadlib/release.py", release)
+        self.assertIn("--source-root", release)
+        self.assertIn("path: source", release)
+        self.assertIn("fetch-depth: 0", release)
         self.assertNotIn("tool.cad.ci", release)
