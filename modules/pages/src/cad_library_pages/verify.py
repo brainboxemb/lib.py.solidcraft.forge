@@ -76,14 +76,14 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
         if not models:
             continue
         marker = re.search(
-            rf'data-verification-section=(?:"{re.escape(section_id)}"|{re.escape(section_id)})(?=[\\s>])',
+            rf'data-verification-section=(?:"{re.escape(section_id)}"|{re.escape(section_id)})(?=[\s>])',
             verification_html,
         )
         if marker is None:
             discovered = [
                 next(value for value in match.groups() if value is not None)
                 for match in re.finditer(
-                    r'data-verification-section=(?:"([^"]+)"|([^\\s>]+))',
+                    r'data-verification-section=(?:"([^"]+)"|([^\s>]+))',
                     verification_html,
                 )
             ]
