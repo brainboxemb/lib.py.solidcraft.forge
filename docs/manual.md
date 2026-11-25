@@ -54,6 +54,19 @@ build/<source-branch>/models/<owner>/
 
 The owner root exposes canonical artifacts from its configured primary implementation. Pages reads durable build evidence and does not rebuild CAD. For implementations with named verification stages, the model page renders each stage status and links its stage-local durable report while retaining the aggregate verification status.
 
+## Pages homepage
+
+Homepage content is declared in `site/home.yml` and generated before Hugo
+renders the site. Use `route` for Forge-local destinations so Hugo applies the
+active base URL, and `url` for absolute HTTPS destinations such as the
+SolidCraft model website. Forge version badges use generated values from
+`landing_metadata()`; placeholders such as `${package_version}` are resolved
+by Pages before `data/home.json` reaches Hugo.
+
+Do not add Forge labels, copy or destinations directly to
+`site/layouts/home.html`. That layout may remain Forge-specific for visual
+structure and CSS classes, but it must render the generated manifest.
+
 ## Migration checks
 
 For every expansion slice:
