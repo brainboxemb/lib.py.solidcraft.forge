@@ -44,19 +44,94 @@ Projected views inherit the selected native occurrence subtree. Drawing intent
 does not alter normal occurrence placement or duplicate the reusable component
 definition.</p>
 
+<h2 id="authoring">Author a real engineering sheet</h2>
+
+<p>The same public API can author view layout, dimensions, notes, drawing
+properties, title-block values and one revision row. These remain native
+SolidCraft drawing objects; Forge does not draw substitute SVG/PDF graphics.</p>
+
+<pre class="code-block"><code>part.with_drawing(
+    name="Bracket drawing",
+    scale="1:1",
+    views={
+        "front": DrawingView(at=(62, 128)),
+        "top": DrawingView(at=(62, 62)),
+        "right": DrawingView(at=(137, 128)),
+        "iso": DrawingView(at=(220, 128), scale="1:1"),
+    },
+    properties={
+        "part_number": "BRK-001",
+        "revision": "A",
+        "author": "Forge",
+        "organization": "Example Engineering",
+        "description": "Wall bracket",
+    },
+    title_block={
+        "title": "Wall bracket",
+        "identification_number": "BRK-001",
+        "material": "PETG",
+        "document_status": "Released",
+    },
+    revision=DrawingRevision(
+        revision="A",
+        description="Initial drawing",
+        designer="Forge",
+        checker="CI",
+        date="2026-11-25",
+    ),
+    notes=(
+        DrawingNote(
+            "NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES.",
+            at=(156, 88),
+            cap_mm=2.5,
+        ),
+    ),
+    dimensions=(
+        DrawingDimension.faces(
+            "front",
+            (-20, 0, 5),
+            (20, 0, 5),
+            direction="horizontal",
+            offset_mm=12,
+            decimals=0,
+        ),
+        DrawingDimension.radial(
+            "front",
+            (0, 4, 10),
+            diameter=True,
+            override_text="2× {value} THRU",
+            line_through_mm=(92, 88),
+            decimals=1,
+        ),
+    ),
+)</code></pre>
+
+<p><code>DrawingView.at</code> uses paper millimetres.
+<code>DrawingDimension.faces()</code> is the preferred overall-size form when
+fillets remove geometric corners. <code>DrawingDimension.radial()</code>
+resolves a circular model edge; avoid selecting the seam point of a circular
+edge. Invalid topology picks fail in SolidCraft rather than being silently
+approximated.</p>
+
+<p>The pinned SolidCraft 0.49 command set does not expose native centre-mark or
+centre-line authoring. Forge therefore does not fake them. Balloons and parts
+lists are also outside the qualified slice.</p>
+
 <h2 id="artifact-boundary">Drawing intent versus published artifacts</h2>
 
-<p>Forge stores the native drawing in <code>model.sc</code> and declares the
-drawing artifact. The SCPF builder reopens that saved design and uses
-SolidCraft's native <code>drawing.export</code> command twice: a vector PDF for
-publication and a 144 dpi PNG of the replay-bound sheet for static visual
-evidence. Forge model code does not embed repository or build-root paths.</p>
+<p>Forge stores the native drawing in <code>model.sc</code>. The SCPF builder
+keeps the final native <code>drawing.inspect</code> result as structural JSON,
+then reopens that saved design and uses SolidCraft's native
+<code>drawing.export</code> command for a vector PDF and a 144 dpi PNG of the
+replay-bound sheet. Forge model code does not embed repository or build-root
+paths.</p>
 
 <pre class="code-block"><code>build/&lt;scope&gt;/models/sample-plate-drawing/scpf/
   model.sc
   drawings/
     Sample-Plate-Drawing.pdf
-    Sample-Plate-Drawing.png</code></pre>
+    Sample-Plate-Drawing.png
+    Sample-Plate-Drawing.json</code></pre>
 
 <p>Pages loads only the static PNG preview and exposes explicit Open PDF /
 Download PDF actions. It does not embed the PDF viewer on page load and copies
@@ -65,11 +140,15 @@ neither generated artifact into <code>gh-pages</code>. See the
 for the complete source, generated SolidCraft sequence, native model and
 drawing PDF.</p>
 
-<h2 id="scope">Current drawing scope</h2>
+<h2 id="scope">Qualified drawing scope</h2>
 
-<p>The patch-qualified drawing slice covers native landscape part sheets,
-standard views, vector PDF publication and a native static sheet preview.
-Dimensions, notes, title-block authoring overrides, explicit view placement,
-balloons and parts lists remain separate future authoring capabilities. They
-will be evaluated against a real downstream Wall Hook drawing after this patch
-rather than being hidden as example-specific behavior.</p>
+<p>The qualified slice covers native landscape A4/A3 part sheets, explicit
+standard-view placement/scale, linear/face/radial dimensions, notes, drawing
+properties, title-block overrides, one revision row, vector PDF publication,
+native static PNG evidence and retained native inspection JSON. The Forge-owned
+Sample Plate Drawing exercises this API as a consumer simulation before the
+same contract is used by downstream CAD models.</p>
+
+<p>Centre marks/centre lines, balloons and parts lists remain outside this
+release because the pinned SolidCraft backend does not yet expose all required
+native authoring commands. They are not emulated with page graphics.</p>

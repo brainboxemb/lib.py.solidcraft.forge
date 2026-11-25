@@ -484,26 +484,137 @@ return (left + right).with_drawing(left, name="Block drawing")
 ```
 
 `with_drawing(...)` creates a persistent native SolidCraft drawing using the
-`iso-a4-part` template by default. Its first sheet documents the selected
-native component and SolidCraft creates the standard front, top, right and
-isometric view layout. Forge restricts those views to the selected occurrence
-subtree using native drawing-view source settings.
+`iso-a4-part` template by default. Forge sets the first native sheet to
+landscape and preserves an explicitly selected `iso-a3-part` template.
 
-A normal SCPF build also publishes that drawing as a native vector PDF below
-`drawings/`. The filename is derived deterministically from the drawing name;
-for example `name="Block drawing"` produces
-`drawings/Block-drawing.pdf`. Use `template="iso-a3-part"` when an A3 sheet
-is more appropriate for a complex part.
+The public drawing authoring controls are:
 
-The drawing API accepts `name=`, `template=` and `sheet_name=`. Compose
-the final Assembly before adding drawing intent; adding occurrences afterwards
-is rejected. Dimensions, balloons, parts lists and other annotations are not
-part of this first slice.
+```python
+DrawingView(at=(x_mm, y_mm), scale="1:1")
 
-For a component inside a larger assembly, SolidCraft currently fits the
-standard view group before Forge narrows the views to that component. The
-drawing is valid, but its scale may therefore be conservative compared with a
-standalone component drawing.
+DrawingNote(
+    "NOTES\n1. ALL DIMENSIONS IN MM.",
+    at=(x_mm, y_mm),
+    cap_mm=2.5,
+    align="left",
+)
+
+DrawingRevision(
+    revision="A",
+    description="Initial drawing",
+    designer="Forge",
+    checker="CI",
+    date="2026-11-25",
+)
+
+DrawingDimension.linear(
+    "front",
+    a=(x, y, z),
+    b=(x, y, z),
+    direction="horizontal",
+    offset_mm=12,
+)
+
+DrawingDimension.faces(
+    "front",
+    a=(x, y, z),
+    b=(x, y, z),
+    direction="horizontal",
+    offset_mm=12,
+)
+
+DrawingDimension.radial(
+    "front",
+    edge=(x, y, z),
+    diameter=True,
+    override_text="2× {value} THRU",
+    line_through_mm=(x_mm, y_mm),
+)
+```
+
+`DrawingDimension.faces()` is the preferred overall-size form for a filleted
+part because it selects the two real planar faces rather than depending on
+corners that may no longer exist. All dimension picks are model-space authoring
+intent. SolidCraft must resolve them to saved native topology; Forge does not
+invent dimension geometry when a pick is invalid.
+
+A consumer may author the complete sheet in one call:
+
+```python
+return part.with_drawing(
+    name="Bracket drawing",
+    scale="1:1",
+    gap_mm=14,
+    views={
+        "front": DrawingView(at=(62, 128)),
+        "top": DrawingView(at=(62, 62)),
+        "right": DrawingView(at=(137, 128)),
+        "iso": DrawingView(at=(220, 128), scale="1:1"),
+    },
+    properties={
+        "project": "Workshop",
+        "part_number": "BRK-001",
+        "revision": "A",
+        "author": "Forge",
+        "organization": "Example Engineering",
+        "description": "Wall bracket",
+    },
+    title_block={
+        "title": "Wall bracket",
+        "identification_number": "BRK-001",
+        "material": "PETG",
+        "document_status": "Released",
+    },
+    revision=DrawingRevision(
+        revision="A",
+        description="Initial drawing",
+        designer="Forge",
+        checker="CI",
+        date="2026-11-25",
+    ),
+    notes=(
+        DrawingNote(
+            "NOTES\n1. ALL DIMENSIONS IN MM.",
+            at=(156, 88),
+        ),
+    ),
+    dimensions=(...),
+)
+```
+
+Supported `views` keys are `front`, `top`, `right` and `iso`.
+`DrawingView.at` is a native paper position in millimetres. A per-view scale
+may be supplied; a projected top/right view is unlinked natively when an
+independent scale is requested.
+
+Supported drawing properties are `project`, `part_number`, `revision`,
+`author`, `organization`, `description` and `license`. Title-block
+override keys are passed to the native SolidCraft sheet template and therefore
+must name cells supported by that template.
+
+A normal SCPF build publishes three sibling drawing artifacts below
+`drawings/`:
+
+- native vector `<name>.pdf`;
+- native 144 dpi sheet `<name>.png`;
+- final native `drawing.inspect` evidence `<name>.json`.
+
+The builder validates the saved drawing structure against the compiled authoring
+intent before publishing those artifacts. The canonical Forge drawing owner
+also compares the generated sheet PNG with an approved visual baseline.
+
+The filename is derived deterministically from the drawing name; for example
+`name="Block drawing"` produces `drawings/Block-drawing.pdf`.
+
+Compose the final Assembly before adding drawing intent; adding occurrences
+afterwards is rejected. For a component inside a larger assembly, SolidCraft
+currently fits the standard view group before Forge narrows the views to that
+component. The fitted scale may therefore be conservative; explicit
+`DrawingView(scale=...)` is the consumer override.
+
+The pinned SolidCraft 0.49 registry does not expose native centre-mark or
+centre-line authoring, so Forge does not fake those graphics. Balloons and
+parts lists remain outside this qualified slice.
 
 ### Occurrence `Placement`
 

@@ -48,6 +48,26 @@ class RuntimeTests(unittest.TestCase):
                     root / "verify.py",
                 )
 
+    def test_dispatches_image_regression(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with patch(
+                "cad_verification.adapters.image_regression.run_image_regression_verification_file"
+            ) as verify:
+                run(
+                    "image-regression",
+                    root / "sheet.png",
+                    root / "visual.json",
+                    root / "verification",
+                    verification_id="drawing:sheet",
+                )
+                verify.assert_called_once_with(
+                    root / "sheet.png",
+                    root / "verification",
+                    root / "visual.json",
+                    verification_id="drawing:sheet",
+                )
+
     def test_unknown_adapter_fails(self):
         with self.assertRaises(ValueError):
             run(

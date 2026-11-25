@@ -17,5 +17,12 @@ verifications:
     artifact: model.sc
     implementations: [scpf]
 
+  - id: drawing-sheet
+    module: verification
+    adapter: image-regression
+    definition: verification/drawing_visual.json
+    artifact: drawings/Sample-Plate-Drawing.png
+    implementations: [scpf]
+
 dependencies: []
 needs: [cadlib]

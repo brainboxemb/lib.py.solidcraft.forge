@@ -1,4 +1,8 @@
-"""Native qualification for the Sample Plate Drawing example."""
+"""Native geometry qualification for the Sample Plate Drawing owner.
+
+Drawing structure is qualified during the SCPF build from replay-bound native
+drawing.inspect evidence published beside the PDF/PNG artifacts.
+"""
 
 from cad_verification import (
     SolidCraftBodyExpectation,
