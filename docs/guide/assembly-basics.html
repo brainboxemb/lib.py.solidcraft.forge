@@ -90,9 +90,11 @@ assembly = assembly.with_drawing(
 )</code></pre>
 <p>For a standalone part, use
 <code>Block().with_drawing(name="Block drawing")</code>. Forge asks SolidCraft
-to create the native A3 part sheet and standard front, top, right and
+to create the native A4 part sheet and standard front, top, right and
 isometric views, then restricts those views to the selected occurrence. The
-sheet explicitly documents that component.</p>
+sheet explicitly documents that component. A normal build also exports the
+drawing as a native vector PDF below <code>drawings/</code>. For a more complex
+part, pass <code>template="iso-a3-part"</code>.</p>
 <div class="notice"><strong>Layout stays native:</strong> Forge does not
 calculate paper coordinates or projected-view placement. SolidCraft owns the
 template, fitted scale and standard-view layout. In this first slice a part
