@@ -45,6 +45,52 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
         if warning_marker not in html:
             raise RuntimeError(f"missing Forge development warning for {route or '/'}")
 
+    sections_path = source_root / "docs/verification/sections.yml"
+    sections_data = yaml.safe_load(sections_path.read_text(encoding="utf-8")) or {}
+    section_defs = sections_data.get("sections", {})
+    verification_models = {}
+    for model in sorted((source_root / "models").rglob("model.yml")):
+        if not (model.parent / "ci.yml").is_file():
+            continue
+        meta = yaml.safe_load(model.read_text()) or {}
+        purposes = meta.get("purpose", [])
+        if isinstance(purposes, str):
+            purposes = [purposes]
+        if "verification" not in purposes:
+            continue
+        ci = yaml.safe_load((model.parent / "ci.yml").read_text()) or {}
+        verification_models.setdefault(meta.get("section"), []).append(
+            (meta.get("priority", 100), ci["id"], str(meta.get("title", ci["id"])))
+        )
+
+    verification_html = read("verification")
+    section_rows = sorted(
+        section_defs.items(),
+        key=lambda item: (item[1]["priority"], item[0]),
+    )
+    section_positions = []
+    for section_id, _definition in section_rows:
+        models = sorted(verification_models.get(section_id, []))
+        if not models:
+            continue
+        marker = f'data-verification-section="{section_id}"'
+        position = verification_html.find(marker)
+        if position < 0:
+            raise RuntimeError(f"verification section missing: {section_id}")
+        section_positions.append(position)
+        end = verification_html.find(
+            'data-verification-section="',
+            position + len(marker),
+        )
+        section_html = verification_html[position:end if end >= 0 else None]
+        model_positions = [section_html.find(title) for _priority, _item, title in models]
+        if -1 in model_positions or model_positions != sorted(model_positions):
+            raise RuntimeError(
+                f"verification model ordering is incorrect in section {section_id}"
+            )
+    if section_positions != sorted(section_positions):
+        raise RuntimeError("verification section ordering is incorrect")
+
     for route in (
         "guide",
         "reference",
