@@ -1,0 +1,91 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "67a1c2dd858f51ffbffb75a5b870551e6641eb891a906c43784b2acaa6223cb6",
+          "size": 1937
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole"
+          }
+        ],
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "name": "Hook profile",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Hook profile",
+              "status": "solved"
+            },
+            "label": "Hook profile sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Hook profile",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Hook profile",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/topology-face-boundary-xz/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "topology-face-boundary-xz"
+}

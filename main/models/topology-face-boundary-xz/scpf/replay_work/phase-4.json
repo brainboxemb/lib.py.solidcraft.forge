@@ -1,0 +1,45 @@
+{
+  "commands": [
+    {
+      "command": "solid.chamfer",
+      "params": {
+        "edges": [
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 5
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 7
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 9
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 11
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 0
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 1
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 2
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 3
+          }
+        ],
+        "distance": 1.5,
+        "body": "TopologyFaceBoundaryXz"
+      }
+    }
+  ]
+}

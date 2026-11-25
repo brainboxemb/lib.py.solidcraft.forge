@@ -46,6 +46,8 @@
     "sketch-pattern-mirror",
     "slot-family",
     "top-sketch-after-chamfer",
+    "topology-face-boundary-box",
+    "topology-face-boundary-xz",
     "xz-anchor"
   ],
   "full": true,
@@ -656,6 +658,26 @@
       ]
     },
     {
+      "id": "topology-face-boundary-box",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "topology-face-boundary-xz",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
       "id": "xz-anchor",
       "implementations": [
         "scpf",
@@ -719,7 +741,9 @@
     "sketch-pattern-mirror",
     "slot-family",
     "top-sketch-after-chamfer",
+    "topology-face-boundary-box",
+    "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "cc68e5b31f4848cbaadfa3e7a7eefe1f1acf43fd"
+  "source_sha": "14b9d7e1166d721bcf2b8ec45377b04fe5490961"
 }

@@ -1,0 +1,60 @@
+{
+  "commands": [
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "TopologyFaceBoundaryBox",
+        "corner": [
+          -30.0,
+          -20.0,
+          0
+        ],
+        "height": 12,
+        "length": 60,
+        "width": 40
+      }
+    },
+    {
+      "bind": {
+        "$topology_face_1": {
+          "field": "faces",
+          "max": "area",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "TopologyFaceBoundaryBox"
+      }
+    },
+    {
+      "bind": {
+        "$topology_edges_1": {
+          "body": "TopologyFaceBoundaryBox",
+          "boundary_of": "$topology_face_1",
+          "field": "edges"
+        }
+      },
+      "command": "model.edges",
+      "params": {
+        "body": "TopologyFaceBoundaryBox"
+      }
+    },
+    {
+      "command": "solid.chamfer",
+      "params": {
+        "body": "TopologyFaceBoundaryBox",
+        "distance": 2,
+        "edges": "$topology_edges_1"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

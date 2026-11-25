@@ -1,0 +1,29 @@
+{
+  "commands": [
+    {
+      "command": "solid.chamfer",
+      "params": {
+        "edges": [
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 0
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 1
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 2
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 3
+          }
+        ],
+        "distance": 2,
+        "body": "TopologyFaceBoundaryBox"
+      }
+    }
+  ]
+}

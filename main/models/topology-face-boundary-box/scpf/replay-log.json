@@ -1,0 +1,147 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "64397e5f59e0790777b2efaf1eb60d4617c396e360ae27790ceca296935657fe",
+  "variables": {
+    "$topology_face_1": {
+      "area": 2400.0,
+      "centroid": [
+        0.0,
+        0.0,
+        12.0
+      ],
+      "exact": true,
+      "index": 0,
+      "name": "F1:+z",
+      "plane_normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "point": [
+        -16.055512754639892,
+        -6.055512754639893,
+        12.0
+      ]
+    },
+    "$topology_edges_1": [
+      {
+        "body": "TopologyFaceBoundaryBox",
+        "index": 0
+      },
+      {
+        "body": "TopologyFaceBoundaryBox",
+        "index": 1
+      },
+      {
+        "body": "TopologyFaceBoundaryBox",
+        "index": 2
+      },
+      {
+        "body": "TopologyFaceBoundaryBox",
+        "index": 3
+      }
+    ]
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 60,
+        "width": 40,
+        "height": 12,
+        "corner": [
+          -30.0,
+          -20.0,
+          0
+        ],
+        "body_name": "TopologyFaceBoundaryBox"
+      }
+    },
+    {
+      "index": 1,
+      "command": "model.faces",
+      "resolved_params": {
+        "body": "TopologyFaceBoundaryBox"
+      },
+      "bindings": {
+        "$topology_face_1": {
+          "area": 2400.0,
+          "centroid": [
+            0.0,
+            0.0,
+            12.0
+          ],
+          "exact": true,
+          "index": 0,
+          "name": "F1:+z",
+          "plane_normal": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "point": [
+            -16.055512754639892,
+            -6.055512754639893,
+            12.0
+          ]
+        }
+      }
+    },
+    {
+      "index": 2,
+      "command": "model.edges",
+      "resolved_params": {
+        "body": "TopologyFaceBoundaryBox"
+      },
+      "bindings": {
+        "$topology_edges_1": [
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 0
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 1
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 2
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 3
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "command": "solid.chamfer",
+      "resolved_params": {
+        "edges": [
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 0
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 1
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 2
+          },
+          {
+            "body": "TopologyFaceBoundaryBox",
+            "index": 3
+          }
+        ],
+        "distance": 2,
+        "body": "TopologyFaceBoundaryBox"
+      }
+    }
+  ],
+  "completed": 4
+}

@@ -1,0 +1,128 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Hook profile",
+        "plane": "XZ"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "points": [
+          [
+            -20,
+            0
+          ],
+          [
+            20,
+            0
+          ],
+          [
+            20,
+            -30
+          ],
+          [
+            -20,
+            -30
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "body_name": "TopologyFaceBoundaryXz",
+        "direction": "symmetric",
+        "distance": 15
+      }
+    },
+    {
+      "bind": {
+        "$topology_face_1": {
+          "field": "faces",
+          "max": "area",
+          "where": {
+            "plane_normal": [
+              0,
+              -1,
+              0
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "TopologyFaceBoundaryXz"
+      }
+    },
+    {
+      "bind": {
+        "$topology_edges_1": {
+          "body": "TopologyFaceBoundaryXz",
+          "boundary_of": "$topology_face_1",
+          "field": "edges"
+        }
+      },
+      "command": "model.edges",
+      "params": {
+        "body": "TopologyFaceBoundaryXz"
+      }
+    },
+    {
+      "bind": {
+        "$topology_face_2": {
+          "field": "faces",
+          "max": "area",
+          "where": {
+            "plane_normal": [
+              0,
+              1,
+              0
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "TopologyFaceBoundaryXz"
+      }
+    },
+    {
+      "bind": {
+        "$topology_edges_2": {
+          "body": "TopologyFaceBoundaryXz",
+          "boundary_of": "$topology_face_2",
+          "field": "edges",
+          "prepend": "$topology_edges_1"
+        }
+      },
+      "command": "model.edges",
+      "params": {
+        "body": "TopologyFaceBoundaryXz"
+      }
+    },
+    {
+      "command": "solid.chamfer",
+      "params": {
+        "body": "TopologyFaceBoundaryXz",
+        "distance": 1.5,
+        "edges": "$topology_edges_2"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}
