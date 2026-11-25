@@ -46,47 +46,36 @@ The accepted baseline now has:
 - a hard migration boundary that rejects `0.15.0` and older as Forge NEW
   releases; no Forge NEW tag or GitHub Release has been published.
 
-The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
-archival/A-B reference rather than an unfinished migration gate.
+The historical repository is being finalized as
+`brainboxemb/lib.py.solidcraft.forge.OLD`, an archived A/B/provenance reference.
 
 ## Now
 
-The SolidCraft 0.49 runtime chain is now immutable and externally qualified:
+The API/runtime migration baseline is accepted on `dev`:
 
-- runtime v0.3.6 source:
-  `fa323fba8146d36e2598d08cb88b3a74e8c71761`;
-- runtime tag Build `45580788559`: both immutable roles PASS;
-- Forge candidate qualification #79 / run `45579896509`: PASS;
-- real CAD consumer qualification #64 / run `45580463512`: PASS;
-- #83 restored canonical SolidCraft reference capture/runtime verification in
-  the NEW module architecture.
+- #74 associative native Sketch-line folds are accepted;
+- SolidCraft runtime v0.3.6 / SolidCraft 0.49.0 is immutable and accepted;
+- #83 restored canonical SolidCraft reference capture/runtime verification;
+- #85 permanent v0.3.6/0.49 adoption is accepted with full 47-owner evidence.
 
-Current work is #85, permanent Forge adoption of runtime v0.3.6 / SolidCraft
-0.49.0:
+Current work is #89 repository canonicalization.
 
-- root runtime pins are immutable v0.3.6;
-- `TESTED_SOLIDCRAFT_VERSION` is 0.49.0;
-- canonical 0.49.0 registry is captured from
-  `cad-solidcraft:v0.3.6`: 886 commands;
-- registry delta from 0.48.1: 20 added, 0 removed, 35 existing definitions
-  changed only in parameter-contract or shortcut metadata;
-- `sheet.fold` itself has no registry-contract change.
-
-1. Complete the full Forge #85 qualification on immutable v0.3.6, merge through
-   `/merge`, then require matching permanent `dev` build evidence.
-2. After #85 is accepted, create the dedicated repository-canonicalization
-   change:
-   - rename the historical `brainboxemb/lib.py.solidcraft.forge` to an
-     explicit `.OLD` archival name and archive it;
-   - rename this repository from `.NEW` to canonical
-     `brainboxemb/lib.py.solidcraft.forge`;
-   - update active consumer/template references explicitly rather than relying
-     on GitHub rename redirects;
-   - verify branch policy, build evidence, Pages provenance, package metadata
-     and release workflows after the rename.
-3. Publish the first actual migrated Forge release from canonical stable
-   `main`, qualified against immutable SolidCraft 0.49.0:
-   - bump the package above the historical `0.15.0` baseline;
+1. Execute the GitHub repository settings swap:
+   - historical `brainboxemb/lib.py.solidcraft.forge` ->
+     `brainboxemb/lib.py.solidcraft.forge.OLD`;
+   - archive the historical `.OLD` repository;
+   - current `brainboxemb/lib.py.solidcraft.forge.NEW` ->
+     canonical `brainboxemb/lib.py.solidcraft.forge`.
+2. After the settings swap, finish and merge the #89 identity audit:
+   - canonical README/handoff/source identity;
+   - canonical Hugo Pages base URL/source repository;
+   - historical parity source renamed to `.OLD`;
+   - verify branch refs, merge policy, release path and Pages from the canonical
+     repository.
+3. Reconcile this plan after #89, then prepare the first migrated Forge release:
+   - promote the accepted `dev` baseline to stable `main` with the required
+     merge commit;
+   - bump package version above historical 0.15.0;
    - add the required dated changelog section;
    - require exact full stable `build/main` evidence;
    - publish only through `/release vX.Y.Z <exact-main-sha>`.
@@ -103,11 +92,6 @@ Current work is #85, permanent Forge adoption of runtime v0.3.6 / SolidCraft
    - visually/content-audit landing, Guide, API Reference, Cheatsheet, Examples
      and Verification;
    - create one issue per remaining independent Pages defect before changing it.
-
-#73 remains retained engine/runtime regression evidence rather than a Forge
-replay-workaround target. The accepted flat-first consumer construction order
-stands; do not force `plane.fixed=true`, move physical holes, or change replay
-semantics merely to mask the historical SolidCraft sheet-state behavior.
 
 ## Later
 

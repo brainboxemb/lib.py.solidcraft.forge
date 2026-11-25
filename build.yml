@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/85-solidcraft-0.49-adoption
-modules: all
-library: true
-models: all
+branch: issue/89-repository-canonicalization
+modules: [pages]
+library: false
+models: []
 tasks: [test]

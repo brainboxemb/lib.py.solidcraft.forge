@@ -1,6 +1,6 @@
-# Forge NEW handoff
+# Forge handoff
 
-Repository: `brainboxemb/lib.py.solidcraft.forge.NEW`.
+Repository: `brainboxemb/lib.py.solidcraft.forge`.
 
 This document is the easy-to-find handoff entrypoint for a new work session.
 It contains one copyable handoff message below.
@@ -18,11 +18,11 @@ Shared SolidCraft/CAD documentation conventions live in
 Copy the complete text block below into a new chat.
 
 ~~~text
-You are continuing work on brainboxemb/lib.py.solidcraft.forge.NEW.
+You are continuing work on brainboxemb/lib.py.solidcraft.forge.
 
 Repository role:
 
-- this repository is the clean Forge migration target and owns the public
+- this repository is the canonical Forge repository and owns the public
   `scpf` package under `cadlib/`;
 - `models/<id>/` is the single physical CAD owner boundary, with multiple
   engine implementations kept inside that owner when historically real;
@@ -67,8 +67,8 @@ Durable working rules:
   successful no-op; a closed but unmerged pull request remains an error;
 - preserve the two released CAD runtime roles, `reference` and `solidcraft`,
   unless a separately qualified change updates that contract;
-- use the historical Forge repository as the A/B migration reference until the
-  relevant model, API or documentation parity has been demonstrated;
+- use the archived `brainboxemb/lib.py.solidcraft.forge.OLD` repository only as
+  historical A/B or provenance evidence when needed;
 - do not copy retired historical orchestration or site machinery when the
   corrected template/module architecture already owns that responsibility.
 
