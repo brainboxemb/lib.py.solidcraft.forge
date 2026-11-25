@@ -25,6 +25,18 @@
 4. SolidCraft executes in its lightweight runtime; generic mesh verification executes in the reference runtime.
 5. CI batches compatible implementation work and does not start one Docker container per model implementation.
 
+## SCPF native associativity
+
+1. When SolidCraft exposes a durable native reference for editable intent, Forge
+   must preserve that relationship instead of snapshotting it to fixed
+   coordinates merely for compilation convenience.
+2. `Shape.fold()` supports both the historical fixed-point form and an
+   associative straight line returned by `Sketch.line(...)`.
+3. The associative fold form must lower to native `sheet.fold`
+   `sketch` + `curve` references and retain symbolic endpoint dependencies.
+4. Native qualification must prove that changing a driving parameter in a saved
+   SolidCraft design rebuilds the fold successfully.
+
 ## Verification
 
 1. Generic `cad_verification` source is local under `modules/verification/`.
