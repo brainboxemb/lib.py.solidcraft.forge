@@ -5,11 +5,11 @@
     {
       "kind": "enum",
       "name": "Faces",
-      "summary": "Select named planar faces for within-component feature operations.",
+      "summary": "Select world-cardinal planar faces consistently across within-component feature operations.",
       "guide": "guide/features/#hole",
       "reference": "reference/Faces/",
-      "use_when": "Pass a Faces value to operations such as Shape.on() and Shape.shell() to identify a surface of the target body.",
-      "limits": "The enum defines all six cardinal faces. Individual operations may support only a subset; Shape.on() currently accepts TOP and BOTTOM. Component assembly attachment uses Anchor instead.",
+      "use_when": "Use Faces with Shape.on(), Shape.shell() and Edges.from_faces() so placement and modify features share one surface vocabulary.",
+      "limits": "TOP/BOTTOM are +/-Z, LEFT/RIGHT are -/+X and FRONT/BACK are -/+Y. Native topology selection uses the largest planar face with the requested normal. Component assembly attachment uses Anchor instead.",
       "parameters": [],
       "example": "",
       "members": [
@@ -178,11 +178,11 @@
     {
       "kind": "enum",
       "name": "Edges",
-      "summary": "Select edges for supported fillet and chamfer feature operations.",
+      "summary": "Select edge topology for supported fillet and chamfer feature operations.",
       "guide": "guide/features/#fillet",
       "reference": "reference/Edges/",
-      "use_when": "Use Edges.VERTICAL for the vertical edges of a supported rectangular body. Use from_profile() for named profile segments and from_vertices() for extrusion-axis edges grown from named profile vertices.",
-      "limits": "Only the selectors implemented here are public. from_profile() currently supports sides=\"both\"; from_vertices() requires named Polygon2D vertices.",
+      "use_when": "Use Edges.from_faces(...) for the complete boundary of one or more named Faces. Existing Edges.VERTICAL, from_profile() and from_vertices() remain available for their established selection contracts.",
+      "limits": "from_faces() resolves native SolidCraft topology at replay time. from_profile() currently supports sides=\"both\"; from_vertices() requires named Polygon2D vertices.",
       "parameters": [],
       "example": "",
       "members": [
@@ -522,8 +522,8 @@
       "summary": "Place a supported within-component feature on a target face.",
       "guide": "guide/features/#hole",
       "reference": "reference/Shape.on/",
-      "use_when": "Put a Hole or another supported feature on an existing Shape and select its entry/support surface with Faces.",
-      "limits": "Shape.on() currently accepts Faces.TOP and Faces.BOTTOM. This is feature placement; component assembly attachment uses Anchor and the component occurrence attach() API.",
+      "use_when": "Put a Hole or another supported feature on an existing Shape and describe its entry/support surface with the same Faces vocabulary used by shell() and Edges.from_faces().",
+      "limits": "All six Faces values are accepted as topology intent. TOP/BOTTOM placement is qualified; side-face placement may still report an explicit native placement/topology limitation. Component assembly attachment uses Anchor.",
       "parameters": [
         {
           "name": "target",
@@ -531,7 +531,7 @@
         },
         {
           "name": "face",
-          "description": "Target surface. Currently Faces.TOP or Faces.BOTTOM. Defaults to Faces.TOP."
+          "description": "Cardinal target surface from the shared Faces vocabulary. Defaults to Faces.TOP."
         },
         {
           "name": "offset",
@@ -577,7 +577,7 @@
       "guide": "guide/features/#fillet",
       "reference": "reference/Shape.fillet/",
       "use_when": "Round one or more edges of a supported feature-based body. Fillet and chamfer use the same edge-selection forms.",
-      "limits": "Edges.VERTICAL and cardinal Box edge selectors require a supported rectangular body. Named profile/vertex selectors require matching Polygon2D ids in a supported extrusion.",
+      "limits": "Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids.",
       "parameters": [
         {
           "name": "radius",
@@ -585,7 +585,7 @@
         },
         {
           "name": "edges",
-          "description": "Edge selection. Use Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL."
+          "description": "Edge selection. Prefer Edges.from_faces(...) for named face perimeters; Edges.VERTICAL, supported two-direction Box selectors, Edges.from_profile(...), Edges.from_vertices(...) and non-empty XYZ edge-pick sequences remain supported. Defaults to Edges.VERTICAL."
         }
       ],
       "example": "body = Box(80, 50, 15)\nrounded = body.fillet(3, edges=Edges.VERTICAL)",
@@ -598,7 +598,7 @@
       "guide": "guide/features/#fillet",
       "reference": "reference/Shape.chamfer/",
       "use_when": "Bevel one or more edges of a supported feature-based body. Chamfer and fillet use the same edge-selection forms.",
-      "limits": "Edges.VERTICAL and cardinal Box edge selectors require a supported rectangular body. Named profile/vertex selectors require matching Polygon2D ids in a supported extrusion.",
+      "limits": "Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids.",
       "parameters": [
         {
           "name": "distance",
@@ -606,7 +606,7 @@
         },
         {
           "name": "edges",
-          "description": "Edge selection. Use Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL."
+          "description": "Edge selection. Prefer Edges.from_faces(...) for named face perimeters; Edges.VERTICAL, supported two-direction Box selectors, Edges.from_profile(...), Edges.from_vertices(...) and non-empty XYZ edge-pick sequences remain supported. Defaults to Edges.VERTICAL."
         }
       ],
       "example": "body = Box(80, 50, 15)\nbevelled = body.chamfer(3, edges=Edges.VERTICAL)",
@@ -618,7 +618,7 @@
       "summary": "Hollow a supported solid and leave selected Faces open.",
       "guide": "guide/features/#shell",
       "reference": "reference/Shape.shell/",
-      "use_when": "Create an enclosure-like body with an even wall thickness while removing one or more named planar faces.",
+      "use_when": "Create an enclosure-like body with an even wall thickness while selecting open surfaces through the same Faces vocabulary used by on() and Edges.from_faces().",
       "limits": "open= must be one Faces value or a non-empty sequence of Faces values. Support still depends on the underlying feature tree.",
       "parameters": [
         {

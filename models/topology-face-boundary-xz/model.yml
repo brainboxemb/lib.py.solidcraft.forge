@@ -1,0 +1,17 @@
+schema: 1
+purpose: verification
+section: features
+priority: 96
+title: Native XZ extrusion face-boundary selection
+tagline: Both broad extrusion faces resolve to native perimeter edges
+description: >
+  An XZ Polygon2D profile extruded symmetrically along Y chamfers both broad
+  end-face perimeters through Edges.from_faces(Faces.FRONT, Faces.BACK).
+  This is the topology pattern required by the Wall Hook consumer.
+parameters: 40 × 30 mm XZ profile; 15 mm symmetric Y extrusion; 1.5 mm face-perimeter chamfer
+stages:
+  - Sketch the closed XZ profile
+  - Extrude it symmetrically along Y
+  - Resolve the FRONT and BACK planar faces through model.faces
+  - Resolve and combine both native edge boundaries through model.edges
+  - Chamfer the returned native edge references

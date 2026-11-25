@@ -67,6 +67,47 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Native topology-selection boundary
+
+Forge uses one world-cardinal `Faces` vocabulary for within-component surface
+intent. `Edges.from_faces(...)` derives an edge selection from that same
+surface intent instead of introducing a chamfer-specific selector language.
+
+The lowering path is replay-driven:
+
+```text
+Faces.FRONT / Faces.BACK
+        ↓
+model.faces(body=...)
+        ↓ bind native face record returned by SolidCraft
+model.edges(body=...)
+        ↓ select edges lying on that returned planar face
+{body, index} edge references
+        ↓
+solid.chamfer / solid.fillet
+```
+
+Forge never predicts native face or edge ids. Replay bindings carry the
+SolidCraft records returned in the current run, and the final modify feature
+receives native `{body, index}` edge references. Multiple faces accumulate and
+deduplicate those returned edge references.
+
+The cardinal convention is fixed in world axes: TOP/BOTTOM are +/-Z,
+LEFT/RIGHT are -/+X and FRONT/BACK are -/+Y. An XZ-authored profile is extruded
+along Y, so its two broad end faces are FRONT and BACK regardless of camera
+orientation.
+
+`shell()` resolves its `Faces` through the same native `model.faces`
+query and passes the returned native face names to `solid.shell`.
+`Shape.on()` accepts the same six `Faces` as public intent. Existing
+TOP/BOTTOM placement remains qualified; a side-face placement reaches the
+shared placement lowering and reports the explicit native topology limitation
+until that backend path is separately qualified.
+
+Legacy selectors (`Edges.VERTICAL`, direction-pair Box edges,
+`Edges.from_profile()`, `Edges.from_vertices()`, and explicit XYZ picks)
+remain compatibility paths.
+
 ## Native component drawing boundary
 
 Component drawings are Assembly-owned presentation state. A component

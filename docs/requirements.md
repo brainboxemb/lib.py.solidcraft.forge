@@ -37,6 +37,24 @@
 4. Native qualification must prove that changing a driving parameter in a saved
    SolidCraft design rebuilds the fold successfully.
 
+## SCPF topology selection
+
+1. `Faces.TOP/BOTTOM/LEFT/RIGHT/FRONT/BACK` is the shared world-cardinal
+   surface vocabulary for within-component feature intent.
+2. `Edges.from_faces(...)` selects the complete boundary of one or more named
+   planar faces without caller-supplied XYZ edge picks.
+3. Native lowering must query SolidCraft topology and consume returned face and
+   edge identity; Forge must not predict browser names or topology ids.
+4. TOP/BOTTOM map to +/-Z, LEFT/RIGHT to -/+X and FRONT/BACK to -/+Y. Therefore
+   the broad end faces of an XZ profile extruded along Y are FRONT/BACK.
+5. Existing edge selectors remain source-compatible.
+6. A public face intent may be accepted even when a particular consumer's
+   lowering is not yet qualified; that failure must identify the native
+   placement/topology limitation rather than invent a second selector model.
+7. Native qualification must cover one-face Box boundary chamfer, two-face XZ
+   extrusion boundary chamfer and interoperability with existing shell/on
+   consumers.
+
 ## Native component drawings
 
 1. A technical drawing is final design presentation state; it must not become part

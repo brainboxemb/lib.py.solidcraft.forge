@@ -14,6 +14,7 @@ from .core import (
     Parameter,
     _DirectionSelector,
     _ProfileEdgeSelection,
+    _FaceBoundarySelection,
     _dim_add,
     _dim_abs,
     _dim_sub,
@@ -201,6 +202,71 @@ def _hole_commands(feature, position, name, refs=None):
     return [_command("solid.hole", **params)]
 
 
+_CARDINAL_FACE_NORMAL = {
+    Faces.TOP: [0, 0, 1],
+    Faces.BOTTOM: [0, 0, -1],
+    Faces.LEFT: [-1, 0, 0],
+    Faces.RIGHT: [1, 0, 0],
+    Faces.FRONT: [0, -1, 0],
+    Faces.BACK: [0, 1, 0],
+}
+
+
+def _face_query_command(name, face, variable, *, select=None):
+    """Bind one cardinal planar face from native SolidCraft topology."""
+    selector = {
+        "field": "faces",
+        "where": {"plane_normal": _CARDINAL_FACE_NORMAL[face]},
+        "max": "area",
+    }
+    if select is not None:
+        selector["select"] = select
+    query = _command("model.faces", body=name)
+    query["bind"] = {variable: selector}
+    return query
+
+
+def _next_face_query_index(steps):
+    return 1 + sum(command["command"] == "model.faces" for command in steps)
+
+
+def _face_boundary_edge_commands(steps, selection, name):
+    """Bind complete face boundaries as native {body,index} edge refs."""
+    commands = []
+    previous_edges = None
+    start = _next_face_query_index(steps)
+    for offset, face in enumerate(selection.faces):
+        index = start + offset
+        face_var = f"$topology_face_{index}"
+        edges_var = f"$topology_edges_{index}"
+        commands.append(_face_query_command(name, face, face_var))
+
+        edge_query = _command("model.edges", body=name)
+        binding = {
+            "field": "edges",
+            "boundary_of": face_var,
+            "body": name,
+        }
+        if previous_edges is not None:
+            binding["prepend"] = previous_edges
+        edge_query["bind"] = {edges_var: binding}
+        commands.append(edge_query)
+        previous_edges = edges_var
+
+    return commands, previous_edges
+
+
+def _face_name_commands(steps, faces, name):
+    """Bind native face names for shell from the shared Faces vocabulary."""
+    commands = []
+    variables = []
+    start = _next_face_query_index(steps)
+    for offset, face in enumerate(faces):
+        variable = f"$topology_face_name_{start + offset}"
+        commands.append(_face_query_command(name, face, variable, select="name"))
+        variables.append(variable)
+    return commands, variables
+
 
 def _resolve_profile_edges(base, selection):
     """Translate named XZ profile segments/vertices to native edge picks.
@@ -330,18 +396,25 @@ def _resolve_feature_edges(base, edges):
     ]
 
 
+def _edge_params(edges):
+    """Keep replay variables symbolic and validate legacy numeric picks."""
+    if isinstance(edges, str):
+        return edges
+    picks = [[pv(v) for v in point] for point in edges]
+    if not all(isfinite(v) for point in picks for v in point):
+        raise ModelError("edge selection must be finite")
+    return picks
+
+
 def _fillet_command(base, radius, edges, name, *, vertical=False):
     r = _require_positive(radius, "fillet radius")
     if vertical:
         w, d = (pv(base[k]) for k in ("width", "depth"))
         if r * 2 >= min(w, d):
             raise ModelError("fillet radius exceeds rectangular base dimensions")
-    picks = [[pv(v) for v in point] for point in edges]
-    if not all(isfinite(v) for point in picks for v in point):
-        raise ModelError("fillet edge selection must be finite")
     return _command(
         "solid.fillet",
-        edges=picks,
+        edges=_edge_params(edges),
         radius=command_value(radius),
         body=name,
     )
@@ -349,41 +422,19 @@ def _fillet_command(base, radius, edges, name, *, vertical=False):
 
 def _chamfer_command(distance, edges, name):
     _require_positive(distance, "chamfer distance")
-    picks = [[pv(v) for v in point] for point in edges]
-    if not all(isfinite(v) for point in picks for v in point):
-        raise ModelError("chamfer edge selection must be finite")
     return _command(
         "solid.chamfer",
-        edges=picks,
+        edges=_edge_params(edges),
         distance=command_value(distance),
         body=name,
     )
 
 
-def _face_point(base, face):
-    """Return a stable authoring pick on a named face of a rectangular base."""
-    if base.get("profile") != "rectangle":
-        raise ModelError("named Faces currently require a rectangular base")
-    x, y, z = (pv(v) for v in base["origin"])
-    width = pv(base["width"])
-    depth = pv(base["depth"])
-    height = pv(base["thickness"])
-    points = {
-        Faces.TOP: [x + half(width), y + half(depth), z + height],
-        Faces.BOTTOM: [x + half(width), y + half(depth), z],
-        Faces.LEFT: [x, y + half(depth), z + half(height)],
-        Faces.RIGHT: [x + width, y + half(depth), z + half(height)],
-        Faces.FRONT: [x + half(width), y, z + half(height)],
-        Faces.BACK: [x + half(width), y + depth, z + half(height)],
-    }
-    return points[face]
-
-
-def _shell_command(base, thickness, faces, name):
+def _shell_command(thickness, faces, name):
     _require_positive(thickness, "shell thickness")
     return _command(
         "solid.shell",
-        faces=[_face_point(base, face) for face in faces],
+        faces=faces,
         thickness=command_value(thickness),
         body=name,
     )
@@ -1822,12 +1873,19 @@ def _to_commands(shape, name):
     if shape.kind == "shell":
         original, thickness, faces = shape.data
         steps, base = _to_commands(original, name)
-        return steps + [_shell_command(base, thickness, faces, name)], base
+        topology, resolved = _face_name_commands(steps, faces, name)
+        return steps + topology + [
+            _shell_command(thickness, resolved, name)
+        ], base
     if shape.kind == "fillet":
         original, radius, edges = shape.data
         steps, base = _to_commands(original, name)
-        resolved = _resolve_feature_edges(base, edges)
-        return steps + [
+        topology = []
+        if isinstance(edges, _FaceBoundarySelection):
+            topology, resolved = _face_boundary_edge_commands(steps, edges, name)
+        else:
+            resolved = _resolve_feature_edges(base, edges)
+        return steps + topology + [
             _fillet_command(
                 base,
                 radius,
@@ -1839,8 +1897,14 @@ def _to_commands(shape, name):
     if shape.kind == "chamfer":
         original, distance, edges = shape.data
         steps, base = _to_commands(original, name)
-        resolved = _resolve_feature_edges(base, edges)
-        return steps + [_chamfer_command(distance, resolved, name)], base
+        topology = []
+        if isinstance(edges, _FaceBoundarySelection):
+            topology, resolved = _face_boundary_edge_commands(steps, edges, name)
+        else:
+            resolved = _resolve_feature_edges(base, edges)
+        return steps + topology + [
+            _chamfer_command(distance, resolved, name)
+        ], base
     if shape.kind in ("union", "difference", "intersection"):
         original, added = shape.data
         steps, base = _to_commands(original, name)

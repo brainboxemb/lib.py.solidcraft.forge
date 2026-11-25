@@ -9,7 +9,7 @@ from scpf.headless import (
     _active_sketch_after,
     _phase_commands,
 )
-from scpf.replay import apply_bindings
+from scpf.replay import apply_bindings, validate_replay_document
 
 
 class HeadlessSketchReplayTests(unittest.TestCase):
@@ -252,6 +252,141 @@ class ReplaySelectorTests(unittest.TestCase):
         self.assertEqual(
             bindings,
             [{"$top_point": [0.0, 0.0, 10.0]}],
+        )
+
+    def test_boundary_selector_returns_native_edge_refs(self):
+        items = [
+            {
+                "command": "model.faces",
+                "params": {"body": "Plate"},
+                "bind": {
+                    "$face": {
+                        "field": "faces",
+                        "where": {"plane_normal": [0, 0, 1]},
+                        "max": "area",
+                    },
+                },
+            },
+            {
+                "command": "model.edges",
+                "params": {"body": "Plate"},
+                "bind": {
+                    "$edges": {
+                        "field": "edges",
+                        "boundary_of": "$face",
+                        "body": "Plate",
+                    },
+                },
+            },
+        ]
+        validate_replay_document({
+            "format": "scpf-replay",
+            "version": 2,
+            "commands": items,
+        })
+        variables = {}
+        apply_bindings(
+            [items[0]],
+            [{
+                "faces": [{
+                    "index": 5,
+                    "name": "F5",
+                    "area": 1200.0,
+                    "point": [0.0, 0.0, 10.0],
+                    "plane_normal": [0.0, 0.0, 1.0],
+                }],
+            }],
+            variables,
+        )
+        apply_bindings(
+            [items[1]],
+            [{
+                "edges": [
+                    {
+                        "index": 1,
+                        "name": "F5|front",
+                        "start": [-20, -15, 10],
+                        "end": [20, -15, 10],
+                        "mid": [0, -15, 10],
+                    },
+                    {
+                        "index": 2,
+                        "name": "right|F5",
+                        "start": [20, -15, 10],
+                        "end": [20, 15, 10],
+                        "mid": [20, 0, 10],
+                    },
+                    {
+                        "index": 9,
+                        "name": "right|back",
+                        "start": [20, 15, 0],
+                        "end": [20, 15, 10],
+                        "mid": [20, 15, 5],
+                    },
+                ],
+            }],
+            variables,
+        )
+        self.assertEqual(
+            variables["$edges"],
+            [
+                {"body": "Plate", "index": 1},
+                {"body": "Plate", "index": 2},
+            ],
+        )
+
+    def test_boundary_selector_prepends_and_deduplicates_face_edges(self):
+        items = [{
+            "command": "model.edges",
+            "params": {"body": "Plate"},
+            "bind": {
+                "$all_edges": {
+                    "field": "edges",
+                    "boundary_of": "$bottom_face",
+                    "body": "Plate",
+                    "prepend": "$top_edges",
+                },
+            },
+        }]
+        variables = {
+            "$bottom_face": {
+                "point": [0, 0, 0],
+                "plane_normal": [0, 0, -1],
+            },
+            "$top_edges": [
+                {"body": "Plate", "index": 1},
+                {"body": "Plate", "index": 7},
+            ],
+        }
+        apply_bindings(
+            items,
+            [{
+                "edges": [
+                    {
+                        "index": 7,
+                        "name": "bottom|front",
+                        "start": [-20, -15, 0],
+                        "end": [20, -15, 0],
+                        "mid": [0, -15, 0],
+                    },
+                    {
+                        "index": 8,
+                        "name": "right|bottom",
+                        "start": [20, -15, 0],
+                        "end": [20, 15, 0],
+                        "mid": [20, 0, 0],
+                    },
+                ],
+            }],
+            variables,
+        )
+        self.assertEqual(
+            variables["$all_edges"],
+            [
+                {"body": "Plate", "index": 1},
+                {"body": "Plate", "index": 7},
+                {"body": "Plate", "index": 8},
+            ],
         )
 
     def test_numeric_vector_selector_rejects_a_different_direction(self):

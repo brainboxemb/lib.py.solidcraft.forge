@@ -58,6 +58,8 @@ EXPECTED_IDS = {
     "sketch-pattern-mirror",
     "slot-family",
     "top-sketch-after-chamfer",
+    "topology-face-boundary-box",
+    "topology-face-boundary-xz",
     "xz-anchor",
 }
 
@@ -74,6 +76,8 @@ SCPF_ONLY_IDS = {
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
+    "topology-face-boundary-box",
+    "topology-face-boundary-xz",
 }
 
 class ModelTests(unittest.TestCase):
@@ -88,7 +92,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 47)
+        self.assertEqual(len(self.models), 49)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 

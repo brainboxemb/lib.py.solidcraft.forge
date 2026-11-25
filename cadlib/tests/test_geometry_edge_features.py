@@ -128,6 +128,107 @@ class GeometryEdgeFeatureTests(unittest.TestCase):
         )
         self.assertEqual(chamfer["params"]["edges"], [[10, 0, 0], [0, 0, 8]])
 
+    def test_face_boundary_selector_compiles_box_topology_to_native_refs(self):
+        from scpf.core import Box, Edges, Faces
+        from scpf.features import compile_features
+
+        shape = Box(80, 50, 8).chamfer(
+            2, edges=Edges.from_faces(Faces.TOP)
+        )
+        commands = compile_features(shape, "Body")
+        face_query = next(
+            row for row in commands if row["command"] == "model.faces"
+        )
+        edge_query = next(
+            row for row in commands if row["command"] == "model.edges"
+        )
+        chamfer = next(
+            row for row in commands if row["command"] == "solid.chamfer"
+        )
+        self.assertEqual(
+            face_query["bind"]["$topology_face_1"]["where"]["plane_normal"],
+            [0, 0, 1],
+        )
+        self.assertEqual(
+            edge_query["bind"]["$topology_edges_1"]["boundary_of"],
+            "$topology_face_1",
+        )
+        self.assertEqual(chamfer["params"]["edges"], "$topology_edges_1")
+
+    def test_face_boundary_selector_compiles_xz_broad_faces_as_front_back(self):
+        from scpf.core import Edges, Faces, Polygon2D
+        from scpf.features import compile_features
+
+        with Sketch(plane="XZ") as sketch:
+            Polygon2D(
+                [(-20, 0), (20, 0), (20, 30), (-20, 30)],
+                plane="XZ",
+                world=True,
+            )
+        body = sketch.extrude(15, sym=True)
+        shape = body.chamfer(
+            1.5,
+            edges=Edges.from_faces(Faces.FRONT, Faces.BACK),
+        )
+        commands = compile_features(shape, "Hook")
+        face_queries = [
+            row for row in commands if row["command"] == "model.faces"
+        ]
+        normals = []
+        for index, row in enumerate(face_queries, start=1):
+            normals.append(
+                row["bind"][f"$topology_face_{index}"]["where"]["plane_normal"]
+            )
+        self.assertEqual(normals, [[0, -1, 0], [0, 1, 0]])
+        edge_queries = [
+            row for row in commands if row["command"] == "model.edges"
+        ]
+        self.assertEqual(
+            edge_queries[1]["bind"]["$topology_edges_2"]["prepend"],
+            "$topology_edges_1",
+        )
+        chamfer = next(
+            row for row in commands if row["command"] == "solid.chamfer"
+        )
+        self.assertEqual(chamfer["params"]["edges"], "$topology_edges_2")
+
+    def test_shell_uses_the_same_native_faces_vocabulary(self):
+        from scpf.core import Box, Faces
+        from scpf.features import compile_features
+
+        commands = compile_features(
+            Box(40, 30, 20).shell(2, open=Faces.LEFT),
+            "Case",
+        )
+        face_query = next(
+            row for row in commands if row["command"] == "model.faces"
+        )
+        shell = next(
+            row for row in commands if row["command"] == "solid.shell"
+        )
+        self.assertEqual(
+            face_query["bind"]["$topology_face_name_1"]["where"]["plane_normal"],
+            [-1, 0, 0],
+        )
+        self.assertEqual(shell["params"]["faces"], ["$topology_face_name_1"])
+
+    def test_on_accepts_shared_faces_before_backend_limits(self):
+        from scpf.core import Box, Faces, Hole
+        from scpf.features import compile_features
+
+        plate = Box(40, 30, 10)
+        side_hole = Hole(d=4).on(plate, face=Faces.LEFT)
+        with self.assertRaisesRegex(
+            ValueError, "native placement/topology limitation"
+        ):
+            compile_features(plate + side_hole, "Plate")
+
+    def test_face_boundary_selector_requires_faces(self):
+        from scpf.core import Edges
+
+        with self.assertRaisesRegex(ValueError, "one or more Faces"):
+            Edges.from_faces()
+
     def test_taper_rejects_invalid_dimensions(self):
         from scpf.core import Box
         for kwargs in (

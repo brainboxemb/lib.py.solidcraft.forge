@@ -116,7 +116,7 @@ groups:
         snippet: "Cylinder(d=8, h=50, axis=Axis.X).at(body)"
         example: primitive-csg
       - title: "shape.on(target, face=...)"
-        description: "Place a feature on a selected face of another shape."
+        description: "Express feature placement with the shared cardinal Faces vocabulary; TOP/BOTTOM placement is currently qualified."
         snippet: "Hole(d=8, depth=Depth.THROUGH_ALL).on(plate, face=Faces.TOP)"
         example: anchored-holes
       - title: "TOP + LEFT / BOTTOM + RIGHT"
@@ -127,6 +127,10 @@ groups:
         description: "Place a native Box by a face, edge or corner anchor without creating a Sketch."
         snippet: "Box(80, 50, 12).at(0, 0, 0, anchor=FRONT + BOTTOM)"
         example:
+      - title: "Edges.from_faces(...)"
+        description: "Select the complete native boundary of one or more cardinal Faces without supplying XYZ edge picks."
+        snippet: "body.chamfer(1.5, edges=Edges.from_faces(Faces.FRONT, Faces.BACK))"
+        example: topology-face-boundary-xz
       - title: "shape.fillet(...)"
         description: "Round selected edges of a feature-based body."
         snippet: "body.fillet(2, edges=Edges.VERTICAL)"
