@@ -3,7 +3,7 @@
     {
       "command": "drawing.open",
       "params": {
-        "drawing": "cxtmbnz9x6eg5"
+        "drawing": "0w1np1wj3vzf2"
       }
     },
     {
@@ -11,6 +11,15 @@
       "params": {
         "format": "pdf",
         "path": "/output/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.pdf"
+      }
+    },
+    {
+      "command": "drawing.export",
+      "params": {
+        "sheet": "9tv1988bf2wz7",
+        "format": "png",
+        "path": "/output/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.png",
+        "dpi": 144
       }
     },
     {

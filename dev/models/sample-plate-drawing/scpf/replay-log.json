@@ -1,7 +1,7 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "f94694f17b21a723b41b4f8fed909cec71d90373aad577d07af3ba7fd875cfb0",
+  "replay_sha256": "9f9e18c795588b31c125b4392534a4c0f900baca10b84994b36061e96eec5fa3",
   "variables": {
     "$sampleplate": 2,
     "$component_1": 1,
@@ -11,11 +11,12 @@
       8.0
     ],
     "$d1_SamplePlate_face_index_1": 3,
-    "$drawing_1": "cxtmbnz9x6eg5",
-    "$drawing_1_source": "cf69tpwfv108k",
-    "$drawing_1_sheet": "5tmmzqngkbv03",
-    "$drawing_1_front": "10sb4dcdgn1ym",
-    "$drawing_1_iso": "3ycdtqv1bxp44"
+    "$drawing_1": "0w1np1wj3vzf2",
+    "$drawing_1_source": "7w4ywftm3z1w5",
+    "$drawing_1_sheet": "9tv1988bf2wz7",
+    "$drawing_1_orientation": "landscape",
+    "$drawing_1_front": "34bq0xesv3z22",
+    "$drawing_1_iso": "3vr676qw4xg7c"
   },
   "commands": [
     {
@@ -265,55 +266,48 @@
         "first_sheet_name": "Sheet 1"
       },
       "bindings": {
-        "$drawing_1": "cxtmbnz9x6eg5",
-        "$drawing_1_source": "cf69tpwfv108k",
-        "$drawing_1_sheet": "5tmmzqngkbv03"
+        "$drawing_1": "0w1np1wj3vzf2",
+        "$drawing_1_source": "7w4ywftm3z1w5",
+        "$drawing_1_sheet": "9tv1988bf2wz7"
       }
     },
     {
       "index": 19,
       "command": "drawing.sheet.set",
       "resolved_params": {
-        "sheet": "5tmmzqngkbv03",
+        "sheet": "9tv1988bf2wz7",
+        "orientation": "landscape",
         "documents": {
-          "source": "cf69tpwfv108k",
+          "source": "7w4ywftm3z1w5",
           "component": 1
         }
       }
     },
     {
       "index": 20,
-      "command": "drawing.view.standard",
-      "resolved_params": {
-        "sheet": "5tmmzqngkbv03",
-        "iso": true
-      },
+      "command": "drawing.inspect",
+      "resolved_params": {},
       "bindings": {
-        "$drawing_1_front": "10sb4dcdgn1ym",
-        "$drawing_1_iso": "3ycdtqv1bxp44"
+        "$drawing_1_orientation": "landscape"
       }
     },
     {
       "index": 21,
-      "command": "drawing.view.edit",
+      "command": "drawing.view.standard",
       "resolved_params": {
-        "view": "10sb4dcdgn1ym",
-        "set": {
-          "source": {
-            "occurrences": [
-              [
-                2
-              ]
-            ]
-          }
-        }
+        "sheet": "9tv1988bf2wz7",
+        "iso": true
+      },
+      "bindings": {
+        "$drawing_1_front": "34bq0xesv3z22",
+        "$drawing_1_iso": "3vr676qw4xg7c"
       }
     },
     {
       "index": 22,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "3ycdtqv1bxp44",
+        "view": "34bq0xesv3z22",
         "set": {
           "source": {
             "occurrences": [
@@ -327,9 +321,25 @@
     },
     {
       "index": 23,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "3vr676qw4xg7c",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 24,
       "command": "drawing.close",
       "resolved_params": {}
     }
   ],
-  "completed": 24
+  "completed": 25
 }

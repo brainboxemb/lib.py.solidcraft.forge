@@ -4,7 +4,10 @@
       {
         "drawing": "$drawing_1",
         "name": "Sample Plate Drawing",
-        "pdf": "drawings/Sample-Plate-Drawing.pdf"
+        "orientation": "$drawing_1_orientation",
+        "pdf": "drawings/Sample-Plate-Drawing.pdf",
+        "png": "drawings/Sample-Plate-Drawing.png",
+        "sheet": "$drawing_1_sheet"
       }
     ]
   },
@@ -275,8 +278,22 @@
           "component": "$component_1",
           "source": "$drawing_1_source"
         },
+        "orientation": "landscape",
         "sheet": "$drawing_1_sheet"
       }
+    },
+    {
+      "bind": {
+        "$drawing_1_orientation": {
+          "field": "sheets",
+          "select": "orientation",
+          "where": {
+            "name": "Sheet 1"
+          }
+        }
+      },
+      "command": "drawing.inspect",
+      "params": {}
     },
     {
       "bind": {

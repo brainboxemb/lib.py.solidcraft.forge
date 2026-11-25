@@ -3,23 +3,28 @@
     {
       "command": "drawing.open",
       "params": {
-        "drawing": "0dbd05ht1wz0k"
+        "drawing": "3haxxgsf0ykvv"
       }
     },
     {
       "command": "drawing.sheet.set",
       "params": {
-        "sheet": "8xnw0t7v0zp9x",
+        "sheet": "dwvr2g103sr9a",
+        "orientation": "landscape",
         "documents": {
-          "source": "5bgcjncgnqtx7",
+          "source": "3esc2c6176kv2",
           "component": 1
         }
       }
     },
     {
+      "command": "drawing.inspect",
+      "params": {}
+    },
+    {
       "command": "drawing.view.standard",
       "params": {
-        "sheet": "8xnw0t7v0zp9x",
+        "sheet": "dwvr2g103sr9a",
         "iso": true
       }
     }
