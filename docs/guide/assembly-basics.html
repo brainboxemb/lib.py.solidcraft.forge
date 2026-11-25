@@ -148,6 +148,23 @@ for a hard-coded XYZ point.</p>
 <p>This is the important rule: <strong>use an anchor when you need to describe a
 relationship or semantic mounting reference</strong>. Do not add anchors to every
 component pre-emptively.</p>
+<p>When that relationship must rotate around one authored axis, use the same
+attachment references and request a native revolute joint explicitly:</p>
+<pre class="code-block"><code>moving = Leaf().attach(
+    fixed,
+    parent="hinge_axis",
+    child="hinge_axis",
+    kind="revolute",
+    value=60,
+    limits=(0, 180),
+    name="Hinge",
+)
+
+hinge = fixed + moving</code></pre>
+<p><code>value</code> and <code>limits</code> are degrees. SolidCraft owns the
+actual rotational degree of freedom and can drive the saved joint later; Forge
+does not substitute a fixed 60° occurrence rotation. Omit <code>kind</code> for
+the existing automatic rigid/planar attachment behavior.</p>
 
 <h2 id="anchor-choice">5. Which kind of anchor?</h2>
 <table><thead><tr><th>Situation</th><th>Use</th></tr></thead><tbody>
