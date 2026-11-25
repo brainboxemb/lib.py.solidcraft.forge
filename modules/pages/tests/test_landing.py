@@ -45,6 +45,23 @@ class LandingTests(unittest.TestCase):
         manifest = homepage_manifest(root, context=metadata)
         rendered_source = json.dumps(manifest)
 
+        hero = next(block for block in manifest["blocks"] if block["type"] == "hero")
+        links = next(block for block in manifest["blocks"] if block["type"] == "links")
+        hero_models = [
+            action for action in hero["actions"]
+            if action["label"] == "SolidCraft models"
+        ]
+        self.assertEqual(len(hero_models), 1)
+        self.assertEqual(
+            hero_models[0]["url"],
+            "https://brainboxemb.github.io/2026-011-02.cad.solidcraft/",
+        )
+        self.assertTrue(hero_models[0]["external"])
+        self.assertNotIn(
+            "SolidCraft models",
+            [item["label"] for item in links["items"]],
+        )
+
         for marker in (
             "Python API/compiler for SolidCraft",
             "SCPF model",
