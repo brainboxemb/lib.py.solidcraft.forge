@@ -82,6 +82,26 @@ Accepted stable state:
 - stable-to-development synchronization #154 / PR #155 returned the release
   metadata to `dev` without rebasing shared history.
 
+### Active: #164 drawing presentation and verification patch
+
+Correct the already released drawing slice without adding a new annotation
+authoring API.
+
+Current branch: `feature/164-drawing-quality`.
+
+Acceptance:
+- A4/A3 native part drawings keep their selected paper size but use landscape;
+- final orientation is replay-bound from the native `drawing.sheet.set`
+  result and must equal `landscape`;
+- builder-scpf exports vector PDF plus native 144 dpi PNG of that exact sheet;
+- Pages loads only the PNG preview and never auto-embeds the PDF;
+- Sample Plate Drawing remains the canonical Forge-owned example +
+  verification owner;
+- PDF/PNG signatures, native build and Pages projection all qualify;
+- notes/dimensions/title-block overrides/explicit view-layout remain deferred
+  until the post-patch API review against the downstream Wall Hook use case;
+- after merge, promote and publish a v0.18.x patch release.
+
 ### Active: #156 release-only stable push selection regression
 
 The v0.18.0 release PR itself correctly selected only the `release` module,
