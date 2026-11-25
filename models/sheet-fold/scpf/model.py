@@ -26,8 +26,14 @@ class SheetFold:
             direction=(0, 0, -1),
         ).at(-20, 0, self.thickness)
 
+        with Sketch(name="Fold line", plane="XY") as fold_sketch:
+            fold_line = fold_sketch.line(
+                start=(20, -self.depth / 2),
+                end=(20, self.depth / 2),
+            )
+
         return sheet.fold(
-            line=((20, -20), (20, 20)),
+            line=fold_line,
             angle=self.fold_angle,
             fixed=(-30, 0, 0),
         )
