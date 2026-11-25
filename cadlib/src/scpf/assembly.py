@@ -894,7 +894,7 @@ def _compile_assembly_with_dependencies(value, name):
         }
         commands.append(create)
 
-        sheet_settings = _command(
+        commands.append(_command(
             "drawing.sheet.set",
             sheet=sheet_ref,
             orientation="landscape",
@@ -902,15 +902,17 @@ def _compile_assembly_with_dependencies(value, name):
                 "source": source_ref,
                 "component": component_ref,
             },
-        )
-        sheet_settings["bind"] = {
+        ))
+
+        inspect = _command("drawing.inspect")
+        inspect["bind"] = {
             orientation_ref: {
                 "field": "sheets",
                 "where": {"name": drawing.sheet_name},
                 "select": "orientation",
             },
         }
-        commands.append(sheet_settings)
+        commands.append(inspect)
 
         standard = _command(
             "drawing.view.standard",
