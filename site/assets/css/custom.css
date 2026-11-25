@@ -1334,3 +1334,19 @@ html:not(.dark) .hextra-search-trigger{font-size:.9rem}
   .cad-forge-start-grid{grid-template-columns:1fr}
   .cad-forge-start-card{min-height:0}
 }
+
+
+/* Native drawing evidence stays on build/<scope>; Pages embeds the raw PDF only. */
+.cad-drawing-sheet{margin-top:.8rem}
+.cad-drawing-frame{
+  display:block;
+  width:100%;
+  min-height:460px;
+  aspect-ratio:297/210;
+  border:1px solid var(--cad-line);
+  border-radius:9px;
+  background:#fff;
+}
+@media(max-width:680px){
+  .cad-drawing-frame{min-height:340px}
+}
