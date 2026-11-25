@@ -100,6 +100,27 @@ Next:
 5. only after v0.18.1, evaluate missing generic drawing authoring API against
    the real CAD Wall Hook use case; do not change CAD as part of this release.
 
+### Active: #169 native revolute-joint authoring
+
+The Basic Hinge consumer in the CAD repository requires a real native
+revolute relationship rather than a rigid/planar approximation.
+
+Scope:
+
+- extend `Occurrence.attach(...)` with explicit `kind="revolute"`;
+- accept a fixed initial angle in degrees, optional min/max limits, native
+  joint-origin flip and an optional joint name;
+- preserve the existing automatic rigid/planar behavior when `kind` is
+  omitted;
+- lower the relationship to SolidCraft `joint.create(type="revolute")`;
+- qualify the public API with library tests and a native hinge fixture before
+  integration;
+- do not add unrelated slider/cylindrical/ball authoring until a consumer
+  demonstrates that need.
+
+This work is consumer-driven by CAD #125 and remains separate from drawing
+authoring/release work #166-#168.
+
 ### Active: #156 release-only stable push selection regression
 
 The v0.18.0 release PR itself correctly selected only the `release` module,

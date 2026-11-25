@@ -668,7 +668,10 @@ def _compile_assembly_with_dependencies(value, name):
         parent_occurrence = occurrence_refs[parent_id]
         child_label = occurrence_labels[child_id]
         parent_label = occurrence_labels[parent_id]
-        joint_name = f"Attach {child_label} to {parent_label}"
+        joint_name = (
+            attachment.name
+            or f"Attach {child_label} to {parent_label}"
+        )
 
         if attachment.as_built:
             commands.append(_command(
@@ -795,15 +798,34 @@ def _compile_assembly_with_dependencies(value, name):
         parent_origin = _concrete_joint_reference(parent_origin)
         child_origin = _concrete_joint_reference(child_origin)
 
+        joint_type = (
+            attachment.kind
+            if attachment.kind is not None
+            else "planar" if has_planar_offset else "rigid"
+        )
         params = {
-            "type": "planar" if has_planar_offset else "rigid",
+            "type": joint_type,
             "name": joint_name,
             "a": parent_origin,
             "b": child_origin,
         }
         if attachment.gap != 0:
             params["offset"] = command_value(attachment.gap)
-        if has_planar_offset:
+        if attachment.flip:
+            params["flip"] = True
+
+        if joint_type == "revolute":
+            params["values"] = [attachment.value]
+            if attachment.limits is not None:
+                params["limits"] = [[
+                    attachment.limits[0],
+                    attachment.limits[1],
+                ]]
+            if attachment.angle is not None:
+                params["angle"] = attachment.angle
+            elif isinstance(attachment.child, AnchorFrame):
+                params["angle"] = 0.0
+        elif has_planar_offset:
             u, v = attachment.offset
             params["values"] = [
                 command_value(u),

@@ -162,6 +162,10 @@ groups:
         description: "Keep an in-plane attachment offset associative; parameter expressions become native planar-joint values."
         snippet: "part.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount, offset=(0, -wall + 12))"
         example: components
+      - title: "attach(kind=\"revolute\", ...)"
+        description: "Create a native bounded revolute relationship while reusing the normal attachment-reference model."
+        snippet: "moving.attach(fixed, parent=\"hinge_axis\", child=\"hinge_axis\", kind=\"revolute\", value=60, limits=(0, 180), name=\"Hinge\")"
+        example: revolute-joint
       - title: "assembly.with_exploded_view(...)"
         description: "Store a native automatic or explicit exploded presentation without changing normal occurrence placements."
         snippet: "assembly.with_exploded_view('Service', scale=1.25).show_exploded('Service')"

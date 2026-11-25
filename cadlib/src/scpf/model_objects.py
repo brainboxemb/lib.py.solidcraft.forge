@@ -61,7 +61,7 @@ class ModelDefinition:
 
 @dataclass(frozen=True)
 class Attachment:
-    """Associative face-to-face relationship between two model occurrences."""
+    """Associative relationship between two model occurrences."""
 
     target: "ModelInstance"
     parent: Anchor | str | AnchorFrame | AnchorTopology | None
@@ -69,6 +69,11 @@ class Attachment:
     offset: tuple[object, object]
     gap: object = 0
     angle: float | None = None
+    kind: str | None = None
+    value: float | None = None
+    limits: tuple[float, float] | None = None
+    flip: bool = False
+    name: str | None = None
     as_built: bool = False
 
 
@@ -520,35 +525,44 @@ class ModelInstance:
         )
 
     def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
-               offset=(0, 0), gap=0, angle=None, as_built=False):
-        """Create a rigid or planar relationship from this occurrence to another component.
+               offset=(0, 0), gap=0, angle=None, as_built=False,
+               kind=None, value=None, limits=None, flip=False, name=None):
+        """Create an associative relationship to another component occurrence.
+
+        The default remains the existing rigid/planar attachment. Set
+        kind="revolute" explicitly for one-axis rotational motion.
 
         Parameters:
             target: Parent component occurrence to attach to.
             parent: Attachment reference on target. Defaults to Anchor.RIGHT.
             child: Attachment reference on this occurrence. Defaults to Anchor.LEFT.
-            offset: In-plane (u, v) offset on the parent attachment plane, in mm. Defaults to (0, 0).
-            gap: Separation along the parent anchor normal, in mm. Defaults to 0.
-            angle: Optional joint rotation in degrees.
-            as_built: When True, keep the occurrences at their existing poses and create an as-built rigid joint.
-
-        Use when:
-            Placement should be expressed semantically between component
-            references, such as left face to right face or one mounting frame
-            to another, rather than as a calculated global XYZ position.
+            offset: In-plane (u, v) offset in mm. Defaults to (0, 0).
+            gap: Separation along the parent anchor normal, in mm.
+            angle: Optional joint-frame rotation in degrees.
+            as_built: Keep existing poses and create an as-built rigid joint.
+            kind: Optional relationship kind. Only "revolute" is explicit.
+            value: Initial revolute angle in degrees. Defaults to 0.
+            limits: Optional (minimum, maximum) revolute limits in degrees.
+            flip: Native joint-origin flip for a revolute relationship.
+            name: Optional native joint name.
 
         Limits:
-            The target must be another component occurrence. Supported standard
-            anchors currently focus on rectangular component geometry; custom
-            AnchorFrame/AnchorTopology references cover more specific datums.
+            Revolute relationships currently require zero in-plane offset.
+            value and limits are fixed finite degree values.
             as_built=True requires all other relationship arguments to remain
             at their defaults.
-
-        Example:
-            right = right.attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT, gap=2)
         """
         if not isinstance(target, ModelInstance):
             raise TypeError("component attach target must be another model object")
+        if kind not in (None, "revolute"):
+            raise ValueError("component attach kind must be 'revolute' or omitted")
+        if not isinstance(flip, bool):
+            raise TypeError("component attach flip must be a bool")
+        if name is not None:
+            if not isinstance(name, str) or not name.strip():
+                raise ValueError("component attach name must be non-empty")
+            name = name.strip()
+
         if as_built:
             if (
                 parent != Anchor.RIGHT
@@ -556,9 +570,15 @@ class ModelInstance:
                 or tuple(offset) != (0, 0)
                 or gap != 0
                 or angle is not None
+                or kind is not None
+                or value is not None
+                or limits is not None
+                or flip
+                or name is not None
             ):
                 raise ValueError(
-                    "as-built attach does not take anchors, offset, gap or angle"
+                    "as-built attach does not take anchors, offset, gap, angle, "
+                    "kind, value, limits, flip or name"
                 )
             return replace(
                 self,
@@ -570,6 +590,7 @@ class ModelInstance:
                     as_built=True,
                 ),
             )
+
         parent = _resolve_anchor_reference(target, parent)
         child = _resolve_anchor_reference(self, child)
         if parent is Anchor.INNER_BOTTOM or child is Anchor.INNER_BOTTOM:
@@ -577,13 +598,44 @@ class ModelInstance:
         if not isinstance(offset, (tuple, list)) or len(offset) != 2:
             raise ValueError("component attach offset must be an (u, v) pair")
         face_offset = tuple(offset)
-        face_offset_values = tuple(pv(value) for value in face_offset)
-        if not all(isfinite(value) for value in face_offset_values):
+        face_offset_values = tuple(pv(item) for item in face_offset)
+        if not all(isfinite(item) for item in face_offset_values):
             raise ValueError("component attach offset must be finite")
+        if kind == "revolute" and any(item != 0 for item in face_offset_values):
+            raise ValueError("revolute attach does not support in-plane offset")
 
         gap_value = pv(gap)
         if not isfinite(gap_value):
             raise ValueError("component attach gap must be finite")
+
+        angle_value = None
+        if angle is not None:
+            angle_value = pv(angle)
+            if not isfinite(angle_value):
+                raise ValueError("component attach angle must be finite")
+
+        revolute_value = None
+        revolute_limits = None
+        if kind == "revolute":
+            revolute_value = 0.0 if value is None else float(pv(value))
+            if not isfinite(revolute_value):
+                raise ValueError("revolute attach value must be finite")
+            if limits is not None:
+                if not isinstance(limits, (tuple, list)) or len(limits) != 2:
+                    raise ValueError("revolute attach limits must be a (min, max) pair")
+                lower = float(pv(limits[0]))
+                upper = float(pv(limits[1]))
+                if not isfinite(lower) or not isfinite(upper):
+                    raise ValueError("revolute attach limits must be finite")
+                if lower > upper:
+                    raise ValueError("revolute attach minimum limit exceeds maximum")
+                if revolute_value < lower or revolute_value > upper:
+                    raise ValueError("revolute attach value lies outside its limits")
+                revolute_limits = (lower, upper)
+        elif value is not None or limits is not None or flip:
+            raise ValueError(
+                "component attach value, limits and flip require kind='revolute'"
+            )
 
         target_local = _anchor_local_point(target, parent)
         child_local = _anchor_local_point(self, child)
@@ -599,8 +651,6 @@ class ModelInstance:
             Anchor.BOTTOM,
             Anchor.CENTER,
         ):
-            # Validation above reads concrete values, but the seed Placement
-            # itself must retain Parameter/Expression dependencies.
             tangent = _face_offset(parent, face_offset)
             if parent is not Anchor.CENTER:
                 normal = parent.vector
@@ -627,11 +677,6 @@ class ModelInstance:
             _dim_sub(target_world[i], child_local[i])
             for i in range(3)
         )
-        angle_value = None
-        if angle is not None:
-            angle_value = pv(angle)
-            if not isfinite(angle_value):
-                raise ValueError("component attach angle must be finite")
 
         return replace(
             self,
@@ -648,6 +693,11 @@ class ModelInstance:
                 offset=face_offset,
                 gap=gap,
                 angle=angle_value,
+                kind=kind,
+                value=revolute_value,
+                limits=revolute_limits,
+                flip=flip,
+                name=name,
             ),
         )
 

@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/164-drawing-quality
-modules: [builder-scpf, pages]
+branch: feature/169-revolute-joints
+modules: []
 library: true
-models: [sample-plate-drawing]
+models: [revolute-joint]
 tasks: [test]

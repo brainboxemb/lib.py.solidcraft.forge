@@ -275,11 +275,11 @@
     {
       "kind": "callable",
       "name": "Occurrence.attach",
-      "summary": "Create a rigid or planar relationship from this occurrence to another component.",
+      "summary": "Create a rigid, planar or explicit native revolute relationship from this occurrence to another component.",
       "guide": "guide/assembly-basics/#relationship",
       "reference": "reference/Occurrence.attach/",
-      "use_when": "Placement should be expressed semantically between component references, such as left face to right face or one mounting frame to another, rather than as a calculated global XYZ position.",
-      "limits": "The target must be another component occurrence. Supported standard anchors currently focus on rectangular component geometry; custom AnchorFrame/AnchorTopology references cover more specific datums. as_built=True requires all other relationship arguments to remain at their defaults.",
+      "use_when": "Placement should be expressed semantically between component references, including a bounded hinge/revolute axis, rather than as a calculated global XYZ pose.",
+      "limits": "Omit kind to retain automatic rigid/planar behavior. kind=\"revolute\" currently requires zero in-plane offset and accepts fixed finite degree value/limits. The target must be another component occurrence; AnchorFrame/AnchorTopology cover specific joint datums. as_built=True remains rigid-only.",
       "parameters": [
         {
           "name": "target",
@@ -295,7 +295,7 @@
         },
         {
           "name": "offset",
-          "description": "In-plane (u, v) offset on the parent attachment plane, in mm. Defaults to (0, 0)."
+          "description": "In-plane (u, v) offset on the parent attachment plane, in mm. Defaults to (0, 0); revolute currently requires zero."
         },
         {
           "name": "gap",
@@ -303,15 +303,35 @@
         },
         {
           "name": "angle",
-          "description": "Optional joint rotation in degrees."
+          "description": "Optional joint-frame rotation in degrees."
         },
         {
           "name": "as_built",
-          "description": "When True, keep the occurrences at their existing poses and create an as-built rigid joint."
+          "description": "When True, keep existing poses and create an as-built rigid joint."
+        },
+        {
+          "name": "kind",
+          "description": "Optional explicit relationship kind. Currently supports \"revolute\"; omit for automatic rigid/planar behavior."
+        },
+        {
+          "name": "value",
+          "description": "Initial revolute angle in degrees. Defaults to 0 when kind=\"revolute\"."
+        },
+        {
+          "name": "limits",
+          "description": "Optional (minimum, maximum) revolute angular limits in degrees."
+        },
+        {
+          "name": "flip",
+          "description": "Native joint-origin flip for a revolute relationship. Defaults to False."
+        },
+        {
+          "name": "name",
+          "description": "Optional non-empty native joint name."
         }
       ],
-      "example": "right = right.attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT, gap=2)",
-      "signature": "Occurrence.attach(self, target, *, parent=<Anchor.RIGHT: 'right'>, child=<Anchor.LEFT: 'left'>, offset=(0, 0), gap=0, angle=None, as_built=False)"
+      "example": "moving = moving.attach(fixed, parent=\"hinge_axis\", child=\"hinge_axis\", kind=\"revolute\", value=60, limits=(0, 180), name=\"Hinge\")",
+      "signature": "Occurrence.attach(self, target, *, parent=<Anchor.RIGHT: 'right'>, child=<Anchor.LEFT: 'left'>, offset=(0, 0), gap=0, angle=None, as_built=False, kind=None, value=None, limits=None, flip=False, name=None)"
     },
     {
       "kind": "callable",
