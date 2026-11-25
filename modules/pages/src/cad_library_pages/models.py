@@ -25,6 +25,50 @@ def _repository(source_root):
     return value
 
 
+def _verification_sections(source_root: Path, site: Path) -> dict[str, dict]:
+    path = source_root / "docs/verification/sections.yml"
+    if not path.is_file():
+        raise ValueError(f"missing verification sections: {path}")
+
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    sections = data.get("sections")
+    if data.get("schema") != 1 or not isinstance(sections, dict) or not sections:
+        raise ValueError(f"invalid verification sections: {path}")
+
+    rows = []
+    normalized = {}
+    for section_id, section in sections.items():
+        if (
+            not isinstance(section_id, str)
+            or not _ID.fullmatch(section_id)
+            or not isinstance(section, dict)
+            or not isinstance(section.get("priority"), int)
+            or not isinstance(section.get("label"), str)
+            or not section["label"]
+            or not isinstance(section.get("description"), str)
+            or not section["description"]
+        ):
+            raise ValueError(f"invalid verification section: {section_id!r}")
+        row = {
+            "id": section_id,
+            "priority": section["priority"],
+            "label": section["label"],
+            "description": section["description"],
+        }
+        rows.append(row)
+        normalized[section_id] = row
+
+    rows.sort(key=lambda row: (row["priority"], row["id"]))
+    target = site / "data/cad/verification_sections.json"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        json.dumps({"schema": 1, "sections": rows}, indent=2, ensure_ascii=False)
+        + "\n",
+        encoding="utf-8",
+    )
+    return normalized
+
+
 def _stage_lines(*, evidence, blob_base, impl_path, stages):
     if stages is None:
         return []
@@ -69,6 +113,7 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
         return
 
     repository = _repository(source_root)
+    verification_sections = _verification_sections(source_root, site)
     namespace = build_scope.name if build_scope else None
     blob_base = (
         f"https://github.com/{repository}/blob/build/{namespace}/"
@@ -97,6 +142,15 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
             raise ValueError(f"invalid model id: {ci_path}")
 
         seen.add(item)
+        if "verification" in purposes:
+            verification_section = meta.get("section")
+            if verification_section not in verification_sections:
+                raise ValueError(
+                    f"unknown verification section {verification_section!r}: {model_yml}"
+                )
+        else:
+            verification_section = None
+
         title = str(meta.get("title", item))
         implementations = ci.get("implementations", [])
         featured = meta.get("presentation_primary", ci.get("primary", ""))
@@ -111,6 +165,8 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
             "files": [],
             "sources": [],
         }
+        if verification_section is not None:
+            params["verificationsection"] = verification_section
         for implementation in ci.get("implementations", []):
             source = owner / implementation["source"]
             if not source.resolve().is_relative_to(owner.resolve()) or not source.is_file():
