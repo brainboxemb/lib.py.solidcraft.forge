@@ -13,7 +13,9 @@
     {{ errorf "missing generated verification catalogue resource" }}
   {{ end }}
   {{ warnf "verification-catalog=%s" (jsonify $catalog) }}
+  {{ warnf "verification-section-count=%d" (len (index $catalog "sections")) }}
   {{ range $section := index $catalog "sections" }}
+    {{ warnf "verification-section-render=%s models=%d" (index $section "id") (len (index $section "models")) }}
     {{ $models := index $section "models" }}
     <section class="cad-section cad-catalog-section" data-verification-section="{{ index $section "id" }}" data-verification-model-count="{{ len $models }}">
       <h2>{{ index $section "label" }}</h2>
