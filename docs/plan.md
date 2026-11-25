@@ -77,10 +77,20 @@ Accepted stable state:
 - the stable public site includes the accepted #57/#58/#68/#106/#107/#109/
   #112/#113 content and presentation fixes.
 
-No active Forge release or Pages blocker remains from this phase.
+No release blocker remains from the completed stabilization phase.
 
-Current Forge work should return to demonstrated consumer value rather than
-continuing a broad migration/site-cleanup stream:
+Current focused Pages correction:
+
+1. #122 restores the source-owned Verification catalogue sections that were
+   retained during migration but not consumed by the Hextra list layout;
+2. keep the correction presentation-only: `docs/verification/sections.yml`
+   remains the section owner and `model.yml.section` remains the model
+   classification;
+3. after #122 passes PR qualification, merge it to `dev` through `/merge`
+   and reconcile this plan to the accepted development state.
+
+After that focused correction, Forge work should return to demonstrated consumer
+value rather than continuing a broad migration/site-cleanup stream:
 
 1. keep #73 as retained engine/runtime regression evidence, not a replay
    workaround target;
