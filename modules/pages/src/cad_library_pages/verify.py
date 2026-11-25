@@ -64,6 +64,8 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
         )
 
     verification_html = read("verification")
+    if "data-verification-catalog-layout" not in verification_html:
+        raise RuntimeError("verification custom catalogue layout was not selected")
     section_rows = sorted(
         section_defs.items(),
         key=lambda item: (item[1]["priority"], item[0]),
