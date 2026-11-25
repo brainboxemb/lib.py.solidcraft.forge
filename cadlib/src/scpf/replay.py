@@ -84,7 +84,9 @@ def _validate_binding_spec(spec, *, version, variable, index):
         raise ValueError(
             f"invalid result binding for {variable} at command index {index}"
         )
-    allowed = {"field", "where", "max", "select", "prepend"}
+    allowed = {
+        "field", "where", "max", "select", "prepend", "boundary_of", "body",
+    }
     unknown = set(spec) - allowed
     if unknown:
         raise ValueError(
@@ -102,19 +104,45 @@ def _validate_binding_spec(spec, *, version, variable, index):
             f"binding selector where for {variable} must be an object"
         )
     prepend = spec.get("prepend")
-    if prepend is not None:
-        if not isinstance(prepend, str) or not _VARIABLE.fullmatch(prepend):
+    if prepend is not None and (
+        not isinstance(prepend, str) or not _VARIABLE.fullmatch(prepend)
+    ):
+        raise ValueError(
+            f"binding prepend for {variable} must be one replay variable"
+        )
+
+    boundary_of = spec.get("boundary_of")
+    body = spec.get("body")
+    if boundary_of is not None:
+        if (
+            not isinstance(boundary_of, str)
+            or not _VARIABLE.fullmatch(boundary_of)
+        ):
             raise ValueError(
-                f"binding prepend for {variable} must be one replay variable"
+                f"binding boundary_of for {variable} must be one replay variable"
+            )
+        if not isinstance(body, str) or not body:
+            raise ValueError(
+                f"binding boundary_of for {variable} needs a body name"
             )
         if where or spec.get("max") is not None or spec.get("select") is not None:
             raise ValueError(
-                f"binding prepend for {variable} cannot use record selectors"
+                f"binding boundary_of for {variable} cannot use record selectors"
             )
-    elif not where and spec.get("max") is None and spec.get("select") is None:
-        raise ValueError(
-            f"binding selector for {variable} does not select a result record"
-        )
+    else:
+        if body is not None:
+            raise ValueError(
+                f"binding body for {variable} is only valid with boundary_of"
+            )
+        if prepend is not None:
+            if where or spec.get("max") is not None or spec.get("select") is not None:
+                raise ValueError(
+                    f"binding prepend for {variable} cannot use record selectors"
+                )
+        elif not where and spec.get("max") is None and spec.get("select") is None:
+            raise ValueError(
+                f"binding selector for {variable} does not select a result record"
+            )
     for key in where:
         if not isinstance(key, str) or not key:
             raise ValueError(
@@ -264,6 +292,87 @@ def _selector_value_matches(actual, expected):
     return actual == expected
 
 
+def _topology_point(value, *, command, variable, label):
+    if (
+        not isinstance(value, (list, tuple))
+        or len(value) != 3
+        or any(
+            isinstance(item, bool) or not isinstance(item, (int, float))
+            for item in value
+        )
+    ):
+        raise ValueError(f"{command} returned invalid {label} for {variable}")
+    return tuple(float(item) for item in value)
+
+
+def _boundary_edge_refs(edges, face, body, *, command, variable):
+    """Return native refs for edges whose endpoints lie in one planar face."""
+    if not isinstance(face, dict):
+        raise ValueError(
+            f"{command} boundary face for {variable} is not a topology record"
+        )
+    point = _topology_point(
+        face.get("point"), command=command, variable=variable, label="face point"
+    )
+    normal = _topology_point(
+        face.get("plane_normal"),
+        command=command,
+        variable=variable,
+        label="face normal",
+    )
+    normal_length = sum(value * value for value in normal) ** 0.5
+    if normal_length <= 0:
+        raise ValueError(f"{command} returned zero face normal for {variable}")
+    tolerance = 1e-7
+
+    def on_plane(candidate):
+        candidate = _topology_point(
+            candidate,
+            command=command,
+            variable=variable,
+            label="edge point",
+        )
+        distance = abs(sum(
+            (candidate[i] - point[i]) * normal[i]
+            for i in range(3)
+        )) / normal_length
+        return distance <= tolerance
+
+    refs = []
+    seen = set()
+    for edge in edges:
+        if not isinstance(edge, dict):
+            continue
+        edge_index = edge.get("index")
+        ends = edge.get("ends", edge.get("endpoints"))
+        if (
+            not isinstance(edge_index, int)
+            or isinstance(edge_index, bool)
+            or not isinstance(ends, (list, tuple))
+            or len(ends) != 2
+        ):
+            continue
+        try:
+            matches = all(on_plane(end) for end in ends)
+            midpoint_value = edge.get("midpoint")
+            if matches and midpoint_value is not None:
+                matches = on_plane(midpoint_value)
+        except ValueError:
+            continue
+        if not matches:
+            continue
+        key = (body, edge_index)
+        if key not in seen:
+            seen.add(key)
+            refs.append({"body": body, "index": edge_index})
+
+    if not refs:
+        raise ValueError(
+            f"{command} boundary selector for {variable} matched no edges"
+        )
+    return refs
+
+
 def _binding_value(result, spec, variables, *, command, variable):
     if not isinstance(result, dict):
         raise ValueError(f"{command} did not return an object for {variable}")
@@ -287,6 +396,36 @@ def _binding_value(result, spec, variables, *, command, variable):
         )
 
     prepend = spec.get("prepend")
+    boundary_of = spec.get("boundary_of")
+    if boundary_of is not None:
+        selected = _boundary_edge_refs(
+            value,
+            resolve_value(boundary_of, variables),
+            spec["body"],
+            command=command,
+            variable=variable,
+        )
+        if prepend is not None:
+            prefix = resolve_value(prepend, variables)
+            if not isinstance(prefix, list):
+                raise ValueError(
+                    f"{command} prepend value for {variable} is not a list"
+                )
+            selected = [*prefix, *selected]
+
+        deduplicated = []
+        seen = set()
+        for edge in selected:
+            if not isinstance(edge, dict):
+                raise ValueError(
+                    f"{command} boundary edge value for {variable} is invalid"
+                )
+            key = (edge.get("body"), edge.get("index"))
+            if key not in seen:
+                seen.add(key)
+                deduplicated.append(edge)
+        return deduplicated
+
     if prepend is not None:
         prefix = resolve_value(prepend, variables)
         if not isinstance(prefix, list):
