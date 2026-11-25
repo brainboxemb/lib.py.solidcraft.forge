@@ -1,0 +1,68 @@
+<p>Forge can attach a native SolidCraft technical drawing to a completed design.
+Drawing intent is presentation state: keep it out of reusable component
+definitions and add it only when the part or assembly you want to document is
+complete.</p>
+
+<h2 id="first-drawing">Add a drawing to one component</h2>
+
+<pre class="code-block"><code>@component
+class SamplePlate:
+    def build(self):
+        return Box(80, 50, 8, anchor=Anchor.BOTTOM)
+
+part = SamplePlate().with_drawing(name="Sample Plate Drawing")</code></pre>
+
+<p><code>with_drawing()</code> uses SolidCraft's native
+<code>iso-a4-part</code> template by default. SolidCraft owns the paper sheet,
+standard front/top/right/isometric view layout and fitted scale. Forge binds
+the native drawing, component, occurrence, source, sheet and view identities
+returned by SolidCraft rather than predicting browser ids.</p>
+
+<h2 id="a4-a3">A4 by default, A3 when you ask for it</h2>
+
+<pre class="code-block"><code>part.with_drawing(
+    name="Large assembly detail",
+    template="iso-a3-part",
+)</code></pre>
+
+<p>A4 is the normal part-drawing default. Select A3 explicitly when the design
+needs more sheet area; Forge does not silently change paper size.</p>
+
+<h2 id="assembly-target">Document one component from an assembly</h2>
+
+<pre class="code-block"><code>assembly = left + right
+assembly = assembly.with_drawing(
+    left,
+    name="Left bracket",
+)</code></pre>
+
+<p>The selected occurrence must already belong to the completed Assembly.
+Projected views inherit the selected native occurrence subtree. Drawing intent
+does not alter normal occurrence placement or duplicate the reusable component
+definition.</p>
+
+<h2 id="artifact-boundary">Drawing intent versus published artifacts</h2>
+
+<p>Forge stores the native drawing in <code>model.sc</code> and declares the
+drawing artifact. The SCPF builder reopens that saved design and uses
+SolidCraft's native <code>drawing.export</code> command to produce a vector PDF
+below the implementation's <code>drawings/</code> directory. Forge model code
+does not embed repository or build-root paths.</p>
+
+<pre class="code-block"><code>build/&lt;scope&gt;/models/sample-plate-drawing/scpf/
+  model.sc
+  drawings/
+    Sample-Plate-Drawing.pdf</code></pre>
+
+<p>Pages links that durable build evidence; it does not copy the PDF into
+<code>gh-pages</code>. See the
+<a href="/examples/sample-plate-drawing/">Sample Plate Drawing example</a>
+for the complete source, generated SolidCraft sequence, native model and
+drawing PDF.</p>
+
+<h2 id="scope">Current drawing scope</h2>
+
+<p>The released drawing slice covers native standard part views and PDF
+publication. Dimensions, balloons, parts lists and broader annotation
+authoring remain separate future capabilities rather than hidden behavior in
+this first drawing API.</p>
