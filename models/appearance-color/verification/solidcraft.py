@@ -29,8 +29,8 @@ VERIFICATION = SolidCraftVerification(
                 ),
                 SolidCraftInspectionCheck(
                     id="color",
-                    path=(0, "steps", 0, "look", "color"),
-                    expected="#FFD21A",
+                    path=(0, "steps", 1, "look", "color"),
+                    expected="#ffd21a",
                 ),
             ),
         ),
