@@ -56,22 +56,20 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge release infrastructure, the global development warning, product landing
-and canonical API Reference landing are accepted:
+Forge release infrastructure and the first Pages cleanup set are accepted:
 
 - stable-main release-flow implementation is accepted on Forge `main`;
 - #57 global development warning is accepted on `dev`;
 - #58 Forge/SCPF product landing is accepted on `dev`;
-- #106 canonical API Reference wording is accepted on `dev`.
+- #106 canonical API Reference landing wording is accepted on `dev`;
+- #107 Joint anatomy now derives the tested SolidCraft version from source.
 
 The active Pages audit work is:
 
-1. #107 — derive Joint anatomy SolidCraft version from source-owned
-   `TESTED_SOLIDCRAFT_VERSION`; remove the stale hardcoded 0.48.1.
-2. #109 — replace migration-era wording on the Guide landing.
-3. #68 — remove CadCraft from Forge verification diagrams/content where it is
-   still publicly surfaced.
-4. Continue the remaining visual/content audit:
+1. #109 — replace migration-era wording on the Guide landing.
+2. #68 — remove CadCraft from Forge verification diagrams/content while
+   preserving deterministic/versioned engineering illustrations.
+3. Continue the remaining visual/content audit:
    - Guide chapter detail routes;
    - API Reference detail routes;
    - Cheatsheet;
