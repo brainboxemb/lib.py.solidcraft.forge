@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/178-appearance-color
-modules: []
-library: true
-models: [appearance-color]
+branch: fix/181-appearance-owner-graph
+modules: [ci]
+library: false
+models: []
 tasks: [test]
