@@ -362,7 +362,7 @@ Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining 
 ## Release boundary
 
 Forge consumes the generic stable-main release boundary from
-`template.cad.library@e9fb95cd22cb574d615d0bf9a8115c30bbac7ddf`.
+`template.cad.library@7049d34bf34a4303331f3f17608eaa75febe34fc`.
 
 Product qualification and release metadata are deliberately separate. A
 product-changing stable source still receives a normal full Forge qualification
@@ -384,9 +384,12 @@ qualified main product source
   -> main -> dev synchronization
 ```
 
-CI records such candidates with `release_only: true`. Build publication
-validates source freshness but deliberately does not replace the prior durable
-full stable scope.
+CI records such candidates with `release_only: true`. Stable classification
+uses the single-parent source delta for both normal `push` and merge-policy
+`workflow_dispatch` permanent runs. A metadata-only delta selects release +
+library and zero models; a product delta or merge commit remains full/fail-
+closed. Build publication validates source freshness but deliberately does not
+prepare or replace the prior durable full stable scope.
 
 `modules/release` validates that retained product scope and then validates the
 exact requested release source history. The full baseline must remain a
