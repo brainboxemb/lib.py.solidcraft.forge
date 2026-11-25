@@ -55,16 +55,23 @@ archival/A-B reference rather than an unfinished migration gate.
    - expose native associative Sketch-line/curve input for `Shape.fold()`;
    - retain the existing fixed-points fold form;
    - add a Forge-owned sheet-metal qualification fixture whose fold line follows
-     an editable native length parameter;
-   - re-run the downstream Mounting Rail M8 / Simple MFT consumer against the
-     corrected Forge behavior.
-2. Treat #73 as retained engine/runtime regression evidence, not as a Forge
+     an editable native length parameter.
+2. Qualify SolidCraft 0.49.0 as the next immutable runtime through
+   `docker.cad.solidcraft#29` before the first migrated Forge release:
+   - pin upstream `v0.49.0` exactly;
+   - preserve the existing two runtime roles and all v0.3.5 owner smokes;
+   - run the Forge component/joined-Cylinder, #73 retained sheet regression and
+     #74 associative-fold qualification against the candidate runtime;
+   - re-run the downstream Mounting Rail M8 / Simple MFT consumer on 0.49.0;
+   - publish a new immutable runtime release only after owner and external
+     qualification are green.
+3. Treat #73 as retained engine/runtime regression evidence, not as a Forge
    replay-workaround target. The flat-first consumer construction order is
    accepted; do not force `plane.fixed=true`, move physical holes, or change
    replay semantics merely to mask the historical SolidCraft sheet-state
    behavior.
-3. After #74 and downstream qualification are green, canonicalize repository
-   identity under #76:
+4. After #74 and the 0.49.0 consumer/runtime qualification are green,
+   canonicalize repository identity under #76:
    - rename the historical repository to an explicit `.OLD` archival name;
    - archive the historical repository;
    - rename this repository from `.NEW` to canonical
@@ -73,18 +80,15 @@ archival/A-B reference rather than an unfinished migration gate.
      GitHub rename redirects;
    - verify branch policy, build evidence, Pages provenance, package metadata
      and release workflows after the rename.
-4. Publish the first actual migrated Forge release from canonical stable
-   `main`:
+5. Publish the first actual migrated Forge release from canonical stable
+   `main`, qualified against the new SolidCraft 0.49.0 immutable runtime:
    - bump the package above the historical `0.15.0` baseline;
    - add the required dated changelog section;
    - require exact full stable `build/main` evidence;
    - publish only through `/release vX.Y.Z <exact-main-sha>`;
    - update and requalify the active CAD consumer against that canonical
      release.
-   A SolidCraft 0.49.0 runtime upgrade is a separate
-   `docker.cad.solidcraft` qualification and is not implicitly part of this
-   release.
-5. Return to Pages as a dedicated quality phase only after the first canonical
+6. Return to Pages as a dedicated quality phase only after the first canonical
    release:
    - restore the global development warning (#57);
    - rewrite the landing page around Forge/SCPF itself (#58);
