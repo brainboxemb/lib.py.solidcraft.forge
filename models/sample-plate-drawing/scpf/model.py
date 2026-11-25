@@ -51,7 +51,11 @@ def sample_plate_drawing():
             "front": DrawingView(at=(62, 128)),
             "top": DrawingView(at=(62, 62)),
             "right": DrawingView(at=(137, 128)),
-            "iso": DrawingView(at=(220, 128), scale="1:1"),
+            "iso": DrawingView(
+                at=(220, 128),
+                scale="1:1",
+                visual_style="shaded",
+            ),
         },
         properties={
             "project": "Forge drawing qualification",
