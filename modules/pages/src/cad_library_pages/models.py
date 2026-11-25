@@ -273,7 +273,7 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
 
     for section in verification_section_rows:
         section["models"].sort(key=lambda model: (model["priority"], model["id"]))
-    target = site / "data/cad/verification_sections.json"
+    target = site / "assets/cad/verification_sections.json"
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(
         json.dumps(
