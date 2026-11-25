@@ -7,7 +7,7 @@ This file contains unfinished work only.
 The Forge migration is complete and promoted to stable `main`.
 
 The accepted baseline now has:
-- 46 physical model owners;
+- 47 physical model owners;
 - SCPF as primary per owner;
 - historically real reference implementations local to the same physical owner;
 - native and applicable geometry verification;
@@ -17,7 +17,7 @@ The accepted baseline now has:
 - `components` as one physical owner with
   `purpose: [example, verification]`;
 - exactly four public Examples;
-- all 46 physical owners projected into Verification;
+- all 47 physical owners projected into Verification;
 - durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
   `gh-pages`;
 - the historical nine-chapter Guide and Cheatsheet;
@@ -51,32 +51,31 @@ archival/A-B reference rather than an unfinished migration gate.
 
 ## Now
 
-1. Qualify Forge against SolidCraft 0.49.0 through #79 and
-   `docker.cad.solidcraft#29`:
-   - runtime v0.3.6 candidate is SolidCraft 0.49.0 with the existing two-role
-     composition unchanged;
-   - use runtime-main `:edge` only in a short-lived, unmerged Forge
-     qualification PR;
-   - require the full Forge graph, including the component/joined-Cylinder
-     regression, #73 retained sheet evidence, and the accepted #74
-     associative-fold saved-design mutation;
-   - record the exact runtime-main commit and Forge qualification run.
-2. Before tagging runtime v0.3.6, externally qualify the current real CAD
-   consumer against the exact runtime candidate:
-   - keep the normal released Forge v0.15.0 dependency for this runtime
-     compatibility A/B;
-   - exercise at least Mounting Rail M8 and Simple MFT with
-     `cad-solidcraft:edge` / SolidCraft 0.49.0;
-   - keep mutable runtime pins on a short-lived qualification branch only;
-   - do not weaken the CAD repository's durable released-Forge / immutable-
-     runtime dependency contract.
-3. Only when owner runtime, Forge #79, and the real CAD runtime A/B are green:
-   - publish immutable runtime v0.3.6 from the exact qualified runtime-main
-     commit;
-   - replace temporary Forge `:edge` pins with
-     `cad-solidcraft:v0.3.6` / `cad-reference:v0.3.6`;
-   - set the tested SolidCraft contract to 0.49.0 and rerun the same Forge
-     qualification before merging permanent runtime adoption.
+SolidCraft 0.49.0 candidate qualification is accepted on the Forge side:
+
+- runtime owner main: `fa323fba8146d36e2598d08cb88b3a74e8c71761`;
+- runtime main Build run `45579060882`: both roles PASS;
+- Forge #79 qualification run `45579896509`: PASS;
+- #73 retained `sheet-contour-flange-recess`: native PASS on 0.49.0;
+- #74 `sheet-fold`: native, visual and geometry PASS on 0.49.0, including
+  the saved-design depth mutation;
+- qualification PR #82 was closed unmerged, so mutable `:edge` pins never
+  entered `dev`.
+
+1. Complete the real CAD consumer runtime A/B in
+   `2026-011-02.cad.solidcraft.NEW#64`:
+   - keep released Forge v0.15.0 for this runtime compatibility test;
+   - exercise Mounting Rail M8 and Simple MFT dependency closure against exact
+     runtime-main `cad-solidcraft:edge` / SolidCraft 0.49.0;
+   - keep the candidate-only newer-engine allowance and mutable image pin on an
+     unmerged qualification branch.
+2. When CAD #64 is green, publish immutable runtime v0.3.6 from exact qualified
+   runtime-main `fa323fba8146d36e2598d08cb88b3a74e8c71761`.
+3. Create the permanent Forge runtime-adoption change:
+   - pin `cad-solidcraft:v0.3.6` and `cad-reference:v0.3.6`;
+   - set the tested SolidCraft contract to 0.49.0;
+   - rerun the full Forge graph on immutable images;
+   - merge only through `/merge`.
 4. After the API/runtime chain is immutable and green, create the dedicated
    repository-canonicalization change:
    - rename the historical `brainboxemb/lib.py.solidcraft.forge` to an
@@ -107,10 +106,10 @@ archival/A-B reference rather than an unfinished migration gate.
      and Verification;
    - create one issue per remaining independent Pages defect before changing it.
 
-#73 remains retained engine/runtime regression evidence. The accepted flat-first
-consumer construction order is not a Forge replay workaround target; do not
-force `plane.fixed=true`, move physical holes, or change replay semantics merely
-to mask the historical SolidCraft sheet-state behavior.
+#73 remains retained engine/runtime regression evidence rather than a Forge
+replay-workaround target. The accepted flat-first consumer construction order
+stands; do not force `plane.fixed=true`, move physical holes, or change replay
+semantics merely to mask the historical SolidCraft sheet-state behavior.
 
 ## Later
 
