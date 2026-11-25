@@ -57,7 +57,11 @@ SolidCraft drawing objects; Forge does not draw substitute SVG/PDF graphics.</p>
         "front": DrawingView(at=(62, 128)),
         "top": DrawingView(at=(62, 62)),
         "right": DrawingView(at=(137, 128)),
-        "iso": DrawingView(at=(220, 128), scale="1:1"),
+        "iso": DrawingView(
+            at=(220, 128),
+            scale="1:1",
+            visual_style="shaded",
+        ),
     },
     properties={
         "part_number": "BRK-001",
@@ -107,11 +111,13 @@ SolidCraft drawing objects; Forge does not draw substitute SVG/PDF graphics.</p>
 )</code></pre>
 
 <p><code>DrawingView.at</code> uses paper millimetres.
-<code>DrawingDimension.faces()</code> is the preferred overall-size form when
-fillets remove geometric corners. <code>DrawingDimension.radial()</code>
-resolves a circular model edge; avoid selecting the seam point of a circular
-edge. Invalid topology picks fail in SolidCraft rather than being silently
-approximated.</p>
+<code>DrawingView(visual_style="shaded")</code> is the qualified native
+pictorial override, useful for an isometric view while orthographic views keep
+their normal line presentation. <code>DrawingDimension.faces()</code> is the
+preferred overall-size form when fillets remove geometric corners.
+<code>DrawingDimension.radial()</code> resolves a circular model edge; avoid
+selecting the seam point of a circular edge. Invalid topology picks fail in
+SolidCraft rather than being silently approximated.</p>
 
 <p>The pinned SolidCraft 0.49 command set does not expose native centre-mark or
 centre-line authoring. Forge therefore does not fake them. Balloons and parts

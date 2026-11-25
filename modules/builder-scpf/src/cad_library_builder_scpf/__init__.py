@@ -97,7 +97,14 @@ def _title_block_cells(sheet):
     }
 
 
-def _validate_drawing_inspection(name, inspection, expected):
+def _validate_drawing_inspection(
+    name,
+    inspection,
+    expected,
+    *,
+    variables,
+    view_inspections,
+):
     """Validate the saved native drawing against the compiled authoring intent."""
     if not isinstance(inspection, dict):
         raise RuntimeError(f"SCPF drawing inspection is invalid: {name}")
@@ -178,6 +185,28 @@ def _validate_drawing_inspection(name, inspection, expected):
                 )
 
     cells = _title_block_cells(sheet)
+    for variable, expected_style in expected.get("view_styles", {}).items():
+        view_id = variables.get(variable)
+        if not isinstance(view_id, str):
+            raise RuntimeError(
+                f"SCPF drawing styled view variable is unbound: {variable}"
+            )
+        view = view_inspections.get(view_id)
+        if view is None:
+            raise RuntimeError(
+                f"SCPF drawing produced no native view inspection: {name}: {variable}"
+            )
+        style = view.get("settings", {}).get("visual_style")
+        actual_style = (
+            style.get("value")
+            if isinstance(style, dict)
+            else style
+        )
+        if actual_style != expected_style:
+            raise RuntimeError(
+                f"SCPF drawing view style mismatch: {name}: {variable}"
+            )
+
     property_cells = {
         "part_number": "identification_number",
         "organization": "legal_owner",
@@ -191,6 +220,21 @@ def _validate_drawing_inspection(name, inspection, expected):
             raise RuntimeError(
                 f"SCPF drawing rendered title-block {cell!r} mismatch: {name}"
             )
+
+
+def _drawing_view_inspections(replay_results):
+    """Return final native drawing.view.inspect results keyed by view id."""
+    by_view = {}
+    if not isinstance(replay_results, list):
+        return by_view
+    for result in replay_results:
+        if (
+            isinstance(result, dict)
+            and isinstance(result.get("view"), str)
+            and isinstance(result.get("settings"), dict)
+        ):
+            by_view[result["view"]] = result
+    return by_view
 
 
 def _drawing_inspections(replay_results):
@@ -219,6 +263,7 @@ def _export_drawings(
 ):
     exports = _drawing_exports(document)
     inspections = _drawing_inspections(replay_results)
+    view_inspections = _drawing_view_inspections(replay_results)
     produced = []
     for index, (
         name,
@@ -295,7 +340,13 @@ def _export_drawings(
             raise RuntimeError(
                 f"SCPF drawing replay produced no final inspection: {name}"
             )
-        _validate_drawing_inspection(name, inspection, expected)
+        _validate_drawing_inspection(
+            name,
+            inspection,
+            expected,
+            variables=variables,
+            view_inspections=view_inspections,
+        )
         inspect.write_text(
             json.dumps(inspection, indent=2, sort_keys=True) + "\n",
             encoding="utf-8",

@@ -794,10 +794,11 @@ def _drawing_xyz(value, name):
 
 @dataclass(frozen=True)
 class DrawingView:
-    """Placement override for one standard drawing view."""
+    """Placement/display override for one standard drawing view."""
 
     at: tuple[float, float] | None = None
     scale: str | None = None
+    visual_style: str | None = None
 
     def __post_init__(self):
         if self.at is not None:
@@ -806,6 +807,11 @@ class DrawingView:
             if not isinstance(self.scale, str) or not self.scale.strip():
                 raise ValueError("drawing view scale must be non-empty text")
             object.__setattr__(self, "scale", self.scale.strip())
+        if self.visual_style is not None:
+            if self.visual_style != "shaded":
+                raise ValueError(
+                    "drawing view visual_style currently supports only 'shaded'"
+                )
 
 
 @dataclass(frozen=True)

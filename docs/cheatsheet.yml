@@ -207,9 +207,9 @@ groups:
         description: "Attach a native SolidCraft engineering drawing to the completed design; ISO A4 landscape is the default."
         snippet: "part.with_drawing(name='Sample Plate Drawing')"
         example: sample-plate-drawing
-      - title: "DrawingView(at=..., scale=...)"
-        description: "Place one native front/top/right/iso view in paper millimetres and optionally give it an explicit native scale."
-        snippet: "DrawingView(at=(62, 128), scale='1:1')"
+      - title: "DrawingView(at=..., scale=..., visual_style=...)"
+        description: "Place one native standard view in paper millimetres; 'shaded' is the qualified pictorial override while omission keeps the normal line view."
+        snippet: "DrawingView(at=(220, 128), scale='1:1', visual_style='shaded')"
         example: sample-plate-drawing
       - title: "DrawingDimension.faces(...)"
         description: "Dimension two real planar model faces; prefer this for overall sizes when fillets remove corners."

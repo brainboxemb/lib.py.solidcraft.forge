@@ -1006,8 +1006,13 @@ def _compile_assembly_with_dependencies(value, name):
                 settings["place"] = {"at": list(view.at)}
             if view.scale is not None:
                 settings["scale"] = view.scale
-                if view_name in {"top", "right"}:
-                    settings["linked"] = False
+            if view.visual_style is not None:
+                settings["visual_style"] = view.visual_style
+            if (
+                view_name in {"top", "right"}
+                and (view.scale is not None or view.visual_style is not None)
+            ):
+                settings["linked"] = False
             if settings:
                 commands.append(_command(
                     "drawing.view.edit",
@@ -1075,6 +1080,15 @@ def _compile_assembly_with_dependencies(value, name):
             }
             commands.append(command)
 
+        # Inspect any consumer-styled native views after all edits so the
+        # builder can prove the saved presentation rather than only command acceptance.
+        for view_name, view in drawing.views:
+            if view.visual_style is not None:
+                commands.append(_command(
+                    "drawing.view.inspect",
+                    view=view_refs[view_name],
+                ))
+
         # Capture the fully-authored sheet after dimensions and notes. The
         # builder publishes this exact native result as durable drawing evidence.
         commands.append(_command("drawing.inspect"))
@@ -1094,6 +1108,11 @@ def _compile_assembly_with_dependencies(value, name):
                 "note_count": len(drawing.notes),
                 "properties": dict(drawing.properties),
                 "title_block": dict(drawing.title_block),
+                "view_styles": {
+                    f"$drawing_{index}_{view_name}": view.visual_style
+                    for view_name, view in drawing.views
+                    if view.visual_style is not None
+                },
             }
             if drawing.revision is not None:
                 expected["revision"] = {

@@ -156,6 +156,7 @@ class ComponentDrawingTests(unittest.TestCase):
                             "note_count": 0,
                             "properties": {},
                             "title_block": {},
+                            "view_styles": {},
                         },
                     }
                 ]
@@ -203,7 +204,11 @@ class ComponentDrawingTests(unittest.TestCase):
                     "front": DrawingView(at=(65, 120)),
                     "top": DrawingView(at=(65, 55)),
                     "right": DrawingView(at=(135, 120)),
-                    "iso": DrawingView(at=(220, 125), scale="1:1"),
+                    "iso": DrawingView(
+                        at=(220, 125),
+                        scale="1:1",
+                        visual_style="shaded",
+                    ),
                 },
                 properties={
                     "project": "Drawing qualification",
@@ -299,6 +304,22 @@ class ComponentDrawingTests(unittest.TestCase):
             if row["params"]["view"] == "$drawing_1_iso"
         )
         self.assertEqual(iso["params"]["set"]["scale"], "1:1")
+        self.assertEqual(
+            iso["params"]["set"]["visual_style"],
+            "shaded",
+        )
+        styled_inspect = next(
+            row for row in commands
+            if row["command"] == "drawing.view.inspect"
+        )
+        self.assertEqual(
+            styled_inspect["params"]["view"],
+            "$drawing_1_iso",
+        )
+        self.assertEqual(
+            document["artifacts"]["drawings"][0]["expected"]["view_styles"],
+            {"$drawing_1_iso": "shaded"},
+        )
 
         dimensions = [
             row for row in commands
@@ -362,6 +383,11 @@ class ComponentDrawingTests(unittest.TestCase):
             panel.with_drawing(name="...")
         with self.assertRaisesRegex(ValueError, "unsupported drawing view"):
             panel.with_drawing(views={"rear": DrawingView(at=(1, 2))})
+        with self.assertRaisesRegex(
+            ValueError,
+            "visual_style currently supports only 'shaded'",
+        ):
+            DrawingView(visual_style="wireframe")
         with self.assertRaisesRegex(ValueError, "unsupported drawing property"):
             panel.with_drawing(properties={"owner": "x"})
         with self.assertRaisesRegex(ValueError, "dimension view"):
