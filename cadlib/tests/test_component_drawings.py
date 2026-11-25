@@ -62,11 +62,6 @@ class ComponentDrawingTests(unittest.TestCase):
                         "where": {"name": "Sheet 1"},
                         "select": "id",
                     },
-                    "$drawing_1_orientation": {
-                        "field": "sheets",
-                        "where": {"name": "Sheet 1"},
-                        "select": "orientation",
-                    },
                 },
             },
         )
@@ -78,6 +73,16 @@ class ComponentDrawingTests(unittest.TestCase):
                 "documents": {
                     "source": "$drawing_1_source",
                     "component": "$component_1",
+                },
+            },
+        )
+        self.assertEqual(
+            drawing[1]["bind"],
+            {
+                "$drawing_1_orientation": {
+                    "field": "sheets",
+                    "where": {"name": "Sheet 1"},
+                    "select": "orientation",
                 },
             },
         )
