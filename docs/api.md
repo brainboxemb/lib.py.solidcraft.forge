@@ -448,12 +448,18 @@ return (left + right).with_drawing(left, name="Block drawing")
 ```
 
 `with_drawing(...)` creates a persistent native SolidCraft drawing using the
-`iso-a3-part` template by default. Its first sheet documents the selected
+`iso-a4-part` template by default. Its first sheet documents the selected
 native component and SolidCraft creates the standard front, top, right and
 isometric view layout. Forge restricts those views to the selected occurrence
 subtree using native drawing-view source settings.
 
-The first slice accepts `name=`, `template=` and `sheet_name=`. Compose
+A normal SCPF build also publishes that drawing as a native vector PDF below
+`drawings/`. The filename is derived deterministically from the drawing name;
+for example `name="Block drawing"` produces
+`drawings/Block-drawing.pdf`. Use `template="iso-a3-part"` when an A3 sheet
+is more appropriate for a complex part.
+
+The drawing API accepts `name=`, `template=` and `sheet_name=`. Compose
 the final Assembly before adding drawing intent; adding occurrences afterwards
 is rejected. Dimensions, balloons, parts lists and other annotations are not
 part of this first slice.
