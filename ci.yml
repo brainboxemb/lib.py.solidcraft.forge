@@ -11,6 +11,9 @@ branches:
 generated:
   build_branch: build
   pages_branch: gh-pages
+# Qualification-only mutable runtime provenance for #79:
+# docker.cad.solidcraft main fa323fba8146d36e2598d08cb88b3a74e8c71761
+# These :edge pins must never merge into dev.
 runtimes:
   reference:
     image: ghcr.io/brainboxemb/cad-reference:edge
