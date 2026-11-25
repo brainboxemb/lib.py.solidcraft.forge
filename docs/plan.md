@@ -79,13 +79,6 @@ Accepted stable state:
 
 No release blocker remains from the completed stabilization phase.
 
-The focused Pages correction #124 adds a direct Forge-homepage route to the
-canonical SolidCraft model catalogue at
-`https://brainboxemb.github.io/2026-011-02.cad.solidcraft/`. This remains a
-navigation-only relationship: Forge owns the authoring/compiler documentation,
-while `brainboxemb/2026-011-02.cad.solidcraft` owns the physical model site and
-its Pages publication.
-
 Forge work should now return to demonstrated consumer value rather than
 continuing a broad migration/site-cleanup stream:
 
