@@ -28,3 +28,7 @@ sections:
     priority: 70
     label: 7 · Sheet metal
     description: Native sheet rules, folds, flanges, hems, paths and recoverable flat patterns.
+  drawings:
+    priority: 80
+    label: 8 · Drawings
+    description: Native technical drawing creation, sheet templates, standard views and published vector PDF evidence.

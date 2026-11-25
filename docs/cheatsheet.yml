@@ -197,6 +197,21 @@ groups:
         snippet: "second = first.copy(placement=Placement(x=40, rotation=(Z, 180)))"
         example:
 
+  - heading: Drawings
+    items:
+      - title: "model.with_drawing(...)"
+        description: "Attach a native SolidCraft technical drawing to the completed design; ISO A4 is the default part template."
+        snippet: "part.with_drawing(name='Sample Plate Drawing')"
+        example: sample-plate-drawing
+      - title: "template='iso-a3-part'"
+        description: "Select native ISO A3 explicitly when the documented part needs more sheet area."
+        snippet: "part.with_drawing(name='Large part', template='iso-a3-part')"
+        example: sample-plate-drawing
+      - title: "Native vector PDF"
+        description: "The SCPF builder exports each declared drawing through SolidCraft drawing.export; Pages links the durable build artifact without copying it."
+        snippet: "drawings/Sample-Plate-Drawing.pdf"
+        example: sample-plate-drawing
+
   - heading: Compile and inspect
     items:
       - title: "python -m scpf ... --out"

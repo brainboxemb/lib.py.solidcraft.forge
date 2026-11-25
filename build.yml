@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/141-reconcile-a4-drawing-pdf
+branch: feature/160-drawings-capability-pages
 modules: [builder-scpf, ci, pages]
 library: true
-models: [components]
+models: [sample-plate-drawing]
 tasks: [test]

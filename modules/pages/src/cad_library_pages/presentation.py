@@ -132,13 +132,25 @@ def implementation_evidence(root, blob_url, raw_url, state):
     """Use only artifacts actually present in this implementation's build."""
     data = {"status": state.get("status") or state.get("verification_status") or "unavailable",
             "previewurl": "", "files": [], "reports": [], "commands": [],
-            "commandurl": "", "images": [], "checks": [], "visualviews": []}
+            "commandurl": "", "images": [], "checks": [], "visualviews": [],
+            "drawings": []}
     if (root / "model.png").is_file():
         data["previewurl"] = f"{raw_url}/model.png"
     for name, label in (("model.stl", "STL"), ("model.step", "STEP"), ("model.sc", "Native model"),
                         ("result.json", "Build result")):
         if (root / name).is_file():
             data["files"].append({"label": label, "url": f"{blob_url}/{name}"})
+    drawings = root / "drawings"
+    if drawings.is_dir():
+        for pdf in sorted(drawings.glob("*.pdf")):
+            if pdf.is_file() and pdf.stat().st_size > 0:
+                relative = pdf.relative_to(root).as_posix()
+                data["drawings"].append({
+                    "name": pdf.stem.replace("-", " "),
+                    "bloburl": f"{blob_url}/{relative}",
+                    "rawurl": f"{raw_url}/{relative}",
+                })
+
     path = root / "solidcraft.json"
     if path.is_file():
         data["commands"] = command_sequence(path)

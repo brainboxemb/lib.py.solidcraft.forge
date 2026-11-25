@@ -78,6 +78,9 @@ class ModelPagesTests(unittest.TestCase):
             )
             (evidence / "model.png").write_text("owner-level image")
             (evidence / "cadquery/model.png").write_text("implementation image")
+            drawing = evidence / "cadquery/drawings/Sample-Plate-Drawing.pdf"
+            drawing.parent.mkdir(parents=True)
+            drawing.write_bytes(b"%PDF-1.7\n")
             (evidence / "model.stl").write_text("mesh")
             for implementation in ("cadquery", "legacy"):
                 (evidence / implementation / "model.stl").write_text("mesh")
@@ -109,6 +112,19 @@ class ModelPagesTests(unittest.TestCase):
             self.assertIn(
                 "models/box/cadquery/verification/geometry/verification.json",
                 content,
+            )
+            projected = json.loads(content.split("\n\n", 1)[0])
+            source = next(
+                item for item in projected["params"]["sources"]
+                if item["id"] == "cadquery"
+            )
+            self.assertEqual(
+                source["drawings"],
+                [{
+                    "name": "Sample Plate Drawing",
+                    "bloburl": "https://github.com/owner/repo/blob/build/dev/models/box/cadquery/drawings/Sample-Plate-Drawing.pdf",
+                    "rawurl": "https://raw.githubusercontent.com/owner/repo/build/dev/models/box/cadquery/drawings/Sample-Plate-Drawing.pdf",
+                }],
             )
             self.assertIn("**legacy** — builder-legacy", content)
             self.assertFalse((site / "static/models/box/model.stl").exists())
