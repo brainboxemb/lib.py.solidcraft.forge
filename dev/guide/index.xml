@@ -500,6 +500,31 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;Automatic mode uses SolidCraft&amp;rsquo;s native scale-based explosion. Explicit mode takes occurrence objects and fixed XYZ translations; Forge resolves those objects to native occurrence ids during replay. Use &lt;code&gt;show_exploded(&amp;quot;Service&amp;quot;)&lt;/code&gt; to display one stored view and &lt;code&gt;show_assembled()&lt;/code&gt; to return to normal presentation. Do not model an explosion with ordinary occurrence moves.&lt;/p&gt;
+&lt;h2 data-hextra-search-id="technical-drawings-are-final-design-presentation"&gt;Technical drawings are final design presentation&lt;span class="hx:absolute hx:-mt-20" id="technical-drawings-are-final-design-presentation"&gt;&lt;/span&gt;
+&lt;a href="#technical-drawings-are-final-design-presentation" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;SolidCraft 0.49 can keep native drawing sheets inside the saved design. In Forge, drawing intent belongs to the completed design rather than to the reusable component definition.&lt;/p&gt;
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
+&lt;div&gt;&lt;div class="highlight"&gt;&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;left&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Block&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;right&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;left&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;copy&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;placement&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;Placement&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;40&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;assembly&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;left&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;right&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;assembly&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;assembly&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;with_drawing&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;left&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;Block drawing&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"&gt;
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+&gt;
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
+&lt;/button&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;For a standalone part, use &lt;code&gt;Block().with_drawing(name=&amp;quot;Block drawing&amp;quot;)&lt;/code&gt;. Forge asks SolidCraft to create the native A3 part sheet and standard front, top, right and isometric views, then restricts those views to the selected occurrence. The sheet explicitly documents that component.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Layout stays native:&lt;/strong&gt; Forge does not calculate paper coordinates or projected-view placement. SolidCraft owns the template, fitted scale and standard-view layout. In this first slice a part selected from a much larger assembly can therefore use a conservative scale, because SolidCraft fits the standard group before Forge narrows the view source.
+Dimensions, balloons, parts lists and other drawing annotations are outside this first API slice.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="3-use-assembly-when-the-composition-itself-is-reusable"&gt;3. Use @assembly when the composition itself is reusable&lt;span class="hx:absolute hx:-mt-20" id="3-use-assembly-when-the-composition-itself-is-reusable"&gt;&lt;/span&gt;
 &lt;a href="#3-use-assembly-when-the-composition-itself-is-reusable" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;You do not need &lt;code&gt;@assembly&lt;/code&gt; merely because a script contains several components. Use it when the &lt;em&gt;composition itself&lt;/em&gt; is a reusable model object that you want to import or instantiate as a subassembly.&lt;/p&gt;
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
