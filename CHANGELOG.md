@@ -8,6 +8,26 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-11-25
+
+### Added
+
+- Add `Edges.from_faces(...)` for selecting the complete native boundary of
+  one or more named cardinal faces without caller-supplied XYZ edge picks.
+
+### Changed
+
+- Use one world-cardinal `Faces` vocabulary across feature placement, shelling
+  and face-boundary edge selection: TOP/BOTTOM = +/-Z, LEFT/RIGHT = -/+X and
+  FRONT/BACK = -/+Y.
+- Resolve named faces and their boundary edges through native SolidCraft
+  `model.faces` / `model.edges` replay queries, then pass SolidCraft-returned
+  `{body, index}` edge references to fillet/chamfer instead of predicting
+  topology ids.
+- Preserve existing edge selectors source-compatibly while qualifying native
+  one-face Box and two-face XZ extrusion perimeter chamfers; XZ broad extrusion
+  faces are FRONT/BACK because extrusion is along world Y.
+
 ## [0.17.0] - 2026-11-25
 
 ### Added
