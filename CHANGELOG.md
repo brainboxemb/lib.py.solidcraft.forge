@@ -8,6 +8,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.16.1] - 2026-11-25
+
+### Changed
+
+- Temporary unmerged release-flow smoke for Forge #98.
+
+
 ## [0.16.0] - 2026-11-25
 
 ### Added
