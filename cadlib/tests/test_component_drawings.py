@@ -62,14 +62,23 @@ class ComponentDrawingTests(unittest.TestCase):
                         "where": {"name": "Sheet 1"},
                         "select": "id",
                     },
+                    "$drawing_1_orientation": {
+                        "field": "sheets",
+                        "where": {"name": "Sheet 1"},
+                        "select": "orientation",
+                    },
                 },
             },
         )
         self.assertEqual(
-            drawing[1]["params"]["documents"],
+            drawing[1]["params"],
             {
-                "source": "$drawing_1_source",
-                "component": "$component_1",
+                "sheet": "$drawing_1_sheet",
+                "orientation": "landscape",
+                "documents": {
+                    "source": "$drawing_1_source",
+                    "component": "$component_1",
+                },
             },
         )
         self.assertEqual(
@@ -107,7 +116,10 @@ class ComponentDrawingTests(unittest.TestCase):
                     {
                         "name": "Second panel drawing",
                         "drawing": "$drawing_1",
+                        "sheet": "$drawing_1_sheet",
+                        "orientation": "$drawing_1_orientation",
                         "pdf": "drawings/Second-panel-drawing.pdf",
+                        "png": "drawings/Second-panel-drawing.png",
                     }
                 ]
             },
