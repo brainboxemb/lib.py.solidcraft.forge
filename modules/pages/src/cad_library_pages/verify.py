@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 import yaml
 
+from .homepage import homepage_manifest
 from .landing import landing_metadata
 
 
@@ -20,22 +21,35 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
 
     home = read("")
     forge = landing_metadata(source_root)
-    for marker in (
-        "Python API/compiler for SolidCraft",
-        "SCPF model",
-        "Forge compiler",
-        "SolidCraft commands",
-        "SolidCraft remains the CAD engine",
-        f"SCPF {forge['package_version']}",
-        f"Tested with SolidCraft {forge['tested_solidcraft_version']}",
-        "Start with the Guide",
-        "API Reference",
-        "Cheatsheet",
-        "Examples",
-        "Verification",
-    ):
+    homepage = homepage_manifest(source_root, context=forge)
+    if "data-generated-homepage" not in home:
+        raise RuntimeError("Forge homepage was not rendered from generated Pages data")
+
+    homepage_markers = []
+    external_urls = []
+    for block in homepage["blocks"]:
+        homepage_markers.append(block["title"])
+        if block["type"] == "hero":
+            homepage_markers.append(block["eyebrow"])
+            homepage_markers.extend(block["badges"])
+            homepage_markers.extend(action["label"] for action in block["actions"])
+            external_urls.extend(
+                action["url"] for action in block["actions"] if action["external"]
+            )
+        elif block["type"] == "flow":
+            homepage_markers.extend(step["title"] for step in block["steps"])
+        elif block["type"] == "links":
+            homepage_markers.extend(item["label"] for item in block["items"])
+            external_urls.extend(
+                item["url"] for item in block["items"] if item["external"]
+            )
+
+    for marker in homepage_markers:
         if marker not in home:
-            raise RuntimeError(f"Forge landing content missing: {marker}")
+            raise RuntimeError(f"generated Forge homepage content missing: {marker}")
+    for url in external_urls:
+        if url not in home:
+            raise RuntimeError(f"generated Forge homepage destination missing: {url}")
 
     for route, marker in (("", "cad-home"), ("docs", "Documentation"), ("docs/model-pages", "Understand verification"),
                           ("examples", "cad-model-grid"), ("verification", "cad-model-grid")):
