@@ -3,13 +3,13 @@
     {
       "command": "drawing.open",
       "params": {
-        "drawing": "6g0bbbsftbj7a"
+        "drawing": "23ckzb552nhsc"
       }
     },
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "fycktms2ntnz9",
+        "view": "24m6mj41bjhhw",
         "set": {
           "source": {
             "occurrences": [
@@ -24,7 +24,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "3pp3eq9ydc90c",
+        "view": "aagtfthbfnnjm",
         "set": {
           "source": {
             "occurrences": [
@@ -35,6 +35,267 @@
           }
         }
       }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "view": "24m6mj41bjhhw",
+        "set": {
+          "place": {
+            "at": [
+              62.0,
+              128.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "view": "7qtzwbknh997a",
+        "set": {
+          "place": {
+            "at": [
+              62.0,
+              62.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "view": "9ba31ban982j3",
+        "set": {
+          "place": {
+            "at": [
+              137.0,
+              128.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "view": "aagtfthbfnnjm",
+        "set": {
+          "place": {
+            "at": [
+              220.0,
+              128.0
+            ]
+          },
+          "scale": "1:1"
+        }
+      }
+    },
+    {
+      "command": "drawing.dimension.add",
+      "params": {
+        "view": "24m6mj41bjhhw",
+        "kind": {
+          "faces": {
+            "a": {
+              "point": [
+                -40.0,
+                0.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "b": {
+              "point": [
+                40.0,
+                0.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "direction": "horizontal"
+          }
+        },
+        "decimals": 0,
+        "offset_mm": 12.0
+      }
+    },
+    {
+      "command": "drawing.dimension.add",
+      "params": {
+        "view": "24m6mj41bjhhw",
+        "kind": {
+          "faces": {
+            "a": {
+              "point": [
+                30.0,
+                20.0,
+                0.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "b": {
+              "point": [
+                30.0,
+                20.0,
+                8.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "direction": "vertical"
+          }
+        },
+        "decimals": 0,
+        "offset_mm": 10.0
+      }
+    },
+    {
+      "command": "drawing.dimension.add",
+      "params": {
+        "view": "7qtzwbknh997a",
+        "kind": {
+          "faces": {
+            "a": {
+              "point": [
+                -40.0,
+                0.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "b": {
+              "point": [
+                40.0,
+                0.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "direction": "horizontal"
+          }
+        },
+        "decimals": 0,
+        "offset_mm": 12.0
+      }
+    },
+    {
+      "command": "drawing.dimension.add",
+      "params": {
+        "view": "7qtzwbknh997a",
+        "kind": {
+          "faces": {
+            "a": {
+              "point": [
+                0.0,
+                -25.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "b": {
+              "point": [
+                0.0,
+                25.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "direction": "vertical"
+          }
+        },
+        "decimals": 0,
+        "offset_mm": 10.0
+      }
+    },
+    {
+      "command": "drawing.dimension.add",
+      "params": {
+        "view": "7qtzwbknh997a",
+        "kind": {
+          "radial": {
+            "edge": {
+              "point": [
+                -25.171573,
+                2.828427,
+                8.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "diameter": true
+          }
+        },
+        "decimals": 0,
+        "line_through_mm": [
+          92.0,
+          88.0
+        ],
+        "override_text": "2\u00d7 {value} THRU"
+      }
+    },
+    {
+      "command": "drawing.dimension.add",
+      "params": {
+        "view": "7qtzwbknh997a",
+        "kind": {
+          "radial": {
+            "edge": {
+              "point": [
+                8.485281,
+                8.485281,
+                22.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "diameter": true
+          }
+        },
+        "decimals": 0,
+        "line_through_mm": [
+          96.0,
+          69.0
+        ]
+      }
+    },
+    {
+      "command": "drawing.note.add",
+      "params": {
+        "anchor": {
+          "sheet": "e170qz0pb4ych"
+        },
+        "at": [
+          156.0,
+          88.0
+        ],
+        "content": "NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES.",
+        "cap_mm": 2.5,
+        "align": "left"
+      }
+    },
+    {
+      "command": "drawing.inspect",
+      "params": {}
     },
     {
       "command": "drawing.close",

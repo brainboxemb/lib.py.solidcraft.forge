@@ -3,13 +3,13 @@
     {
       "command": "drawing.open",
       "params": {
-        "drawing": "5smxkztsn8h6h"
+        "drawing": "6bjjpygh73gaq"
       }
     },
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "21x5sfzc3gcr1",
+        "view": "efy7vrc7vztjy",
         "set": {
           "source": {
             "occurrences": [
@@ -24,7 +24,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "64khenph6smgr",
+        "view": "4rrdzfbb5kj52",
         "set": {
           "source": {
             "occurrences": [
@@ -35,6 +35,10 @@
           }
         }
       }
+    },
+    {
+      "command": "drawing.inspect",
+      "params": {}
     },
     {
       "command": "drawing.close",

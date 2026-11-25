@@ -7,6 +7,11 @@
       "preview_status": null,
       "status": "pass",
       "verification_stages": {
+        "drawing-sheet": {
+          "adapter": "image-regression",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "status": "pass"
+        },
         "native": {
           "adapter": "solidcraft-model",
           "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",

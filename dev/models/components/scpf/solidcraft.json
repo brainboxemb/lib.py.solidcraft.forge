@@ -3,6 +3,15 @@
     "drawings": [
       {
         "drawing": "$drawing_1",
+        "expected": {
+          "dimension_count": 0,
+          "note_count": 0,
+          "orientation": "landscape",
+          "properties": {},
+          "title_block": {},
+          "view_count": 4
+        },
+        "inspect": "drawings/Block-drawing.json",
         "name": "Block drawing",
         "orientation": "$drawing_1_orientation",
         "pdf": "drawings/Block-drawing.pdf",
@@ -109,10 +118,13 @@
     {
       "bind": {
         "$drawing_1_front": "view",
-        "$drawing_1_iso": "iso"
+        "$drawing_1_iso": "iso",
+        "$drawing_1_right": "right",
+        "$drawing_1_top": "top"
       },
       "command": "drawing.view.standard",
       "params": {
+        "gap_mm": 20.0,
         "iso": true,
         "sheet": "$drawing_1_sheet"
       }
@@ -146,6 +158,10 @@
         },
         "view": "$drawing_1_iso"
       }
+    },
+    {
+      "command": "drawing.inspect",
+      "params": {}
     },
     {
       "command": "drawing.close",

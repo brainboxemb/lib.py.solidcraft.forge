@@ -3,16 +3,16 @@
     {
       "command": "drawing.open",
       "params": {
-        "drawing": "5smxkztsn8h6h"
+        "drawing": "6bjjpygh73gaq"
       }
     },
     {
       "command": "drawing.sheet.set",
       "params": {
-        "sheet": "6j7k3416gjbmm",
+        "sheet": "bhvdzr17nyc2m",
         "orientation": "landscape",
         "documents": {
-          "source": "1117jdhn8t6eg",
+          "source": "4jxzghmphjdcz",
           "component": 1
         }
       }
@@ -24,8 +24,9 @@
     {
       "command": "drawing.view.standard",
       "params": {
-        "sheet": "6j7k3416gjbmm",
-        "iso": true
+        "sheet": "bhvdzr17nyc2m",
+        "iso": true,
+        "gap_mm": 20.0
       }
     }
   ]

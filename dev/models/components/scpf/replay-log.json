@@ -1,17 +1,19 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "baa159cdb39dcec10ca8d128d927d1afeab8393bda119823535026f8ca01ffb8",
+  "replay_sha256": "7dc5f9abe4567c8ad3e7b791dd897074508324c21939b574160601b7dc5d86db",
   "variables": {
     "$block_occurrence_1": 2,
     "$component_1": 1,
     "$block_occurrence_2": 4,
-    "$drawing_1": "5smxkztsn8h6h",
-    "$drawing_1_source": "1117jdhn8t6eg",
-    "$drawing_1_sheet": "6j7k3416gjbmm",
+    "$drawing_1": "6bjjpygh73gaq",
+    "$drawing_1_source": "4jxzghmphjdcz",
+    "$drawing_1_sheet": "bhvdzr17nyc2m",
     "$drawing_1_orientation": "landscape",
-    "$drawing_1_front": "21x5sfzc3gcr1",
-    "$drawing_1_iso": "64khenph6smgr"
+    "$drawing_1_front": "efy7vrc7vztjy",
+    "$drawing_1_top": "3ykqt0x6jc87k",
+    "$drawing_1_right": "chzy13b76sprn",
+    "$drawing_1_iso": "4rrdzfbb5kj52"
   },
   "commands": [
     {
@@ -72,19 +74,19 @@
         "first_sheet_name": "Sheet 1"
       },
       "bindings": {
-        "$drawing_1": "5smxkztsn8h6h",
-        "$drawing_1_source": "1117jdhn8t6eg",
-        "$drawing_1_sheet": "6j7k3416gjbmm"
+        "$drawing_1": "6bjjpygh73gaq",
+        "$drawing_1_source": "4jxzghmphjdcz",
+        "$drawing_1_sheet": "bhvdzr17nyc2m"
       }
     },
     {
       "index": 5,
       "command": "drawing.sheet.set",
       "resolved_params": {
-        "sheet": "6j7k3416gjbmm",
+        "sheet": "bhvdzr17nyc2m",
         "orientation": "landscape",
         "documents": {
-          "source": "1117jdhn8t6eg",
+          "source": "4jxzghmphjdcz",
           "component": 1
         }
       }
@@ -101,19 +103,22 @@
       "index": 7,
       "command": "drawing.view.standard",
       "resolved_params": {
-        "sheet": "6j7k3416gjbmm",
-        "iso": true
+        "sheet": "bhvdzr17nyc2m",
+        "iso": true,
+        "gap_mm": 20.0
       },
       "bindings": {
-        "$drawing_1_front": "21x5sfzc3gcr1",
-        "$drawing_1_iso": "64khenph6smgr"
+        "$drawing_1_front": "efy7vrc7vztjy",
+        "$drawing_1_top": "3ykqt0x6jc87k",
+        "$drawing_1_right": "chzy13b76sprn",
+        "$drawing_1_iso": "4rrdzfbb5kj52"
       }
     },
     {
       "index": 8,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "21x5sfzc3gcr1",
+        "view": "efy7vrc7vztjy",
         "set": {
           "source": {
             "occurrences": [
@@ -129,7 +134,7 @@
       "index": 9,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "64khenph6smgr",
+        "view": "4rrdzfbb5kj52",
         "set": {
           "source": {
             "occurrences": [
@@ -143,9 +148,14 @@
     },
     {
       "index": 10,
+      "command": "drawing.inspect",
+      "resolved_params": {}
+    },
+    {
+      "index": 11,
       "command": "drawing.close",
       "resolved_params": {}
     }
   ],
-  "completed": 11
+  "completed": 12
 }

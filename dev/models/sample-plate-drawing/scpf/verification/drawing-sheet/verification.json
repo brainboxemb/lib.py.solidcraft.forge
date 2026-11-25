@@ -1,0 +1,62 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "actual.png",
+          "sha256": "f248820122270363c3c1b86b969f33ead996fca3828e0c9544c6917e923180b1",
+          "size": 61984
+        },
+        {
+          "kind": "file",
+          "path": "approved-baseline.png",
+          "sha256": "6b108400f355498ed4492ea0916cb26732db013dd4ff06a2ea8d44af16934fbc",
+          "size": 7286
+        },
+        {
+          "kind": "file",
+          "path": "diff.png",
+          "sha256": "c32a7178eb3e3c0ec7c836ad78c2f1846f5aacf11477244122bc8e1b25753beb",
+          "size": 16005
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "actual.png",
+        "baseline_status": "pass",
+        "diff_image": "diff.png",
+        "expected_shape_status": "missing",
+        "goal_image": null,
+        "overlay_image": null,
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.06,
+          "max_mean_difference": 5.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        }
+      },
+      "id": "image-regression",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.png",
+  "metadata": {
+    "baseline_payload": "baselines/drawing-sheet.json",
+    "baseline_provenance": {
+      "approval": "approved",
+      "purpose": "consumer-grade engineering drawing sheet",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "7fcc218241f03a523fb4bae9e0c3d030ee99648a",
+      "workflow_run": 45692342472
+    },
+    "kind": "image-regression"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sample-plate-drawing-scpf-drawing-sheet"
+}

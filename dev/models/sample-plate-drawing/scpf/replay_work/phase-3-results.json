@@ -3,7 +3,7 @@
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "6g0bbbsftbj7a",
+    "id": "23ckzb552nhsc",
     "language": "en",
     "line_group": "0.5",
     "name": "Sample Plate Drawing",
@@ -27,7 +27,7 @@
           "count": false,
           "print": false
         },
-        "id": "19fqk6nh51sxp",
+        "id": "e170qz0pb4ych",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -725,7 +725,7 @@
     ],
     "sources": [
       {
-        "id": "a2tgebwmy19nx"
+        "id": "49mymhyxd5jed"
       }
     ],
     "symbols": [],
@@ -739,7 +739,7 @@
   {
     "sheets": [
       {
-        "id": "19fqk6nh51sxp",
+        "id": "e170qz0pb4ych",
         "name": "Sheet 1"
       }
     ]
@@ -748,7 +748,7 @@
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "6g0bbbsftbj7a",
+    "id": "23ckzb552nhsc",
     "language": "en",
     "line_group": "0.5",
     "name": "Sample Plate Drawing",
@@ -768,14 +768,14 @@
       {
         "documents": {
           "component": 1,
-          "source": "a2tgebwmy19nx"
+          "source": "49mymhyxd5jed"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "19fqk6nh51sxp",
+        "id": "e170qz0pb4ych",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -1395,11 +1395,13 @@
         "title_block_cells": [
           {
             "name": "title",
-            "text": "SamplePlate"
+            "text": "Sample Plate",
+            "value": "SamplePlate"
           },
           {
             "name": "identification_number",
-            "text": "SamplePlate"
+            "text": "SCPF-DWG-001",
+            "value": "SamplePlate"
           },
           {
             "name": "created_by",
@@ -1419,11 +1421,13 @@
           },
           {
             "name": "material",
-            "text": "Default"
+            "text": "Qualification material",
+            "value": "Default"
           },
           {
             "name": "finish",
-            "text": ""
+            "text": "As modelled",
+            "value": ""
           },
           {
             "name": "mass",
@@ -1449,7 +1453,13 @@
           },
           {
             "name": "document_status",
-            "text": ""
+            "notes": [
+              {
+                "fit": "width"
+              }
+            ],
+            "text": "Qualification",
+            "value": ""
           },
           {
             "name": "language",
@@ -1461,19 +1471,26 @@
           },
           {
             "name": "department",
-            "text": ""
+            "text": "Engineering",
+            "value": ""
           }
         ],
         "title_block_overrides": {
+          "department": "Engineering",
+          "document_status": "Qualification",
           "document_type": "Part drawing",
-          "general_tolerances": "Unless stated: linear ±0.2 mm, angles ±0.5°. Break sharp edges 0.2 mm."
+          "finish": "As modelled",
+          "general_tolerances": "Unless stated: linear ±0.2 mm, angles ±0.5°. Break sharp edges 0.2 mm.",
+          "identification_number": "SCPF-DWG-001",
+          "material": "Qualification material",
+          "title": "Sample Plate"
         },
         "views": []
       }
     ],
     "sources": [
       {
-        "id": "a2tgebwmy19nx"
+        "id": "49mymhyxd5jed"
       }
     ],
     "symbols": [],
@@ -1485,15 +1502,74 @@
     }
   },
   {
-    "iso": "3pp3eq9ydc90c",
-    "right": "80fa2ewt59q0t",
+    "changed": [
+      "author",
+      "description",
+      "organization",
+      "part_number",
+      "project"
+    ],
+    "metadata": {
+      "author": "Forge",
+      "description": "Sample plate engineering drawing",
+      "organization": "brainboxemb",
+      "part_number": "SCPF-DWG-001",
+      "project": "Forge drawing qualification"
+    }
+  },
+  {
+    "next": "1",
+    "row": "3vntc37bnrp4f",
+    "rows": [
+      {
+        "checker": "CI",
+        "date": "2026-11-25",
+        "description": "Initial qualified drawing",
+        "designer": "Forge",
+        "hidden": false,
+        "revision": "A",
+        "row": "3vntc37bnrp4f"
+      }
+    ]
+  },
+  {
+    "iso": "aagtfthbfnnjm",
+    "outside": [
+      {
+        "boundary_mm": {
+          "max": [
+            138.023340597113,
+            80.6327526665666
+          ],
+          "min": [
+            58.02334059711299,
+            58.6327526665666
+          ]
+        },
+        "view": "24m6mj41bjhhw"
+      },
+      {
+        "boundary_mm": {
+          "max": [
+            202.023340597113,
+            80.6327526665666
+          ],
+          "min": [
+            152.023340597113,
+            58.6327526665666
+          ]
+        },
+        "view": "9ba31ban982j3"
+      }
+    ],
+    "right": "9ba31ban982j3",
     "scale": {
       "factor": 1.0,
-      "fitted": true,
+      "fitted": false,
       "text": "1:1"
     },
-    "sheet": "19fqk6nh51sxp",
-    "top": "dydcg5n5r7m4w",
-    "view": "fycktms2ntnz9"
+    "sheet": "e170qz0pb4ych",
+    "top": "7qtzwbknh997a",
+    "view": "24m6mj41bjhhw"
   }
 ]
