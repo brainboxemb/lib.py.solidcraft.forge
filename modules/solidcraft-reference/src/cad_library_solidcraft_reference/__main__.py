@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from . import capture_snapshot, verify_pinned_reference, verify_snapshot
+from . import capture_snapshot, root_runtime_pin, verify_pinned_reference, verify_snapshot
 
 
 def main() -> int:
@@ -59,10 +59,7 @@ def main() -> int:
 
     repo = args.repo_root.resolve()
     count = verify_pinned_reference(repo)
-    image, version = __import__(
-        "cad_library_solidcraft_reference",
-        fromlist=["root_runtime_pin"],
-    ).root_runtime_pin(repo)
+    image, version = root_runtime_pin(repo)
     print(
         f"SolidCraft reference matches root pin {image}: "
         f"{version}; {count} commands"
