@@ -9,6 +9,15 @@ class BuildTests(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
             (root / "site").mkdir()
+            (root / "cadlib/src/scpf").mkdir(parents=True)
+            (root / "cadlib/pyproject.toml").write_text(
+                '[project]\nname = "scpf"\nversion = "1.2.3"\n',
+                encoding="utf-8",
+            )
+            (root / "cadlib/src/scpf/version.py").write_text(
+                'TESTED_SOLIDCRAFT_VERSION = "9.8.7"\n',
+                encoding="utf-8",
+            )
             destination = root / "out"
             destination.mkdir()
             with patch("cad_library_pages.build.subprocess.run") as run:
