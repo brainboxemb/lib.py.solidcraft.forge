@@ -159,7 +159,11 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Assembly.show_exploded</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Assembly.show_exploded/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Assembly.show_exploded/</guid><description>
+&lt;/div&gt;
+&lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Explicitly return the Assembly presentation to its normal assembled placement after defining or selecting exploded views.&lt;/p&gt;
+&lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;This changes presentation state only. It does not delete named exploded views or modify occurrence placement, attachments or joints.&lt;/p&gt;</description></item><item><title>Assembly.show_exploded</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Assembly.show_exploded/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Assembly.show_exploded/</guid><description>
 &lt;p&gt;Show one named exploded view after the assembly is built.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#exploded-views"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -175,7 +179,11 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Assembly.with_anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Assembly.with_anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Assembly.with_anchor/</guid><description>
+&lt;/div&gt;
+&lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Select one previously defined exploded view as the Assembly presentation that SolidCraft should show after the assembly is built.&lt;/p&gt;
+&lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The named exploded view must already exist on this Assembly. This changes presentation state only; it does not change occurrence placement, attachments or joint definitions.&lt;/p&gt;</description></item><item><title>Assembly.with_anchor</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Assembly.with_anchor/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Assembly.with_anchor/</guid><description>
 &lt;p&gt;Expose one named attachment datum owned by this assembly.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/components/#assembly-anchor"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
@@ -232,7 +240,11 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>attachment-references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/attachment-references/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/attachment-references/</guid><description>
+&lt;/div&gt;
+&lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Define a named native exploded presentation after the final Assembly occurrences and attachments are composed, using either automatic scale mode or explicit occurrence translations.&lt;/p&gt;
+&lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Requires at least two occurrences. Use either scale or moves, not both. Explicit moves must target occurrences already owned by this Assembly, each occurrence may move once, and translations must be fixed finite non-zero XYZ values.&lt;/p&gt;</description></item><item><title>attachment-references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/attachment-references/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/attachment-references/</guid><description>
 &lt;p&gt;Use richer local or topology-backed datums when a standard Anchor is not enough.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/assembly-basics/#anchor-choice"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
@@ -1156,7 +1168,11 @@ data-copied-label="Copied!"
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"&gt;&lt;/div&gt;
 &lt;/button&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Shape.fillet</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Shape.fillet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Shape.fillet/</guid><description>
+&lt;/div&gt;
+&lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Create a new native sheet-metal body from a finished open connected Sketch chain, using a positive flange distance and a shared SolidCraft sheet rule derived from the supplied material values.&lt;/p&gt;
+&lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The receiver must be the Shape returned by Sketch.chain(&amp;hellip;).finish(). Distance, thickness and bend radius must be positive; K-factor must be between 0 and 1. This API starts the sheet body from one open chain and exposes only rule name plus flip/reverse orientation controls.&lt;/p&gt;</description></item><item><title>Shape.fillet</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Shape.fillet/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Shape.fillet/</guid><description>
 &lt;p&gt;Round selected solid edges with one radius.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#fillet"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="signature"&gt;Signature&lt;span class="hx:absolute hx:-mt-20" id="signature"&gt;&lt;/span&gt;
