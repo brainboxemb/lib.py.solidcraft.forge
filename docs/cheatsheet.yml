@@ -259,7 +259,9 @@ groups:
         snippet: "python -m scpf examples/simple-box/scpf/model.py --connect"
         example:
 
-  - title: "Display appearance"
-    description: "Give the finished body a visual color without changing material/BOM semantics."
-    snippet: 'body.with_appearance("#FFD21A")'
-    example: appearance-color
+  - heading: Display appearance
+    items:
+      - title: 'shape.with_appearance("#RRGGBB")'
+        description: "Give the finished body a visual color without changing material/BOM semantics."
+        snippet: 'body.with_appearance("#FFD21A")'
+        example: appearance-color
