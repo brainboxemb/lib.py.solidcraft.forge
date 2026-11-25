@@ -302,19 +302,35 @@ class Axis(str, Enum):
 
 
 class Edges(Enum):
-    """Select edges for supported fillet and chamfer feature operations.
+    """Select topology for supported edge-consuming feature operations.
 
     Use when:
-        Use Edges.VERTICAL for the vertical edges of a supported rectangular
-        body. Use from_profile() for named profile segments and from_vertices()
-        for extrusion-axis edges grown from named profile vertices.
+        Use from_faces() to select the complete boundary of one or more
+        cardinal Faces through native SolidCraft topology. Edges.VERTICAL,
+        from_profile() and from_vertices() remain available for their existing
+        source-compatible selection contracts.
 
     Limits:
-        Only the selectors implemented here are public. from_profile()
-        currently supports sides="both"; from_vertices() requires named
-        Polygon2D vertices.
+        from_faces() selects boundaries of the largest planar face matching
+        each requested cardinal direction. from_profile() currently supports
+        sides="both"; from_vertices() requires named Polygon2D vertices.
     """
     VERTICAL = "vertical"
+
+    @staticmethod
+    def from_faces(*faces):
+        """Select all native boundary edges of one or more cardinal Faces.
+
+        Forge resolves each face and its boundary from SolidCraft at replay
+        time. Callers do not provide or predict native topology ids.
+        """
+        if not faces:
+            raise ValueError("provide one or more Faces values")
+        try:
+            normalized = tuple(Faces(face) for face in faces)
+        except ValueError as exc:
+            raise ValueError("from_faces() requires Faces values") from exc
+        return _FaceBoundarySelection(normalized)
 
     @staticmethod
     def from_profile(*segment_ids, sides="both"):
@@ -349,7 +365,9 @@ class _ProfileEdgeSelection:
 
 def _feature_edge_selection(edges, *, operation):
     """Validate one public fillet/chamfer edge selection."""
-    if edges is Edges.VERTICAL or isinstance(edges, _ProfileEdgeSelection):
+    if edges is Edges.VERTICAL or isinstance(
+        edges, (_ProfileEdgeSelection, _FaceBoundarySelection)
+    ):
         return edges
 
     directional = (
@@ -392,16 +410,16 @@ def _feature_edge_selection(edges, *, operation):
 
 
 class Faces(Enum):
-    """Select named planar faces for within-component feature operations.
+    """Select cardinal planar surfaces consistently across feature operations.
 
     Use when:
-        Pass a Faces value to operations such as Shape.on() and Shape.shell()
-        to identify a surface of the target body.
+        Pass a Faces value to Shape.on(), Shape.shell() or Edges.from_faces()
+        so placement and modify features share one surface vocabulary.
 
     Limits:
-        The enum defines all six cardinal faces. Individual operations may
-        support only a subset; Shape.on() currently accepts TOP and BOTTOM.
-        Component assembly attachment uses Anchor instead.
+        TOP/BOTTOM are +/-Z, LEFT/RIGHT are -/+X and FRONT/BACK are -/+Y.
+        Native lowering selects the largest planar face with that normal when
+        topology inspection is used. Component assembly attachment uses Anchor.
     """
     TOP = "top"
     BOTTOM = "bottom"
@@ -409,6 +427,13 @@ class Faces(Enum):
     RIGHT = "right"
     FRONT = "front"
     BACK = "back"
+
+
+@dataclass(frozen=True)
+class _FaceBoundarySelection:
+    """Internal request for native boundary edges of cardinal Faces."""
+
+    faces: tuple[Faces, ...]
 
 
 @dataclass(frozen=True)
@@ -1760,16 +1785,17 @@ class Shape:
 
         Parameters:
             radius: Fillet radius in mm.
-            edges: Edge selection. Use Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.
+            edges: Edge selection. Use Edges.from_faces(...) for native face-boundary topology, Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.
 
         Use when:
             Round one or more edges of a supported feature-based body. Fillet
             and chamfer use the same edge-selection forms.
 
         Limits:
-            Edges.VERTICAL and cardinal Box edge selectors require a supported
-            rectangular body. Named profile/vertex selectors require matching
-            Polygon2D ids in a supported extrusion.
+            Edges.from_faces() resolves native SolidCraft topology for supported planar
+            cardinal faces. Edges.VERTICAL and cardinal Box edge selectors
+            require a supported rectangular body. Named profile/vertex
+            selectors require matching Polygon2D ids in a supported extrusion.
 
         Example:
             body = Box(80, 50, 15)
@@ -1786,16 +1812,17 @@ class Shape:
 
         Parameters:
             distance: Chamfer distance in mm.
-            edges: Edge selection. Use Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.
+            edges: Edge selection. Use Edges.from_faces(...) for native face-boundary topology, Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.
 
         Use when:
             Bevel one or more edges of a supported feature-based body. Chamfer
             and fillet use the same edge-selection forms.
 
         Limits:
-            Edges.VERTICAL and cardinal Box edge selectors require a supported
-            rectangular body. Named profile/vertex selectors require matching
-            Polygon2D ids in a supported extrusion.
+            Edges.from_faces() resolves native SolidCraft topology for supported planar
+            cardinal faces. Edges.VERTICAL and cardinal Box edge selectors
+            require a supported rectangular body. Named profile/vertex
+            selectors require matching Polygon2D ids in a supported extrusion.
 
         Example:
             body = Box(80, 50, 15)
@@ -2088,17 +2115,19 @@ class Shape:
 
         Parameters:
             target: Existing Shape that receives the feature.
-            face: Target surface. Currently Faces.TOP or Faces.BOTTOM. Defaults to Faces.TOP.
-            offset: In-plane (x, y) offset from the target face centre, in mm. Defaults to (0, 0).
+            face: Cardinal target surface from the shared Faces vocabulary. Defaults to Faces.TOP.
+            offset: In-plane offset from the target face centre, in mm. Defaults to (0, 0).
 
         Use when:
             Put a Hole or another supported feature on an existing Shape and
-            select its entry/support surface with Faces.
+            describe its entry/support surface with the same Faces values used
+            by shell() and Edges.from_faces().
 
         Limits:
-            Shape.on() currently accepts Faces.TOP and Faces.BOTTOM. This is
-            feature placement; component assembly attachment uses Anchor and
-            the component occurrence attach() API.
+            All six Faces values are accepted as topology intent. Individual
+            placement lowerings may still reject a side face when that native
+            SolidCraft placement path has not been qualified yet. Component
+            assembly attachment uses Anchor instead.
 
         Example:
             Hole(d=8).on(plate, face=Faces.TOP, offset=(20, 0))
@@ -2110,9 +2139,11 @@ class Shape:
         face_to_anchor = {
             Faces.TOP: Anchor.TOP,
             Faces.BOTTOM: Anchor.BOTTOM,
+            Faces.LEFT: Anchor.LEFT,
+            Faces.RIGHT: Anchor.RIGHT,
+            Faces.FRONT: Anchor.FRONT,
+            Faces.BACK: Anchor.BACK,
         }
-        if face not in face_to_anchor:
-            raise ValueError("on() currently supports Faces.TOP or Faces.BOTTOM")
         return self._anchor_to(target, face_to_anchor[face], Anchor.BOTTOM, offset)
 
     def attach(self, target, *, parent=Anchor.TOP, child=Anchor.BOTTOM,
