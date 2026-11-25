@@ -8,6 +8,24 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- Add `Sketch.line(...)` as a reusable native straight-line Sketch reference
+  and allow `Shape.fold(line=...)` to bind that authored Sketch curve, keeping
+  parameter-driven bend lines associative through saved-design edits (#74).
+- Restore canonical SolidCraft command-reference capture/verification as the
+  normal `modules/solidcraft-reference` owner and capture the exact 0.49.0
+  registry from immutable runtime v0.3.6: 886 commands (#83).
+
+### Changed
+
+- Adopt immutable `docker.cad.solidcraft v0.3.6` and qualify Forge against
+  SolidCraft **0.49.0**. Candidate Forge #79 and real CAD consumer #64 both
+  passed before the runtime was released; permanent Forge CI now uses only the
+  immutable v0.3.6 images (#88).
+- The SolidCraft 0.48.1 → 0.49.0 command registry adds 20 command IDs and
+  removes none; historical canonical reference directories remain unchanged.
+
 ## [0.15.0] - 2026-11-24
 
 ### Fixed
