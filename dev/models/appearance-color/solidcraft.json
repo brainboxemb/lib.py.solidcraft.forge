@@ -1,0 +1,27 @@
+{
+  "commands": [
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "AppearanceColor",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 10,
+        "length": 40,
+        "width": 30
+      }
+    },
+    {
+      "command": "appearance.assign",
+      "params": {
+        "bodies": [
+          "AppearanceColor"
+        ],
+        "color": "#FFD21A"
+      }
+    }
+  ]
+}

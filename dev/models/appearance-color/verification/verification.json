@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "08a2cff39912be0e0af607d28bcabae7732b8268547589461ac93a51d9eceb30",
+          "size": 1287
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/appearance/results.json",
+          "sha256": "a4fd647ba534bef019d0001375df7841114ffeeab48334d6227edea6ba82902b",
+          "size": 401
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": "body",
+              "expected": "body",
+              "label": "SolidCraft inspection check active",
+              "pass": true
+            },
+            "id": "active",
+            "path": [
+              0,
+              "active"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "#ffd21a",
+              "expected": "#ffd21a",
+              "label": "SolidCraft inspection check color",
+              "pass": true
+            },
+            "id": "color",
+            "path": [
+              0,
+              "steps",
+              1,
+              "look",
+              "color"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_appearance",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/appearance-color/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "appearance-color"
+}
