@@ -57,6 +57,15 @@ owner-local geometry/semantic evidence
 
 Reference implementations use the standard PythonSCAD, pyBOSL2, CadQuery and build123d builders directly inside the same physical owner.
 
+Native feature inputs keep native identity where SolidCraft provides it. For
+example, an associative sheet fold stores the finished one-line Sketch Shape in
+the Forge feature tree. Lowering emits that Sketch as
+`sketch.create -> sketch.line -> sketch.finish`, then emits
+`sheet.fold {sketch, curve}`. The older fixed two-point form remains a
+compatibility path and lowers to `sheet.fold.points`. This avoids baking a
+symbolically driven bend line into coordinates that stop following later
+parameter edits.
+
 ## Runtime graph
 
 Reference implementations build and verify in one `reference` container batch. SCPF-generated SolidCraft commands execute in `solidcraft`; their STL then enters the `reference` verification role.
