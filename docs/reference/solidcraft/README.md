@@ -12,6 +12,10 @@ docs/reference/solidcraft/
 The historical [0.42.0](0.42.0/SOURCE.md) tree remains accepted historical
 qualification evidence.
 
+The current canonical target is [SolidCraft 0.49.0](0.49.0/SOURCE.md), captured
+from immutable `cad-solidcraft:v0.3.6`. The 0.48.1 and older canonical trees
+remain immutable historical evidence.
+
 The hand-authored 0.43.0 migration tree was removed during the 2026-11-21
 audit because it was not a canonical command snapshot. Do not reconstruct it or
 use it as an input for newer versions.
