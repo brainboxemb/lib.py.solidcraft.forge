@@ -40,10 +40,12 @@ def landing_metadata(source_root: Path) -> dict[str, str]:
     }
 
 
-def prepare_landing(source_root: Path, site: Path) -> None:
+def prepare_landing(source_root: Path, site: Path) -> dict[str, str]:
+    metadata = landing_metadata(source_root)
     data = site / "data"
     data.mkdir(parents=True, exist_ok=True)
     (data / "forge.json").write_text(
-        json.dumps(landing_metadata(source_root), indent=2, sort_keys=True) + "\n",
+        json.dumps(metadata, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
+    return metadata
