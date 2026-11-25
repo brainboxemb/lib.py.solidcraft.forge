@@ -338,27 +338,41 @@ def _boundary_edge_refs(edges, face, body, *, command, variable):
         )) / normal_length
         return distance <= tolerance
 
+    face_name = face.get("name")
     refs = []
     seen = set()
     for edge in edges:
         if not isinstance(edge, dict):
             continue
         edge_index = edge.get("index")
-        ends = edge.get("ends", edge.get("endpoints"))
-        if (
-            not isinstance(edge_index, int)
-            or isinstance(edge_index, bool)
-            or not isinstance(ends, (list, tuple))
-            or len(ends) != 2
-        ):
+        if not isinstance(edge_index, int) or isinstance(edge_index, bool):
             continue
-        try:
-            matches = all(on_plane(end) for end in ends)
-            midpoint_value = edge.get("midpoint")
-            if matches and midpoint_value is not None:
-                matches = on_plane(midpoint_value)
-        except ValueError:
-            continue
+
+        # SolidCraft returns native edge names as the two adjacent native face
+        # names joined by "|". Prefer that returned topology relationship.
+        # This consumes runtime identity; Forge does not predict either name.
+        edge_name = edge.get("name")
+        matches = (
+            isinstance(face_name, str)
+            and face_name
+            and isinstance(edge_name, str)
+            and face_name in edge_name.split("|")
+        )
+
+        # Keep a geometry fallback for runtimes that expose edge points but no
+        # adjacency name. SolidCraft 0.49 uses start/end/mid.
+        if not matches:
+            start = edge.get("start")
+            end = edge.get("end")
+            if start is not None and end is not None:
+                try:
+                    matches = on_plane(start) and on_plane(end)
+                    midpoint_value = edge.get("mid", edge.get("midpoint"))
+                    if matches and midpoint_value is not None:
+                        matches = on_plane(midpoint_value)
+                except ValueError:
+                    matches = False
+
         if not matches:
             continue
         key = (body, edge_index)
