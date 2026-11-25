@@ -3,7 +3,7 @@ purpose: [example, verification]
 section: drawings
 priority: 80
 title: Sample Plate Drawing
-tagline: A reusable component with a native ISO A4 technical drawing
+tagline: A reusable component with a native ISO A4 landscape technical drawing
 description: >
   Builds a small parameterized plate with two repeated holes, a raised boss
   and central bore, then adds one native SolidCraft drawing only to the final
@@ -12,6 +12,6 @@ parameters: 80 × 50 × 8 mm plate; R6 corners; Ø8 repeated holes; Ø24 × 14 b
 stages:
   - Build the reusable SamplePlate component
   - Keep drawing intent out of the reusable component definition
-  - Attach a native ISO A4 part drawing to the final design
+  - Attach a native ISO A4 landscape part drawing to the final design
   - Generate SolidCraft standard orthographic and isometric views
-  - Publish the native vector PDF below the implementation drawings directory
+  - Publish the native vector PDF and static native sheet PNG below the implementation drawings directory
