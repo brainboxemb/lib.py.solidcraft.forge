@@ -43,6 +43,7 @@ EXPECTED_IDS = {
     "rectangular-pattern",
     "sample-plate-drawing",
     "repeated-parent-attachments",
+    "revolute-joint",
     "rotated-copy-placement",
     "rotated-sketch-cutter",
     "round-top-sketch",
@@ -70,6 +71,7 @@ SCPF_ONLY_IDS = {
     "cone-boolean",
     "exploded-views",
     "native-revolve",
+    "revolute-joint",
     "rotated-sketch-cutter",
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
@@ -94,7 +96,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 50)
+        self.assertEqual(len(self.models), 51)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
