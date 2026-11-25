@@ -2,7 +2,7 @@
 title: Verification
 type: models
 description: Qualification cases and durable evidence for Forge/SCPF behaviour.
-verificationCatalog: true
+layout: verification
 ---
 
 Verification shows the model cases used to qualify Forge/SCPF behaviour across the supported implementations. Each case pairs source intent with published build and verification evidence so you can inspect what was checked and what passed.
