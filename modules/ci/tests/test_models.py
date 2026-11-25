@@ -43,6 +43,7 @@ EXPECTED_IDS = {
     "rectangular-pattern",
     "sample-plate-drawing",
     "repeated-parent-attachments",
+    "revolute-joint",
     "rotated-copy-placement",
     "rotated-sketch-cutter",
     "round-top-sketch",
@@ -70,6 +71,7 @@ SCPF_ONLY_IDS = {
     "cone-boolean",
     "exploded-views",
     "native-revolve",
+    "revolute-joint",
     "rotated-sketch-cutter",
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
@@ -94,7 +96,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 50)
+        self.assertEqual(len(self.models), 51)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -152,14 +154,24 @@ class ModelTests(unittest.TestCase):
                 [impl.id for impl in model.implementations],
                 ["scpf"],
             )
-            self.assertEqual(
-                [stage.id for stage in model.verifications],
-                ["native"],
-            )
-            self.assertEqual(
-                [stage.runtime for stage in model.verifications],
-                ["solidcraft"],
-            )
+            if model_id == "sample-plate-drawing":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "drawing-sheet"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference"],
+                )
+            else:
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft"],
+                )
 
         for model in self.models:
             self.assertEqual(model.primary, "scpf")
@@ -252,11 +264,15 @@ class ModelTests(unittest.TestCase):
         reference = manifests[1]
         multi_engine = len(EXPECTED_IDS - SCPF_ONLY_IDS)
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
-        self.assertEqual(len(reference["verify_items"]), multi_engine * 5)
+        self.assertEqual(
+            len(reference["verify_items"]),
+            multi_engine * 5 + 1,
+        )
         self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
-            set(EXPECTED_IDS) - set(SCPF_ONLY_IDS),
+            (set(EXPECTED_IDS) - set(SCPF_ONLY_IDS))
+            | {"sample-plate-drawing"},
         )
         self.assertEqual(
             {
@@ -269,6 +285,7 @@ class ModelTests(unittest.TestCase):
                 ("build123d", "geometry"),
                 ("pythonscad", "geometry"),
                 ("pybosl2", "geometry"),
+                ("scpf", "drawing-sheet"),
             },
         )
 
