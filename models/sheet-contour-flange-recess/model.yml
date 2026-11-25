@@ -1,0 +1,15 @@
+schema: 1
+purpose: verification
+section: sheet-metal
+priority: 35
+title: Contour flange recess replay
+tagline: A valid broad-face recess must replay identically headless and live
+description: >
+  A 27 × 18 × 1.25 mm native contour-flange C-profile receives one Ø12.5 mm
+  through-cut on its broad planar back face. The fixture preserves the exact
+  geometry that exposes the downstream live-replay failure.
+parameters: 250 mm rail; 27 × 18 × 1.25 mm C-profile; 15 mm opening; Ø12.5 mm cut at Y=37.5 mm
+stages:
+  - Create the native contour-flange C-profile
+  - Attach one circular Sketch to the broad planar back face
+  - Cut through-all and require native replay to succeed
