@@ -112,7 +112,13 @@ class SCPFBuilderTests(unittest.TestCase):
             results_out.write_text("[]")
             replay_log_out.write_text('{"completed": 2}')
             work_dir.mkdir(parents=True, exist_ok=True)
-            return {"variables": {"$drawing_1": "D1"}}
+            return {
+                "variables": {
+                    "$drawing_1": "D1",
+                    "$drawing_1_sheet": "S1",
+                    "$drawing_1_orientation": "landscape",
+                }
+            }
 
         headless.run_document = run_document
         scpf.headless = headless
@@ -185,7 +191,10 @@ class SCPFBuilderTests(unittest.TestCase):
                     {
                         "name": "Part drawing",
                         "drawing": "$drawing_1",
+                        "sheet": "$drawing_1_sheet",
+                        "orientation": "$drawing_1_orientation",
                         "pdf": "drawings/Part-drawing.pdf",
+                        "png": "drawings/Part-drawing.png",
                     }
                 ]
             },
@@ -224,11 +233,16 @@ class SCPFBuilderTests(unittest.TestCase):
                 calls.append(args)
                 if args[1] == "run":
                     script = json.loads(Path(args[2]).read_text())
-                    export_cmd = next(
+                    export_cmds = [
                         row for row in script["commands"]
                         if row["command"] == "drawing.export"
-                    )
-                    Path(export_cmd["params"]["path"]).write_bytes(b"%PDF-test")
+                    ]
+                    for export_cmd in export_cmds:
+                        target = Path(export_cmd["params"]["path"])
+                        if export_cmd["params"]["format"] == "pdf":
+                            target.write_bytes(b"%PDF-test")
+                        else:
+                            target.write_bytes(b"\x89PNG\r\n\x1a\npreview")
                 elif args[1] == "snapshot":
                     Path(args[args.index("--out") + 1]).write_bytes(b"png")
                 return Mock(returncode=0)
@@ -248,13 +262,26 @@ class SCPFBuilderTests(unittest.TestCase):
                 build(source, output)
 
             pdf = output.parent / "drawings/Part-drawing.pdf"
+            png = output.parent / "drawings/Part-drawing.png"
             self.assertEqual(pdf.read_bytes(), b"%PDF-test")
+            self.assertEqual(
+                png.read_bytes()[:8],
+                b"\x89PNG\r\n\x1a\n",
+            )
             export_run = next(
                 args for args in calls
                 if args[1] == "run" and "drawing-export" in args[2]
             )
             self.assertIn("--in", export_run)
             self.assertIn(str(output.parent / "model.sc"), export_run)
+            export_script = json.loads(Path(export_run[2]).read_text())
+            png_export = next(
+                row for row in export_script["commands"]
+                if row["command"] == "drawing.export"
+                and row["params"]["format"] == "png"
+            )
+            self.assertEqual(png_export["params"]["sheet"], "S1")
+            self.assertEqual(png_export["params"]["dpi"], 144)
 
 if __name__ == "__main__":
     unittest.main()
