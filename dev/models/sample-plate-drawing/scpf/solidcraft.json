@@ -30,7 +30,10 @@
             "material": "Qualification material",
             "title": "Sample Plate"
           },
-          "view_count": 4
+          "view_count": 4,
+          "view_styles": {
+            "$drawing_1_iso": "shaded"
+          }
         },
         "inspect": "drawings/Sample-Plate-Drawing.json",
         "name": "Sample Plate Drawing",
@@ -455,7 +458,8 @@
               128.0
             ]
           },
-          "scale": "1:1"
+          "scale": "1:1",
+          "visual_style": "shaded"
         },
         "view": "$drawing_1_iso"
       }
@@ -679,6 +683,12 @@
         ],
         "cap_mm": 2.5,
         "content": "NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES."
+      }
+    },
+    {
+      "command": "drawing.view.inspect",
+      "params": {
+        "view": "$drawing_1_iso"
       }
     },
     {

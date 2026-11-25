@@ -3,13 +3,13 @@
     {
       "command": "drawing.open",
       "params": {
-        "drawing": "23ckzb552nhsc"
+        "drawing": "eewde4y3y5s5a"
       }
     },
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "24m6mj41bjhhw",
+        "view": "asjqafz8b4jzv",
         "set": {
           "source": {
             "occurrences": [
@@ -24,7 +24,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "aagtfthbfnnjm",
+        "view": "68b1rk5ghh7q1",
         "set": {
           "source": {
             "occurrences": [
@@ -39,7 +39,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "24m6mj41bjhhw",
+        "view": "asjqafz8b4jzv",
         "set": {
           "place": {
             "at": [
@@ -53,7 +53,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "7qtzwbknh997a",
+        "view": "cwm9gr5b6h13j",
         "set": {
           "place": {
             "at": [
@@ -67,7 +67,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "9ba31ban982j3",
+        "view": "7xqgns6g9hxbr",
         "set": {
           "place": {
             "at": [
@@ -81,7 +81,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "aagtfthbfnnjm",
+        "view": "68b1rk5ghh7q1",
         "set": {
           "place": {
             "at": [
@@ -89,14 +89,15 @@
               128.0
             ]
           },
-          "scale": "1:1"
+          "scale": "1:1",
+          "visual_style": "shaded"
         }
       }
     },
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "24m6mj41bjhhw",
+        "view": "asjqafz8b4jzv",
         "kind": {
           "faces": {
             "a": {
@@ -129,7 +130,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "24m6mj41bjhhw",
+        "view": "asjqafz8b4jzv",
         "kind": {
           "faces": {
             "a": {
@@ -162,7 +163,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "7qtzwbknh997a",
+        "view": "cwm9gr5b6h13j",
         "kind": {
           "faces": {
             "a": {
@@ -195,7 +196,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "7qtzwbknh997a",
+        "view": "cwm9gr5b6h13j",
         "kind": {
           "faces": {
             "a": {
@@ -228,7 +229,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "7qtzwbknh997a",
+        "view": "cwm9gr5b6h13j",
         "kind": {
           "radial": {
             "edge": {
@@ -255,7 +256,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "7qtzwbknh997a",
+        "view": "cwm9gr5b6h13j",
         "kind": {
           "radial": {
             "edge": {
@@ -282,7 +283,7 @@
       "command": "drawing.note.add",
       "params": {
         "anchor": {
-          "sheet": "e170qz0pb4ych"
+          "sheet": "csdzbsqbbedaf"
         },
         "at": [
           156.0,
@@ -291,6 +292,12 @@
         "content": "NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES.",
         "cap_mm": 2.5,
         "align": "left"
+      }
+    },
+    {
+      "command": "drawing.view.inspect",
+      "params": {
+        "view": "68b1rk5ghh7q1"
       }
     },
     {
