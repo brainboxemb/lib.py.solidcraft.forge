@@ -90,6 +90,7 @@ class ModelPagesTests(unittest.TestCase):
             page = site / "content/examples/box/index.md"
             content = page.read_text()
             self.assertIn("test-sha", content)
+            self.assertNotIn('"verificationsection"', content)
             self.assertNotIn("build/dev/models/box/model.png", content)
             self.assertIn("value = 42", content)
             self.assertIn("model.py", content)
@@ -127,12 +128,17 @@ class ModelPagesTests(unittest.TestCase):
                         "priority": 10,
                         "label": "1 · Basic geometry",
                         "description": "Primitive geometry.",
+                        "models": [
+                            {"id": "box", "priority": 20, "title": "box"},
+                            {"id": "fixture", "priority": 20, "title": "fixture"},
+                        ],
                     },
                     {
                         "id": "later",
                         "priority": 20,
                         "label": "2 · Later",
                         "description": "Later cases.",
+                        "models": [],
                     },
                 ],
             )
