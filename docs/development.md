@@ -2,9 +2,9 @@
 
 ## Branches
 
-Work from `dev` on a short-lived issue/fix/feature/docs/chore branch. Keep `build.yml.branch` exact and select the smallest library/modules/models required.
+Work from `dev` on a short-lived issue/fix/feature/docs/chore branch for normal product development. Long-running research uses permanent `exp`; temporary work targeting that line uses the same prefixes and targets `exp`. Keep `build.yml.branch` exact and select the smallest library/modules/models required.
 
-After green checks, use the repository merge policy to squash normal product work into `dev`. Promotion from `dev` to `main` is an explicit full product qualification and uses a merge commit.
+After green checks, use the repository merge policy to squash temporary work into `dev` or `exp`. Synchronization `dev -> exp` and completed-experiment integration `exp -> dev` use merge commits and full PR qualification. `exp -> main` is forbidden. Promotion from `dev` to `main` remains the only product stabilization path and uses a merge commit.
 
 Release preparation is separate. Create `release/vX.Y.Z` from stable `main`,
 change only `CHANGELOG.md` plus `cadlib/pyproject.toml:project.version`, and

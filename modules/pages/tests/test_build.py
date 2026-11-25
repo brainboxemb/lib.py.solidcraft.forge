@@ -38,3 +38,26 @@ blocks:
                 (destination / "index.html").touch()
                 build(source_root=root, destination=destination, base_url="https://example.org/dev/")
                 self.assertIn("https://example.org/dev/", run.call_args.args[0])
+
+    def test_experimental_banner_is_prepared_only_in_temporary_site(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "site").mkdir()
+            destination = root / "out"
+            destination.mkdir()
+            (destination / "index.html").touch()
+
+            with patch("cad_library_pages.build.prepare_landing", return_value={}), \
+                 patch("cad_library_pages.build.prepare_homepage"), \
+                 patch("cad_library_pages.build.prepare_documentation"), \
+                 patch("cad_library_pages.build.prepare_api_reference"), \
+                 patch("cad_library_pages.build.prepare_guides"), \
+                 patch("cad_library_pages.build.prepare_cheatsheet"), \
+                 patch("cad_library_pages.build.prepare_models"), \
+                 patch("cad_library_pages.build.prepare_verification_special"), \
+                 patch("cad_library_pages.build.subprocess.run") as run:
+                build(source_root=root, destination=destination, base_url="https://example.org/exp/", experimental=True)
+                command = run.call_args.args[0]
+                source = Path(command[command.index("--source") + 1])
+                self.assertIn("experimental", command)
+                self.assertFalse((root / "site/config/experimental/params.toml").exists())

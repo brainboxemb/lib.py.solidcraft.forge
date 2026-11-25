@@ -56,11 +56,11 @@ def _validated_release_paths(paths):
 def selection(repo, project, branch, modules):
     event = os.environ.get("GITHUB_EVENT_NAME", "")
     base = os.environ.get("GITHUB_BASE_REF", "")
-    if (
-        event == "pull_request"
-        and branch == project.development_branch
-        and base == project.stable_branch
-    ):
+    if event == "pull_request" and (branch, base) in {
+        (project.development_branch, project.stable_branch),
+        ("exp", project.development_branch),
+        (project.development_branch, "exp"),
+    }:
         plan = full_selection(branch)
         return plan, None, True, False
 
@@ -82,7 +82,7 @@ def selection(repo, project, branch, modules):
                 return _release_plan(branch), None, False, True
         plan = full_selection(branch)
         return plan, None, True, False
-    if branch == project.development_branch:
+    if branch in {project.development_branch, "exp"}:
         if event not in {"push", "workflow_dispatch"}:
             plan = full_selection(branch)
             return plan, None, True, False

@@ -20,7 +20,7 @@ class CleanupConfig:
 
     @property
     def permanent(self) -> frozenset[str]:
-        return frozenset({self.stable, self.development})
+        return frozenset({self.stable, self.development, "exp"})
 
 
 def load_config(repo: Path) -> CleanupConfig:

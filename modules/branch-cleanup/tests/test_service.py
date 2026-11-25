@@ -69,6 +69,12 @@ class ServiceTests(unittest.TestCase):
         )
         self.assertEqual(client.deleted, ["release/v1.2.3"])
 
+    def test_sweep_accepts_experimental_merge(self):
+        client = FakeClient()
+        client._branches = ["exp", "issue/3-experiment"]
+        client.merged_pr_to = lambda branch, base: branch == "issue/3-experiment" and base == "exp"
+        self.assertEqual(sweep(client, config=CONFIG), ("issue/3-experiment",))
+
     def test_sweep_keeps_permanent_open_and_unproven_branches(self):
         client = FakeClient()
         deleted = sweep(client, config=CONFIG)

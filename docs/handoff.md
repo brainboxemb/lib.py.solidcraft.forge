@@ -57,8 +57,7 @@ Durable working rules:
 - generated CAD artifacts remain on `build/<scope>/models/**`; Pages reads
   durable evidence and must not duplicate generated CAD artifacts into
   `gh-pages`;
-- use `main` for stable integration and `dev` for normal integration;
-  squash normal short-lived work branches into `dev`, promote explicit
+- use `main` for stable integration, `dev` for normal integration and optional permanent `exp` for isolated experiments; squash temporary work into `dev` or `exp` as appropriate, synchronize `dev -> exp` and integrate completed experiments through `exp -> dev`, never promote `exp -> main`, and promote explicit
   product stabilization `dev -> main` with a merge commit, and prepare
   metadata-only releases on `release/vX.Y.Z` branches created from stable
   `main` and squashed directly to `main`; after publication synchronize
