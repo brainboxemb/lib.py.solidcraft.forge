@@ -1,4 +1,4 @@
-# Forge NEW plan
+# Forge plan
 
 This file contains unfinished work only.
 
@@ -51,42 +51,38 @@ The historical repository is being finalized as
 
 ## Now
 
-The API/runtime migration baseline is accepted on `dev`:
+Repository canonicalization #89 is accepted:
 
-- #74 associative native Sketch-line folds are accepted;
-- SolidCraft runtime v0.3.6 / SolidCraft 0.49.0 is immutable and accepted;
-- #83 restored canonical SolidCraft reference capture/runtime verification;
-- #85 permanent v0.3.6/0.49 adoption is accepted with full 47-owner evidence.
+- live repository: `brainboxemb/lib.py.solidcraft.forge`;
+- historical repository: `brainboxemb/lib.py.solidcraft.forge.OLD`, archived;
+- canonical dev build and Pages publication are green;
+- immutable runtime baseline remains v0.3.6 / SolidCraft 0.49.0.
 
-Current work is #89 repository canonicalization.
+Current work is #92: publish the first canonical post-migration Forge release,
+**v0.16.0**, so downstream CAD projects can consume the migrated Forge.
 
-1. Execute the GitHub repository settings swap:
-   - historical `brainboxemb/lib.py.solidcraft.forge` ->
-     `brainboxemb/lib.py.solidcraft.forge.OLD`;
-   - archive the historical `.OLD` repository;
-   - current `brainboxemb/lib.py.solidcraft.forge.NEW` ->
-     canonical `brainboxemb/lib.py.solidcraft.forge`.
-2. After the settings swap, finish and merge the #89 identity audit:
-   - canonical README/handoff/source identity;
-   - canonical Hugo Pages base URL/source repository;
-   - historical parity source renamed to `.OLD`;
-   - verify branch refs, merge policy, release path and Pages from the canonical
-     repository.
-3. Reconcile this plan after #89, then prepare the first migrated Forge release:
-   - promote the accepted `dev` baseline to stable `main` with the required
-     merge commit;
-   - bump package version above historical 0.15.0;
-   - add the required dated changelog section;
-   - require exact full stable `build/main` evidence;
-   - publish only through `/release vX.Y.Z <exact-main-sha>`.
-4. Update the active CAD project to the new canonical Forge release:
+1. Complete the v0.16.0 release-prep PR:
+   - package version 0.16.0;
+   - dated 2026-11-25 changelog section;
+   - library + release metadata qualification only; no new modelling behavior.
+2. Merge release prep to `dev` through `/merge`, then require permanent
+   green `dev` evidence.
+3. Promote `dev -> main` through a dedicated PR and `/merge`:
+   - promotion qualification must be full;
+   - stable `main` must receive a merge commit;
+   - exact durable `build/main` evidence must show `full: true`,
+     `library: true`, all 47 active owners and the exact stable source SHA.
+4. Publish only through
+   `/release v0.16.0 <exact-40-character-main-sha>` on #92 and verify the
+   annotated tag/GitHub Release provenance.
+5. Update the active CAD project to v0.16.0:
+   - move the Forge dependency from historical v0.15.0 to canonical v0.16.0;
    - replace the four Mounting Rail fixed fold lines with the accepted #74
      `Sketch.line(...)` path;
    - verify native post-generation length edits remain associative;
-   - requalify Mounting Rail M8 and Simple MFT against the immutable
-     Forge/runtime pair.
-5. Return to Pages as a dedicated quality phase only after the canonical release
-   and downstream adoption:
+   - requalify Mounting Rail M8 and Simple MFT against immutable Forge/runtime.
+6. Return to Pages as a dedicated quality phase after downstream release
+   adoption:
    - restore the global development warning (#57);
    - rewrite the landing page around Forge/SCPF itself (#58);
    - visually/content-audit landing, Guide, API Reference, Cheatsheet, Examples
