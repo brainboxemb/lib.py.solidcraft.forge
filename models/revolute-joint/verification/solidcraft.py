@@ -15,7 +15,7 @@ HERE = Path(__file__).resolve().parent
 VERIFICATION = SolidCraftVerification(
     verification_id="revolute-joint",
     baseline=SolidCraftModelExpectation(
-        body_count=1,
+        body_count=2,
     ),
     inspections=(
         SolidCraftInspection(
