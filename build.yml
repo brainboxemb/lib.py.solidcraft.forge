@@ -1,6 +1,6 @@
 schema: 1
-branch: fix/181-appearance-owner-graph
-modules: [ci]
+branch: fix/156-release-only-dispatch
+modules: [ci, build]
 library: false
 models: []
 tasks: [test]

@@ -86,6 +86,81 @@ class ReleaseSelectionTests(unittest.TestCase):
     @patch.dict(
         os.environ,
         {
+            "GITHUB_EVENT_NAME": "workflow_dispatch",
+            "GITHUB_SHA": "c" * 40,
+        },
+        clear=True,
+    )
+    @patch("cad_library_ci.__main__.changed_paths_from_parent")
+    def test_stable_release_metadata_dispatch_is_lightweight(self, changed):
+        changed.return_value = (
+            "CHANGELOG.md",
+            "cadlib/pyproject.toml",
+        )
+        plan, paths, full, release_only = selection(
+            Path("."),
+            PROJECT,
+            "main",
+            (),
+        )
+        self.assertEqual(plan.modules, ("release",))
+        self.assertEqual(plan.models, ())
+        self.assertTrue(plan.library)
+        self.assertIsNone(paths)
+        self.assertFalse(full)
+        self.assertTrue(release_only)
+
+    @patch.dict(
+        os.environ,
+        {
+            "GITHUB_EVENT_NAME": "workflow_dispatch",
+            "GITHUB_SHA": "d" * 40,
+        },
+        clear=True,
+    )
+    @patch("cad_library_ci.__main__.changed_paths_from_parent")
+    def test_stable_product_dispatch_remains_full(self, changed):
+        changed.return_value = ("cadlib/src/demo.py",)
+        plan, paths, full, release_only = selection(
+            Path("."),
+            PROJECT,
+            "main",
+            (),
+        )
+        self.assertIsNone(plan.modules)
+        self.assertIsNone(plan.models)
+        self.assertTrue(plan.library)
+        self.assertIsNone(paths)
+        self.assertTrue(full)
+        self.assertFalse(release_only)
+
+    @patch.dict(
+        os.environ,
+        {
+            "GITHUB_EVENT_NAME": "workflow_dispatch",
+            "GITHUB_SHA": "e" * 40,
+        },
+        clear=True,
+    )
+    @patch("cad_library_ci.__main__.changed_paths_from_parent")
+    def test_stable_merge_commit_dispatch_falls_back_to_full(self, changed):
+        changed.return_value = None
+        plan, paths, full, release_only = selection(
+            Path("."),
+            PROJECT,
+            "main",
+            (),
+        )
+        self.assertIsNone(plan.modules)
+        self.assertIsNone(plan.models)
+        self.assertTrue(plan.library)
+        self.assertIsNone(paths)
+        self.assertTrue(full)
+        self.assertFalse(release_only)
+
+    @patch.dict(
+        os.environ,
+        {
             "GITHUB_EVENT_NAME": "push",
             "GITHUB_SHA": "b" * 40,
         },

@@ -362,12 +362,12 @@ Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining 
 ## Release boundary
 
 Forge consumes the generic stable-main release boundary from
-`template.cad.library@e9fb95cd22cb574d615d0bf9a8115c30bbac7ddf`.
+`template.cad.library@7049d34bf34a4303331f3f17608eaa75febe34fc`.
 
 Product qualification and release metadata are deliberately separate. A
 product-changing stable source still receives a normal full Forge qualification
 and becomes the durable `build/main` product baseline. A later release commit
-does not rebuild the 47 unchanged model owners merely because version/changelog
+does not rebuild unchanged model owners merely because version/changelog
 metadata changed.
 
 The accepted release path is:
@@ -384,7 +384,11 @@ qualified main product source
   -> main -> dev synchronization
 ```
 
-CI records such candidates with `release_only: true`. Build publication
+CI records such candidates with `release_only: true`. Stable classification
+uses the single-parent source delta itself and is identical for a normal
+`push` or the merge-policy `workflow_dispatch` used for permanent integration
+runs. A metadata-only delta selects `release` + library and zero models; a
+merge commit or any product path remains full/fail-closed. Build publication
 validates source freshness but deliberately does not replace the prior durable
 full stable scope.
 

@@ -61,7 +61,7 @@ The historical repository is being finalized as
 
 ## Now
 
-### Next: #156, then #166 / #167 release the qualified drawing system
+### Next: #166 / #167 release the qualified development baseline
 
 The consumer-grade drawing system is fully qualified on permanent `dev`:
 
@@ -81,35 +81,10 @@ The consumer-grade drawing system is fully qualified on permanent `dev`:
   centre-line authoring command, so Forge deliberately does not fake them.
 
 Release work order:
-1. resolve #156 through the generic template fix tracked by
-   `template.cad.library#67`, then consume that correction in Forge so a
-   metadata-only release commit does not trigger another full model build;
-2. #166 promotes the exact qualified `dev -> main` product state with full
+1. #166 promotes the exact qualified `dev -> main` product state with full
    stable qualification;
-3. #167 publishes Forge v0.18.1 from that stable baseline and synchronizes
-   `main -> dev` through merge policy.
-
-### Active: #156 release-only stable push selection regression
-
-The v0.18.0 release PR itself correctly selected only the `release` module,
-the library owner and zero model owners. The subsequent metadata-only stable
-`main` push unexpectedly reran full 49-owner qualification and published a
-new full baseline instead of retaining the previous full product evidence.
-
-This did not invalidate v0.18.0: the exact release SHA received stronger
-full/library/all-owner evidence and the release validator accepted it.
-Nevertheless it violates the documented release optimization contract and must
-be corrected separately without changing v0.18.0 provenance.
-
-After #156:
-1. keep #73 as retained engine/runtime regression evidence, not a replay
-   workaround target;
-2. prioritize migrated product/API backlog (#59-#72) only when an active CAD
-   consumer or concrete design requirement needs it;
-3. keep template.cad.library #62 as the non-blocking generic optimization for
-   avoiding unnecessary full qualification on history-only synchronization;
-4. coordinate new Forge API changes with the active CAD repository rather than
-   adding speculative coverage.
+2. #167 publishes the next Forge release from that stable baseline and
+   synchronizes `main -> dev` through merge policy.
 
 CAD project work may consume Forge v0.18.0 as the stable topology-selection
 baseline.
