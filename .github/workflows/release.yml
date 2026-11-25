@@ -46,7 +46,7 @@ jobs:
         with:
           ref: ${{ steps.request.outputs.target_sha }}
           path: source
-          fetch-depth: 1
+          fetch-depth: 0
           fetch-tags: false
           persist-credentials: false
 
@@ -70,6 +70,7 @@ jobs:
         run: >-
           python -m cad_library_release
           --build-scope "${{ github.workspace }}/generated-build/main"
+          --source-root "${{ github.workspace }}/source"
           --source-sha "${{ steps.request.outputs.target_sha }}"
 
   release:
