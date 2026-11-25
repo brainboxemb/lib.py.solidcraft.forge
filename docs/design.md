@@ -160,25 +160,54 @@ Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining 
 
 ## Release boundary
 
-Forge consumes the generic library release boundary from
-`template.cad.library`.
+Forge consumes the generic stable-main release boundary from
+`template.cad.library@e9fb95cd22cb574d615d0bf9a8115c30bbac7ddf`.
 
-`modules/release` is a pure stable-evidence reader. It validates the exact
-requested `build/main` scope and never creates tags, releases or Pages output.
+Product qualification and release metadata are deliberately separate. A
+product-changing stable source still receives a normal full Forge qualification
+and becomes the durable `build/main` product baseline. A later release commit
+does not rebuild the 47 unchanged model owners merely because version/changelog
+metadata changed.
 
-`.github/workflows/release.yml` is a thin issue-comment adapter. It uses the
-released `tool.py.lib.ci v0.2.1` parser, checks the exact stable durable
-evidence through `modules/release`, and then delegates annotated-tag and GitHub
-Release publication to that released reusable workflow.
+The accepted release path is:
+
+```text
+qualified main product source
+  -> release/vX.Y.Z from main
+  -> CHANGELOG.md + cadlib/pyproject.toml:project.version only
+  -> semantic delta preflight
+  -> library + modules/release only; zero models
+  -> squash to main through /merge
+  -> release-only stable check, preserve prior build/main product evidence
+  -> /release exact-main-sha
+  -> main -> dev synchronization
+```
+
+CI records such candidates with `release_only: true`. Build publication
+validates source freshness but deliberately does not replace the prior durable
+full stable scope.
+
+`modules/release` validates that retained product scope and then validates the
+exact requested release source history. The full baseline must remain a
+library + all-owner PASS. Every first-parent stable commit between that baseline
+and the release target must be single-parent and may change only
+`CHANGELOG.md` and the `project.version` value in
+`cadlib/pyproject.toml`. Any product/source/model/dependency/build-config
+change requires a new normal full stable qualification.
+
+`.github/workflows/release.yml` checks out the exact requested source with
+history, performs this repository/template-owned evidence validation, and then
+delegates publication to released `tool.py.lib.ci v0.2.1`. The shared
+publisher still requires the requested SHA to equal current `main` HEAD.
 
 Forge-specific release metadata remains consumer-owned in
 `cadlib/release.py`: package version, dated changelog section, active
-release-blockers and `TESTED_SOLIDCRAFT_VERSION`. The validator emits release
-notes but owns no generic build, tag or GitHub Release mechanics.
+release-blockers and `TESTED_SOLIDCRAFT_VERSION`. It emits release notes but
+owns no generic build, tag or GitHub Release mechanics.
 
-The checked-in package version `0.15.0` is the immutable historical migration
-baseline. Forge NEW intentionally rejects release requests at or below that
-version. A first actual NEW release requires an explicit version bump and dated
-changelog section.
+`release/*` is a first-class temporary branch whose valid integration target
+is stable `main`; other temporary branches target `dev`. Branch cleanup uses
+the same target mapping so cleanup cannot legitimize an invalid branch
+integration.
 
 Pages and `gh-pages` are not release evidence.

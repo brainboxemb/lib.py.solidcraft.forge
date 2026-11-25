@@ -7,14 +7,21 @@ from cad_model_branch_cleanup.service import post_merge_cleanup, sweep
 CONFIG = CleanupConfig(
     stable="main",
     development="dev",
-    temporary_prefixes=("issue/", "fix/"),
+    temporary_prefixes=("issue/", "fix/", "release/"),
 )
 
 
 class FakeClient:
     def __init__(self):
         self.deleted = []
-        self._branches = ["main", "dev", "issue/1-done", "fix/2-open", "other"]
+        self._branches = [
+            "main",
+            "dev",
+            "issue/1-done",
+            "fix/2-open",
+            "release/v1.2.3",
+            "other",
+        ]
 
     def branches(self):
         return list(self._branches)
@@ -23,7 +30,11 @@ class FakeClient:
         return branch == "fix/2-open"
 
     def merged_pr_to(self, branch, base):
-        return branch in {"issue/1-done", "fix/2-open"} and base == "dev"
+        return (
+            branch in {"issue/1-done", "fix/2-open"} and base == "dev"
+        ) or (
+            branch == "release/v1.2.3" and base == "main"
+        )
 
     def delete_branch(self, branch):
         self.deleted.append(branch)
@@ -44,11 +55,25 @@ class ServiceTests(unittest.TestCase):
         )
         self.assertEqual(client.deleted, ["issue/1-done"])
 
+    def test_post_merge_deletes_release_branch_only_from_stable(self):
+        client = FakeClient()
+        self.assertTrue(
+            post_merge_cleanup(
+                client,
+                head="release/v1.2.3",
+                base="main",
+                same_repository=True,
+                merged=True,
+                config=CONFIG,
+            )
+        )
+        self.assertEqual(client.deleted, ["release/v1.2.3"])
+
     def test_sweep_keeps_permanent_open_and_unproven_branches(self):
         client = FakeClient()
         deleted = sweep(client, config=CONFIG)
-        self.assertEqual(deleted, ("issue/1-done",))
-        self.assertEqual(client.deleted, ["issue/1-done"])
+        self.assertEqual(deleted, ("issue/1-done", "release/v1.2.3"))
+        self.assertEqual(client.deleted, ["issue/1-done", "release/v1.2.3"])
 
 
 if __name__ == "__main__":

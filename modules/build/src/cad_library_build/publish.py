@@ -72,6 +72,22 @@ def _prepare_worktree(repo, branch, target):
     )
 
 
+def _preserve_release_baseline(plan, source_ref, stable_ref):
+    """Return whether release-only stable metadata must not replace build/main."""
+
+    if plan.get("release_only") is not True:
+        return False
+    if source_ref != stable_ref:
+        raise PublishError("release-only publication is valid only for stable source")
+    if plan.get("full") is True:
+        raise PublishError("release-only candidate cannot be a full build")
+    if plan.get("library") is not True:
+        raise PublishError("release-only candidate must qualify the library")
+    if plan.get("selected") not in ([], ()):
+        raise PublishError("release-only candidate must not select model owners")
+    return True
+
+
 def update_scope(target, candidate, plan):
     active, selected = set(plan["active"]), set(plan["selected"])
     if not selected <= active or not all(
@@ -123,6 +139,14 @@ def publish(repo, candidate, source_ref, source_sha):
     plan = json.loads((candidate / "build-plan.json").read_text())
     if plan.get("schema") != 2 or plan.get("source_sha") != source_sha:
         raise PublishError("candidate provenance mismatch")
+
+    if _preserve_release_baseline(
+        plan,
+        source_ref,
+        config["branches"]["stable"],
+    ):
+        _require_fresh_source(repo, source_ref, source_sha)
+        return
 
     for _ in range(3):
         _require_fresh_source(repo, source_ref, source_sha)

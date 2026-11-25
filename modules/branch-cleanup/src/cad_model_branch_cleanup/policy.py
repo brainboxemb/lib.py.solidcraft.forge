@@ -11,6 +11,14 @@ def is_temporary(branch: str, config: CleanupConfig) -> bool:
     return branch.startswith(config.temporary_prefixes)
 
 
+def merge_target(branch: str, config: CleanupConfig) -> str:
+    """Return the only permanent branch that may consume this temporary branch."""
+
+    if branch.startswith("release/"):
+        return config.stable
+    return config.development
+
+
 def eligible_post_merge(
     *,
     head: str,
@@ -22,8 +30,8 @@ def eligible_post_merge(
     return (
         merged
         and same_repository
-        and base == config.development
         and is_temporary(head, config)
+        and base == merge_target(head, config)
     )
 
 
@@ -31,11 +39,11 @@ def eligible_sweep(
     *,
     branch: str,
     has_open_pr: bool,
-    has_merged_pr_to_development: bool,
+    has_merged_pr_to_target: bool,
     config: CleanupConfig,
 ) -> bool:
     return (
         is_temporary(branch, config)
         and not has_open_pr
-        and has_merged_pr_to_development
+        and has_merged_pr_to_target
     )

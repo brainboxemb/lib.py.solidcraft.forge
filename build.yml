@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/92-release-v0.16.0
-modules: [release]
-library: true
+branch: docs/98-release-handoff
+modules: [ci]
+library: false
 models: []
 tasks: [test]

@@ -58,8 +58,12 @@ Durable working rules:
   durable evidence and must not duplicate generated CAD artifacts into
   `gh-pages`;
 - use `main` for stable integration and `dev` for normal integration;
-  squash short-lived work branches into `dev`, and promote `dev -> main`
-  with a merge commit;
+  squash normal short-lived work branches into `dev`, promote explicit
+  product stabilization `dev -> main` with a merge commit, and prepare
+  metadata-only releases on `release/vX.Y.Z` branches created from stable
+  `main` and squashed directly to `main`; after publication synchronize
+  the stable-only release commit back with `main -> dev` and never rebase
+  the shared permanent branch;
 - execute every source-branch integration by posting `/merge` on the pull
   request and letting `.github/workflows/merge-policy.yml` choose the merge
   method; never use direct merge API, auto-merge or manual merge fallback;

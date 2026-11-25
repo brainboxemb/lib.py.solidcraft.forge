@@ -72,3 +72,35 @@ def changed_paths(repo, baseline: str, target: str) -> tuple[str, ...] | None:
         for line in result.stdout.splitlines()
         if line.strip()
     )
+
+
+def changed_paths_from_parent(repo, target: str) -> tuple[str, ...] | None:
+    """Return one single-parent commit delta, or None for merge/root commits."""
+
+    result = subprocess.run(
+        ["git", "-C", str(repo), "rev-list", "--parents", "-n", "1", target],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    parts = result.stdout.strip().split()
+    if len(parts) != 2:
+        return None
+    return changed_paths(repo, parts[1], target)
+
+
+def changed_paths_from_base(repo, base_ref: str, target: str = "HEAD") -> tuple[str, ...] | None:
+    """Return the PR delta from the remote base branch to target."""
+
+    result = subprocess.run(
+        ["git", "-C", str(repo), "merge-base", target, f"origin/{base_ref}"],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        return None
+    baseline = result.stdout.strip()
+    if not baseline:
+        return None
+    return changed_paths(repo, baseline, target)

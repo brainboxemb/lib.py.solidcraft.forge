@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from .config import CleanupConfig
-from .policy import eligible_post_merge, eligible_sweep
+from .policy import eligible_post_merge, eligible_sweep, merge_target
 
 
 def post_merge_cleanup(
@@ -33,8 +33,8 @@ def sweep(client, *, config: CleanupConfig) -> tuple[str, ...]:
         if eligible_sweep(
             branch=branch,
             has_open_pr=client.open_pr_exists(branch),
-            has_merged_pr_to_development=client.merged_pr_to(
-                branch, config.development
+            has_merged_pr_to_target=client.merged_pr_to(
+                branch, merge_target(branch, config)
             ),
             config=config,
         ):
