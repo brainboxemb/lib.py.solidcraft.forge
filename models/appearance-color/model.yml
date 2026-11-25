@@ -1,0 +1,15 @@
+schema: 1
+purpose: verification
+section: fundamentals
+priority: 66
+title: Display Appearance Color
+tagline: One body with a native display-only color assignment
+description: >
+  Qualifies Shape.with_appearance() against native SolidCraft appearance
+  storage without creating physical material or BOM semantics.
+parameters: 40 × 30 × 10 mm box; display color #FFD21A
+stages:
+  - Create one box body
+  - Assign #FFD21A with Shape.with_appearance()
+  - Lower to native appearance.assign
+  - Inspect the active SolidCraft appearance chain after replay
