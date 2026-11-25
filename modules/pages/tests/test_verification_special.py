@@ -36,6 +36,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
             (joint / 'body.html').write_text(
                 '<main><section class="hero"><h1>Old title</h1></section>'
                 '<section class="panel"><h2>Concept</h2><p>Body.</p>'
+                '<p>Qualified with SolidCraft $solidcraft_version.</p>'
                 '<div class="concept-steps">\n'
                 '    <div><strong>4 brackets</strong><br>One bracket.</div>\n'
                 '</div>'
