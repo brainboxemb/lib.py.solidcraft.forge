@@ -880,10 +880,10 @@ def _compile_assembly_with_dependencies(value, name):
             view=assembly.exploded_display,
         ))
 
-    # Drawings are final design presentation state. SolidCraft owns the paper
-    # template, standard-view placement and fitted scale. Forge only selects
-    # which native component the sheet documents and which occurrence subtree
-    # the standard views show.
+    # Drawings are final design presentation state. SolidCraft owns the
+    # actual paper, views, dimensions, notes and title block. Forge lowers
+    # consumer-authored intent to native drawing commands and keeps every
+    # drawing/view identity replay-bound.
     for drawing_number, drawing in enumerate(assembly.drawings, start=1):
         target = drawing_targets[drawing.target_occurrence_id]
         component_ref = component_refs[target.definition.key]
@@ -893,6 +893,8 @@ def _compile_assembly_with_dependencies(value, name):
         sheet_ref = f"$drawing_{drawing_number}_sheet"
         orientation_ref = f"$drawing_{drawing_number}_orientation"
         front_ref = f"$drawing_{drawing_number}_front"
+        top_ref = f"$drawing_{drawing_number}_top"
+        right_ref = f"$drawing_{drawing_number}_right"
         iso_ref = f"$drawing_{drawing_number}_iso"
 
         create = _command(
@@ -916,15 +918,17 @@ def _compile_assembly_with_dependencies(value, name):
         }
         commands.append(create)
 
-        commands.append(_command(
-            "drawing.sheet.set",
-            sheet=sheet_ref,
-            orientation="landscape",
-            documents={
+        sheet_params = {
+            "sheet": sheet_ref,
+            "orientation": "landscape",
+            "documents": {
                 "source": source_ref,
                 "component": component_ref,
             },
-        ))
+        }
+        if drawing.title_block:
+            sheet_params["title_block_overrides"] = dict(drawing.title_block)
+        commands.append(_command("drawing.sheet.set", **sheet_params))
 
         inspect = _command("drawing.inspect")
         inspect["bind"] = {
@@ -936,13 +940,42 @@ def _compile_assembly_with_dependencies(value, name):
         }
         commands.append(inspect)
 
-        standard = _command(
-            "drawing.view.standard",
-            sheet=sheet_ref,
-            iso=True,
-        )
+        if drawing.properties:
+            commands.append(_command(
+                "drawing.properties.set",
+                values=dict(drawing.properties),
+            ))
+
+        if drawing.revision is not None:
+            revision = {
+                key: value
+                for key, value in {
+                    "revision": drawing.revision.revision,
+                    "description": drawing.revision.description,
+                    "designer": drawing.revision.designer,
+                    "checker": drawing.revision.checker,
+                    "date": drawing.revision.date,
+                    "hidden": drawing.revision.hidden,
+                }.items()
+                if value is not None
+            }
+            commands.append(_command(
+                "drawing.revision.add",
+                set=revision,
+            ))
+
+        standard_params = {
+            "sheet": sheet_ref,
+            "iso": True,
+            "gap_mm": drawing.gap_mm,
+        }
+        if drawing.scale is not None:
+            standard_params["scale"] = drawing.scale
+        standard = _command("drawing.view.standard", **standard_params)
         standard["bind"] = {
             front_ref: "view",
+            top_ref: "top",
+            right_ref: "right",
             iso_ref: "iso",
         }
         commands.append(standard)
@@ -960,6 +993,91 @@ def _compile_assembly_with_dependencies(value, name):
             view=iso_ref,
             set={"source": selected_source},
         ))
+
+        view_refs = {
+            "front": front_ref,
+            "top": top_ref,
+            "right": right_ref,
+            "iso": iso_ref,
+        }
+        for view_name, view in drawing.views:
+            settings = {}
+            if view.at is not None:
+                settings["place"] = {"at": list(view.at)}
+            if view.scale is not None:
+                settings["scale"] = view.scale
+                if view_name in {"top", "right"}:
+                    settings["linked"] = False
+            if settings:
+                commands.append(_command(
+                    "drawing.view.edit",
+                    view=view_refs[view_name],
+                    set=settings,
+                ))
+
+        def drawing_pick(point):
+            return {
+                "point": list(point),
+                "path": [occurrence_ref],
+            }
+
+        for dimension_number, dimension in enumerate(
+            drawing.dimensions,
+            start=1,
+        ):
+            if dimension.kind in {"linear", "faces"}:
+                payload = {
+                    "a": drawing_pick(dimension.a),
+                    "b": drawing_pick(dimension.b),
+                    "direction": dimension.direction,
+                }
+                kind = {dimension.kind: payload}
+            else:
+                radial = {
+                    "edge": drawing_pick(dimension.edge),
+                }
+                if dimension.diameter is not None:
+                    radial["diameter"] = dimension.diameter
+                kind = {"radial": radial}
+
+            params = {
+                "view": view_refs[dimension.view],
+                "kind": kind,
+                "decimals": dimension.decimals,
+            }
+            if dimension.line_through_mm is not None:
+                params["line_through_mm"] = list(
+                    dimension.line_through_mm
+                )
+            else:
+                params["offset_mm"] = dimension.offset_mm
+            if dimension.override_text is not None:
+                params["override_text"] = dimension.override_text
+
+            command = _command("drawing.dimension.add", **params)
+            command["bind"] = {
+                f"$drawing_{drawing_number}_dimension_{dimension_number}":
+                    "dimension",
+            }
+            commands.append(command)
+
+        for note_number, note in enumerate(drawing.notes, start=1):
+            command = _command(
+                "drawing.note.add",
+                anchor={"sheet": sheet_ref},
+                at=list(note.at),
+                content=note.content,
+                cap_mm=note.cap_mm,
+                align=note.align,
+            )
+            command["bind"] = {
+                f"$drawing_{drawing_number}_note_{note_number}": "note",
+            }
+            commands.append(command)
+
+        # Capture the fully-authored sheet after dimensions and notes. The
+        # builder publishes this exact native result as durable drawing evidence.
+        commands.append(_command("drawing.inspect"))
         commands.append(_command("drawing.close"))
 
     if not commands:
@@ -967,8 +1085,30 @@ def _compile_assembly_with_dependencies(value, name):
     dependencies = _native_dependencies(commands)
     document = _plain_command_value(replay_document(commands))
     if assembly.drawings:
-        document["artifacts"] = {
-            "drawings": [
+        drawing_artifacts = []
+        for index, drawing in enumerate(assembly.drawings, start=1):
+            expected = {
+                "orientation": "landscape",
+                "view_count": 4,
+                "dimension_count": len(drawing.dimensions),
+                "note_count": len(drawing.notes),
+                "properties": dict(drawing.properties),
+                "title_block": dict(drawing.title_block),
+            }
+            if drawing.revision is not None:
+                expected["revision"] = {
+                    key: value
+                    for key, value in {
+                        "revision": drawing.revision.revision,
+                        "description": drawing.revision.description,
+                        "designer": drawing.revision.designer,
+                        "checker": drawing.revision.checker,
+                        "date": drawing.revision.date,
+                        "hidden": drawing.revision.hidden,
+                    }.items()
+                    if value is not None
+                }
+            drawing_artifacts.append(
                 {
                     "name": drawing.name,
                     "drawing": f"$drawing_{index}",
@@ -976,10 +1116,11 @@ def _compile_assembly_with_dependencies(value, name):
                     "orientation": f"$drawing_{index}_orientation",
                     "pdf": drawing.pdf_path,
                     "png": drawing.pdf_path.removesuffix(".pdf") + ".png",
+                    "inspect": drawing.pdf_path.removesuffix(".pdf") + ".json",
+                    "expected": expected,
                 }
-                for index, drawing in enumerate(assembly.drawings, start=1)
-            ],
-        }
+            )
+        document["artifacts"] = {"drawings": drawing_artifacts}
     return document, dependencies
 
 
