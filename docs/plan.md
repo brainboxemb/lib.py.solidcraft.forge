@@ -59,21 +59,6 @@ The historical repository is being finalized as
 
 ## Now
 
-### #128 — generated Forge homepage recovery
-
-Consume the accepted `template.cad.library#63` homepage-generation boundary
-before further Forge Pages work:
-
-- move Forge homepage copy, ordered sections and destinations into
-  `site/home.yml`;
-- resolve dynamic Forge version metadata during Pages preparation;
-- keep Forge-specific Hugo styling while removing product content from
-  `home.html`;
-- make the SolidCraft model website a first-class generated start destination;
-- remove the obsolete duplicate Hugo config URL and the ineffective Markdown
-  body workaround;
-- qualify rendered desktop/mobile layout and the canonical external model URL.
-
 The release/CI correction and the Forge Pages quality phase are complete on
 stable `main`.
 
