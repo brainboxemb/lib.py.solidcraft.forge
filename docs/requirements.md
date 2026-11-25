@@ -37,6 +37,25 @@
 4. Native qualification must prove that changing a driving parameter in a saved
    SolidCraft design rebuilds the fold successfully.
 
+## Native component drawings
+
+1. A technical drawing is final design presentation state; it must not become part
+   of a reusable component definition or be duplicated implicitly by
+   `.copy()`.
+2. `ModelInstance.with_drawing(...)` may create a one-component design drawing;
+   `Assembly.with_drawing(target, ...)` selects one occurrence already owned by
+   the completed Assembly.
+3. Forge must use SolidCraft's native drawing, sheet and view commands and must
+   not implement paper layout, projected-view placement or fitted-scale logic.
+4. Drawing lowering must address components, occurrences, sheets, sources and
+   views through replay-bound SolidCraft result ids; browser names and predicted
+   ids are forbidden.
+5. The initial drawing slice uses a native part template with standard
+   front/top/right/isometric views and leaves dimensions, balloons, parts lists
+   and annotation authoring to later demonstrated requirements.
+6. Native qualification must execute the drawing commands against the pinned
+   tested SolidCraft runtime, not only compare generated JSON.
+
 ## SolidCraft reference evidence
 
 1. Every tested SolidCraft version must have one canonical command-registry
