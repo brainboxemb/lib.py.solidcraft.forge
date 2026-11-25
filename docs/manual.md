@@ -76,3 +76,20 @@ For every expansion slice:
 4. compare native/saved-design semantics where the old case claims them;
 5. retain both results long enough to diagnose drift;
 6. only then expand the selected owner set.
+
+
+## Releases
+
+Product changes are stabilized separately through a full `dev -> main`
+promotion. A `release/vX.Y.Z` branch starts from qualified stable `main` and
+may change only `CHANGELOG.md` plus the package version in
+`cadlib/pyproject.toml`.
+
+After that release branch is squashed to `main`, merge policy starts the
+permanent stable build through `workflow_dispatch`. Forge classifies that
+dispatch from the release commit's **single-parent source delta**, exactly as it
+does for a normal stable push. A metadata-only release commit therefore runs
+`release` + library, selects zero models and records
+`release_only: true`; build publication preserves the previous full
+`build/main` product evidence. Product-changing commits and merge commits
+remain full/fail-closed.
