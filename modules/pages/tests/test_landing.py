@@ -3,6 +3,7 @@ from tempfile import TemporaryDirectory
 import json
 import unittest
 
+from cad_library_pages.homepage import homepage_manifest
 from cad_library_pages.landing import (
     landing_metadata,
     prepare_landing,
@@ -25,41 +26,52 @@ class LandingTests(unittest.TestCase):
             )
 
             self.assertEqual(tested_solidcraft_version(root), "9.8.7")
-            self.assertEqual(
-                landing_metadata(root),
-                {
-                    "package_version": "1.2.3",
-                    "tested_solidcraft_version": "9.8.7",
-                },
-            )
+            expected = {
+                "package_version": "1.2.3",
+                "tested_solidcraft_version": "9.8.7",
+            }
+            self.assertEqual(landing_metadata(root), expected)
 
             site = root / "site"
-            prepare_landing(root, site)
+            self.assertEqual(prepare_landing(root, site), expected)
             self.assertEqual(
                 json.loads((site / "data/forge.json").read_text(encoding="utf-8")),
-                {
-                    "package_version": "1.2.3",
-                    "tested_solidcraft_version": "9.8.7",
-                },
+                expected,
             )
 
-    def test_landing_template_explains_forge_before_site_navigation(self):
+    def test_homepage_content_is_generated_not_hardcoded_in_layout(self):
         root = Path(__file__).resolve().parents[3]
-        source = (root / "site/layouts/home.html").read_text(encoding="utf-8")
+        metadata = landing_metadata(root)
+        manifest = homepage_manifest(root, context=metadata)
+        rendered_source = json.dumps(manifest)
+
         for marker in (
             "Python API/compiler for SolidCraft",
             "SCPF model",
             "Forge compiler",
-            "SolidCraft commands",
-            "SolidCraft remains the CAD engine",
-            "Tested with SolidCraft",
+            "SolidCraft",
             "Start with the Guide",
             "API Reference",
             "Cheatsheet",
             "Examples",
             "Verification",
+            "SolidCraft models",
+            "https://brainboxemb.github.io/2026-011-02.cad.solidcraft/",
+            f"SCPF {metadata['package_version']}",
+            f"Tested with SolidCraft {metadata['tested_solidcraft_version']}",
         ):
-            self.assertIn(marker, source)
+            self.assertIn(marker, rendered_source)
+
+        layout = (root / "site/layouts/home.html").read_text(encoding="utf-8")
+        self.assertIn("site.Data.home", layout)
+        self.assertIn("data-generated-homepage", layout)
+        for product_copy in (
+            "Start with the Guide",
+            "API Reference",
+            "SolidCraft models",
+            "Python API/compiler for SolidCraft",
+        ):
+            self.assertNotIn(product_copy, layout)
 
 
 if __name__ == "__main__":
