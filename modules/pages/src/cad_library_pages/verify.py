@@ -45,6 +45,69 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
         if warning_marker not in html:
             raise RuntimeError(f"missing Forge development warning for {route or '/'}")
 
+    sections_path = source_root / "docs/verification/sections.yml"
+    sections_data = yaml.safe_load(sections_path.read_text(encoding="utf-8")) or {}
+    section_defs = sections_data.get("sections", {})
+    verification_models = {}
+    for model in sorted((source_root / "models").rglob("model.yml")):
+        if not (model.parent / "ci.yml").is_file():
+            continue
+        meta = yaml.safe_load(model.read_text()) or {}
+        purposes = meta.get("purpose", [])
+        if isinstance(purposes, str):
+            purposes = [purposes]
+        if "verification" not in purposes:
+            continue
+        ci = yaml.safe_load((model.parent / "ci.yml").read_text()) or {}
+        verification_models.setdefault(meta.get("section"), []).append(
+            (meta.get("priority", 100), ci["id"], str(meta.get("title", ci["id"])))
+        )
+
+    verification_html = read("verification")
+    if "data-verification-catalog-layout" not in verification_html:
+        raise RuntimeError("verification custom catalogue layout was not selected")
+    section_rows = sorted(
+        section_defs.items(),
+        key=lambda item: (item[1]["priority"], item[0]),
+    )
+    section_positions = []
+    for section_id, _definition in section_rows:
+        models = sorted(verification_models.get(section_id, []))
+        if not models:
+            continue
+        marker = re.search(
+            rf'data-verification-section=(?:"{re.escape(section_id)}"|{re.escape(section_id)})(?=[\s>])',
+            verification_html,
+        )
+        if marker is None:
+            discovered = [
+                next(value for value in match.groups() if value is not None)
+                for match in re.finditer(
+                    r'data-verification-section=(?:"([^"]+)"|([^\s>]+))',
+                    verification_html,
+                )
+            ]
+            raise RuntimeError(
+                f"verification section missing: {section_id}; "
+                f"discovered={discovered}; "
+                f"catalog_shell={'cad-page-shell cad-catalog-page' in verification_html}"
+            )
+        position = marker.start()
+        section_positions.append(position)
+        next_marker = re.search(
+            r'data-verification-section=',
+            verification_html[marker.end():],
+        )
+        end = marker.end() + next_marker.start() if next_marker else None
+        section_html = verification_html[position:end]
+        model_positions = [section_html.find(title) for _priority, _item, title in models]
+        if -1 in model_positions or model_positions != sorted(model_positions):
+            raise RuntimeError(
+                f"verification model ordering is incorrect in section {section_id}"
+            )
+    if section_positions != sorted(section_positions):
+        raise RuntimeError("verification section ordering is incorrect")
+
     for route in (
         "guide",
         "reference",

@@ -15,6 +15,20 @@ class ModelPagesTests(unittest.TestCase):
             (config / "hugo.toml").write_text(
                 '[params]\ncadSourceRepository = "owner/repo"\n'
             )
+            sections = root / "docs/verification"
+            sections.mkdir(parents=True)
+            (sections / "sections.yml").write_text(
+                "schema: 1\n"
+                "sections:\n"
+                "  later:\n"
+                "    priority: 20\n"
+                "    label: 2 · Later\n"
+                "    description: Later cases.\n"
+                "  fundamentals:\n"
+                "    priority: 10\n"
+                "    label: 1 · Basic geometry\n"
+                "    description: Primitive geometry.\n"
+            )
             for item, purpose in (
                 ("box", "[example, verification]"),
                 ("fixture", "[verification]"),
@@ -23,6 +37,7 @@ class ModelPagesTests(unittest.TestCase):
                 owner.mkdir(parents=True)
                 (owner / "model.yml").write_text(
                     f"title: {item}\npurpose: {purpose}\n"
+                    "section: fundamentals\npriority: 20\n"
                 )
                 (owner / "ci.yml").write_text(
                     f"id: {item}\nprimary: cadquery\nimplementations:\n  - id: cadquery\n    source: model.py\n"
@@ -75,6 +90,7 @@ class ModelPagesTests(unittest.TestCase):
             page = site / "content/examples/box/index.md"
             content = page.read_text()
             self.assertIn("test-sha", content)
+            self.assertNotIn('"verificationsection"', content)
             self.assertNotIn("build/dev/models/box/model.png", content)
             self.assertIn("value = 42", content)
             self.assertIn("model.py", content)
@@ -98,9 +114,67 @@ class ModelPagesTests(unittest.TestCase):
             self.assertFalse((site / "static/models/box/model.stl").exists())
             self.assertFalse((site / "content/examples/fixture").exists())
             self.assertTrue((site / "content/verification/fixture/index.md").is_file())
-            self.assertTrue((site / "content/verification/box/index.md").is_file())
+            verification_box = site / "content/verification/box/index.md"
+            self.assertTrue(verification_box.is_file())
+            self.assertIn('"verificationsection": "fundamentals"', verification_box.read_text())
+            catalog = json.loads(
+                (site / "assets/cad/verification_sections.json").read_text()
+            )
+            self.assertEqual(
+                catalog["sections"],
+                [
+                    {
+                        "id": "fundamentals",
+                        "priority": 10,
+                        "label": "1 · Basic geometry",
+                        "description": "Primitive geometry.",
+                        "models": [
+                            {"id": "box", "priority": 20, "title": "box"},
+                            {"id": "fixture", "priority": 20, "title": "fixture"},
+                        ],
+                    },
+                    {
+                        "id": "later",
+                        "priority": 20,
+                        "label": "2 · Later",
+                        "description": "Later cases.",
+                        "models": [],
+                    },
+                ],
+            )
             self.assertIn('"/models/box/"', content)
             self.assertEqual(list(site.rglob("*.stl")), [])
+
+    def test_unknown_verification_section_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = root / "site/config/_default"
+            config.mkdir(parents=True)
+            (config / "hugo.toml").write_text(
+                '[params]\ncadSourceRepository = "owner/repo"\n'
+            )
+            sections = root / "docs/verification"
+            sections.mkdir(parents=True)
+            (sections / "sections.yml").write_text(
+                "schema: 1\nsections:\n"
+                "  fundamentals:\n"
+                "    priority: 10\n"
+                "    label: Basic\n"
+                "    description: Basic cases.\n"
+            )
+            owner = root / "models/box"
+            owner.mkdir(parents=True)
+            (owner / "model.yml").write_text(
+                "title: box\npurpose: verification\nsection: missing\n"
+            )
+            (owner / "ci.yml").write_text(
+                "id: box\nprimary: cadquery\nimplementations:\n"
+                "  - id: cadquery\n    source: model.py\n"
+            )
+            (owner / "model.py").write_text("value = 42\n")
+
+            with self.assertRaisesRegex(ValueError, "unknown verification section"):
+                prepare_models(root, root / "staged-site", None)
 
 
 if __name__ == "__main__":
