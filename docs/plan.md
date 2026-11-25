@@ -1,10 +1,10 @@
-# Forge NEW plan
+# Forge plan
 
 This file contains unfinished work only.
 
 ## Accepted baseline
 
-The Forge migration is complete and promoted to stable `main`.
+The canonical migrated Forge baseline is accepted on `dev`; #93 owns its first stable release promotion.
 
 The accepted baseline now has:
 - 47 physical model owners;
@@ -43,50 +43,43 @@ The accepted baseline now has:
   section, active blockers and the tested SolidCraft version;
 - explicit owner-issued `/release` publication delegated to released
   `tool.py.lib.ci v0.2.1`, with Pages excluded from release evidence;
-- a hard migration boundary that rejects `0.15.0` and older as Forge NEW
-  releases; no Forge NEW tag or GitHub Release has been published.
+- a hard migration boundary that rejects the historical `0.15.0` baseline
+  and older versions from publication in the rebuilt canonical repository.
 
 The historical repository is being finalized as
 `brainboxemb/lib.py.solidcraft.forge.OLD`, an archived A/B/provenance reference.
 
 ## Now
 
-The API/runtime migration baseline is accepted on `dev`:
+Repository canonicalization #89 is complete. Current work is #93, the first
+canonical Forge release: **v0.16.0**.
 
-- #74 associative native Sketch-line folds are accepted;
-- SolidCraft runtime v0.3.6 / SolidCraft 0.49.0 is immutable and accepted;
-- #83 restored canonical SolidCraft reference capture/runtime verification;
-- #85 permanent v0.3.6/0.49 adoption is accepted with full 47-owner evidence.
-
-Current work is #89 repository canonicalization.
-
-1. Execute the GitHub repository settings swap:
-   - historical `brainboxemb/lib.py.solidcraft.forge` ->
-     `brainboxemb/lib.py.solidcraft.forge.OLD`;
-   - archive the historical `.OLD` repository;
-   - current `brainboxemb/lib.py.solidcraft.forge.NEW` ->
-     canonical `brainboxemb/lib.py.solidcraft.forge`.
-2. After the settings swap, finish and merge the #89 identity audit:
-   - canonical README/handoff/source identity;
-   - canonical Hugo Pages base URL/source repository;
-   - historical parity source renamed to `.OLD`;
-   - verify branch refs, merge policy, release path and Pages from the canonical
-     repository.
-3. Reconcile this plan after #89, then prepare the first migrated Forge release:
-   - promote the accepted `dev` baseline to stable `main` with the required
-     merge commit;
-   - bump package version above historical 0.15.0;
-   - add the required dated changelog section;
-   - require exact full stable `build/main` evidence;
-   - publish only through `/release vX.Y.Z <exact-main-sha>`.
-4. Update the active CAD project to the new canonical Forge release:
+1. Qualify the release-ready `dev` source:
+   - package version `0.16.0`;
+   - dated `CHANGELOG.md` section for 2026-11-25;
+   - tested SolidCraft 0.49.0 / immutable runtime v0.3.6;
+   - no active foundational release blockers;
+   - full library/module/47-owner PR qualification.
+2. Merge the release-ready source to `dev` through `/merge` and require the
+   matching permanent `build/dev` evidence.
+3. Open exact `dev -> main` promotion and integrate only through `/merge`;
+   merge-policy must preserve the required stable merge commit.
+4. Require exact stable `build/main` evidence:
+   - schema 2;
+   - source SHA equals stable main head;
+   - `full:true`;
+   - `library:true`;
+   - all 47 active owners selected and passing.
+5. Publish only from #93 with
+   `/release v0.16.0 <exact-main-sha>`, then verify the annotated tag and
+   GitHub Release.
+6. After v0.16.0 is published, update the active CAD project to the canonical
+   release:
    - replace the four Mounting Rail fixed fold lines with the accepted #74
      `Sketch.line(...)` path;
    - verify native post-generation length edits remain associative;
-   - requalify Mounting Rail M8 and Simple MFT against the immutable
-     Forge/runtime pair.
-5. Return to Pages as a dedicated quality phase only after the canonical release
-   and downstream adoption:
+   - requalify Mounting Rail M8 and Simple MFT.
+7. Return to Pages as a dedicated quality phase after downstream adoption:
    - restore the global development warning (#57);
    - rewrite the landing page around Forge/SCPF itself (#58);
    - visually/content-audit landing, Guide, API Reference, Cheatsheet, Examples
