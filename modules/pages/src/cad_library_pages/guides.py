@@ -151,7 +151,7 @@ def prepare_guides(source_root: Path, site: Path) -> None:
         "title: Guide",
         "---",
         "",
-        "The authored SCPF guide, migrated from the historical Forge documentation.",
+        "The SCPF Guide explains the public Forge modelling workflow, core API concepts and native SolidCraft-oriented authoring patterns.",
         "",
     ]
 
