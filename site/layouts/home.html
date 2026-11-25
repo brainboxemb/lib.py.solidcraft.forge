@@ -11,7 +11,7 @@
         <p class="cad-hero-lead">{{ $block.lead }}</p>
         {{ with $block.badges }}
           {{ if gt (len .) 0 }}
-            <div class="cad-badges">
+            <div class="cad-forge-meta">
               {{ range . }}<span>{{ . }}</span>{{ end }}
             </div>
           {{ end }}
@@ -35,10 +35,11 @@
           <h2>{{ $block.title }}</h2>
           <p>{{ $block.description }}</p>
         </div>
-        <div class="cad-home-flow">
+        <div class="cad-forge-flow">
           {{ range $index, $step := $block.steps }}
-            <div class="cad-home-flow-step">
-              <span class="cad-home-flow-number">{{ add $index 1 }}</span>
+            {{ if gt $index 0 }}<div class="cad-forge-flow-arrow" aria-hidden="true">→</div>{{ end }}
+            <div class="cad-forge-flow-step">
+              <span class="cad-forge-flow-number">{{ add $index 1 }}</span>
               <h3>{{ $step.title }}</h3>
               <p>{{ $step.description }}</p>
             </div>
@@ -51,12 +52,12 @@
           <h2>{{ $block.title }}</h2>
           <p>{{ $block.description }}</p>
         </div>
-        <div class="cad-home-link-grid">
+        <div class="cad-forge-start-grid">
           {{ range $item := $block.items }}
             {{ $href := $item.url }}
             {{ if $item.route }}{{ $href = ($item.route | relURL) }}{{ end }}
-            <a class="cad-home-link-card" href="{{ $href }}"{{ if $item.external }} target="_blank" rel="noopener noreferrer"{{ end }}>
-              {{ with $item.kicker }}<span class="cad-home-link-kicker">{{ . }}</span>{{ end }}
+            <a class="cad-forge-start-card" href="{{ $href }}"{{ if $item.external }} target="_blank" rel="noopener noreferrer"{{ end }}>
+              {{ with $item.kicker }}<span class="cad-forge-start-kicker">{{ . }}</span>{{ end }}
               <strong>{{ $item.label }}</strong>
               <span>{{ $item.description }}</span>
             </a>
