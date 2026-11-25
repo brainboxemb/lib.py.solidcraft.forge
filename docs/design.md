@@ -67,6 +67,37 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Native component drawing boundary
+
+Component drawings are Assembly-owned presentation state. A component
+definition remains geometry/feature intent and does not own a drawing, because
+one definition may have many physical occurrences.
+
+Forge lowers `with_drawing()` to native `drawing.create`,
+`drawing.sheet.set`, `drawing.view.standard`, component-filtering
+`drawing.view.edit` calls and `drawing.close`. SolidCraft owns the part
+template, standard front/top/right/isometric layout and fitted scale. A4 is the
+Forge default; A3 remains an explicit native template choice for larger or more
+complex parts.
+
+All component, occurrence, drawing, drawing-source, sheet and view identities
+come from replay-bound SolidCraft command results. Forge never predicts browser
+names or native ids.
+
+The replay document may also declare a drawing PDF artifact by its safe
+implementation-relative path, for example
+`drawings/Block-drawing.pdf`. `builder-scpf` owns the actual build path:
+after the native model replay succeeds it reopens `model.sc`, opens the
+replay-bound drawing and calls SolidCraft `drawing.export` with
+`format="pdf"`. The PDF is therefore a native vector drawing artifact, not a
+screenshot and not a Python-rendered document.
+
+For a component selected from a larger Assembly, SolidCraft currently computes
+the standard view group's fitted scale before Forge narrows the base views to
+that occurrence subtree. Projected top/right views inherit the main view
+source. The result remains native and safe, but the scale can be conservative
+for a small component inside a much larger Assembly.
+
 ## SolidCraft command-reference boundary
 
 The canonical SolidCraft command registry is a Forge-owned engineering
@@ -103,6 +134,8 @@ build/<scope>/models/<owner>/
   source.json
   model.stl
   model.png
+  drawings/
+    <drawing>.pdf
   scpf/
   cadquery/
   build123d/
@@ -128,6 +161,19 @@ The schema-2 `build-plan.json` also records whether the independent `cadlib` own
 The two routes are presentation views over the same owner and durable `build/<scope>/models/<id>/` evidence. They are not separate model owners and do not duplicate CAD artifacts into `gh-pages`.
 
 The reusable Hextra model presentation is consumed from the accepted `template.cad.library` design: expected setup, featured native/primary result, primary source and generated commands, independent reference source/result pairs, image/check overviews and raw verification evidence.
+
+The Forge homepage follows the generated homepage contract established by
+`template.cad.library#63`. Repository-owned `site/home.yml` declares the
+ordered hero, flow, navigation and catalogue blocks. Pages validates that
+source with `homepage.py`, resolves Forge-owned generated values from
+`landing_metadata()`, and writes temporary `data/home.json`. Hugo then
+renders that manifest with the Forge-specific presentation classes in
+`site/layouts/home.html`. The layout owns structure and styling only; Forge
+copy, routes and external destinations are not hardcoded there. The SolidCraft
+model website is therefore one normal generated navigation destination rather
+than a template exception.
+
+Verification keeps its Forge-owned presentation taxonomy in `docs/verification/sections.yml`. During Pages preparation that declaration is validated, sorted by section priority and projected into a temporary Hugo resource catalogue. Every owner projected to Verification must name one known section through `model.yml.section`; the Verification list renders those sections in declared order and sorts the model cards inside each section by model priority. This is presentation metadata only and does not create additional model owners or CAD build scopes.
 
 Forge-specific documentation is projected separately:
 

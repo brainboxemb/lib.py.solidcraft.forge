@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/117-pages-stable-promotion
-modules: [pages]
-library: false
-models: []
+branch: issue/141-reconcile-a4-drawing-pdf
+modules: [builder-scpf, ci, pages]
+library: true
+models: [components]
 tasks: [test]

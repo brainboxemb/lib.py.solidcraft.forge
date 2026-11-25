@@ -49,59 +49,50 @@ The accepted baseline now has:
   releases;
 - canonical post-migration release `v0.16.0`, published from stable main
   `021dc78a32d99d31f16a76efc9d036855114df0c` after exact full build/main
-  qualification.
+  qualification;
+- stable Pages quality phase promoted to main
+  `b091449dab32e75ef3c4f22ca0679d21f21beedf`, with full 47-owner evidence
+  and canonical stable Pages deployment.
 
 The historical repository is being finalized as
 `brainboxemb/lib.py.solidcraft.forge.OLD`, an archived A/B/provenance reference.
 
 ## Now
 
-The Forge Pages quality phase is accepted on development and ready for stable
-promotion.
+The release/CI correction and the Forge Pages quality phase are complete on
+stable `main`.
 
-Accepted development source:
-- `53c368f1668077b326dec4cb47b18c7ad6570f55`;
-- permanent dev CI `45621976335`: PASS.
+Accepted stable state:
 
-Accepted Pages set:
-- #57 global development warning;
-- #58 Forge/SCPF product landing;
-- #106 canonical API Reference landing wording;
-- #107 source-owned Joint anatomy SolidCraft version;
-- #109 canonical Guide landing wording;
-- #68 CadCraft source/link removal with SVG/DXF retained;
-- #112 complete public callable Use when / Limits guidance;
-- #113 user-facing Examples and Verification landing copy.
+- release branches start from stable `main`, allow only release metadata and
+  reuse retained full product evidence only across validated release-only
+  history;
+- Forge v0.16.0 remains the current canonical package release;
+- stable Pages source:
+  `b091449dab32e75ef3c4f22ca0679d21f21beedf`;
+- permanent stable build `45623785680`: PASS;
+- durable stable evidence: `full: true`, `library: true`, 47/47 owners;
+- Pages assembly/publication `45624236854`: PASS;
+- GitHub Pages deployment `45624348968`: PASS;
+- the stable public site includes the accepted #57/#58/#68/#106/#107/#109/
+  #112/#113 content and presentation fixes.
 
-Final audit at that baseline found no remaining independent Pages defect in the
-reviewed categories:
-- no stale NEW product identity;
-- no hardcoded current 0.48.1 in the public Pages generators/landings;
-- no CadCraft files/references;
-- no owner-internal copy on the two catalogue landings;
-- all public callables have non-empty Use when + Limits;
-- rendered capture/verifier covers Guide, API Reference, Cheatsheet, Examples,
-  Verification, Coverage, Results and Joint anatomy.
+No release blocker remains from the completed stabilization phase.
 
-Current task is #117: promote that accepted Pages set to stable `main`.
+Forge work should now return to demonstrated consumer value rather than
+continuing a broad migration/site-cleanup stream:
 
-1. Merge `main -> dev` through `/merge` as history-only synchronization;
-   current comparison has zero file changes.
-2. Require permanent green dev evidence after the sync.
-3. Open `dev -> main` and require full product qualification plus Pages
-   desktop/mobile evidence.
-4. Merge through `/merge` so stable receives the normal promotion merge
-   commit.
-5. Require permanent full `build/main` evidence and successful Pages
-   publication.
-6. Verify the canonical public root now contains the accepted Pages set.
+1. keep #73 as retained engine/runtime regression evidence, not a replay
+   workaround target;
+2. prioritize migrated product/API backlog (#59-#72) only when an active CAD
+   consumer or concrete design requirement needs it;
+3. keep template.cad.library #62 as the non-blocking generic optimization for
+   avoiding full model qualification on history-only `main -> dev` syncs;
+4. coordinate new Forge API changes with the active CAD repository rather than
+   adding speculative coverage.
 
-CAD project work continues independently and is not a prerequisite for this
-stabilization.
-
-#73 remains retained engine/runtime regression evidence rather than a Forge
-replay-workaround target. Other migrated Forge backlog stays Later unless active
-consumer work exposes a concrete blocker.
+CAD project work continues independently and may now consume the stable Forge
+and release-flow baseline.
 
 ## Later
 

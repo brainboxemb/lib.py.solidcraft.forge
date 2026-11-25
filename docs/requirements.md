@@ -37,6 +37,32 @@
 4. Native qualification must prove that changing a driving parameter in a saved
    SolidCraft design rebuilds the fold successfully.
 
+## Native component drawings
+
+1. A technical drawing is final design presentation state; it must not become part
+   of a reusable component definition or be duplicated implicitly by
+   `.copy()`.
+2. `ModelInstance.with_drawing(...)` may create a one-component design drawing;
+   `Assembly.with_drawing(target, ...)` selects one occurrence already owned by
+   the completed Assembly.
+3. Forge must use SolidCraft's native drawing, sheet and view commands and must
+   not implement paper layout, projected-view placement or fitted-scale logic.
+4. Drawing lowering must address components, occurrences, sheets, sources and
+   views through replay-bound SolidCraft result ids; browser names and predicted
+   ids are forbidden.
+5. Component drawings default to SolidCraft's native ISO A4 part template;
+   callers may select the native ISO A3 part template for more complex parts.
+6. Every declared drawing is retained in the native `.sc` design and the SCPF
+   builder exports it as a vector PDF below the implementation's
+   `drawings/` output directory using SolidCraft `drawing.export`.
+7. Build filesystem paths are builder-owned. Model/compiler intent may declare a
+   relative drawing artifact name and a replay-bound drawing id, but must not
+   embed repository/build-root paths.
+8. Native qualification must execute drawing creation and PDF export against
+   the pinned tested SolidCraft runtime, not only compare generated JSON.
+9. Dimensions, balloons, parts lists and annotation authoring remain later
+   demonstrated requirements.
+
 ## SolidCraft reference evidence
 
 1. Every tested SolidCraft version must have one canonical command-registry
@@ -85,3 +111,4 @@
 7. Verification `coverage`, `results` and `joint-anatomy` pages are source/evidence projections: coverage and authored explanations live in `docs/`, while current result status comes only from durable `build/<scope>/models/**` evidence.
 8. The reusable model catalogue/detail presentation is adopted from `template.cad.library`; Forge owns only consumer-specific Guide, API Reference, Cheatsheet and Verification explanatory content.
 9. A fixed OLD-vs-NEW Pages parity manifest must verify the retained historical routes and identifying content before the migration is accepted.
+10. The public Verification catalogue must group verification owners by the source-owned `docs/verification/sections.yml` taxonomy and order both sections and model cards by their declared priorities; unknown or missing verification sections fail closed.

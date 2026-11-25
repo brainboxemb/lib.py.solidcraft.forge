@@ -1,0 +1,59 @@
+schema: 1
+
+blocks:
+  - type: hero
+    eyebrow: Python API/compiler for SolidCraft
+    title: SolidCraft Forge
+    lead: >-
+      Write editable CAD intent in Python with SCPF. Forge lowers that intent
+      into SolidCraft commands and native SolidCraft geometry, so SolidCraft
+      remains the CAD engine and editable model owner.
+    badges:
+      - SCPF ${package_version}
+      - Tested with SolidCraft ${tested_solidcraft_version}
+    actions:
+      - label: Start with the Guide
+        route: guide/
+        primary: true
+      - label: API Reference
+        route: reference/
+      - label: Cheatsheet
+        route: cheatsheet/
+      - label: SolidCraft models
+        url: https://brainboxemb.github.io/2026-011-02.cad.solidcraft/
+
+  - type: flow
+    title: From Python intent to native SolidCraft
+    description: Forge is the authoring/compiler layer; it is not a separate CAD engine.
+    steps:
+      - title: SCPF model
+        description: Python expresses parameters, shapes, features, assemblies and native references.
+      - title: Forge compiler
+        description: Forge validates the model intent and lowers it to explicit SolidCraft commands.
+      - title: SolidCraft
+        description: SolidCraft creates the native editable geometry, history and saved design.
+
+  - type: links
+    title: Choose where to start
+    description: Learn the authoring surface, inspect working models, or review the evidence behind supported behavior.
+    items:
+      - kicker: Learn
+        label: Guide
+        description: Concepts and workflows for writing SCPF models.
+        route: guide/
+      - kicker: Look up
+        label: API Reference
+        description: The public SCPF surface, statically checked against the package source.
+        route: reference/
+      - kicker: See it work
+        label: Examples
+        description: Selected physical model owners with source and published geometry.
+        route: examples/
+      - kicker: Inspect evidence
+        label: Verification
+        description: Native, geometry and reference evidence for declared Forge behavior.
+        route: verification/
+  - type: catalogue
+    title: Featured examples
+    description: Practical SCPF patterns backed by published model and verification evidence.
+    section: examples

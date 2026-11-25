@@ -14,9 +14,12 @@ class TwoBlocks:
             placement=Placement(x=Block.length),
         )
 
-        # left/right are ModelInstance occurrences here. Their + operator
-        # creates an Assembly; it is not the Shape + Boolean/feature operator.
-        return left + right
+        # Drawing intent belongs to the finished design, not Block's reusable
+        # definition. SolidCraft creates the sheet and standard views natively.
+        return (left + right).with_drawing(
+            left,
+            name="Block drawing",
+        )
 
 
 TwoBlocks()

@@ -427,6 +427,48 @@ a stored presentation and `show_assembled()` emits
 adding occurrences afterwards is rejected so automatic view scope cannot change
 silently.
 
+### Native component drawings
+
+A technical drawing is attached to the completed design, not to the reusable
+component definition.
+
+For a standalone component occurrence:
+
+```python
+part = Bracket()
+return part.with_drawing(name="Bracket drawing")
+```
+
+For one component inside an Assembly:
+
+```python
+left = Block()
+right = left.copy(placement=Placement(x=40))
+return (left + right).with_drawing(left, name="Block drawing")
+```
+
+`with_drawing(...)` creates a persistent native SolidCraft drawing using the
+`iso-a4-part` template by default. Its first sheet documents the selected
+native component and SolidCraft creates the standard front, top, right and
+isometric view layout. Forge restricts those views to the selected occurrence
+subtree using native drawing-view source settings.
+
+A normal SCPF build also publishes that drawing as a native vector PDF below
+`drawings/`. The filename is derived deterministically from the drawing name;
+for example `name="Block drawing"` produces
+`drawings/Block-drawing.pdf`. Use `template="iso-a3-part"` when an A3 sheet
+is more appropriate for a complex part.
+
+The drawing API accepts `name=`, `template=` and `sheet_name=`. Compose
+the final Assembly before adding drawing intent; adding occurrences afterwards
+is rejected. Dimensions, balloons, parts lists and other annotations are not
+part of this first slice.
+
+For a component inside a larger assembly, SolidCraft currently fits the
+standard view group before Forge narrows the views to that component. The
+drawing is valid, but its scale may therefore be conservative compared with a
+standalone component drawing.
+
 ### Occurrence `Placement`
 
 `Placement` is reserved occurrence metadata, separate from component model

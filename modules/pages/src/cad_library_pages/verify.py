@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 import yaml
 
+from .homepage import homepage_manifest
 from .landing import landing_metadata
 
 
@@ -20,22 +21,35 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
 
     home = read("")
     forge = landing_metadata(source_root)
-    for marker in (
-        "Python API/compiler for SolidCraft",
-        "SCPF model",
-        "Forge compiler",
-        "SolidCraft commands",
-        "SolidCraft remains the CAD engine",
-        f"SCPF {forge['package_version']}",
-        f"Tested with SolidCraft {forge['tested_solidcraft_version']}",
-        "Start with the Guide",
-        "API Reference",
-        "Cheatsheet",
-        "Examples",
-        "Verification",
-    ):
+    homepage = homepage_manifest(source_root, context=forge)
+    if "data-generated-homepage" not in home:
+        raise RuntimeError("Forge homepage was not rendered from generated Pages data")
+
+    homepage_markers = []
+    external_urls = []
+    for block in homepage["blocks"]:
+        homepage_markers.append(block["title"])
+        if block["type"] == "hero":
+            homepage_markers.append(block["eyebrow"])
+            homepage_markers.extend(block["badges"])
+            homepage_markers.extend(action["label"] for action in block["actions"])
+            external_urls.extend(
+                action["url"] for action in block["actions"] if action["external"]
+            )
+        elif block["type"] == "flow":
+            homepage_markers.extend(step["title"] for step in block["steps"])
+        elif block["type"] == "links":
+            homepage_markers.extend(item["label"] for item in block["items"])
+            external_urls.extend(
+                item["url"] for item in block["items"] if item["external"]
+            )
+
+    for marker in homepage_markers:
         if marker not in home:
-            raise RuntimeError(f"Forge landing content missing: {marker}")
+            raise RuntimeError(f"generated Forge homepage content missing: {marker}")
+    for url in external_urls:
+        if url not in home:
+            raise RuntimeError(f"generated Forge homepage destination missing: {url}")
 
     for route, marker in (("", "cad-home"), ("docs", "Documentation"), ("docs/model-pages", "Understand verification"),
                           ("examples", "cad-model-grid"), ("verification", "cad-model-grid")):
@@ -44,6 +58,69 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
             raise RuntimeError(f"missing layout marker for {route}: {marker}")
         if warning_marker not in html:
             raise RuntimeError(f"missing Forge development warning for {route or '/'}")
+
+    sections_path = source_root / "docs/verification/sections.yml"
+    sections_data = yaml.safe_load(sections_path.read_text(encoding="utf-8")) or {}
+    section_defs = sections_data.get("sections", {})
+    verification_models = {}
+    for model in sorted((source_root / "models").rglob("model.yml")):
+        if not (model.parent / "ci.yml").is_file():
+            continue
+        meta = yaml.safe_load(model.read_text()) or {}
+        purposes = meta.get("purpose", [])
+        if isinstance(purposes, str):
+            purposes = [purposes]
+        if "verification" not in purposes:
+            continue
+        ci = yaml.safe_load((model.parent / "ci.yml").read_text()) or {}
+        verification_models.setdefault(meta.get("section"), []).append(
+            (meta.get("priority", 100), ci["id"], str(meta.get("title", ci["id"])))
+        )
+
+    verification_html = read("verification")
+    if "data-verification-catalog-layout" not in verification_html:
+        raise RuntimeError("verification custom catalogue layout was not selected")
+    section_rows = sorted(
+        section_defs.items(),
+        key=lambda item: (item[1]["priority"], item[0]),
+    )
+    section_positions = []
+    for section_id, _definition in section_rows:
+        models = sorted(verification_models.get(section_id, []))
+        if not models:
+            continue
+        marker = re.search(
+            rf'data-verification-section=(?:"{re.escape(section_id)}"|{re.escape(section_id)})(?=[\s>])',
+            verification_html,
+        )
+        if marker is None:
+            discovered = [
+                next(value for value in match.groups() if value is not None)
+                for match in re.finditer(
+                    r'data-verification-section=(?:"([^"]+)"|([^\s>]+))',
+                    verification_html,
+                )
+            ]
+            raise RuntimeError(
+                f"verification section missing: {section_id}; "
+                f"discovered={discovered}; "
+                f"catalog_shell={'cad-page-shell cad-catalog-page' in verification_html}"
+            )
+        position = marker.start()
+        section_positions.append(position)
+        next_marker = re.search(
+            r'data-verification-section=',
+            verification_html[marker.end():],
+        )
+        end = marker.end() + next_marker.start() if next_marker else None
+        section_html = verification_html[position:end]
+        model_positions = [section_html.find(title) for _priority, _item, title in models]
+        if -1 in model_positions or model_positions != sorted(model_positions):
+            raise RuntimeError(
+                f"verification model ordering is incorrect in section {section_id}"
+            )
+    if section_positions != sorted(section_positions):
+        raise RuntimeError("verification section ordering is incorrect")
 
     for route in (
         "guide",

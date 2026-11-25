@@ -25,6 +25,44 @@ def _repository(source_root):
     return value
 
 
+def _verification_sections(source_root: Path) -> tuple[dict[str, dict], list[dict]]:
+    path = source_root / "docs/verification/sections.yml"
+    if not path.is_file():
+        raise ValueError(f"missing verification sections: {path}")
+
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    sections = data.get("sections")
+    if data.get("schema") != 1 or not isinstance(sections, dict) or not sections:
+        raise ValueError(f"invalid verification sections: {path}")
+
+    rows = []
+    normalized = {}
+    for section_id, section in sections.items():
+        if (
+            not isinstance(section_id, str)
+            or not _ID.fullmatch(section_id)
+            or not isinstance(section, dict)
+            or not isinstance(section.get("priority"), int)
+            or not isinstance(section.get("label"), str)
+            or not section["label"]
+            or not isinstance(section.get("description"), str)
+            or not section["description"]
+        ):
+            raise ValueError(f"invalid verification section: {section_id!r}")
+        row = {
+            "id": section_id,
+            "priority": section["priority"],
+            "label": section["label"],
+            "description": section["description"],
+            "models": [],
+        }
+        rows.append(row)
+        normalized[section_id] = row
+
+    rows.sort(key=lambda row: (row["priority"], row["id"]))
+    return normalized, rows
+
+
 def _stage_lines(*, evidence, blob_base, impl_path, stages):
     if stages is None:
         return []
@@ -69,6 +107,7 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
         return
 
     repository = _repository(source_root)
+    verification_sections, verification_section_rows = _verification_sections(source_root)
     namespace = build_scope.name if build_scope else None
     blob_base = (
         f"https://github.com/{repository}/blob/build/{namespace}/"
@@ -97,7 +136,22 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
             raise ValueError(f"invalid model id: {ci_path}")
 
         seen.add(item)
+        if "verification" in purposes:
+            verification_section = meta.get("section")
+            if verification_section not in verification_sections:
+                raise ValueError(
+                    f"unknown verification section {verification_section!r}: {model_yml}"
+                )
+        else:
+            verification_section = None
+
         title = str(meta.get("title", item))
+        if verification_section is not None:
+            verification_sections[verification_section]["models"].append({
+                "id": item,
+                "priority": meta.get("priority", 100),
+                "title": title,
+            })
         implementations = ci.get("implementations", [])
         featured = meta.get("presentation_primary", ci.get("primary", ""))
         if implementations and featured not in {i["id"] for i in implementations}:
@@ -205,11 +259,27 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
             page.parent.mkdir(parents=True, exist_ok=True)
             if diagram:
                 (page.parent / "setup.svg").write_text(diagram, encoding="utf-8")
+            page_params = dict(params)
+            if purpose == "verification":
+                page_params["verificationsection"] = verification_section
             data = {"title": title, "type": "models", "weight": meta.get("priority", 100),
-                    "params": params}
+                    "params": page_params}
             if purpose == ("example" if "example" in purposes else "verification"):
                 data["aliases"] = [f"/models/{item}/"]
             page.write_text(
                 json.dumps(data, ensure_ascii=False, indent=2) + "\n\n"
                 + "\n".join(lines).rstrip() + "\n", encoding="utf-8"
             )
+
+    for section in verification_section_rows:
+        section["models"].sort(key=lambda model: (model["priority"], model["id"]))
+    target = site / "assets/cad/verification_sections.json"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        json.dumps(
+            {"schema": 1, "sections": verification_section_rows},
+            indent=2,
+            ensure_ascii=False,
+        ) + "\n",
+        encoding="utf-8",
+    )

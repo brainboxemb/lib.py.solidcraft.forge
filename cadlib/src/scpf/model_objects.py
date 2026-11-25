@@ -5,6 +5,7 @@ These nodes are the compiler-facing representation; users do not need to
 construct Component or Occurrence objects explicitly.
 """
 from dataclasses import dataclass, field, replace
+import re
 from itertools import count
 from math import isfinite
 
@@ -650,6 +651,20 @@ class ModelInstance:
             ),
         )
 
+    def with_drawing(self, *, name=None, template="iso-a4-part", sheet_name="Sheet 1"):
+        """Add a native technical drawing for this component occurrence.
+
+        The drawing belongs to the final design presentation, not to the
+        reusable component definition. Calling this on a standalone occurrence
+        therefore returns a one-occurrence Assembly carrying the drawing.
+        """
+        return Assembly((self,)).with_drawing(
+            self,
+            name=name,
+            template=template,
+            sheet_name=sheet_name,
+        )
+
     def __add__(self, other):
         return Assembly((self,)) + other
 
@@ -672,6 +687,17 @@ class AssemblyAnchor:
 
 
 @dataclass(frozen=True)
+class ComponentDrawing:
+    """One native SolidCraft drawing owned by the final design."""
+
+    name: str
+    target_occurrence_id: int
+    template: str = "iso-a4-part"
+    sheet_name: str = "Sheet 1"
+    pdf_path: str = ""
+
+
+@dataclass(frozen=True)
 class ExplodedView:
     """One persistent native exploded presentation owned by an Assembly."""
 
@@ -689,6 +715,7 @@ class Assembly:
     exploded_views: tuple[ExplodedView, ...] = ()
     exploded_display: str | None = None
     exploded_display_set: bool = False
+    drawings: tuple[ComponentDrawing, ...] = ()
 
     def group(self, name):
         """Wrap these assembly occurrences in a real nested native component.
@@ -752,6 +779,53 @@ class Assembly:
             self,
             instances=grouped,
             anchors=anchors,
+        )
+
+    def with_drawing(self, target, *, name=None, template="iso-a4-part", sheet_name="Sheet 1"):
+        """Add a native technical drawing of one component occurrence.
+
+        Compose the final Assembly first, then select the occurrence the sheet
+        documents. SolidCraft owns paper layout, standard-view placement and
+        fitted scale.
+        """
+        if not isinstance(target, ModelInstance):
+            raise TypeError("drawing target must be a component occurrence")
+        owned = {instance.occurrence_id for instance in self.instances}
+        if target.occurrence_id not in owned:
+            raise ValueError("drawing target must belong to this assembly")
+
+        if name is None:
+            base = target.name or target.definition.class_name
+            name = f"{base} drawing"
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("drawing name must be non-empty text")
+        name = name.strip()
+        if any(drawing.name == name for drawing in self.drawings):
+            raise ValueError(f"drawing {name!r} already exists")
+
+        pdf_stem = re.sub(r"[^A-Za-z0-9._-]+", "-", name).strip("-.")
+        if not pdf_stem:
+            raise ValueError("drawing name cannot produce a safe PDF filename")
+        pdf_path = f"drawings/{pdf_stem}.pdf"
+        if any(drawing.pdf_path == pdf_path for drawing in self.drawings):
+            raise ValueError(f"drawing PDF path {pdf_path!r} already exists")
+
+        if not isinstance(template, str) or not template.strip():
+            raise ValueError("drawing template must be non-empty text")
+        if not isinstance(sheet_name, str) or not sheet_name.strip():
+            raise ValueError("drawing sheet name must be non-empty text")
+
+        return replace(
+            self,
+            drawings=self.drawings + (
+                ComponentDrawing(
+                    name=name,
+                    target_occurrence_id=target.occurrence_id,
+                    template=template.strip(),
+                    sheet_name=sheet_name.strip(),
+                    pdf_path=pdf_path,
+                ),
+            ),
         )
 
     def with_exploded_view(self, name, *, scale=None, moves=None):
@@ -1020,17 +1094,37 @@ class Assembly:
                     "is not defined"
                 )
 
-    def __add__(self, other):
-        if self.exploded_views or self.exploded_display_set:
+        drawing_names = [drawing.name for drawing in self.drawings]
+        duplicate_drawings = sorted({
+            name for name in drawing_names if drawing_names.count(name) > 1
+        })
+        if duplicate_drawings:
             raise ValueError(
-                "compose the final assembly before defining exploded views"
+                "drawing names must be unique: " + ", ".join(duplicate_drawings)
+            )
+        for drawing in self.drawings:
+            if not isinstance(drawing, ComponentDrawing):
+                raise TypeError("assembly drawing is invalid")
+            if drawing.target_occurrence_id not in owned_occurrences:
+                raise ValueError(
+                    f"drawing {drawing.name!r} target is not in this assembly"
+                )
+
+    def __add__(self, other):
+        if self.exploded_views or self.exploded_display_set or self.drawings:
+            raise ValueError(
+                "compose the final assembly before defining presentation state"
             )
         if isinstance(other, ModelInstance):
             return Assembly(self.instances + (other,), self.anchors)
         if isinstance(other, Assembly):
-            if other.exploded_views or other.exploded_display_set:
+            if (
+                other.exploded_views
+                or other.exploded_display_set
+                or other.drawings
+            ):
                 raise ValueError(
-                    "compose the final assembly before defining exploded views"
+                    "compose the final assembly before defining presentation state"
                 )
             return Assembly(
                 self.instances + other.instances,
