@@ -56,23 +56,23 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge release infrastructure, the global development warning and the product
-landing page are accepted:
+Forge release infrastructure, the global development warning, product landing
+and canonical API Reference landing are accepted:
 
-- stable-main release-flow implementation is on Forge `main`
-  `dc9bd4b75e9aedf8f5ffa215be7382775baa89c9`;
-- unmerged release-only smoke PR #103 / run `45603049650`: PASS;
+- stable-main release-flow implementation is accepted on Forge `main`;
 - #57 global development warning is accepted on `dev`;
-- #58 Forge/SCPF product landing is accepted on `dev`.
+- #58 Forge/SCPF product landing is accepted on `dev`;
+- #106 canonical API Reference wording is accepted on `dev`.
 
-The active Pages audit defects are:
+The active Pages audit work is:
 
-1. #106 — remove migration-era `NEW` wording from the public API Reference
-   landing while retaining static source validation against `cadlib/src/scpf`.
-2. #107 — derive Joint anatomy SolidCraft version from the current source-owned
-   `TESTED_SOLIDCRAFT_VERSION` instead of hardcoding 0.48.1.
-3. Continue the visual/content audit after #106/#107:
-   - Guide;
+1. #107 — derive Joint anatomy SolidCraft version from source-owned
+   `TESTED_SOLIDCRAFT_VERSION`; remove the stale hardcoded 0.48.1.
+2. #109 — replace migration-era wording on the Guide landing.
+3. #68 — remove CadCraft from Forge verification diagrams/content where it is
+   still publicly surfaced.
+4. Continue the remaining visual/content audit:
+   - Guide chapter detail routes;
    - API Reference detail routes;
    - Cheatsheet;
    - Examples;
