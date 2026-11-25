@@ -6,12 +6,14 @@ Read `docs/requirements.md`, `docs/design.md`, `docs/plan.md` and `docs/handoff.
 
 - `main`: stable integration only.
 - `dev`: normal integration branch.
-- normal short-lived work branches use `issue/`, `fix/`, `feature/`, `docs/` or `chore/` and squash into `dev`.
+- `exp`: optional permanent experimental integration branch; never a release source.
+- normal short-lived work branches use `issue/`, `fix/`, `feature/`, `docs/` or `chore/` and squash into `dev` or `exp` according to their intended integration line.
+- `dev -> exp` synchronization and completed `exp -> dev` integration use merge commits; `exp -> main` is forbidden.
 - explicit product promotion `dev -> main` uses a merge commit.
 - release preparation uses `release/vX.Y.Z` created from stable `main`; only `CHANGELOG.md` and `cadlib/pyproject.toml:project.version` may change.
 - `release/* -> main` uses squash through the merge policy.
 - after a stable-only release commit, synchronize `main -> dev` with a merge commit; never rebase the shared permanent branch.
-- never delete `main`, `dev`, `build` or `gh-pages`.
+- never delete `main`, `dev`, `exp`, `build` or `gh-pages`.
 
 ### Mandatory merge execution rule
 
@@ -19,7 +21,8 @@ This repository deliberately does **not** let an agent choose the merge method.
 
 For every source-branch integration:
 
-- normal short-lived branch -> `dev`;
+- normal short-lived branch -> `dev` or `exp`;
+- `dev` -> `exp` and `exp` -> `dev`;
 - `release/*` -> `main`;
 - explicit product promotion `dev` -> `main`;
 - stable synchronization `main` -> `dev`;
@@ -37,7 +40,7 @@ An agent MUST NOT:
 If `/merge` fails, stop the integration and repair the merge-policy path.
 Never bypass the policy.
 
-Matching work-branch `build.yml` controls explicit library/module/model selection. `dev` uses incremental selection since the last successful integration run. Product-changing `main` commits and `dev -> main` promotions run full. Validated release-only PRs/pushes run library + release only and preserve the previous full stable CAD evidence.
+Matching work-branch `build.yml` controls explicit library/module/model selection. `dev` and `exp` use incremental selection since the last successful run on their own branch. Product-changing `main` commits and `dev -> main` promotions run full. Validated release-only PRs/pushes run library + release only and preserve the previous full stable CAD evidence.
 
 ## Ownership
 
@@ -55,7 +58,7 @@ Keep generic mechanics in their owning modules:
 
 Central CI schedules model owners, implementations and runtime roles but must not contain engine-specific branches.
 
-Pull requests run central `ci` only. Permanent `dev`/`main` events run one `build` job that performs qualification and durable publication, then dispatches the independent Pages workflow without waiting for it. Do not reintroduce separate permanent-branch `publish-build` or `dispatch-pages` jobs inside CI.
+Pull requests run central `ci` only. Permanent `dev`/`main`/`exp` events run one `build` job that performs qualification and durable publication, then dispatches the independent Pages workflow without waiting for it. Do not reintroduce separate permanent-branch `publish-build` or `dispatch-pages` jobs inside CI.
 
 ## Release policy
 

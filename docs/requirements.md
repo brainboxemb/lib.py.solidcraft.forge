@@ -5,8 +5,8 @@
 1. Preserve the public SCPF Python API and import name `scpf`.
 2. Use the corrected CAD library architecture rather than reproducing historical Forge-local orchestration.
 3. Keep source ownership explicit: library, physical models, generic modules, documentation and generated evidence are separate roles.
-4. Use `main` as stable and `dev` as development integration.
-5. Generated CAD output is owned by `build`; Pages presentation is owned by `gh-pages`. Pages must not duplicate generated CAD artifacts.
+4. Use `main` as stable, `dev` as normal development integration and optional permanent `exp` as isolated experimental integration. `exp` is not a release source and may not promote directly to `main`.
+5. Generated CAD output is owned by `build`; Pages presentation is owned by `gh-pages`. Permanent `main`, `dev` and optional `exp` outputs must remain isolated by source scope. Pages must not duplicate generated CAD artifacts.
 
 ## Models
 

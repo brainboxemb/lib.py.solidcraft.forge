@@ -61,6 +61,11 @@ The historical repository is being finalized as
 
 ## Now
 
+### Parallel: #190 prepare the experimental Forge integration line
+
+Consume the qualified optional `exp` contract from `template.cad.library#73` without mixing backend research into the current drawing/release stabilization. This issue changes branch/CI/build/Pages infrastructure only; Mitcad/backend implementation starts after the permanent Forge `exp` line is qualified.
+
+
 ### Next: #166 / #167 release the qualified development baseline
 
 The consumer-grade drawing system is fully qualified on permanent `dev`:
