@@ -1264,14 +1264,14 @@ class Shape:
     def _csg_operand(self, other, operator):
         other = _shape(other)
         if (
-            self.kind == "material_assignment"
-            or other.kind == "material_assignment"
+            self.kind in ("material_assignment", "appearance_assignment")
+            or other.kind in ("material_assignment", "appearance_assignment")
         ):
             raise TypeError(
-                f"material-assigned Shapes cannot be combined with {operator}. "
+                f"material/appearance-assigned Shapes cannot be combined with {operator}. "
                 "Finish one physical part's Shape geometry before calling "
-                "with_material(). For separate physical parts or different "
-                "materials, use component occurrences in an Assembly."
+                "with_material() or with_appearance(). For separate physical "
+                "parts, use component occurrences in an Assembly."
             )
         return other
 
@@ -1875,6 +1875,29 @@ class Shape:
                                   any(c not in "0123456789abcdefABCDEF" for c in color[1:])):
             raise ValueError("material color must be a #RRGGBB hex string")
         return Shape("material_assignment", (self, name, density_g_cm3, color))
+
+    def with_appearance(self, color):
+        """Assign a fixed display appearance color to the final body.
+
+        Parameters:
+            color: Hex display color in #RRGGBB form.
+
+        Use when:
+            The authored model should open with a specific visual color while
+            physical material and BOM semantics remain unchanged.
+
+        Limits:
+            This first public contract assigns one opaque fixed color to the
+            final body. Apply it after all geometry operations.
+        """
+        if (
+            not isinstance(color, str)
+            or len(color) != 7
+            or color[0] != "#"
+            or any(c not in "0123456789abcdefABCDEF" for c in color[1:])
+        ):
+            raise ValueError("appearance color must be a #RRGGBB hex string")
+        return Shape("appearance_assignment", (self, color.upper()))
 
     def at(self, x=0, y=0, z=0, *, anchor=Anchor.CENTER, child=Anchor.CENTER):
         """Place a shape at absolute coordinates or align it to another Shape.
