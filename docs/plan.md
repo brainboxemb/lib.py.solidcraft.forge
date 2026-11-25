@@ -43,51 +43,61 @@ The accepted baseline now has:
   section, active blockers and the tested SolidCraft version;
 - explicit owner-issued `/release` publication delegated to released
   `tool.py.lib.ci v0.2.1`, with Pages excluded from release evidence;
-- a hard migration boundary that rejects `0.15.0` and older as Forge NEW
-  releases; no Forge NEW tag or GitHub Release has been published.
+- a hard migration boundary that rejects `0.15.0` and older as Forge
+  releases;
+- canonical post-migration release `v0.16.0`, published from stable main
+  `021dc78a32d99d31f16a76efc9d036855114df0c` after exact full build/main
+  qualification.
 
 The historical repository is being finalized as
 `brainboxemb/lib.py.solidcraft.forge.OLD`, an archived A/B/provenance reference.
 
 ## Now
 
-Repository canonicalization #89 is accepted:
+Canonical Forge **v0.16.0** is published and available to consumers:
 
-- live repository: `brainboxemb/lib.py.solidcraft.forge`;
-- historical repository: `brainboxemb/lib.py.solidcraft.forge.OLD`, archived;
-- canonical dev build and Pages publication are green;
-- immutable runtime baseline remains v0.3.6 / SolidCraft 0.49.0.
+- stable source: `021dc78a32d99d31f16a76efc9d036855114df0c`;
+- annotated tag: `v0.16.0`;
+- release workflow `45587716727`: PASS;
+- durable stable evidence: `full: true`, `library: true`, 47/47 active owners;
+- qualified runtime: v0.3.6 / SolidCraft 0.49.0.
 
-Current work is #92: publish the first canonical post-migration Forge release,
-**v0.16.0**, so downstream CAD projects can consume the migrated Forge.
+The immediate priority is the active CAD project, not more Forge infrastructure:
 
-1. Complete the v0.16.0 release-prep PR:
-   - package version 0.16.0;
-   - dated 2026-11-25 changelog section;
-   - library + release metadata qualification only; no new modelling behavior.
-2. Merge release prep to `dev` through `/merge`, then require permanent
-   green `dev` evidence.
-3. Promote `dev -> main` through a dedicated PR and `/merge`:
-   - promotion qualification must be full;
-   - stable `main` must receive a merge commit;
-   - exact durable `build/main` evidence must show `full: true`,
-     `library: true`, all 47 active owners and the exact stable source SHA.
-4. Publish only through
-   `/release v0.16.0 <exact-40-character-main-sha>` on #92 and verify the
-   annotated tag/GitHub Release provenance.
-5. Update the active CAD project to v0.16.0:
-   - move the Forge dependency from historical v0.15.0 to canonical v0.16.0;
-   - replace the four Mounting Rail fixed fold lines with the accepted #74
-     `Sketch.line(...)` path;
-   - verify native post-generation length edits remain associative;
-   - requalify Mounting Rail M8 and Simple MFT against immutable Forge/runtime.
-6. Return to Pages as a dedicated quality phase after downstream release
-   adoption:
+1. CAD #73 — replace the temporary Forge-main SHA pin with canonical
+   `brainboxemb/lib.py.solidcraft.forge@v0.16.0` and requalify bootstrap/build.
+2. CAD #67 — finish the Basic / Components / Subassemblies / Assemblies catalog
+   taxonomy with generic Display/MFT grouping.
+3. CAD #62 / draft PR #63 — resume the MFT mounting-rail corner bracket after
+   #67 is accepted:
+   - retain the already-qualified 6 mm load-bearing feet below both rail ends;
+   - retain the low rounded outside-corner protector;
+   - preserve outward/open C-channels;
+   - keep provisional MFT screw/hardware dimensions unfrozen until measured or
+     explicitly accepted.
+
+After that CAD checkpoint, prioritize the release-process correction before
+returning to Pages:
+
+4. Template `template.cad.library#47` / PR #48 — separate release preparation
+   from normal dev promotion:
+   - `release/vX.Y.Z` starts from stable `main`;
+   - only `release/*` may go directly to `main`;
+   - full stable qualification remains mandatory;
+   - after publication synchronize `main -> dev` through merge policy;
+   - never rebase the shared permanent `dev` branch.
+5. Forge #98 — consume the accepted generic release-flow policy and update
+   Forge AGENTS/development/release documentation accordingly.
+6. Return to Pages as a dedicated quality phase:
    - restore the global development warning (#57);
    - rewrite the landing page around Forge/SCPF itself (#58);
    - visually/content-audit landing, Guide, API Reference, Cheatsheet, Examples
      and Verification;
    - create one issue per remaining independent Pages defect before changing it.
+
+#73 remains retained engine/runtime regression evidence rather than a Forge
+replay-workaround target. Other migrated Forge backlog (#59-#72) stays Later
+unless the active CAD work exposes a concrete blocker.
 
 ## Later
 
