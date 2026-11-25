@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/178-appearance-color
-modules: []
-library: true
-models: [appearance-color]
+branch: fix/156-workflow-dispatch-release-only
+modules: [ci, build]
+library: false
+models: []
 tasks: [test]
