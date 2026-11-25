@@ -108,11 +108,11 @@ class ComponentDrawingTests(unittest.TestCase):
             },
         }
         self.assertEqual(
-            drawing[5]["params"],
+            drawing[4]["params"],
             {"view": "$drawing_1_front", "set": selected},
         )
         self.assertEqual(
-            drawing[4]["params"],
+            drawing[5]["params"],
             {"view": "$drawing_1_iso", "set": selected},
         )
         self.assertEqual(
@@ -159,6 +159,11 @@ class ComponentDrawingTests(unittest.TestCase):
             if row["command"] == "drawing.create"
         )
         self.assertEqual(create["params"]["template"], "iso-a3-part")
+        sheet = next(
+            row for row in document["commands"]
+            if row["command"] == "drawing.sheet.set"
+        )
+        self.assertEqual(sheet["params"]["orientation"], "landscape")
 
     def test_drawing_intent_is_final_design_state(self):
         first = DrawingPanel()
