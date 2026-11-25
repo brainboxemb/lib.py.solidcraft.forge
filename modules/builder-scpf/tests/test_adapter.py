@@ -203,7 +203,9 @@ class SCPFBuilderTests(unittest.TestCase):
                             "note_count": 0,
                             "properties": {},
                             "title_block": {},
-                            "view_styles": {},
+                            "view_styles": {
+                                "$drawing_1_iso": "shaded",
+                            },
                         },
                     }
                 ]
@@ -225,6 +227,16 @@ class SCPFBuilderTests(unittest.TestCase):
             save.write_bytes(b"sc")
             export.write_bytes(b"stl")
             results_out.write_text(json.dumps([
+                {
+                    "view": "VISO",
+                    "settings": {
+                        "visual_style": {
+                            "from": "this",
+                            "set": "shaded",
+                            "value": "shaded",
+                        }
+                    },
+                },
                 {
                     "name": "Part drawing",
                     "properties": {},
@@ -252,6 +264,7 @@ class SCPFBuilderTests(unittest.TestCase):
                     "$drawing_1": "D1",
                     "$drawing_1_sheet": "S1",
                     "$drawing_1_orientation": "landscape",
+                    "$drawing_1_iso": "VISO",
                 }
             }
 
