@@ -76,6 +76,32 @@ objects to native occurrence ids during replay. Use
 <code>show_exploded("Service")</code> to display one stored view and
 <code>show_assembled()</code> to return to normal presentation. Do not model an
 explosion with ordinary occurrence moves.</p>
+<h2 id="drawings">Technical drawings are final design presentation</h2>
+<p>SolidCraft 0.49 can keep native drawing sheets inside the saved design. In
+Forge, drawing intent belongs to the completed design rather than to the
+reusable component definition.</p>
+<pre class="code-block"><code>left = Block()
+right = left.copy(placement=Placement(x=40))
+
+assembly = left + right
+assembly = assembly.with_drawing(
+    left,
+    name="Block drawing",
+)</code></pre>
+<p>For a standalone part, use
+<code>Block().with_drawing(name="Block drawing")</code>. Forge asks SolidCraft
+to create the native A3 part sheet and standard front, top, right and
+isometric views, then restricts those views to the selected occurrence. The
+sheet explicitly documents that component.</p>
+<div class="notice"><strong>Layout stays native:</strong> Forge does not
+calculate paper coordinates or projected-view placement. SolidCraft owns the
+template, fitted scale and standard-view layout. In this first slice a part
+selected from a much larger assembly can therefore use a conservative scale,
+because SolidCraft fits the standard group before Forge narrows the view
+source.</div>
+<p>Dimensions, balloons, parts lists and other drawing annotations are outside
+this first API slice.</p>
+
 <h2 id="reusable-assembly">3. Use @assembly when the composition itself is reusable</h2>
 <p>You do not need <code>@assembly</code> merely because a script contains
 several components. Use it when the <em>composition itself</em> is a reusable
