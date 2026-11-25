@@ -33,6 +33,6 @@ Not every model needs every implementation; the owner declares the implementatio
 - corrected CAD library template: `brainboxemb/template.cad.library@1d9cddfe975d508e2aaa03cb140cbf61e2fdff82`;
 - historical Forge source baseline: `brainboxemb/lib.py.solidcraft.forge@8ddcf7e6f58e8da12750d63a5d3604101c9c2824`;
 - migrated package keeps the public name `scpf`;
-- CAD runtime: `docker.cad.solidcraft v0.3.5` / SolidCraft 0.48.1.
+- CAD runtime: `docker.cad.solidcraft v0.3.6` / SolidCraft 0.49.0.
 
 The migration expands physical models deliberately: **1 → 5 → 10 → remaining graph**. The old Forge repository stays authoritative until equivalent package, CAD, verification and site evidence exists here.
