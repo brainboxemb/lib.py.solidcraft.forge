@@ -75,24 +75,31 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
         models = sorted(verification_models.get(section_id, []))
         if not models:
             continue
-        marker = f'data-verification-section="{section_id}"'
-        position = verification_html.find(marker)
-        if position < 0:
-            discovered = re.findall(
-                r'data-verification-section="([^"]+)"',
-                verification_html,
-            )
+        marker = re.search(
+            rf'data-verification-section=(?:"{re.escape(section_id)}"|{re.escape(section_id)})(?=[\\s>])',
+            verification_html,
+        )
+        if marker is None:
+            discovered = [
+                next(value for value in match.groups() if value is not None)
+                for match in re.finditer(
+                    r'data-verification-section=(?:"([^"]+)"|([^\\s>]+))',
+                    verification_html,
+                )
+            ]
             raise RuntimeError(
                 f"verification section missing: {section_id}; "
                 f"discovered={discovered}; "
                 f"catalog_shell={'cad-page-shell cad-catalog-page' in verification_html}"
             )
+        position = marker.start()
         section_positions.append(position)
-        end = verification_html.find(
-            'data-verification-section="',
-            position + len(marker),
+        next_marker = re.search(
+            r'data-verification-section=',
+            verification_html[marker.end():],
         )
-        section_html = verification_html[position:end if end >= 0 else None]
+        end = marker.end() + next_marker.start() if next_marker else None
+        section_html = verification_html[position:end]
         model_positions = [section_html.find(title) for _priority, _item, title in models]
         if -1 in model_positions or model_positions != sorted(model_positions):
             raise RuntimeError(
