@@ -40,6 +40,18 @@ jobs:
           PYTHONPATH: modules/ci/src
         run: python -m cad_library_ci
 
+      - name: Capture SolidCraft 0.49 canonical reference
+        if: github.head_ref == 'issue/83-capture-solidcraft-0.49'
+        env:
+          PYTHONPATH: modules/solidcraft-reference/src
+        run: >-
+          python -m cad_library_solidcraft_reference capture
+          --image ghcr.io/brainboxemb/cad-solidcraft:v0.3.6
+          --version 0.49.0
+          --upstream-commit 10e6242c3a94e942c8fc11e78965ef1cd21e4856
+          --runtime-release v0.3.6
+          --out build/qualification/solidcraft-reference-0.49.0
+
       - name: Upload qualification evidence
         if: always()
         uses: actions/upload-artifact@v7
