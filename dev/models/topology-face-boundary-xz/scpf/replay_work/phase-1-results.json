@@ -1,0 +1,193 @@
+[
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Hook profile",
+    "projected": null,
+    "sketch": 1,
+    "sketching_view": 1
+  },
+  {
+    "constraints": [],
+    "created": {
+      "constraints": [],
+      "curves": [
+        "a",
+        "b",
+        "c",
+        "d"
+      ],
+      "dimensions": [],
+      "points": [
+        "a.start",
+        "a.end",
+        "b.end",
+        "c.end"
+      ]
+    },
+    "curves": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ],
+    "sketch": {
+      "dof": 8,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 1
+  },
+  {
+    "bodies": [
+      "TopologyFaceBoundaryXz"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "TopologyFaceBoundaryXz"
+    ],
+    "feature": 2,
+    "ms": 3.8629409999999997,
+    "name": "Extrude1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "body": "TopologyFaceBoundaryXz",
+    "faces": [
+      {
+        "area": 1200.0,
+        "centroid": [
+          0.0,
+          7.5,
+          15.0
+        ],
+        "exact": true,
+        "index": 0,
+        "name": "F2:top",
+        "plane_normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "point": [
+          10.0,
+          7.5,
+          10.0
+        ]
+      },
+      {
+        "area": 600.0,
+        "centroid": [
+          0.0,
+          0.0,
+          30.0
+        ],
+        "exact": true,
+        "index": 1,
+        "name": "F2:side:c",
+        "plane_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "point": [
+          -13.860009363293829,
+          -1.3600093632938277,
+          30.0
+        ]
+      },
+      {
+        "area": 450.0,
+        "centroid": [
+          20.0,
+          0.0,
+          15.0
+        ],
+        "exact": true,
+        "index": 2,
+        "name": "F2:side:b",
+        "plane_normal": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          20.0,
+          -1.7705098312484226,
+          24.270509831248425
+        ]
+      },
+      {
+        "area": 600.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "exact": true,
+        "index": 3,
+        "name": "F2:side:a",
+        "plane_normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "point": [
+          13.860009363293829,
+          -1.3600093632938277,
+          0.0
+        ]
+      },
+      {
+        "area": 450.0,
+        "centroid": [
+          -20.0,
+          0.0,
+          15.0
+        ],
+        "exact": true,
+        "index": 4,
+        "name": "F2:side:d",
+        "plane_normal": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          -20.0,
+          -1.7705098312484226,
+          5.729490168751578
+        ]
+      },
+      {
+        "area": 1200.0,
+        "centroid": [
+          0.0,
+          -7.5,
+          15.0
+        ],
+        "exact": true,
+        "index": 5,
+        "name": "F2:bottom",
+        "plane_normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "point": [
+          10.0,
+          -7.5,
+          10.0
+        ]
+      }
+    ]
+  }
+]

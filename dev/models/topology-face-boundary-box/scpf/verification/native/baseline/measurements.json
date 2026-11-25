@@ -1,0 +1,78 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 6959.058007951268,
+      "bbox": {
+        "max": [
+          30.0,
+          20.000000000000007,
+          12.0
+        ],
+        "min": [
+          -30.000000000000007,
+          -20.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        -1.2004774094979107e-15,
+        5.005050451694734e-16,
+        5.9269757837431944
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 20,
+      "face_types": {
+        "plane": 10
+      },
+      "faces": 10,
+      "kernel": {
+        "edges": 20,
+        "faces": 10,
+        "shells": 1,
+        "vertices": 12
+      },
+      "mass_g": 36.64975999999999,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "TopologyFaceBoundaryBox",
+      "notes": [],
+      "vertices": 12,
+      "volume_mm3": 28410.666666666664
+    }
+  ],
+  "body_count": 1,
+  "params": [],
+  "sketches": [],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 3.4797360000000004,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 23.197165,
+      "name": "Chamfer1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ChamferFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 6959.058007951268,
+    "edges": 20,
+    "faces": 10,
+    "mass_g": 36.64975999999999,
+    "open_bodies_skipped": 0,
+    "vertices": 12,
+    "volume_mm3": 28410.666666666664
+  }
+}
