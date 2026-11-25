@@ -72,8 +72,10 @@
 2. `ModelInstance.with_drawing(...)` may create a one-component design drawing;
    `Assembly.with_drawing(target, ...)` selects one occurrence already owned by
    the completed Assembly.
-3. Forge must use SolidCraft's native drawing, sheet and view commands and must
-   not implement paper layout, projected-view placement or fitted-scale logic.
+3. Forge must lower drawing intent to SolidCraft's native drawing commands.
+   SolidCraft owns sheet/view/dimension/note/title-block representation; Forge
+   may expose generic consumer controls for native standard-view placement,
+   scale, annotations and metadata but must not draw replacement graphics.
 4. Drawing lowering must address components, occurrences, sheets, sources and
    views through replay-bound SolidCraft result ids; browser names and predicted
    ids are forbidden.
@@ -81,25 +83,39 @@
    explicitly set the first sheet to landscape. Callers may select the native
    ISO A3 part template for more complex parts; Forge preserves that paper size
    while applying the same landscape sheet policy.
-6. Every declared drawing is retained in the native `.sc` design and the SCPF
-   builder exports both a vector PDF and a native static PNG of the exact
-   replay-bound sheet below the implementation's `drawings/` output directory
-   using SolidCraft `drawing.export`.
-7. Build filesystem paths are builder-owned. Model/compiler intent may declare a
-   relative drawing artifact name and a replay-bound drawing id, but must not
-   embed repository/build-root paths.
-8. Native qualification must execute drawing creation and PDF export against
-   the pinned tested SolidCraft runtime, not only compare generated JSON.
-9. Dimensions, notes, title-block override authoring, explicit view placement,
-   balloons and parts lists remain later demonstrated requirements; this patch
-   must not invent example-specific layout or annotation behavior.
-10. Drawings are a first-class public documentation capability: Guide must have
-    a dedicated Drawings chapter, Cheatsheet must expose the common drawing
-    forms, and one physical owner with purpose [example, verification] must
-    demonstrate the complete A4 drawing flow in both public catalogues.
-11. Pages must not embed/auto-open drawing PDFs. It may load the durable static
-    PNG sheet preview and expose explicit PDF open/download links from
-    build/<scope>, but must copy neither generated PDF nor PNG into gh-pages.
+6. The public drawing authoring contract must support explicit standard-view
+   placement/scale, drawing properties, title-block overrides, one revision row,
+   sheet notes and native dimensions needed by a Wall-Hook-class part drawing.
+7. Dimension authoring must remain native and topology-resolved. Forge may expose
+   model-space picks for SolidCraft linear, parallel-face and radial dimensions;
+   it must not convert dimensions into free lines/text. Stable face-to-face
+   dimensions are the preferred overall-size form where fillets remove corners.
+8. Every declared drawing is retained in the native `.sc` design and the SCPF
+   builder exports a vector PDF, a native static PNG of the exact replay-bound
+   sheet and the final native `drawing.inspect` JSON below the implementation's
+   `drawings/` output directory.
+9. Build filesystem paths are builder-owned. Model/compiler intent may declare
+   safe relative drawing artifact names and replay-bound ids, but must not embed
+   repository/build-root paths.
+10. The SCPF builder must validate the fully-authored native drawing inspection
+    against the compiled drawing intent before publishing the PDF/PNG evidence:
+    orientation, view count, dimension count, note count, properties, revision
+    and authored title-block values must survive native replay.
+11. Drawing qualification must also include an approved visual baseline of the
+    generated native sheet. Image comparison is generic verification behavior,
+    not a drawing renderer; it must consume the already-generated sheet PNG.
+12. Native qualification must execute drawing creation and export against the
+    pinned tested SolidCraft runtime, not only compare generated JSON.
+13. Centre marks/centre lines remain unavailable until the pinned SolidCraft
+    command registry exposes native authoring for them. Balloons and parts lists
+    remain later consumer requirements; Forge must not fake them.
+14. Drawings are a first-class public documentation capability: Guide must show
+    the full authoring flow, Cheatsheet must expose the practical drawing calls,
+    and API Reference must be sufficient for an external CAD repository to
+    reproduce the qualification sheet without reading Forge internals.
+15. One physical owner with purpose `[example, verification]` must demonstrate
+    the complete drawing flow. Pages must not embed/auto-open drawing PDFs; it
+    may load the durable static PNG sheet preview and expose explicit PDF actions.
 
 ## SolidCraft reference evidence
 
