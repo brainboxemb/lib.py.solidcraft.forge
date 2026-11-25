@@ -585,12 +585,12 @@
       "summary": "Fold existing sheet material along one straight line.",
       "guide": "guide/sheet-metal/#fold",
       "reference": "reference/Shape.fold/",
-      "use_when": "Bend material that already exists in a sheet blank. Dimensions and bend allowance come from the sheet's shared rule.",
-      "limits": "This first qualified form supports one straight fold line. The line endpoints and fixed point are fixed finite coordinates.",
+      "use_when": "Bend material that already exists in a sheet blank. Dimensions and bend allowance come from the sheet's shared rule. Prefer an authored Sketch line when the bend line must follow later parameter edits.",
+      "limits": "One straight fold line is supported. Fixed-point input remains numeric-only; associative input must be one Sketch.line(...) result.",
       "parameters": [
         {
           "name": "line",
-          "description": "Two XY or XYZ points defining the fold line."
+          "description": "Either two fixed XY/XYZ points or the Shape returned by Sketch.line(...). The Sketch-line form preserves native associativity when its endpoints use Parameters/Expressions."
         },
         {
           "name": "angle",
@@ -609,7 +609,7 @@
           "description": "Fold to the opposite side when True. Defaults to False."
         }
       ],
-      "example": "sheet.fold(\nline=((20, -20), (20, 20)),\nangle=90,\nfixed=(-20, 0, 0),\n)",
+      "example": "with Sketch(name=\"Fold line\", plane=\"XY\") as fold_sketch:\n    fold_line = fold_sketch.line(\n        start=(20, -(depth / 2)),\n        end=(20, depth / 2),\n    )\nsheet.fold(\n    line=fold_line,\n    angle=90,\n    fixed=(-20, 0, 0),\n)",
       "signature": "Shape.fold(self, *, line, angle=90, fixed=None, position='centerline', flip=False)"
     },
     {
@@ -907,6 +907,27 @@
       ],
       "example": "sketch.add(Circle2D(d=8), anchor=Anchor.CENTER, offset=(20, 0))",
       "signature": "Sketch.add(self, profile, *, anchor=None, offset=(0, 0))"
+    },
+    {
+      "kind": "callable",
+      "name": "Sketch.line",
+      "summary": "Author and return one reusable straight Sketch line.",
+      "guide": "guide/geometry/#profiles",
+      "reference": "reference/Sketch.line/",
+      "use_when": "A downstream native feature needs one authored Sketch curve with stable identity, especially an associative Shape.fold().",
+      "limits": "This is the one-line convenience form of Sketch.chain() and currently follows the same standalone Sketch restrictions.",
+      "parameters": [
+        {
+          "name": "start",
+          "description": "Sketch-local (x, y) start point. Coordinates may retain Parameter/Expression dependencies."
+        },
+        {
+          "name": "end",
+          "description": "Sketch-local (x, y) end point. Coordinates may retain Parameter/Expression dependencies."
+        }
+      ],
+      "example": "with Sketch(name=\"Fold line\", plane=\"XY\") as sketch:\n    fold_line = sketch.line(\n        start=(20, -(depth / 2)),\n        end=(20, depth / 2),\n    )",
+      "signature": "Sketch.line(self, *, start, end)"
     },
     {
       "kind": "callable",
