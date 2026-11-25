@@ -37,6 +37,14 @@
           0.0
         ]
       }
+    },
+    {
+      "command": "drawing.create",
+      "params": {
+        "name": "Block drawing",
+        "template": "iso-a4-part",
+        "first_sheet_name": "Sheet 1"
+      }
     }
   ]
 }

@@ -1,0 +1,27 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "73d946p8j1edx"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "sheet": "9g9tvwec02tmf",
+        "documents": {
+          "source": "0vm3tdqc521k0",
+          "component": 1
+        }
+      }
+    },
+    {
+      "command": "drawing.view.standard",
+      "params": {
+        "sheet": "9g9tvwec02tmf",
+        "iso": true
+      }
+    }
+  ]
+}

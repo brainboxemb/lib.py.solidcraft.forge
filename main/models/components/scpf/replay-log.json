@@ -1,10 +1,16 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "a99cdee955fc07db8e27875d1e23c94c6b69d83ad1001f7b71577b48c83d6435",
+  "replay_sha256": "d0d9a800542add5aabfc0a5380fefe11ef791a3abd3c7143395197349f8c0e33",
   "variables": {
     "$block_occurrence_1": 2,
-    "$block_occurrence_2": 4
+    "$component_1": 1,
+    "$block_occurrence_2": 4,
+    "$drawing_1": "73d946p8j1edx",
+    "$drawing_1_source": "0vm3tdqc521k0",
+    "$drawing_1_sheet": "9g9tvwec02tmf",
+    "$drawing_1_front": "1jhrptthzh6vv",
+    "$drawing_1_iso": "c2ddrt9ekfv43"
   },
   "commands": [
     {
@@ -15,7 +21,8 @@
         "grounded": true
       },
       "bindings": {
-        "$block_occurrence_1": 2
+        "$block_occurrence_1": 2,
+        "$component_1": 1
       }
     },
     {
@@ -54,7 +61,81 @@
       "bindings": {
         "$block_occurrence_2": 4
       }
+    },
+    {
+      "index": 4,
+      "command": "drawing.create",
+      "resolved_params": {
+        "name": "Block drawing",
+        "template": "iso-a4-part",
+        "first_sheet_name": "Sheet 1"
+      },
+      "bindings": {
+        "$drawing_1": "73d946p8j1edx",
+        "$drawing_1_source": "0vm3tdqc521k0",
+        "$drawing_1_sheet": "9g9tvwec02tmf"
+      }
+    },
+    {
+      "index": 5,
+      "command": "drawing.sheet.set",
+      "resolved_params": {
+        "sheet": "9g9tvwec02tmf",
+        "documents": {
+          "source": "0vm3tdqc521k0",
+          "component": 1
+        }
+      }
+    },
+    {
+      "index": 6,
+      "command": "drawing.view.standard",
+      "resolved_params": {
+        "sheet": "9g9tvwec02tmf",
+        "iso": true
+      },
+      "bindings": {
+        "$drawing_1_front": "1jhrptthzh6vv",
+        "$drawing_1_iso": "c2ddrt9ekfv43"
+      }
+    },
+    {
+      "index": 7,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "1jhrptthzh6vv",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 8,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "c2ddrt9ekfv43",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 9,
+      "command": "drawing.close",
+      "resolved_params": {}
     }
   ],
-  "completed": 4
+  "completed": 10
 }
