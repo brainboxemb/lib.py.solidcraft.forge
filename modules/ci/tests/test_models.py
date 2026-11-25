@@ -13,6 +13,7 @@ from cad_library_ci.models import discover_models, select_models
 
 EXPECTED_IDS = {
     "anchor-topology-mutation",
+    "appearance-color",
     "anchored-holes",
     "as-built-attach",
     "assembly-decorator",
@@ -41,7 +42,9 @@ EXPECTED_IDS = {
     "parent-derived-child-size",
     "primitive-csg",
     "rectangular-pattern",
+    "sample-plate-drawing",
     "repeated-parent-attachments",
+    "revolute-joint",
     "rotated-copy-placement",
     "rotated-sketch-cutter",
     "round-top-sketch",
@@ -65,10 +68,12 @@ EXPECTED_IDS = {
 
 
 SCPF_ONLY_IDS = {
+    "appearance-color",
     "attached-through-all",
     "cone-boolean",
     "exploded-views",
     "native-revolve",
+    "revolute-joint",
     "rotated-sketch-cutter",
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
@@ -76,6 +81,7 @@ SCPF_ONLY_IDS = {
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
+    "sample-plate-drawing",
     "topology-face-boundary-box",
     "topology-face-boundary-xz",
 }
@@ -92,7 +98,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 49)
+        self.assertEqual(len(self.models), 52)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -101,6 +107,7 @@ class ModelTests(unittest.TestCase):
             "anchored-holes",
             "corner-anchor",
             "components",
+            "sample-plate-drawing",
         ):
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -111,6 +118,7 @@ class ModelTests(unittest.TestCase):
             "anchored-holes",
             "corner-anchor",
             "components",
+            "sample-plate-drawing",
         }:
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -148,14 +156,24 @@ class ModelTests(unittest.TestCase):
                 [impl.id for impl in model.implementations],
                 ["scpf"],
             )
-            self.assertEqual(
-                [stage.id for stage in model.verifications],
-                ["native"],
-            )
-            self.assertEqual(
-                [stage.runtime for stage in model.verifications],
-                ["solidcraft"],
-            )
+            if model_id == "sample-plate-drawing":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "drawing-sheet"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference"],
+                )
+            else:
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft"],
+                )
 
         for model in self.models:
             self.assertEqual(model.primary, "scpf")
@@ -248,11 +266,15 @@ class ModelTests(unittest.TestCase):
         reference = manifests[1]
         multi_engine = len(EXPECTED_IDS - SCPF_ONLY_IDS)
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
-        self.assertEqual(len(reference["verify_items"]), multi_engine * 5)
+        self.assertEqual(
+            len(reference["verify_items"]),
+            multi_engine * 5 + 1,
+        )
         self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
-            set(EXPECTED_IDS) - set(SCPF_ONLY_IDS),
+            (set(EXPECTED_IDS) - set(SCPF_ONLY_IDS))
+            | {"sample-plate-drawing"},
         )
         self.assertEqual(
             {
@@ -265,6 +287,7 @@ class ModelTests(unittest.TestCase):
                 ("build123d", "geometry"),
                 ("pythonscad", "geometry"),
                 ("pybosl2", "geometry"),
+                ("scpf", "drawing-sheet"),
             },
         )
 

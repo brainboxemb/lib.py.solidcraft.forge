@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/141-reconcile-a4-drawing-pdf
-modules: [builder-scpf, ci, pages]
-library: true
-models: [components]
+branch: fix/186-appearance-cheatsheet-group
+modules: [pages]
+library: false
+models: []
 tasks: [test]

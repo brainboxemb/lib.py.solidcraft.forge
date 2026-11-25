@@ -186,6 +186,28 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
                         details = re.findall(r"<details\b[^>]*cad-command-section[^>]*>", html)
                         if not details or any(re.search(r"\sopen(?:[\s=>]|$)", tag) for tag in details):
                             raise RuntimeError(f"{route}: generated commands must be collapsed")
+                    drawings_root = impl_root / "drawings"
+                    if drawings_root.is_dir():
+                        pdfs = sorted(drawings_root.glob("*.pdf"))
+                        for pdf in pdfs:
+                            expected.append(
+                                f"/build/{build_scope.name}/models/{item}/{impl}/drawings/{pdf.name}"
+                            )
+                            png = pdf.with_suffix(".png")
+                            if png.is_file():
+                                expected.append(
+                                    f"/build/{build_scope.name}/models/{item}/{impl}/drawings/{png.name}"
+                                )
+                        if featured == impl and pdfs:
+                            if "drawing-sheet" not in html:
+                                raise RuntimeError(
+                                    f"{route}: missing drawing sheet presentation"
+                                )
+                            if "<iframe" in html or "<object" in html or "<embed" in html:
+                                raise RuntimeError(
+                                    f"{route}: drawing PDF must not auto-embed"
+                                )
+
                     if (impl_root / "model.png").is_file() and any(i["id"] == impl for i in ci.get("implementations", [])):
                         preview = f"/build/{build_scope.name}/models/{item}/{impl}/model.png"
                         expected.append(preview)
@@ -212,6 +234,19 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
             for artifact in ("model.png", "model.stl", "model.sc", "solidcraft.json", "result.json"):
                 if (site / route / artifact).exists():
                     raise RuntimeError(f"generated CAD artifact copied into Pages: {route}/{artifact}")
+            if list((site / route).rglob("*.pdf")):
+                raise RuntimeError(
+                    f"generated drawing PDF copied into Pages: {route}"
+                )
+            if list((site / route).rglob("*.png")):
+                copied = [
+                    path for path in (site / route).rglob("*.png")
+                    if "setup" not in path.name
+                ]
+                if copied:
+                    raise RuntimeError(
+                        f"generated drawing/model PNG copied into Pages: {route}"
+                    )
 
     parity_path = source_root / "docs" / "pages-parity.json"
     if parity_path.is_file():

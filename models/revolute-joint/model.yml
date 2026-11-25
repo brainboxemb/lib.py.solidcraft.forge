@@ -1,0 +1,18 @@
+schema: 1
+purpose: verification
+section: associativity
+priority: 65
+title: Revolute Joint
+tagline: Two reusable leaves connected by a native bounded revolute relationship
+description: >
+  Qualifies Forge's public revolute attachment authoring against native
+  SolidCraft. Two identical component occurrences share a hinge axis, start
+  at 60 degrees, retain 0 to 180 degree limits and are driven to 120 degrees
+  in saved-design verification.
+parameters: Two 40 × 30 × 3 mm leaves; 60° initial angle; 0–180° limits
+stages:
+  - Build one reusable leaf definition with named hinge-axis frames
+  - Create fixed and moving occurrences
+  - Create native revolute joint Hinge at the shared X axis
+  - Inspect native type, value and limits
+  - Drive Hinge from 60° to 120° and prove the moving body changes position

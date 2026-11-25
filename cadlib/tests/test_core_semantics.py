@@ -54,6 +54,34 @@ class CoreSemantics(unittest.TestCase):
         self.assertEqual(command_value(down(distance)[2]), "-(distance)")
         self.assertEqual(command_value(right(distance)[0]), "distance")
 
+    def test_shape_appearance_lowers_without_material_semantics(self):
+        from scpf import Box
+        from scpf.compiler import compile_model
+
+        document = compile_model(
+            Box(40, 30, 10).with_appearance("#ffd21a"),
+            "YellowBox",
+        )
+        commands = document["commands"]
+        appearance = next(
+            row for row in commands
+            if row["command"] == "appearance.assign"
+        )
+
+        self.assertEqual(
+            appearance["params"],
+            {"bodies": ["YellowBox"], "color": "#FFD21A"},
+        )
+        self.assertFalse(
+            any(row["command"].startswith("material.") for row in commands)
+        )
+
+    def test_shape_appearance_validates_hex_color(self):
+        from scpf import Box
+
+        with self.assertRaisesRegex(ValueError, "#RRGGBB"):
+            Box(10, 10, 10).with_appearance("yellow")
+
     def test_half_and_midpoint_preserve_symbolic_dimensions(self):
         from scpf import half, midpoint
         from scpf.core import Parameter, command_value

@@ -61,7 +61,7 @@ class ModelDefinition:
 
 @dataclass(frozen=True)
 class Attachment:
-    """Associative face-to-face relationship between two model occurrences."""
+    """Associative relationship between two model occurrences."""
 
     target: "ModelInstance"
     parent: Anchor | str | AnchorFrame | AnchorTopology | None
@@ -69,6 +69,11 @@ class Attachment:
     offset: tuple[object, object]
     gap: object = 0
     angle: float | None = None
+    kind: str | None = None
+    value: float | None = None
+    limits: tuple[float, float] | None = None
+    flip: bool = False
+    name: str | None = None
     as_built: bool = False
 
 
@@ -116,6 +121,7 @@ def _unwrap_rectangular_shape(shape):
     """Follow modifiers that retain the base component's nominal bounds."""
     while shape.kind in (
         "material_assignment",
+        "appearance_assignment",
         "fillet",
         "chamfer",
         "shell",
@@ -520,35 +526,44 @@ class ModelInstance:
         )
 
     def attach(self, target, *, parent=Anchor.RIGHT, child=Anchor.LEFT,
-               offset=(0, 0), gap=0, angle=None, as_built=False):
-        """Create a rigid or planar relationship from this occurrence to another component.
+               offset=(0, 0), gap=0, angle=None, as_built=False,
+               kind=None, value=None, limits=None, flip=False, name=None):
+        """Create an associative relationship to another component occurrence.
+
+        The default remains the existing rigid/planar attachment. Set
+        kind="revolute" explicitly for one-axis rotational motion.
 
         Parameters:
             target: Parent component occurrence to attach to.
             parent: Attachment reference on target. Defaults to Anchor.RIGHT.
             child: Attachment reference on this occurrence. Defaults to Anchor.LEFT.
-            offset: In-plane (u, v) offset on the parent attachment plane, in mm. Defaults to (0, 0).
-            gap: Separation along the parent anchor normal, in mm. Defaults to 0.
-            angle: Optional joint rotation in degrees.
-            as_built: When True, keep the occurrences at their existing poses and create an as-built rigid joint.
-
-        Use when:
-            Placement should be expressed semantically between component
-            references, such as left face to right face or one mounting frame
-            to another, rather than as a calculated global XYZ position.
+            offset: In-plane (u, v) offset in mm. Defaults to (0, 0).
+            gap: Separation along the parent anchor normal, in mm.
+            angle: Optional joint-frame rotation in degrees.
+            as_built: Keep existing poses and create an as-built rigid joint.
+            kind: Optional relationship kind. Only "revolute" is explicit.
+            value: Initial revolute angle in degrees. Defaults to 0.
+            limits: Optional (minimum, maximum) revolute limits in degrees.
+            flip: Native joint-origin flip for a revolute relationship.
+            name: Optional native joint name.
 
         Limits:
-            The target must be another component occurrence. Supported standard
-            anchors currently focus on rectangular component geometry; custom
-            AnchorFrame/AnchorTopology references cover more specific datums.
+            Revolute relationships currently require zero in-plane offset.
+            value and limits are fixed finite degree values.
             as_built=True requires all other relationship arguments to remain
             at their defaults.
-
-        Example:
-            right = right.attach(left, parent=Anchor.RIGHT, child=Anchor.LEFT, gap=2)
         """
         if not isinstance(target, ModelInstance):
             raise TypeError("component attach target must be another model object")
+        if kind not in (None, "revolute"):
+            raise ValueError("component attach kind must be 'revolute' or omitted")
+        if not isinstance(flip, bool):
+            raise TypeError("component attach flip must be a bool")
+        if name is not None:
+            if not isinstance(name, str) or not name.strip():
+                raise ValueError("component attach name must be non-empty")
+            name = name.strip()
+
         if as_built:
             if (
                 parent != Anchor.RIGHT
@@ -556,9 +571,15 @@ class ModelInstance:
                 or tuple(offset) != (0, 0)
                 or gap != 0
                 or angle is not None
+                or kind is not None
+                or value is not None
+                or limits is not None
+                or flip
+                or name is not None
             ):
                 raise ValueError(
-                    "as-built attach does not take anchors, offset, gap or angle"
+                    "as-built attach does not take anchors, offset, gap, angle, "
+                    "kind, value, limits, flip or name"
                 )
             return replace(
                 self,
@@ -570,6 +591,7 @@ class ModelInstance:
                     as_built=True,
                 ),
             )
+
         parent = _resolve_anchor_reference(target, parent)
         child = _resolve_anchor_reference(self, child)
         if parent is Anchor.INNER_BOTTOM or child is Anchor.INNER_BOTTOM:
@@ -577,13 +599,44 @@ class ModelInstance:
         if not isinstance(offset, (tuple, list)) or len(offset) != 2:
             raise ValueError("component attach offset must be an (u, v) pair")
         face_offset = tuple(offset)
-        face_offset_values = tuple(pv(value) for value in face_offset)
-        if not all(isfinite(value) for value in face_offset_values):
+        face_offset_values = tuple(pv(item) for item in face_offset)
+        if not all(isfinite(item) for item in face_offset_values):
             raise ValueError("component attach offset must be finite")
+        if kind == "revolute" and any(item != 0 for item in face_offset_values):
+            raise ValueError("revolute attach does not support in-plane offset")
 
         gap_value = pv(gap)
         if not isfinite(gap_value):
             raise ValueError("component attach gap must be finite")
+
+        angle_value = None
+        if angle is not None:
+            angle_value = pv(angle)
+            if not isfinite(angle_value):
+                raise ValueError("component attach angle must be finite")
+
+        revolute_value = None
+        revolute_limits = None
+        if kind == "revolute":
+            revolute_value = 0.0 if value is None else float(pv(value))
+            if not isfinite(revolute_value):
+                raise ValueError("revolute attach value must be finite")
+            if limits is not None:
+                if not isinstance(limits, (tuple, list)) or len(limits) != 2:
+                    raise ValueError("revolute attach limits must be a (min, max) pair")
+                lower = float(pv(limits[0]))
+                upper = float(pv(limits[1]))
+                if not isfinite(lower) or not isfinite(upper):
+                    raise ValueError("revolute attach limits must be finite")
+                if lower > upper:
+                    raise ValueError("revolute attach minimum limit exceeds maximum")
+                if revolute_value < lower or revolute_value > upper:
+                    raise ValueError("revolute attach value lies outside its limits")
+                revolute_limits = (lower, upper)
+        elif value is not None or limits is not None or flip:
+            raise ValueError(
+                "component attach value, limits and flip require kind='revolute'"
+            )
 
         target_local = _anchor_local_point(target, parent)
         child_local = _anchor_local_point(self, child)
@@ -599,8 +652,6 @@ class ModelInstance:
             Anchor.BOTTOM,
             Anchor.CENTER,
         ):
-            # Validation above reads concrete values, but the seed Placement
-            # itself must retain Parameter/Expression dependencies.
             tangent = _face_offset(parent, face_offset)
             if parent is not Anchor.CENTER:
                 normal = parent.vector
@@ -627,11 +678,6 @@ class ModelInstance:
             _dim_sub(target_world[i], child_local[i])
             for i in range(3)
         )
-        angle_value = None
-        if angle is not None:
-            angle_value = pv(angle)
-            if not isfinite(angle_value):
-                raise ValueError("component attach angle must be finite")
 
         return replace(
             self,
@@ -648,10 +694,29 @@ class ModelInstance:
                 offset=face_offset,
                 gap=gap,
                 angle=angle_value,
+                kind=kind,
+                value=revolute_value,
+                limits=revolute_limits,
+                flip=flip,
+                name=name,
             ),
         )
 
-    def with_drawing(self, *, name=None, template="iso-a4-part", sheet_name="Sheet 1"):
+    def with_drawing(
+        self,
+        *,
+        name=None,
+        template="iso-a4-part",
+        sheet_name="Sheet 1",
+        scale=None,
+        gap_mm=20,
+        views=None,
+        properties=None,
+        title_block=None,
+        revision=None,
+        notes=(),
+        dimensions=(),
+    ):
         """Add a native technical drawing for this component occurrence.
 
         The drawing belongs to the final design presentation, not to the
@@ -663,6 +728,14 @@ class ModelInstance:
             name=name,
             template=template,
             sheet_name=sheet_name,
+            scale=scale,
+            gap_mm=gap_mm,
+            views=views,
+            properties=properties,
+            title_block=title_block,
+            revision=revision,
+            notes=notes,
+            dimensions=dimensions,
         )
 
     def __add__(self, other):
@@ -686,6 +759,280 @@ class AssemblyAnchor:
     offset: tuple[object, object] = (0, 0)
 
 
+def _drawing_xy(value, name):
+    """Return one finite drawing-paper XY pair."""
+
+    if isinstance(value, (str, bytes)):
+        raise ValueError(f"{name} must be an (x, y) pair")
+    try:
+        values = tuple(value)
+    except TypeError as exc:
+        raise ValueError(f"{name} must be an (x, y) pair") from exc
+    if len(values) != 2:
+        raise ValueError(f"{name} must be an (x, y) pair")
+    result = tuple(float(pv(item)) for item in values)
+    if not all(isfinite(item) for item in result):
+        raise ValueError(f"{name} must contain finite values")
+    return result
+
+
+def _drawing_xyz(value, name):
+    """Return one finite model-space XYZ pick."""
+
+    if isinstance(value, (str, bytes)):
+        raise ValueError(f"{name} must be an (x, y, z) point")
+    try:
+        values = tuple(value)
+    except TypeError as exc:
+        raise ValueError(f"{name} must be an (x, y, z) point") from exc
+    if len(values) != 3:
+        raise ValueError(f"{name} must be an (x, y, z) point")
+    result = tuple(float(pv(item)) for item in values)
+    if not all(isfinite(item) for item in result):
+        raise ValueError(f"{name} must contain finite values")
+    return result
+
+
+@dataclass(frozen=True)
+class DrawingView:
+    """Placement/display override for one standard drawing view."""
+
+    at: tuple[float, float] | None = None
+    scale: str | None = None
+    visual_style: str | None = None
+
+    def __post_init__(self):
+        if self.at is not None:
+            object.__setattr__(self, "at", _drawing_xy(self.at, "drawing view at"))
+        if self.scale is not None:
+            if not isinstance(self.scale, str) or not self.scale.strip():
+                raise ValueError("drawing view scale must be non-empty text")
+            object.__setattr__(self, "scale", self.scale.strip())
+        if self.visual_style is not None:
+            if self.visual_style != "shaded":
+                raise ValueError(
+                    "drawing view visual_style currently supports only 'shaded'"
+                )
+
+
+@dataclass(frozen=True)
+class DrawingNote:
+    """One native sheet note positioned in paper millimetres."""
+
+    content: str
+    at: tuple[float, float]
+    cap_mm: float = 3.5
+    align: str = "left"
+
+    def __post_init__(self):
+        if not isinstance(self.content, str) or not self.content.strip():
+            raise ValueError("drawing note content must be non-empty text")
+        object.__setattr__(self, "content", self.content.strip())
+        object.__setattr__(self, "at", _drawing_xy(self.at, "drawing note at"))
+        cap = float(self.cap_mm)
+        if not isfinite(cap) or not 0.5 <= cap <= 100:
+            raise ValueError("drawing note cap_mm must be between 0.5 and 100")
+        object.__setattr__(self, "cap_mm", cap)
+        if self.align not in {"left", "centre", "right"}:
+            raise ValueError(
+                "drawing note align must be left, centre or right"
+            )
+
+
+@dataclass(frozen=True)
+class DrawingRevision:
+    """One native drawing revision row."""
+
+    revision: str | None = None
+    description: str | None = None
+    designer: str | None = None
+    checker: str | None = None
+    date: str | None = None
+    hidden: bool = False
+
+    def __post_init__(self):
+        values = {}
+        for name in ("revision", "description", "designer", "checker", "date"):
+            value = getattr(self, name)
+            if value is not None:
+                if not isinstance(value, str) or not value.strip():
+                    raise ValueError(
+                        f"drawing revision {name} must be non-empty text"
+                    )
+                value = value.strip()
+                object.__setattr__(self, name, value)
+                values[name] = value
+        if not values:
+            raise ValueError("drawing revision requires at least one text field")
+        if not isinstance(self.hidden, bool):
+            raise ValueError("drawing revision hidden must be a bool")
+
+
+@dataclass(frozen=True)
+class DrawingDimension:
+    """One native drawing dimension resolved from model-space picks."""
+
+    view: str
+    kind: str
+    a: tuple[float, float, float] | None = None
+    b: tuple[float, float, float] | None = None
+    edge: tuple[float, float, float] | None = None
+    direction: str = "aligned"
+    diameter: bool | None = None
+    offset_mm: float = 10.0
+    override_text: str | None = None
+    decimals: int = 2
+    line_through_mm: tuple[float, float] | None = None
+
+    @classmethod
+    def linear(
+        cls,
+        view,
+        a,
+        b,
+        *,
+        direction="aligned",
+        offset_mm=10,
+        override_text=None,
+        decimals=2,
+        line_through_mm=None,
+    ):
+        """Dimension two model corners/points in one drawing view."""
+
+        return cls(
+            view=view,
+            kind="linear",
+            a=a,
+            b=b,
+            direction=direction,
+            offset_mm=offset_mm,
+            override_text=override_text,
+            decimals=decimals,
+            line_through_mm=line_through_mm,
+        )
+
+    @classmethod
+    def faces(
+        cls,
+        view,
+        a,
+        b,
+        *,
+        direction="aligned",
+        offset_mm=10,
+        override_text=None,
+        decimals=2,
+        line_through_mm=None,
+    ):
+        """Dimension two parallel planar model faces in one drawing view."""
+
+        return cls(
+            view=view,
+            kind="faces",
+            a=a,
+            b=b,
+            direction=direction,
+            offset_mm=offset_mm,
+            override_text=override_text,
+            decimals=decimals,
+            line_through_mm=line_through_mm,
+        )
+
+    @classmethod
+    def radial(
+        cls,
+        view,
+        edge,
+        *,
+        diameter=None,
+        offset_mm=10,
+        override_text=None,
+        decimals=2,
+        line_through_mm=None,
+    ):
+        """Dimension one circular edge seen face-on in one drawing view."""
+
+        return cls(
+            view=view,
+            kind="radial",
+            edge=edge,
+            diameter=diameter,
+            offset_mm=offset_mm,
+            override_text=override_text,
+            decimals=decimals,
+            line_through_mm=line_through_mm,
+        )
+
+    def __post_init__(self):
+        if self.view not in {"front", "top", "right", "iso"}:
+            raise ValueError(
+                "drawing dimension view must be front, top, right or iso"
+            )
+        if self.kind not in {"linear", "faces", "radial"}:
+            raise ValueError(
+                "drawing dimension kind must be linear, faces or radial"
+            )
+        if self.kind in {"linear", "faces"}:
+            if self.a is None or self.b is None or self.edge is not None:
+                raise ValueError(
+                    f"{self.kind} drawing dimension requires a and b"
+                )
+            object.__setattr__(self, "a", _drawing_xyz(self.a, "dimension a"))
+            object.__setattr__(self, "b", _drawing_xyz(self.b, "dimension b"))
+            if self.direction not in {"aligned", "horizontal", "vertical"}:
+                raise ValueError(
+                    "linear drawing dimension direction must be aligned, "
+                    "horizontal or vertical"
+                )
+            if self.diameter is not None:
+                raise ValueError(
+                    f"{self.kind} drawing dimension has no diameter flag"
+                )
+        else:
+            if self.edge is None or self.a is not None or self.b is not None:
+                raise ValueError("radial drawing dimension requires edge")
+            object.__setattr__(
+                self,
+                "edge",
+                _drawing_xyz(self.edge, "dimension edge"),
+            )
+            if self.diameter is not None and not isinstance(self.diameter, bool):
+                raise ValueError("radial dimension diameter must be bool or None")
+
+        offset = float(self.offset_mm)
+        if not isfinite(offset):
+            raise ValueError("drawing dimension offset_mm must be finite")
+        object.__setattr__(self, "offset_mm", offset)
+        if (
+            isinstance(self.decimals, bool)
+            or not isinstance(self.decimals, int)
+            or not 0 <= self.decimals <= 6
+        ):
+            raise ValueError("drawing dimension decimals must be 0..6")
+        if self.override_text is not None:
+            if (
+                not isinstance(self.override_text, str)
+                or not self.override_text.strip()
+            ):
+                raise ValueError(
+                    "drawing dimension override_text must be non-empty text"
+                )
+            object.__setattr__(
+                self,
+                "override_text",
+                self.override_text.strip(),
+            )
+        if self.line_through_mm is not None:
+            object.__setattr__(
+                self,
+                "line_through_mm",
+                _drawing_xy(
+                    self.line_through_mm,
+                    "drawing dimension line_through_mm",
+                ),
+            )
+
+
 @dataclass(frozen=True)
 class ComponentDrawing:
     """One native SolidCraft drawing owned by the final design."""
@@ -695,6 +1042,14 @@ class ComponentDrawing:
     template: str = "iso-a4-part"
     sheet_name: str = "Sheet 1"
     pdf_path: str = ""
+    scale: str | None = None
+    gap_mm: float = 20.0
+    views: tuple[tuple[str, DrawingView], ...] = ()
+    properties: tuple[tuple[str, str], ...] = ()
+    title_block: tuple[tuple[str, str | None], ...] = ()
+    revision: DrawingRevision | None = None
+    notes: tuple[DrawingNote, ...] = ()
+    dimensions: tuple[DrawingDimension, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -781,12 +1136,28 @@ class Assembly:
             anchors=anchors,
         )
 
-    def with_drawing(self, target, *, name=None, template="iso-a4-part", sheet_name="Sheet 1"):
+    def with_drawing(
+        self,
+        target,
+        *,
+        name=None,
+        template="iso-a4-part",
+        sheet_name="Sheet 1",
+        scale=None,
+        gap_mm=20,
+        views=None,
+        properties=None,
+        title_block=None,
+        revision=None,
+        notes=(),
+        dimensions=(),
+    ):
         """Add a native technical drawing of one component occurrence.
 
         Compose the final Assembly first, then select the occurrence the sheet
-        documents. SolidCraft owns paper layout, standard-view placement and
-        fitted scale.
+        documents. Standard views remain native SolidCraft views; optional
+        authoring data controls their paper layout, dimensions, notes and title
+        information without drawing model-specific graphics in Forge.
         """
         if not isinstance(target, ModelInstance):
             raise TypeError("drawing target must be a component occurrence")
@@ -815,6 +1186,92 @@ class Assembly:
         if not isinstance(sheet_name, str) or not sheet_name.strip():
             raise ValueError("drawing sheet name must be non-empty text")
 
+        if scale is not None:
+            if not isinstance(scale, str) or not scale.strip():
+                raise ValueError("drawing scale must be non-empty text")
+            scale = scale.strip()
+        gap = float(gap_mm)
+        if not isfinite(gap) or not 0 <= gap <= 1000:
+            raise ValueError("drawing gap_mm must be between 0 and 1000")
+
+        if views is None:
+            view_rows = ()
+        else:
+            if not isinstance(views, dict):
+                raise TypeError("drawing views must be a mapping")
+            allowed_views = {"front", "top", "right", "iso"}
+            unknown = sorted(set(views) - allowed_views)
+            if unknown:
+                raise ValueError(
+                    "unsupported drawing view(s): " + ", ".join(unknown)
+                )
+            if not all(isinstance(value, DrawingView) for value in views.values()):
+                raise TypeError("drawing views must contain DrawingView values")
+            view_rows = tuple(views.items())
+
+        property_keys = {
+            "project",
+            "part_number",
+            "revision",
+            "author",
+            "organization",
+            "description",
+            "license",
+        }
+        if properties is None:
+            property_rows = ()
+        else:
+            if not isinstance(properties, dict):
+                raise TypeError("drawing properties must be a mapping")
+            unknown = sorted(set(properties) - property_keys)
+            if unknown:
+                raise ValueError(
+                    "unsupported drawing property keys: " + ", ".join(unknown)
+                )
+            normalized = []
+            for key, value in properties.items():
+                if not isinstance(value, str) or not value.strip():
+                    raise ValueError(
+                        f"drawing property {key} must be non-empty text"
+                    )
+                normalized.append((key, value.strip()))
+            property_rows = tuple(normalized)
+
+        if title_block is None:
+            title_rows = ()
+        else:
+            if not isinstance(title_block, dict):
+                raise TypeError("drawing title_block must be a mapping")
+            normalized = []
+            for key, value in title_block.items():
+                if not isinstance(key, str) or not key.strip():
+                    raise ValueError(
+                        "drawing title block cell names must be non-empty text"
+                    )
+                if value is not None and (
+                    not isinstance(value, str) or not value.strip()
+                ):
+                    raise ValueError(
+                        f"drawing title block {key} must be text or None"
+                    )
+                normalized.append(
+                    (key.strip(), None if value is None else value.strip())
+                )
+            title_rows = tuple(normalized)
+
+        if revision is not None and not isinstance(revision, DrawingRevision):
+            raise TypeError("drawing revision must be a DrawingRevision")
+        note_rows = tuple(notes)
+        if not all(isinstance(item, DrawingNote) for item in note_rows):
+            raise TypeError("drawing notes must contain DrawingNote values")
+        dimension_rows = tuple(dimensions)
+        if not all(
+            isinstance(item, DrawingDimension) for item in dimension_rows
+        ):
+            raise TypeError(
+                "drawing dimensions must contain DrawingDimension values"
+            )
+
         return replace(
             self,
             drawings=self.drawings + (
@@ -824,6 +1281,14 @@ class Assembly:
                     template=template.strip(),
                     sheet_name=sheet_name.strip(),
                     pdf_path=pdf_path,
+                    scale=scale,
+                    gap_mm=gap,
+                    views=view_rows,
+                    properties=property_rows,
+                    title_block=title_rows,
+                    revision=revision,
+                    notes=note_rows,
+                    dimensions=dimension_rows,
                 ),
             ),
         )

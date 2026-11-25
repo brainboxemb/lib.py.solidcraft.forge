@@ -76,3 +76,29 @@ For every expansion slice:
 4. compare native/saved-design semantics where the old case claims them;
 5. retain both results long enough to diagnose drift;
 6. only then expand the selected owner set.
+
+
+## Releases
+
+Promote product changes from `dev -> main` separately and only after full
+qualification. Prepare `release/vX.Y.Z` from qualified stable `main`; that
+branch may change only `CHANGELOG.md` and
+`cadlib/pyproject.toml:project.version`, then targets `main` directly
+through the normal `/merge` policy.
+
+A metadata-only stable release commit is classified from its single-parent
+source delta. This is deliberately identical whether the permanent stable run
+arrives as a normal `push` or as merge-policy `workflow_dispatch`. A valid
+release-only stable run selects the library plus `modules/release`, selects
+zero model owners, records `release_only: true` / `full: false`, and keeps
+the previous full `build/main` product scope unchanged. Product paths or a
+merge commit fail closed to full qualification.
+
+Publication remains explicit:
+
+```text
+/release vX.Y.Z <exact-40-character-main-sha>
+```
+
+After publication, synchronize `main -> dev` through merge policy; never
+rebase the shared permanent branch.

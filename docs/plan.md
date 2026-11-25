@@ -7,7 +7,7 @@ This file contains unfinished work only.
 The Forge migration is complete and promoted to stable `main`.
 
 The accepted baseline now has:
-- 47 physical model owners;
+- 49 physical model owners;
 - SCPF as primary per owner;
 - historically real reference implementations local to the same physical owner;
 - native and applicable geometry verification;
@@ -17,7 +17,7 @@ The accepted baseline now has:
 - `components` as one physical owner with
   `purpose: [example, verification]`;
 - exactly four public Examples;
-- all 47 physical owners projected into Verification;
+- all 49 physical owners projected into Verification;
 - durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
   `gh-pages`;
 - the historical nine-chapter Guide and Cheatsheet;
@@ -47,80 +47,47 @@ The accepted baseline now has:
   `tool.py.lib.ci v0.2.1`, with Pages excluded from release evidence;
 - a hard migration boundary that rejects `0.15.0` and older as Forge
   releases;
-- canonical post-migration release `v0.16.0`, published from stable main
-  `021dc78a32d99d31f16a76efc9d036855114df0c` after exact full build/main
-  qualification;
-- stable Pages quality phase promoted to main
-  `b091449dab32e75ef3c4f22ca0679d21f21beedf`, with full 47-owner evidence
-  and canonical stable Pages deployment.
+- canonical post-migration releases through `v0.18.0`; v0.18.0 is published
+  from exact stable main `009a2bd86dad7c4d452d72a4541f4bdf2dbd34d2`;
+- shared topology selection is part of the stable public API:
+  `Edges.from_faces(...)`, one world-cardinal `Faces` vocabulary, and
+  replay-bound native `model.faces` / `model.edges` identity;
+- the stable v0.18.0 source has exact full schema-2 evidence with
+  `library: true` and all 49 physical owners passing;
+- stable Pages quality and the canonical Pages deployment remain accepted.
 
 The historical repository is being finalized as
 `brainboxemb/lib.py.solidcraft.forge.OLD`, an archived A/B/provenance reference.
 
 ## Now
 
-The release/CI correction and the Forge Pages quality phase are complete on
-stable `main`.
+### Next: #166 / #167 release the qualified development baseline
 
-Accepted stable state:
+The consumer-grade drawing system is fully qualified on permanent `dev`:
 
-- release branches start from stable `main`, allow only release metadata and
-  reuse retained full product evidence only across validated release-only
-  history;
-- Forge v0.17.0 is the current canonical package release;
-- stable Pages source:
-  `b091449dab32e75ef3c4f22ca0679d21f21beedf`;
-- permanent stable build `45623785680`: PASS;
-- durable stable evidence: `full: true`, `library: true`, 47/47 owners;
-- Pages assembly/publication `45624236854`: PASS;
-- GitHub Pages deployment `45624348968`: PASS;
-- the stable public site includes the accepted #57/#58/#68/#106/#107/#109/
-  #112/#113 content and presentation fixes.
+- #168 / PR #170 added the public drawing-authoring API for explicit standard
+  view placement/scale, native dimensions/callouts, notes, properties,
+  title-block overrides and revision data;
+- #172 / PR #173 added qualified per-view
+  `DrawingView(visual_style="shaded")`, used only on the Sample Plate
+  isometric while orthographic views remain native line views;
+- the canonical Sample Plate Drawing publishes vector PDF, native PNG and final
+  `drawing.inspect` JSON;
+- builder-side structural checks and approved sheet-image regression both pass;
+- permanent `dev` CI run 45700081925 and Pages run 45700455394 are green;
+- Guide, Cheatsheet and API Reference are sufficient for the downstream CAD
+  consumer to author a Wall-Hook-class drawing without Forge-local hacks;
+- the pinned SolidCraft 0.49 registry still has no native centre-mark or
+  centre-line authoring command, so Forge deliberately does not fake them.
 
-No release blocker remains from the completed stabilization phase.
+Release work order:
+1. #166 promotes the exact qualified `dev -> main` product state with full
+   stable qualification;
+2. #167 publishes the next Forge release from that stable baseline and
+   synchronizes `main -> dev` through merge policy.
 
-Forge work should now return to demonstrated consumer value rather than
-continuing a broad migration/site-cleanup stream.
-
-### #148 shared face/edge topology selection — implemented and qualified
-
-The Wall Hook in the active CAD repository demonstrated that face and edge
-selection was still too feature-specific. PR #149 implements the shared
-topology layer and has qualified it for integration to `dev`:
-
-- `Faces` is the shared world-cardinal vocabulary across `on()`, `shell()`
-  and face-boundary edge selection;
-- `Edges.from_faces(...)` selects complete named-face boundaries without
-  caller XYZ picks;
-- replay resolves `model.faces` and `model.edges` from the current
-  SolidCraft run and sends returned native `{body, index}` edge references to
-  modify features;
-- the lowering consumes SolidCraft-returned face/edge identity and does not
-  predict browser topology ids;
-- existing edge selectors remain source-compatible;
-- one-face Box and two-face XZ Polygon2D extrusion chamfers both pass native
-  qualification; the XZ broad faces are FRONT/BACK because extrusion is along
-  world Y;
-- `Shape.on()` accepts the same six-face intent vocabulary while unqualified
-  side placement reports the explicit native placement/topology limitation;
-- requirements, design, API reference, Guide and Cheatsheet describe the common
-  topology contract.
-
-No Forge release is part of #148. Stable remains v0.17.0 until a separately
-planned promotion/release requires this API.
-
-Next Forge work:
-1. keep #73 as retained engine/runtime regression evidence, not a replay
-   workaround target;
-2. prioritize migrated product/API backlog (#59-#72) only when an active CAD
-   consumer or concrete design requirement needs it;
-3. keep template.cad.library #62 as the non-blocking generic optimization for
-   avoiding full model qualification on history-only `main -> dev` syncs;
-4. coordinate new Forge API changes with the active CAD repository rather than
-   adding speculative coverage.
-
-CAD project work continues independently and may consume the stable Forge and
-release-flow baseline.
+CAD project work may consume Forge v0.18.0 as the stable topology-selection
+baseline.
 
 ## Later
 

@@ -1,0 +1,11 @@
+{
+  "commands": [
+    {
+      "command": "joint.drive",
+      "params": {
+        "joint": "Hinge",
+        "value": 120
+      }
+    }
+  ]
+}

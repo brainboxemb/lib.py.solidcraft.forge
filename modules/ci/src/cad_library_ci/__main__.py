@@ -75,7 +75,7 @@ def selection(repo, project, branch, modules):
         return _release_plan(branch), None, False, True
 
     if branch == project.stable_branch:
-        if event == "push":
+        if event in {"push", "workflow_dispatch"}:
             target = os.environ.get("GITHUB_SHA", "").strip() or "HEAD"
             paths = changed_paths_from_parent(repo, target)
             if paths and set(paths) <= RELEASE_METADATA_PATHS:

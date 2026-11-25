@@ -1334,3 +1334,24 @@ html:not(.dark) .hextra-search-trigger{font-size:.9rem}
   .cad-forge-start-grid{grid-template-columns:1fr}
   .cad-forge-start-card{min-height:0}
 }
+
+
+/* Native drawing evidence stays on build/<scope>; Pages loads only static PNG evidence. */
+.cad-drawing-sheet{margin-top:.8rem}
+.cad-drawing-preview-link{
+  display:flex;
+  width:100%;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  border:1px solid var(--cad-line);
+  border-radius:9px;
+  background:#fff;
+}
+.cad-drawing-preview{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:900px;
+  object-fit:contain;
+}

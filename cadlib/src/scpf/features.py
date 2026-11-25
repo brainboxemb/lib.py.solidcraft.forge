@@ -98,7 +98,8 @@ def _is_feature_tree(shape):
         return True
     if shape.kind in (
         "fillet", "chamfer", "shell", "union", "difference", "intersection",
-        "material_assignment", "rectangular_pattern", "circular_pattern",
+        "material_assignment", "appearance_assignment",
+        "rectangular_pattern", "circular_pattern",
     ):
         return True
     return False
@@ -1870,6 +1871,12 @@ def _to_commands(shape, name):
             _command("material.create", **creation),
             _command("material.assign", bodies=[name], material=material),
         ], base
+    if shape.kind == "appearance_assignment":
+        base_shape, color = shape.data
+        steps, base = _to_commands(base_shape, name)
+        return steps + [
+            _command("appearance.assign", bodies=[name], color=color),
+        ], base
     if shape.kind == "shell":
         original, thickness, faces = shape.data
         steps, base = _to_commands(original, name)
@@ -1983,7 +1990,10 @@ def compile_features(shape, name):
     # dimension of the feature. Keep it before coordinates of its profile.
     # XY rectangular footprints instead list their plan dimensions first.
     root = shape
-    while root.kind in ("fillet", "chamfer", "shell", "union", "difference", "material_assignment"):
+    while root.kind in (
+        "fillet", "chamfer", "shell", "union", "difference",
+        "material_assignment", "appearance_assignment",
+    ):
         root = root.data[0]
     if root.kind == "sketch_base_extrusion":
         profiles = root.data[4]

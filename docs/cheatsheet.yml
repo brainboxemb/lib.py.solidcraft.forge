@@ -162,6 +162,10 @@ groups:
         description: "Keep an in-plane attachment offset associative; parameter expressions become native planar-joint values."
         snippet: "part.attach(base, parent=Anchor.FRONT_TOP_LEFT, child=mount, offset=(0, -wall + 12))"
         example: components
+      - title: "attach(kind=\"revolute\", ...)"
+        description: "Create a native bounded revolute relationship while reusing the normal attachment-reference model."
+        snippet: "moving.attach(fixed, parent=\"hinge_axis\", child=\"hinge_axis\", kind=\"revolute\", value=60, limits=(0, 180), name=\"Hinge\")"
+        example: revolute-joint
       - title: "assembly.with_exploded_view(...)"
         description: "Store a native automatic or explicit exploded presentation without changing normal occurrence placements."
         snippet: "assembly.with_exploded_view('Service', scale=1.25).show_exploded('Service')"
@@ -197,6 +201,49 @@ groups:
         snippet: "second = first.copy(placement=Placement(x=40, rotation=(Z, 180)))"
         example:
 
+  - heading: Drawings
+    items:
+      - title: "model.with_drawing(...)"
+        description: "Attach a native SolidCraft engineering drawing to the completed design; ISO A4 landscape is the default."
+        snippet: "part.with_drawing(name='Sample Plate Drawing')"
+        example: sample-plate-drawing
+      - title: "DrawingView(at=..., scale=..., visual_style=...)"
+        description: "Place one native standard view in paper millimetres; 'shaded' is the qualified pictorial override while omission keeps the normal line view."
+        snippet: "DrawingView(at=(220, 128), scale='1:1', visual_style='shaded')"
+        example: sample-plate-drawing
+      - title: "DrawingDimension.faces(...)"
+        description: "Dimension two real planar model faces; prefer this for overall sizes when fillets remove corners."
+        snippet: "DrawingDimension.faces('front', (-40,0,4), (40,0,4), direction='horizontal', offset_mm=12)"
+        example: sample-plate-drawing
+      - title: "DrawingDimension.linear(...)"
+        description: "Create a native linear dimension between two model-space point/corner picks."
+        snippet: "DrawingDimension.linear('front', (0,0,0), (20,0,0), direction='horizontal')"
+        example: sample-plate-drawing
+      - title: "DrawingDimension.radial(...)"
+        description: "Create a native radial/diameter dimension from a circular model-edge pick; override_text may form a hole callout."
+        snippet: "DrawingDimension.radial('top', (-25.17,2.83,8), diameter=True, override_text='2× {value} THRU')"
+        example: sample-plate-drawing
+      - title: "DrawingNote(...)"
+        description: "Add native sheet notes at an explicit paper position."
+        snippet: "DrawingNote('NOTES\\n1. ALL DIMENSIONS IN MM.', at=(156,88), cap_mm=2.5)"
+        example: sample-plate-drawing
+      - title: "DrawingRevision(...)"
+        description: "Add one native revision row and drive matching title-block revision fields."
+        snippet: "DrawingRevision(revision='A', description='Initial drawing', designer='Forge', checker='CI')"
+        example: sample-plate-drawing
+      - title: "properties=... / title_block=..."
+        description: "Populate native drawing properties and explicit cells in the selected SolidCraft title-block template."
+        snippet: "properties={'part_number':'BRK-001'}, title_block={'title':'Bracket','material':'PETG'}"
+        example: sample-plate-drawing
+      - title: "template='iso-a3-part'"
+        description: "Select native ISO A3 explicitly when the documented part needs more sheet area; Forge keeps it landscape."
+        snippet: "part.with_drawing(name='Large part', template='iso-a3-part')"
+        example: sample-plate-drawing
+      - title: "Native PDF + PNG + inspect JSON"
+        description: "builder-scpf publishes vector PDF, static native sheet PNG and final native drawing.inspect evidence; Pages loads only the PNG."
+        snippet: "drawings/Sample-Plate-Drawing.{pdf,png,json}"
+        example: sample-plate-drawing
+
   - heading: Compile and inspect
     items:
       - title: "python -m scpf ... --out"
@@ -211,3 +258,10 @@ groups:
         description: "Execute a model in an open SolidCraft GUI document."
         snippet: "python -m scpf examples/simple-box/scpf/model.py --connect"
         example:
+
+  - heading: Display appearance
+    items:
+      - title: 'shape.with_appearance("#RRGGBB")'
+        description: "Give the finished body a visual color without changing material/BOM semantics."
+        snippet: 'body.with_appearance("#FFD21A")'
+        example: appearance-color

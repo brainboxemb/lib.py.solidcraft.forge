@@ -67,6 +67,56 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Native revolute-relationship boundary
+
+Revolute motion stays inside the existing occurrence-attachment model. A
+consumer selects the same parent/child attachment references used by rigid and
+planar relationships, then explicitly requests `kind="revolute"`.
+
+The lowering path is:
+
+```text
+Occurrence.attach(kind="revolute", value=60, limits=(0, 180))
+        ↓
+Attachment(kind/value/limits/flip/name)
+        ↓ existing Anchor / AnchorFrame / AnchorTopology resolution
+joint.create(type="revolute", values=[60], limits=[[0, 180]])
+        ↓
+native SolidCraft joint solver
+```
+
+Forge does not rotate the moving occurrence to imitate a hinge. The occurrence
+gets only the seed placement needed to bring the two authored joint origins
+together; SolidCraft stores and solves the revolute degree of freedom. Existing
+calls without `kind` keep the established automatic rigid/planar lowering.
+
+The first public moving-joint contract is deliberately narrow: fixed numeric
+degree value/limits plus native `flip` and `name`. Slider, cylindrical,
+pin-slot and ball authoring wait for demonstrated consumers rather than sharing
+an unqualified generic abstraction.
+
+## Display-appearance boundary
+
+Display color is intentionally separate from physical material authoring.
+
+```text
+Shape.with_appearance("#FFD21A")
+        ↓
+Shape("appearance_assignment", ...)
+        ↓
+appearance.assign(bodies=[final_body], color="#FFD21A")
+        ↓
+native SolidCraft appearance chain
+```
+
+Forge does not create a synthetic material merely to carry display color.
+`with_material(...)` remains the physical-material path with density/BOM
+semantics; `with_appearance(...)` changes only visual presentation.
+
+The initial contract is deliberately narrow: one opaque fixed body-wide color.
+Face-level looks, library recipes, opacity and PBR controls wait for concrete
+consumers.
+
 ## Native topology-selection boundary
 
 Forge uses one world-cardinal `Faces` vocabulary for within-component surface
@@ -110,34 +160,96 @@ remain compatibility paths.
 
 ## Native component drawing boundary
 
-Component drawings are Assembly-owned presentation state. A component
+Component drawings are Assembly-owned presentation state. A reusable component
 definition remains geometry/feature intent and does not own a drawing, because
-one definition may have many physical occurrences.
+one definition may have many physical occurrences and many downstream drawing
+layouts.
 
-Forge lowers `with_drawing()` to native `drawing.create`,
-`drawing.sheet.set`, `drawing.view.standard`, component-filtering
-`drawing.view.edit` calls and `drawing.close`. SolidCraft owns the part
-template, standard front/top/right/isometric layout and fitted scale. A4 is the
-Forge default; A3 remains an explicit native template choice for larger or more
-complex parts.
+The public authoring objects are deliberately small intent records:
 
-All component, occurrence, drawing, drawing-source, sheet and view identities
-come from replay-bound SolidCraft command results. Forge never predicts browser
-names or native ids.
+- `DrawingView(at=..., scale=..., visual_style=...)` controls one native front/top/right/iso view; `visual_style="shaded"` is the qualified pictorial override while omission keeps SolidCraft's normal line presentation;
+- `DrawingDimension.linear(...)` resolves two model corners/points;
+- `DrawingDimension.faces(...)` resolves two parallel planar faces and is the
+  stable overall-size form for filleted parts;
+- `DrawingDimension.radial(...)` resolves one circular edge and may request a
+  diameter/callout override;
+- `DrawingNote(...)` authors native sheet text;
+- `DrawingRevision(...)` authors one native revision row;
+- drawing `properties={...}` and `title_block={...}` populate native drawing
+  metadata/title cells.
 
-The replay document may also declare a drawing PDF artifact by its safe
-implementation-relative path, for example
-`drawings/Block-drawing.pdf`. `builder-scpf` owns the actual build path:
-after the native model replay succeeds it reopens `model.sc`, opens the
-replay-bound drawing and calls SolidCraft `drawing.export` with
-`format="pdf"`. The PDF is therefore a native vector drawing artifact, not a
-screenshot and not a Python-rendered document.
+Forge lowers that intent to native `drawing.create`, `drawing.sheet.set`,
+`drawing.properties.set`, `drawing.revision.add`,
+`drawing.view.standard`, `drawing.view.edit`,
+`drawing.dimension.add`, `drawing.note.add`, `drawing.inspect` and
+`drawing.close`. It does not draw dimension lines, leaders, notes or a title
+block itself.
+
+The default path still delegates standard view grouping and initial fitted scale
+to SolidCraft. A consumer may then author explicit paper positions and view
+scales through `DrawingView`; independent projected-view scale automatically
+unlinks that native projected view. A consumer may also request the qualified
+native `visual_style="shaded"` on an individual view, allowing normal line
+orthographics with a shaded isometric without Forge rendering the picture
+itself. A4 is the default and the first sheet is explicitly landscape. A3
+remains an explicit native template choice.
+
+All component, occurrence, drawing, drawing-source, sheet, view, dimension and
+note identities come from replay-bound SolidCraft command results. Forge never
+predicts browser names or native ids. Model-space dimension picks remain input
+intent only; SolidCraft must resolve them to saved native topology or reject
+them. This deliberately exposes invalid picks (for example a filleted-away
+corner or a point inside a through-hole) instead of silently manufacturing a
+measurement.
+
+The replay document declares safe implementation-relative PDF, PNG and native
+inspection JSON paths plus the replay-bound drawing/sheet/orientation variables.
+After native replay, `builder-scpf` takes the last fully-authored
+`drawing.inspect` result for each declared drawing and validates it against
+the compiled authoring intent: landscape orientation, four standard views,
+dimension/note counts, drawing properties, title-block overrides and revision
+fields. That exact inspection is retained as `drawings/<name>.json`.
+
+The builder then reopens the saved `model.sc`, opens the replay-bound native
+drawing id and uses SolidCraft `drawing.export` for both the vector PDF and
+the exact replay-bound sheet PNG at 144 dpi. Neither artifact is reconstructed
+by Python.
+
+Visual sheet qualification is separate from drawing production. The generic
+`image-regression` verifier consumes the generated PNG and compares it with an
+approved encoded baseline using the released `cad_verification` image
+comparison primitives. It neither invokes SolidCraft nor understands drawing
+semantics. This catches layout regressions that a structure-only inspection
+would miss.
+
+The `sample-plate-drawing` owner is the Forge-owned consumer simulation. It
+uses only the public API to author explicit view layout/scale, a shaded native
+isometric alongside line orthographics, overall face-to-face dimensions,
+radial callouts, notes, drawing properties,
+title-block overrides and one revision row. The owner therefore proves the
+same class of authoring an external CAD model such as Wall Hook will need,
+without importing or modifying that downstream repository.
+
+The pinned SolidCraft 0.49 registry does not expose native centre-mark or
+centre-line authoring. Forge therefore does not fake those graphics. Balloons
+and parts lists are also outside the qualified consumer slice until a native
+backend path exists and a real consumer requires them.
 
 For a component selected from a larger Assembly, SolidCraft currently computes
 the standard view group's fitted scale before Forge narrows the base views to
-that occurrence subtree. Projected top/right views inherit the main view
-source. The result remains native and safe, but the scale can be conservative
-for a small component inside a much larger Assembly.
+that occurrence subtree. Projected top/right views inherit the main view source.
+The result remains native and safe, but the scale can be conservative for a
+small component inside a much larger Assembly; explicit `DrawingView(scale=...)`
+is the consumer override.
+
+Drawing presentation is projected from the same owner/evidence architecture as
+other examples. The `sample-plate-drawing` owner has
+`purpose: [example, verification]`: Examples teaches the workflow, while the
+Drawings verification section exposes the same native evidence. Pages discovers
+implementation-local `drawings/*.pdf` plus sibling PNG/JSON evidence. Pages
+loads only the static PNG preview and exposes explicit PDF open/download links;
+generated drawing artifacts remain on `build/<scope>` and are never copied
+into `gh-pages`.
 
 ## SolidCraft command-reference boundary
 
@@ -177,6 +289,8 @@ build/<scope>/models/<owner>/
   model.png
   drawings/
     <drawing>.pdf
+    <drawing>.png
+    <drawing>.json
   scpf/
   cadquery/
   build123d/
@@ -248,12 +362,12 @@ Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining 
 ## Release boundary
 
 Forge consumes the generic stable-main release boundary from
-`template.cad.library@e9fb95cd22cb574d615d0bf9a8115c30bbac7ddf`.
+`template.cad.library@7049d34bf34a4303331f3f17608eaa75febe34fc`.
 
 Product qualification and release metadata are deliberately separate. A
 product-changing stable source still receives a normal full Forge qualification
 and becomes the durable `build/main` product baseline. A later release commit
-does not rebuild the 47 unchanged model owners merely because version/changelog
+does not rebuild unchanged model owners merely because version/changelog
 metadata changed.
 
 The accepted release path is:
@@ -270,7 +384,11 @@ qualified main product source
   -> main -> dev synchronization
 ```
 
-CI records such candidates with `release_only: true`. Build publication
+CI records such candidates with `release_only: true`. Stable classification
+uses the single-parent source delta itself and is identical for a normal
+`push` or the merge-policy `workflow_dispatch` used for permanent integration
+runs. A metadata-only delta selects `release` + library and zero models; a
+merge commit or any product path remains full/fail-closed. Build publication
 validates source freshness but deliberately does not replace the prior durable
 full stable scope.
 

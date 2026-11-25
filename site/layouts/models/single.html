@@ -53,6 +53,28 @@
     </div>
   </details>
   {{ end }}{{ end }}
+  {{ range .Params.sources }}{{ if and (eq .id $primary) .drawings }}
+  <section class="cad-panel cad-drawing-panel" id="drawing-sheet">
+    <h2 class="cad-section-title">Drawing sheet</h2>
+    <p class="cad-section-help">Native SolidCraft drawing evidence from the durable build scope. The page loads only the static sheet preview; the vector PDF opens only when you ask for it.</p>
+    {{ range .drawings }}
+    <article class="cad-drawing-sheet">
+      <h3 class="cad-section-subtitle">{{ .name }}</h3>
+      {{ with .previewurl }}
+      <a class="cad-drawing-preview-link" href="{{ . }}" aria-label="Open static native drawing sheet preview">
+        <img class="cad-drawing-preview" src="{{ . }}" alt="{{ $.Title }} native SolidCraft drawing sheet preview" decoding="async">
+      </a>
+      {{ else }}
+      <div class="cad-preview-empty">Static drawing preview will appear after the next native build publication.</div>
+      {{ end }}
+      <div class="cad-links">
+        <a href="{{ .bloburl }}">Open PDF on GitHub</a>
+        <a href="{{ .rawurl }}" download>Download PDF</a>
+      </div>
+    </article>
+    {{ end }}
+  </section>
+  {{ end }}{{ end }}
   <section class="cad-section" id="reference-code">
     <h2 class="cad-section-title">Reference code</h2>
     {{ range .Params.sources }}{{ if ne .id $primary }}
