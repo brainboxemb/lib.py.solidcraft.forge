@@ -9,7 +9,9 @@ from cad_verification import (
     SolidCraftBodyExpectation,
     SolidCraftInspection,
     SolidCraftInspectionCheck,
+    SolidCraftMeasurementChangeExpectation,
     SolidCraftModelExpectation,
+    SolidCraftSavedDesign,
     SolidCraftSketchExpectation,
     SolidCraftTimelineExpectation,
     SolidCraftVerification,
@@ -51,6 +53,10 @@ VERIFICATION = SolidCraftVerification(
                 check_error=False, check_warning=False,
             ),
             SolidCraftTimelineExpectation(
+                "Sketch", name="Fold line", check_name=True,
+                check_error=False, check_warning=False,
+            ),
+            SolidCraftTimelineExpectation(
                 "FoldFeature", name="Fold1", check_name=True,
                 check_error=False, check_warning=False,
             ),
@@ -58,6 +64,54 @@ VERIFICATION = SolidCraftVerification(
         sketches=(
             SolidCraftSketchExpectation(
                 name="Blank", profiles=1, curves=4, status="solved",
+            ),
+            SolidCraftSketchExpectation(
+                name="Fold line", curves=1,
+            ),
+        ),
+    ),
+    saved_designs=(
+        SolidCraftSavedDesign(
+            id="depth-60",
+            command_path=HERE / "change_depth_60.json",
+            expectation=SolidCraftModelExpectation(
+                body_count=1,
+                parameters={"depth": 60.0},
+                parameter_match="subset",
+                timeline=(
+                    SolidCraftTimelineExpectation(
+                        "Sketch", name="Blank", check_name=True,
+                        check_error=False, check_warning=False,
+                    ),
+                    SolidCraftTimelineExpectation(
+                        "BaseFlangeFeature", name="BaseFlange1", check_name=True,
+                        check_error=False, check_warning=False,
+                    ),
+                    SolidCraftTimelineExpectation(
+                        "HoleFeature", name="Hole1", check_name=True,
+                        check_error=False, check_warning=False,
+                    ),
+                    SolidCraftTimelineExpectation(
+                        "Sketch", name="Fold line", check_name=True,
+                        check_error=False, check_warning=False,
+                    ),
+                    SolidCraftTimelineExpectation(
+                        "FoldFeature", name="Fold1", check_name=True,
+                        check_error=False, check_warning=False,
+                    ),
+                ),
+                sketches=(
+                    SolidCraftSketchExpectation(
+                        name="Fold line", curves=1,
+                    ),
+                ),
+            ),
+            changes=(
+                SolidCraftMeasurementChangeExpectation(
+                    id="depth-extent",
+                    path=("bodies", 0, "bbox", "min", 1),
+                    minimum_absolute_delta=5.0,
+                ),
             ),
         ),
     ),

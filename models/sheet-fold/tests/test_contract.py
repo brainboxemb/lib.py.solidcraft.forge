@@ -29,6 +29,9 @@ class SheetFoldQualificationTests(unittest.TestCase):
                 "sketch.finish",
                 "sheet.flange",
                 "solid.hole",
+                "sketch.create",
+                "sketch.line",
+                "sketch.finish",
                 "sheet.fold",
             ],
         )
@@ -69,6 +72,23 @@ class SheetFoldQualificationTests(unittest.TestCase):
         self.assertEqual(hole["direction"], [0.0, 0.0, -1.0])
         self.assertEqual(hole["targets"], ["SheetFold"])
 
+        fold_line = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.line"
+        )
+        self.assertEqual(
+            fold_line,
+            {
+                "points": [
+                    [20, "-(depth / 2)"],
+                    [20, "depth / 2"],
+                ],
+                "ids": ["l1"],
+                "connect": True,
+            },
+        )
+
         fold = next(
             row["params"]
             for row in commands
@@ -77,11 +97,12 @@ class SheetFoldQualificationTests(unittest.TestCase):
         self.assertEqual(
             fold,
             {
-                "points": [[20, -20, 0], [20, 20, 0]],
                 "angle": "fold_angle",
                 "position": "centerline",
                 "flip": False,
                 "body": "SheetFold",
+                "sketch": "Fold line",
+                "curve": "l1",
                 "fixed": [-30, 0, 0],
             },
         )

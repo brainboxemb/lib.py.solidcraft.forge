@@ -439,6 +439,27 @@ class Sketch:
         self._chain_builders.append(builder)
         return builder
 
+    def line(self, *, start, end):
+        """Author and return one reusable straight Sketch line.
+
+        Parameters:
+            start: Sketch-local (x, y) start point. Coordinates may retain
+                Parameter/Expression dependencies.
+            end: Sketch-local (x, y) end point. Coordinates may retain
+                Parameter/Expression dependencies.
+
+        Use when:
+            A downstream native feature needs one authored Sketch curve with
+            stable identity, for example `Shape.fold(line=...)`.
+
+        Limits:
+            This is the one-line convenience form of `Sketch.chain()` and
+            currently follows the same standalone Sketch restrictions.
+        """
+        builder = self.chain(start=start)
+        builder.line_to(end)
+        return builder.finish()
+
     def profile(self, *, start):
         """Start one connected mixed line/arc profile in this Sketch."""
 

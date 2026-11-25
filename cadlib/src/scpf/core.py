@@ -1656,7 +1656,9 @@ class Shape:
         """Fold existing sheet material along one straight line.
 
         Parameters:
-            line: Two XY or XYZ points defining the fold line.
+            line: Either two fixed XY/XYZ points or the Shape returned by
+                `Sketch.line(...)`. The Sketch-line form preserves native
+                associativity when its endpoints use Parameters/Expressions.
             angle: Bend angle in degrees. Defaults to 90.
             fixed: Optional XYZ point on the side that must stay fixed.
             position: Native bend-line position: "centerline", "start", "end" or "mould". Defaults to "centerline".
@@ -1664,42 +1666,64 @@ class Shape:
 
         Use when:
             Bend material that already exists in a sheet blank. Dimensions and
-            bend allowance come from the sheet's shared rule.
+            bend allowance come from the sheet's shared rule. Prefer an authored
+            Sketch line when the bend line must follow later parameter edits.
 
         Limits:
-            This first qualified form supports one straight fold line. The line
-            endpoints and fixed point are fixed finite coordinates.
+            One straight fold line is supported. Fixed-point input remains
+            numeric-only; associative input must be one `Sketch.line(...)`
+            result.
 
         Example:
+            with Sketch(name="Fold line", plane="XY") as fold_sketch:
+                fold_line = fold_sketch.line(
+                    start=(20, -(depth / 2)),
+                    end=(20, depth / 2),
+                )
             sheet.fold(
-                line=((20, -20), (20, 20)),
+                line=fold_line,
                 angle=90,
                 fixed=(-20, 0, 0),
             )
         """
-        if not isinstance(line, (list, tuple)) or len(line) != 2:
-            raise ValueError("fold line must contain exactly two points")
-
-        def point3(value, label):
-            if not isinstance(value, (list, tuple)) or len(value) not in (2, 3):
-                raise ValueError(f"{label} must be an XY or XYZ point")
-            result = tuple(value) if len(value) == 3 else (value[0], value[1], 0)
-            if not all(
-                isinstance(v, (int, float)) and not isinstance(v, bool)
-                for v in result
-            ):
+        if isinstance(line, Shape):
+            if line.kind != "sketch_open_chain":
                 raise ValueError(
-                    f"{label} coordinates must be fixed numbers; "
-                    "associative fold lines require a Sketch line"
+                    "fold line Shape must be returned by Sketch.line(...)"
                 )
-            if not all(isfinite(v) for v in result):
-                raise ValueError(f"{label} must contain finite coordinates")
-            return result
+            _name, _plane, _offset, _start, segments = line.data
+            if len(segments) != 1 or segments[0][0] != "line":
+                raise ValueError(
+                    "fold Sketch line must contain exactly one straight line"
+                )
+            fold_line = line
+        else:
+            if not isinstance(line, (list, tuple)) or len(line) != 2:
+                raise ValueError(
+                    "fold line must contain exactly two points or use Sketch.line(...)"
+                )
 
-        p0 = point3(line[0], "fold line point")
-        p1 = point3(line[1], "fold line point")
-        if tuple(_pv(v) for v in p0) == tuple(_pv(v) for v in p1):
-            raise ValueError("fold line points must be different")
+            def point3(value, label):
+                if not isinstance(value, (list, tuple)) or len(value) not in (2, 3):
+                    raise ValueError(f"{label} must be an XY or XYZ point")
+                result = tuple(value) if len(value) == 3 else (value[0], value[1], 0)
+                if not all(
+                    isinstance(v, (int, float)) and not isinstance(v, bool)
+                    for v in result
+                ):
+                    raise ValueError(
+                        f"{label} coordinates must be fixed numbers; "
+                        "associative fold lines require Sketch.line(...)"
+                    )
+                if not all(isfinite(v) for v in result):
+                    raise ValueError(f"{label} must contain finite coordinates")
+                return result
+
+            p0 = point3(line[0], "fold line point")
+            p1 = point3(line[1], "fold line point")
+            if tuple(_pv(v) for v in p0) == tuple(_pv(v) for v in p1):
+                raise ValueError("fold line points must be different")
+            fold_line = (p0, p1)
 
         value = _pv(angle)
         if not isfinite(value) or value == 0 or abs(value) >= 180:
@@ -1712,10 +1736,23 @@ class Shape:
         if not isinstance(flip, bool):
             raise TypeError("fold flip must be True or False")
 
-        fixed_point = None if fixed is None else point3(fixed, "fold fixed")
+        def fixed_point3(value):
+            if not isinstance(value, (list, tuple)) or len(value) not in (2, 3):
+                raise ValueError("fold fixed must be an XY or XYZ point")
+            result = tuple(value) if len(value) == 3 else (value[0], value[1], 0)
+            if not all(
+                isinstance(v, (int, float)) and not isinstance(v, bool)
+                for v in result
+            ):
+                raise ValueError("fold fixed coordinates must be fixed numbers")
+            if not all(isfinite(v) for v in result):
+                raise ValueError("fold fixed must contain finite coordinates")
+            return result
+
+        fixed_point = None if fixed is None else fixed_point3(fixed)
         return Shape(
             "sheet_fold",
-            (self, (p0, p1), angle, fixed_point, position, flip),
+            (self, fold_line, angle, fixed_point, position, flip),
         )
 
     def fillet(self, radius, *, edges=Edges.VERTICAL):

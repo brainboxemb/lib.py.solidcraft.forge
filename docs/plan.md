@@ -1,4 +1,4 @@
-# Forge NEW plan
+# Forge plan
 
 This file contains unfinished work only.
 
@@ -7,7 +7,7 @@ This file contains unfinished work only.
 The Forge migration is complete and promoted to stable `main`.
 
 The accepted baseline now has:
-- 46 physical model owners;
+- 47 physical model owners;
 - SCPF as primary per owner;
 - historically real reference implementations local to the same physical owner;
 - native and applicable geometry verification;
@@ -17,11 +17,11 @@ The accepted baseline now has:
 - `components` as one physical owner with
   `purpose: [example, verification]`;
 - exactly four public Examples;
-- all 46 physical owners projected into Verification;
+- all 47 physical owners projected into Verification;
 - durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
   `gh-pages`;
 - the historical nine-chapter Guide and Cheatsheet;
-- 44 case-sensitive public SCPF API Reference routes, statically validated
+- 45 case-sensitive public SCPF API Reference routes, statically validated
   against `cadlib/src/scpf` without importing or executing the package;
 - Verification `coverage`, `joint-anatomy` and `results` projections from
   source declarations and durable build evidence;
@@ -46,10 +46,53 @@ The accepted baseline now has:
 - a hard migration boundary that rejects `0.15.0` and older as Forge NEW
   releases; no Forge NEW tag or GitHub Release has been published.
 
-The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
-archival/A-B reference rather than an unfinished migration gate.
+The historical repository is being finalized as
+`brainboxemb/lib.py.solidcraft.forge.OLD`, an archived A/B/provenance reference.
+
+## Now
+
+Repository canonicalization #89 is accepted:
+
+- live repository: `brainboxemb/lib.py.solidcraft.forge`;
+- historical repository: `brainboxemb/lib.py.solidcraft.forge.OLD`, archived;
+- canonical dev build and Pages publication are green;
+- immutable runtime baseline remains v0.3.6 / SolidCraft 0.49.0.
+
+Current work is #92: publish the first canonical post-migration Forge release,
+**v0.16.0**, so downstream CAD projects can consume the migrated Forge.
+
+1. Complete the v0.16.0 release-prep PR:
+   - package version 0.16.0;
+   - dated 2026-11-25 changelog section;
+   - library + release metadata qualification only; no new modelling behavior.
+2. Merge release prep to `dev` through `/merge`, then require permanent
+   green `dev` evidence.
+3. Promote `dev -> main` through a dedicated PR and `/merge`:
+   - promotion qualification must be full;
+   - stable `main` must receive a merge commit;
+   - exact durable `build/main` evidence must show `full: true`,
+     `library: true`, all 47 active owners and the exact stable source SHA.
+4. Publish only through
+   `/release v0.16.0 <exact-40-character-main-sha>` on #92 and verify the
+   annotated tag/GitHub Release provenance.
+5. Update the active CAD project to v0.16.0:
+   - move the Forge dependency from historical v0.15.0 to canonical v0.16.0;
+   - replace the four Mounting Rail fixed fold lines with the accepted #74
+     `Sketch.line(...)` path;
+   - verify native post-generation length edits remain associative;
+   - requalify Mounting Rail M8 and Simple MFT against immutable Forge/runtime.
+6. Return to Pages as a dedicated quality phase after downstream release
+   adoption:
+   - restore the global development warning (#57);
+   - rewrite the landing page around Forge/SCPF itself (#58);
+   - visually/content-audit landing, Guide, API Reference, Cheatsheet, Examples
+     and Verification;
+   - create one issue per remaining independent Pages defect before changing it.
 
 ## Later
 
-1. publish the first actual Forge NEW release only after an explicit version bump above `0.15.0` and a dated changelog section;
-2. retire duplicated historical orchestration only after all real consumers and public documentation have equivalent coverage.
+1. Continue the migrated Forge product/research backlog (#59-#72) according to
+   demonstrated consumer value and dependencies rather than treating the whole
+   historical backlog as release-blocking.
+2. Retire duplicated historical orchestration only after all real consumers and
+   public documentation have equivalent coverage.

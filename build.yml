@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/54-reconcile-release-plan
-modules: []
-library: false
+branch: issue/92-release-v0.16.0
+modules: [release]
+library: true
 models: []
 tasks: [test]

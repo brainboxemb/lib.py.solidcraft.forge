@@ -1,8 +1,8 @@
-# Forge NEW design
+# Forge design
 
 ## Purpose
 
-Forge NEW is a clean consumer of the corrected `template.cad.library` architecture.
+Forge is a clean consumer of the corrected `template.cad.library` architecture.
 
 ```text
 cadlib/                     public scpf package
@@ -10,6 +10,7 @@ models/                     physical CAD model owners
 modules/
   ci/                       selection/runtime orchestration
   builder-*                 standard CAD adapters
+  solidcraft-reference/     canonical runtime command-registry evidence
   verification/             local generic cad_verification
   preview/                  deterministic presentation rendering
   build/                    durable generated-output publication
@@ -56,6 +57,37 @@ owner-local geometry/semantic evidence
 ```
 
 Reference implementations use the standard PythonSCAD, pyBOSL2, CadQuery and build123d builders directly inside the same physical owner.
+
+Native feature inputs keep native identity where SolidCraft provides it. For
+example, an associative sheet fold stores the finished one-line Sketch Shape in
+the Forge feature tree. Lowering emits that Sketch as
+`sketch.create -> sketch.line -> sketch.finish`, then emits
+`sheet.fold {sketch, curve}`. The older fixed two-point form remains a
+compatibility path and lowers to `sheet.fold.points`. This avoids baking a
+symbolically driven bend line into coordinates that stop following later
+parameter edits.
+
+## SolidCraft command-reference boundary
+
+The canonical SolidCraft command registry is a Forge-owned engineering
+reference, not a CAD model and not generated Pages content.
+
+```text
+root ci.yml immutable SolidCraft runtime pin
+        ↓ modules/solidcraft-reference
+solidcraft-cli --version + commands
+        ↓
+docs/reference/solidcraft/<version>/
+  commands.json
+  commands.md
+  SOURCE.md
+```
+
+`modules/solidcraft-reference` validates registry completeness, captures and
+normalizes the exact runtime registry, renders the human catalog/provenance, and
+compares the checked snapshot back to the same immutable runtime. Its item watch
+includes `docs/reference/solidcraft/**`, so reference changes select their
+own verifier. Historical version directories remain immutable evidence.
 
 ## Runtime graph
 

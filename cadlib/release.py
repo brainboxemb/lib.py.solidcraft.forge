@@ -66,7 +66,7 @@ def validate(
     requested = parse_release_version(version)
     if requested <= MIGRATED_BASELINE_VERSION:
         raise SystemExit(
-            "Forge NEW release version must be newer than migrated "
+            "Forge release version must be newer than migrated "
             "historical baseline 0.15.0"
         )
     if _SHA.fullmatch(target_sha) is None:

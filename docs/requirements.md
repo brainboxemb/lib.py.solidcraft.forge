@@ -1,4 +1,4 @@
-# Forge NEW requirements
+# Forge requirements
 
 ## Repository
 
@@ -19,11 +19,38 @@
 
 ## CAD execution
 
-1. Reuse only the released `reference` and `solidcraft` runtime roles from `docker.cad.solidcraft v0.3.5` until a separately qualified upgrade exists.
+1. Reuse only the released `reference` and `solidcraft` runtime roles from `docker.cad.solidcraft v0.3.6` until a separately qualified upgrade exists.
 2. Standard reference builders are PythonSCAD, pyBOSL2, CadQuery and build123d.
 3. SCPF compilation is consumer-owned and feeds the generic SolidCraft command builder; do not teach generic builders Forge semantics.
 4. SolidCraft executes in its lightweight runtime; generic mesh verification executes in the reference runtime.
 5. CI batches compatible implementation work and does not start one Docker container per model implementation.
+
+## SCPF native associativity
+
+1. When SolidCraft exposes a durable native reference for editable intent, Forge
+   must preserve that relationship instead of snapshotting it to fixed
+   coordinates merely for compilation convenience.
+2. `Shape.fold()` supports both the historical fixed-point form and an
+   associative straight line returned by `Sketch.line(...)`.
+3. The associative fold form must lower to native `sheet.fold`
+   `sketch` + `curve` references and retain symbolic endpoint dependencies.
+4. Native qualification must prove that changing a driving parameter in a saved
+   SolidCraft design rebuilds the fold successfully.
+
+## SolidCraft reference evidence
+
+1. Every tested SolidCraft version must have one canonical command-registry
+   snapshot under `docs/reference/solidcraft/<version>/`.
+2. The snapshot must be captured from the exact immutable runtime image
+   qualified by Forge, never from a hand-selected command subset or an
+   unpinned local installation.
+3. Canonical capture and runtime comparison are owned by
+   `modules/solidcraft-reference/`; retired top-level script/orchestration
+   layouts must not be reintroduced.
+4. The checked `commands.json`, generated `commands.md` and `SOURCE.md`
+   provenance must remain deterministic and mutually consistent.
+5. Forge CI must compare the checked registry with the root-pinned immutable
+   SolidCraft runtime whenever the reference module/reference tree is selected.
 
 ## Verification
 
