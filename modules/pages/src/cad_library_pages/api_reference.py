@@ -151,7 +151,8 @@ def prepare_api_reference(source_root: Path, site: Path) -> None:
         _frontmatter("SCPF API Reference")
         + "Reference for the public SCPF Python surface.\n\n"
         + "The descriptive contract is retained from the accepted historical Forge reference. "
-        + "NEW validates every referenced public symbol statically against `cadlib/src/scpf` during the Pages build.\n",
+        + "Current Forge validates every referenced public symbol statically against "
+        + "`cadlib/src/scpf` during the Pages build.\n",
         encoding="utf-8",
     )
     for row in manifest["references"]:
