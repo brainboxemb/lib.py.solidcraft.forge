@@ -8,6 +8,22 @@ from cad_library_pages.guides import prepare_guides
 
 
 class AuthoredDocumentationProjectionTests(unittest.TestCase):
+    def test_cheatsheet_rejects_loose_item_as_group(self):
+        with TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            docs = root / "docs"
+            docs.mkdir()
+            (docs / "cheatsheet.yml").write_text(
+                "schema: 1\n"
+                "groups:\n"
+                "  - title: Display appearance\n"
+                "    description: Invalid loose item.\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "invalid cheatsheet group"):
+                prepare_cheatsheet(root, root / "site")
+
     def test_guide_and_cheatsheet_are_projected(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
