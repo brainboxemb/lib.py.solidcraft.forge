@@ -218,7 +218,7 @@
       "center_of_mass": [
         54.53333333333334,
         34.53333333333334,
-        7.999999999999997
+        7.999999999999998
       ],
       "closed": true,
       "density_g_cm3": 1.29,
@@ -233,13 +233,13 @@
         "shells": 1,
         "vertices": 12
       },
-      "mass_g": 4.9536,
+      "mass_g": 4.953600000000001,
       "material": "Default",
       "measured_by": "smlib",
       "name": "LProfile (LProfile:5)",
       "notes": [],
       "vertices": 12,
-      "volume_mm3": 3839.9999999999995
+      "volume_mm3": 3840.0
     },
     {
       "area_mm2": 2528.0,
@@ -273,13 +273,13 @@
         "shells": 1,
         "vertices": 12
       },
-      "mass_g": 4.9536,
+      "mass_g": 4.953600000000001,
       "material": "Default",
       "measured_by": "smlib",
       "name": "LProfile (LProfile:6)",
       "notes": [],
       "vertices": 12,
-      "volume_mm3": 3839.9999999999995
+      "volume_mm3": 3840.0
     },
     {
       "area_mm2": 2528.0,
@@ -297,7 +297,7 @@
       },
       "center_of_mass": [
         -54.53333333333334,
-        34.53333333333334,
+        34.53333333333333,
         8.0
       ],
       "closed": true,
@@ -313,13 +313,13 @@
         "shells": 1,
         "vertices": 12
       },
-      "mass_g": 4.953599999999998,
+      "mass_g": 4.953599999999999,
       "material": "Default",
       "measured_by": "smlib",
       "name": "LProfile (LProfile:7)",
       "notes": [],
       "vertices": 12,
-      "volume_mm3": 3839.999999999998
+      "volume_mm3": 3839.9999999999986
     },
     {
       "area_mm2": 2528.0,
@@ -337,7 +337,7 @@
       },
       "center_of_mass": [
         -54.53333333333334,
-        34.53333333333334,
+        34.53333333333333,
         52.0
       ],
       "closed": true,
@@ -353,13 +353,13 @@
         "shells": 1,
         "vertices": 12
       },
-      "mass_g": 4.953599999999998,
+      "mass_g": 4.953599999999999,
       "material": "Default",
       "measured_by": "smlib",
       "name": "LProfile (LProfile:8)",
       "notes": [],
       "vertices": 12,
-      "volume_mm3": 3839.999999999998
+      "volume_mm3": 3839.9999999999986
     }
   ],
   "body_count": 9,
@@ -408,7 +408,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 3.494558,
+      "ms": 3.5522750000000003,
       "name": "Box1",
       "rolled_back": false,
       "suppressed": false,
@@ -418,7 +418,7 @@
     {
       "error": null,
       "id": 4,
-      "ms": 81.10205500000001,
+      "ms": 80.326352,
       "name": "Fillet1",
       "rolled_back": false,
       "suppressed": false,
@@ -428,7 +428,7 @@
     {
       "error": null,
       "id": 7,
-      "ms": 0.1872,
+      "ms": 0.18734900000000002,
       "name": "d2_LProfile__Profile",
       "rolled_back": false,
       "suppressed": false,
@@ -438,7 +438,7 @@
     {
       "error": null,
       "id": 8,
-      "ms": 3.017366,
+      "ms": 2.9531,
       "name": "Extrude1",
       "rolled_back": false,
       "suppressed": false,

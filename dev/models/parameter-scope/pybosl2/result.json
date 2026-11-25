@@ -5,13 +5,13 @@
   "implementation": "pybosl2",
   "owner": "parameter-scope",
   "preview_status": "pass",
-  "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+  "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
   "schema": 2,
   "status": "pass",
   "verification_stages": {
     "geometry": {
       "adapter": "mesh-geometry",
-      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.5",
+      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
       "status": "pass"
     }
   },

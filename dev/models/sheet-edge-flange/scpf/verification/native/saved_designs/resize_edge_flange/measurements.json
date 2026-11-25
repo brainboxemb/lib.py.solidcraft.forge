@@ -15,9 +15,9 @@
         ]
       },
       "center_of_mass": [
-        9.432859265767332,
-        9.423951180221837e-16,
-        3.7611395668014964
+        9.432859265767334,
+        1.0871094475150565e-15,
+        3.7611395668014946
       ],
       "closed": true,
       "density_g_cm3": 1.29,
@@ -33,14 +33,14 @@
         "shells": 1,
         "vertices": 16
       },
-      "mass_g": 10.607760291021606,
+      "mass_g": 10.607760291021602,
       "material": "Default",
       "measured_by": "smlib",
       "name": "SheetEdgeFlange",
       "notes": [],
       "sheet_metal": true,
       "vertices": 16,
-      "volume_mm3": 8223.069993040004
+      "volume_mm3": 8223.069993040002
     }
   ],
   "body_count": 1,
@@ -125,7 +125,7 @@
     {
       "error": null,
       "id": 1,
-      "ms": 0.174006,
+      "ms": 0.188631,
       "name": "Blank",
       "rolled_back": false,
       "suppressed": false,
@@ -135,7 +135,7 @@
     {
       "error": null,
       "id": 2,
-      "ms": 1.8127760000000002,
+      "ms": 1.742109,
       "name": "BaseFlange1",
       "rolled_back": false,
       "suppressed": false,
@@ -145,7 +145,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 7.592586,
+      "ms": 8.043587,
       "name": "EdgeFlange1",
       "rolled_back": false,
       "suppressed": false,
@@ -157,9 +157,9 @@
     "area_mm2": 8794.223492692,
     "edges": 24,
     "faces": 10,
-    "mass_g": 10.607760291021606,
+    "mass_g": 10.607760291021602,
     "open_bodies_skipped": 0,
     "vertices": 16,
-    "volume_mm3": 8223.069993040004
+    "volume_mm3": 8223.069993040002
   }
 }
