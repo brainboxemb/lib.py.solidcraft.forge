@@ -13,6 +13,7 @@ from cad_library_ci.models import discover_models, select_models
 
 EXPECTED_IDS = {
     "anchor-topology-mutation",
+    "appearance-color",
     "anchored-holes",
     "as-built-attach",
     "assembly-decorator",
@@ -67,6 +68,7 @@ EXPECTED_IDS = {
 
 
 SCPF_ONLY_IDS = {
+    "appearance-color",
     "attached-through-all",
     "cone-boolean",
     "exploded-views",
@@ -96,7 +98,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 51)
+        self.assertEqual(len(self.models), 52)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
