@@ -1,4 +1,4 @@
-# Forge NEW requirements
+# Forge requirements
 
 ## Repository
 
