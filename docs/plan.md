@@ -44,40 +44,33 @@ The accepted baseline now has:
 - explicit owner-issued `/release` publication delegated to released
   `tool.py.lib.ci v0.2.1`, with Pages excluded from release evidence;
 - a hard migration boundary that rejects `0.15.0` and older as Forge NEW
-  releases; no Forge NEW tag or GitHub Release has been published.
+  releases; no Forge NEW tag or GitHub Release has been published;
+- immutable CAD runtime `docker.cad.solidcraft v0.3.6` with SolidCraft 0.49.0,
+  externally qualified first on Forge and the real Mounting Rail M8 / Simple MFT
+  consumer;
+- canonical SolidCraft 0.49.0 reference evidence captured from exact
+  `cad-solidcraft:v0.3.6`: 886 commands, 20 additions vs 0.48.1 and no
+  removed command IDs.
 
 The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
 archival/A-B reference rather than an unfinished migration gate.
 
 ## Now
 
-SolidCraft 0.49.0 candidate qualification is accepted on the Forge side:
+The post-migration API/runtime chain is immutable and qualified:
 
-- runtime owner main: `fa323fba8146d36e2598d08cb88b3a74e8c71761`;
-- runtime main Build run `45579060882`: both roles PASS;
-- Forge #79 qualification run `45579896509`: PASS;
-- #73 retained `sheet-contour-flange-recess`: native PASS on 0.49.0;
-- #74 `sheet-fold`: native, visual and geometry PASS on 0.49.0, including
-  the saved-design depth mutation;
-- qualification PR #82 was closed unmerged, so mutable `:edge` pins never
-  entered `dev`.
+- #74 associative Sketch-line fold support is accepted on `dev`;
+- runtime v0.3.6 / SolidCraft 0.49.0 is published from exact qualified source
+  `fa323fba8146d36e2598d08cb88b3a74e8c71761`;
+- Forge candidate qualification #79 / run `45579896509` passed;
+- real CAD consumer A/B #64 / run `45580463512` passed with unchanged
+  Mounting Rail M8 and Simple MFT geometry;
+- #83 restored canonical reference capture and the 0.49.0 snapshot is generated
+  from the immutable runtime;
+- Forge permanently consumes `cad-solidcraft:v0.3.6`,
+  `cad-reference:v0.3.6` and tests SolidCraft 0.49.0.
 
-1. Complete the real CAD consumer runtime A/B in
-   `2026-011-02.cad.solidcraft.NEW#64`:
-   - keep released Forge v0.15.0 for this runtime compatibility test;
-   - exercise Mounting Rail M8 and Simple MFT dependency closure against exact
-     runtime-main `cad-solidcraft:edge` / SolidCraft 0.49.0;
-   - keep the candidate-only newer-engine allowance and mutable image pin on an
-     unmerged qualification branch.
-2. When CAD #64 is green, publish immutable runtime v0.3.6 from exact qualified
-   runtime-main `fa323fba8146d36e2598d08cb88b3a74e8c71761`.
-3. Create the permanent Forge runtime-adoption change:
-   - pin `cad-solidcraft:v0.3.6` and `cad-reference:v0.3.6`;
-   - set the tested SolidCraft contract to 0.49.0;
-   - rerun the full Forge graph on immutable images;
-   - merge only through `/merge`.
-4. After the API/runtime chain is immutable and green, create the dedicated
-   repository-canonicalization change:
+1. Create the dedicated repository-canonicalization change:
    - rename the historical `brainboxemb/lib.py.solidcraft.forge` to an
      explicit `.OLD` archival name and archive it;
    - rename this repository from `.NEW` to canonical
@@ -86,19 +79,19 @@ SolidCraft 0.49.0 candidate qualification is accepted on the Forge side:
      on GitHub rename redirects;
    - verify branch policy, build evidence, Pages provenance, package metadata
      and release workflows after the rename.
-5. Publish the first actual migrated Forge release from canonical stable
+2. Publish the first actual migrated Forge release from canonical stable
    `main`, qualified against immutable SolidCraft 0.49.0:
    - bump the package above the historical `0.15.0` baseline;
    - add the required dated changelog section;
    - require exact full stable `build/main` evidence;
    - publish only through `/release vX.Y.Z <exact-main-sha>`.
-6. Update the active CAD project to the new canonical Forge release:
+3. Update the active CAD project to the new canonical Forge release:
    - replace the four Mounting Rail fixed fold lines with the accepted #74
      `Sketch.line(...)` path;
    - verify native post-generation length edits remain associative;
    - requalify Mounting Rail M8 and Simple MFT against the immutable
      Forge/runtime pair.
-7. Return to Pages as a dedicated quality phase only after the canonical release
+4. Return to Pages as a dedicated quality phase only after the canonical release
    and downstream adoption:
    - restore the global development warning (#57);
    - rewrite the landing page around Forge/SCPF itself (#58);
