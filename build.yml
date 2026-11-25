@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/168-consumer-drawing-authoring
-modules: [builder-scpf, pages]
+branch: feature/172-drawing-view-style
+modules: [builder-scpf, pages, verification]
 library: true
 models: [sample-plate-drawing]
 tasks: [test]
