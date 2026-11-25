@@ -82,29 +82,34 @@ No release blocker remains from the completed stabilization phase.
 Forge work should now return to demonstrated consumer value rather than
 continuing a broad migration/site-cleanup stream.
 
-### Active: #148 shared face/edge topology selection
+### #148 shared face/edge topology selection — implemented and qualified
 
 The Wall Hook in the active CAD repository demonstrated that face and edge
-selection is still too feature-specific. Issue #148 is the current API task.
+selection was still too feature-specific. PR #149 implements the shared
+topology layer and has qualified it for integration to `dev`:
 
-Required completion:
-- add one shared `Faces` vocabulary across `on()`, `shell()` and
-  face-boundary edge selection;
-- add semantic `Edges.from_faces(...)` without requiring caller XYZ picks;
-- resolve faces and boundary edges from native SolidCraft topology at replay
-  time, using returned identities rather than predicted topology ids;
-- preserve all existing edge-selection forms source-compatibly;
-- qualify one-face Box and two-face XZ Polygon2D extrusion chamfers natively;
-- document the world-cardinal convention: XZ profiles extrude along Y, so their
-  broad end faces are FRONT/BACK;
-- retain explicit backend/topology-limit errors where a consumer such as
-  `Shape.on(Faces.LEFT)` is accepted as intent but not yet qualified for
-  placement lowering;
-- update requirements, design, API reference, Guide and Cheatsheet;
-- merge to `dev` only after library and selected native model qualification
-  are green.
+- `Faces` is the shared world-cardinal vocabulary across `on()`, `shell()`
+  and face-boundary edge selection;
+- `Edges.from_faces(...)` selects complete named-face boundaries without
+  caller XYZ picks;
+- replay resolves `model.faces` and `model.edges` from the current
+  SolidCraft run and sends returned native `{body, index}` edge references to
+  modify features;
+- the lowering consumes SolidCraft-returned face/edge identity and does not
+  predict browser topology ids;
+- existing edge selectors remain source-compatible;
+- one-face Box and two-face XZ Polygon2D extrusion chamfers both pass native
+  qualification; the XZ broad faces are FRONT/BACK because extrusion is along
+  world Y;
+- `Shape.on()` accepts the same six-face intent vocabulary while unqualified
+  side placement reports the explicit native placement/topology limitation;
+- requirements, design, API reference, Guide and Cheatsheet describe the common
+  topology contract.
 
-After #148:
+No Forge release is part of #148. Stable remains v0.17.0 until a separately
+planned promotion/release requires this API.
+
+Next Forge work:
 1. keep #73 as retained engine/runtime regression evidence, not a replay
    workaround target;
 2. prioritize migrated product/API backlog (#59-#72) only when an active CAD
