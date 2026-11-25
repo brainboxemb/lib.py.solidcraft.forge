@@ -20,35 +20,79 @@ def _drawing_exports(document):
     result = []
     seen = set()
     for index, item in enumerate(drawings):
-        if not isinstance(item, dict) or set(item) != {"name", "drawing", "pdf"}:
+        if (
+            not isinstance(item, dict)
+            or set(item) != {
+                "name", "drawing", "sheet", "orientation", "pdf", "png",
+            }
+        ):
             raise RuntimeError(f"invalid SCPF drawing artifact at index {index}")
         variable = item["drawing"]
+        sheet_variable = item["sheet"]
+        orientation_variable = item["orientation"]
         relative = Path(item["pdf"])
+        preview = Path(item["png"])
         if (
             not isinstance(variable, str)
             or not variable.startswith("$")
+            or not isinstance(sheet_variable, str)
+            or not sheet_variable.startswith("$")
+            or not isinstance(orientation_variable, str)
+            or not orientation_variable.startswith("$")
             or relative.is_absolute()
+            or preview.is_absolute()
             or ".." in relative.parts
+            or ".." in preview.parts
             or relative.suffix.lower() != ".pdf"
+            or preview.suffix.lower() != ".png"
+            or relative.with_suffix(".png") != preview
             or not relative.parts
             or relative.parts[0] != "drawings"
+            or not preview.parts
+            or preview.parts[0] != "drawings"
         ):
             raise RuntimeError(f"invalid SCPF drawing artifact at index {index}")
-        key = relative.as_posix()
-        if key in seen:
-            raise RuntimeError(f"duplicate SCPF drawing artifact: {key}")
-        seen.add(key)
-        result.append((item["name"], variable, relative))
+        keys = (relative.as_posix(), preview.as_posix())
+        if any(key in seen for key in keys):
+            raise RuntimeError(
+                f"duplicate SCPF drawing artifact: {relative.as_posix()}"
+            )
+        seen.update(keys)
+        result.append(
+            (
+                item["name"],
+                variable,
+                sheet_variable,
+                orientation_variable,
+                relative,
+                preview,
+            )
+        )
     return result
 
 
 def _export_drawings(document, variables, native: Path, target: Path, replay_work: Path):
     exports = _drawing_exports(document)
     produced = []
-    for index, (name, variable, relative) in enumerate(exports, start=1):
-        if variable not in variables:
-            raise RuntimeError(f"unbound drawing artifact variable: {variable}")
+    for index, (
+        name,
+        variable,
+        sheet_variable,
+        orientation_variable,
+        relative,
+        preview_relative,
+    ) in enumerate(exports, start=1):
+        for required in (variable, sheet_variable, orientation_variable):
+            if required not in variables:
+                raise RuntimeError(
+                    f"unbound drawing artifact variable: {required}"
+                )
+        if variables[orientation_variable] != "landscape":
+            raise RuntimeError(
+                f"SCPF drawing sheet is not landscape: {name}"
+            )
         pdf = target / relative
+        png = target / preview_relative
         pdf.parent.mkdir(parents=True, exist_ok=True)
         script = replay_work / f"drawing-export-{index}.json"
         checkpoint = replay_work / f"drawing-export-{index}.sc"
@@ -65,6 +109,15 @@ def _export_drawings(document, variables, native: Path, target: Path, replay_wor
                             "params": {
                                 "format": "pdf",
                                 "path": str(pdf.resolve()),
+                            },
+                        },
+                        {
+                            "command": "drawing.export",
+                            "params": {
+                                "sheet": variables[sheet_variable],
+                                "format": "png",
+                                "path": str(png.resolve()),
+                                "dpi": 144,
                             },
                         },
                         {"command": "drawing.close", "params": {}},
@@ -88,10 +141,14 @@ def _export_drawings(document, variables, native: Path, target: Path, replay_wor
             ],
             check=True,
         )
-        _require_artifacts((pdf,))
+        _require_artifacts((pdf, png))
         if pdf.read_bytes()[:5] != b"%PDF-":
             raise RuntimeError(f"SCPF drawing export is not a PDF: {name}")
-        produced.append(pdf)
+        if png.read_bytes()[:8] != b"\x89PNG\r\n\x1a\n":
+            raise RuntimeError(
+                f"SCPF drawing preview export is not a PNG: {name}"
+            )
+        produced.extend((pdf, png))
     return tuple(produced)
 
 
