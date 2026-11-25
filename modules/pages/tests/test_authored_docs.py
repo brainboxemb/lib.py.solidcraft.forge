@@ -59,6 +59,11 @@ class AuthoredDocumentationProjectionTests(unittest.TestCase):
             prepare_cheatsheet(root, site)
 
             overview = (site / "content/guide/_index.md").read_text()
+            self.assertIn(
+                "The SCPF Guide explains the public Forge modelling workflow",
+                overview,
+            )
+            self.assertNotIn("migrated from the historical Forge", overview)
             self.assertIn("[Getting started](getting-started/)", overview)
             chapter = (
                 site / "content/guide/getting-started/index.md"
