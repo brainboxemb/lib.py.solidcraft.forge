@@ -1,6 +1,6 @@
 schema: 1
-branch: docs/174-reconcile-drawing-gate
-modules: [pages]
+branch: fix/176-reconcile-ci-owner-graph
+modules: [ci]
 library: false
 models: []
 tasks: [test]
