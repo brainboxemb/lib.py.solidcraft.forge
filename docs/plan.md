@@ -60,19 +60,24 @@ archival/A-B reference rather than an unfinished migration gate.
    - require the full Forge graph, including the component/joined-Cylinder
      regression, #73 retained sheet evidence, and the accepted #74
      associative-fold saved-design mutation;
-   - record the exact runtime-main commit and Forge qualification run before any
-     immutable runtime release.
-2. If the `:edge` qualification is green:
+   - record the exact runtime-main commit and Forge qualification run.
+2. Before tagging runtime v0.3.6, externally qualify the current real CAD
+   consumer against the exact runtime candidate:
+   - keep the normal released Forge v0.15.0 dependency for this runtime
+     compatibility A/B;
+   - exercise at least Mounting Rail M8 and Simple MFT with
+     `cad-solidcraft:edge` / SolidCraft 0.49.0;
+   - keep mutable runtime pins on a short-lived qualification branch only;
+   - do not weaken the CAD repository's durable released-Forge / immutable-
+     runtime dependency contract.
+3. Only when owner runtime, Forge #79, and the real CAD runtime A/B are green:
    - publish immutable runtime v0.3.6 from the exact qualified runtime-main
      commit;
-   - replace temporary `:edge` pins with
+   - replace temporary Forge `:edge` pins with
      `cad-solidcraft:v0.3.6` / `cad-reference:v0.3.6`;
    - set the tested SolidCraft contract to 0.49.0 and rerun the same Forge
      qualification before merging permanent runtime adoption.
-3. Requalify the active Mounting Rail M8 / Simple MFT CAD consumer against the
-   immutable Forge/runtime pair. The rail must use the accepted #74
-   `Sketch.line(...)` fold path so native length edits remain associative.
-4. Only after the API/runtime/consumer chain is green, create the dedicated
+4. After the API/runtime chain is immutable and green, create the dedicated
    repository-canonicalization change:
    - rename the historical `brainboxemb/lib.py.solidcraft.forge` to an
      explicit `.OLD` archival name and archive it;
@@ -83,15 +88,19 @@ archival/A-B reference rather than an unfinished migration gate.
    - verify branch policy, build evidence, Pages provenance, package metadata
      and release workflows after the rename.
 5. Publish the first actual migrated Forge release from canonical stable
-   `main`, qualified against SolidCraft 0.49.0:
+   `main`, qualified against immutable SolidCraft 0.49.0:
    - bump the package above the historical `0.15.0` baseline;
    - add the required dated changelog section;
    - require exact full stable `build/main` evidence;
-   - publish only through `/release vX.Y.Z <exact-main-sha>`;
-   - update and requalify the active CAD consumer against that canonical
-     release.
-6. Return to Pages as a dedicated quality phase only after the first canonical
-   release:
+   - publish only through `/release vX.Y.Z <exact-main-sha>`.
+6. Update the active CAD project to the new canonical Forge release:
+   - replace the four Mounting Rail fixed fold lines with the accepted #74
+     `Sketch.line(...)` path;
+   - verify native post-generation length edits remain associative;
+   - requalify Mounting Rail M8 and Simple MFT against the immutable
+     Forge/runtime pair.
+7. Return to Pages as a dedicated quality phase only after the canonical release
+   and downstream adoption:
    - restore the global development warning (#57);
    - rewrite the landing page around Forge/SCPF itself (#58);
    - visually/content-audit landing, Guide, API Reference, Cheatsheet, Examples
