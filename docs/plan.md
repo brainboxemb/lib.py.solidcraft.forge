@@ -4,95 +4,96 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The Forge migration is complete and promoted to stable `main`.
+The Forge migration is complete and the current public product baseline is
+released as **v0.19.0**.
 
-The accepted baseline now has:
-- 49 physical model owners;
-- SCPF as primary per owner;
-- historically real reference implementations local to the same physical owner;
-- native and applicable geometry verification;
-- 36 model-local approved SolidCraft visual-verification policies;
-- current per-view native evidence generated from `model.sc`;
-- saved-design and inspection behavior retained where historically real;
-- `components` as one physical owner with
-  `purpose: [example, verification]`;
-- exactly four public Examples;
-- all 49 physical owners projected into Verification;
-- durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
-  `gh-pages`;
-- the historical nine-chapter Guide and Cheatsheet;
-- 45 case-sensitive public SCPF API Reference routes, statically validated
-  against `cadlib/src/scpf` without importing or executing the package;
-- Verification `coverage`, `joint-anatomy` and `results` projections from
-  source declarations and durable build evidence;
-- the reusable Hextra/CAD presentation foundation from
-  `template.cad.library`;
-- a fixed 63-route OLD-vs-NEW route/content gate;
-- accepted desktop/mobile rendered-layout evidence, including the corrected
-  rich joint-anatomy diagram presentation;
-- policy-owned merge execution through PR comment `/merge`, with
-  `.github/workflows/merge-policy.yml` choosing and executing the merge
-  method;
-- the accepted library/CAD NEW workflow split: pull requests run central `ci`
-  only, permanent `dev`/`main` runs use one `build` job for qualification and
-  durable publication, and Pages is dispatched as an independent workflow;
-- generic stable-main release qualification from
-  `template.cad.library@e9fb95cd22cb574d615d0bf9a8115c30bbac7ddf`,
-  consumed and live-qualified in Forge #98: product-changing stable sources
-  retain full schema-2 evidence, while metadata-only release commits reuse that
-  evidence only across a validated linear release-only history;
-- Forge-owned release metadata validation for package version, dated changelog
-  section, active blockers and the tested SolidCraft version;
-- explicit owner-issued `/release` publication delegated to released
-  `tool.py.lib.ci v0.2.1`, with Pages excluded from release evidence;
-- a hard migration boundary that rejects `0.15.0` and older as Forge
-  releases;
-- canonical post-migration releases through `v0.18.0`; v0.18.0 is published
-  from exact stable main `009a2bd86dad7c4d452d72a4541f4bdf2dbd34d2`;
-- shared topology selection is part of the stable public API:
-  `Edges.from_faces(...)`, one world-cardinal `Faces` vocabulary, and
-  replay-bound native `model.faces` / `model.edges` identity;
-- the stable v0.18.0 source has exact full schema-2 evidence with
-  `library: true` and all 49 physical owners passing;
-- stable Pages quality and the canonical Pages deployment remain accepted.
+The accepted baseline now includes:
+- 52 physical model owners, with SCPF primary per owner and historically real
+  reference implementations kept inside the same physical owner;
+- native, geometry, inspection and applicable visual verification with durable
+  generated evidence below `build/<scope>/models/**`;
+- public Examples and Verification projected from the same physical-owner
+  declarations rather than duplicate model trees;
+- the Guide, Cheatsheet and generated API Reference validated against the public
+  `cadlib/scpf` surface;
+- shared topology selection through `Edges.from_faces(...)`, one
+  world-cardinal `Faces` vocabulary and replay-bound native
+  `model.faces` / `model.edges` identity;
+- consumer-grade native drawing authoring:
+  - A4/A3 landscape sheets;
+  - explicit front/top/right/isometric placement and scale;
+  - per-view visual style, including qualified shaded isometric views;
+  - linear, face-to-face and radial/diameter dimensions and callouts;
+  - native notes, drawing properties, title-block overrides and revisions;
+  - vector PDF, native PNG and retained final `drawing.inspect` JSON;
+  - builder-side structural checks plus approved sheet-image regression;
+- bounded native revolute relationships through
+  `Occurrence.attach(..., kind="revolute", ...)`;
+- display-only `Shape.with_appearance("#RRGGBB")` authoring without changing
+  material/density/BOM semantics;
+- policy-owned integration through PR comment `/merge`, including merge
+  commits for permanent branch synchronization;
+- the library workflow split: pull requests run central `ci`; permanent
+  `dev` / `main` runs qualify and publish durable scopes; Pages is
+  dispatched independently;
+- release-only stable `workflow_dispatch` classification from #156 /
+  `template.cad.library#67`: metadata-only stable commits select release +
+  library + zero models, while product changes or merge commits fail closed to
+  full qualification;
+- release-only stable publication preserves the previous full `build/main`
+  product baseline instead of rebuilding/replacing it;
+- Forge-owned release metadata validation and explicit owner-issued
+  `/release` publication through released `tool.py.lib.ci`;
+- stable Pages quality and the canonical Pages deployment.
 
-The historical repository is being finalized as
-`brainboxemb/lib.py.solidcraft.forge.OLD`, an archived A/B/provenance reference.
+Release evidence for v0.19.0:
+- promoted full product baseline:
+  `e19c362e3703ae0d62638d76728b29d3315320f0`;
+- full durable `build/main` evidence: library=true and 52/52 owners;
+- release metadata commit:
+  `ce9cd4439efe51edc360b7bfffb77b950e218d32`;
+- annotated tag `v0.19.0` points exactly to that release commit;
+- the metadata-only permanent stable run selected release + library + zero
+  models and retained the full product baseline;
+- stable -> dev synchronization completed through merge commit
+  `6e569782592ebd9d51fef991b032b6fb51eb7eb7`.
+
+The pinned SolidCraft 0.49 registry still has no native centre-mark or
+centre-line drawing-authoring command; Forge deliberately does not emulate
+those graphics.
+
+The historical repository remains an archived A/B/provenance reference at
+`brainboxemb/lib.py.solidcraft.forge.OLD`.
 
 ## Now
 
-### Parallel: #190 prepare the experimental Forge integration line
+### #190 complete the permanent experimental Forge integration line
 
-Consume the qualified optional `exp` contract from `template.cad.library#73` without mixing backend research into the current drawing/release stabilization. This issue changes branch/CI/build/Pages infrastructure only; Mitcad/backend implementation starts after the permanent Forge `exp` line is qualified.
+The optional `exp` branch/CI/build/Pages infrastructure from
+`template.cad.library#73` is already implemented on `dev` through PR #191.
+It was intentionally not promoted before the v0.19.0 release.
 
+Complete #190 by:
+1. promoting the qualified branch-policy/CI/Pages contract to stable
+   `main` without mixing backend implementation into that promotion;
+2. creating permanent Forge `exp` from the qualified normal development
+   baseline;
+3. qualifying real `build/exp` publication and the `/exp/` Pages projection
+   end-to-end;
+4. keeping releases forbidden from `exp` and rejecting direct
+   `exp -> main` integration;
+5. only after the permanent experimental line is accepted, begin Mitcad /
+   multi-backend research on that line.
 
-### Next: #166 / #167 release the qualified development baseline
+### Queued: #162 / #163 verification evidence cleanup
 
-The consumer-grade drawing system is fully qualified on permanent `dev`:
-
-- #168 / PR #170 added the public drawing-authoring API for explicit standard
-  view placement/scale, native dimensions/callouts, notes, properties,
-  title-block overrides and revision data;
-- #172 / PR #173 added qualified per-view
-  `DrawingView(visual_style="shaded")`, used only on the Sample Plate
-  isometric while orthographic views remain native line views;
-- the canonical Sample Plate Drawing publishes vector PDF, native PNG and final
-  `drawing.inspect` JSON;
-- builder-side structural checks and approved sheet-image regression both pass;
-- permanent `dev` CI run 45700081925 and Pages run 45700455394 are green;
-- Guide, Cheatsheet and API Reference are sufficient for the downstream CAD
-  consumer to author a Wall-Hook-class drawing without Forge-local hacks;
-- the pinned SolidCraft 0.49 registry still has no native centre-mark or
-  centre-line authoring command, so Forge deliberately does not fake them.
-
-Release work order:
-1. #166 promotes the exact qualified `dev -> main` product state with full
-   stable qualification;
-2. #167 publishes the next Forge release from that stable baseline and
-   synchronizes `main -> dev` through merge policy.
-
-CAD project work may consume Forge v0.18.0 as the stable topology-selection
-baseline.
+After the permanent `exp` line is stable:
+- #162 fixes the concrete `sheet-perforate` case where native perforation
+  metadata passes but the published model preview does not visibly show the
+  perforations, and adds an explicit approved visual expectation;
+- #163 audits every verification owner against the current evidence contract
+  so visually meaningful owners cannot remain green on metadata/native checks
+  alone.
 
 ## Later
 
