@@ -8,6 +8,39 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-11-25
+
+### Added
+
+- Add public `Sketch.line(...)` for one reusable straight native Sketch curve
+  while preserving symbolic `Parameter` / expression endpoints, and allow
+  `Shape.fold(line=...)` to consume that curve as an associative native
+  `sheet.fold {sketch, curve}` reference (#74).
+- Add the canonical `solidcraft-reference` module for deterministic command
+  registry capture, provenance rendering and exact immutable-runtime
+  verification (#83).
+
+### Changed
+
+- Adopt immutable `docker.cad.solidcraft v0.3.6` and qualify Forge against
+  SolidCraft **0.49.0**. The canonical registry contains 886 commands: 20 new
+  command ids versus 0.48.1, no removed ids, and no `sheet.fold` contract
+  change (#85).
+- Complete the OLD→NEW migration and make
+  `brainboxemb/lib.py.solidcraft.forge` the canonical repository. The former
+  implementation is retained read-only as
+  `brainboxemb/lib.py.solidcraft.forge.OLD` for historical A/B and provenance
+  evidence (#89).
+- Release qualification now runs on the rebuilt owner/module architecture with
+  47 physical model owners, full library evidence and 45 public API-reference
+  routes before stable publication.
+
+### Fixed
+
+- Restore reusable SolidCraft reference capture/runtime-verification capability
+  that was missing from the initial repository migration, without restoring the
+  retired top-level script/orchestration layout (#83).
+
 ## [0.15.0] - 2026-11-24
 
 ### Fixed
