@@ -1,15 +1,16 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "7356744afc7ddaf4f5df9890e7234b060bc27578390d76e3b81a58688e433234",
+  "replay_sha256": "d0d9a800542add5aabfc0a5380fefe11ef791a3abd3c7143395197349f8c0e33",
   "variables": {
     "$block_occurrence_1": 2,
     "$component_1": 1,
     "$block_occurrence_2": 4,
-    "$drawing_1_source": "03wrxeby7pm6c",
-    "$drawing_1_sheet": "3466jd50rv0gx",
-    "$drawing_1_front": "3e3a67wdjwfah",
-    "$drawing_1_iso": "97wmsmhbb1a0h"
+    "$drawing_1": "0n2zyqnyk5pdn",
+    "$drawing_1_source": "598dp58m1sk84",
+    "$drawing_1_sheet": "4vcfskr5rcyg2",
+    "$drawing_1_front": "astn4c2k75s5r",
+    "$drawing_1_iso": "53rwcna7tmzws"
   },
   "commands": [
     {
@@ -66,21 +67,22 @@
       "command": "drawing.create",
       "resolved_params": {
         "name": "Block drawing",
-        "template": "iso-a3-part",
+        "template": "iso-a4-part",
         "first_sheet_name": "Sheet 1"
       },
       "bindings": {
-        "$drawing_1_source": "03wrxeby7pm6c",
-        "$drawing_1_sheet": "3466jd50rv0gx"
+        "$drawing_1": "0n2zyqnyk5pdn",
+        "$drawing_1_source": "598dp58m1sk84",
+        "$drawing_1_sheet": "4vcfskr5rcyg2"
       }
     },
     {
       "index": 5,
       "command": "drawing.sheet.set",
       "resolved_params": {
-        "sheet": "3466jd50rv0gx",
+        "sheet": "4vcfskr5rcyg2",
         "documents": {
-          "source": "03wrxeby7pm6c",
+          "source": "598dp58m1sk84",
           "component": 1
         }
       }
@@ -89,19 +91,19 @@
       "index": 6,
       "command": "drawing.view.standard",
       "resolved_params": {
-        "sheet": "3466jd50rv0gx",
+        "sheet": "4vcfskr5rcyg2",
         "iso": true
       },
       "bindings": {
-        "$drawing_1_front": "3e3a67wdjwfah",
-        "$drawing_1_iso": "97wmsmhbb1a0h"
+        "$drawing_1_front": "astn4c2k75s5r",
+        "$drawing_1_iso": "53rwcna7tmzws"
       }
     },
     {
       "index": 7,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "3e3a67wdjwfah",
+        "view": "astn4c2k75s5r",
         "set": {
           "source": {
             "occurrences": [
@@ -117,7 +119,7 @@
       "index": 8,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "97wmsmhbb1a0h",
+        "view": "53rwcna7tmzws",
         "set": {
           "source": {
             "occurrences": [

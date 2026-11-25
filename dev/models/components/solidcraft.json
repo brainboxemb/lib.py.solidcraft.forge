@@ -1,4 +1,13 @@
 {
+  "artifacts": {
+    "drawings": [
+      {
+        "drawing": "$drawing_1",
+        "name": "Block drawing",
+        "pdf": "drawings/Block-drawing.pdf"
+      }
+    ]
+  },
   "commands": [
     {
       "bind": {
@@ -47,6 +56,7 @@
     },
     {
       "bind": {
+        "$drawing_1": "id",
         "$drawing_1_sheet": {
           "field": "sheets",
           "select": "id",
@@ -66,7 +76,7 @@
       "params": {
         "first_sheet_name": "Sheet 1",
         "name": "Block drawing",
-        "template": "iso-a3-part"
+        "template": "iso-a4-part"
       }
     },
     {
