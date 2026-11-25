@@ -3,7 +3,11 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from cad_library_build.publish import PublishError, update_scope
+from cad_library_build.publish import (
+    PublishError,
+    _preserve_release_baseline,
+    update_scope,
+)
 
 
 class PublishTests(unittest.TestCase):
@@ -46,6 +50,25 @@ class PublishTests(unittest.TestCase):
                 json.loads((target / "models/b/source.json").read_text())["source_sha"],
                 "new",
             )
+
+    def test_release_only_stable_candidate_preserves_full_baseline(self):
+        plan = {
+            "release_only": True,
+            "full": False,
+            "library": True,
+            "selected": [],
+        }
+        self.assertTrue(_preserve_release_baseline(plan, "main", "main"))
+
+    def test_release_only_candidate_is_rejected_outside_stable(self):
+        plan = {
+            "release_only": True,
+            "full": False,
+            "library": True,
+            "selected": [],
+        }
+        with self.assertRaisesRegex(PublishError, "stable source"):
+            _preserve_release_baseline(plan, "dev", "main")
 
     def test_rejects_missing_active_output(self):
         with tempfile.TemporaryDirectory() as tmp:
