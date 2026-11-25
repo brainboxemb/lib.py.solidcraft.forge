@@ -20,6 +20,10 @@ class ModelPagesTests(unittest.TestCase):
             (sections / "sections.yml").write_text(
                 "schema: 1\n"
                 "sections:\n"
+                "  later:\n"
+                "    priority: 20\n"
+                "    label: 2 · Later\n"
+                "    description: Later cases.\n"
                 "  fundamentals:\n"
                 "    priority: 10\n"
                 "    label: 1 · Basic geometry\n"
@@ -117,12 +121,20 @@ class ModelPagesTests(unittest.TestCase):
             )
             self.assertEqual(
                 catalog["sections"],
-                [{
-                    "id": "fundamentals",
-                    "priority": 10,
-                    "label": "1 · Basic geometry",
-                    "description": "Primitive geometry.",
-                }],
+                [
+                    {
+                        "id": "fundamentals",
+                        "priority": 10,
+                        "label": "1 · Basic geometry",
+                        "description": "Primitive geometry.",
+                    },
+                    {
+                        "id": "later",
+                        "priority": 20,
+                        "label": "2 · Later",
+                        "description": "Later cases.",
+                    },
+                ],
             )
             self.assertIn('"/models/box/"', content)
             self.assertEqual(list(site.rglob("*.stl")), [])
