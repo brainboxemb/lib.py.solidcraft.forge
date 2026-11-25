@@ -5,6 +5,7 @@ import unittest
 from scpf.headless import (
     HeadlessReplayError,
     _active_component_after,
+    _active_drawing_after,
     _active_sketch_after,
     _phase_commands,
 )
@@ -156,6 +157,61 @@ class HeadlessComponentReplayTests(unittest.TestCase):
                     },
                 ],
                 [{}],
+                None,
+            )
+
+
+class HeadlessDrawingReplayTests(unittest.TestCase):
+    def test_next_phase_reopens_active_drawing_before_native_commands(self):
+        chunk = [{
+            "command": "drawing.sheet.set",
+            "params": {"sheet": "sheet-1", "line_group": 0.5},
+        }]
+        native, prefix = _phase_commands(
+            chunk,
+            {},
+            None,
+            None,
+            "drawing-1",
+        )
+        self.assertEqual(prefix, 1)
+        self.assertEqual(
+            native[0],
+            {
+                "command": "drawing.open",
+                "params": {"drawing": "drawing-1"},
+            },
+        )
+        self.assertEqual(native[1]["command"], "drawing.sheet.set")
+
+    def test_create_open_and_close_update_tracked_drawing(self):
+        active = _active_drawing_after(
+            [{"command": "drawing.create", "params": {"name": "Part"}}],
+            [{"id": "drawing-1", "name": "Part"}],
+            None,
+        )
+        self.assertEqual(active, "drawing-1")
+        active = _active_drawing_after(
+            [{"command": "drawing.open", "params": {"drawing": "drawing-2"}}],
+            [{"id": "drawing-2"}],
+            active,
+        )
+        self.assertEqual(active, "drawing-2")
+        active = _active_drawing_after(
+            [{"command": "drawing.close", "params": {}}],
+            [{}],
+            active,
+        )
+        self.assertIsNone(active)
+
+    def test_drawing_create_requires_usable_identity(self):
+        with self.assertRaisesRegex(
+            HeadlessReplayError,
+            "did not return a drawing id",
+        ):
+            _active_drawing_after(
+                [{"command": "drawing.create", "params": {"name": "Part"}}],
+                [{"name": "Part"}],
                 None,
             )
 

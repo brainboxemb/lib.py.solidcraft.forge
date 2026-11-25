@@ -24,13 +24,15 @@ def _phase_commands(
     variables,
     active_sketch,
     active_component=None,
+    active_drawing=None,
 ):
     """Resolve one replay phase and restore transient SolidCraft edit context.
 
-    A saved .sc file preserves component/Sketch features but not the fresh CLI
-    process' active component or active-Sketch session state. Restore the
-    component first, then reopen any unfinished Sketch inside that context.
-    Transport restore commands are excluded from authored replay results/logs.
+    A saved .sc file preserves native features and drawings but not the fresh
+    CLI process' active component, active-Sketch or open-drawing session state.
+    Restore component/Sketch context first, then reopen the drawing when one is
+    active. Transport restore commands are excluded from authored replay
+    results/logs.
     """
     native = [resolved_command(item, variables) for item in chunk]
     transport = []
@@ -43,6 +45,11 @@ def _phase_commands(
         transport.append({
             "command": "sketch.edit",
             "params": {"sketch": active_sketch},
+        })
+    if active_drawing is not None:
+        transport.append({
+            "command": "drawing.open",
+            "params": {"drawing": active_drawing},
         })
     return [*transport, *native], len(transport)
 
@@ -110,6 +117,38 @@ def _active_sketch_after(items, results, active_sketch):
     return active
 
 
+def _active_drawing_after(items, results, active_drawing):
+    """Track the transient open drawing represented by replay commands."""
+    if len(items) != len(results):
+        raise HeadlessReplayError(
+            "SolidCraft did not return one result per replay command"
+        )
+
+    active = active_drawing
+    for item, result in zip(items, results):
+        command = item["command"]
+        params = item.get("params", {})
+        if command == "drawing.create":
+            target = result.get("id") if isinstance(result, dict) else None
+            if not isinstance(target, (int, str)) or target == "":
+                raise HeadlessReplayError(
+                    f"drawing.create did not return a drawing id: {result!r}"
+                )
+            active = target
+        elif command == "drawing.open":
+            target = params.get("drawing")
+            if not isinstance(target, (int, str)) or target == "":
+                raise HeadlessReplayError(
+                    "drawing.open has no usable drawing target"
+                )
+            active = target
+        elif command == "drawing.close":
+            active = None
+        elif command == "file.new":
+            active = None
+    return active
+
+
 def run_document(
     document,
     *,
@@ -153,6 +192,7 @@ def run_document(
     all_results = []
     active_sketch = None
     active_component = None
+    active_drawing = None
 
     owned_tmp = None
     if work_dir is None:
@@ -172,6 +212,7 @@ def run_document(
                     variables,
                     active_sketch,
                     active_component,
+                    active_drawing,
                 )
                 replay_native = native[transport_prefix:]
             else:
@@ -259,6 +300,11 @@ def run_document(
                     replay_native,
                     replay_results,
                     active_sketch,
+                )
+                active_drawing = _active_drawing_after(
+                    replay_native,
+                    replay_results,
+                    active_drawing,
                 )
             else:
                 bindings = [{} for _ in chunk]

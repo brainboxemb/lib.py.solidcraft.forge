@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/132-model-site-hero-action
-modules: [pages]
-library: false
-models: []
+branch: issue/134-component-drawings
+modules: [ci, pages]
+library: true
+models: [components]
 tasks: [test]
