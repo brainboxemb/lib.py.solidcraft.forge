@@ -76,18 +76,23 @@ class ComponentDrawingTests(unittest.TestCase):
                 },
             },
         )
+        self.assertNotIn("bind", drawing[1])
         self.assertEqual(
-            drawing[1]["bind"],
+            drawing[2],
             {
-                "$drawing_1_orientation": {
-                    "field": "sheets",
-                    "where": {"name": "Sheet 1"},
-                    "select": "orientation",
+                "command": "drawing.inspect",
+                "params": {},
+                "bind": {
+                    "$drawing_1_orientation": {
+                        "field": "sheets",
+                        "where": {"name": "Sheet 1"},
+                        "select": "orientation",
+                    },
                 },
             },
         )
         self.assertEqual(
-            drawing[2],
+            drawing[3],
             {
                 "command": "drawing.view.standard",
                 "params": {"sheet": "$drawing_1_sheet", "iso": True},
@@ -103,7 +108,7 @@ class ComponentDrawingTests(unittest.TestCase):
             },
         }
         self.assertEqual(
-            drawing[3]["params"],
+            drawing[5]["params"],
             {"view": "$drawing_1_front", "set": selected},
         )
         self.assertEqual(
@@ -111,7 +116,7 @@ class ComponentDrawingTests(unittest.TestCase):
             {"view": "$drawing_1_iso", "set": selected},
         )
         self.assertEqual(
-            drawing[5],
+            drawing[6],
             {"command": "drawing.close", "params": {}},
         )
         self.assertEqual(
