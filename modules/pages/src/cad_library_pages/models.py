@@ -25,7 +25,7 @@ def _repository(source_root):
     return value
 
 
-def _verification_sections(source_root: Path, site: Path) -> dict[str, dict]:
+def _verification_sections(source_root: Path) -> tuple[dict[str, dict], list[dict]]:
     path = source_root / "docs/verification/sections.yml"
     if not path.is_file():
         raise ValueError(f"missing verification sections: {path}")
@@ -54,19 +54,13 @@ def _verification_sections(source_root: Path, site: Path) -> dict[str, dict]:
             "priority": section["priority"],
             "label": section["label"],
             "description": section["description"],
+            "models": [],
         }
         rows.append(row)
         normalized[section_id] = row
 
     rows.sort(key=lambda row: (row["priority"], row["id"]))
-    target = site / "data/cad/verification_sections.json"
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(
-        json.dumps({"schema": 1, "sections": rows}, indent=2, ensure_ascii=False)
-        + "\n",
-        encoding="utf-8",
-    )
-    return normalized
+    return normalized, rows
 
 
 def _stage_lines(*, evidence, blob_base, impl_path, stages):
@@ -113,7 +107,7 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
         return
 
     repository = _repository(source_root)
-    verification_sections = _verification_sections(source_root, site)
+    verification_sections, verification_section_rows = _verification_sections(source_root)
     namespace = build_scope.name if build_scope else None
     blob_base = (
         f"https://github.com/{repository}/blob/build/{namespace}/"
@@ -152,6 +146,12 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
             verification_section = None
 
         title = str(meta.get("title", item))
+        if verification_section is not None:
+            verification_sections[verification_section]["models"].append({
+                "id": item,
+                "priority": meta.get("priority", 100),
+                "title": title,
+            })
         implementations = ci.get("implementations", [])
         featured = meta.get("presentation_primary", ci.get("primary", ""))
         if implementations and featured not in {i["id"] for i in implementations}:
@@ -270,3 +270,16 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
                 json.dumps(data, ensure_ascii=False, indent=2) + "\n\n"
                 + "\n".join(lines).rstrip() + "\n", encoding="utf-8"
             )
+
+    for section in verification_section_rows:
+        section["models"].sort(key=lambda model: (model["priority"], model["id"]))
+    target = site / "data/cad/verification_sections.json"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(
+        json.dumps(
+            {"schema": 1, "sections": verification_section_rows},
+            indent=2,
+            ensure_ascii=False,
+        ) + "\n",
+        encoding="utf-8",
+    )
