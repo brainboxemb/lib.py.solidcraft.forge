@@ -156,6 +156,7 @@ class ComponentDrawingTests(unittest.TestCase):
                             "note_count": 0,
                             "properties": {},
                             "title_block": {},
+                            "view_styles": {},
                         },
                     }
                 ]
@@ -306,6 +307,18 @@ class ComponentDrawingTests(unittest.TestCase):
         self.assertEqual(
             iso["params"]["set"]["visual_style"],
             "shaded",
+        )
+        styled_inspect = next(
+            row for row in commands
+            if row["command"] == "drawing.view.inspect"
+        )
+        self.assertEqual(
+            styled_inspect["params"]["view"],
+            "$drawing_1_iso",
+        )
+        self.assertEqual(
+            document["artifacts"]["drawings"][0]["expected"]["view_styles"],
+            {"$drawing_1_iso": "shaded"},
         )
 
         dimensions = [
