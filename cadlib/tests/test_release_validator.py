@@ -36,7 +36,7 @@ def write_candidate(
         encoding="utf-8",
     )
     (root / "cadlib/src/scpf/version.py").write_text(
-        'TESTED_SOLIDCRAFT_VERSION = "0.48.1"\n',
+        'TESTED_SOLIDCRAFT_VERSION = "0.49.0"\n',
         encoding="utf-8",
     )
     (root / "CHANGELOG.md").write_text(
