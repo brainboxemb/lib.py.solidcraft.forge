@@ -490,7 +490,7 @@ landscape and preserves an explicitly selected `iso-a3-part` template.
 The public drawing authoring controls are:
 
 ```python
-DrawingView(at=(x_mm, y_mm), scale="1:1")
+DrawingView(at=(x_mm, y_mm), scale="1:1", visual_style="shaded")
 
 DrawingNote(
     "NOTES\n1. ALL DIMENSIONS IN MM.",
@@ -549,7 +549,11 @@ return part.with_drawing(
         "front": DrawingView(at=(62, 128)),
         "top": DrawingView(at=(62, 62)),
         "right": DrawingView(at=(137, 128)),
-        "iso": DrawingView(at=(220, 128), scale="1:1"),
+        "iso": DrawingView(
+            at=(220, 128),
+            scale="1:1",
+            visual_style="shaded",
+        ),
     },
     properties={
         "project": "Workshop",
@@ -585,7 +589,8 @@ return part.with_drawing(
 Supported `views` keys are `front`, `top`, `right` and `iso`.
 `DrawingView.at` is a native paper position in millimetres. A per-view scale
 may be supplied; a projected top/right view is unlinked natively when an
-independent scale is requested.
+independent scale is requested. `visual_style="shaded"` is the qualified
+native pictorial override; omit it for SolidCraft's normal line presentation.
 
 Supported drawing properties are `project`, `part_number`, `revision`,
 `author`, `organization`, `description` and `license`. Title-block
