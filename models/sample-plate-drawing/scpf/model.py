@@ -41,7 +41,7 @@ class SamplePlate:
 
 
 def sample_plate_drawing():
-    """Final design presentation with Forge's default native ISO A4 drawing."""
+    """Final design presentation with Forge's default ISO A4 landscape drawing."""
     return SamplePlate().with_drawing(name="Sample Plate Drawing")
 
 
