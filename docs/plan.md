@@ -82,23 +82,42 @@ Accepted stable state:
 - stable-to-development synchronization #154 / PR #155 returned the release
   metadata to `dev` without rebasing shared history.
 
-### Active: #166 / #167 promote and release drawing-quality patch
+### Active: #168 consumer-grade drawing authoring
 
-PR #165 qualified the drawing correction for integration to `dev`:
+PR #165 established the drawing runtime/presentation foundation on `dev`:
 - A4/A3 native part drawings preserve paper size and use landscape;
 - final orientation is read back through native `drawing.inspect`;
 - builder-scpf publishes vector PDF + native 144 dpi sheet PNG;
-- Pages loads only the static preview and never auto-embeds the PDF;
-- Sample Plate Drawing remains the Forge-owned example + verification owner;
-- native CI and Pages qualification are green.
+- Pages loads only the static preview and never auto-embeds the PDF.
 
-Next:
-1. merge #165 to `dev` through policy and require the permanent dev build;
-2. #166 promotes exact `dev -> main` with full stable qualification;
-3. #167 publishes metadata-only Forge v0.18.1 from that stable baseline;
-4. synchronize stable release metadata back `main -> dev`;
-5. only after v0.18.1, evaluate missing generic drawing authoring API against
-   the real CAD Wall Hook use case; do not change CAD as part of this release.
+That foundation is not the release boundary.
+
+Current branch: `feature/168-consumer-drawing-authoring-v2`.
+
+Release acceptance for #168:
+- public `DrawingView`, `DrawingNote`, `DrawingRevision` and
+  `DrawingDimension` author native SolidCraft drawing state;
+- `with_drawing(...)` exposes explicit standard-view placement/scale, native
+  drawing properties, title-block overrides, revision, notes and dimensions;
+- linear, stable face-to-face and radial/diameter dimensions are qualified;
+- Sample Plate Drawing consumes only that public API as a Wall-Hook-class
+  consumer simulation;
+- builder-scpf retains and validates the final native `drawing.inspect`
+  evidence beside PDF/PNG artifacts;
+- the generated engineering sheet is compared with an approved visual baseline;
+- Guide, Cheatsheet and API Reference are sufficient for an external CAD
+  repository to reproduce the authoring workflow without Forge internals;
+- centre marks/centre lines remain an explicit SolidCraft 0.49 backend limit,
+  not a forged graphics workaround;
+- CAD itself remains untouched until this Forge contract is qualified.
+
+### Blocked: #166 / #167 promote and release drawing work
+
+#166 promotion and #167 Forge v0.18.1 remain blocked until #168 is merged and
+the permanent `dev` build/Pages evidence is green. Only then:
+1. promote exact `dev -> main` with full stable qualification;
+2. publish metadata-only v0.18.1 from that stable product baseline;
+3. synchronize `main -> dev` through merge policy.
 
 ### Active: #169 native revolute-joint authoring
 
