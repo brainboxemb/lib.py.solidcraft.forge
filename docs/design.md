@@ -129,6 +129,17 @@ The two routes are presentation views over the same owner and durable `build/<sc
 
 The reusable Hextra model presentation is consumed from the accepted `template.cad.library` design: expected setup, featured native/primary result, primary source and generated commands, independent reference source/result pairs, image/check overviews and raw verification evidence.
 
+The Forge homepage follows the generated homepage contract established by
+`template.cad.library#63`. Repository-owned `site/home.yml` declares the
+ordered hero, flow, navigation and catalogue blocks. Pages validates that
+source with `homepage.py`, resolves Forge-owned generated values from
+`landing_metadata()`, and writes temporary `data/home.json`. Hugo then
+renders that manifest with the Forge-specific presentation classes in
+`site/layouts/home.html`. The layout owns structure and styling only; Forge
+copy, routes and external destinations are not hardcoded there. The SolidCraft
+model website is therefore one normal generated navigation destination rather
+than a template exception.
+
 Verification keeps its Forge-owned presentation taxonomy in `docs/verification/sections.yml`. During Pages preparation that declaration is validated, sorted by section priority and projected into a temporary Hugo resource catalogue. Every owner projected to Verification must name one known section through `model.yml.section`; the Verification list renders those sections in declared order and sorts the model cards inside each section by model priority. This is presentation metadata only and does not create additional model owners or CAD build scopes.
 
 Forge-specific documentation is projected separately:
