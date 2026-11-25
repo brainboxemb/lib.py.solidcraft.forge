@@ -51,6 +51,7 @@ class ComponentDrawingTests(unittest.TestCase):
                     "first_sheet_name": "Sheet 1",
                 },
                 "bind": {
+                    "$drawing_1": "id",
                     "$drawing_1_source": {
                         "field": "sources",
                         "where": {"path": None},
@@ -65,14 +66,21 @@ class ComponentDrawingTests(unittest.TestCase):
             },
         )
         self.assertEqual(
-            drawing[1]["params"]["documents"],
+            drawing[1],
+            {
+                "command": "drawing.open",
+                "params": {"drawing": "$drawing_1"},
+            },
+        )
+        self.assertEqual(
+            drawing[2]["params"]["documents"],
             {
                 "source": "$drawing_1_source",
                 "component": "$component_1",
             },
         )
         self.assertEqual(
-            drawing[2],
+            drawing[3],
             {
                 "command": "drawing.view.standard",
                 "params": {"sheet": "$drawing_1_sheet", "iso": True},
@@ -88,15 +96,22 @@ class ComponentDrawingTests(unittest.TestCase):
             },
         }
         self.assertEqual(
-            drawing[3]["params"],
+            drawing[4],
+            {
+                "command": "drawing.open",
+                "params": {"drawing": "$drawing_1"},
+            },
+        )
+        self.assertEqual(
+            drawing[5]["params"],
             {"view": "$drawing_1_front", "set": selected},
         )
         self.assertEqual(
-            drawing[4]["params"],
+            drawing[6]["params"],
             {"view": "$drawing_1_iso", "set": selected},
         )
         self.assertEqual(
-            drawing[5],
+            drawing[7],
             {"command": "drawing.close", "params": {}},
         )
 

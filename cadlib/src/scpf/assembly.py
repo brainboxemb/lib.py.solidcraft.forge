@@ -866,6 +866,7 @@ def _compile_assembly_with_dependencies(value, name):
         target = drawing_targets[drawing.target_occurrence_id]
         component_ref = component_refs[target.definition.key]
         occurrence_ref = occurrence_refs[target.occurrence_id]
+        drawing_ref = f"$drawing_{drawing_number}"
         source_ref = f"$drawing_{drawing_number}_source"
         sheet_ref = f"$drawing_{drawing_number}_sheet"
         front_ref = f"$drawing_{drawing_number}_front"
@@ -878,6 +879,7 @@ def _compile_assembly_with_dependencies(value, name):
             first_sheet_name=drawing.sheet_name,
         )
         create["bind"] = {
+            drawing_ref: "id",
             source_ref: {
                 "field": "sources",
                 "where": {"path": None},
@@ -891,6 +893,13 @@ def _compile_assembly_with_dependencies(value, name):
         }
         commands.append(create)
 
+        # Replay saves and reopens the native design between commands whose
+        # results bind ids used later. Drawing open-state is session-local, so
+        # explicitly reopen the persisted drawing after each binding boundary.
+        commands.append(_command(
+            "drawing.open",
+            drawing=drawing_ref,
+        ))
         commands.append(_command(
             "drawing.sheet.set",
             sheet=sheet_ref,
@@ -911,6 +920,10 @@ def _compile_assembly_with_dependencies(value, name):
         }
         commands.append(standard)
 
+        commands.append(_command(
+            "drawing.open",
+            drawing=drawing_ref,
+        ))
         selected_source = {
             "occurrences": [[occurrence_ref]],
         }
