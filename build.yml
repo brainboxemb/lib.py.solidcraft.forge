@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/172-drawing-view-style
-modules: [builder-scpf, pages, verification]
-library: true
-models: [sample-plate-drawing]
+branch: docs/174-reconcile-drawing-gate
+modules: [pages]
+library: false
+models: []
 tasks: [test]

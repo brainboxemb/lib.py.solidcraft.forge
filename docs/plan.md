@@ -82,40 +82,33 @@ Accepted stable state:
 - stable-to-development synchronization #154 / PR #155 returned the release
   metadata to `dev` without rebasing shared history.
 
-### Active: #172 final drawing release gate
+### Next: #156, then #166 / #167 release the qualified drawing system
 
-#168 / PR #170 is integrated on `dev` and qualified the consumer-grade
-drawing authoring system:
+The consumer-grade drawing system is fully qualified on permanent `dev`:
 
-- public `DrawingView`, `DrawingNote`, `DrawingRevision` and
-  `DrawingDimension`;
-- explicit standard-view placement/scale;
-- native linear, parallel-face and radial/diameter dimensions;
-- native notes, drawing properties, title-block overrides and one revision row;
-- durable vector PDF, native PNG and final `drawing.inspect` JSON;
-- builder-side structural validation of the saved native drawing;
-- approved generated-sheet image regression;
-- Guide, Cheatsheet and API Reference for external consumers.
+- #168 / PR #170 added the public drawing-authoring API for explicit standard
+  view placement/scale, native dimensions/callouts, notes, properties,
+  title-block overrides and revision data;
+- #172 / PR #173 added qualified per-view
+  `DrawingView(visual_style="shaded")`, used only on the Sample Plate
+  isometric while orthographic views remain native line views;
+- the canonical Sample Plate Drawing publishes vector PDF, native PNG and final
+  `drawing.inspect` JSON;
+- builder-side structural checks and approved sheet-image regression both pass;
+- permanent `dev` CI run 45700081925 and Pages run 45700455394 are green;
+- Guide, Cheatsheet and API Reference are sufficient for the downstream CAD
+  consumer to author a Wall-Hook-class drawing without Forge-local hacks;
+- the pinned SolidCraft 0.49 registry still has no native centre-mark or
+  centre-line authoring command, so Forge deliberately does not fake them.
 
-#172 is the final release gate. It must:
-- expose and natively qualify per-view `visual_style="shaded"`;
-- keep normal orthographic views as SolidCraft line views while the consumer
-  proof uses a shaded isometric;
-- reconcile `docs/requirements.md` with the already integrated #168 behavior;
-- update and visually approve the drawing-sheet baseline only after the native
-  shaded output is reviewed;
-- pass PR CI, permanent `dev` build publication and Pages.
-
-The pinned SolidCraft 0.49 registry still has no native centre-mark/centre-line
-authoring command; Forge must not fake those graphics.
-
-### Blocked: #166 / #167 promote and release drawing work
-
-#166 promotion and #167 Forge v0.18.1 remain blocked until #172 is merged and
-the permanent `dev` build/Pages evidence is green. Only then:
-1. promote exact `dev -> main` with full stable qualification;
-2. publish metadata-only v0.18.1 from that stable product baseline;
-3. synchronize `main -> dev` through merge policy.
+Release work order:
+1. resolve #156 through the generic template fix tracked by
+   `template.cad.library#67`, then consume that correction in Forge so a
+   metadata-only release commit does not trigger another full model build;
+2. #166 promotes the exact qualified `dev -> main` product state with full
+   stable qualification;
+3. #167 publishes Forge v0.18.1 from that stable baseline and synchronizes
+   `main -> dev` through merge policy.
 
 ### Active: #156 release-only stable push selection regression
 
