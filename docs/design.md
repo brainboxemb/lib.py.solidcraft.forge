@@ -116,22 +116,22 @@ one definition may have many physical occurrences.
 
 Forge lowers `with_drawing()` to native `drawing.create`,
 `drawing.sheet.set`, `drawing.view.standard`, component-filtering
-`drawing.view.edit` calls and `drawing.close`. SolidCraft owns the part
-template, standard front/top/right/isometric layout and fitted scale. A4 is the
-Forge default; A3 remains an explicit native template choice for larger or more
-complex parts.
+`drawing.view.edit` calls and `drawing.close`. SolidCraft owns the part template, standard front/top/right/isometric layout
+and fitted scale. A4 is the Forge default and Forge explicitly sets the first
+native sheet to landscape. A3 remains an explicit native template choice; its
+paper size is preserved while the first sheet is also set to landscape.
 
 All component, occurrence, drawing, drawing-source, sheet and view identities
 come from replay-bound SolidCraft command results. Forge never predicts browser
 names or native ids.
 
-The replay document may also declare a drawing PDF artifact by its safe
-implementation-relative path, for example
-`drawings/Block-drawing.pdf`. `builder-scpf` owns the actual build path:
-after the native model replay succeeds it reopens `model.sc`, opens the
-replay-bound drawing and calls SolidCraft `drawing.export` with
-`format="pdf"`. The PDF is therefore a native vector drawing artifact, not a
-screenshot and not a Python-rendered document.
+The replay document declares the safe implementation-relative vector PDF and
+static PNG paths plus the replay-bound drawing, sheet and final sheet
+orientation variables. `builder-scpf` owns the actual build path: after native
+model replay succeeds it requires the returned final orientation to be
+`landscape`, reopens `model.sc`, opens the replay-bound drawing and calls
+SolidCraft `drawing.export` for the vector PDF and the exact replay-bound sheet
+PNG at 144 dpi. Neither artifact is reconstructed by Python.
 
 For a component selected from a larger Assembly, SolidCraft currently computes
 the standard view group's fitted scale before Forge narrows the base views to
@@ -143,9 +143,9 @@ Drawing presentation is projected from the same owner/evidence architecture as
 other examples. The `sample-plate-drawing` owner has
 `purpose: [example, verification]`: Examples teaches the workflow, while the
 Drawings verification section exposes the same native evidence. Pages discovers
-implementation-local `drawings/*.pdf`, embeds the raw build-branch PDF and
-links its blob/download locations without copying the generated file into
-`gh-pages`.
+implementation-local `drawings/*.pdf` and sibling PNG evidence. Pages loads
+only the static PNG preview and exposes explicit PDF open/download links;
+neither generated artifact is copied into `gh-pages`.
 
 ## SolidCraft command-reference boundary
 
@@ -185,6 +185,7 @@ build/<scope>/models/<owner>/
   model.png
   drawings/
     <drawing>.pdf
+    <drawing>.png
   scpf/
   cadquery/
   build123d/
