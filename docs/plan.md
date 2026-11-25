@@ -59,6 +59,21 @@ The historical repository is being finalized as
 
 ## Now
 
+### #139 — A4 drawing PDF artifacts
+
+Turn the accepted native component drawing into a consumable build artifact:
+
+- make `iso-a4-part` the default drawing template while retaining explicit
+  `iso-a3-part` support;
+- replay-bind the native drawing id and declare a safe relative PDF artifact;
+- have `builder-scpf` reopen the saved native design and call SolidCraft
+  `drawing.export` to create a vector PDF below `drawings/`;
+- prove `components` produces `drawings/Block-drawing.pdf` on the pinned
+  SolidCraft 0.49.0 runtime;
+- publish the API/reference documentation needed by the CAD consumer;
+- after acceptance, release Forge and consume that release in the CAD
+  `sample-plate` owner as the first public A4 drawing/PDF verification.
+
 The release/CI correction and the Forge Pages quality phase are complete on
 stable `main`.
 
