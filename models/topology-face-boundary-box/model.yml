@@ -1,0 +1,16 @@
+schema: 1
+purpose: verification
+section: features
+priority: 95
+title: Native Box face-boundary selection
+tagline: One named face resolves to its native boundary edges for chamfer
+description: >
+  A rectangular Box chamfers the complete TOP-face perimeter through
+  Edges.from_faces(Faces.TOP). Forge queries SolidCraft topology at replay time
+  and passes native edge references to the chamfer feature.
+parameters: 60 × 40 × 12 mm Box; 2 mm TOP perimeter chamfer
+stages:
+  - Create the native Box
+  - Resolve the largest planar TOP face through model.faces
+  - Resolve its boundary through model.edges
+  - Chamfer the returned native edge references
