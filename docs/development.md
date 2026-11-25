@@ -4,7 +4,14 @@
 
 Work from `dev` on a short-lived issue/fix/feature/docs/chore branch. Keep `build.yml.branch` exact and select the smallest library/modules/models required.
 
-After green checks, use the repository merge policy to squash into `dev`. Promotion from `dev` to `main` is a full qualification and uses a merge commit.
+After green checks, use the repository merge policy to squash normal product work into `dev`. Promotion from `dev` to `main` is an explicit full product qualification and uses a merge commit.
+
+Release preparation is separate. Create `release/vX.Y.Z` from stable `main`,
+change only `CHANGELOG.md` plus `cadlib/pyproject.toml:project.version`, and
+open that branch directly against `main`. The release lane runs the library
+and release capability only, preserves the prior full stable CAD evidence, and
+publishes from exact current `main`. After publication synchronize
+`main -> dev` through `/merge`; do not rebase `dev`.
 
 ## Tests
 
