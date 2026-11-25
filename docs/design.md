@@ -67,6 +67,27 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Native component drawing boundary
+
+Component drawings are Assembly-owned presentation state. A component
+definition remains geometry/feature intent and does not own a drawing, because
+one definition may have many physical occurrences.
+
+Forge lowers `with_drawing()` to native `drawing.create`,
+`drawing.sheet.set`, `drawing.view.standard`, component-filtering
+`drawing.view.edit` calls and `drawing.close`. SolidCraft owns the part
+template, standard front/top/right/isometric layout and fitted scale.
+
+All component, occurrence, drawing-source, sheet and view identities come from
+replay-bound SolidCraft command results. Forge never predicts browser names or
+native ids.
+
+For a component selected from a larger Assembly, SolidCraft currently computes
+the standard view group's fitted scale before Forge narrows the base views to
+that occurrence subtree. Projected top/right views inherit the main view
+source. The result remains native and safe, but the scale can be conservative
+for a small component inside a much larger Assembly.
+
 ## SolidCraft command-reference boundary
 
 The canonical SolidCraft command registry is a Forge-owned engineering
