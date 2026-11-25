@@ -51,10 +51,11 @@ archival/A-B reference rather than an unfinished migration gate.
 
 ## Now
 
-1. Restore and qualify the late OLD `issue/845-live-sheet-recess` verification
-   owner that was authored after Forge NEW was created but before OLD work
-   stopped. Keep the live-vs-headless replay defect tracked by #73 after the
-   fixture itself is safely migrated.
+1. Use the restored `sheet-contour-flange-recess` owner under #73 to determine
+   and fix the live-vs-headless replay divergence. The late OLD regression
+   fixture is now preserved in NEW; #73 remains open until the same replay
+   document is accepted consistently or the defect is explicitly reassigned to
+   its owning layer with reproducible evidence.
 
 ## Later
 
