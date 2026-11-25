@@ -6,11 +6,11 @@
     "$block_occurrence_1": 2,
     "$component_1": 1,
     "$block_occurrence_2": 4,
-    "$drawing_1": "60xf5hbtrp1xt",
-    "$drawing_1_source": "ac14g7nw94f37",
-    "$drawing_1_sheet": "c96zqxdmsp52z",
-    "$drawing_1_front": "3vvmegmkd5q4j",
-    "$drawing_1_iso": "fjfe2nst20trc"
+    "$drawing_1": "0dbd05ht1wz0k",
+    "$drawing_1_source": "5bgcjncgnqtx7",
+    "$drawing_1_sheet": "8xnw0t7v0zp9x",
+    "$drawing_1_front": "2z4edjfncm5rq",
+    "$drawing_1_iso": "bhevetskj6jjk"
   },
   "commands": [
     {
@@ -71,18 +71,18 @@
         "first_sheet_name": "Sheet 1"
       },
       "bindings": {
-        "$drawing_1": "60xf5hbtrp1xt",
-        "$drawing_1_source": "ac14g7nw94f37",
-        "$drawing_1_sheet": "c96zqxdmsp52z"
+        "$drawing_1": "0dbd05ht1wz0k",
+        "$drawing_1_source": "5bgcjncgnqtx7",
+        "$drawing_1_sheet": "8xnw0t7v0zp9x"
       }
     },
     {
       "index": 5,
       "command": "drawing.sheet.set",
       "resolved_params": {
-        "sheet": "c96zqxdmsp52z",
+        "sheet": "8xnw0t7v0zp9x",
         "documents": {
-          "source": "ac14g7nw94f37",
+          "source": "5bgcjncgnqtx7",
           "component": 1
         }
       }
@@ -91,19 +91,19 @@
       "index": 6,
       "command": "drawing.view.standard",
       "resolved_params": {
-        "sheet": "c96zqxdmsp52z",
+        "sheet": "8xnw0t7v0zp9x",
         "iso": true
       },
       "bindings": {
-        "$drawing_1_front": "3vvmegmkd5q4j",
-        "$drawing_1_iso": "fjfe2nst20trc"
+        "$drawing_1_front": "2z4edjfncm5rq",
+        "$drawing_1_iso": "bhevetskj6jjk"
       }
     },
     {
       "index": 7,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "3vvmegmkd5q4j",
+        "view": "2z4edjfncm5rq",
         "set": {
           "source": {
             "occurrences": [
@@ -119,7 +119,7 @@
       "index": 8,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "fjfe2nst20trc",
+        "view": "bhevetskj6jjk",
         "set": {
           "source": {
             "occurrences": [

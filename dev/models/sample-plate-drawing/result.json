@@ -1,0 +1,22 @@
+{
+  "id": "sample-plate-drawing",
+  "implementations": {
+    "scpf": {
+      "build_status": "pass",
+      "builder": "builder-scpf",
+      "preview_status": null,
+      "status": "pass",
+      "verification_stages": {
+        "native": {
+          "adapter": "solidcraft-model",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "status": "pass"
+        }
+      },
+      "verification_status": "pass"
+    }
+  },
+  "primary": "scpf",
+  "schema": 2,
+  "status": "pass"
+}

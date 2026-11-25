@@ -1,0 +1,27 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "cxtmbnz9x6eg5"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "sheet": "5tmmzqngkbv03",
+        "documents": {
+          "source": "cf69tpwfv108k",
+          "component": 1
+        }
+      }
+    },
+    {
+      "command": "drawing.view.standard",
+      "params": {
+        "sheet": "5tmmzqngkbv03",
+        "iso": true
+      }
+    }
+  ]
+}

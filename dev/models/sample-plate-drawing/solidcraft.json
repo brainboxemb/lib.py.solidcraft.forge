@@ -1,0 +1,329 @@
+{
+  "artifacts": {
+    "drawings": [
+      {
+        "drawing": "$drawing_1",
+        "name": "Sample Plate Drawing",
+        "pdf": "drawings/Sample-Plate-Drawing.pdf"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "bind": {
+        "$component_1": "component",
+        "$sampleplate": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "SamplePlate"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "d1_SamplePlate__Base",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          -40.0,
+          -25.0
+        ],
+        "p1": [
+          40.0,
+          25.0
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "body_name": "SamplePlate",
+        "direction": "positive",
+        "distance": 8.0
+      }
+    },
+    {
+      "command": "solid.fillet",
+      "params": {
+        "body": "SamplePlate",
+        "edges": [
+          [
+            -40.0,
+            -25.0,
+            4.0
+          ],
+          [
+            40.0,
+            -25.0,
+            4.0
+          ],
+          [
+            40.0,
+            25.0,
+            4.0
+          ],
+          [
+            -40.0,
+            25.0,
+            4.0
+          ]
+        ],
+        "radius": 6
+      }
+    },
+    {
+      "bind": {
+        "$d1_SamplePlate_face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$d1_SamplePlate_face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "SamplePlate"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "d1_SamplePlate__Holes",
+        "plane": {
+          "body": "SamplePlate",
+          "face": "$d1_SamplePlate_face_point_1",
+          "index": "$d1_SamplePlate_face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          -28.0,
+          0.0
+        ],
+        "diameter": 8
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "name": "Holes",
+        "operation": "cut",
+        "targets": [
+          "SamplePlate"
+        ],
+        "through_all": true
+      }
+    },
+    {
+      "command": "solid.pattern.rectangular",
+      "params": {
+        "alignment": "right",
+        "count1": 2,
+        "dir1": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "features": [
+          "Holes"
+        ],
+        "reversed": false,
+        "spacing1": 56.0
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0.0,
+          0.0,
+          8.0
+        ],
+        "diameter": 24,
+        "height": 14,
+        "operation": "join",
+        "references": [
+          {
+            "distance": 40.0,
+            "edge": [
+              -40.0,
+              0.0,
+              8.0
+            ]
+          },
+          {
+            "distance": 25.0,
+            "edge": [
+              0.0,
+              -25.0,
+              8.0
+            ]
+          }
+        ],
+        "targets": [
+          "SamplePlate"
+        ]
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "d1_SamplePlate__Bore",
+        "offset": 22.0,
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0.0,
+          0.0
+        ],
+        "diameter": 12
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "distance": 22.0,
+        "name": "Bore",
+        "operation": "cut",
+        "targets": [
+          "SamplePlate"
+        ]
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$drawing_1": "id",
+        "$drawing_1_sheet": {
+          "field": "sheets",
+          "select": "id",
+          "where": {
+            "name": "Sheet 1"
+          }
+        },
+        "$drawing_1_source": {
+          "field": "sources",
+          "select": "id",
+          "where": {
+            "path": null
+          }
+        }
+      },
+      "command": "drawing.create",
+      "params": {
+        "first_sheet_name": "Sheet 1",
+        "name": "Sample Plate Drawing",
+        "template": "iso-a4-part"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "documents": {
+          "component": "$component_1",
+          "source": "$drawing_1_source"
+        },
+        "sheet": "$drawing_1_sheet"
+      }
+    },
+    {
+      "bind": {
+        "$drawing_1_front": "view",
+        "$drawing_1_iso": "iso"
+      },
+      "command": "drawing.view.standard",
+      "params": {
+        "iso": true,
+        "sheet": "$drawing_1_sheet"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                "$sampleplate"
+              ]
+            ]
+          }
+        },
+        "view": "$drawing_1_front"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                "$sampleplate"
+              ]
+            ]
+          }
+        },
+        "view": "$drawing_1_iso"
+      }
+    },
+    {
+      "command": "drawing.close",
+      "params": {}
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

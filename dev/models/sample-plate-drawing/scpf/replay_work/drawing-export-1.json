@@ -1,0 +1,21 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "cxtmbnz9x6eg5"
+      }
+    },
+    {
+      "command": "drawing.export",
+      "params": {
+        "format": "pdf",
+        "path": "/output/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.pdf"
+      }
+    },
+    {
+      "command": "drawing.close",
+      "params": {}
+    }
+  ]
+}
