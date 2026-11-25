@@ -930,7 +930,7 @@ class SheetMetalTests(unittest.TestCase):
         )
         with Sketch(name="Fold line", plane="XY") as fold_sketch:
             fold_line = fold_sketch.line(
-                start=(20, -depth / 2),
+                start=(20, -(depth / 2)),
                 end=(20, depth / 2),
             )
 
