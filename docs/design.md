@@ -67,6 +67,34 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Native revolute-relationship boundary
+
+Revolute motion stays inside the existing occurrence-attachment model. A
+consumer selects the same parent/child attachment references used by rigid and
+planar relationships, then explicitly requests `kind="revolute"`.
+
+The lowering path is:
+
+```text
+Occurrence.attach(kind="revolute", value=60, limits=(0, 180))
+        ↓
+Attachment(kind/value/limits/flip/name)
+        ↓ existing Anchor / AnchorFrame / AnchorTopology resolution
+joint.create(type="revolute", values=[60], limits=[[0, 180]])
+        ↓
+native SolidCraft joint solver
+```
+
+Forge does not rotate the moving occurrence to imitate a hinge. The occurrence
+gets only the seed placement needed to bring the two authored joint origins
+together; SolidCraft stores and solves the revolute degree of freedom. Existing
+calls without `kind` keep the established automatic rigid/planar lowering.
+
+The first public moving-joint contract is deliberately narrow: fixed numeric
+degree value/limits plus native `flip` and `name`. Slider, cylindrical,
+pin-slot and ball authoring wait for demonstrated consumers rather than sharing
+an unqualified generic abstraction.
+
 ## Native topology-selection boundary
 
 Forge uses one world-cardinal `Faces` vocabulary for within-component surface
