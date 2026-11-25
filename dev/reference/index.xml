@@ -242,14 +242,14 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
-&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Document one selected physical component occurrence after composing the final Assembly.&lt;/p&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Document one selected physical component occurrence after composing the final Assembly. The first native sheet is landscape; A3 remains an explicit template choice.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
-&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;target must already belong to the Assembly. Drawing intent is final presentation state, so add it after assembly composition. SolidCraft owns standard-view layout and fitted scale; a component selected from a much larger assembly may receive a conservative scale. A normal SCPF build also publishes the drawing as a native vector PDF below drawings/. A4 is the default; iso-a3-part remains available explicitly.&lt;/p&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;target must already belong to the Assembly. Drawing intent is final presentation state, so add it after assembly composition. SolidCraft owns standard-view layout and fitted scale; a component selected from a much larger assembly may receive a conservative scale. A normal SCPF build also publishes the drawing as a native vector PDF below drawings/. A4 is the default; iso-a3-part remains available explicitly. The current patch does not add note, dimension, title-block override or explicit view-layout authoring.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="parameters"&gt;Parameters&lt;span class="hx:absolute hx:-mt-20" id="parameters"&gt;&lt;/span&gt;
 &lt;a href="#parameters" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;target&lt;/code&gt; — Component occurrence in this Assembly to document.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;name&lt;/code&gt; — Optional drawing name. Defaults to &amp;lsquo;&lt;!-- raw HTML omitted --&gt; drawing&amp;rsquo;.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;template&lt;/code&gt; — Native SolidCraft drawing template. Defaults to &amp;lsquo;iso-a4-part&amp;rsquo;; use &amp;lsquo;iso-a3-part&amp;rsquo; for a larger sheet.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;template&lt;/code&gt; — Native SolidCraft part-drawing template. Defaults to iso-a4-part; Forge preserves the selected paper size and sets the first sheet to landscape.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;sheet_name&lt;/code&gt; — Name of the first sheet. Defaults to &amp;lsquo;Sheet 1&amp;rsquo;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 data-hextra-search-id="example"&gt;Example&lt;span class="hx:absolute hx:-mt-20" id="example"&gt;&lt;/span&gt;
