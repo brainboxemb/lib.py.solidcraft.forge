@@ -56,11 +56,17 @@
   {{ range .Params.sources }}{{ if and (eq .id $primary) .drawings }}
   <section class="cad-panel cad-drawing-panel" id="drawing-sheet">
     <h2 class="cad-section-title">Drawing sheet</h2>
-    <p class="cad-section-help">Native SolidCraft vector drawing from the durable build scope. The PDF stays on the build branch and is not copied into Pages.</p>
+    <p class="cad-section-help">Native SolidCraft drawing evidence from the durable build scope. The page loads only the static sheet preview; the vector PDF opens only when you ask for it.</p>
     {{ range .drawings }}
     <article class="cad-drawing-sheet">
       <h3 class="cad-section-subtitle">{{ .name }}</h3>
-      <iframe class="cad-drawing-frame" src="{{ .rawurl }}" title="{{ $.Title }} {{ .name }} drawing PDF"></iframe>
+      {{ with .previewurl }}
+      <a class="cad-drawing-preview-link" href="{{ $.RelPermalink }}#drawing-sheet" aria-label="Static native drawing sheet preview">
+        <img class="cad-drawing-preview" src="{{ . }}" alt="{{ $.Title }} {{ .name }} native SolidCraft drawing sheet preview" decoding="async">
+      </a>
+      {{ else }}
+      <div class="cad-preview-empty">Static drawing preview will appear after the next native build publication.</div>
+      {{ end }}
       <div class="cad-links">
         <a href="{{ .bloburl }}">Open PDF on GitHub</a>
         <a href="{{ .rawurl }}" download>Download PDF</a>
