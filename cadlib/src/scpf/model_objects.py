@@ -5,6 +5,7 @@ These nodes are the compiler-facing representation; users do not need to
 construct Component or Occurrence objects explicitly.
 """
 from dataclasses import dataclass, field, replace
+import re
 from itertools import count
 from math import isfinite
 
