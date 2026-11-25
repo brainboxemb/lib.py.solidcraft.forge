@@ -61,8 +61,8 @@
     <article class="cad-drawing-sheet">
       <h3 class="cad-section-subtitle">{{ .name }}</h3>
       {{ with .previewurl }}
-      <a class="cad-drawing-preview-link" href="{{ $.RelPermalink }}#drawing-sheet" aria-label="Static native drawing sheet preview">
-        <img class="cad-drawing-preview" src="{{ . }}" alt="{{ $.Title }} {{ .name }} native SolidCraft drawing sheet preview" decoding="async">
+      <a class="cad-drawing-preview-link" href="{{ . }}" aria-label="Open static native drawing sheet preview">
+        <img class="cad-drawing-preview" src="{{ . }}" alt="{{ $.Title }} native SolidCraft drawing sheet preview" decoding="async">
       </a>
       {{ else }}
       <div class="cad-preview-empty">Static drawing preview will appear after the next native build publication.</div>
