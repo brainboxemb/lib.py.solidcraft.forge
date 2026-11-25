@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/83-solidcraft-reference-module
-modules: [solidcraft-reference]
-library: false
-models: []
+branch: issue/85-solidcraft-0.49-adoption
+modules: all
+library: true
+models: all
 tasks: [test]

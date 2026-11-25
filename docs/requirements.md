@@ -19,7 +19,7 @@
 
 ## CAD execution
 
-1. Reuse only the released `reference` and `solidcraft` runtime roles from `docker.cad.solidcraft v0.3.5` until a separately qualified upgrade exists.
+1. Reuse only the released `reference` and `solidcraft` runtime roles from `docker.cad.solidcraft v0.3.6` until a separately qualified upgrade exists.
 2. Standard reference builders are PythonSCAD, pyBOSL2, CadQuery and build123d.
 3. SCPF compilation is consumer-owned and feeds the generic SolidCraft command builder; do not teach generic builders Forge semantics.
 4. SolidCraft executes in its lightweight runtime; generic mesh verification executes in the reference runtime.

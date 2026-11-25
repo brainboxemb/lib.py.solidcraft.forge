@@ -6,6 +6,8 @@ Forge keeps immutable, version-pinned SolidCraft engineering evidence under:
 docs/reference/solidcraft/
   0.42.0/
   0.45.0/
+  0.48.1/
+  0.49.0/
   <future-version>/
 ```
 
