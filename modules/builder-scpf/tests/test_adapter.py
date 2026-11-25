@@ -175,7 +175,7 @@ class SCPFBuilderTests(unittest.TestCase):
             )
 
 
-    def test_replay_document_exports_declared_drawing_pdf(self):
+    def test_replay_document_exports_declared_drawing_pdf_and_preview(self):
         document = {
             "format": "scpf-replay",
             "version": 2,
@@ -217,7 +217,13 @@ class SCPFBuilderTests(unittest.TestCase):
             results_out.write_text("[]")
             replay_log_out.write_text("{}")
             work_dir.mkdir(parents=True, exist_ok=True)
-            return {"variables": {"$drawing_1": "D1"}}
+            return {
+                "variables": {
+                    "$drawing_1": "D1",
+                    "$drawing_1_sheet": "S1",
+                    "$drawing_1_orientation": "landscape",
+                }
+            }
 
         headless.run_document = run_document
         scpf.headless = headless
@@ -282,6 +288,75 @@ class SCPFBuilderTests(unittest.TestCase):
             )
             self.assertEqual(png_export["params"]["sheet"], "S1")
             self.assertEqual(png_export["params"]["dpi"], 144)
+
+    def test_replay_document_rejects_portrait_drawing_artifact(self):
+        document = {
+            "format": "scpf-replay",
+            "version": 2,
+            "commands": [],
+            "artifacts": {
+                "drawings": [
+                    {
+                        "name": "Part drawing",
+                        "drawing": "$drawing_1",
+                        "sheet": "$drawing_1_sheet",
+                        "orientation": "$drawing_1_orientation",
+                        "pdf": "drawings/Part-drawing.pdf",
+                        "png": "drawings/Part-drawing.png",
+                    }
+                ]
+            },
+        }
+        scpf, runner, replay, _ = self._scpf_modules(document, replay=True)
+        headless = ModuleType("scpf.headless")
+
+        def run_document(
+            value,
+            *,
+            save,
+            export,
+            results_out,
+            replay_log_out,
+            work_dir,
+        ):
+            save.parent.mkdir(parents=True, exist_ok=True)
+            save.write_bytes(b"sc")
+            export.write_bytes(b"stl")
+            results_out.write_text("[]")
+            replay_log_out.write_text("{}")
+            work_dir.mkdir(parents=True, exist_ok=True)
+            return {
+                "variables": {
+                    "$drawing_1": "D1",
+                    "$drawing_1_sheet": "S1",
+                    "$drawing_1_orientation": "portrait",
+                }
+            }
+
+        headless.run_document = run_document
+        scpf.headless = headless
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "model.py"
+            source.write_text("model")
+            output = root / "out/model.stl"
+            with patch.dict(
+                sys.modules,
+                {
+                    "scpf": scpf,
+                    "scpf.runner": runner,
+                    "scpf.replay": replay,
+                    "scpf.headless": headless,
+                },
+            ), patch(
+                "cad_library_builder_scpf.subprocess.run",
+            ):
+                with self.assertRaisesRegex(
+                    RuntimeError,
+                    "drawing sheet is not landscape",
+                ):
+                    build(source, output)
 
 if __name__ == "__main__":
     unittest.main()
