@@ -56,35 +56,30 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge release infrastructure is accepted and stable:
+Forge release infrastructure and the global development warning are accepted:
 
-- canonical Forge v0.16.0 remains published from
-  `021dc78a32d99d31f16a76efc9d036855114df0c`;
 - stable-main release-flow implementation is on Forge `main`
   `dc9bd4b75e9aedf8f5ffa215be7382775baa89c9`;
-- permanent main build `45602391276`: PASS;
 - unmerged release-only smoke PR #103 / run `45603049650`: PASS;
-- smoke selection: module `release`, library true, zero models,
-  `release_only:true`, `full:false`;
-- metadata-only releases no longer promote unrelated `dev` work or rebuild
-  unchanged CAD owners.
+- #57 global development warning is accepted on `dev`
+  `02511eaa57d4129a3f90bad327ce5373651decc8`;
+- #57 permanent Pages publication `45604568348`: PASS.
 
-The active Forge phase is now Pages quality.
+The active Pages task is #58: make the landing page explain Forge/SCPF as a
+product rather than describing the website.
 
-1. #57 — restore one shared global red development warning:
-   - use a single Forge-owned warning partial;
-   - cover Hextra content routes plus custom home/model layouts;
-   - require the rendered marker on home, Documentation, Guide, API Reference,
-     Cheatsheet, Examples, Verification, special Verification routes and model
-     detail routes;
-   - review existing desktop/mobile layout-evidence screenshots.
-2. #58 — rewrite the landing page around Forge/SCPF itself:
-   - explain Forge as the Python API/compiler for SolidCraft;
-   - explain SCPF -> SolidCraft commands -> native SolidCraft geometry;
-   - show tested SolidCraft version;
-   - provide direct Guide, API Reference, Cheatsheet, Examples and Verification
-     entry points.
-3. Run a full visual/content audit after #57/#58:
+1. #58 — rewrite the landing page:
+   - Forge/SCPF is the Python API/compiler for SolidCraft;
+   - show the compilation relationship:
+     SCPF model -> Forge compiler -> SolidCraft commands/native geometry;
+   - make explicit that SolidCraft remains the CAD engine;
+   - project SCPF package version and tested SolidCraft version statically from
+     source without importing `scpf`;
+   - give direct entry points to Guide, API Reference, Cheatsheet, Examples and
+     Verification;
+   - retain a link to real SolidCraft CAD projects;
+   - review desktop/mobile screenshot evidence.
+2. After #58, run a full visual/content audit:
    - landing;
    - Guide;
    - API Reference;
