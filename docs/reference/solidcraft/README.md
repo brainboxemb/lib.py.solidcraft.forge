@@ -31,7 +31,24 @@ qualified immutable solidcraft-cli
                 +--> commands.md     generated human catalog
 ```
 
-Use `scripts/capture_solidcraft_reference.py` to create the version tree.
+Use the Forge-owned reference module to create the version tree:
+
+```sh
+PYTHONPATH=modules/solidcraft-reference/src \
+python -m cad_library_solidcraft_reference capture \
+  --image ghcr.io/brainboxemb/cad-solidcraft:vX.Y.Z \
+  --version A.B.C \
+  --upstream-commit <40-char-upstream-sha> \
+  --runtime-release vX.Y.Z \
+  --out docs/reference/solidcraft/A.B.C
+```
+
+Verify the checked reference against the root immutable runtime pin with:
+
+```sh
+PYTHONPATH=modules/solidcraft-reference/src \
+python -m cad_library_solidcraft_reference verify --repo-root .
+```
 
 A versioned command reference must never be a manually selected subset. The raw
 registry is retained so completeness and later diffs can be checked directly.
@@ -41,7 +58,7 @@ registry is retained so completeness and later diffs can be checked directly.
 1. qualify the current stable SolidCraft release in the runtime owner
    repository;
 2. release an immutable runtime image from the exact green commit;
-3. run the capture script against that exact `solidcraft-cli`;
+3. run the `solidcraft-reference` capture module against that exact immutable runtime;
 4. record the exact upstream commit, runtime release and runtime image in
    `SOURCE.md`;
 5. review the generated registry diff before adapting Forge compatibility code;
