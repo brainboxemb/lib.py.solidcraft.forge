@@ -22,7 +22,16 @@ from . import core
 from .compiler import ModelError, _compile_model_with_dependencies
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
 from .assembly import _compile_assembly_with_dependencies
-from .model_objects import Assembly, ModelDefinition, ModelInstance, Placement
+from .model_objects import (
+    Assembly,
+    DrawingDimension,
+    DrawingNote,
+    DrawingRevision,
+    DrawingView,
+    ModelDefinition,
+    ModelInstance,
+    Placement,
+)
 from .explicit_sketch import Sketch
 
 
@@ -937,6 +946,10 @@ def run_script(path: str | Path) -> dict:
         "FRONT": core.FRONT,
         "BACK": core.BACK,
         "Placement": Placement,
+        "DrawingView": DrawingView,
+        "DrawingNote": DrawingNote,
+        "DrawingRevision": DrawingRevision,
+        "DrawingDimension": DrawingDimension,
         "up": core.up,
         "down": core.down,
         "left": core.left,
