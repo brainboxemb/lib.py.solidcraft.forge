@@ -196,7 +196,13 @@ def _validate_drawing_inspection(
             raise RuntimeError(
                 f"SCPF drawing produced no native view inspection: {name}: {variable}"
             )
-        if view.get("settings", {}).get("visual_style") != expected_style:
+        style = view.get("settings", {}).get("visual_style")
+        actual_style = (
+            style.get("value")
+            if isinstance(style, dict)
+            else style
+        )
+        if actual_style != expected_style:
             raise RuntimeError(
                 f"SCPF drawing view style mismatch: {name}: {variable}"
             )
