@@ -82,24 +82,6 @@ Accepted stable state:
 - stable-to-development synchronization #154 / PR #155 returned the release
   metadata to `dev` without rebasing shared history.
 
-### Active: #160 first-class Drawings documentation and verification
-
-Expose the already released native drawing feature as a first-class Forge
-capability rather than an incidental part of Components/API documentation.
-
-Current branch: `feature/160-drawings-capability-pages`.
-
-Acceptance:
-- add Drawings as a dedicated Guide chapter;
-- add one physical `sample-plate-drawing` owner with
-  `purpose: [example, verification]`;
-- add an eighth Verification section, Drawings;
-- render/link implementation-local vector PDFs from durable build evidence
-  without copying them into `gh-pages`;
-- add a Drawings Cheatsheet group;
-- qualify the new owner natively against pinned SolidCraft;
-- keep A4 default and A3 explicit behavior unchanged.
-
 ### Active: #156 release-only stable push selection regression
 
 The v0.18.0 release PR itself correctly selected only the `release` module,
