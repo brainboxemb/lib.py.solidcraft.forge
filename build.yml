@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/54-reconcile-release-plan
-modules: []
-library: false
-models: []
+branch: issue/73-live-sheet-recess-fixture
+modules: [ci, verification, builder-scpf, builder-solidcraft, pages]
+library: true
+models: [sheet-contour-flange-recess]
 tasks: [test]
