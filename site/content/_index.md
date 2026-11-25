@@ -1,11 +1,12 @@
 ---
 title: SolidCraft Forge
+description: Python API/compiler for expressing editable SolidCraft CAD models with SCPF.
 ---
 
-SCPF documentation, Forge examples and qualified multi-engine CAD verification evidence.
+SolidCraft Forge is the Python API/compiler behind the public `scpf` package.
+SCPF model intent is lowered to explicit SolidCraft commands; SolidCraft creates
+and owns the resulting native editable geometry.
 
-- [Documentation](docs/)
-- [Guide](guide/)
-- [Cheatsheet](cheatsheet/)
-- [Examples](examples/)
-- [Verification](verification/)
+Use the Guide and API Reference to learn the authoring surface, Examples to see
+practical models, and Verification to inspect the evidence behind declared Forge
+behavior.
