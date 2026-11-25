@@ -2,11 +2,11 @@
   "schema": 1,
   "baseline_payload": "baselines/drawing-sheet.json",
   "normalized_size": [
-    192,
-    136
+    96,
+    68
   ],
   "changed_pixel_threshold": 12,
-  "max_mean_difference": 2,
+  "max_mean_difference": 1.5,
   "max_changed_fraction": 0.02,
   "baseline_provenance": {
     "approval": "approved",
