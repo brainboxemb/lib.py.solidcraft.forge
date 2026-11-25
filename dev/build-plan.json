@@ -30,6 +30,7 @@
     "primitive-csg",
     "rectangular-pattern",
     "repeated-parent-attachments",
+    "revolute-joint",
     "rotated-copy-placement",
     "rotated-sketch-cutter",
     "round-top-sketch",
@@ -462,6 +463,16 @@
       ]
     },
     {
+      "id": "revolute-joint",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
       "id": "rotated-copy-placement",
       "implementations": [
         "scpf",
@@ -737,6 +748,7 @@
     "primitive-csg",
     "rectangular-pattern",
     "repeated-parent-attachments",
+    "revolute-joint",
     "rotated-copy-placement",
     "rotated-sketch-cutter",
     "round-top-sketch",
@@ -758,5 +770,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "b2fa3929eaaca442e033179af633d7447299694c"
+  "source_sha": "0f4ed4a9e0b850969bfea437d5f78decdab35f67"
 }

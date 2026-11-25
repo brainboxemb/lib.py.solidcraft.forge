@@ -1,0 +1,126 @@
+[
+  {
+    "joints": [
+      {
+        "a": {
+          "component": 1,
+          "component_name": "Leaf",
+          "frame": {
+            "origin": [
+              0.0,
+              15.0,
+              1.5
+            ],
+            "x": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "z": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "occurrence": 2,
+          "occurrence_name": "Leaf:1",
+          "path": "Leaf:1",
+          "references": [],
+          "resolves": true,
+          "snap": {
+            "point": [
+              0.0,
+              15.0,
+              1.5
+            ],
+            "type": "point",
+            "x": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "z": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "angle": 0.0,
+        "b": {
+          "component": 1,
+          "component_name": "Leaf",
+          "frame": {
+            "origin": [
+              0.0,
+              14.999999999999998,
+              1.5
+            ],
+            "x": [
+              0.0,
+              -0.8660254037844386,
+              0.5000000000000001
+            ],
+            "z": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "occurrence": 4,
+          "occurrence_name": "Leaf:2",
+          "path": "Leaf:2",
+          "references": [],
+          "resolves": true,
+          "snap": {
+            "point": [
+              0.0,
+              -15.0,
+              1.5
+            ],
+            "type": "point",
+            "x": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "z": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "conflicts": [],
+        "dofs": [
+          "angle"
+        ],
+        "errors": [],
+        "flip": true,
+        "id": 5,
+        "links": [],
+        "name": "Hinge",
+        "offset": 0.0,
+        "offset_xy": [
+          0.0,
+          0.0
+        ],
+        "suppressed": false,
+        "type": "revolute",
+        "values": [
+          {
+            "dynamics": null,
+            "limits": [
+              0.0,
+              180.0
+            ],
+            "name": "angle",
+            "unit": "deg",
+            "value": 60.0
+          }
+        ],
+        "visible": false
+      }
+    ]
+  }
+]

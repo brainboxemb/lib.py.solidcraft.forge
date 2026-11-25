@@ -1,0 +1,129 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "f6057c05c3f94180ff42696c6cf5d4e4f3c2e9fc1e537f89d78adc276ea77a7d",
+  "variables": {
+    "$fixed": 2,
+    "$moving": 4
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "Leaf",
+        "grounded": true
+      },
+      "bindings": {
+        "$fixed": 2
+      }
+    },
+    {
+      "index": 1,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 40.0,
+        "width": 30.0,
+        "height": 3.0,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "Leaf"
+      }
+    },
+    {
+      "index": 2,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 3,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "Leaf"
+      },
+      "bindings": {
+        "$moving": 4
+      }
+    },
+    {
+      "index": 4,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 4,
+        "translate": [
+          0,
+          30.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "command": "joint.create",
+      "resolved_params": {
+        "type": "revolute",
+        "name": "Hinge",
+        "a": {
+          "point": [
+            0.0,
+            15.0,
+            1.5
+          ],
+          "z": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "x": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "occurrence": 2
+        },
+        "b": {
+          "point": [
+            0.0,
+            15.0,
+            1.5
+          ],
+          "z": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "x": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "occurrence": 4
+        },
+        "flip": true,
+        "values": [
+          60.0
+        ],
+        "limits": [
+          [
+            0.0,
+            180.0
+          ]
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "command": "browser.visibility",
+      "resolved_params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ],
+  "completed": 7
+}

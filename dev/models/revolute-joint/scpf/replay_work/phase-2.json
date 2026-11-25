@@ -1,0 +1,75 @@
+{
+  "commands": [
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 4,
+        "translate": [
+          0,
+          30.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "type": "revolute",
+        "name": "Hinge",
+        "a": {
+          "point": [
+            0.0,
+            15.0,
+            1.5
+          ],
+          "z": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "x": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "occurrence": 2
+        },
+        "b": {
+          "point": [
+            0.0,
+            15.0,
+            1.5
+          ],
+          "z": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "x": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "occurrence": 4
+        },
+        "flip": true,
+        "values": [
+          60.0
+        ],
+        "limits": [
+          [
+            0.0,
+            180.0
+          ]
+        ]
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ]
+}

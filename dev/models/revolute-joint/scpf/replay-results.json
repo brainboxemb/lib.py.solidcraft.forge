@@ -1,0 +1,98 @@
+[
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Leaf",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Leaf"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Leaf"
+    ],
+    "feature": 3,
+    "ms": 2.1021389999999998,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 1,
+    "occurrence": 4
+  },
+  {
+    "occurrence": 4,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        30.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "conflicts": [],
+    "dof": [
+      {
+        "dof": 0,
+        "occurrence": 0
+      },
+      {
+        "dof": 0,
+        "occurrence": 2
+      },
+      {
+        "dof": 1,
+        "occurrence": 4
+      }
+    ],
+    "errors": [],
+    "fixed": [
+      0,
+      2
+    ],
+    "joint": 5,
+    "name": "Hinge"
+  },
+  {
+    "changed": 1,
+    "visibility": {
+      "hidden_bodies": [],
+      "hidden_joints": [
+        5
+      ],
+      "hidden_occurrences": [],
+      "hidden_origin": [],
+      "hidden_sketches": [],
+      "shown_sketches": []
+    },
+    "visible": false
+  }
+]
