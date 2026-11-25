@@ -119,13 +119,23 @@
       "status": "solved",
       "visible": false,
       "wires_ok": true
+    },
+    {
+      "curves": 1,
+      "dof": 0,
+      "id": 4,
+      "name": "Fold line",
+      "profiles": 0,
+      "status": "solved",
+      "visible": true,
+      "wires_ok": true
     }
   ],
   "timeline": [
     {
       "error": null,
       "id": 1,
-      "ms": 0.16780699999999998,
+      "ms": 0.156544,
       "name": "Blank",
       "rolled_back": false,
       "suppressed": false,
@@ -135,7 +145,7 @@
     {
       "error": null,
       "id": 2,
-      "ms": 1.896967,
+      "ms": 1.746923,
       "name": "BaseFlange1",
       "rolled_back": false,
       "suppressed": false,
@@ -145,7 +155,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 22.031417,
+      "ms": 21.263431,
       "name": "Hole1",
       "rolled_back": false,
       "suppressed": false,
@@ -155,7 +165,17 @@
     {
       "error": null,
       "id": 4,
-      "ms": 17.424025,
+      "ms": 0.057037000000000004,
+      "name": "Fold line",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 5,
+      "ms": 16.894394,
       "name": "Fold1",
       "rolled_back": false,
       "suppressed": false,

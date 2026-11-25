@@ -26,7 +26,7 @@
               "changed_pixel_threshold": 12,
               "max_changed_fraction": 0.08,
               "max_mean_difference": 6.0,
-              "mean_absolute_difference": 0.012876,
+              "mean_absolute_difference": 0.014902,
               "pass": true
             }
           },
@@ -56,7 +56,7 @@
               "changed_pixel_threshold": 12,
               "max_changed_fraction": 0.08,
               "max_mean_difference": 6.0,
-              "mean_absolute_difference": 0.011574,
+              "mean_absolute_difference": 0.078414,
               "pass": true
             }
           },
@@ -82,11 +82,11 @@
             "goal_image": "visual/iso/goal.png",
             "overlay_image": "visual/iso/overlay.png",
             "regression": {
-              "changed_pixel_fraction": 0.0,
+              "changed_pixel_fraction": 0.005787,
               "changed_pixel_threshold": 12,
               "max_changed_fraction": 0.08,
               "max_mean_difference": 6.0,
-              "mean_absolute_difference": 0.013455,
+              "mean_absolute_difference": 0.263021,
               "pass": true
             }
           },
@@ -143,7 +143,7 @@
           "changed_pixel_threshold": 12,
           "max_changed_fraction": 0.08,
           "max_mean_difference": 6.0,
-          "mean_absolute_difference": 0.012876,
+          "mean_absolute_difference": 0.014902,
           "pass": true
         }
       },
@@ -167,7 +167,7 @@
           "changed_pixel_threshold": 12,
           "max_changed_fraction": 0.08,
           "max_mean_difference": 6.0,
-          "mean_absolute_difference": 0.011574,
+          "mean_absolute_difference": 0.078414,
           "pass": true
         }
       },
@@ -187,11 +187,11 @@
         "goal_image": "visual/iso/goal.png",
         "overlay_image": "visual/iso/overlay.png",
         "regression": {
-          "changed_pixel_fraction": 0.0,
+          "changed_pixel_fraction": 0.005787,
           "changed_pixel_threshold": 12,
           "max_changed_fraction": 0.08,
           "max_mean_difference": 6.0,
-          "mean_absolute_difference": 0.013455,
+          "mean_absolute_difference": 0.263021,
           "pass": true
         }
       },

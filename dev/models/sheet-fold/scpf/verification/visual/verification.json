@@ -11,8 +11,8 @@
         {
           "kind": "file",
           "path": "visual/front/actual.png",
-          "sha256": "0d6e3cedd4e16dbab0823395572d676d24b1232e28ecc8021f9fc0df18093d33",
-          "size": 10914
+          "sha256": "6352397670afb1c4b964909f6e1c4aa77ed6ee946d106e23ffc217f990e6a5ae",
+          "size": 10946
         },
         {
           "kind": "file",
@@ -23,14 +23,14 @@
         {
           "kind": "file",
           "path": "visual/front/overlay.png",
-          "sha256": "17d4c71ae0d061cb5794a08e83fff956db5b12c4572b4032747b8f6da4757532",
-          "size": 4225
+          "sha256": "3ab7a0f45973fb20971810a908f7db41a4057edb49e5090fd3e0868e006d0fe4",
+          "size": 4242
         },
         {
           "kind": "file",
           "path": "visual/front/diff.png",
-          "sha256": "729ed88fc64a07858d9ef909dc949e550388b320bcbb3789d8f9611506dcbab2",
-          "size": 657
+          "sha256": "bb87cfac484acf563336de2d6c0ebfb0df69a594dde74036608ded754bfee0f3",
+          "size": 671
         }
       ],
       "error": null,
@@ -49,7 +49,7 @@
           "changed_pixel_threshold": 12,
           "max_changed_fraction": 0.08,
           "max_mean_difference": 6.0,
-          "mean_absolute_difference": 0.012876,
+          "mean_absolute_difference": 0.014902,
           "pass": true
         },
         "regression_required": true,
@@ -70,14 +70,14 @@
         {
           "kind": "file",
           "path": "visual/right/actual.png",
-          "sha256": "7c7dd1a0e5ad31a1ad9036425c5ff426f2897397fbf0fdf8dbfbf231af277faa",
-          "size": 9938
+          "sha256": "75c013a58e63f18ac80442cef469c0d2145f5de44dc524eb13f4aac42bdb0796",
+          "size": 9915
         },
         {
           "kind": "file",
           "path": "visual/right/diff.png",
-          "sha256": "a4fd6345c753bc099ef5885ff960eedd13d208753261a37e8e6933d188fb065d",
-          "size": 604
+          "sha256": "1b49001bc7b42f7ed3d26b77528f03436ac8b906b17ec44c5f868d19538949ec",
+          "size": 613
         }
       ],
       "error": null,
@@ -96,7 +96,7 @@
           "changed_pixel_threshold": 12,
           "max_changed_fraction": 0.08,
           "max_mean_difference": 6.0,
-          "mean_absolute_difference": 0.011574,
+          "mean_absolute_difference": 0.078414,
           "pass": true
         },
         "regression_required": true,
@@ -117,8 +117,8 @@
         {
           "kind": "file",
           "path": "visual/iso/actual.png",
-          "sha256": "7f5b6c83ddc990702ae117bf3fd3bf47253423a6f436e8d33917c5268c7993ad",
-          "size": 39295
+          "sha256": "70850c9ddaf7ee77a3da12b49b1d710b5ffab79e3d707f3bc84ec6a483703ba8",
+          "size": 42327
         },
         {
           "kind": "file",
@@ -129,14 +129,14 @@
         {
           "kind": "file",
           "path": "visual/iso/overlay.png",
-          "sha256": "910a9068c04cad4440eba3853516c51cf471c5c85cece8a2833b290c34e586a4",
-          "size": 26928
+          "sha256": "2c172b22a905db75779058700cdbbb0fb74cccfe45409927efc07ec6091e213a",
+          "size": 29266
         },
         {
           "kind": "file",
           "path": "visual/iso/diff.png",
-          "sha256": "044541ffcdb1739b21fbb43b8d8373a0328f369794964f019da3b9ba5da3125b",
-          "size": 2820
+          "sha256": "40d7aba73fdde13c0aabc8bb476b2e8af136878204a40d2441f3e15969e239b2",
+          "size": 3054
         }
       ],
       "error": null,
@@ -151,11 +151,11 @@
         "goal_image": "visual/iso/goal.png",
         "overlay_image": "visual/iso/overlay.png",
         "regression": {
-          "changed_pixel_fraction": 0.0,
+          "changed_pixel_fraction": 0.005787,
           "changed_pixel_threshold": 12,
           "max_changed_fraction": 0.08,
           "max_mean_difference": 6.0,
-          "mean_absolute_difference": 0.013455,
+          "mean_absolute_difference": 0.263021,
           "pass": true
         },
         "regression_required": true,
@@ -176,8 +176,8 @@
         {
           "kind": "file",
           "path": "visual/top/actual.png",
-          "sha256": "c260e0b4b8406cc4d6286aa7404358476fb91b3f11077b860c6ceba799dbb11a",
-          "size": 12624
+          "sha256": "6ca76feff7312542b9c2d6e91d8dc790cd01ff8766b8285985ef03a8a33c53bc",
+          "size": 12646
         },
         {
           "kind": "file",
@@ -188,8 +188,8 @@
         {
           "kind": "file",
           "path": "visual/top/overlay.png",
-          "sha256": "67bf961594f5e742cae2fad3843e2de6b186137d6a99983981869dbd6ae7680a",
-          "size": 4797
+          "sha256": "0c72b44675649c68a34908804f5df19c38691ac75345e2d540f803b2339dceba",
+          "size": 4808
         }
       ],
       "error": null,

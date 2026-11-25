@@ -119,29 +119,49 @@
       }
     },
     {
+      "command": "sketch.create",
+      "params": {
+        "name": "Fold line",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l1"
+        ],
+        "points": [
+          [
+            20,
+            "-(depth / 2)"
+          ],
+          [
+            20,
+            "depth / 2"
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
       "command": "sheet.fold",
       "params": {
         "angle": "fold_angle",
         "body": "SheetFold",
+        "curve": "l1",
         "fixed": [
           -30,
           0,
           0
         ],
         "flip": false,
-        "points": [
-          [
-            20,
-            -20,
-            0
-          ],
-          [
-            20,
-            20,
-            0
-          ]
-        ],
-        "position": "centerline"
+        "position": "centerline",
+        "sketch": "Fold line"
       }
     }
   ]
