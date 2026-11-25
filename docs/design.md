@@ -145,7 +145,7 @@ layouts.
 
 The public authoring objects are deliberately small intent records:
 
-- `DrawingView(at=..., scale=...)` controls one native front/top/right/iso view;
+- `DrawingView(at=..., scale=..., visual_style=...)` controls one native front/top/right/iso view; `visual_style="shaded"` is the qualified pictorial override while omission keeps SolidCraft's normal line presentation;
 - `DrawingDimension.linear(...)` resolves two model corners/points;
 - `DrawingDimension.faces(...)` resolves two parallel planar faces and is the
   stable overall-size form for filleted parts;
@@ -166,8 +166,11 @@ block itself.
 The default path still delegates standard view grouping and initial fitted scale
 to SolidCraft. A consumer may then author explicit paper positions and view
 scales through `DrawingView`; independent projected-view scale automatically
-unlinks that native projected view. A4 is the default and the first sheet is
-explicitly landscape. A3 remains an explicit native template choice.
+unlinks that native projected view. A consumer may also request the qualified
+native `visual_style="shaded"` on an individual view, allowing normal line
+orthographics with a shaded isometric without Forge rendering the picture
+itself. A4 is the default and the first sheet is explicitly landscape. A3
+remains an explicit native template choice.
 
 All component, occurrence, drawing, drawing-source, sheet, view, dimension and
 note identities come from replay-bound SolidCraft command results. Forge never
@@ -198,8 +201,9 @@ semantics. This catches layout regressions that a structure-only inspection
 would miss.
 
 The `sample-plate-drawing` owner is the Forge-owned consumer simulation. It
-uses only the public API to author explicit view layout/scale, overall
-face-to-face dimensions, radial callouts, notes, drawing properties,
+uses only the public API to author explicit view layout/scale, a shaded native
+isometric alongside line orthographics, overall face-to-face dimensions,
+radial callouts, notes, drawing properties,
 title-block overrides and one revision row. The owner therefore proves the
 same class of authoring an external CAD model such as Wall Hook will need,
 without importing or modifying that downstream repository.
@@ -264,6 +268,7 @@ build/<scope>/models/<owner>/
   drawings/
     <drawing>.pdf
     <drawing>.png
+    <drawing>.json
   scpf/
   cadquery/
   build123d/
