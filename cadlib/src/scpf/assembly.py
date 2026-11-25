@@ -427,6 +427,17 @@ def _compile_assembly_with_dependencies(value, name):
         assembly,
         occurrence_labels,
     )
+    drawing_targets = {
+        drawing.target_occurrence_id: next(
+            instance for instance in assembly.instances
+            if instance.occurrence_id == drawing.target_occurrence_id
+        )
+        for drawing in assembly.drawings
+    }
+    drawing_definition_keys = {
+        instance.definition.key for instance in drawing_targets.values()
+    }
+    component_refs = {}
     inherited_parameters = {}
     shared_materials = {}
     positioned_at_copy = set()
@@ -532,11 +543,16 @@ def _compile_assembly_with_dependencies(value, name):
             grounded_occurrence_ids.add(first.occurrence_id)
         if parent_name is not None:
             create_params["parent"] = parent_name
-        commands.append(_bound_command(
+        create_command = _bound_command(
             "component.create",
             occurrence_refs[first.occurrence_id],
             **create_params,
-        ))
+        )
+        if key in drawing_definition_keys:
+            component_ref = f"$component_{definition_number}"
+            component_refs[key] = component_ref
+            create_command["bind"][component_ref] = "component"
+        commands.append(create_command)
 
         for command in geometry_commands:
             if command["command"] == "material.create":
@@ -841,6 +857,74 @@ def _compile_assembly_with_dependencies(value, name):
             "explode.show",
             view=assembly.exploded_display,
         ))
+
+    # Drawings are final design presentation state. SolidCraft owns the paper
+    # template, standard-view placement and fitted scale. Forge only selects
+    # which native component the sheet documents and which occurrence subtree
+    # the standard views show.
+    for drawing_number, drawing in enumerate(assembly.drawings, start=1):
+        target = drawing_targets[drawing.target_occurrence_id]
+        component_ref = component_refs[target.definition.key]
+        occurrence_ref = occurrence_refs[target.occurrence_id]
+        source_ref = f"$drawing_{drawing_number}_source"
+        sheet_ref = f"$drawing_{drawing_number}_sheet"
+        front_ref = f"$drawing_{drawing_number}_front"
+        iso_ref = f"$drawing_{drawing_number}_iso"
+
+        create = _command(
+            "drawing.create",
+            name=drawing.name,
+            template=drawing.template,
+            first_sheet_name=drawing.sheet_name,
+        )
+        create["bind"] = {
+            source_ref: {
+                "field": "sources",
+                "where": {"path": None},
+                "select": "id",
+            },
+            sheet_ref: {
+                "field": "sheets",
+                "where": {"name": drawing.sheet_name},
+                "select": "id",
+            },
+        }
+        commands.append(create)
+
+        commands.append(_command(
+            "drawing.sheet.set",
+            sheet=sheet_ref,
+            documents={
+                "source": source_ref,
+                "component": component_ref,
+            },
+        ))
+
+        standard = _command(
+            "drawing.view.standard",
+            sheet=sheet_ref,
+            iso=True,
+        )
+        standard["bind"] = {
+            front_ref: "view",
+            iso_ref: "iso",
+        }
+        commands.append(standard)
+
+        selected_source = {
+            "occurrences": [[occurrence_ref]],
+        }
+        commands.append(_command(
+            "drawing.view.edit",
+            view=front_ref,
+            set={"source": selected_source},
+        ))
+        commands.append(_command(
+            "drawing.view.edit",
+            view=iso_ref,
+            set={"source": selected_source},
+        ))
+        commands.append(_command("drawing.close"))
 
     if not commands:
         raise ModelError(f"{name} contains no component instances")
