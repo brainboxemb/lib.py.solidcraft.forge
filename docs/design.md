@@ -1,8 +1,8 @@
-# Forge NEW design
+# Forge design
 
 ## Purpose
 
-Forge NEW is a clean consumer of the corrected `template.cad.library` architecture.
+Forge is a clean consumer of the corrected `template.cad.library` architecture.
 
 ```text
 cadlib/                     public scpf package
