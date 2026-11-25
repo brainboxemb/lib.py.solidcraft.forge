@@ -1336,17 +1336,22 @@ html:not(.dark) .hextra-search-trigger{font-size:.9rem}
 }
 
 
-/* Native drawing evidence stays on build/<scope>; Pages embeds the raw PDF only. */
+/* Native drawing evidence stays on build/<scope>; Pages loads only static PNG evidence. */
 .cad-drawing-sheet{margin-top:.8rem}
-.cad-drawing-frame{
-  display:block;
+.cad-drawing-preview-link{
+  display:flex;
   width:100%;
-  min-height:460px;
-  aspect-ratio:297/210;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
   border:1px solid var(--cad-line);
   border-radius:9px;
   background:#fff;
 }
-@media(max-width:680px){
-  .cad-drawing-frame{min-height:340px}
+.cad-drawing-preview{
+  display:block;
+  width:100%;
+  height:auto;
+  max-height:900px;
+  object-fit:contain;
 }

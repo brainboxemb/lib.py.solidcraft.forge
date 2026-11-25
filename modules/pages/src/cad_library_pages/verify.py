@@ -193,8 +193,20 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
                             expected.append(
                                 f"/build/{build_scope.name}/models/{item}/{impl}/drawings/{pdf.name}"
                             )
-                        if featured == impl and pdfs and "drawing-sheet" not in html:
-                            raise RuntimeError(f"{route}: missing drawing sheet presentation")
+                            png = pdf.with_suffix(".png")
+                            if png.is_file():
+                                expected.append(
+                                    f"/build/{build_scope.name}/models/{item}/{impl}/drawings/{png.name}"
+                                )
+                        if featured == impl and pdfs:
+                            if "drawing-sheet" not in html:
+                                raise RuntimeError(
+                                    f"{route}: missing drawing sheet presentation"
+                                )
+                            if "<iframe" in html or "<object" in html or "<embed" in html:
+                                raise RuntimeError(
+                                    f"{route}: drawing PDF must not auto-embed"
+                                )
 
                     if (impl_root / "model.png").is_file() and any(i["id"] == impl for i in ci.get("implementations", [])):
                         preview = f"/build/{build_scope.name}/models/{item}/{impl}/model.png"
@@ -223,7 +235,18 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
                 if (site / route / artifact).exists():
                     raise RuntimeError(f"generated CAD artifact copied into Pages: {route}/{artifact}")
             if list((site / route).rglob("*.pdf")):
-                raise RuntimeError(f"generated drawing PDF copied into Pages: {route}")
+                raise RuntimeError(
+                    f"generated drawing PDF copied into Pages: {route}"
+                )
+            if list((site / route).rglob("*.png")):
+                copied = [
+                    path for path in (site / route).rglob("*.png")
+                    if "setup" not in path.name
+                ]
+                if copied:
+                    raise RuntimeError(
+                        f"generated drawing/model PNG copied into Pages: {route}"
+                    )
 
     parity_path = source_root / "docs" / "pages-parity.json"
     if parity_path.is_file():

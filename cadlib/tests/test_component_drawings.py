@@ -66,14 +66,33 @@ class ComponentDrawingTests(unittest.TestCase):
             },
         )
         self.assertEqual(
-            drawing[1]["params"]["documents"],
+            drawing[1]["params"],
             {
-                "source": "$drawing_1_source",
-                "component": "$component_1",
+                "sheet": "$drawing_1_sheet",
+                "orientation": "landscape",
+                "documents": {
+                    "source": "$drawing_1_source",
+                    "component": "$component_1",
+                },
+            },
+        )
+        self.assertNotIn("bind", drawing[1])
+        self.assertEqual(
+            drawing[2],
+            {
+                "command": "drawing.inspect",
+                "params": {},
+                "bind": {
+                    "$drawing_1_orientation": {
+                        "field": "sheets",
+                        "where": {"name": "Sheet 1"},
+                        "select": "orientation",
+                    },
+                },
             },
         )
         self.assertEqual(
-            drawing[2],
+            drawing[3],
             {
                 "command": "drawing.view.standard",
                 "params": {"sheet": "$drawing_1_sheet", "iso": True},
@@ -89,15 +108,15 @@ class ComponentDrawingTests(unittest.TestCase):
             },
         }
         self.assertEqual(
-            drawing[3]["params"],
+            drawing[4]["params"],
             {"view": "$drawing_1_front", "set": selected},
         )
         self.assertEqual(
-            drawing[4]["params"],
+            drawing[5]["params"],
             {"view": "$drawing_1_iso", "set": selected},
         )
         self.assertEqual(
-            drawing[5],
+            drawing[6],
             {"command": "drawing.close", "params": {}},
         )
         self.assertEqual(
@@ -107,7 +126,10 @@ class ComponentDrawingTests(unittest.TestCase):
                     {
                         "name": "Second panel drawing",
                         "drawing": "$drawing_1",
+                        "sheet": "$drawing_1_sheet",
+                        "orientation": "$drawing_1_orientation",
                         "pdf": "drawings/Second-panel-drawing.pdf",
+                        "png": "drawings/Second-panel-drawing.png",
                     }
                 ]
             },
@@ -137,6 +159,11 @@ class ComponentDrawingTests(unittest.TestCase):
             if row["command"] == "drawing.create"
         )
         self.assertEqual(create["params"]["template"], "iso-a3-part")
+        sheet = next(
+            row for row in document["commands"]
+            if row["command"] == "drawing.sheet.set"
+        )
+        self.assertEqual(sheet["params"]["orientation"], "landscape")
 
     def test_drawing_intent_is_final_design_state(self):
         first = DrawingPanel()

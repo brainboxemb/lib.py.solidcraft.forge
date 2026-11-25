@@ -82,6 +82,24 @@ Accepted stable state:
 - stable-to-development synchronization #154 / PR #155 returned the release
   metadata to `dev` without rebasing shared history.
 
+### Active: #166 / #167 promote and release drawing-quality patch
+
+PR #165 qualified the drawing correction for integration to `dev`:
+- A4/A3 native part drawings preserve paper size and use landscape;
+- final orientation is read back through native `drawing.inspect`;
+- builder-scpf publishes vector PDF + native 144 dpi sheet PNG;
+- Pages loads only the static preview and never auto-embeds the PDF;
+- Sample Plate Drawing remains the Forge-owned example + verification owner;
+- native CI and Pages qualification are green.
+
+Next:
+1. merge #165 to `dev` through policy and require the permanent dev build;
+2. #166 promotes exact `dev -> main` with full stable qualification;
+3. #167 publishes metadata-only Forge v0.18.1 from that stable baseline;
+4. synchronize stable release metadata back `main -> dev`;
+5. only after v0.18.1, evaluate missing generic drawing authoring API against
+   the real CAD Wall Hook use case; do not change CAD as part of this release.
+
 ### Active: #156 release-only stable push selection regression
 
 The v0.18.0 release PR itself correctly selected only the `release` module,

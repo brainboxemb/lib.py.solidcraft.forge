@@ -869,6 +869,7 @@ def _compile_assembly_with_dependencies(value, name):
         drawing_ref = f"$drawing_{drawing_number}"
         source_ref = f"$drawing_{drawing_number}_source"
         sheet_ref = f"$drawing_{drawing_number}_sheet"
+        orientation_ref = f"$drawing_{drawing_number}_orientation"
         front_ref = f"$drawing_{drawing_number}_front"
         iso_ref = f"$drawing_{drawing_number}_iso"
 
@@ -896,11 +897,22 @@ def _compile_assembly_with_dependencies(value, name):
         commands.append(_command(
             "drawing.sheet.set",
             sheet=sheet_ref,
+            orientation="landscape",
             documents={
                 "source": source_ref,
                 "component": component_ref,
             },
         ))
+
+        inspect = _command("drawing.inspect")
+        inspect["bind"] = {
+            orientation_ref: {
+                "field": "sheets",
+                "where": {"name": drawing.sheet_name},
+                "select": "orientation",
+            },
+        }
+        commands.append(inspect)
 
         standard = _command(
             "drawing.view.standard",
@@ -938,7 +950,10 @@ def _compile_assembly_with_dependencies(value, name):
                 {
                     "name": drawing.name,
                     "drawing": f"$drawing_{index}",
+                    "sheet": f"$drawing_{index}_sheet",
+                    "orientation": f"$drawing_{index}_orientation",
                     "pdf": drawing.pdf_path,
+                    "png": drawing.pdf_path.removesuffix(".pdf") + ".png",
                 }
                 for index, drawing in enumerate(assembly.drawings, start=1)
             ],
