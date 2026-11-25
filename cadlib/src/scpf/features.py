@@ -1716,15 +1716,30 @@ def _to_commands(shape, name):
         original, line, angle, fixed, position, flip = shape.data
         steps, base = _to_commands(original, name)
         params = {
-            "points": [
-                [command_value(v) for v in point]
-                for point in line
-            ],
             "angle": command_value(angle),
             "position": position,
             "flip": flip,
             "body": name,
         }
+        if isinstance(line, Shape):
+            if line.kind != "sketch_open_chain":
+                raise ModelError(
+                    "associative sheet fold requires a Sketch.line(...) Shape"
+                )
+            segments = line.data[4]
+            if len(segments) != 1 or segments[0][0] != "line":
+                raise ModelError(
+                    "associative sheet fold requires exactly one straight Sketch line"
+                )
+            sketch, meta = compile_open_chain(line)
+            steps += sketch
+            params["sketch"] = meta["sketch_name"]
+            params["curve"] = "l1"
+        else:
+            params["points"] = [
+                [command_value(v) for v in point]
+                for point in line
+            ]
         if fixed is not None:
             params["fixed"] = [command_value(v) for v in fixed]
         return steps + [_command("sheet.fold", **params)], base

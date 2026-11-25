@@ -916,6 +916,83 @@ class SheetMetalTests(unittest.TestCase):
                 bend_radius=2.5,
             )
 
+    def test_fold_accepts_associative_sketch_line(self):
+        depth = Parameter("depth", 40)
+
+        with Sketch(name="Blank", plane="XY") as blank:
+            Rectangle2D(80, depth)
+
+        sheet = blank.sheet_metal(
+            thickness=2,
+            bend_radius=2,
+            k_factor=0.5,
+            rule_name="Qualification Sheet",
+        )
+        with Sketch(name="Fold line", plane="XY") as fold_sketch:
+            fold_line = fold_sketch.line(
+                start=(20, -(depth / 2)),
+                end=(20, depth / 2),
+            )
+
+        commands = compile_model(
+            sheet.fold(
+                line=fold_line,
+                angle=90,
+                fixed=(-30, 0, 0),
+            ),
+            "AssociativeFold",
+        )["commands"]
+
+        units = {
+            row["params"]["name"]: row["params"]["unit"]
+            for row in commands
+            if row["command"] == "parameters.add"
+        }
+        self.assertEqual(units, {"depth": "mm"})
+
+        line = next(
+            row for row in commands
+            if row["command"] == "sketch.line"
+        )
+        self.assertEqual(
+            line["params"],
+            {
+                "points": [[20, "-(depth / 2)"], [20, "depth / 2"]],
+                "ids": ["l1"],
+                "connect": True,
+            },
+        )
+
+        fold = commands[-1]
+        self.assertEqual(fold["command"], "sheet.fold")
+        self.assertEqual(
+            fold["params"],
+            {
+                "angle": 90,
+                "position": "centerline",
+                "flip": False,
+                "body": "AssociativeFold",
+                "sketch": "Fold line",
+                "curve": "l1",
+                "fixed": [-30, 0, 0],
+            },
+        )
+        self.assertNotIn("points", fold["params"])
+
+    def test_fold_rejects_multi_segment_sketch_chain(self):
+        with Sketch(name="Blank", plane="XY") as blank:
+            Rectangle2D(80, 40)
+        sheet = blank.sheet_metal(thickness=2, bend_radius=2)
+
+        with Sketch(name="Too many lines", plane="XY") as sketch:
+            chain = sketch.chain(start=(20, -20))
+            chain.line_to((20, 0))
+            chain.line_to((20, 20))
+            fold_line = chain.finish()
+
+        with self.assertRaisesRegex(ValueError, "exactly one straight line"):
+            sheet.fold(line=fold_line)
+
     def test_sheet_metal_and_fold_validate_authoring_contract(self):
         with Sketch(name="Blank", plane="XY") as blank:
             Rectangle2D(80, 40)
