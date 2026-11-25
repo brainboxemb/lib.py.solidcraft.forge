@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "e96d944dd4d32d43f9f29d7beb6c3259f83c7235d8bff08b9007db24778b923c",
-          "size": 3393
+          "sha256": "eeea25d8ad3eed456814b1cbf500ff8a09d5cba24c686743a0a9c3865abe6c1c",
+          "size": 3795
         }
       ],
       "error": null,
@@ -99,6 +99,18 @@
             },
             "label": "Blank sketch",
             "pass": true
+          },
+          {
+            "actual": {
+              "curves": 1,
+              "name": "Fold line"
+            },
+            "expected": {
+              "curves": 1,
+              "name": "Fold line"
+            },
+            "label": "Fold line sketch",
+            "pass": true
           }
         ],
         "timeline": {
@@ -114,6 +126,10 @@
             {
               "name": "Hole1",
               "type": "HoleFeature"
+            },
+            {
+              "name": "Fold line",
+              "type": "Sketch"
             },
             {
               "name": "Fold1",
@@ -134,6 +150,10 @@
               "type": "HoleFeature"
             },
             {
+              "name": "Fold line",
+              "type": "Sketch"
+            },
+            {
               "name": "Fold1",
               "type": "FoldFeature"
             }
@@ -143,6 +163,130 @@
         }
       },
       "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/depth-60/model.sc",
+          "sha256": "f594421ee0a4f55be96617109bb56e33f5e5888e8be9580b6735cfc45a6eec81",
+          "size": 22993
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/depth-60/measurements.json",
+          "sha256": "50a3d26d0729da8d4fccb9c91c99a0a73f3581f291118548f3bb9464c581d455",
+          "size": 3792
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 10.0,
+                "baseline": -20.000000000000004,
+                "mutated": -30.000000000000004
+              },
+              "expected": {
+                "absolute_delta_gt": 5.0
+              },
+              "label": "SolidCraft saved design change depth-extent",
+              "pass": true
+            },
+            "id": "depth-extent",
+            "path": [
+              "bodies",
+              0,
+              "bbox",
+              "min",
+              1
+            ]
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "depth": 60.0
+          },
+          "expected": {
+            "depth": 60.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 1,
+              "name": "Fold line"
+            },
+            "expected": {
+              "curves": 1,
+              "name": "Fold line"
+            },
+            "label": "Fold line sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Blank",
+              "type": "Sketch"
+            },
+            {
+              "name": "BaseFlange1",
+              "type": "BaseFlangeFeature"
+            },
+            {
+              "name": "Hole1",
+              "type": "HoleFeature"
+            },
+            {
+              "name": "Fold line",
+              "type": "Sketch"
+            },
+            {
+              "name": "Fold1",
+              "type": "FoldFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Blank",
+              "type": "Sketch"
+            },
+            {
+              "name": "BaseFlange1",
+              "type": "BaseFlangeFeature"
+            },
+            {
+              "name": "Hole1",
+              "type": "HoleFeature"
+            },
+            {
+              "name": "Fold line",
+              "type": "Sketch"
+            },
+            {
+              "name": "Fold1",
+              "type": "FoldFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "saved_design_depth-60",
       "reason": null,
       "status": "pass"
     },

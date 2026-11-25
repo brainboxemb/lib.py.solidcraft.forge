@@ -1,7 +1,7 @@
 {
   "bodies": [
     {
-      "area_mm2": 80041.06193011359,
+      "area_mm2": 80041.06193011368,
       "bbox": {
         "max": [
           120.0,
@@ -15,8 +15,8 @@
         ]
       },
       "center_of_mass": [
-        0.3264371531985775,
-        -5.342567696322085e-16,
+        0.3264371531985728,
+        1.4371130735567086e-16,
         2.5
       ],
       "closed": true,
@@ -33,13 +33,13 @@
         "shells": 1,
         "vertices": 88
       },
-      "mass_g": 232.7776465845309,
+      "mass_g": 232.77764658453106,
       "material": "Default",
       "measured_by": "smlib",
       "name": "SketchPatternMirror",
       "notes": [],
       "vertices": 88,
-      "volume_mm3": 180447.78805002396
+      "volume_mm3": 180447.78805002407
     }
   ],
   "body_count": 1,
@@ -125,7 +125,7 @@
     {
       "error": null,
       "id": 1,
-      "ms": 3.148247,
+      "ms": 2.254144,
       "name": "Box1",
       "rolled_back": false,
       "suppressed": false,
@@ -135,7 +135,7 @@
     {
       "error": null,
       "id": 2,
-      "ms": 0.40387300000000004,
+      "ms": 0.36580599999999996,
       "name": "Dog holes",
       "rolled_back": false,
       "suppressed": false,
@@ -145,7 +145,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 79.801337,
+      "ms": 70.42101100000001,
       "name": "Dog holes",
       "rolled_back": false,
       "suppressed": false,
@@ -155,7 +155,7 @@
     {
       "error": null,
       "id": 4,
-      "ms": 1.927933,
+      "ms": 1.573622,
       "name": "Clamp slots",
       "rolled_back": false,
       "suppressed": false,
@@ -165,7 +165,7 @@
     {
       "error": null,
       "id": 5,
-      "ms": 156.81741499999998,
+      "ms": 136.628822,
       "name": "Clamp slots",
       "rolled_back": false,
       "suppressed": false,
@@ -174,12 +174,12 @@
     }
   ],
   "total": {
-    "area_mm2": 80041.06193011359,
+    "area_mm2": 80041.06193011368,
     "edges": 132,
     "faces": 46,
-    "mass_g": 232.7776465845309,
+    "mass_g": 232.77764658453106,
     "open_bodies_skipped": 0,
     "vertices": 88,
-    "volume_mm3": 180447.78805002396
+    "volume_mm3": 180447.78805002407
   }
 }

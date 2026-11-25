@@ -36,6 +36,7 @@
     "rounded-rectangle-sketch",
     "selective-profile-extrude",
     "sheet-contour-flange",
+    "sheet-contour-flange-recess",
     "sheet-edge-flange",
     "sheet-fold",
     "sheet-hem",
@@ -534,6 +535,16 @@
       ]
     },
     {
+      "id": "sheet-contour-flange-recess",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
       "id": "sheet-edge-flange",
       "implementations": [
         "scpf"
@@ -697,6 +708,7 @@
     "rounded-rectangle-sketch",
     "selective-profile-extrude",
     "sheet-contour-flange",
+    "sheet-contour-flange-recess",
     "sheet-edge-flange",
     "sheet-fold",
     "sheet-hem",
@@ -708,5 +720,5 @@
     "top-sketch-after-chamfer",
     "xz-anchor"
   ],
-  "source_sha": "4599f0c98225b79bc70c0f9ede79969f911724b2"
+  "source_sha": "021dc78a32d99d31f16a76efc9d036855114df0c"
 }

@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "805797f7b449c3b8237526ee037d580209621bc8a08739cf6b11ee5ad8d4ccfd",
-          "size": 3559
+          "sha256": "9ad8bcedba8309e94bad112e32fc483412b3b4825c49f2857d9465738d1b6f46",
+          "size": 3552
         }
       ],
       "error": null,
@@ -179,14 +179,14 @@
         {
           "kind": "file",
           "path": "saved_designs/patterns_mutated/model.sc",
-          "sha256": "dd3f29745289c8d1e4d8553abb6c34a75b4b242346db31a3200d78835967bab4",
-          "size": 49693
+          "sha256": "96a7fa4981d3906107ef6e2ac4b54758401e12f7df8246665ac669ebec78a401",
+          "size": 49224
         },
         {
           "kind": "file",
           "path": "saved_designs/patterns_mutated/measurements.json",
-          "sha256": "a40a6c853b06fd55a8ce0c9550775e5e99fcead32f610a3480025af8e4da4a22",
-          "size": 3584
+          "sha256": "fcd6e2401cab32c094a36190d8c92044974df4311c6d2b5636d121ab1c2330c1",
+          "size": 3586
         }
       ],
       "error": null,
@@ -241,9 +241,9 @@
           {
             "comparison": {
               "actual": {
-                "absolute_delta": 0.07729494151012944,
+                "absolute_delta": 0.07729494151012473,
                 "baseline": 0.24914221168844808,
-                "mutated": 0.3264371531985775
+                "mutated": 0.3264371531985728
               },
               "expected": {
                 "absolute_delta_gt": 0.01
@@ -264,8 +264,8 @@
           {
             "selector": "sole",
             "volume": {
-              "actual": 180447.78805002396,
-              "delta": 1.9112194422632456e-06,
+              "actual": 180447.78805002407,
+              "delta": 1.9113358575850725e-06,
               "expected": 180447.78804811274,
               "kind": "scalar",
               "label": "sole body volume",

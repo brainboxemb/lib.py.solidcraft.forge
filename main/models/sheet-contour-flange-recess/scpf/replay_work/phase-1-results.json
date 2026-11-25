@@ -1,0 +1,70 @@
+[
+  {
+    "display_value": 250.0,
+    "name": "length",
+    "unit": "mm",
+    "value": 250.0
+  },
+  {
+    "errors": [],
+    "rule": {
+      "angle_display": "bend",
+      "bend_radius": "1.25",
+      "corner_relief": "Thickness * 4.0",
+      "corner_relief_shape": "notch",
+      "gap": "Thickness",
+      "hem_gap": "0.01 mm",
+      "k_factor": "0.4",
+      "name": "Contour Recess Rule",
+      "relief_depth": "Thickness * 0.5",
+      "relief_width": "Thickness",
+      "thickness": "1.25"
+    },
+    "values": {
+      "angle_display": "bend",
+      "bend_radius": 1.25,
+      "corner_relief": 5.0,
+      "corner_relief_shape": "notch",
+      "gap": 1.25,
+      "hem_gap": 0.01,
+      "k_factor": 0.4,
+      "relief_depth": 0.625,
+      "relief_width": 1.25,
+      "thickness": 1.25
+    }
+  },
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "C profile",
+    "projected": null,
+    "sketch": 1,
+    "sketching_view": 1
+  },
+  {
+    "constraints": [],
+    "created": {
+      "constraints": [],
+      "curves": [
+        "l1"
+      ],
+      "dimensions": [],
+      "points": [
+        "l1.start",
+        "l1.end"
+      ]
+    },
+    "curves": [
+      "l1"
+    ],
+    "sketch": {
+      "dof": 4,
+      "solved": true
+    }
+  }
+]

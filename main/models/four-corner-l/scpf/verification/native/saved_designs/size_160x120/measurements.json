@@ -15,8 +15,8 @@
         ]
       },
       "center_of_mass": [
-        4.592022506945081e-15,
-        -2.6657633635192556e-15,
+        4.5920225069450805e-15,
+        -2.6657633635192583e-15,
         30.0
       ],
       "closed": true,
@@ -138,7 +138,7 @@
       "center_of_mass": [
         74.53333333333333,
         54.53333333333334,
-        29.999999999999996
+        30.0
       ],
       "closed": true,
       "density_g_cm3": 1.29,
@@ -176,7 +176,7 @@
         ]
       },
       "center_of_mass": [
-        -74.53333333333335,
+        -74.53333333333333,
         54.53333333333333,
         30.0
       ],
@@ -199,7 +199,7 @@
       "name": "LProfile (LProfile:4)",
       "notes": [],
       "vertices": 12,
-      "volume_mm3": 3839.9999999999986
+      "volume_mm3": 3839.999999999999
     }
   ],
   "body_count": 5,
@@ -248,7 +248,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 1.899639,
+      "ms": 1.537306,
       "name": "Box1",
       "rolled_back": false,
       "suppressed": false,
@@ -258,7 +258,7 @@
     {
       "error": null,
       "id": 4,
-      "ms": 76.86665199999999,
+      "ms": 49.2267,
       "name": "Fillet1",
       "rolled_back": false,
       "suppressed": false,
@@ -268,7 +268,7 @@
     {
       "error": null,
       "id": 7,
-      "ms": 0.100407,
+      "ms": 0.108358,
       "name": "d2_LProfile__Profile",
       "rolled_back": false,
       "suppressed": false,
@@ -278,7 +278,7 @@
     {
       "error": null,
       "id": 8,
-      "ms": 2.71954,
+      "ms": 2.162921,
       "name": "Extrude1",
       "rolled_back": false,
       "suppressed": false,

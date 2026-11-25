@@ -1,0 +1,238 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "250",
+        "name": "length",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sheet.manage_rules",
+      "params": {
+        "active": true,
+        "bend_radius": 1.25,
+        "k_factor": 0.4,
+        "name": "Contour Recess Rule",
+        "thickness": 1.25
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "C profile",
+        "plane": "XZ"
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_1": "curves"
+      },
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l1"
+        ],
+        "points": [
+          [
+            -7.5,
+            0.625
+          ],
+          [
+            -12.875,
+            0.625
+          ]
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_2": {
+          "field": "curves",
+          "prepend": "$contour_curves_1"
+        }
+      },
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l2"
+        ],
+        "points": [
+          [
+            -12.875,
+            0.625
+          ],
+          [
+            -12.875,
+            17.375
+          ]
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_3": {
+          "field": "curves",
+          "prepend": "$contour_curves_2"
+        }
+      },
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l3"
+        ],
+        "points": [
+          [
+            -12.875,
+            17.375
+          ],
+          [
+            12.875,
+            17.375
+          ]
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_4": {
+          "field": "curves",
+          "prepend": "$contour_curves_3"
+        }
+      },
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l4"
+        ],
+        "points": [
+          [
+            12.875,
+            17.375
+          ],
+          [
+            12.875,
+            0.625
+          ]
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_5": {
+          "field": "curves",
+          "prepend": "$contour_curves_4"
+        }
+      },
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l5"
+        ],
+        "points": [
+          [
+            12.875,
+            0.625
+          ],
+          [
+            7.5,
+            0.625
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "sheet.flange",
+      "params": {
+        "body_name": "SheetContourFlangeRecess",
+        "curves": "$contour_curves_5",
+        "distance": "length",
+        "rule": "Contour Recess Rule",
+        "sketch": "C profile",
+        "type": "contour"
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "SheetContourFlangeRecess"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Broad face recess",
+        "plane": {
+          "body": "SheetContourFlangeRecess",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0.0,
+          37.5
+        ],
+        "diameter": 12.5
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "name": "Broad face recess",
+        "operation": "cut",
+        "targets": [
+          "SheetContourFlangeRecess"
+        ],
+        "through_all": true
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

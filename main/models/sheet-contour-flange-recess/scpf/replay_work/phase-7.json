@@ -1,0 +1,46 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": {
+          "face": [
+            5.862106546757257,
+            4.512893453242743,
+            -16.125
+          ],
+          "body": "SheetContourFlangeRecess",
+          "index": 9
+        },
+        "project_edges": false,
+        "name": "Broad face recess"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0.0,
+          37.5
+        ],
+        "diameter": 12.5
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "operation": "cut",
+        "targets": [
+          "SheetContourFlangeRecess"
+        ],
+        "name": "Broad face recess",
+        "through_all": true,
+        "direction": "negative"
+      }
+    }
+  ]
+}
