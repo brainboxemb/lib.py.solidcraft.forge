@@ -165,8 +165,6 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
             "files": [],
             "sources": [],
         }
-        if verification_section is not None:
-            params["verificationsection"] = verification_section
         for implementation in ci.get("implementations", []):
             source = owner / implementation["source"]
             if not source.resolve().is_relative_to(owner.resolve()) or not source.is_file():
@@ -261,8 +259,11 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
             page.parent.mkdir(parents=True, exist_ok=True)
             if diagram:
                 (page.parent / "setup.svg").write_text(diagram, encoding="utf-8")
+            page_params = dict(params)
+            if purpose == "verification":
+                page_params["verificationsection"] = verification_section
             data = {"title": title, "type": "models", "weight": meta.get("priority", 100),
-                    "params": params}
+                    "params": page_params}
             if purpose == ("example" if "example" in purposes else "verification"):
                 data["aliases"] = [f"/models/{item}/"]
             page.write_text(
