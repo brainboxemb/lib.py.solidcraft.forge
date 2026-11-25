@@ -56,32 +56,48 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge release infrastructure and the identified public Pages content fixes are
-accepted or in final qualification:
+The Forge Pages quality phase is accepted on development and ready for stable
+promotion.
 
+Accepted development source:
+- `53c368f1668077b326dec4cb47b18c7ad6570f55`;
+- permanent dev CI `45621976335`: PASS.
+
+Accepted Pages set:
 - #57 global development warning;
 - #58 Forge/SCPF product landing;
 - #106 canonical API Reference landing wording;
 - #107 source-owned Joint anatomy SolidCraft version;
 - #109 canonical Guide landing wording;
-- #68 CadCraft removal while retaining SVG/DXF engineering assets;
-- #112 complete `Use when` / `Limits` guidance across public callables.
+- #68 CadCraft source/link removal with SVG/DXF retained;
+- #112 complete public callable Use when / Limits guidance;
+- #113 user-facing Examples and Verification landing copy.
 
-The active Pages task is #113: make the Examples and Verification landing copy
-user-facing instead of exposing internal model-owner projection mechanics.
+Final audit at that baseline found no remaining independent Pages defect in the
+reviewed categories:
+- no stale NEW product identity;
+- no hardcoded current 0.48.1 in the public Pages generators/landings;
+- no CadCraft files/references;
+- no owner-internal copy on the two catalogue landings;
+- all public callables have non-empty Use when + Limits;
+- rendered capture/verifier covers Guide, API Reference, Cheatsheet, Examples,
+  Verification, Coverage, Results and Joint anatomy.
 
-After #113, finish the audit rather than starting another broad rewrite:
+Current task is #117: promote that accepted Pages set to stable `main`.
 
-1. review desktop/mobile evidence for Guide chapter detail routes;
-2. review API Reference detail routes;
-3. review Cheatsheet;
-4. review Examples model pages;
-5. review Verification model pages and Coverage/Results/Joint anatomy;
-6. create one issue per independent remaining defect before changing it;
-7. if no new defects remain, reconcile the Pages phase as complete.
+1. Merge `main -> dev` through `/merge` as history-only synchronization;
+   current comparison has zero file changes.
+2. Require permanent green dev evidence after the sync.
+3. Open `dev -> main` and require full product qualification plus Pages
+   desktop/mobile evidence.
+4. Merge through `/merge` so stable receives the normal promotion merge
+   commit.
+5. Require permanent full `build/main` evidence and successful Pages
+   publication.
+6. Verify the canonical public root now contains the accepted Pages set.
 
 CAD project work continues independently and is not a prerequisite for this
-Pages phase.
+stabilization.
 
 #73 remains retained engine/runtime regression evidence rather than a Forge
 replay-workaround target. Other migrated Forge backlog stays Later unless active
