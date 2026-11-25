@@ -80,6 +80,12 @@
    the pinned tested SolidCraft runtime, not only compare generated JSON.
 9. Dimensions, balloons, parts lists and annotation authoring remain later
    demonstrated requirements.
+10. Drawings are a first-class public documentation capability: Guide must have
+    a dedicated Drawings chapter, Cheatsheet must expose the common drawing
+    forms, and one physical owner with purpose [example, verification] must
+    demonstrate the complete A4 drawing flow in both public catalogues.
+11. Pages may embed/link durable drawing PDFs from build/<scope>, but must not
+    copy generated PDFs into gh-pages.
 
 ## SolidCraft reference evidence
 
