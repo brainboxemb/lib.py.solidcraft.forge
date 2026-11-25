@@ -6,10 +6,11 @@ Read `docs/requirements.md`, `docs/design.md`, `docs/plan.md` and `docs/handoff.
 
 - `main`: stable integration only.
 - `dev`: normal integration branch.
-- short-lived work branches use `issue/`, `fix/`, `feature/`, `docs/` or `chore/`.
-- squash short-lived branches into `dev`.
-- promote `dev -> main` with a merge commit.
-- do not back-merge `main -> dev` unless there is a real stable-only change.
+- normal short-lived work branches use `issue/`, `fix/`, `feature/`, `docs/` or `chore/` and squash into `dev`.
+- explicit product promotion `dev -> main` uses a merge commit.
+- release preparation uses `release/vX.Y.Z` created from stable `main`; only `CHANGELOG.md` and `cadlib/pyproject.toml:project.version` may change.
+- `release/* -> main` uses squash through the merge policy.
+- after a stable-only release commit, synchronize `main -> dev` with a merge commit; never rebase the shared permanent branch.
 - never delete `main`, `dev`, `build` or `gh-pages`.
 
 ### Mandatory merge execution rule
@@ -18,9 +19,10 @@ This repository deliberately does **not** let an agent choose the merge method.
 
 For every source-branch integration:
 
-- short-lived branch -> `dev`;
-- `dev` -> `main`;
-- exceptional `main` -> `dev`;
+- normal short-lived branch -> `dev`;
+- `release/*` -> `main`;
+- explicit product promotion `dev` -> `main`;
+- stable synchronization `main` -> `dev`;
 
 an agent MUST post `/merge` on the pull request and let
 `.github/workflows/merge-policy.yml` choose and execute the merge.
@@ -35,7 +37,7 @@ An agent MUST NOT:
 If `/merge` fails, stop the integration and repair the merge-policy path.
 Never bypass the policy.
 
-Matching work-branch `build.yml` controls explicit library/module/model selection. `dev` uses incremental selection since the last successful integration run. `main` and promotion PRs run full.
+Matching work-branch `build.yml` controls explicit library/module/model selection. `dev` uses incremental selection since the last successful integration run. Product-changing `main` commits and `dev -> main` promotions run full. Validated release-only PRs/pushes run library + release only and preserve the previous full stable CAD evidence.
 
 ## Ownership
 
@@ -57,17 +59,34 @@ Pull requests run central `ci` only. Permanent `dev`/`main` events run one `buil
 
 ## Release policy
 
-A release is an explicit repository-owner action on a normal issue. Do not create tags or GitHub Releases directly.
+A release is an explicit repository-owner action on a normal issue. Do not
+create tags or GitHub Releases directly.
 
-The release path is:
+Release preparation is not product promotion:
 
-- stable `main` already has exact durable `build/main` evidence;
-- comment `/release vX.Y.Z <exact-40-character-main-sha>` on the release issue;
-- `.github/workflows/release.yml` checks the durable library/model evidence;
-- Forge-specific metadata validation runs from `cadlib/release.py`;
-- released `tool.py.lib.ci` owns stable-head validation, annotated tags, GitHub Releases, idempotency and issue reporting.
+1. create `release/vX.Y.Z` from current stable `main`;
+2. change only `CHANGELOG.md` and the `project.version` value in
+   `cadlib/pyproject.toml`;
+3. open `release/vX.Y.Z -> main`;
+4. CI must select only `modules/release` plus the library owner and no model
+   owners;
+5. merge only through `/merge`;
+6. the stable release-only push must not replace the previous full
+   `build/main` product evidence;
+7. comment `/release vX.Y.Z <exact-40-character-main-sha>` on the release
+   issue;
+8. after publication synchronize `main -> dev` through `/merge`.
 
-Pages is never release evidence. The migrated package version `0.15.0` is a historical baseline and must not be published as a NEW release.
+The generic release validator proves that the retained full stable product
+baseline is an ancestor of the exact release SHA and that every first-parent
+commit since it is linear release metadata only. Forge-specific metadata
+validation remains in `cadlib/release.py`: package version, dated changelog,
+active blockers and `TESTED_SOLIDCRAFT_VERSION`.
+
+Released `tool.py.lib.ci` still owns current-main validation, annotated tags,
+GitHub Releases, idempotency and issue reporting. Pages is never release
+evidence. The migrated package version `0.15.0` remains a historical baseline
+and must not be published as a canonical Forge release.
 
 ## Runtime policy
 
