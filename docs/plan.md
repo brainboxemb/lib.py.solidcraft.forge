@@ -82,25 +82,23 @@ Accepted stable state:
 - stable-to-development synchronization #154 / PR #155 returned the release
   metadata to `dev` without rebasing shared history.
 
-### Active: #164 drawing presentation and verification patch
+### Active: #166 / #167 promote and release drawing-quality patch
 
-Correct the already released drawing slice without adding a new annotation
-authoring API.
+PR #165 qualified the drawing correction for integration to `dev`:
+- A4/A3 native part drawings preserve paper size and use landscape;
+- final orientation is read back through native `drawing.inspect`;
+- builder-scpf publishes vector PDF + native 144 dpi sheet PNG;
+- Pages loads only the static preview and never auto-embeds the PDF;
+- Sample Plate Drawing remains the Forge-owned example + verification owner;
+- native CI and Pages qualification are green.
 
-Current branch: `feature/164-drawing-quality`.
-
-Acceptance:
-- A4/A3 native part drawings keep their selected paper size but use landscape;
-- final orientation is replay-bound from the native `drawing.sheet.set`
-  result and must equal `landscape`;
-- builder-scpf exports vector PDF plus native 144 dpi PNG of that exact sheet;
-- Pages loads only the PNG preview and never auto-embeds the PDF;
-- Sample Plate Drawing remains the canonical Forge-owned example +
-  verification owner;
-- PDF/PNG signatures, native build and Pages projection all qualify;
-- notes/dimensions/title-block overrides/explicit view-layout remain deferred
-  until the post-patch API review against the downstream Wall Hook use case;
-- after merge, promote and publish a v0.18.x patch release.
+Next:
+1. merge #165 to `dev` through policy and require the permanent dev build;
+2. #166 promotes exact `dev -> main` with full stable qualification;
+3. #167 publishes metadata-only Forge v0.18.1 from that stable baseline;
+4. synchronize stable release metadata back `main -> dev`;
+5. only after v0.18.1, evaluate missing generic drawing authoring API against
+   the real CAD Wall Hook use case; do not change CAD as part of this release.
 
 ### Active: #156 release-only stable push selection regression
 
