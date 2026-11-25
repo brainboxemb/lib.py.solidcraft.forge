@@ -3,7 +3,11 @@ from tempfile import TemporaryDirectory
 import json
 import unittest
 
-from cad_library_pages.landing import landing_metadata, prepare_landing
+from cad_library_pages.landing import (
+    landing_metadata,
+    prepare_landing,
+    tested_solidcraft_version,
+)
 
 
 class LandingTests(unittest.TestCase):
@@ -20,6 +24,7 @@ class LandingTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
+            self.assertEqual(tested_solidcraft_version(root), "9.8.7")
             self.assertEqual(
                 landing_metadata(root),
                 {

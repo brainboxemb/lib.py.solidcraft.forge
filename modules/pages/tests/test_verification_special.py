@@ -17,6 +17,13 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
                 encoding='utf-8',
             )
 
+            version = root / 'cadlib/src/scpf'
+            version.mkdir(parents=True)
+            (version / 'version.py').write_text(
+                'TESTED_SOLIDCRAFT_VERSION = "9.8.7"\n',
+                encoding='utf-8',
+            )
+
             docs = root / 'docs/verification'
             docs.mkdir(parents=True)
             (docs / 'api-coverage.py').write_text(
@@ -29,6 +36,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
             (joint / 'body.html').write_text(
                 '<main><section class="hero"><h1>Old title</h1></section>'
                 '<section class="panel"><h2>Concept</h2><p>Body.</p>'
+                '<p>Qualified with SolidCraft $solidcraft_version.</p>'
                 '<div class="concept-steps">\n'
                 '    <div><strong>4 brackets</strong><br>One bracket.</div>\n'
                 '</div>'
@@ -73,6 +81,8 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
             self.assertIn('| [`example`](../example/) | pass | `1234567890ab` | `scpf` | 1 | 2 |', results)
 
             anatomy = (site / 'content/verification/joint-anatomy/index.md').read_text(encoding='utf-8')
+            self.assertIn('9.8.7', anatomy)
+            self.assertNotIn('0.48.1', anatomy)
             self.assertIn('## Concept', anatomy)
             self.assertIn('**4 brackets**\nOne bracket.', anatomy)
             self.assertIn('### Diagram', anatomy)

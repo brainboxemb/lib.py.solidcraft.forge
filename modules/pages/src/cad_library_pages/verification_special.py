@@ -11,6 +11,7 @@ import shutil
 import yaml
 
 from .guides import html_to_markdown
+from .landing import tested_solidcraft_version
 
 
 _RANK = {"Unit": 1, "Integration": 2, "Native": 3, "Geometry": 4, "Saved design": 5, "Visual": 6}
@@ -159,7 +160,10 @@ def _joint_anatomy_page(source_root: Path, site: Path) -> None:
     panel = html.find('<section class="panel">')
     if panel >= 0:
         html = html[panel:]
-    html = html.replace("$solidcraft_version", "0.48.1")
+    html = html.replace(
+        "$solidcraft_version",
+        tested_solidcraft_version(source_root),
+    )
     html = html.replace("$source_sha", "current source")
     html = html.replace("$diagram_raw_base/", "")
     html = html.replace("$diagram_blob_base/", "")
