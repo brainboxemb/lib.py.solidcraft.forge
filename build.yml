@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/98-stable-main-release-flow
-modules: [ci, build, release, merge-policy, branch-cleanup]
-library: true
+branch: docs/98-release-handoff
+modules: [ci]
+library: false
 models: []
 tasks: [test]
