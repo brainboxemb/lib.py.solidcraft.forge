@@ -17,14 +17,14 @@ jobs:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       actions: read
     steps:
       - name: Check out source
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -51,6 +51,21 @@ jobs:
           --upstream-commit 10e6242c3a94e942c8fc11e78965ef1cd21e4856
           --runtime-release v0.3.6
           --out build/qualification/solidcraft-reference-0.49.0
+
+      - name: Publish captured reference to permanent adoption branch
+        if: github.head_ref == 'issue/83-capture-solidcraft-0.49'
+        run: |
+          git fetch origin issue/88-adopt-runtime-v0.3.6
+          git switch --force-create capture-target origin/issue/88-adopt-runtime-v0.3.6
+          mkdir -p docs/reference/solidcraft/0.49.0
+          cp build/qualification/solidcraft-reference-0.49.0/SOURCE.md docs/reference/solidcraft/0.49.0/
+          cp build/qualification/solidcraft-reference-0.49.0/commands.json docs/reference/solidcraft/0.49.0/
+          cp build/qualification/solidcraft-reference-0.49.0/commands.md docs/reference/solidcraft/0.49.0/
+          git add docs/reference/solidcraft/0.49.0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m '#83 capture SolidCraft 0.49 canonical reference'
+          git push origin HEAD:issue/88-adopt-runtime-v0.3.6
 
       - name: Upload qualification evidence
         if: always()
