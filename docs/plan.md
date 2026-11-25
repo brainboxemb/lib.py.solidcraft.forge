@@ -56,33 +56,33 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge release infrastructure and the first Pages cleanup set are accepted:
+Forge release infrastructure and the migration-era Pages cleanup set are
+accepted:
 
 - stable-main release-flow implementation is accepted on Forge `main`;
 - #57 global development warning is accepted on `dev`;
 - #58 Forge/SCPF product landing is accepted on `dev`;
 - #106 canonical API Reference landing wording is accepted on `dev`;
-- #107 Joint anatomy now derives the tested SolidCraft version from source.
+- #107 Joint anatomy derives the tested SolidCraft version from source;
+- #109 canonical Guide landing wording is accepted on `dev`.
 
 The active Pages audit work is:
 
-1. #109 — replace migration-era wording on the Guide landing.
-2. #68 — remove CadCraft from Forge verification diagrams/content while
-   preserving deterministic/versioned engineering illustrations.
-3. Continue the remaining visual/content audit:
-   - Guide chapter detail routes;
-   - API Reference detail routes;
-   - Cheatsheet;
-   - Examples;
-   - Verification and special routes;
-   - create one issue per independent defect before changing it.
+1. #68 — remove the remaining six obsolete CadCraft Joint-anatomy sources and
+   public source links while retaining committed/versioned SVG + DXF assets.
+2. #112 — complete missing `Use when` / `Limits` guidance on four public API
+   callable routes.
+3. #113 — make Examples and Verification landing copy user-facing instead of
+   exposing model-owner implementation mechanics.
+4. Continue the remaining visual/content audit after those fixes and create one
+   issue per independent defect before changing it.
 
 CAD project work continues independently and is not a prerequisite for this
 Pages phase.
 
 #73 remains retained engine/runtime regression evidence rather than a Forge
-replay-workaround target. Other migrated Forge backlog (#59-#72) stays Later
-unless active consumer work exposes a concrete blocker.
+replay-workaround target. Other migrated Forge backlog stays Later unless active
+consumer work exposes a concrete blocker.
 
 ## Later
 
