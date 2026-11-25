@@ -353,8 +353,8 @@
       "summary": "Add one native SolidCraft exploded presentation to this Assembly. Define exploded views after composing the final Assembly. Use either automatic scale mode or explicit occurrence translations.",
       "guide": "guide/assembly-basics/#exploded-views",
       "reference": "reference/Assembly.with_exploded_view/",
-      "use_when": "",
-      "limits": "",
+      "use_when": "Define a named native exploded presentation after the final Assembly occurrences and attachments are composed, using either automatic scale mode or explicit occurrence translations.",
+      "limits": "Requires at least two occurrences. Use either scale or moves, not both. Explicit moves must target occurrences already owned by this Assembly, each occurrence may move once, and translations must be fixed finite non-zero XYZ values.",
       "parameters": [],
       "example": "",
       "signature": "Assembly.with_exploded_view(self, name, *, scale=None, moves=None)"
@@ -365,8 +365,8 @@
       "summary": "Show one named exploded view after the assembly is built.",
       "guide": "guide/assembly-basics/#exploded-views",
       "reference": "reference/Assembly.show_exploded/",
-      "use_when": "",
-      "limits": "",
+      "use_when": "Select one previously defined exploded view as the Assembly presentation that SolidCraft should show after the assembly is built.",
+      "limits": "The named exploded view must already exist on this Assembly. This changes presentation state only; it does not change occurrence placement, attachments or joint definitions.",
       "parameters": [],
       "example": "",
       "signature": "Assembly.show_exploded(self, name)"
@@ -377,8 +377,8 @@
       "summary": "Explicitly show the normal assembled placement.",
       "guide": "guide/assembly-basics/#exploded-views",
       "reference": "reference/Assembly.show_assembled/",
-      "use_when": "",
-      "limits": "",
+      "use_when": "Explicitly return the Assembly presentation to its normal assembled placement after defining or selecting exploded views.",
+      "limits": "This changes presentation state only. It does not delete named exploded views or modify occurrence placement, attachments or joints.",
       "parameters": [],
       "example": "",
       "signature": "Assembly.show_assembled(self)"
@@ -655,8 +655,8 @@
       "summary": "Create a native contour-flange sheet from an open Sketch chain. The receiver must be the Shape returned by Sketch.chain(...).finish(). Material dimensions define the sheet rule used by the new body; the contour feature itself receives only that rule name.",
       "guide": "guide/sheet-metal/#contour-flange",
       "reference": "reference/Shape.contour_flange/",
-      "use_when": "",
-      "limits": "",
+      "use_when": "Create a new native sheet-metal body from a finished open connected Sketch chain, using a positive flange distance and a shared SolidCraft sheet rule derived from the supplied material values.",
+      "limits": "The receiver must be the Shape returned by Sketch.chain(...).finish(). Distance, thickness and bend radius must be positive; K-factor must be between 0 and 1. This API starts the sheet body from one open chain and exposes only rule name plus flip/reverse orientation controls.",
       "parameters": [],
       "example": "",
       "signature": "Shape.contour_flange(self, *, distance, thickness, bend_radius, k_factor=0.5, rule_name='Forge Sheet', flip=False, reverse=False)"
