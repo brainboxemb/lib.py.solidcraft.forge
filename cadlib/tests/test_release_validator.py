@@ -43,8 +43,8 @@ def write_candidate(
         "# Changelog\n\n"
         "## [Unreleased]\n\n"
         f"## [{changelog_version}] - 2026-11-25\n\n"
-        "### Added\n\n- NEW release candidate\n\n"
-        "## [0.15.0] - 2026-11-25\n\n"
+        "### Added\n\n- canonical release candidate\n\n"
+        "## [0.15.0] - 2026-11-24\n\n"
         "### Changed\n\n- migrated historical baseline\n",
         encoding="utf-8",
     )
