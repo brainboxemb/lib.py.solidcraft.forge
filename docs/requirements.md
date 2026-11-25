@@ -37,6 +37,21 @@
 4. Native qualification must prove that changing a driving parameter in a saved
    SolidCraft design rebuilds the fold successfully.
 
+## SolidCraft reference evidence
+
+1. Every tested SolidCraft version must have one canonical command-registry
+   snapshot under `docs/reference/solidcraft/<version>/`.
+2. The snapshot must be captured from the exact immutable runtime image
+   qualified by Forge, never from a hand-selected command subset or an
+   unpinned local installation.
+3. Canonical capture and runtime comparison are owned by
+   `modules/solidcraft-reference/`; retired top-level script/orchestration
+   layouts must not be reintroduced.
+4. The checked `commands.json`, generated `commands.md` and `SOURCE.md`
+   provenance must remain deterministic and mutually consistent.
+5. Forge CI must compare the checked registry with the root-pinned immutable
+   SolidCraft runtime whenever the reference module/reference tree is selected.
+
 ## Verification
 
 1. Generic `cad_verification` source is local under `modules/verification/`.

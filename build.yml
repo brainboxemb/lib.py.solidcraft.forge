@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/73-live-sheet-recess-fixture
-modules: [ci, verification, builder-scpf, builder-solidcraft, pages]
-library: true
-models: [sheet-contour-flange-recess]
+branch: issue/83-solidcraft-reference-module
+modules: [solidcraft-reference]
+library: false
+models: []
 tasks: [test]
