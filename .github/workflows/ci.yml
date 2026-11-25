@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [dev, main]
+    branches: [dev, main, exp]
   push:
-    branches: [dev, main]
+    branches: [dev, main, exp]
   workflow_dispatch:
 
 concurrency:
@@ -62,7 +62,7 @@ jobs:
 
   build:
     name: build
-    if: github.event_name != 'pull_request' && (github.ref_name == 'dev' || github.ref_name == 'main')
+    if: github.event_name != 'pull_request' && (github.ref_name == 'dev' || github.ref_name == 'main' || github.ref_name == 'exp')
     runs-on: ubuntu-latest
     permissions:
       contents: write
