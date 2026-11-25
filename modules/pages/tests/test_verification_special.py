@@ -17,6 +17,13 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
                 encoding='utf-8',
             )
 
+            version = root / 'cadlib/src/scpf'
+            version.mkdir(parents=True)
+            (version / 'version.py').write_text(
+                'TESTED_SOLIDCRAFT_VERSION = "9.8.7"\n',
+                encoding='utf-8',
+            )
+
             docs = root / 'docs/verification'
             docs.mkdir(parents=True)
             (docs / 'api-coverage.py').write_text(
@@ -29,18 +36,19 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
             (joint / 'body.html').write_text(
                 '<main><section class="hero"><h1>Old title</h1></section>'
                 '<section class="panel"><h2>Concept</h2><p>Body.</p>'
+                '<p>Qualified with SolidCraft $solidcraft_version.</p>'
                 '<div class="concept-steps">\n'
                 '    <div><strong>4 brackets</strong><br>One bracket.</div>\n'
                 '</div>'
                 '<h3>Diagram</h3>'
                 '<figure><a href="$diagram_raw_base/example.svg">'
                 '<img src="$diagram_raw_base/example.svg" alt="Example diagram"></a>'
-                '<figcaption>Caption.</figcaption></figure>'
-                '<p><a href="example.cadcraft.json">CadCraft source</a></p></section></main>',
+                '<figcaption>Caption. <a href="$diagram_blob_base/example.dxf">DXF</a></figcaption>'
+                '</section></main>',
                 encoding='utf-8',
             )
             (joint / 'example.svg').write_text('<svg/>', encoding='utf-8')
-            (joint / 'example.cadcraft.json').write_text('{}', encoding='utf-8')
+            (joint / 'example.dxf').write_text('0\nEOF\n', encoding='utf-8')
 
             build_scope = root / 'build/dev'
             evidence = build_scope / 'models/example'
@@ -73,14 +81,27 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
             self.assertIn('| [`example`](../example/) | pass | `1234567890ab` | `scpf` | 1 | 2 |', results)
 
             anatomy = (site / 'content/verification/joint-anatomy/index.md').read_text(encoding='utf-8')
+            self.assertIn('9.8.7', anatomy)
+            self.assertNotIn('0.48.1', anatomy)
             self.assertIn('## Concept', anatomy)
             self.assertIn('**4 brackets**\nOne bracket.', anatomy)
             self.assertIn('### Diagram', anatomy)
             self.assertIn('[![Example diagram](example.svg)](example.svg)', anatomy)
             self.assertNotIn('    **4 brackets**', anatomy)
             self.assertNotIn('    ![Example diagram]', anatomy)
+            self.assertNotIn('CadCraft', anatomy)
+            self.assertNotIn('.cadcraft.json', anatomy)
             self.assertTrue((site / 'static/verification/joint-anatomy/example.svg').is_file())
-            self.assertTrue((site / 'static/verification/joint-anatomy/example.cadcraft.json').is_file())
+            self.assertTrue((site / 'static/verification/joint-anatomy/example.dxf').is_file())
+            self.assertFalse(list((site / 'static/verification/joint-anatomy').glob('*.cadcraft.json')))
+
+    def test_repository_joint_anatomy_has_no_cadcraft_sources(self):
+        root = Path(__file__).resolve().parents[3]
+        joint = root / 'docs/verification/joint-anatomy'
+        self.assertFalse(list(joint.glob('*.cadcraft.json')))
+        body = (joint / 'body.html').read_text(encoding='utf-8')
+        self.assertNotIn('CadCraft source', body)
+        self.assertNotIn('.cadcraft.json', body)
 
     def test_coverage_rejects_unknown_owner(self):
         with TemporaryDirectory() as tmp:

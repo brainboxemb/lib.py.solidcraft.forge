@@ -1,9 +1,11 @@
 ---
 title: Verification
 type: models
-description: Model-based qualification and verification evidence across Forge CAD implementations.
+description: Qualification cases and durable evidence for Forge/SCPF behaviour.
 ---
 
-Every physical owner whose `model.yml.purpose` contains `verification` is projected here from the same source owner and durable build evidence.
+Verification shows the model cases used to qualify Forge/SCPF behaviour across the supported implementations. Each case pairs source intent with published build and verification evidence so you can inspect what was checked and what passed.
+
+A PASS means the declared checks passed for that published source and qualified runtime; it is evidence, not a support or production-readiness guarantee.
 
 Special views: [Coverage](coverage/) · [Results](results/) · [Joint anatomy](joint-anatomy/)

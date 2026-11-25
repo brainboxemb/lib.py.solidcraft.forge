@@ -6,18 +6,56 @@ import re
 from pathlib import Path
 import yaml
 
+from .landing import landing_metadata
+
 
 def verify(source_root: Path, site: Path, build_scope: Path | None):
+    warning_marker = "data-forge-development-warning"
+
     def read(route):
         path = site / route / "index.html"
         if not path.is_file():
             raise RuntimeError(f"missing generated route: {path}")
         return unescape(path.read_text(encoding="utf-8"))
 
+    home = read("")
+    forge = landing_metadata(source_root)
+    for marker in (
+        "Python API/compiler for SolidCraft",
+        "SCPF model",
+        "Forge compiler",
+        "SolidCraft commands",
+        "SolidCraft remains the CAD engine",
+        f"SCPF {forge['package_version']}",
+        f"Tested with SolidCraft {forge['tested_solidcraft_version']}",
+        "Start with the Guide",
+        "API Reference",
+        "Cheatsheet",
+        "Examples",
+        "Verification",
+    ):
+        if marker not in home:
+            raise RuntimeError(f"Forge landing content missing: {marker}")
+
     for route, marker in (("", "cad-home"), ("docs", "Documentation"), ("docs/model-pages", "Understand verification"),
                           ("examples", "cad-model-grid"), ("verification", "cad-model-grid")):
-        if marker not in read(route):
+        html = read(route)
+        if marker not in html:
             raise RuntimeError(f"missing layout marker for {route}: {marker}")
+        if warning_marker not in html:
+            raise RuntimeError(f"missing Forge development warning for {route or '/'}")
+
+    for route in (
+        "guide",
+        "reference",
+        "cheatsheet",
+        "verification/coverage",
+        "verification/results",
+        "verification/joint-anatomy",
+    ):
+        if (site / route / "index.html").is_file():
+            if warning_marker not in read(route):
+                raise RuntimeError(f"missing Forge development warning for {route}")
 
     for model in sorted((source_root / "models").rglob("model.yml")):
         if not (model.parent / "ci.yml").is_file():
@@ -35,6 +73,8 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
                     raise RuntimeError(f"unexpected purpose view: {route}")
                 continue
             html = read(route)
+            if warning_marker not in html:
+                raise RuntimeError(f"{route}: missing Forge development warning")
             expected = ["cad-model-detail", str(meta.get("title", item)), "Build and verification"]
             featured = meta.get("presentation_primary", ci.get("primary"))
             order = ["expected-setup", "featured-result", "primary-source", "reference-code", "image-overview", "check-overview", "build-verification"]
