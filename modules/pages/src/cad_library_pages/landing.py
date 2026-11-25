@@ -14,6 +14,19 @@ _TESTED = re.compile(
 )
 
 
+def tested_solidcraft_version(source_root: Path) -> str:
+    """Read the qualified SolidCraft version statically from Forge source."""
+
+    source_root = source_root.resolve()
+    version_source = (
+        source_root / "cadlib/src/scpf/version.py"
+    ).read_text(encoding="utf-8")
+    match = _TESTED.search(version_source)
+    if match is None:
+        raise ValueError("cannot read TESTED_SOLIDCRAFT_VERSION for Pages")
+    return match.group(1)
+
+
 def landing_metadata(source_root: Path) -> dict[str, str]:
     source_root = source_root.resolve()
     pyproject = tomllib.loads(
@@ -21,16 +34,9 @@ def landing_metadata(source_root: Path) -> dict[str, str]:
     )
     package_version = str(pyproject["project"]["version"])
 
-    version_source = (
-        source_root / "cadlib/src/scpf/version.py"
-    ).read_text(encoding="utf-8")
-    match = _TESTED.search(version_source)
-    if match is None:
-        raise ValueError("cannot read TESTED_SOLIDCRAFT_VERSION for Pages")
-
     return {
         "package_version": package_version,
-        "tested_solidcraft_version": match.group(1),
+        "tested_solidcraft_version": tested_solidcraft_version(source_root),
     }
 
 
