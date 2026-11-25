@@ -59,6 +59,26 @@ class ApiReferenceProjectionTests(unittest.TestCase):
             )
             self.assertNotIn('NEW validates', landing)
 
+    def test_all_public_callables_have_use_when_and_limits(self):
+        root = Path(__file__).resolve().parents[3]
+        manifest = json.loads(
+            (root / 'docs/api-reference.json').read_text(encoding='utf-8')
+        )
+        callables = [
+            row for row in manifest['references']
+            if row.get('kind') == 'callable'
+        ]
+        missing_use_when = [
+            row['name'] for row in callables
+            if not str(row.get('use_when', '')).strip()
+        ]
+        missing_limits = [
+            row['name'] for row in callables
+            if not str(row.get('limits', '')).strip()
+        ]
+        self.assertEqual(missing_use_when, [])
+        self.assertEqual(missing_limits, [])
+
     def test_rejects_manifest_that_loses_public_export(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
