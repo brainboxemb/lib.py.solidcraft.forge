@@ -110,6 +110,35 @@ class PublishTests(unittest.TestCase):
         with self.assertRaisesRegex(PublishError, "stable source"):
             _preserve_release_baseline(plan, "dev", "main")
 
+    @patch("cad_library_build.publish._run")
+    @patch("cad_library_build.publish._prepare_worktree")
+    @patch("cad_library_build.publish._require_fresh_source")
+    def test_exp_publication_updates_only_exp_scope(self, fresh, prepare, run):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidate = root / "candidate"
+            candidate.mkdir()
+            (root / "ci.yml").write_text("branches:\n  stable: main\n  development: dev\ngenerated:\n  build_branch: build\n")
+            sha = "e" * 40
+            plan = {"schema": 2, "source_sha": sha, "active": [], "selected": [], "full": True, "library": True}
+            (candidate / "build-plan.json").write_text(json.dumps(plan))
+            def setup(repo, branch, target):
+                target.mkdir()
+                for scope in ("main", "dev"):
+                    (target / scope).mkdir()
+                    (target / scope / "sentinel").write_text(scope)
+            def inspect(command, *, cwd, check=True):
+                if command[:2] == ["git", "add"]:
+                    self.assertEqual(command, ["git", "add", "-A", "--", "exp"])
+                    self.assertEqual((cwd / "main/sentinel").read_text(), "main")
+                    self.assertEqual((cwd / "dev/sentinel").read_text(), "dev")
+                    self.assertEqual(json.loads((cwd / "exp/build-plan.json").read_text()), plan)
+                return type("Result", (), {"returncode": 0})()
+            prepare.side_effect = setup
+            run.side_effect = inspect
+            publish(root, candidate, "exp", sha)
+            fresh.assert_called_once_with(root.resolve(), "exp", sha)
+
     def test_rejects_missing_active_output(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

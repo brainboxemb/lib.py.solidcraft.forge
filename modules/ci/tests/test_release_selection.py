@@ -15,6 +15,31 @@ PROJECT = SimpleNamespace(
 
 
 class ReleaseSelectionTests(unittest.TestCase):
+    def test_experimental_integration_requires_full_qualification(self):
+        for head, base in (("exp", "dev"), ("dev", "exp")):
+            with self.subTest(head=head, base=base), patch.dict(os.environ, {"GITHUB_EVENT_NAME": "pull_request", "GITHUB_BASE_REF": base}, clear=True):
+                plan, paths, full, release_only = selection(Path("."), PROJECT, head, ())
+                self.assertTrue(full)
+                self.assertTrue(plan.library)
+                self.assertFalse(release_only)
+
+    @patch.dict(os.environ, {"GITHUB_EVENT_NAME": "push", "GH_TOKEN": "token", "GITHUB_REPOSITORY": "owner/repo", "GITHUB_SHA": "new", "GITHUB_RUN_ID": "42"}, clear=True)
+    @patch("cad_library_ci.__main__.changed_paths", return_value=())
+    @patch("cad_library_ci.__main__.last_successful_dev_sha", return_value="old")
+    def test_exp_uses_own_incremental_history(self, history, changed):
+        plan, paths, full, release_only = selection(Path("."), PROJECT, "exp", ())
+        self.assertEqual(history.call_args.kwargs["branch"], "exp")
+        self.assertEqual(plan.branch, "exp")
+        self.assertFalse(full)
+        self.assertFalse(release_only)
+
+    @patch.dict(os.environ, {"GITHUB_EVENT_NAME": "push"}, clear=True)
+    def test_first_experimental_build_is_full(self):
+        plan, paths, full, release_only = selection(Path("."), PROJECT, "exp", ())
+        self.assertTrue(full)
+        self.assertTrue(plan.library)
+        self.assertFalse(release_only)
+
     @patch.dict(
         os.environ,
         {
