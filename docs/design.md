@@ -139,6 +139,14 @@ that occurrence subtree. Projected top/right views inherit the main view
 source. The result remains native and safe, but the scale can be conservative
 for a small component inside a much larger Assembly.
 
+Drawing presentation is projected from the same owner/evidence architecture as
+other examples. The `sample-plate-drawing` owner has
+`purpose: [example, verification]`: Examples teaches the workflow, while the
+Drawings verification section exposes the same native evidence. Pages discovers
+implementation-local `drawings/*.pdf`, embeds the raw build-branch PDF and
+links its blob/download locations without copying the generated file into
+`gh-pages`.
+
 ## SolidCraft command-reference boundary
 
 The canonical SolidCraft command registry is a Forge-owned engineering
