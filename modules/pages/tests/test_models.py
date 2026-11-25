@@ -81,6 +81,9 @@ class ModelPagesTests(unittest.TestCase):
             drawing = evidence / "cadquery/drawings/Sample-Plate-Drawing.pdf"
             drawing.parent.mkdir(parents=True)
             drawing.write_bytes(b"%PDF-1.7\n")
+            drawing.with_suffix(".png").write_bytes(
+                b"\x89PNG\r\n\x1a\npreview"
+            )
             (evidence / "model.stl").write_text("mesh")
             for implementation in ("cadquery", "legacy"):
                 (evidence / implementation / "model.stl").write_text("mesh")
@@ -124,6 +127,7 @@ class ModelPagesTests(unittest.TestCase):
                     "name": "Sample Plate Drawing",
                     "bloburl": "https://github.com/owner/repo/blob/build/dev/models/box/cadquery/drawings/Sample-Plate-Drawing.pdf",
                     "rawurl": "https://raw.githubusercontent.com/owner/repo/build/dev/models/box/cadquery/drawings/Sample-Plate-Drawing.pdf",
+                    "previewurl": "https://raw.githubusercontent.com/owner/repo/build/dev/models/box/cadquery/drawings/Sample-Plate-Drawing.png",
                 }],
             )
             self.assertIn("**legacy** — builder-legacy", content)
