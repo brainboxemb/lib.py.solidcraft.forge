@@ -6,29 +6,10 @@
     <h1>{{ .Title }}</h1>
     <p>{{ .Description }}</p>
   </section>
-  {{ $pages := .RegularPages.ByWeight }}
-  {{ $verificationModels := where $pages "Params.verificationsection" "!=" nil }}
-  {{ if gt (len $verificationModels) 0 }}
-    {{ $catalog := hugo.Data.cad.verification_sections }}
-    {{ range $section := index $catalog "sections" }}
-      {{ $key := index $section "id" }}
-      {{ $models := where $verificationModels "Params.verificationsection" $key }}
-      {{ if gt (len $models) 0 }}
-        <section class="cad-section cad-catalog-section" data-verification-section="{{ $key }}">
-          <h2>{{ index $section "label" }}</h2>
-          <p>{{ index $section "description" }}</p>
-          <div class="cad-model-grid">
-            {{ range $models }}{{ partial "cad/model-card.html" . }}{{ end }}
-          </div>
-        </section>
-      {{ end }}
-    {{ end }}
-  {{ else }}
-    <section class="cad-section cad-catalog-section">
-      <div class="cad-model-grid">
-        {{ range $pages }}{{ partial "cad/model-card.html" . }}{{ end }}
-      </div>
-    </section>
-  {{ end }}
+  <section class="cad-section cad-catalog-section">
+    <div class="cad-model-grid">
+      {{ range .RegularPages.ByWeight }}{{ partial "cad/model-card.html" . }}{{ end }}
+    </div>
+  </section>
 </main>
 {{ end }}
