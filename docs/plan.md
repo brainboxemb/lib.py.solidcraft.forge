@@ -61,6 +61,18 @@ The historical repository is being finalized as
 
 ## Now
 
+### #178 — public appearance/color authoring
+
+Consumer-driven by CAD Wall Hook #133.
+
+Add a narrow display-only color contract:
+
+- `Shape.with_appearance("#RRGGBB")`;
+- lower to native `appearance.assign`;
+- do not create or modify physical material/BOM metadata;
+- qualify saved native appearance through SolidCraft inspection;
+- keep the first contract opaque and body-wide.
+
 Forge **v0.18.0** is the current canonical package release.
 
 Accepted stable state:
