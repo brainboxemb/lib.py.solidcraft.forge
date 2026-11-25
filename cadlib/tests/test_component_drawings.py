@@ -47,10 +47,11 @@ class ComponentDrawingTests(unittest.TestCase):
                 "command": "drawing.create",
                 "params": {
                     "name": "Second panel drawing",
-                    "template": "iso-a3-part",
+                    "template": "iso-a4-part",
                     "first_sheet_name": "Sheet 1",
                 },
                 "bind": {
+                    "$drawing_1": "id",
                     "$drawing_1_source": {
                         "field": "sources",
                         "where": {"path": None},
@@ -99,6 +100,18 @@ class ComponentDrawingTests(unittest.TestCase):
             drawing[5],
             {"command": "drawing.close", "params": {}},
         )
+        self.assertEqual(
+            compile_assembly(assembly, "DrawingAssembly")["artifacts"],
+            {
+                "drawings": [
+                    {
+                        "name": "Second panel drawing",
+                        "drawing": "$drawing_1",
+                        "pdf": "drawings/Second-panel-drawing.pdf",
+                    }
+                ]
+            },
+        )
 
     def test_standalone_component_can_own_a_drawing(self):
         panel = DrawingPanel()
@@ -109,6 +122,21 @@ class ComponentDrawingTests(unittest.TestCase):
             and row["params"]["name"] == "Panel drawing"
             for row in commands
         ))
+
+    def test_a3_template_remains_available_for_complex_parts(self):
+        panel = DrawingPanel()
+        document = compile_assembly(
+            panel.with_drawing(
+                name="Large drawing",
+                template="iso-a3-part",
+            ),
+            "Panel",
+        )
+        create = next(
+            row for row in document["commands"]
+            if row["command"] == "drawing.create"
+        )
+        self.assertEqual(create["params"]["template"], "iso-a3-part")
 
     def test_drawing_intent_is_final_design_state(self):
         first = DrawingPanel()
@@ -133,6 +161,8 @@ class ComponentDrawingTests(unittest.TestCase):
             panel.with_drawing(template="")
         with self.assertRaisesRegex(ValueError, "sheet name must be non-empty"):
             panel.with_drawing(sheet_name="")
+        with self.assertRaisesRegex(ValueError, "safe PDF filename"):
+            panel.with_drawing(name="...")
 
 
 if __name__ == "__main__":
