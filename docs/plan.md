@@ -7,7 +7,7 @@ This file contains unfinished work only.
 The Forge migration is complete and promoted to stable `main`.
 
 The accepted baseline now has:
-- 47 physical model owners;
+- 49 physical model owners;
 - SCPF as primary per owner;
 - historically real reference implementations local to the same physical owner;
 - native and applicable geometry verification;
@@ -17,7 +17,7 @@ The accepted baseline now has:
 - `components` as one physical owner with
   `purpose: [example, verification]`;
 - exactly four public Examples;
-- all 47 physical owners projected into Verification;
+- all 49 physical owners projected into Verification;
 - durable generated CAD artifacts on `build/<scope>/models/**`, not copied to
   `gh-pages`;
 - the historical nine-chapter Guide and Cheatsheet;
@@ -47,80 +47,65 @@ The accepted baseline now has:
   `tool.py.lib.ci v0.2.1`, with Pages excluded from release evidence;
 - a hard migration boundary that rejects `0.15.0` and older as Forge
   releases;
-- canonical post-migration release `v0.16.0`, published from stable main
-  `021dc78a32d99d31f16a76efc9d036855114df0c` after exact full build/main
-  qualification;
-- stable Pages quality phase promoted to main
-  `b091449dab32e75ef3c4f22ca0679d21f21beedf`, with full 47-owner evidence
-  and canonical stable Pages deployment.
+- canonical post-migration releases through `v0.18.0`; v0.18.0 is published
+  from exact stable main `009a2bd86dad7c4d452d72a4541f4bdf2dbd34d2`;
+- shared topology selection is part of the stable public API:
+  `Edges.from_faces(...)`, one world-cardinal `Faces` vocabulary, and
+  replay-bound native `model.faces` / `model.edges` identity;
+- the stable v0.18.0 source has exact full schema-2 evidence with
+  `library: true` and all 49 physical owners passing;
+- stable Pages quality and the canonical Pages deployment remain accepted.
 
 The historical repository is being finalized as
 `brainboxemb/lib.py.solidcraft.forge.OLD`, an archived A/B/provenance reference.
 
 ## Now
 
-The release/CI correction and the Forge Pages quality phase are complete on
-stable `main`.
+Forge **v0.18.0** is the current canonical package release.
 
 Accepted stable state:
 
-- release branches start from stable `main`, allow only release metadata and
-  reuse retained full product evidence only across validated release-only
-  history;
-- Forge v0.17.0 is the current canonical package release;
-- stable Pages source:
-  `b091449dab32e75ef3c4f22ca0679d21f21beedf`;
-- permanent stable build `45623785680`: PASS;
-- durable stable evidence: `full: true`, `library: true`, 47/47 owners;
-- Pages assembly/publication `45624236854`: PASS;
-- GitHub Pages deployment `45624348968`: PASS;
-- the stable public site includes the accepted #57/#58/#68/#106/#107/#109/
-  #112/#113 content and presentation fixes.
+- #148 shared face/edge topology selection is implemented, promoted and
+  released;
+- `Edges.from_faces(...)` selects complete native boundaries of named
+  cardinal faces without caller XYZ picks;
+- TOP/BOTTOM, LEFT/RIGHT and FRONT/BACK are one documented world-cardinal
+  `Faces` vocabulary across topology consumers;
+- SolidCraft-returned face/edge identity is resolved at replay time and native
+  `{body, index}` edge references are consumed by modify features;
+- the Box one-face and XZ FRONT/BACK two-face qualification owners are part of
+  the 49-owner stable graph;
+- stable product promotion #150 / PR #152 received full qualification and was
+  integrated with the policy-selected merge commit;
+- release #151 / PR #153 published annotated tag `v0.18.0` exactly at
+  `009a2bd86dad7c4d452d72a4541f4bdf2dbd34d2`;
+- stable-to-development synchronization #154 / PR #155 returned the release
+  metadata to `dev` without rebasing shared history.
 
-No release blocker remains from the completed stabilization phase.
+### Active: #156 release-only stable push selection regression
 
-Forge work should now return to demonstrated consumer value rather than
-continuing a broad migration/site-cleanup stream.
+The v0.18.0 release PR itself correctly selected only the `release` module,
+the library owner and zero model owners. The subsequent metadata-only stable
+`main` push unexpectedly reran full 49-owner qualification and published a
+new full baseline instead of retaining the previous full product evidence.
 
-### #148 shared face/edge topology selection — implemented and qualified
+This did not invalidate v0.18.0: the exact release SHA received stronger
+full/library/all-owner evidence and the release validator accepted it.
+Nevertheless it violates the documented release optimization contract and must
+be corrected separately without changing v0.18.0 provenance.
 
-The Wall Hook in the active CAD repository demonstrated that face and edge
-selection was still too feature-specific. PR #149 implements the shared
-topology layer and has qualified it for integration to `dev`:
-
-- `Faces` is the shared world-cardinal vocabulary across `on()`, `shell()`
-  and face-boundary edge selection;
-- `Edges.from_faces(...)` selects complete named-face boundaries without
-  caller XYZ picks;
-- replay resolves `model.faces` and `model.edges` from the current
-  SolidCraft run and sends returned native `{body, index}` edge references to
-  modify features;
-- the lowering consumes SolidCraft-returned face/edge identity and does not
-  predict browser topology ids;
-- existing edge selectors remain source-compatible;
-- one-face Box and two-face XZ Polygon2D extrusion chamfers both pass native
-  qualification; the XZ broad faces are FRONT/BACK because extrusion is along
-  world Y;
-- `Shape.on()` accepts the same six-face intent vocabulary while unqualified
-  side placement reports the explicit native placement/topology limitation;
-- requirements, design, API reference, Guide and Cheatsheet describe the common
-  topology contract.
-
-No Forge release is part of #148. Stable remains v0.17.0 until a separately
-planned promotion/release requires this API.
-
-Next Forge work:
+After #156:
 1. keep #73 as retained engine/runtime regression evidence, not a replay
    workaround target;
 2. prioritize migrated product/API backlog (#59-#72) only when an active CAD
    consumer or concrete design requirement needs it;
 3. keep template.cad.library #62 as the non-blocking generic optimization for
-   avoiding full model qualification on history-only `main -> dev` syncs;
+   avoiding unnecessary full qualification on history-only synchronization;
 4. coordinate new Forge API changes with the active CAD repository rather than
    adding speculative coverage.
 
-CAD project work continues independently and may consume the stable Forge and
-release-flow baseline.
+CAD project work may consume Forge v0.18.0 as the stable topology-selection
+baseline.
 
 ## Later
 
