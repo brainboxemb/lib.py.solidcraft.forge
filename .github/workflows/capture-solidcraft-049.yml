@@ -1,5 +1,7 @@
 name: Capture SolidCraft 0.49 reference
 
+# Qualification-only workflow; removed before merge.
+
 on:
   push:
     branches:
