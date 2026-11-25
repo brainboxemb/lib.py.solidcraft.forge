@@ -8,6 +8,27 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-11-25
+
+### Added
+
+- Add native technical drawings for component occurrences through
+  `Occurrence.with_drawing(...)` and `Assembly.with_drawing(...)`, with
+  SolidCraft-owned front, top, right and isometric standard views.
+- Publish every declared native drawing as a vector PDF build artifact below
+  `drawings/`, using SolidCraft `drawing.export` rather than screenshots or
+  a Forge-side PDF renderer.
+
+### Changed
+
+- Default component drawings to SolidCraft's ISO A4 part template while
+  retaining explicit `template="iso-a3-part"` support for larger or more
+  complex drawings.
+- Restore open drawing editor context across headless replay phase boundaries,
+  matching the existing active-component and active-Sketch transport behavior.
+- Document the drawing ownership boundary, A4/A3 workflow and public
+  `with_drawing` API in the Guide and generated API Reference.
+
 ## [0.16.0] - 2026-11-25
 
 ### Added
