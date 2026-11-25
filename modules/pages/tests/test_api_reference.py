@@ -52,6 +52,12 @@ class ApiReferenceProjectionTests(unittest.TestCase):
                 json.loads((site / 'static/reference/api.json').read_text(encoding='utf-8')),
                 manifest,
             )
+            landing = (site / 'content/reference/_index.md').read_text(encoding='utf-8')
+            self.assertIn(
+                'Current Forge validates every referenced public symbol statically',
+                landing,
+            )
+            self.assertNotIn('NEW validates', landing)
 
     def test_rejects_manifest_that_loses_public_export(self):
         with TemporaryDirectory() as tmp:

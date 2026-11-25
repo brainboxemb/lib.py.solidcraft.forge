@@ -56,33 +56,24 @@ The historical repository is being finalized as
 
 ## Now
 
-Forge release infrastructure and the global development warning are accepted:
+Forge release infrastructure, the global development warning and the product
+landing page are accepted:
 
 - stable-main release-flow implementation is on Forge `main`
   `dc9bd4b75e9aedf8f5ffa215be7382775baa89c9`;
 - unmerged release-only smoke PR #103 / run `45603049650`: PASS;
-- #57 global development warning is accepted on `dev`
-  `02511eaa57d4129a3f90bad327ce5373651decc8`;
-- #57 permanent Pages publication `45604568348`: PASS.
+- #57 global development warning is accepted on `dev`;
+- #58 Forge/SCPF product landing is accepted on `dev`.
 
-The active Pages task is #58: make the landing page explain Forge/SCPF as a
-product rather than describing the website.
+The active Pages audit defects are:
 
-1. #58 — rewrite the landing page:
-   - Forge/SCPF is the Python API/compiler for SolidCraft;
-   - show the compilation relationship:
-     SCPF model -> Forge compiler -> SolidCraft commands/native geometry;
-   - make explicit that SolidCraft remains the CAD engine;
-   - project SCPF package version and tested SolidCraft version statically from
-     source without importing `scpf`;
-   - give direct entry points to Guide, API Reference, Cheatsheet, Examples and
-     Verification;
-   - retain a link to real SolidCraft CAD projects;
-   - review desktop/mobile screenshot evidence.
-2. After #58, run a full visual/content audit:
-   - landing;
+1. #106 — remove migration-era `NEW` wording from the public API Reference
+   landing while retaining static source validation against `cadlib/src/scpf`.
+2. #107 — derive Joint anatomy SolidCraft version from the current source-owned
+   `TESTED_SOLIDCRAFT_VERSION` instead of hardcoding 0.48.1.
+3. Continue the visual/content audit after #106/#107:
    - Guide;
-   - API Reference;
+   - API Reference detail routes;
    - Cheatsheet;
    - Examples;
    - Verification and special routes;
