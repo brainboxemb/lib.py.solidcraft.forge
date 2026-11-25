@@ -49,6 +49,13 @@ The accepted baseline now has:
 The historical `brainboxemb/lib.py.solidcraft.forge` repository is now an
 archival/A-B reference rather than an unfinished migration gate.
 
+## Now
+
+1. Restore and qualify the late OLD `issue/845-live-sheet-recess` verification
+   owner that was authored after Forge NEW was created but before OLD work
+   stopped. Keep the live-vs-headless replay defect tracked by #73 after the
+   fixture itself is safely migrated.
+
 ## Later
 
 1. publish the first actual Forge NEW release only after an explicit version bump above `0.15.0` and a dated changelog section;
