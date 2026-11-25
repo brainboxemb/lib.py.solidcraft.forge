@@ -388,12 +388,12 @@ data-copied-label="Copied!"
 &lt;a href="#modelerror" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Report unsupported or invalid CAD model intent.&lt;/p&gt;
 &lt;h3 data-hextra-search-id="modelparameterwarning"&gt;ModelParameterWarning&lt;span class="hx:absolute hx:-mt-20" id="modelparameterwarning"&gt;&lt;/span&gt;
 &lt;a href="#modelparameterwarning" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h3&gt;&lt;p&gt;Warn that an editable model parameter lost a native CAD dependency.&lt;/p&gt;</description></item><item><title>Edges</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Edges/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Edges/</guid><description>
-&lt;p&gt;Select edges for supported fillet and chamfer feature operations.&lt;/p&gt;
+&lt;p&gt;Select edge topology for supported fillet and chamfer feature operations.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#fillet"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
-&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Use Edges.VERTICAL for the vertical edges of a supported rectangular body. Use from_profile() for named profile segments and from_vertices() for extrusion-axis edges grown from named profile vertices.&lt;/p&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Use Edges.from_faces(&amp;hellip;) for the complete boundary of one or more named Faces. Existing Edges.VERTICAL, from_profile() and from_vertices() remain available for their established selection contracts.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
-&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Only the selectors implemented here are public. from_profile() currently supports sides=&amp;ldquo;both&amp;rdquo;; from_vertices() requires named Polygon2D vertices.&lt;/p&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;from_faces() resolves native SolidCraft topology at replay time. from_profile() currently supports sides=&amp;ldquo;both&amp;rdquo;; from_vertices() requires named Polygon2D vertices.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
 &lt;a href="#members" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;VERTICAL&lt;/code&gt; = &lt;code&gt;vertical&lt;/code&gt;&lt;/li&gt;
@@ -431,12 +431,12 @@ data-copied-label="Copied!"
 &lt;/button&gt;
 &lt;/div&gt;
 &lt;/div&gt;</description></item><item><title>Faces</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Faces/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/dev/reference/Faces/</guid><description>
-&lt;p&gt;Select named planar faces for within-component feature operations.&lt;/p&gt;
+&lt;p&gt;Select world-cardinal planar faces consistently across within-component feature operations.&lt;/p&gt;
 &lt;p&gt;&lt;a href="../../guide/features/#hole"&gt;Related guide&lt;/a&gt;&lt;/p&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
-&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Pass a Faces value to operations such as Shape.on() and Shape.shell() to identify a surface of the target body.&lt;/p&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Use Faces with Shape.on(), Shape.shell() and Edges.from_faces() so placement and modify features share one surface vocabulary.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
-&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;The enum defines all six cardinal faces. Individual operations may support only a subset; Shape.on() currently accepts TOP and BOTTOM. Component assembly attachment uses Anchor instead.&lt;/p&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;TOP/BOTTOM are +/-Z, LEFT/RIGHT are -/+X and FRONT/BACK are -/+Y. Native topology selection uses the largest planar face with the requested normal. Component assembly attachment uses Anchor instead.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="members"&gt;Members&lt;span class="hx:absolute hx:-mt-20" id="members"&gt;&lt;/span&gt;
 &lt;a href="#members" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;TOP&lt;/code&gt; = &lt;code&gt;top&lt;/code&gt;&lt;/li&gt;
@@ -1169,11 +1169,11 @@ data-copied-label="Copied!"
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
 &lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Bevel one or more edges of a supported feature-based body. Chamfer and fillet use the same edge-selection forms.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
-&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Edges.VERTICAL and cardinal Box edge selectors require a supported rectangular body. Named profile/vertex selectors require matching Polygon2D ids in a supported extrusion.&lt;/p&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="parameters"&gt;Parameters&lt;span class="hx:absolute hx:-mt-20" id="parameters"&gt;&lt;/span&gt;
 &lt;a href="#parameters" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;distance&lt;/code&gt; — Chamfer distance in mm.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;edges&lt;/code&gt; — Edge selection. Use Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(&amp;hellip;), Edges.from_vertices(&amp;hellip;) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;edges&lt;/code&gt; — Edge selection. Prefer Edges.from_faces(&amp;hellip;) for named face perimeters; Edges.VERTICAL, supported two-direction Box selectors, Edges.from_profile(&amp;hellip;), Edges.from_vertices(&amp;hellip;) and non-empty XYZ edge-pick sequences remain supported. Defaults to Edges.VERTICAL.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 data-hextra-search-id="example"&gt;Example&lt;span class="hx:absolute hx:-mt-20" id="example"&gt;&lt;/span&gt;
 &lt;a href="#example" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -1273,11 +1273,11 @@ data-copied-label="Copied!"
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
 &lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Round one or more edges of a supported feature-based body. Fillet and chamfer use the same edge-selection forms.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
-&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Edges.VERTICAL and cardinal Box edge selectors require a supported rectangular body. Named profile/vertex selectors require matching Polygon2D ids in a supported extrusion.&lt;/p&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="parameters"&gt;Parameters&lt;span class="hx:absolute hx:-mt-20" id="parameters"&gt;&lt;/span&gt;
 &lt;a href="#parameters" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;radius&lt;/code&gt; — Fillet radius in mm.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;edges&lt;/code&gt; — Edge selection. Use Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(&amp;hellip;), Edges.from_vertices(&amp;hellip;) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;edges&lt;/code&gt; — Edge selection. Prefer Edges.from_faces(&amp;hellip;) for named face perimeters; Edges.VERTICAL, supported two-direction Box selectors, Edges.from_profile(&amp;hellip;), Edges.from_vertices(&amp;hellip;) and non-empty XYZ edge-pick sequences remain supported. Defaults to Edges.VERTICAL.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 data-hextra-search-id="example"&gt;Example&lt;span class="hx:absolute hx:-mt-20" id="example"&gt;&lt;/span&gt;
 &lt;a href="#example" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code"&gt;
@@ -1418,13 +1418,13 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
-&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Put a Hole or another supported feature on an existing Shape and select its entry/support surface with Faces.&lt;/p&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Put a Hole or another supported feature on an existing Shape and describe its entry/support surface with the same Faces vocabulary used by shell() and Edges.from_faces().&lt;/p&gt;
 &lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
-&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Shape.on() currently accepts Faces.TOP and Faces.BOTTOM. This is feature placement; component assembly attachment uses Anchor and the component occurrence attach() API.&lt;/p&gt;
+&lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;All six Faces values are accepted as topology intent. TOP/BOTTOM placement is qualified; side-face placement may still report an explicit native placement/topology limitation. Component assembly attachment uses Anchor.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="parameters"&gt;Parameters&lt;span class="hx:absolute hx:-mt-20" id="parameters"&gt;&lt;/span&gt;
 &lt;a href="#parameters" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;target&lt;/code&gt; — Existing Shape that receives the feature.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;face&lt;/code&gt; — Target surface. Currently Faces.TOP or Faces.BOTTOM. Defaults to Faces.TOP.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;face&lt;/code&gt; — Cardinal target surface from the shared Faces vocabulary. Defaults to Faces.TOP.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;offset&lt;/code&gt; — In-plane (x, y) offset from the target face centre, in mm. Defaults to (0, 0).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 data-hextra-search-id="example"&gt;Example&lt;span class="hx:absolute hx:-mt-20" id="example"&gt;&lt;/span&gt;
@@ -1559,7 +1559,7 @@ data-copied-label="Copied!"
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;h2 data-hextra-search-id="use-when"&gt;Use when&lt;span class="hx:absolute hx:-mt-20" id="use-when"&gt;&lt;/span&gt;
-&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Create an enclosure-like body with an even wall thickness while removing one or more named planar faces.&lt;/p&gt;
+&lt;a href="#use-when" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;Create an enclosure-like body with an even wall thickness while selecting open surfaces through the same Faces vocabulary used by on() and Edges.from_faces().&lt;/p&gt;
 &lt;h2 data-hextra-search-id="limits"&gt;Limits&lt;span class="hx:absolute hx:-mt-20" id="limits"&gt;&lt;/span&gt;
 &lt;a href="#limits" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;p&gt;open= must be one Faces value or a non-empty sequence of Faces values. Support still depends on the underlying feature tree.&lt;/p&gt;
 &lt;h2 data-hextra-search-id="parameters"&gt;Parameters&lt;span class="hx:absolute hx:-mt-20" id="parameters"&gt;&lt;/span&gt;
