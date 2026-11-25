@@ -24,28 +24,28 @@ VERIFICATION = SolidCraftVerification(
             checks=(
                 SolidCraftInspectionCheck(
                     id="type",
-                    path=("joints", 0, "type"),
+                    path=(0, "joints", 0, "type"),
                     expected="revolute",
                 ),
                 SolidCraftInspectionCheck(
                     id="name",
-                    path=("joints", 0, "name"),
+                    path=(0, "joints", 0, "name"),
                     expected="Hinge",
                 ),
                 SolidCraftInspectionCheck(
                     id="value",
-                    path=("joints", 0, "values", 0, "value"),
+                    path=(0, "joints", 0, "values", 0, "value"),
                     expected=60.0,
                     tolerance=0.001,
                 ),
                 SolidCraftInspectionCheck(
                     id="unit",
-                    path=("joints", 0, "values", 0, "unit"),
+                    path=(0, "joints", 0, "values", 0, "unit"),
                     expected="deg",
                 ),
                 SolidCraftInspectionCheck(
                     id="limits",
-                    path=("joints", 0, "values", 0, "limits"),
+                    path=(0, "joints", 0, "values", 0, "limits"),
                     expected=[0.0, 180.0],
                 ),
             ),
@@ -56,12 +56,12 @@ VERIFICATION = SolidCraftVerification(
             checks=(
                 SolidCraftInspectionCheck(
                     id="moved",
-                    path=("moved",),
+                    path=(0, "moved",),
                     expected=True,
                 ),
                 SolidCraftInspectionCheck(
                     id="value",
-                    path=("values", 0, "value"),
+                    path=(0, "values", 0, "value"),
                     expected=120.0,
                     tolerance=0.001,
                 ),
