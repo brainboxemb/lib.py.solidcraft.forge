@@ -1006,8 +1006,13 @@ def _compile_assembly_with_dependencies(value, name):
                 settings["place"] = {"at": list(view.at)}
             if view.scale is not None:
                 settings["scale"] = view.scale
-                if view_name in {"top", "right"}:
-                    settings["linked"] = False
+            if view.visual_style is not None:
+                settings["visual_style"] = view.visual_style
+            if (
+                view_name in {"top", "right"}
+                and (view.scale is not None or view.visual_style is not None)
+            ):
+                settings["linked"] = False
             if settings:
                 commands.append(_command(
                     "drawing.view.edit",
