@@ -1,0 +1,48 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "length",
+        "expression": "250",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sheet.manage_rules",
+      "params": {
+        "name": "Contour Recess Rule",
+        "thickness": 1.25,
+        "k_factor": 0.4,
+        "bend_radius": 1.25,
+        "active": true
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XZ",
+        "name": "C profile"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            -7.5,
+            0.625
+          ],
+          [
+            -12.875,
+            0.625
+          ]
+        ],
+        "ids": [
+          "l1"
+        ],
+        "connect": true
+      }
+    }
+  ]
+}
