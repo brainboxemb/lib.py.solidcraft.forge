@@ -145,6 +145,39 @@ centered = Cylinder(d=8, h=30, axis=Axis.X).at(body)
 `shape.at(target)` means CENTER-to-CENTER for supported direct shapes. It does
 not mean "put this on a face". Use `on()` or `Sketch(on=...)` for that intent.
 
+### Shared face and edge topology selection
+
+`Faces` is one world-cardinal surface vocabulary across feature placement,
+shelling and edge-boundary selection:
+
+- `TOP/BOTTOM` are +Z/-Z;
+- `LEFT/RIGHT` are -X/+X;
+- `FRONT/BACK` are -Y/+Y.
+
+Use `Edges.from_faces(...)` when the design intent is the complete perimeter
+of one or more named faces:
+
+```python
+body = Box(80, 50, 15)
+body = body.chamfer(1.5, edges=Edges.from_faces(Faces.TOP))
+```
+
+For an XZ profile extruded along Y, the broad end faces are therefore
+`Faces.FRONT` and `Faces.BACK`:
+
+```python
+body = profile.extrude(15, sym=True)
+body = body.chamfer(
+    1.5,
+    edges=Edges.from_faces(Faces.FRONT, Faces.BACK),
+)
+```
+
+Forge resolves these faces and their boundary edges from SolidCraft during
+replay and sends native `{body, index}` edge references to fillet/chamfer.
+Model code does not provide XYZ picks or predict native topology ids. Existing
+edge selectors remain supported for their established use cases.
+
 ### `on()`
 
 `on()` selects a target surface for a within-component feature.
@@ -160,8 +193,11 @@ boss = Cylinder(d=24, h=14).on(plate, face=Faces.TOP)
 ```
 
 For a Hole, `face=Faces.TOP` means drilling starts at the current top surface
-and proceeds inward. `Faces` is surface-selection vocabulary; it is not an
-assembly attachment vocabulary.
+and proceeds inward. `Shape.on()` accepts the same six `Faces` values used by
+shell and face-boundary selection. TOP/BOTTOM placement is currently qualified;
+a side-face request may still fail in the native placement lowering with an
+explicit topology-limit error. `Faces` is surface-selection vocabulary; it is
+not an assembly attachment vocabulary.
 
 ### Explicit `Sketch`
 
@@ -597,7 +633,7 @@ See [change 0011](background/changes/0011-grouping-is-hierarchy-only.md).
 Cardinal direction names are shared where their geometric meaning is shared:
 `TOP`, `BOTTOM`, `LEFT`, `RIGHT`, `FRONT`, `BACK`.
 
-- `Faces` selects a surface for within-component feature placement.
+- `Faces` selects a world-cardinal surface consistently for within-component feature placement, shelling and `Edges.from_faces(...)`.
 - `Anchor` describes an attachment/alignment reference.
 - Direction selectors may be composed, for example `BOTTOM + LEFT`.
 - Component anchors may identify a face or a rectangular corner such as
@@ -696,7 +732,7 @@ See [change 0016](background/changes/0016-parameter-dependency-diagnostics.md).
 - `&` expresses intersection where supported.
 - `shell()`, `fillet()` and `chamfer()` are modifiers of supported feature trees.
 - `rectangular_pattern()` and `circular_pattern()` repeat already-applied native history features. Both keep one native SolidCraft pattern feature instead of expanding independent Python copies. Circular patterns support principal or fixed XYZ axes plus an optional fixed axis origin; native construction/edge/face axis selectors are separate future extensions.
-- `fillet(..., edges=...)` and `chamfer(..., edges=...)` use the same edge-selection vocabulary where SolidCraft accepts the same edge picks: `Edges.VERTICAL`, supported two-direction Box edge selectors, `Edges.from_profile(...)`, `Edges.from_vertices(...)` and explicit XYZ edge picks.
+- `fillet(..., edges=...)` and `chamfer(..., edges=...)` use the same edge-selection vocabulary. Prefer `Edges.from_faces(...)` when intent is a named face perimeter; existing `Edges.VERTICAL`, supported two-direction Box selectors, `Edges.from_profile(...)`, `Edges.from_vertices(...)` and explicit XYZ picks remain supported.
 - `Lip`, `SnapFit`, `Boss` and `Rest` are object-level feature intents;
   the compiler chooses the appropriate native SolidCraft representation.
 - `Anchor.INNER_BOTTOM` refers to the inner floor of a shelled body.
