@@ -15,15 +15,16 @@ from cad_verification import (
 HERE = Path(__file__).resolve().parent
 
 
-def expected(*, height, fit):
+def expected(*, height, fit, tube=None):
+    parameters = {
+        "sleeve_height": height,
+        "fit_diameter": fit,
+    }
+    if tube is not None:
+        parameters["tube_d"] = tube
     return SolidCraftModelExpectation(
         body_count=1,
-        parameters={
-            "tube_d": 20.0,
-            "clamp_interference": 0.2,
-            "sleeve_height": height,
-            "fit_diameter": fit,
-        },
+        parameters=parameters,
         parameter_match="subset",
     )
 
@@ -77,7 +78,7 @@ VERIFICATION = SolidCraftVerification(
                         "values",
                         "param:fit_diameter",
                     ),
-                    expected="tube_d - clamp_interference",
+                    expected="19.8 mm",
                 ),
             ),
         ),
@@ -86,19 +87,19 @@ VERIFICATION = SolidCraftVerification(
         SolidCraftSavedDesign(
             id="installed-medium",
             command_path=HERE / "installed.json",
-            expectation=expected(height=30.0, fit=20.0),
+            expectation=expected(height=30.0, fit=20.0, tube=20.0),
             changes=changed_geometry("installed-fit"),
         ),
         SolidCraftSavedDesign(
             id="installed-large",
             command_path=HERE / "installed-large.json",
-            expectation=expected(height=40.0, fit=20.0),
+            expectation=expected(height=40.0, fit=20.0, tube=20.0),
             changes=changed_geometry("installed-large-geometry"),
         ),
         SolidCraftSavedDesign(
             id="free-large",
             command_path=HERE / "free-large.json",
-            expectation=expected(height=40.0, fit=19.8),
+            expectation=expected(height=40.0, fit=19.8, tube=20.0),
             changes=changed_geometry("free-large-geometry"),
         ),
     ),

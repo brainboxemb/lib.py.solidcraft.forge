@@ -18,8 +18,6 @@ class FlexibleSleeve:
 
 
 class FlexibleFitState:
-    tube_d = 20.0
-    clamp_interference = 0.2
     fit_diameter = 19.8
     sleeve_height = 30.0
 
@@ -29,7 +27,6 @@ class FlexibleFitState:
             sleeve_height=self.sleeve_height,
             name="flexible_sleeve",
         )
-        free_fit = "tube_d - clamp_interference"
         return Configure(
             sleeve,
             active="Medium",
@@ -38,9 +35,9 @@ class FlexibleFitState:
                 Param(self.fit_diameter),
             ),
             rows={
-                "Small": ("20 mm", free_fit),
-                "Medium": ("30 mm", free_fit),
-                "Large": ("40 mm", free_fit),
+                "Small": ("20 mm", "19.8 mm"),
+                "Medium": ("30 mm", "19.8 mm"),
+                "Large": ("40 mm", "19.8 mm"),
             },
         )
 

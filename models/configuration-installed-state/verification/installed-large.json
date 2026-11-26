@@ -1,6 +1,14 @@
 {
   "commands": [
     {
+      "command": "parameters.add",
+      "params": {
+        "name": "tube_d",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
       "command": "config.rule",
       "params": {
         "rule": {
