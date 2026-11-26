@@ -62,6 +62,7 @@ def _warn_missing_model_parameters(
     *,
     context="model",
     pv_parameters=(),
+    backend_name="SolidCraft",
 ):
     """Warn from actual emitted dependencies and explicit user pv() reads."""
     native = set(dependencies)
@@ -72,13 +73,13 @@ def _warn_missing_model_parameters(
             if name in native:
                 detail = (
                     "remains a native dependency, but pv() also consumes its "
-                    "current Python value. Changing the SolidCraft parameter "
-                    "may therefore update only part of the model."
+                    f"current Python value. Changing the {backend_name} "
+                    "parameter may therefore update only part of the model."
                 )
             else:
                 detail = (
-                    "has no native SolidCraft dependency and pv() consumes its "
-                    "current Python value."
+                    f"has no native {backend_name} dependency and pv() "
+                    "consumes its current Python value."
                 )
             warnings.warn(
                 f"{context} parameter {name!r} {detail} Preserve the symbolic "
@@ -89,7 +90,7 @@ def _warn_missing_model_parameters(
             )
         elif name not in native:
             warnings.warn(
-                f"{context} parameter {name!r} has no native SolidCraft "
+                f"{context} parameter {name!r} has no native {backend_name} "
                 "dependency; publishing a parameter alone does not make model "
                 "geometry or placement associative. Preserve the symbolic "
                 f"value, or rename it to _{name} if it is intentionally "
@@ -834,11 +835,13 @@ def _model_import_context(path: Path):
         sys.dont_write_bytecode = original_dont_write_bytecode
 
 
-def run_script(path: str | Path) -> dict:
+def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
     """Execute a trusted SCPF model source file and return its command document.
 
     Parameters:
         path: Path to the trusted Python model source file.
+        backend: Native lowering backend. "solidcraft" is the stable default;
+            "mitcad" is experimental and intentionally incomplete.
 
     Use when:
         Programmatic tooling needs the same model-loading/root-selection and
@@ -852,6 +855,9 @@ def run_script(path: str | Path) -> dict:
     Example:
         document = run_script("models/panel/scpf/model.py")
     """
+    if backend not in {"solidcraft", "mitcad"}:
+        raise ValueError(f"unknown SCPF backend: {backend!r}")
+
     path = Path(path).resolve()
     syntax = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
@@ -1066,10 +1072,21 @@ def run_script(path: str | Path) -> dict:
             )
 
     if isinstance(result, Shape):
-        document, dependencies = _compile_model_with_dependencies(
-            result, name
-        )
+        if backend == "solidcraft":
+            document, dependencies = _compile_model_with_dependencies(
+                result, name
+            )
+        else:
+            from .backends.mitcad import compile_model_with_dependencies
+            document, dependencies = compile_model_with_dependencies(
+                result, name
+            )
     elif isinstance(result, (ModelInstance, Assembly)):
+        if backend != "solidcraft":
+            raise ModelError(
+                "Mitcad backend does not yet support Forge assemblies; "
+                "the first #192 spike is shape-only"
+            )
         document, dependencies = _compile_assembly_with_dependencies(
             result, name
         )
@@ -1082,5 +1099,6 @@ def run_script(path: str | Path) -> dict:
             dependencies,
             context=name,
             pv_parameters=built.pv_parameters,
+            backend_name=("SolidCraft" if backend == "solidcraft" else "Mitcad"),
         )
     return document

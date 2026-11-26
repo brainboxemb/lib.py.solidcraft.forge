@@ -1,6 +1,6 @@
 schema: 1
-branch: docs/206-exp-reconcile-dispatch-plan
-modules: [ci]
-library: false
-models: []
+branch: feature/192-mitcad-backend-spike
+modules: [mitcad-reference, mitcad-native-smoke]
+library: true
+models: [simple-box, circle-negative-extrude, topology-face-boundary-box]
 tasks: [test]
