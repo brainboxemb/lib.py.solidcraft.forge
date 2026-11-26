@@ -11,6 +11,6 @@ description: >
 parameters: Free diameter 20.4 mm; Installed diameter 20.0 mm
 stages:
   - Build one split flexible-fit sleeve
-  - Keep its fit diameter as one native model parameter
+  - Keep its fit diameter as the only editable native model parameter
   - Author Free and Installed rows on the same physical component
   - Reopen the saved design and switch to Installed

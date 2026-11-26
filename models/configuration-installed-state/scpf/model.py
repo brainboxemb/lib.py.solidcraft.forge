@@ -3,12 +3,12 @@
 
 class FlexibleFitState:
     fit_diameter = 20.4
-    height = 20.0
-    relief_width = 2.0
+    HEIGHT = 20.0
+    RELIEF_WIDTH = 2.0
 
     def build(self):
-        sleeve = Cylinder(d=self.fit_diameter, h=self.height)
-        relief = Box(12, self.relief_width, 22).move(x=6)
+        sleeve = Cylinder(d=self.fit_diameter, h=self.HEIGHT)
+        relief = Box(12, self.RELIEF_WIDTH, 22).move(x=6)
         part = sleeve - relief
 
         return Configure(

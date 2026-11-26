@@ -48,7 +48,7 @@ VERIFICATION = SolidCraftVerification(
                         "values",
                         "param:fit_diameter",
                     ),
-                    expected="20 mm",
+                    expected="20.0 mm",
                 ),
             ),
         ),
