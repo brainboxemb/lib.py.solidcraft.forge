@@ -44,17 +44,24 @@ CI selects `simple-box` once. Its `ci.yml` expands the implementations required 
 
 The template role `cadlib` is the actual `scpf` package. Forge-specific compilation is consumer-owned logic.
 
-The intended Forge path is:
+The intended Forge compiler path is:
 
 ```text
 models/<id>/scpf/model.py
-        ↓ cadlib/scpf compiler
-SolidCraft command JSON
-        ↓ generic builder-solidcraft
-model.sc + model.stl + native model.png
-        ↓ reference verifier
-owner-local geometry/semantic evidence
+        ↓ one SCPF evaluation / semantic normalization
+typed engine-neutral Forge CAD IR
+        ↓                         ↓
+SolidCraft lowering          Mitcad lowering
+        ↓                         ↓
+SolidCraft commands          Mitcad commands
+        ↓                         ↓
+native SolidCraft            native Mitcad
 ```
+
+SCPF is the first frontend, not the backend contract. The semantic IR is the
+compiler boundary. A future frontend may target the same IR and a future CAD
+backend may lower the same IR without understanding SCPF or SolidCraft command
+syntax.
 
 Reference implementations use the standard PythonSCAD, pyBOSL2, CadQuery and build123d builders directly inside the same physical owner.
 
@@ -66,6 +73,97 @@ the Forge feature tree. Lowering emits that Sketch as
 compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
+
+## Forge CAD compiler boundary
+
+Forge is developed as a compiler, not as a collection of engine-specific SCPF
+interpreters:
+
+```text
+SCPF authoring
+    ↓
+semantic frontend / normalization
+    ↓
+Forge CAD IR
+    ├── SolidCraft lowering
+    ├── Mitcad lowering
+    └── future backend lowering
+```
+
+The frontend owns source interpretation. Backends receive typed semantic nodes
+only. A backend may choose a native spelling for those nodes or reject a
+capability explicitly; it may not parse raw `Shape.data` to rediscover the
+model.
+
+The IR records authored CAD meaning. It must not contain SolidCraft command
+names, Mitcad feature/body/curve ids, replay handles, engine topology ids or
+helper geometry introduced only to satisfy one engine. For example, if Mitcad
+needs a construction Sketch line to express a shifted revolve axis, that line
+is a Mitcad lowering detail. The generic IR describes the axis line itself.
+
+Parameters and expressions stay symbolic in the IR. Evaluated values are
+allowed for validation (for example positive dimensions or a region selector)
+but never as a replacement for the authored dependency graph.
+
+Feature identity also remains semantic. A feature authored as one Revolve cut
+should remain one Revolve feature with cut operation/target intent when that is
+the CAD meaning. A backend may use different native mechanics, but the IR must
+not erase that identity merely to make lowering convenient.
+
+### Current semantic IR inventory
+
+The inventory is deliberately architectural rather than a list of supported
+Mitcad commands.
+
+| Semantic layer | Current state on `exp` | Compiler boundary |
+| --- | --- | --- |
+| Values / parameters | accepted | `ParameterIR` plus symbolic public Parameter/Expression values retained inside typed nodes |
+| Primitive geometry | accepted bounded slice | `BoxIR`, `CylinderIR`, `SphereIR` |
+| Placement | accepted bounded slice | `PlacementIR` for qualified primitive placement |
+| Reference geometry | missing as a general layer | public axes/planes exist in SCPF, but no generic `AxisLineIR` / `PlaneIR` / `PointIR` layer yet |
+| Sketch | partial | `SketchIR` carries plane and qualified closed profiles; general sketch entities, constraints and dimensions are not yet a complete semantic IR |
+| Profiles / regions | accepted bounded slice | `CircleProfileIR`, `PolygonProfileIR`, `RegionIR` |
+| Extrude | accepted bounded slice | `ExtrudeIR` with qualified directions/regions |
+| Revolve | accepted first slice | `RevolveIR` covers the #381 principal world-axis new-body case; generic shifted-axis and feature-operation/target semantics are not yet represented |
+| Boolean body operations | accepted bounded slice | recursive `BooleanIR` for qualified primitive CSG |
+| Topology/reference intent | partial | `FaceBoundaryIR` covers qualified face-boundary Chamfer selection; there is no general engine-neutral topology graph |
+| Chamfer | accepted bounded slice | `ChamferIR` composes qualified typed bases and face-boundary intent |
+| Feature/history identity | partial | typed feature nodes exist, but there is not yet a general history/reference graph for every public SCPF feature |
+| Assemblies / occurrences / relationships | not yet in experimental semantic IR | stable SCPF/SolidCraft behavior remains outside the current multi-backend IR migration |
+| Configuration / suppression | not yet in experimental semantic IR | stable native SolidCraft behavior exists, but portable configuration/suppression needs an explicit semantic layer |
+| Legacy compatibility | temporary migration boundary | `LegacyShapeIR` preserves stable SolidCraft behavior for unmigrated semantics; Mitcad must fail closed on it |
+
+This table is the control surface for the experimental lane. New work should
+fill a generic semantic gap, not merely increase the number of Mitcad commands
+that happen to work.
+
+### Experimental capability workflow
+
+Every new compiler capability follows the same sequence:
+
+1. define the generic CAD semantic contract and identify the inventory gap;
+2. normalize unchanged public SCPF authoring into typed IR;
+3. prove the IR with backend-independent tests, including symbolic dependency
+   and feature-identity assertions;
+4. lower that IR independently in each backend that is in scope;
+5. test the backend command contract without changing the IR to accommodate
+   transport-only details;
+6. execute the exact pinned native runtime and retain deterministic evidence;
+7. only after those gates pass, integrate the capability to permanent `exp`.
+
+When backend implementation suggests a new field, the design question is first
+whether that field is CAD meaning or backend transport. Only the former belongs
+in Forge IR.
+
+`LegacyShapeIR` is intentionally visible while the migration proceeds. It is
+not permission to build a second interpreter. SolidCraft may retain the legacy
+compatibility route until a semantic slice migrates; experimental backends
+reject it explicitly.
+
+#389 is the first capability evaluated under this workflow. Its architectural
+value is not Revolve specifically: it tests whether generic reference geometry
+(`AxisLineIR`) and feature operation/target identity can be represented
+without importing Mitcad's construction-line transport into the IR.
 
 ## Symbolic CAD math boundary
 
