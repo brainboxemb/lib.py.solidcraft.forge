@@ -1,0 +1,158 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 3025.7856709863095,
+      "bbox": {
+        "max": [
+          -8.0417392568986,
+          12.000000000000002,
+          10.000000000000002
+        ],
+        "min": [
+          -32.0,
+          -12.000000000000002,
+          -10.000000000000002
+        ]
+      },
+      "center_of_mass": [
+        -20.327720633059307,
+        1.1185166000693473e-15,
+        2.737734158252611e-15
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 12,
+      "face_types": {
+        "cylinder": 2,
+        "plane": 4
+      },
+      "faces": 6,
+      "kernel": {
+        "edges": 18,
+        "faces": 8,
+        "shells": 1,
+        "vertices": 12
+      },
+      "mass_g": 3.1458745528952416,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "FlexibleSleeve",
+      "notes": [],
+      "vertices": 8,
+      "volume_mm3": 2438.6624441048384
+    },
+    {
+      "area_mm2": 3025.7856709863104,
+      "bbox": {
+        "max": [
+          31.9582607431014,
+          12.000000000000002,
+          10.000000000000002
+        ],
+        "min": [
+          7.999999999999998,
+          -12.000000000000002,
+          -10.000000000000002
+        ]
+      },
+      "center_of_mass": [
+        19.672279366940693,
+        7.574471883737126e-16,
+        4.5873140255066554e-15
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 12,
+      "face_types": {
+        "cylinder": 2,
+        "plane": 4
+      },
+      "faces": 6,
+      "kernel": {
+        "edges": 18,
+        "faces": 8,
+        "shells": 1,
+        "vertices": 12
+      },
+      "mass_g": 3.145874552895242,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "FlexibleSleeve (FlexibleSleeve:2)",
+      "notes": [],
+      "vertices": 8,
+      "volume_mm3": 2438.662444104839
+    }
+  ],
+  "body_count": 2,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "20",
+      "model": false,
+      "name": "tube_d",
+      "unit": "mm",
+      "value": 20.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "20.4 mm",
+      "model": false,
+      "name": "fit_diameter",
+      "unit": "mm",
+      "value": 20.4
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "80 mm",
+      "model": false,
+      "name": "frame_width",
+      "unit": "mm",
+      "value": 80.0
+    }
+  ],
+  "sketches": [],
+  "timeline": [
+    {
+      "error": null,
+      "id": 3,
+      "ms": 5.314412999999999,
+      "name": "Cylinder1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "CylinderFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 21.606340000000003,
+      "name": "Cylinder2",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "CylinderFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 5,
+      "ms": 29.174872,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 6051.57134197262,
+    "edges": 24,
+    "faces": 12,
+    "mass_g": 6.291749105790483,
+    "open_bodies_skipped": 0,
+    "vertices": 16,
+    "volume_mm3": 4877.324888209678
+  }
+}

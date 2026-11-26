@@ -1,48 +1,90 @@
 [
   {
-    "active": "Medium",
+    "occurrence": 2,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        -20.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "occurrence": 6,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        20.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "active": "Default",
     "columns": [
-      "param:sleeve_height",
+      "param:frame_width",
       "param:fit_diameter"
     ],
-    "errors": [],
     "matches": true,
     "rows": [
       {
-        "id": 5,
-        "name": "Small",
-        "values": {
-          "param:fit_diameter": "19.8 mm",
-          "param:sleeve_height": "20 mm"
-        }
-      },
-      {
-        "id": 6,
-        "name": "Medium",
-        "values": {
-          "param:fit_diameter": "19.8 mm",
-          "param:sleeve_height": "30 mm"
-        }
-      },
-      {
         "id": 7,
-        "name": "Large",
+        "name": "Default",
         "values": {
-          "param:fit_diameter": "19.8 mm",
-          "param:sleeve_height": "40 mm"
+          "param:fit_diameter": "20.4",
+          "param:frame_width": "80 mm"
         }
       }
     ],
     "rules": [],
     "style_error": null,
     "style_status": [],
-    "styles": [],
     "targets": [
       {
-        "key": "param:sleeve_height",
-        "label": "param:sleeve_height",
+        "key": "param:frame_width",
+        "label": "param:frame_width",
         "target": {
-          "param": "sleeve_height"
+          "param": "frame_width"
         }
       },
       {
@@ -52,39 +94,22 @@
           "param": "fit_diameter"
         }
       }
-    ],
-    "trace": []
+    ]
   },
   {
-    "active": "Medium",
+    "active": "Small",
     "columns": [
-      "param:sleeve_height",
+      "param:frame_width",
       "param:fit_diameter"
     ],
     "matches": true,
     "rows": [
       {
-        "id": 5,
+        "id": 7,
         "name": "Small",
         "values": {
-          "param:fit_diameter": "19.8 mm",
-          "param:sleeve_height": "20 mm"
-        }
-      },
-      {
-        "id": 6,
-        "name": "Medium",
-        "values": {
-          "param:fit_diameter": "19.8 mm",
-          "param:sleeve_height": "30 mm"
-        }
-      },
-      {
-        "id": 7,
-        "name": "Large",
-        "values": {
-          "param:fit_diameter": "19.8 mm",
-          "param:sleeve_height": "40 mm"
+          "param:fit_diameter": "20.4",
+          "param:frame_width": "80 mm"
         }
       }
     ],
@@ -93,10 +118,213 @@
     "style_status": [],
     "targets": [
       {
-        "key": "param:sleeve_height",
-        "label": "param:sleeve_height",
+        "key": "param:frame_width",
+        "label": "param:frame_width",
         "target": {
-          "param": "sleeve_height"
+          "param": "frame_width"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Medium",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Medium",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "100 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Medium",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "100 mm"
+        }
+      }
+    ],
+    "rules": [
+      {
+        "condition": {
+          "type": "always"
+        },
+        "effect": {
+          "expression": "tube_d",
+          "parameter": "fit_diameter",
+          "type": "drive_parameter"
+        },
+        "enabled": true,
+        "id": "installed",
+        "length_unit": "mm",
+        "name": "Installed"
+      }
+    ],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
         }
       },
       {

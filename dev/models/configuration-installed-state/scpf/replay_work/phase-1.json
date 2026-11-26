@@ -3,8 +3,8 @@
     {
       "command": "parameters.add",
       "params": {
-        "name": "sleeve_height",
-        "expression": "30",
+        "name": "tube_d",
+        "expression": "20",
         "unit": "mm"
       }
     },
@@ -12,7 +12,7 @@
       "command": "parameters.add",
       "params": {
         "name": "fit_diameter",
-        "expression": "19.8",
+        "expression": "20.4",
         "unit": "mm"
       }
     },
@@ -20,18 +20,18 @@
       "command": "component.create",
       "params": {
         "name": "FlexibleSleeve",
-        "grounded": true
+        "grounded": false
       }
     },
     {
       "command": "solid.cylinder",
       "params": {
-        "height": "sleeve_height",
-        "diameter": "fit_diameter",
+        "height": 20.0,
+        "diameter": "tube_d + 4 mm",
         "base": [
           0,
           0,
-          "-(sleeve_height / 2)"
+          -10.0
         ],
         "axis": "Z",
         "operation": "new",
@@ -39,11 +39,28 @@
       }
     },
     {
+      "command": "solid.cylinder",
+      "params": {
+        "height": 22.0,
+        "diameter": "fit_diameter",
+        "base": [
+          0,
+          0,
+          -11.0
+        ],
+        "axis": "Z",
+        "operation": "cut",
+        "targets": [
+          "FlexibleSleeve"
+        ]
+      }
+    },
+    {
       "command": "solid.box",
       "params": {
         "length": 12,
         "width": 2.0,
-        "height": "sleeve_height + 2 mm",
+        "height": 22.0,
         "operation": "cut",
         "center": [
           6.0,
@@ -62,49 +79,16 @@
       }
     },
     {
-      "command": "config.configure",
+      "command": "occurrence.copy",
       "params": {
-        "params": [
-          "sleeve_height",
-          "fit_diameter"
-        ]
+        "component": "FlexibleSleeve"
       }
     },
     {
-      "command": "config.row",
+      "command": "parameters.add",
       "params": {
-        "name": "Default",
-        "rename": "Small"
-      }
-    },
-    {
-      "command": "config.row",
-      "params": {
-        "name": "Small",
-        "values": {
-          "param:sleeve_height": "20 mm",
-          "param:fit_diameter": "19.8 mm"
-        }
-      }
-    },
-    {
-      "command": "config.row",
-      "params": {
-        "name": "Medium",
-        "values": {
-          "param:sleeve_height": "30 mm",
-          "param:fit_diameter": "19.8 mm"
-        }
-      }
-    },
-    {
-      "command": "config.row",
-      "params": {
-        "name": "Large",
-        "values": {
-          "param:sleeve_height": "40 mm",
-          "param:fit_diameter": "19.8 mm"
-        }
+        "name": "frame_width",
+        "expression": "80 mm"
       }
     }
   ]

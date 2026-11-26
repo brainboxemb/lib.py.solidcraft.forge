@@ -1,14 +1,90 @@
 {
   "commands": [
     {
-      "command": "config.activate",
+      "command": "occurrence.move",
       "params": {
-        "row": 6
+        "occurrence": 2,
+        "translate": [
+          "(-(frame_width)) / 4",
+          0,
+          0
+        ]
       }
     },
     {
-      "command": "config.table",
-      "params": {}
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 6,
+        "translate": [
+          "frame_width / 4",
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "frame_width",
+          "fit_diameter"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:frame_width": "60 mm",
+          "param:fit_diameter": "20.4 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Medium",
+        "values": {
+          "param:frame_width": "80 mm",
+          "param:fit_diameter": "20.4 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:frame_width": "100 mm",
+          "param:fit_diameter": "20.4 mm"
+        }
+      }
+    },
+    {
+      "command": "config.rule",
+      "params": {
+        "rule": {
+          "id": "installed",
+          "name": "Installed",
+          "enabled": true,
+          "condition": {
+            "type": "always"
+          },
+          "effect": {
+            "type": "drive_parameter",
+            "parameter": "fit_diameter",
+            "expression": "tube_d"
+          }
+        }
+      }
     }
   ]
 }
