@@ -1,6 +1,6 @@
 schema: 1
-branch: fix/214-revolute-exp-regression
-modules: [verification]
-library: true
-models: [revolute-joint]
+branch: docs/217-reconcile-backend-plan
+modules: [ci]
+library: false
+models: []
 tasks: [test]
