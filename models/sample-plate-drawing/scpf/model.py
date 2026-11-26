@@ -154,12 +154,12 @@ def sample_plate_drawing():
             ),
         },
         properties={
-            "part_number": "SCPF-DWG-COMPACT",
+            "part_number": "SCPF-C-001",
             "organization": "brainboxemb",
         },
         title_block={
-            "title": "Sample Plate Compact",
-            "identification_number": "SCPF-DWG-COMPACT",
+            "title": "Sample Plate",
+            "identification_number": "SCPF-C-001",
         },
     )
 
