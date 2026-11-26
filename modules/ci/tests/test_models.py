@@ -96,7 +96,6 @@ SCPF_ONLY_IDS = {
     "sheet-path-flange",
     "sheet-perforate",
     "sample-plate-drawing",
-    "topology-face-boundary-xz",
 }
 
 MITCAD_IDS = {
