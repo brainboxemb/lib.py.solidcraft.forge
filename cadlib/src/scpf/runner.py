@@ -22,7 +22,7 @@ from . import core, cadmath
 from .configurations import (
     Configure, Param, Suppress, _ConfiguredDesign, _apply_configuration_document,
 )
-from .compiler import ModelError
+from .compiler import ModelError, _compile_model_with_dependencies
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
 from .model_objects import (
     Assembly,
@@ -1081,18 +1081,34 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
             )
 
     if isinstance(result, _ConfiguredDesign):
+        if backend_adapter.id != "solidcraft":
+            raise ModelError(
+                f"{backend_adapter.display_name} backend does not support "
+                "Forge configurations in its qualified capability set"
+            )
+
         design = result.design
         if isinstance(design, Shape):
+            # compile_model()/configured Shape is stable SolidCraft-only
+            # document intent; the compiler owns that boundary until a
+            # portable ConfigurationIR exists.
             document, dependencies = _compile_model_with_dependencies(
-                design, name
+                result, name
             )
         elif isinstance(design, (ModelInstance, Assembly)):
-            document, dependencies = _compile_assembly_with_dependencies(
+            if backend_adapter.compile_assembly is None:
+                raise ModelError(
+                    f"{backend_adapter.display_name} backend does not support "
+                    "Forge assemblies in its qualified capability set"
+                )
+            document, dependencies = backend_adapter.compile_assembly(
                 design, name
+            )
+            document = _apply_configuration_document(
+                result, name, document
             )
         else:
             raise TypeError("Configure contains an unsupported design result")
-        document = _apply_configuration_document(result, name, document)
     elif isinstance(result, Shape):
         model_ir = normalize_shape(result)
         document, dependencies = backend_adapter.compile_ir(model_ir, name)

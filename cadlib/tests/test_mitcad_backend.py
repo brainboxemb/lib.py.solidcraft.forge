@@ -14,6 +14,7 @@ SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
 TOPOLOGY_BOX = ROOT / "models/topology-face-boundary-box/scpf/model.py"
 CYLINDER_SUBTRACT = ROOT / "models/cylinder-subtract/scpf/model.py"
+CONFIGURATION_TABLE = ROOT / "models/configuration-table/scpf/model.py"
 
 
 class MitcadBackendTests(unittest.TestCase):
@@ -176,6 +177,13 @@ class MitcadBackendTests(unittest.TestCase):
             "does not yet support Forge shape kind 'sphere'",
         ):
             compile_model(Sphere(10), "SphereTest")
+
+    def test_configuration_table_fails_closed_on_mitcad(self):
+        with self.assertRaisesRegex(
+            ModelError,
+            "does not support Forge configurations",
+        ):
+            run_script(CONFIGURATION_TABLE, backend="mitcad")
 
     def test_unknown_runner_backend_is_rejected_before_model_execution(self):
         with self.assertRaisesRegex(ValueError, "unknown SCPF backend"):
