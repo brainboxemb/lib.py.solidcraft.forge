@@ -202,6 +202,13 @@
    provenance must remain deterministic and mutually consistent.
 5. Forge CI must compare the checked registry with the root-pinned immutable
    SolidCraft runtime whenever the reference module/reference tree is selected.
+6. When a typed native command contract gates Forge API design, retain the exact
+   targeted `engine.describe` result below
+   `docs/reference/solidcraft/<version>/describe/`; do not infer missing
+   condition/effect schemas from the short command-registry description.
+7. Targeted describe evidence must be captured from and compared back to the
+   same root-pinned immutable runtime as the command registry. A checked schema
+   may not be hand-authored from guessed SolidCraft parameter or effect names.
 
 ## Manufacturing visual verification
 

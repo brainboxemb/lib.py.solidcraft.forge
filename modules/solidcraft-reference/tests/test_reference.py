@@ -13,8 +13,11 @@ from cad_library_solidcraft_reference import (
     render_commands,
     root_runtime_pin,
     validate_registry,
+    verify_describe_snapshot,
+    verify_pinned_describe,
     verify_pinned_reference,
     verify_snapshot,
+    write_describe_snapshot,
     write_snapshot,
 )
 
@@ -166,6 +169,76 @@ class SolidCraftReferenceTests(unittest.TestCase):
                         version="0.49.0",
                         snapshot=snapshot,
                     )
+
+    def test_describe_snapshot_requires_exact_runtime_result(self):
+        expected = {
+            "result": {
+                "id": "config.rule",
+                "input": {"type": "object"},
+            }
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            snapshot = Path(tmp) / "config.rule.json"
+            write_describe_snapshot(snapshot, expected)
+            with patch(
+                "cad_library_solidcraft_reference.capture_describe_runtime",
+                return_value=("solidcraft-cli 0.49.0", expected),
+            ):
+                self.assertEqual(
+                    verify_describe_snapshot(
+                        image="example/runtime:v1",
+                        version="0.49.0",
+                        command="config.rule",
+                        snapshot=snapshot,
+                    ),
+                    expected,
+                )
+
+            changed = {"result": {"id": "config.rule", "input": None}}
+            with patch(
+                "cad_library_solidcraft_reference.capture_describe_runtime",
+                return_value=("solidcraft-cli 0.49.0", changed),
+            ):
+                with self.assertRaisesRegex(
+                    RuntimeError, "describe snapshot differs"
+                ):
+                    verify_describe_snapshot(
+                        image="example/runtime:v1",
+                        version="0.49.0",
+                        command="config.rule",
+                        snapshot=snapshot,
+                    )
+
+    def test_missing_describe_snapshot_reports_runtime_result(self):
+        actual = {
+            "result": {
+                "id": "config.rule",
+                "input": {"title": "Configuration Rule"},
+            }
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            snapshot = Path(tmp) / "missing.json"
+            with patch(
+                "cad_library_solidcraft_reference.capture_describe_runtime",
+                return_value=("solidcraft-cli 0.49.0", actual),
+            ):
+                with self.assertRaises(FileNotFoundError) as caught:
+                    verify_describe_snapshot(
+                        image="example/runtime:v1",
+                        version="0.49.0",
+                        command="config.rule",
+                        snapshot=snapshot,
+                    )
+            self.assertIn("Captured runtime result", str(caught.exception))
+            self.assertIn("Configuration Rule", str(caught.exception))
+
+    @unittest.skipUnless(
+        shutil.which("docker"),
+        "Docker is required for immutable runtime reference verification",
+    )
+    def test_checked_config_rule_describe_matches_root_immutable_runtime(self):
+        result = verify_pinned_describe(ROOT, "config.rule")
+        self.assertIsNotNone(result)
 
     @unittest.skipUnless(
         shutil.which("docker"),

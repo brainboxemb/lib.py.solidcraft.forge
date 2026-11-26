@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import subprocess
+import tempfile
 from typing import Any
 
 import yaml
@@ -90,6 +91,116 @@ def capture_runtime(image: str) -> tuple[str, list[dict[str, Any]]]:
     version = runtime_output(image, "solidcraft-cli", "--version").strip()
     registry = json.loads(runtime_output(image, "solidcraft-cli", "commands"))
     return version, normalized_registry(registry)
+
+
+def _runtime_command_results(image: str, commands: list[dict[str, Any]]) -> Any:
+    """Execute exact native commands in the immutable runtime and return results."""
+
+    document = {"commands": commands}
+    with tempfile.TemporaryDirectory(prefix="solidcraft-reference-") as directory:
+        host = Path(directory).resolve()
+        source = host / "commands.json"
+        source.write_text(
+            json.dumps(document, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        completed = subprocess.run(
+            [
+                "docker",
+                "run",
+                "--rm",
+                "--pull=never",
+                "-v",
+                f"{host}:/solidcraft-reference:ro",
+                image,
+                "solidcraft-cli",
+                "run",
+                "/solidcraft-reference/commands.json",
+                "--param-check",
+                "strict",
+                "--results",
+            ],
+            check=True,
+            text=True,
+            stdout=subprocess.PIPE,
+        )
+    return json.loads(completed.stdout)
+
+
+def capture_describe_runtime(image: str, command: str) -> tuple[str, Any]:
+    """Capture one exact engine.describe result from an immutable runtime."""
+
+    if not isinstance(command, str) or not command.strip():
+        raise ValueError("SolidCraft command id is required")
+    subprocess.run(["docker", "pull", image], check=True)
+    version = runtime_output(image, "solidcraft-cli", "--version").strip()
+    result = _runtime_command_results(
+        image,
+        [
+            {
+                "command": "engine.describe",
+                "params": {"command": command},
+            }
+        ],
+    )
+    return version, result
+
+
+def write_describe_snapshot(snapshot: Path, value: Any) -> None:
+    """Write one targeted engine.describe result without hand-normalizing it."""
+
+    snapshot.parent.mkdir(parents=True, exist_ok=True)
+    snapshot.write_text(
+        json.dumps(value, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+
+def capture_describe_snapshot(
+    *,
+    image: str,
+    version: str,
+    command: str,
+    snapshot: Path,
+) -> Any:
+    """Capture one targeted typed command contract from the immutable runtime."""
+
+    cli_version, result = capture_describe_runtime(image, command)
+    if version not in cli_version:
+        raise RuntimeError(
+            f"runtime version mismatch: expected {version!r} in {cli_version!r}"
+        )
+    write_describe_snapshot(snapshot, result)
+    return result
+
+
+def verify_describe_snapshot(
+    *,
+    image: str,
+    version: str,
+    command: str,
+    snapshot: Path,
+) -> Any:
+    """Require one checked engine.describe result to equal the pinned runtime."""
+
+    cli_version, actual = capture_describe_runtime(image, command)
+    if version not in cli_version:
+        raise RuntimeError(
+            f"runtime version mismatch: expected {version!r} in {cli_version!r}"
+        )
+    captured = json.dumps(actual, indent=2, sort_keys=True)
+    if not snapshot.is_file():
+        raise FileNotFoundError(
+            f"missing SolidCraft describe snapshot: {snapshot}\n"
+            f"Captured runtime result:\n{captured}"
+        )
+    expected = json.loads(snapshot.read_text(encoding="utf-8"))
+    if expected != actual:
+        raise RuntimeError(
+            f"SolidCraft describe snapshot differs from {image}: {snapshot}\n"
+            f"Captured runtime result:\n{captured}"
+        )
+    return actual
 
 
 def toolbar(row: dict[str, Any]) -> str:
@@ -292,9 +403,32 @@ def verify_pinned_reference(repo: Path) -> int:
     return verify_snapshot(image=image, version=version, snapshot=snapshot)
 
 
+def verify_pinned_describe(repo: Path, command: str) -> Any:
+    """Verify one checked typed command contract against the root runtime pin."""
+
+    image, version = root_runtime_pin(repo)
+    snapshot = (
+        repo
+        / "docs"
+        / "reference"
+        / "solidcraft"
+        / version
+        / "describe"
+        / f"{command}.json"
+    )
+    return verify_describe_snapshot(
+        image=image,
+        version=version,
+        command=command,
+        snapshot=snapshot,
+    )
+
+
 __all__ = [
     "MIN_COMMAND_COUNT",
     "REQUIRED_COMMANDS",
+    "capture_describe_runtime",
+    "capture_describe_snapshot",
     "capture_runtime",
     "capture_snapshot",
     "normalized_registry",
@@ -303,7 +437,10 @@ __all__ = [
     "source_text",
     "toolbar",
     "validate_registry",
+    "verify_describe_snapshot",
+    "verify_pinned_describe",
     "verify_pinned_reference",
     "verify_snapshot",
+    "write_describe_snapshot",
     "write_snapshot",
 ]
