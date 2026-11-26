@@ -28,6 +28,7 @@ from ..ir import (
     ModelIR,
     PlacementIR,
     RegionIR,
+    _circle_region_interior_point,
     normalize_shape,
 )
 
@@ -194,72 +195,84 @@ def _extrude_commands(
     sketch = node.sketch
     if sketch.plane not in ("XY", "XZ", "YZ"):
         raise ModelError("Mitcad Sketch IR requires XY, XZ or YZ")
-    if len(sketch.profiles) != 1 or len(node.regions) != 1:
-        raise ModelError(
-            "Mitcad Extrude IR currently requires one circle region"
-        )
+    if len(node.regions) != 1:
+        raise ModelError("Mitcad Extrude IR requires one region")
 
-    profile = sketch.profiles[0]
     region = node.regions[0]
-    if not isinstance(profile, CircleProfileIR):
-        raise ModelError(
-            "Mitcad Extrude IR currently requires CircleProfileIR"
-        )
-    if not isinstance(region, RegionIR) or region.outer != 0 or region.holes:
-        raise ModelError(
-            "Mitcad Extrude IR currently requires one region without holes"
-        )
-    if any(parameters_in(value) or pv(value) != 0 for value in profile.center):
-        raise ModelError(
-            "Mitcad CircleProfileIR currently requires origin center"
-        )
+    if not isinstance(region, RegionIR):
+        raise ModelError("Mitcad Extrude IR requires RegionIR")
     if node.direction not in ("positive", "negative"):
         raise ModelError(
             "Mitcad Extrude IR requires positive or negative direction"
         )
 
-    _require_positive(profile.diameter, "circle diameter")
+    try:
+        pick = _circle_region_interior_point(sketch, region)
+    except ValueError as exc:
+        raise ModelError(str(exc)) from exc
+
+    profiles = []
+    for profile in sketch.profiles:
+        if not isinstance(profile, CircleProfileIR):
+            raise ModelError(
+                "Mitcad Extrude IR currently requires CircleProfileIR"
+            )
+        if any(parameters_in(value) or pv(value) != 0 for value in profile.center):
+            raise ModelError(
+                "Mitcad CircleProfileIR currently requires origin center"
+            )
+        _require_positive(profile.diameter, "circle diameter")
+        profiles.append(profile)
+
     _require_positive(node.distance, "sketch extrusion distance")
 
-    radius = pv(profile.diameter) / 2.0
+    center = [command_value(value) for value in profiles[0].center]
+    entities = [
+        {
+            "id": "p1",
+            "type": "point",
+            "at": center,
+            "fixed": True,
+        }
+    ]
+    dimensions = []
+    for index, profile in enumerate(profiles, start=2):
+        curve = f"c{index}"
+        entities.append(
+            {
+                "id": curve,
+                "type": "circle",
+                "center": "p1",
+                "radius": pv(profile.diameter) / 2.0,
+            }
+        )
+        dimensions.append(
+            {
+                "id": f"k{index - 1}",
+                "type": "diameter",
+                "curve": curve,
+                "value": command_value(profile.diameter),
+            }
+        )
+
     extent_distance = command_value(
         -node.distance if node.direction == "negative" else node.distance
     )
-    center = [command_value(value) for value in profile.center]
+    selector = center if not region.holes else [pick[0], pick[1]]
 
     sketch_definition = {
         "type": "sketch",
         "plane": sketch.plane.lower(),
-        "entities": [
-            {
-                "id": "p1",
-                "type": "point",
-                "at": center,
-                "fixed": True,
-            },
-            {
-                "id": "c2",
-                "type": "circle",
-                "center": "p1",
-                "radius": radius,
-            },
-        ],
+        "entities": entities,
         "constraints": [],
-        "dimensions": [
-            {
-                "id": "k1",
-                "type": "diameter",
-                "curve": "c2",
-                "value": command_value(profile.diameter),
-            }
-        ],
+        "dimensions": dimensions,
     }
     extrude_definition = {
         "type": "extrude",
         "profiles": [
             {
                 "sketch": {"ref": "sk.uid"},
-                "point": center,
+                "point": selector,
             }
         ],
         "extent": {
@@ -283,7 +296,6 @@ def _extrude_commands(
             "def": extrude_definition,
         },
     ]
-
 
 def _chamfer_document(
     model: ModelIR,
