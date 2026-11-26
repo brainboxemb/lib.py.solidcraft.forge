@@ -135,7 +135,7 @@ native table. The design may be a Shape or an assembly result. <code>Param</code
 <code>Suppress</code> selects an exact applied Forge feature. Each named row
 contains one cell per column. The active row must be declared.</p>
 <pre><code>Configure(plate - hole, active="Medium",
-    columns=(Param("width"), Suppress(hole)),
+    columns=(Param(self.width), Suppress(hole)),
     rows={"Medium": ("80 mm", True),
           "Large": ("100 mm", False)})</code></pre>
 <p>The native table remains editable in the saved SolidCraft document. Forge's

@@ -272,7 +272,7 @@ groups:
         description: "Author one editable native SolidCraft configuration table."
         snippet: |
           Configure(design, active="Medium",
-              columns=(Param("width"), Suppress(hole)),
+              columns=(Param(self.width), Suppress(hole)),
               rows={"Medium": ("80 mm", True),
                     "Large": ("100 mm", False)})
         example: configuration-table

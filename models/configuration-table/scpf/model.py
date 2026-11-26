@@ -15,8 +15,8 @@ class ConfigurationPlate:
         return Configure(
             plate - left - right,
             active="Medium",
-            columns=(Param("width"), Param("depth"), Param("thickness"),
-                     Param("diameter"), Suppress(left), Suppress(right)),
+            columns=(Param(self.width), Param(self.depth), Param(self.thickness),
+                     Param(self.diameter), Suppress(left), Suppress(right)),
             rows={
                 "Small": ("60 mm", "30 mm", "4 mm", "4 mm", True, True),
                 "Medium": ("80 mm", "40 mm", "5 mm", "5 mm", True, True),

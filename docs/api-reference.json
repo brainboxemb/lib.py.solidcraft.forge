@@ -2470,15 +2470,15 @@
           "description": "Ordered mapping of row names to cell sequences."
         }
       ],
-      "example": "Configure(design, active='Medium', columns=(Param('width'),), rows={'Medium': ('80 mm',)})"
+      "example": "Configure(design, active='Medium', columns=(Param(self.width),), rows={'Medium': ('80 mm',)})"
     },
     {
       "kind": "function",
       "name": "Param",
-      "summary": "Select an existing native parameter for a configuration column.",
+      "summary": "Select an existing native model parameter for a configuration column.",
       "guide": "guide/geometry/",
       "reference": "reference/Param/",
-      "use_when": "Define editable native configuration rows rather than Python-only variants.",
+      "use_when": "Prefer Param(self.parameter) inside build() so configuration intent follows the actual symbolic model parameter; a parameter name string remains accepted when a direct object is unavailable.",
       "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
       "parameters": [
         {
@@ -2486,7 +2486,7 @@
           "description": "Native parameter name or Parameter object."
         }
       ],
-      "example": "Param('width')"
+      "example": "Param(self.width)"
     },
     {
       "kind": "function",
