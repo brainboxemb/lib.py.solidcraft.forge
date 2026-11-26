@@ -14,7 +14,7 @@ class _ParameterColumn:
 
 @dataclass(frozen=True)
 class _SuppressionColumn:
-    feature: Shape
+    feature: object
 
 
 @dataclass(frozen=True)
@@ -56,9 +56,12 @@ def Param(name):
 
 
 def Suppress(feature):
-    """Select the exact applied Forge feature Shape as a suppression column."""
-    if not isinstance(feature, Shape):
-        raise TypeError("Suppress requires an authored feature Shape")
+    """Select one exact Forge-authored feature as a suppression column."""
+    from .model_objects import _ComponentFeatureReference
+    if not isinstance(feature, (Shape, _ComponentFeatureReference)):
+        raise TypeError(
+            "Suppress requires an authored feature Shape or component feature reference"
+        )
     return _SuppressionColumn(feature)
 
 
@@ -271,6 +274,8 @@ def _suppression_command_index(configured, name, commands, feature):
     )
     from .core import _shape_contains
 
+    from .model_objects import _ComponentFeatureReference
+
     assembly = _as_assembly(configured.design)
     names = _definition_names(assembly)
     by_definition = {}
@@ -278,14 +283,27 @@ def _suppression_command_index(configured, name, commands, feature):
         by_definition.setdefault(instance.definition.key, []).append(instance)
 
     matches = []
+    referenced_definition = False
     for definition_number, (key, instances) in enumerate(
         by_definition.items(),
         start=1,
     ):
         definition = instances[0].definition
-        if not _shape_contains(definition.shape, feature):
+        source = feature
+        if isinstance(feature, _ComponentFeatureReference):
+            if key != feature.definition_key:
+                continue
+            referenced_definition = True
+            try:
+                source = dict(definition.features)[feature.name]
+            except KeyError as exc:
+                raise ModelError(
+                    f"component definition has no exported feature {feature.name!r}"
+                ) from exc
+        elif not _shape_contains(definition.shape, source):
             continue
-        prefix = _feature_prefix(definition.shape, feature)
+
+        prefix = _feature_prefix(definition.shape, source)
         if prefix is None:
             continue
         external_names = {
@@ -308,6 +326,11 @@ def _suppression_command_index(configured, name, commands, feature):
         matches.extend(
             index for index, command in enumerate(commands)
             if _same_native_command(command, target)
+        )
+
+    if isinstance(feature, _ComponentFeatureReference) and not referenced_definition:
+        raise ModelError(
+            "component feature reference is not part of this configured design"
         )
 
     matches = sorted(set(matches))
