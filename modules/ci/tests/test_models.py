@@ -39,7 +39,6 @@ EXPECTED_IDS = {
     "group-hierarchy",
     "hole-family",
     "native-revolve",
-    "multi-profile-extrude",
     "parameter-scope",
     "parametric-anchor",
     "parametric-attach",
@@ -70,7 +69,6 @@ EXPECTED_IDS = {
     "slot-family",
     "top-sketch-after-chamfer",
     "topology-face-boundary-box",
-    "topology-face-boundary-xz",
     "xz-anchor",
 }
 
@@ -103,13 +101,23 @@ SCPF_ONLY_IDS = {
 MITCAD_IDS = {
     "circle-negative-extrude",
     "cylinder-subtract",
+    "multi-profile-extrude",
+    "primitive-csg",
     "simple-box",
     "topology-face-boundary-box",
+    "topology-face-boundary-xz",
 }
 
 MITCAD_FOCUSED_IDS = {
     "cylinder-subtract",
+    "multi-profile-extrude",
     "topology-face-boundary-box",
+    "topology-face-boundary-xz",
+}
+
+MITCAD_PREVIEW_IDS = MITCAD_IDS - {
+    "primitive-csg",
+    "topology-face-boundary-xz",
 }
 
 STANDARD_MULTI_ENGINE_IDS = (
@@ -202,19 +210,43 @@ class ModelTests(unittest.TestCase):
                 [impl.id for impl in model.implementations],
                 ["scpf", "scpf-mitcad"],
             )
-            self.assertEqual(
-                [stage.id for stage in model.verifications],
-                ["native", "geometry"],
-            )
-            self.assertEqual(
-                [stage.runtime for stage in model.verifications],
-                ["solidcraft", "reference"],
-            )
+            if model_id == "multi-profile-extrude":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "geometry", "visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference", "solidcraft"],
+                )
+            else:
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "geometry"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference"],
+                )
             self.assertEqual(
                 model.verifications[0].implementations,
                 ("scpf",),
             )
-            self.assertIsNone(model.verifications[1].implementations)
+            if model_id in {
+                "multi-profile-extrude",
+                "topology-face-boundary-xz",
+            }:
+                self.assertEqual(
+                    model.verifications[1].implementations,
+                    ("scpf", "scpf-mitcad"),
+                )
+            else:
+                self.assertIsNone(model.verifications[1].implementations)
+            if model_id == "multi-profile-extrude":
+                self.assertEqual(
+                    model.verifications[2].implementations,
+                    ("scpf",),
+                )
 
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
@@ -396,7 +428,7 @@ class ModelTests(unittest.TestCase):
         )
         self.assertEqual(
             len(reference["preview_items"]),
-            multi_engine * 4 + len(MITCAD_IDS),
+            multi_engine * 4 + len(MITCAD_PREVIEW_IDS),
         )
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
