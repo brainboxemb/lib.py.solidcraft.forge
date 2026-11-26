@@ -71,7 +71,12 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v7
         with:
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
+
+      - name: Resolve current branch source
+        id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Set up Python
         uses: actions/setup-python@v7
@@ -84,6 +89,7 @@ jobs:
       - name: Run selected project items
         env:
           GH_TOKEN: ${{ github.token }}
+          CAD_SOURCE_SHA: ${{ steps.source.outputs.sha }}
           PYTHONPATH: modules/ci/src
         run: python -m cad_library_ci
 
@@ -94,7 +100,7 @@ jobs:
           python -m cad_library_build.publish
           --candidate build/qualification
           --source-ref "${{ github.ref_name }}"
-          --source-sha "${{ github.sha }}"
+          --source-sha "${{ steps.source.outputs.sha }}"
 
       - name: Dispatch Pages
         env:

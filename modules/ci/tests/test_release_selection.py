@@ -15,6 +15,21 @@ PROJECT = SimpleNamespace(
 
 
 class ReleaseSelectionTests(unittest.TestCase):
+    @patch.dict(os.environ, {"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_SHA": "old-event-sha", "CAD_SOURCE_SHA": "current-checked-out-sha"}, clear=True)
+    @patch("cad_library_ci.__main__.changed_paths_from_parent")
+    def test_stable_dispatch_prefers_checked_out_source_sha(self, changed):
+        changed.return_value = ("cadlib/src/demo.py",)
+        selection(Path("."), PROJECT, "main", ())
+        changed.assert_called_once_with(Path("."), "current-checked-out-sha")
+
+    @patch.dict(os.environ, {"GITHUB_EVENT_NAME": "workflow_dispatch", "GH_TOKEN": "token", "GITHUB_REPOSITORY": "owner/repo", "GITHUB_RUN_ID": "42", "GITHUB_SHA": "old-event-sha", "CAD_SOURCE_SHA": "current-checked-out-sha"}, clear=True)
+    @patch("cad_library_ci.__main__.changed_paths", return_value=())
+    @patch("cad_library_ci.__main__.last_successful_dev_sha", return_value="baseline")
+    def test_development_dispatch_prefers_checked_out_source_sha(self, history, changed):
+        selection(Path("."), PROJECT, "dev", ())
+        self.assertEqual(history.call_args.kwargs["target_sha"], "current-checked-out-sha")
+        changed.assert_called_once_with(Path("."), "baseline", "current-checked-out-sha")
+
     def test_experimental_integration_requires_full_qualification(self):
         for head, base in (("exp", "dev"), ("dev", "exp")):
             with self.subTest(head=head, base=base), patch.dict(os.environ, {"GITHUB_EVENT_NAME": "pull_request", "GITHUB_BASE_REF": base}, clear=True):

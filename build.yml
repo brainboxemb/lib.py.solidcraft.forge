@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/190-exp-development-line
-modules: [ci, build, pages, merge-policy, branch-cleanup]
+branch: fix/202-current-dispatch-head
+modules: [ci, build]
 library: false
 models: []
 tasks: [test]
