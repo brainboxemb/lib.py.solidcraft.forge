@@ -9,6 +9,13 @@
       }
     },
     {
+      "command": "component.create",
+      "params": {
+        "name": "FlexibleSleeve",
+        "grounded": true
+      }
+    },
+    {
       "command": "solid.cylinder",
       "params": {
         "height": 20.0,
@@ -20,7 +27,7 @@
         ],
         "axis": "Z",
         "operation": "new",
-        "body_name": "FlexibleFitState"
+        "body_name": "FlexibleSleeve"
       }
     },
     {
@@ -36,8 +43,14 @@
           0.0
         ],
         "targets": [
-          "FlexibleFitState"
+          "FlexibleSleeve"
         ]
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
       }
     },
     {
