@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import argparse
+import base64
+import binascii
 import json
 import os
 from urllib import error, request
@@ -149,6 +151,50 @@ def require_green_ci(
         raise MergePolicyError("central ci check is still running")
     if latest.get("conclusion") not in _ALLOWED_CI_RESULTS:
         raise MergePolicyError("central ci check is not green")
+
+
+def require_durable_permanent_head(
+    repository: str,
+    branch: str,
+    sha: str,
+    token: str,
+) -> None:
+    """Require published permanent qualification for the exact branch source.
+
+    A genuinely conflicted pull request has no synthetic merge ref, so GitHub
+    may not start its pull-request workflow at all. Permanent qualification
+    already records the actual checked-out source SHA in durable build evidence;
+    use that source identity for the original conflicted head while the separate
+    resolution review still requires normal pull-request CI.
+    """
+
+    payload = api(
+        repository,
+        f"contents/{branch}/build-plan.json?ref=build",
+        token,
+    )
+    if not isinstance(payload, dict):
+        raise MergePolicyError("permanent head has no durable build evidence")
+    content = payload.get("content")
+    if payload.get("encoding") != "base64" or not isinstance(content, str):
+        raise MergePolicyError("permanent head build evidence is malformed")
+
+    try:
+        raw = base64.b64decode(
+            "".join(content.splitlines()),
+            validate=True,
+        ).decode("utf-8")
+        plan = json.loads(raw)
+    except (binascii.Error, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise MergePolicyError(
+            "permanent head build evidence is malformed"
+        ) from exc
+
+    source_sha = plan.get("source_sha") if isinstance(plan, dict) else None
+    if source_sha != sha:
+        raise MergePolicyError(
+            "permanent head durable qualification does not match reviewed SHA"
+        )
 
 
 def merge_required(pr: dict) -> bool:
@@ -337,10 +383,17 @@ def run_resolved(args, token: str) -> str:
     base = pr["base"]["ref"]
     head = pr["head"]["ref"]
 
-    require_green_ci(
+    require_branch_sha(
         args.repository,
+        head,
         resolved.head_sha,
-        args.pull_request_number,
+        token,
+        label="head ref",
+    )
+    require_durable_permanent_head(
+        args.repository,
+        head,
+        resolved.head_sha,
         token,
     )
     review = require_resolution_review(
