@@ -69,6 +69,10 @@ The accepted baseline now includes:
   default;
 - policy-owned integration through PR comment `/merge`, including merge
   commits for permanent branch synchronization;
+- reviewed `/merge-resolved` recovery for genuinely conflicted direct
+  permanent merges, using a separate green same-repository `resolve/*` PR,
+  an exact reviewed tree and an exact two-parent `[base, head]` merge object
+  before non-force base advancement;
 - the library workflow split: pull requests run central `ci`; permanent
   `dev` / `main` runs qualify and publish durable scopes; Pages is
   dispatched independently;
@@ -144,12 +148,31 @@ minor-release capability.
 #315 is not a v0.22.1 prerequisite because that patch only publishes the
 already-stable #306 qualification.
 
-### Experimental lane
+### Experimental lane: #320 annular RegionIR on Mitcad
 
-Permanent `exp` keeps the accepted Mitcad/semantic-IR work isolated from
-normal development. The v0.22.1 stable/governance synchronization is settled;
-#297 may synchronize that accepted baseline into `exp` independently, without
-blocking #315 or reimplementing normal product work.
+#297 is complete. Current accepted normal `dev` was synchronized into
+permanent `exp` through the reviewed conflict-recovery path:
+
+- direct permanent `dev -> exp` PR #337 remained genuinely conflicted;
+- review-only resolution PR #338 qualified the exact combined tree;
+- permanent merge commit
+  `3a467642cabbb1b2920a6d30fce8e507131ef3a9` has parents exactly
+  `[3bb91eb5e05f3cc788c85d90b59b3e5a3d9621ae, abeb6d10479802e4866783b9d67431c53786d0dd]`
+  = `[exp, dev]`;
+- permanent exp CI run 45854046610 is green;
+- durable `build/exp/build-plan.json` records that exact source with
+  `full=true`, `library=true` and all 60 active owners.
+
+Continue the isolated compiler/backend experiment with #320. Qualify the
+already-public two-concentric-circle / annular standalone
+`Sketch.extrude(..., exact_regions=True)` semantics through the existing
+engine-neutral `SketchIR` / `RegionIR` / `ExtrudeIR` boundary for
+SolidCraft and Mitcad.
+
+Keep the public SCPF authoring unchanged. `RegionIR` owns semantic profile
+membership; backend-native coordinate picks or Mitcad region ids are lowering
+details and must not become IR intent. Unsupported arbitrary multi-profile
+forms remain fail-closed.
 
 ## Later
 
