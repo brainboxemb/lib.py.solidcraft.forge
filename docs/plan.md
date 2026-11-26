@@ -50,7 +50,8 @@ The accepted baseline now includes:
 - the adapter-boundary regression found by the permanent 52-owner gate is fixed: SolidCraft compiler/assembly imports occur during package initialization so public `scpf.assembly` remains the callable decorator; permanent `build/exp` at `4e2a6a7feb0de7f750efe1d073852208f1a25b5a` passed with library=true and 52/52 owners, followed by successful `/exp/` Pages publication;
 - the experimental builder/runtime boundary is complete: `builder-scpf-mitcad` compiles unchanged SCPF sources through the Mitcad adapter and retains `model.mitcad` + `model.stl`; `docker.cad.solidcraft v0.3.7` publishes the isolated immutable `cad-mitcad` role pinned to Mitcad 0.70.0; temporary Forge evidence PR #230 qualified the exact release candidate through normal CAD-CI with `simple-box` and `circle-negative-extrude` Mitcad geometry PASS and was closed unmerged;
 - the first owner-integrated Mitcad slice stays inside the existing physical owners: `simple-box`, `circle-negative-extrude` and `topology-face-boundary-box` declare secondary `scpf-mitcad` implementations over the same SCPF source while SolidCraft remains primary; all three enter generic reference-runtime mesh verification, including an explicit two-edge chamfer geometry contract for the topology owner;
-- experimental Pages now makes that second backend inspectable instead of merely green: `builder-scpf-mitcad` retains validated `mitcad.json`, durable output includes native `model.mitcad` plus Mitcad-exported `model.stl`/preview, shared SCPF source is shown once, and the published `/exp/` pages expose generated Mitcad commands and replay bindings alongside result/verification evidence; permanent exp build `45817979939` and Pages run `45818223238` passed after #243.
+- experimental Pages now makes that second backend inspectable instead of merely green: `builder-scpf-mitcad` retains validated `mitcad.json`, durable output includes native `model.mitcad` plus Mitcad-exported `model.stl`/preview, shared SCPF source is shown once, and the published `/exp/` pages expose generated Mitcad commands and replay bindings alongside result/verification evidence; permanent exp build `45817979939` and Pages run `45818223238` passed after #243;
+- the experimental compiler boundary is now explicit: trusted SCPF source is evaluated once, final Shape intent is normalized to engine-neutral `ModelIR`, and SolidCraft/Mitcad lower the same typed `BoxIR`, `CircleExtrudeIR`, `ChamferIR` and semantic face-boundary intent; not-yet-migrated stable SolidCraft surface is isolated behind SolidCraft-only `LegacyShapeIR`; permanent exp build `45824024029` passed with library=true and all 52 owners, followed by successful Pages run `45824616018`.
 
 Release evidence for v0.19.0:
 - promoted full product baseline:
@@ -73,28 +74,21 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #253 introduce explicit Forge semantic IR
+### Experimental: #246 qualify native Cylinder and subtractive boolean on Mitcad
 
-Before adding more Mitcad features, make the multi-backend compiler boundary
-explicit:
+Build the first new CAD capability on top of the accepted semantic IR boundary:
 
-- evaluate trusted SCPF source once into Forge model objects;
-- normalize final Shape intent into typed, engine-neutral `ModelIR`;
-- migrate the already-qualified portable slice to typed `BoxIR`,
-  `CircleExtrudeIR`, `ChamferIR` and semantic face-boundary selection;
-- make SolidCraft and Mitcad lower the same typed IR instead of independently
-  interpreting portable `Shape.kind` / `Shape.data`;
-- keep a temporary SolidCraft-only `LegacyShapeIR` for stable surface not yet
-  migrated, and require Mitcad to reject it;
-- preserve existing SolidCraft command/replay output for the migrated slice and
-  qualify library + all 52 owners before accepting the boundary;
+- introduce native Cylinder intent once as typed Forge IR;
+- introduce the qualified subtractive body boolean/cut once as typed Forge IR;
+- make SolidCraft and Mitcad lower those same semantic nodes independently;
+- preserve symbolic parameter intent and bind engine-owned body results rather
+  than predicting native ids;
+- keep unsupported boolean cases explicit and fail closed;
+- prove the slice in focused IR/backend/headless tests and one existing
+  physical owner with durable command/native/result/verification evidence on
+  `/exp/`;
+- do not add new raw `Shape.data` interpretation to the Mitcad backend;
 - do not integrate `exp -> dev`.
-
-### Blocked next: #246 native Cylinder + subtractive boolean on Mitcad
-
-After #253 is accepted, add Cylinder and subtractive boolean **once** as Forge
-semantic IR and then implement the two backend lowerings. Do not add another
-raw-Shape backend parser.
 
 ### Queued: #162 / #163 verification evidence cleanup
 
