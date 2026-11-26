@@ -127,9 +127,14 @@ class ModelTests(unittest.TestCase):
 
         for model_id in set(EXPECTED_IDS) - set(SCPF_ONLY_IDS):
             model = by_id[model_id]
+            expected_implementations = [
+                "scpf", "cadquery", "build123d", "pythonscad", "pybosl2",
+            ]
+            if model_id in {"simple-box", "circle-negative-extrude"}:
+                expected_implementations.insert(1, "scpf-mitcad")
             self.assertEqual(
                 [impl.id for impl in model.implementations],
-                ["scpf", "cadquery", "build123d", "pythonscad", "pybosl2"],
+                expected_implementations,
             )
             expected_stages = ["native", "geometry", "visual"]
             expected_runtimes = ["solidcraft", "reference", "solidcraft"]
@@ -236,13 +241,27 @@ class ModelTests(unittest.TestCase):
                     Path(tmp),
                 )
 
-        self.assertEqual(invoked.call_count, 2)
+        self.assertEqual(invoked.call_count, 3)
         self.assertEqual(
             [manifest["runtime"] for manifest in manifests],
-            ["solidcraft", "reference"],
+            ["mitcad", "solidcraft", "reference"],
         )
 
-        solidcraft = manifests[0]
+        mitcad = manifests[0]
+        self.assertEqual(
+            [
+                (row["owner"], row["implementation"])
+                for row in mitcad["build_items"]
+            ],
+            [
+                ("circle-negative-extrude", "scpf-mitcad"),
+                ("simple-box", "scpf-mitcad"),
+            ],
+        )
+        self.assertEqual(mitcad["verify_items"], [])
+        self.assertEqual(mitcad["preview_items"], [])
+
+        solidcraft = manifests[1]
         self.assertEqual(
             [row["implementation"] for row in solidcraft["build_items"]],
             ["scpf"] * len(EXPECTED_IDS),
@@ -263,12 +282,12 @@ class ModelTests(unittest.TestCase):
             ],
         )
 
-        reference = manifests[1]
+        reference = manifests[2]
         multi_engine = len(EXPECTED_IDS - SCPF_ONLY_IDS)
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
         self.assertEqual(
             len(reference["verify_items"]),
-            multi_engine * 5 + 1,
+            multi_engine * 5 + 3,
         )
         self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
         self.assertEqual(
@@ -287,6 +306,7 @@ class ModelTests(unittest.TestCase):
                 ("build123d", "geometry"),
                 ("pythonscad", "geometry"),
                 ("pybosl2", "geometry"),
+                ("scpf-mitcad", "geometry"),
                 ("scpf", "drawing-sheet"),
             },
         )
