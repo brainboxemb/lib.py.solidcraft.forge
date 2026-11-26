@@ -84,6 +84,55 @@ class SketchExtrusionTests(unittest.TestCase):
         self.assertTrue(attached_extrude["exact_regions"])
 
 
+    def test_standalone_sketch_multiple_closed_profiles_selects_exact_region(self):
+        with Sketch(name="Tube profile", plane="XY") as sketch:
+            Circle2D(d=10)
+            Circle2D(d=8)
+
+        commands = compile_model(
+            sketch.extrude(
+                30,
+                profiles=[(4.5, 0)],
+                exact_regions=True,
+            ),
+            "AnnularTube",
+        )["commands"]
+
+        self.assertEqual(
+            [row["command"] for row in commands],
+            [
+                "sketch.create",
+                "sketch.circle.center",
+                "sketch.circle.center",
+                "sketch.finish",
+                "solid.extrude",
+            ],
+        )
+        circles = [
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.circle.center"
+        ]
+        self.assertEqual(
+            [circle["diameter"] for circle in circles],
+            [10, 8],
+        )
+        extrude = commands[-1]["params"]
+        self.assertEqual(extrude["profiles"], [{"point": [4.5, 0.0]}])
+        self.assertTrue(extrude["exact_regions"])
+        self.assertEqual(extrude["body_name"], "AnnularTube")
+
+    def test_multi_profile_support_does_not_expand_revolve_contract(self):
+        with Sketch(name="Revolve loops", plane="XZ") as sketch:
+            Circle2D(d=10)
+            Circle2D(d=8)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "exactly one closed profile",
+        ):
+            sketch.revolve(axis=Axis.X)
+
     def test_standalone_sketch_extrusion_is_native_boolean_operand(self):
         base = Box(120, 100, 40)
 

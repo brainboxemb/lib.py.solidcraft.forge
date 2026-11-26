@@ -94,6 +94,40 @@ This is expression authoring, not a general Python symbolic algebra system.
 Forge only exposes operations that have a qualified native SolidCraft spelling
 and current-value evaluation.
 
+## Native multi-profile Sketch extrusion boundary
+
+Standalone Sketch compilation preserves one authored Sketch even when it
+contains several closed loops. Every supported profile is lowered between the
+same `sketch.create` / `sketch.finish` pair; Forge does not manufacture one
+Sketch per loop.
+
+Extrusion keeps SolidCraft's native region model. For ambiguous/nested loops,
+consumer code uses the existing typed selection:
+
+```python
+with Sketch(name="Tube profile", plane="XY") as profile:
+    Circle2D(d=outer_diameter)
+    Circle2D(d=inner_diameter)
+
+tube = profile.extrude(
+    length,
+    profiles=[(4.5, 0)],
+    exact_regions=True,
+)
+```
+
+The fixed point is authoring intent only. SolidCraft resolves the exact region
+and retains the surrounding native curves so the selected annulus can survive
+saved-design diameter changes. No native profile index or generated curve id is
+part of the public API.
+
+The compiler's base-shape metadata remains intentionally conservative for
+multi-profile Sketches: profile-specific edge selectors such as
+`Edges.from_profile(...)` continue to require their already-qualified single
+Polygon2D extrusion. Multi-profile support is an extrusion-region capability,
+not a blanket expansion of every Sketch consumer. `Sketch.revolve()` retains
+its one-closed-profile limit.
+
 ## Native axis-line and shifted revolve boundary
 
 `AxisLine(direction, origin=...)` is the public typed line contract for native

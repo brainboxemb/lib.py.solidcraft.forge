@@ -37,6 +37,26 @@
 4. Native qualification must prove that changing a driving parameter in a saved
    SolidCraft design rebuilds the fold successfully.
 
+## SCPF standalone Sketch regions
+
+1. A standalone `Sketch` may contain one or more supported closed profiles;
+   Forge must lower all authored loops into one native SolidCraft Sketch rather
+   than split them into unrelated sketches/features.
+2. `Sketch.extrude(..., profiles=..., exact_regions=True)` is the public
+   region-selection contract for nested or otherwise ambiguous closed loops.
+   User code selects with fixed sketch-local points and never names native
+   profile/curve ids.
+3. Nested closed loops must preserve SolidCraft region semantics so an inner
+   loop may become a hole in the explicitly selected outer region.
+4. Existing one-profile standalone Sketch extrusion remains source- and
+   command-compatible.
+5. Multi-profile extrusion does not broaden other features implicitly:
+   `Sketch.revolve()` remains limited to exactly one closed profile until a
+   separately qualified contract changes it.
+6. Native qualification must prove one Sketch contains both loops, one native
+   extrusion consumes the intended annular region, and saved-design parameter
+   changes preserve that region association.
+
 ## SCPF configuration tables
 
 1. Author one native editable configuration table around a finished Shape, component occurrence or Assembly, with named rows and an explicit active row.
