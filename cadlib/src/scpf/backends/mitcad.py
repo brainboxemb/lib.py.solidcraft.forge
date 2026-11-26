@@ -283,6 +283,8 @@ def _extrude_commands(
             "def": extrude_definition,
         },
     ]
+
+
 def _chamfer_document(
     model: ModelIR,
     node: ChamferIR,

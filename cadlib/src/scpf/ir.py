@@ -100,6 +100,21 @@ class RegionIR:
     outer: int
     holes: tuple[int, ...] = ()
 
+    def __post_init__(self):
+        if type(self.outer) is not int or self.outer < 0:
+            raise ValueError("RegionIR outer must be a non-negative profile index")
+        if (
+            not isinstance(self.holes, tuple)
+            or any(type(index) is not int or index < 0 for index in self.holes)
+        ):
+            raise ValueError(
+                "RegionIR holes must contain non-negative profile indexes"
+            )
+        if self.outer in self.holes:
+            raise ValueError("RegionIR outer profile cannot also be a hole")
+        if len(set(self.holes)) != len(self.holes):
+            raise ValueError("RegionIR hole profile indexes must be unique")
+
 
 @dataclass(frozen=True)
 class ExtrudeIR:

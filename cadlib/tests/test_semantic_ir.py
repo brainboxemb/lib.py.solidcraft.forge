@@ -264,6 +264,18 @@ class SemanticIRTests(unittest.TestCase):
             ):
                 compiler(future, "FutureAnnulus")
 
+    def test_region_ir_rejects_invalid_profile_membership(self):
+        for kwargs in (
+            {"outer": -1},
+            {"outer": True},
+            {"outer": 0, "holes": [1]},
+            {"outer": 0, "holes": (-1,)},
+            {"outer": 0, "holes": (0,)},
+            {"outer": 0, "holes": (1, 1)},
+        ):
+            with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
+                RegionIR(**kwargs)
+
     def test_face_boundary_chamfer_keeps_semantic_selector_and_placement(self):
         shape = Box(
             60,
