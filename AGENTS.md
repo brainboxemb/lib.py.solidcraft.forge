@@ -2,12 +2,25 @@
 
 Read `docs/requirements.md`, `docs/design.md`, `docs/plan.md` and `docs/handoff.md` before making repository changes.
 
+## Plan ownership
+
+`docs/plan.md` is repository governance and is canonical on **main**.
+Always read the current main version before choosing work, even when working on
+`dev` or `exp` and their local copy is behind.
+
+- reconcile plan state on a short-lived docs branch created from `main`;
+- merge that governance PR back to `main` only through `/merge`;
+- do not author competing normal or experimental plan state directly on
+  `dev` or `exp`;
+- accepted governance reaches permanent development lanes through their normal
+  merge-policy synchronization checkpoints.
+
 ## Branch policy
 
 - `main`: stable integration only.
 - `dev`: normal integration branch.
 - `exp`: optional permanent experimental integration branch; never a release source.
-- normal short-lived work branches use `issue/`, `fix/`, `feature/`, `docs/` or `chore/` and squash into `dev` or `exp` according to their intended integration line.
+- normal short-lived product work branches use `issue/`, `fix/`, `feature/`, `docs/` or `chore/` and squash into `dev` or `exp` according to their intended integration line; the canonical `docs/plan.md` reconciliation exception is a short-lived docs branch from `main` back to `main`.
 - `dev -> exp` synchronization and completed `exp -> dev` integration use merge commits; `exp -> main` is forbidden.
 - explicit product promotion `dev -> main` uses a merge commit.
 - release preparation uses `release/vX.Y.Z` created from stable `main`; only `CHANGELOG.md` and `cadlib/pyproject.toml:project.version` may change.
@@ -22,6 +35,7 @@ This repository deliberately does **not** let an agent choose the merge method.
 For every source-branch integration:
 
 - normal short-lived branch -> `dev` or `exp`;
+- canonical governance docs branch -> `main`;
 - `dev` -> `exp` and `exp` -> `dev`;
 - `release/*` -> `main`;
 - explicit product promotion `dev` -> `main`;

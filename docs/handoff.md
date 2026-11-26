@@ -36,8 +36,8 @@ Start by:
 
 1. inspecting the current issues, pull requests and branches;
 2. reading AGENTS.md;
-3. reading docs/plan.md;
-4. treating docs/plan.md as the source of truth for unfinished work;
+3. reading the current `main` version of docs/plan.md;
+4. treating `main:docs/plan.md` as the single source of truth for unfinished work across `main`, `dev` and `exp`;
 5. reading docs/requirements.md and docs/design.md before changing behavior or
    architecture;
 6. following the current work order from the plan rather than from old handoff
@@ -52,6 +52,9 @@ Durable working rules:
 
 - preserve the public `scpf` import/package contract and fix lost Forge API
   behavior in `cadlib/scpf` rather than with model-local workarounds;
+- keep `docs/plan.md` canonical on `main`; reconcile it from a short-lived
+  main-based docs branch and never treat `dev` or `exp` copies as competing
+  lane-local plans;
 - keep one physical owner per model and use `model.yml.purpose` only as a
   presentation projection for `example`, `verification`, or both;
 - generated CAD artifacts remain on `build/<scope>/models/**`; Pages reads

@@ -2,13 +2,20 @@
 
 This file contains unfinished work only.
 
+`docs/plan.md` is repository governance and is canonical on **main**. Work on
+`dev` or `exp` must read the current main version even when that branch's
+working-tree copy has not yet received the latest governance synchronization.
+Plan reconciliation is authored from a short-lived docs branch created from
+`main` and merged back to `main` through `/merge`; development lanes do not
+maintain competing branch-local plans.
+
 ## Accepted baseline
 
 The Forge migration is complete and the current public product baseline is
-released as **v0.21.0**.
+released as **v0.22.0**.
 
 The accepted baseline now includes:
-- 57 physical model owners, with SCPF primary per owner and historically real
+- 59 physical model owners, with SCPF primary per owner and historically real
   reference implementations kept inside the same physical owner;
 - native, geometry, inspection and applicable visual verification with durable
   generated evidence below `build/<scope>/models/**`;
@@ -45,6 +52,11 @@ The accepted baseline now includes:
 - typed shifted/custom `AxisLine(...)` support for `Sketch.revolve(...)`,
   including parameter-driven origins while retaining one suppressible native
   revolve feature;
+- multiple closed profiles in one standalone `Sketch.extrude(...)`, including
+  deterministic nested-loop/annular regions while preserving one native Sketch
+  and one native ExtrudeFeature;
+- native equal- or two-distance chamfer authoring through
+  `Shape.chamfer(distance, distance2=..., flip=..., edges=...)`;
 - manufacturing-output verification for `sheet-perforate` from authoritative
   SolidCraft flat-pattern/DXF evidence rather than fabricated display geometry;
 - native compact technical-drawing title blocks through
@@ -67,19 +79,19 @@ The accepted baseline now includes:
 - stable Pages quality and the canonical Pages deployment;
 - policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks.
 
-Release evidence for v0.21.0:
+Release evidence for v0.22.0:
 - promoted full product baseline:
-  `fe1c6fd699e7df872e962fdee31ea002747b88f5`;
-- full durable `build/main` evidence: `full=true`, `library=true` and
-  57/57 active owners;
+  `8fd34556bb85527e085dc59ae0b07cc0539080cc`;
+- full durable `build/main` evidence retains that source with
+  `full=true`, `library=true` and 59/59 active owners;
 - release metadata commit:
-  `5a176ab1a5c1eb04e920b896f6df382ac85888e6`;
-- annotated tag `v0.21.0` points exactly to that release commit and the
+  `bed61dd65fb2b2617f2f316cbc1cd7a7dd250988`;
+- annotated tag `v0.22.0` points exactly to that release commit and the
   GitHub Release is published;
-- the metadata-only permanent stable run selected release + library + zero
-  models and retained the full product baseline;
-- stable -> dev synchronization completed through merge commit
-  `46f77cc9078adb7e63a0ddd2b1694bd1fbdf4662`.
+- the metadata-only stable release path succeeded and retained the full product
+  baseline rather than replacing it.
+- stable -> dev release-metadata synchronization completed through merge commit
+  `a60114bceccc084f812bfd9435d364c80180e677`.
 
 The pinned SolidCraft 0.49 registry still has no native centre-mark or
 centre-line drawing-authoring command; Forge deliberately does not emulate
@@ -90,45 +102,68 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: v0.22.0 stabilization
+### Stable governance checkpoint: #307
 
-The consumer-driven development line for v0.22.0 is complete on `dev`:
+The #306 qualification-only product delta is already promoted to stable
+`main` through #317 / PR #319 at
+`4370cc398ac8913dacda1c02a57edc13ef8c58ba`.
 
-- #163 established the repository-wide verification evidence contract and the
-  future-owner rule for visibly meaningful geometry;
-- #267 adds multiple closed profiles in one standalone Sketch extrusion,
-  including the annular-region authoring needed by CAD catalog #198;
-- #294 adds approved SolidCraft visual evidence for that new visible-geometry
-  owner;
-- #271 adds native two-distance / asymmetric chamfer authoring for CAD catalog
-  #200 while preserving the existing equal-distance command contract;
-- the current development catalogue contains 59 physical owners.
+Land #307 next on that updated stable product. This makes
+`main:docs/plan.md` the single canonical repository plan and updates AGENTS
+and the durable handoff accordingly. Require the permanent stable main
+qualification after that governance merge before release preparation.
 
-Finish the stable release without mixing further product work into this line:
+### Release checkpoint: #318 / v0.22.1
 
-1. require the permanent `dev` qualification on the exact #271 merge head;
-2. promote the complete `dev -> main` product through a dedicated
-   merge-policy issue/PR;
-3. publish v0.22.0 through release issue #299;
-4. synchronize the stable-only release metadata back with `main -> dev`;
-5. reconcile this plan after publication.
+#306 proves the existing released configuration API covers the HUB75
+parent/child composition without adding a new public API:
 
-Only after v0.22.0 is stable, continue the concrete evidence follow-ups from
-the completed #163 audit: #255, #256 and #257.
+- a reusable child component publishes one native parameter through
+  `component(..., include=...)`;
+- the parent Assembly's Small / Medium / Large `Configure(...)` table targets
+  that shared published child parameter through ordinary `Param(...)`;
+- multiple child occurrences share the same native parameter;
+- saved-design row switching recomputes child geometry without rerunning Forge
+  Python;
+- no boolean emulation, duplicate Installed body, Cartesian state table or raw
+  SolidCraft ids are introduced.
+
+Because this qualification completed after the immutable v0.22.0 publication,
+publish a **v0.22.1 qualification-only patch**:
+
+1. require the permanent stable build on the #306 promotion head;
+2. merge #307 canonical-plan governance on that updated main;
+3. require permanent stable qualification after the governance merge;
+4. create metadata-only `release/v0.22.1` from that exact main;
+5. publish through #318 with the explicit owner-issued `/release` workflow;
+6. synchronize accepted governance plus stable patch metadata back with one
+   `main -> dev` merge-policy PR;
+7. reconcile this canonical main plan after publication.
+
+The patch must not add a new public API.
+
+### Conditional future configuration research: #315
+
+Only if a demonstrated consumer requires Free / Installed to remain an
+independent state axis inside the same Assembly while Small / Medium / Large
+remains separate, investigate the native SolidCraft `config.rule` contract
+through #315 before designing Forge API.
+
+#315 is **not** a v0.22.1 prerequisite. Do not emulate a boolean with numeric
+0/1 and do not force Cartesian configuration rows.
 
 ### Experimental lane
 
-The permanent `exp` branch remains isolated from normal product development.
-Its branch-local `docs/plan.md` owns the current experimental work order;
-normal `dev` must not duplicate that queue because it progresses
-independently. Re-read the current `exp` plan before doing experimental work,
-and integrate `exp -> dev` only through a separately qualified issue/PR when
-an experiment is explicitly accepted for the product.
+Permanent `exp` keeps the accepted Mitcad/semantic-IR work isolated from
+normal development. Synchronize accepted normal product/governance state into
+`exp` through #297 only after the stable/governance synchronization is
+settled, then continue experiments without reimplementing normal product work.
 
 ## Later
 
-1. Execute verification-evidence follow-ups #255, #256 and #257 after the
-   v0.22.0 stable release, in the order justified by the completed #163 audit.
+1. After the v0.22.1 qualification patch, execute verification-evidence
+   follow-ups #255, #256 and #257 in the order justified by the completed
+   #163 audit unless a newer demonstrated consumer blocker takes priority.
 2. Continue the migrated Forge product/research backlog (#59-#72) according to
    demonstrated consumer value and dependencies rather than treating the whole
    historical backlog as release-blocking.
