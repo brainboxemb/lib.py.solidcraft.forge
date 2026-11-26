@@ -91,7 +91,7 @@ VERIFICATION = SolidCraftVerification(
                         "effect",
                         "expression",
                     ),
-                    expected="20 mm",
+                    expected="20",
                 ),
             ),
         ),
