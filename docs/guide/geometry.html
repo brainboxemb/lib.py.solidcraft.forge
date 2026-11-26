@@ -86,6 +86,21 @@ when the saved design recomputes. <code>exact_regions=True</code> asks
 SolidCraft to use exactly the region containing each point. Profile points must
 be fixed finite numbers; Forge Parameters and expressions are not accepted in
 this field.</p>
+<p>A standalone Sketch may contain several closed loops. Nested loops remain
+one native Sketch; select the intended exact region when the loops create more
+than one region. A hollow tube can therefore be authored as one concentric
+two-circle Sketch and one extrusion:</p>
+<pre class="code-block"><code>with Sketch(name=&quot;Tube profile&quot;, plane=&quot;XY&quot;) as profile:
+    Circle2D(d=10)
+    Circle2D(d=8)
+
+tube = profile.extrude(
+    30,
+    profiles=[(4.5, 0)],
+    exact_regions=True,
+)</code></pre>
+<p>This capability is specific to extrusion. <code>Sketch.revolve()</code>
+still requires exactly one closed profile.</p>
 <h2 id="pattern-mirror">Repeat and mirror profiles inside one Sketch</h2>
 <p><code>Sketch.rectangular_pattern()</code> makes a native SolidCraft sketch pattern from a profile that already belongs to the Sketch. <code>Sketch.mirror()</code> mirrors a profile, a pattern result or an earlier mirror result. Both methods return a Sketch result that can be passed to another supported Sketch operation.</p>
 <pre class="code-block"><code>from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
