@@ -311,7 +311,7 @@ class ModelTests(unittest.TestCase):
                 for pair in (
                     [("scpf", "native")]
                     if model.id in SCPF_ONLY_IDS
-                    or model.id == "topology-face-boundary-box"
+                    or model.id in MITCAD_FOCUSED_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
                 )
             ],
@@ -322,7 +322,7 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
         self.assertEqual(
             len(reference["verify_items"]),
-            multi_engine * 5 + len(MITCAD_IDS) + 2,
+            multi_engine * 5 + len(MITCAD_IDS) + len(MITCAD_FOCUSED_IDS),
         )
         self.assertEqual(
             len(reference["preview_items"]),
