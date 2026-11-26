@@ -24,7 +24,6 @@ from .configurations import (
 )
 from .compiler import ModelError, _compile_model_with_dependencies
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
-from .assembly import _compile_assembly_with_dependencies
 from .model_objects import (
     Assembly,
     DrawingDimension,
