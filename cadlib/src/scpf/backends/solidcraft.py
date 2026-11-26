@@ -143,7 +143,13 @@ def _box_command(
         "width": command_value(primitive.width),
         "height": command_value(primitive.height),
     }
-    if not node.explicit and node.anchor == (0, 0, 0):
+    if operation is not None and node.anchor == (0, 0, 0):
+        # Legacy CSG spelling keeps translated centered boxes as a native
+        # centre placement rather than rewriting the equivalent solid by corner.
+        params["center"] = [
+            command_value(value) for value in node.point
+        ]
+    elif not node.explicit and node.anchor == (0, 0, 0):
         params["center"] = [0, 0, 0]
     elif not node.explicit and tuple(node.point) == (0, 0, 0):
         params["corner"] = [
