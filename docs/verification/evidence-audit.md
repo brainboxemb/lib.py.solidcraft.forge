@@ -2,7 +2,7 @@
 
 Issue: #163
 
-This audit classifies every current `dev` model owner whose
+This audit classifies every model owner in the v0.21.0 `dev` baseline whose
 `model.yml.purpose` contains `verification`. It records whether the evidence
 can catch the failure the owner is intended to guard against. A native replay
 PASS by itself is not treated as sufficient for visibly geometric behavior.
@@ -74,7 +74,7 @@ or manufacture missing verification.
 | rotated-sketch-cutter | non-axis-aligned sketch cutters | build only | no explicit contract | no | no | missing structural/visual expectation | #255 |
 | round-top-sketch | TOP face on circular body | yes | yes | yes | yes | complete/current | — |
 | rounded-rectangle-sketch | attached pad + standalone cut | yes | yes | yes | yes | complete/current | — |
-| sample-plate-drawing | native technical drawing | yes | drawing inspection | yes | yes | complete/current | — |
+| sample-plate-drawing | native full + compact technical drawings | yes | drawing inspection | yes, two sheet baselines | yes | complete/current | — |
 | selective-profile-extrude | selected sketch regions only | yes | yes | yes | yes | complete/current | — |
 | sheet-contour-flange | native contour-flange history | yes | flat-pattern inspection | no | no | missing folded-geometry expectation | #257 |
 | sheet-contour-flange-recess | broad-face recess + live/headless parity | runtime fixture | no explicit visual contract | no | no | blocked by live runtime defect; visual gap | #73, #255 |
@@ -96,22 +96,23 @@ or manufacture missing verification.
 
 The current `dev` catalogue contains 57 verification owners.
 
-- 39 owners already have the current combination of native/structural evidence
-  and explicit visual expectation appropriate to their visible geometry.
-- 3 owners are intentionally non-visual or use a specialized authoritative
-  representation: `configuration-table`, `configuration-symbolic-math`, and
-  `sheet-perforate`.
+- 38 owners are complete/current for their intended contract. This includes
+  `sheet-perforate`, whose explicit visual expectation is the authoritative
+  manufacturing representation rather than the display B-rep.
+- 2 owners are intentionally non-visual because their contract is native
+  table/expression state rather than a presentation result:
+  `configuration-table` and `configuration-symbolic-math`.
 - 7 visibly geometric/topology owners need explicit geometry/visual evidence:
   #255.
 - 6 user-visible state/motion owners need visual state evidence in addition to
   their existing native inspections: #256.
 - 4 folded sheet-metal owners need normal folded-geometry visual baselines in
   addition to their existing native/flat-pattern checks: #257.
-- `sheet-contour-flange-recess` also remains tied to the live-vs-headless
-  runtime defect tracked by #73.
+- `sheet-contour-flange-recess` is one of the seven #255 owners and also
+  remains tied to the separate live-vs-headless runtime defect tracked by #73.
 
-The follow-ups overlap the summary categories only where a single owner has two
-distinct concerns; they do not create new model owners.
+The three evidence follow-ups cover 17 distinct owners; they do not create new
+model owners and they do not turn #163 into a bulk verification-fix PR.
 
 ## Future owner rule
 
