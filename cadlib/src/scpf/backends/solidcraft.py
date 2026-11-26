@@ -18,6 +18,7 @@ from ..core import (
     _DirectionSelector,
     _box_corner_from_anchor,
     _cylinder_base_from_anchor,
+    _sphere_center_from_anchor,
     _native_dependencies,
     _native_expression,
     _plain_command_value,
@@ -26,7 +27,7 @@ from ..core import (
     number_text,
 )
 from ..ir import (
-    BooleanSubtractIR,
+    BooleanIR,
     BoxIR,
     ChamferIR,
     CircleProfileIR,
@@ -37,6 +38,7 @@ from ..ir import (
     ModelIR,
     PlacementIR,
     RegionIR,
+    SphereIR,
     _circle_region_interior_point,
 )
 from ..replay import replay_document
@@ -121,7 +123,12 @@ def _origin_box_corner(primitive: BoxIR, anchor):
     return corner
 
 
-def _box_command(node: PlacementIR, name: str) -> dict:
+def _box_command(
+    node: PlacementIR,
+    name: str,
+    *,
+    operation: str | None = None,
+) -> dict:
     primitive = node.primitive
     if not isinstance(primitive, BoxIR):
         raise TypeError("SolidCraft box lowering requires PlacementIR(BoxIR)")
@@ -155,16 +162,15 @@ def _box_command(node: PlacementIR, name: str) -> dict:
             command_value(value)
             for value in corner
         ]
-    params["body_name"] = name
+    if operation is None:
+        params["body_name"] = name
+    else:
+        params["operation"] = operation
+        if operation == "new":
+            params["body_name"] = name
+        else:
+            params["targets"] = [name]
     return _command("solid.box", **params)
-
-
-def _csg_box_command(node: PlacementIR, name: str) -> dict:
-    # Preserve the accepted #246 SolidCraft command shape rather than changing
-    # native command spelling merely because placement moved into typed IR.
-    command = _box_command(node, name)
-    command["params"]["operation"] = "new"
-    return command
 
 
 def _cylinder_command(
@@ -201,6 +207,69 @@ def _cylinder_command(
     else:
         params["targets"] = [name]
     return _command("solid.cylinder", **params)
+
+
+def _sphere_command(
+    node: PlacementIR,
+    name: str,
+    *,
+    operation: str = "new",
+) -> dict:
+    primitive = node.primitive
+    if not isinstance(primitive, SphereIR):
+        raise TypeError(
+            "SolidCraft sphere lowering requires PlacementIR(SphereIR)"
+        )
+    _require_positive(primitive.radius, "sphere radius")
+    selector = _DirectionSelector(node.anchor)
+    center = _sphere_center_from_anchor(
+        primitive.radius,
+        node.point,
+        selector,
+    )
+    params = {
+        "radius": command_value(primitive.radius),
+        "center": [command_value(value) for value in center],
+        "operation": operation,
+    }
+    if operation == "new":
+        params["body_name"] = name
+    else:
+        params["targets"] = [name]
+    return _command("solid.sphere", **params)
+
+
+def _csg_primitive_command(
+    node: PlacementIR,
+    name: str,
+    operation: str,
+) -> dict:
+    if isinstance(node.primitive, BoxIR):
+        return _box_command(node, name, operation=operation)
+    if isinstance(node.primitive, CylinderIR):
+        return _cylinder_command(node, name, operation=operation)
+    if isinstance(node.primitive, SphereIR):
+        return _sphere_command(node, name, operation=operation)
+    raise ModelError(
+        "portable SolidCraft primitive CSG does not support "
+        f"{type(node.primitive).__name__}"
+    )
+
+
+def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
+    """Flatten one bounded left-associated semantic CSG tree in source order."""
+    commands = []
+    if isinstance(node.target, BooleanIR):
+        commands.extend(_boolean_commands(node.target, name))
+    elif isinstance(node.target, PlacementIR):
+        commands.append(_csg_primitive_command(node.target, name, "new"))
+    else:
+        raise ModelError("portable SolidCraft BooleanIR has unsupported target")
+
+    commands.append(
+        _csg_primitive_command(node.tool, name, node.operation)
+    )
+    return commands
 
 
 def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
@@ -314,6 +383,8 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
             return [*parameters, _box_command(node, name)]
         if isinstance(node.primitive, CylinderIR):
             return [*parameters, _cylinder_command(node, name)]
+        if isinstance(node.primitive, SphereIR):
+            return [*parameters, _sphere_command(node, name)]
         raise TypeError(
             f"unsupported SolidCraft placed primitive "
             f"{type(node.primitive).__name__}"
@@ -325,11 +396,10 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
             *_extrude_commands(node, name),
         ]
 
-    if isinstance(node, BooleanSubtractIR):
+    if isinstance(node, BooleanIR):
         return [
             *parameters,
-            _csg_box_command(node.target, name),
-            _cylinder_command(node.tool, name, operation="cut"),
+            *_boolean_commands(node, name),
         ]
 
     if isinstance(node, ChamferIR):
