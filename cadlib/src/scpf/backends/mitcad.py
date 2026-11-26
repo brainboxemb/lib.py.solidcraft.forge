@@ -18,7 +18,7 @@ from ..core import (
     parameters_in,
 )
 from ..ir import (
-    BooleanSubtractIR,
+    BooleanIR,
     BoxIR,
     ChamferIR,
     CircleProfileIR,
@@ -28,6 +28,7 @@ from ..ir import (
     ModelIR,
     PlacementIR,
     RegionIR,
+    SphereIR,
     _circle_region_interior_point,
     normalize_shape,
 )
@@ -69,17 +70,42 @@ def _require_origin_plane(value, *, label):
         )
 
 
-def _box_command(node: PlacementIR, name: str) -> dict:
+def _box_command(
+    node: PlacementIR,
+    name: str,
+    *,
+    operation: str = "new_body",
+) -> dict:
     primitive = node.primitive
     if not isinstance(primitive, BoxIR):
         raise TypeError("Mitcad box lowering requires PlacementIR(BoxIR)")
 
     _require_positive(primitive.length, "box length")
     _require_positive(primitive.width, "box width")
-    _require_positive(primitive.height, "box height")
-    _require_origin_plane(node.point[2], label="Box")
+    height = _require_positive(primitive.height, "box height")
 
-    if node.anchor not in ((0, 0, -1), (0, 0, 0)):
+    if node.anchor == (0, 0, -1):
+        _require_origin_plane(node.point[2], label="Box")
+        symmetric = False
+    elif node.anchor == (0, 0, 0):
+        axial = pv(node.point[2])
+        if parameters_in(node.point[2]):
+            raise ModelError(
+                "Mitcad Box axial placement currently requires a numeric "
+                "origin-plane equivalent"
+            )
+        if abs(axial) <= 1e-9:
+            symmetric = True
+        elif not parameters_in(primitive.height) and abs(axial - height / 2.0) <= 1e-9:
+            # A centered Forge box whose bottom lies on XY is the same native
+            # solid as a one-sided Mitcad box starting on XY.
+            symmetric = False
+        else:
+            raise ModelError(
+                "Mitcad Box placement currently requires its center on XY "
+                "or its bottom face on XY"
+            )
+    else:
         raise ModelError(
             "Mitcad Box placement currently supports Anchor.BOTTOM or "
             "Anchor.CENTER only"
@@ -103,8 +129,8 @@ def _box_command(node: PlacementIR, name: str) -> dict:
         "length": command_value(primitive.length),
         "width": command_value(primitive.width),
         "height": command_value(primitive.height),
-        "symmetric": node.anchor == (0, 0, 0),
-        "operation": "new_body",
+        "symmetric": symmetric,
+        "operation": operation,
         "participants": [],
     }
     return {
@@ -185,6 +211,75 @@ def _cylinder_command(
             "participants": [],
         },
     }
+
+
+def _sphere_command(
+    node: PlacementIR,
+    name: str,
+    *,
+    operation: str = "new_body",
+) -> dict:
+    primitive = node.primitive
+    if not isinstance(primitive, SphereIR):
+        raise TypeError("Mitcad sphere lowering requires PlacementIR(SphereIR)")
+    _require_positive(primitive.radius, "sphere radius")
+    if node.anchor != (0, 0, 0):
+        raise ModelError("Mitcad Sphere IR currently requires Anchor.CENTER")
+    _require_origin_plane(node.point[2], label="Sphere")
+    return {
+        "cmd": "add_feature",
+        "name": name,
+        "def": {
+            "type": "sphere",
+            "plane": "xy",
+            "center": [
+                command_value(node.point[0]),
+                command_value(node.point[1]),
+            ],
+            "diameter": command_value(primitive.radius * 2),
+            "operation": operation,
+            "participants": [],
+        },
+    }
+
+
+def _csg_primitive_command(
+    node: PlacementIR,
+    name: str,
+    operation: str,
+) -> dict:
+    if isinstance(node.primitive, BoxIR):
+        return _box_command(node, name, operation=operation)
+    if isinstance(node.primitive, CylinderIR):
+        return _cylinder_command(node, name, operation=operation)
+    if isinstance(node.primitive, SphereIR):
+        return _sphere_command(node, name, operation=operation)
+    raise ModelError(
+        "Mitcad primitive CSG does not support "
+        f"{type(node.primitive).__name__}"
+    )
+
+
+def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
+    """Flatten one bounded left-associated semantic CSG tree in source order."""
+    commands = []
+    if isinstance(node.target, BooleanIR):
+        commands.extend(_boolean_commands(node.target, name))
+    elif isinstance(node.target, PlacementIR):
+        commands.append(
+            _csg_primitive_command(node.target, f"{name}Base", "new_body")
+        )
+    else:
+        raise ModelError("Mitcad BooleanIR has unsupported target")
+
+    commands.append(
+        _csg_primitive_command(
+            node.tool,
+            f"{name}{node.operation.title()}{len(commands)}",
+            node.operation,
+        )
+    )
+    return commands
 
 
 def _extrude_commands(
@@ -381,6 +476,8 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
             geometry_commands = [_box_command(node, name)]
         elif isinstance(node.primitive, CylinderIR):
             geometry_commands = [_cylinder_command(node, name)]
+        elif isinstance(node.primitive, SphereIR):
+            geometry_commands = [_sphere_command(node, name)]
         else:
             raise ModelError(
                 f"Mitcad backend does not support placed Forge IR primitive "
@@ -388,15 +485,8 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
             )
     elif isinstance(node, ExtrudeIR):
         geometry_commands = _extrude_commands(node, name)
-    elif isinstance(node, BooleanSubtractIR):
-        geometry_commands = [
-            _box_command(node.target, f"{name}Base"),
-            _cylinder_command(
-                node.tool,
-                f"{name}Cut",
-                operation="cut",
-            ),
-        ]
+    elif isinstance(node, BooleanIR):
+        geometry_commands = _boolean_commands(node, name)
     else:
         raise ModelError(
             f"Mitcad backend does not support Forge IR node "

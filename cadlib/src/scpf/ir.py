@@ -54,7 +54,15 @@ class CylinderIR:
     source_kind: str = "cylinder"
 
 
-PrimitiveIR = BoxIR | CylinderIR
+@dataclass(frozen=True)
+class SphereIR:
+    """Spherical primitive geometry independent of native diameter spelling."""
+
+    radius: Any
+    source_kind: str = "sphere"
+
+
+PrimitiveIR = BoxIR | CylinderIR | SphereIR
 
 
 @dataclass(frozen=True)
@@ -201,12 +209,24 @@ class ChamferIR:
 
 
 @dataclass(frozen=True)
-class BooleanSubtractIR:
-    """Qualified subtractive boolean between typed semantic solids."""
+class BooleanIR:
+    """Bounded recursive primitive CSG intent.
 
-    target: PlacementIR
+    target may be another BooleanIR so a left-associated public CSG expression
+    remains one semantic tree. tool is deliberately one placed primitive in
+    the current qualified slice; more general boolean operands stay legacy.
+    """
+
+    operation: str
+    target: "PlacementIR | BooleanIR"
     tool: PlacementIR
-    source_kind: str = "difference"
+    source_kind: str = "boolean"
+
+    def __post_init__(self):
+        if self.operation not in {"join", "cut", "intersect"}:
+            raise ValueError(
+                "BooleanIR operation must be join, cut or intersect"
+            )
 
 
 @dataclass(frozen=True)
@@ -221,7 +241,7 @@ IRNode = (
     PlacementIR
     | ExtrudeIR
     | ChamferIR
-    | BooleanSubtractIR
+    | BooleanIR
     | LegacyShapeIR
 )
 
@@ -302,6 +322,17 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
             anchor=_anchor_vector(anchor),
         )
 
+    if shape.kind == "sphere":
+        radius, anchor = shape.data
+        anchor_vector = _anchor_vector(anchor)
+        if anchor_vector != (0, 0, 0):
+            return None
+        return PlacementIR(
+            primitive=SphereIR(radius=radius),
+            point=(0, 0, 0),
+            anchor=anchor_vector,
+        )
+
     if shape.kind == "placed_box":
         box, x, y, z, anchor = shape.data
         if box.kind != "box":
@@ -333,7 +364,7 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
     if shape.kind == "translated":
         child, delta = shape.data
         placement = _portable_placement(child)
-        if placement is None:
+        if placement is None or isinstance(placement.primitive, SphereIR):
             return None
         return PlacementIR(
             primitive=placement.primitive,
@@ -474,17 +505,25 @@ def _normalize_node(shape: Shape) -> IRNode:
     if placement is not None:
         return placement
 
-    if shape.kind == "difference":
+    if shape.kind in {"union", "difference", "intersection"}:
         target_shape, tool_shape = shape.data
         target = _normalize_node(target_shape)
         tool = _normalize_node(tool_shape)
         if (
-            isinstance(target, PlacementIR)
-            and isinstance(target.primitive, BoxIR)
+            isinstance(target, (PlacementIR, BooleanIR))
             and isinstance(tool, PlacementIR)
-            and isinstance(tool.primitive, CylinderIR)
+            and isinstance(tool.primitive, (BoxIR, CylinderIR, SphereIR))
         ):
-            return BooleanSubtractIR(target=target, tool=tool)
+            operation = {
+                "union": "join",
+                "difference": "cut",
+                "intersection": "intersect",
+            }[shape.kind]
+            return BooleanIR(
+                operation=operation,
+                target=target,
+                tool=tool,
+            )
         return LegacyShapeIR(shape=shape, source_kind=shape.kind)
 
     extrude = _portable_extrude(shape)
@@ -514,7 +553,7 @@ def is_portable(model: ModelIR) -> bool:
 
 
 __all__ = [
-    "BooleanSubtractIR",
+    "BooleanIR",
     "BoxIR",
     "ChamferIR",
     "CircleProfileIR",
@@ -530,6 +569,7 @@ __all__ = [
     "ProfileIR",
     "RegionIR",
     "SketchIR",
+    "SphereIR",
     "is_portable",
     "normalize_shape",
 ]

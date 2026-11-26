@@ -75,7 +75,10 @@ def _mitcad_adapter() -> BackendAdapter:
             {
                 "primitive.box",
                 "primitive.cylinder",
+                "primitive.sphere",
                 "boolean.subtract",
+                "boolean.join",
+                "boolean.intersect",
                 "placement.primitive",
                 "sketch.circle",
                 "profile.region",

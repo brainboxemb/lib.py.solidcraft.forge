@@ -3,7 +3,7 @@
 from pathlib import Path
 import unittest
 
-from scpf import Anchor, Box, Cylinder, Sphere
+from scpf import Anchor, Box, Cone, Cylinder, Sphere
 from scpf.backends.mitcad import compile_model
 from scpf.compiler import ModelError
 from scpf.runner import run_script
@@ -174,9 +174,9 @@ class MitcadBackendTests(unittest.TestCase):
     def test_unsupported_shape_fails_explicitly(self):
         with self.assertRaisesRegex(
             ModelError,
-            "does not yet support Forge shape kind 'sphere'",
+            "does not yet support Forge shape kind 'cone'",
         ):
-            compile_model(Sphere(10), "SphereTest")
+            compile_model(Cone(d=10, h=20), "ConeTest")
 
     def test_configuration_table_fails_closed_on_mitcad(self):
         with self.assertRaisesRegex(
