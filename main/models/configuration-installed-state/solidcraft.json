@@ -9,6 +9,16 @@
       }
     },
     {
+      "bind": {
+        "$flexible_sleeve": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "FlexibleSleeve"
+      }
+    },
+    {
       "command": "solid.cylinder",
       "params": {
         "axis": "Z",
@@ -17,7 +27,7 @@
           0,
           -10.0
         ],
-        "body_name": "FlexibleFitState",
+        "body_name": "FlexibleSleeve",
         "diameter": "fit_diameter",
         "height": 20.0,
         "operation": "new"
@@ -35,9 +45,15 @@
         "length": 12,
         "operation": "cut",
         "targets": [
-          "FlexibleFitState"
+          "FlexibleSleeve"
         ],
         "width": 2.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
       }
     },
     {

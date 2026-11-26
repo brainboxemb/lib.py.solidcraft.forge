@@ -1,10 +1,11 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "9c1060d53caf57ddd5fadb3035da70d6e5aa61b290ed44e04cb6c79f6d04c1bd",
+  "replay_sha256": "0d39b03ac1cbd930156b14382f51db9c274ec3eab3483008276db7b3e2139b7b",
   "variables": {
-    "$config_row_f411a1fb6275": 3,
-    "$config_row_f8b32f4e92bd": 4
+    "$flexible_sleeve": 2,
+    "$config_row_f411a1fb6275": 5,
+    "$config_row_f8b32f4e92bd": 6
   },
   "commands": [
     {
@@ -18,6 +19,17 @@
     },
     {
       "index": 1,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "FlexibleSleeve",
+        "grounded": true
+      },
+      "bindings": {
+        "$flexible_sleeve": 2
+      }
+    },
+    {
+      "index": 2,
       "command": "solid.cylinder",
       "resolved_params": {
         "height": 20.0,
@@ -29,11 +41,11 @@
         ],
         "axis": "Z",
         "operation": "new",
-        "body_name": "FlexibleFitState"
+        "body_name": "FlexibleSleeve"
       }
     },
     {
-      "index": 2,
+      "index": 3,
       "command": "solid.box",
       "resolved_params": {
         "length": 12,
@@ -46,12 +58,19 @@
           0.0
         ],
         "targets": [
-          "FlexibleFitState"
+          "FlexibleSleeve"
         ]
       }
     },
     {
-      "index": 3,
+      "index": 4,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 5,
       "command": "config.configure",
       "resolved_params": {
         "params": [
@@ -60,18 +79,18 @@
       }
     },
     {
-      "index": 4,
+      "index": 6,
       "command": "config.row",
       "resolved_params": {
         "name": "Default",
         "rename": "Free"
       },
       "bindings": {
-        "$config_row_f411a1fb6275": 3
+        "$config_row_f411a1fb6275": 5
       }
     },
     {
-      "index": 5,
+      "index": 7,
       "command": "config.row",
       "resolved_params": {
         "name": "Free",
@@ -81,7 +100,7 @@
       }
     },
     {
-      "index": 6,
+      "index": 8,
       "command": "config.row",
       "resolved_params": {
         "name": "Installed",
@@ -90,21 +109,21 @@
         }
       },
       "bindings": {
-        "$config_row_f8b32f4e92bd": 4
+        "$config_row_f8b32f4e92bd": 6
       }
     },
     {
-      "index": 7,
+      "index": 9,
       "command": "config.activate",
       "resolved_params": {
-        "row": 3
+        "row": 5
       }
     },
     {
-      "index": 8,
+      "index": 10,
       "command": "config.table",
       "resolved_params": {}
     }
   ],
-  "completed": 9
+  "completed": 11
 }
