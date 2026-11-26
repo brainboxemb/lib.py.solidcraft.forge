@@ -662,6 +662,18 @@ Before moving historical code, classify it as:
 
 Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining graph.
 
+## Central PR CI freshness in merge policy
+
+Forge consumes the generic stable template rule that merge policy validates
+the newest `pull_request` run of `.github/workflows/ci.yml` for the exact
+head SHA and pull request. GitHub can re-associate historical check-runs when
+a replacement PR reuses a permanent-branch head, so old red checks must not
+permanently poison a later successful qualification.
+
+The newest matching run remains fail-closed: pending blocks, failure blocks,
+and no current-PR CI blocks. Permanent `workflow_dispatch` runs are not PR
+qualification. Forge owns no consumer-specific variant of this rule.
+
 ## Reviewed permanent-branch conflict recovery
 
 The branch topology remains authoritative even when GitHub cannot merge a
@@ -701,7 +713,7 @@ non-`resolve/*` head or non-permanent original direction fails closed. If the
 original PR becomes normally mergeable, ordinary `/merge` is required.
 
 Forge adopts this behavior from stable
-`template.cad.library@04ff29b9ba80719b2954e1439db12ef9434b0b97`; it does not
+`template.cad.library@8f05e030151535e46ba4c6a1cf2aec59945542f3`; it does not
 own a second conflict-recovery design.
 
 ## Main-owned governance merge boundary

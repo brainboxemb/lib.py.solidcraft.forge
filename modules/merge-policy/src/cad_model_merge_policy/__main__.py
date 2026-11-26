@@ -93,40 +93,61 @@ def require_main_governance_paths(
         )
 
 
+def _workflow_run_recency(run: dict) -> tuple[str, int]:
+    """Return one deterministic GitHub Actions run recency key."""
+
+    created = run.get("created_at")
+    if not isinstance(created, str):
+        created = ""
+    run_id = run.get("id")
+    if not isinstance(run_id, int) or isinstance(run_id, bool):
+        run_id = -1
+    return created, run_id
+
+
 def require_green_ci(
     repository: str,
     sha: str,
     pull_request_number: int,
     token: str,
 ) -> None:
-    checks = api(repository, f"commits/{sha}/check-runs", token).get("check_runs", [])
-    ci_checks = [
-        check
-        for check in checks
-        if check.get("name") == "ci"
+    """Require the latest central pull-request CI for this exact head SHA.
+
+    GitHub can re-associate historical check-runs with a replacement PR when
+    the same head commit is reused. Query pull-request workflow runs directly
+    and validate only the newest run for this PR so superseded failures do not
+    poison a later successful qualification.
+    """
+
+    payload = api(
+        repository,
+        (
+            "actions/runs"
+            f"?head_sha={sha}&event=pull_request&per_page=100"
+        ),
+        token,
+    )
+    runs = payload.get("workflow_runs", []) if isinstance(payload, dict) else []
+    ci_runs = [
+        run
+        for run in runs
+        if isinstance(run, dict)
+        and run.get("event") == "pull_request"
+        and run.get("path") == ".github/workflows/ci.yml"
         and any(
             pr.get("number") == pull_request_number
-            for pr in check.get("pull_requests", [])
+            for pr in run.get("pull_requests", [])
+            if isinstance(pr, dict)
         )
     ]
 
-    if not ci_checks:
+    if not ci_runs:
         raise MergePolicyError("pull request has no central ci check")
 
-    pending = [
-        check
-        for check in ci_checks
-        if check.get("status") != "completed"
-    ]
-    if pending:
+    latest = max(ci_runs, key=_workflow_run_recency)
+    if latest.get("status") != "completed":
         raise MergePolicyError("central ci check is still running")
-
-    failed = [
-        check
-        for check in ci_checks
-        if check.get("conclusion") not in _ALLOWED_CI_RESULTS
-    ]
-    if failed:
+    if latest.get("conclusion") not in _ALLOWED_CI_RESULTS:
         raise MergePolicyError("central ci check is not green")
 
 
