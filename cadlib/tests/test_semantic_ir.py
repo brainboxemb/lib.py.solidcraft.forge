@@ -6,6 +6,7 @@ from scpf import (
     Axis,
     Box,
     Circle2D,
+    Cone,
     Cylinder,
     Edges,
     Faces,
@@ -498,21 +499,21 @@ class SemanticIRTests(unittest.TestCase):
             compile_mitcad_ir(model, "AsymmetricChamfer")
 
     def test_unmigrated_surface_is_explicit_legacy_ir_only_for_solidcraft(self):
-        shape = Sphere(10)
+        shape = Cone(d=10, h=20)
         model = normalize_shape(shape)
 
         self.assertIsInstance(model.root, LegacyShapeIR)
-        self.assertEqual(model.root.source_kind, "sphere")
-        solidcraft = compile_solidcraft_ir(model, "SphereTest")
+        self.assertEqual(model.root.source_kind, "cone")
+        solidcraft = compile_solidcraft_ir(model, "ConeTest")
         self.assertEqual(
             solidcraft["commands"][-1]["command"],
-            "solid.sphere",
+            "solid.cone",
         )
         with self.assertRaisesRegex(
             ModelError,
-            "does not yet support Forge shape kind 'sphere'",
+            "does not yet support Forge shape kind 'cone'",
         ):
-            compile_mitcad_ir(model, "SphereTest")
+            compile_mitcad_ir(model, "ConeTest")
 
 
 if __name__ == "__main__":
