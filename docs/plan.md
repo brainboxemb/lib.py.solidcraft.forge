@@ -53,6 +53,7 @@ The accepted baseline now includes:
 - experimental Pages now makes that second backend inspectable instead of merely green: `builder-scpf-mitcad` retains validated `mitcad.json`, durable output includes native `model.mitcad` plus Mitcad-exported `model.stl`/preview, shared SCPF source is shown once, and the published `/exp/` pages expose generated Mitcad commands and replay bindings alongside result/verification evidence; permanent exp build `45817979939` and Pages run `45818223238` passed after #243;
 - the experimental compiler boundary is now explicit: trusted SCPF source is evaluated once, final Shape intent is normalized to engine-neutral `ModelIR`, and SolidCraft/Mitcad lower the same typed `BoxIR`, `CircleExtrudeIR`, `ChamferIR` and semantic face-boundary intent; not-yet-migrated stable SolidCraft surface is isolated behind SolidCraft-only `LegacyShapeIR`; permanent exp build `45824024029` passed with library=true and all 52 owners, followed by successful Pages run `45824616018`;
 - the first capability added through that compiler boundary is qualified: `CylinderIR` and bounded `BooleanSubtractIR(BoxIR, CylinderIR)` are shared semantic nodes, SolidCraft preserves its existing CSG command contract, Mitcad lowers the same intent to native Box + Cylinder Cut without predicted body ids, and the focused `cylinder-subtract` owner extends only the experimental catalog to 53 owners; permanent exp build `45828904100` passed with both SolidCraft and Mitcad geometry evidence, followed by successful Pages run `45829424750`.
+- primitive geometry and absolute placement are now separate semantic IR concepts: `PlacementIR` owns world-space point + semantic anchor around typed `BoxIR` / `CylinderIR`, qualified `.at(...)` and translations use that same boundary, and `BooleanSubtractIR` consumes placed solids; the off-centre `cylinder-subtract` proof keeps symbolic `bore_x` / `bore_y` through Mitcad native Cylinder Cut while unsupported axial offsets fail closed; permanent exp build `45832874520` passed with library=true and all 53 owners, followed by successful Pages run `45833401412`.
 
 Release evidence for v0.19.0:
 - promoted full product baseline:
@@ -75,23 +76,27 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #268 make primitive placement first-class in Forge semantic IR
+### Experimental: #282 split Sketch/Profile and Extrude semantics in Forge IR
 
-Remove the next portability leak before adding more CAD features:
+Remove the next fused compiler node before adding broader sketch authoring:
 
-- represent absolute primitive placement as one engine-neutral typed IR concept
-  instead of leaving `placed_box`, `placed3d` or primitive-specific point
-  fields for backends to reinterpret;
-- migrate qualified Box and Cylinder placement through that shared IR;
-- preserve semantic anchor intent and symbolic placement coordinates until
-  backend lowering where possible;
-- allow the existing `BooleanSubtractIR` to consume a placed Cylinder tool;
-- prove the same off-centre Cylinder cut through the existing
-  `cylinder-subtract` owner on SolidCraft and Mitcad;
-- preserve exact existing SolidCraft command/replay behavior for the migrated
-  placement slice;
-- keep assemblies, arbitrary rotation/matrices and generic multi-body boolean
-  targeting outside this issue;
+- replace the qualified Circle-specific `CircleExtrudeIR` path with separate
+  typed sketch/profile intent and typed Extrude intent;
+- keep the current public SCPF authoring unchanged for this experimental
+  refactor;
+- represent profile/region selection without SolidCraft curve ids, Mitcad
+  region ids, BRep entities or coordinate picking;
+- make the engine-neutral region form structurally extensible to nested
+  loops/holes while qualifying only the existing single Circle2D region here;
+- preserve symbolic diameter and extrusion-distance dependencies;
+- make SolidCraft and Mitcad lower the same Sketch/Profile + Extrude semantics
+  independently;
+- preserve exact existing SolidCraft command/replay output for the qualified
+  circle-extrude slice;
+- prove the boundary through focused IR/backend tests and the existing
+  `circle-negative-extrude` owner on both backends;
+- do not implement consumer issue #267 multi-closed-profile authoring in this
+  experimental issue;
 - do not integrate `exp -> dev`.
 
 ### Queued: #162 / #163 verification evidence cleanup
