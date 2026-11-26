@@ -467,6 +467,28 @@ The `solidcraft-sheet-flat-pattern-visual` adapter opens the saved native
 retains DXF plus Actual/Goal/Overlay SVGs. Pages projects only these durable
 artifacts and never executes CAD.
 
+## Verification evidence boundary
+
+Verification evidence is selected from the contract a physical owner is meant
+to prove rather than from one repository-wide screenshot rule.
+
+- visible geometry/state combines deterministic review views with an approved
+  expectation and structural checks where a wrong topology/shape could still
+  look superficially plausible;
+- native feature/history behavior uses saved-design mutation or inspection so a
+  successful replay is not mistaken for proof of editability or stored intent;
+- manufacturing-only behavior uses its authoritative exported/manufacturing
+  representation instead of altering the display B-rep for verification;
+- negative or runtime-divergence behavior records the expected failure/result
+  explicitly rather than inferring it from a missing output.
+
+Model-specific expectations remain owner-local below `models/<id>/verification`.
+Generic adapters in `modules/verification` consume those expectations and
+produce durable evidence below `build/<scope>/models/**`. Pages only projects
+that retained evidence. `docs/verification/evidence-audit.md` records the
+current owner-by-owner classification; concrete missing evidence is repaired in
+separate owner-focused follow-up issues rather than inside the audit itself.
+
 ## Pages projection
 
 Verification detail pages identify their role with **What this verifies** and

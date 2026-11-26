@@ -174,6 +174,9 @@
 3. A migration slice is accepted only with retained evidence equivalent to the historical Forge baseline for the behavior under migration.
 4. Every model owner whose `model.yml.purpose` contains `verification` must appear in the public Verification catalogue. Every owner whose purpose contains `example` must appear in Examples. An owner with both purposes appears in both views while remaining one physical owner.
 5. Verification detail pages must state the human verification intent before implementation detail. Durable measurement/check evidence remains available but may be collapsed by default; owner-local explanatory content stays source-owned and Pages must not execute CAD to produce it.
+6. Every verification owner must state the contract it proves and retain the minimum evidence capable of catching a meaningful regression in that contract; successful command generation, replay or model build is not sufficient by itself when visible or structural output could still be wrong.
+7. Visibly meaningful geometry or state must have deterministic review views and an approved expected visual baseline, with structural/geometry checks where topology or shape is part of the contract; Pages must make retained expected-vs-actual evidence reviewable rather than generating it.
+8. Native feature/history contracts require saved-design mutation or inspection as appropriate. Manufacturing-only geometry must be checked from its authoritative manufacturing representation, and negative/runtime contracts must record an explicit expected failure or cross-runtime result rather than treating a missing artifact as evidence.
 
 ## Migration
 
