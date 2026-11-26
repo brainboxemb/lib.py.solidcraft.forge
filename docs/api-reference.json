@@ -642,7 +642,7 @@
           "description": "Iterable of DrawingDimension objects."
         }
       ],
-      "example": "part.with_drawing(name=\"Bracket drawing\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
+      "example": "part.with_drawing(name=\"Bracket drawing\", title_block_style=\"compact\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
       "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, title_block_style=None, revision=None, notes=(), dimensions=())"
     },
     {
