@@ -38,6 +38,7 @@ class BackendRegistryTests(unittest.TestCase):
                     "primitive.box",
                     "primitive.cylinder",
                     "boolean.subtract",
+                    "placement.primitive",
                     "sketch.circle",
                     "feature.extrude.distance",
                     "modify.chamfer.face-boundary",

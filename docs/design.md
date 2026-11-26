@@ -510,7 +510,7 @@ topology/drawings. Typed portable nodes lower directly in the SolidCraft
 backend; `LegacyShapeIR` delegates only not-yet-migrated stable surface to the
 historical compiler. Mitcad declares only the already-qualified experimental
 slice: `primitive.box`, `primitive.cylinder`, `boolean.subtract`,
-`sketch.circle`, `feature.extrude.distance`,
+`placement.primitive`, `sketch.circle`, `feature.extrude.distance`,
 `modify.chamfer.face-boundary` and `native-topology`; its assembly compiler is absent, so assembly intent fails
 explicitly at the boundary. This registry is intentionally internal: it does
 not rename `scpf`, expose a new public backend API or imply feature parity.
@@ -536,8 +536,8 @@ not a backend parser, owns new CAD semantics:
 SCPF: Box(...) - Cylinder(...)
             ↓
 BooleanSubtractIR(
-  target=BoxIR(...),
-  tool=CylinderIR(...)
+  target=PlacementIR(BoxIR(...)),
+  tool=PlacementIR(CylinderIR(...))
 )
        ├── SolidCraft lowering
        │     solid.box(operation=new)
@@ -547,10 +547,10 @@ BooleanSubtractIR(
              cylinder(operation=cut, participants=[])
 ```
 
-`CylinderIR` keeps height, diameter, principal axis, semantic anchor and
-placement point. The first Mitcad qualification accepts origin placement and
-CENTER or the negative axial-end anchor only; the IR itself is not
-Mitcad-specific and SolidCraft retains its existing broader stable behavior.
+`CylinderIR` keeps only primitive geometry: height, diameter and principal
+axis. #268 moves semantic anchor and world-space point into shared
+`PlacementIR`, so primitive geometry no longer carries backend-facing
+placement state.
 
 `BooleanSubtractIR` is intentionally narrower than a general boolean tree:
 #246 qualifies one `BoxIR` target and one `CylinderIR` tool. Other target/tool
@@ -570,6 +570,45 @@ pre-existing `primitive-csg` owner also requires Sphere, union and
 intersection. Reusing that owner would have expanded the Mitcad capability
 surface merely to prove this slice. Both `scpf` and `scpf-mitcad`
 implementations of the focused owner consume the same SCPF source.
+
+### Experimental primitive placement IR (#268)
+
+Primitive geometry and absolute placement are separate compiler concepts:
+
+```text
+Box(...) / Cylinder(...)
+        ↓ geometry
+BoxIR / CylinderIR
+        ↓ placement
+PlacementIR(
+  primitive=...,
+  point=(x, y, z),
+  anchor=(ax, ay, az)
+)
+```
+
+Direct primitives use `point=(0, 0, 0)`; `.at(...)` and qualified
+translations change the same `PlacementIR` instead of introducing a second
+backend-specific interpretation path. `BooleanSubtractIR` therefore combines
+placed semantic solids, not raw authoring payloads.
+
+SolidCraft lowers the full qualified world-space point through its established
+native Box corner / Cylinder base calculations and must retain the exact
+pre-#268 command form. Mitcad lowers transverse placement directly into the
+primitive's parametrically editable plane `corner` / `center` values. The
+origin-plane frames are mapped explicitly: XY=(+X,+Y), XZ=(+X,-Z),
+YZ=(-Z,+Y).
+
+The first Mitcad placement qualification deliberately requires the primitive's
+axial placement coordinate to remain on its origin plane. This keeps
+transverse X/Y-style coordinates symbolic without pretending that arbitrary
+axial offsets or general frames are already portable. Unsupported axial
+placement fails before native execution.
+
+The focused `cylinder-subtract` owner moves its bore to X=8, Y=-5. Both
+SolidCraft and Mitcad consume the same SCPF source; the generic mesh contract
+moves its bore probe to that off-centre axis. This proves placement semantics
+survive frontend → IR → two independent native lowerings.
 
 ### Experimental Mitcad builder boundary (#218)
 

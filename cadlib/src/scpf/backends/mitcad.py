@@ -15,6 +15,7 @@ from ..core import (
     _plain_command_value,
     _pv as pv,
     command_value,
+    parameters_in,
 )
 from ..ir import (
     BooleanSubtractIR,
@@ -24,6 +25,7 @@ from ..ir import (
     CylinderIR,
     LegacyShapeIR,
     ModelIR,
+    PlacementIR,
     normalize_shape,
 )
 
@@ -55,22 +57,36 @@ def _parameter_commands(model: ModelIR) -> list[dict]:
     ]
 
 
-def _box_command(node: BoxIR, name: str) -> dict:
-    _require_positive(node.length, "box length")
-    _require_positive(node.width, "box width")
-    _require_positive(node.height, "box height")
+def _require_origin_plane(value, *, label):
+    """Refuse axial placement that this Mitcad slice cannot preserve yet."""
+    if parameters_in(value) or pv(value) != 0:
+        raise ModelError(
+            f"Mitcad {label} placement currently requires its axial "
+            "coordinate on the origin plane"
+        )
+
+
+def _box_command(node: PlacementIR, name: str) -> dict:
+    primitive = node.primitive
+    if not isinstance(primitive, BoxIR):
+        raise TypeError("Mitcad box lowering requires PlacementIR(BoxIR)")
+
+    _require_positive(primitive.length, "box length")
+    _require_positive(primitive.width, "box width")
+    _require_positive(primitive.height, "box height")
+    _require_origin_plane(node.point[2], label="Box")
 
     if node.anchor not in ((0, 0, -1), (0, 0, 0)):
         raise ModelError(
-            "Mitcad Box lowering currently supports Anchor.BOTTOM or "
+            "Mitcad Box placement currently supports Anchor.BOTTOM or "
             "Anchor.CENTER only"
         )
 
     corner = _box_corner_from_anchor(
-        node.length,
-        node.width,
-        node.height,
-        (0, 0, 0),
+        primitive.length,
+        primitive.width,
+        primitive.height,
+        node.point,
         _DirectionSelector(node.anchor),
     )
 
@@ -81,9 +97,9 @@ def _box_command(node: BoxIR, name: str) -> dict:
             command_value(corner[0]),
             command_value(corner[1]),
         ],
-        "length": command_value(node.length),
-        "width": command_value(node.width),
-        "height": command_value(node.height),
+        "length": command_value(primitive.length),
+        "width": command_value(primitive.width),
+        "height": command_value(primitive.height),
         "symmetric": node.anchor == (0, 0, 0),
         "operation": "new_body",
         "participants": [],
@@ -96,44 +112,71 @@ def _box_command(node: BoxIR, name: str) -> dict:
 
 
 _CYLINDER_PLANES = {
-    "X": ("yz", (-1, 0, 0)),
-    "Y": ("xz", (0, -1, 0)),
-    "Z": ("xy", (0, 0, -1)),
+    "X": ("yz", (-1, 0, 0), 0),
+    "Y": ("xz", (0, -1, 0), 1),
+    "Z": ("xy", (0, 0, -1), 2),
 }
 
 
+def _cylinder_plane_center(axis, point):
+    if axis == "X":
+        # Mitcad YZ plane coordinates: u=-Z, v=+Y.
+        return (-point[2], point[1])
+    if axis == "Y":
+        # Mitcad XZ plane coordinates: u=+X, v=-Z.
+        return (point[0], -point[2])
+    if axis == "Z":
+        return (point[0], point[1])
+    raise ModelError(
+        f"Mitcad Cylinder IR requires a principal axis, got {axis!r}"
+    )
+
+
 def _cylinder_command(
-    node: CylinderIR,
+    node: PlacementIR,
     name: str,
     *,
     operation: str = "new_body",
 ) -> dict:
-    _require_positive(node.height, "cylinder height")
-    _require_positive(node.diameter, "cylinder diameter")
-    if tuple(node.point) != (0, 0, 0):
-        raise ModelError(
-            "Mitcad Cylinder IR currently requires the origin placement"
+    primitive = node.primitive
+    if not isinstance(primitive, CylinderIR):
+        raise TypeError(
+            "Mitcad cylinder lowering requires PlacementIR(CylinderIR)"
         )
+
+    _require_positive(primitive.height, "cylinder height")
+    _require_positive(primitive.diameter, "cylinder diameter")
     try:
-        plane, axial_start = _CYLINDER_PLANES[node.axis]
+        plane, axial_start, axial_index = _CYLINDER_PLANES[primitive.axis]
     except KeyError as exc:
         raise ModelError(
-            f"Mitcad Cylinder IR requires a principal axis, got {node.axis!r}"
+            f"Mitcad Cylinder IR requires a principal axis, "
+            f"got {primitive.axis!r}"
         ) from exc
+
+    _require_origin_plane(
+        node.point[axial_index],
+        label="Cylinder",
+    )
     if node.anchor not in ((0, 0, 0), axial_start):
         raise ModelError(
-            "Mitcad Cylinder IR currently supports CENTER or the negative "
-            "axial end anchor only"
+            "Mitcad Cylinder placement currently supports CENTER or the "
+            "negative axial end anchor only"
         )
+
+    center = _cylinder_plane_center(primitive.axis, node.point)
     return {
         "cmd": "add_feature",
         "name": name,
         "def": {
             "type": "cylinder",
             "plane": plane,
-            "center": [0, 0],
-            "diameter": command_value(node.diameter),
-            "height": command_value(node.height),
+            "center": [
+                command_value(center[0]),
+                command_value(center[1]),
+            ],
+            "diameter": command_value(primitive.diameter),
+            "height": command_value(primitive.height),
             "symmetric": node.anchor == (0, 0, 0),
             "operation": operation,
             "participants": [],
@@ -290,10 +333,16 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
     if isinstance(node, ChamferIR):
         return _chamfer_document(model, node, name)
 
-    if isinstance(node, BoxIR):
-        geometry_commands = [_box_command(node, name)]
-    elif isinstance(node, CylinderIR):
-        geometry_commands = [_cylinder_command(node, name)]
+    if isinstance(node, PlacementIR):
+        if isinstance(node.primitive, BoxIR):
+            geometry_commands = [_box_command(node, name)]
+        elif isinstance(node.primitive, CylinderIR):
+            geometry_commands = [_cylinder_command(node, name)]
+        else:
+            raise ModelError(
+                f"Mitcad backend does not support placed Forge IR primitive "
+                f"{type(node.primitive).__name__!r}"
+            )
     elif isinstance(node, CircleExtrudeIR):
         geometry_commands = _circle_extrude_commands(node, name)
     elif isinstance(node, BooleanSubtractIR):

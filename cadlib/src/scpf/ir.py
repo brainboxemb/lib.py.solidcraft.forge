@@ -15,11 +15,10 @@ from typing import Any
 
 from .core import (
     Anchor,
-    Expression,
     Faces,
-    Parameter,
     Shape,
     _FaceBoundarySelection,
+    _dim_add,
     parameters_in,
 )
 
@@ -35,25 +34,41 @@ class ParameterIR:
 
 @dataclass(frozen=True)
 class BoxIR:
-    """Axis-aligned box semantic intent."""
+    """Axis-aligned box geometry independent of placement."""
 
     length: Any
     width: Any
     height: Any
-    anchor: tuple[int, int, int]
     source_kind: str = "box"
 
 
 @dataclass(frozen=True)
 class CylinderIR:
-    """Principal-axis cylinder semantic intent."""
+    """Principal-axis cylinder geometry independent of placement."""
 
     height: Any
     diameter: Any
     axis: str
-    anchor: tuple[int, int, int]
-    point: tuple[Any, Any, Any] = (0, 0, 0)
     source_kind: str = "cylinder"
+
+
+PrimitiveIR = BoxIR | CylinderIR
+
+
+@dataclass(frozen=True)
+class PlacementIR:
+    """Absolute placement of one typed primitive.
+
+    point is the world-space point at which the selected semantic anchor is
+    placed. The native backend decides how that placement maps to its own
+    primitive plane, centre/corner or base representation.
+    """
+
+    primitive: PrimitiveIR
+    point: tuple[Any, Any, Any]
+    anchor: tuple[int, int, int]
+    explicit: bool = False
+    source_kind: str = "placement"
 
 
 @dataclass(frozen=True)
@@ -79,7 +94,7 @@ class FaceBoundaryIR:
 class ChamferIR:
     """Equal-distance chamfer over semantic edge-selection intent."""
 
-    base: BoxIR
+    base: PlacementIR
     distance: Any
     edges: FaceBoundaryIR
     source_kind: str = "chamfer"
@@ -89,8 +104,8 @@ class ChamferIR:
 class BooleanSubtractIR:
     """Qualified subtractive boolean between typed semantic solids."""
 
-    target: BoxIR
-    tool: CylinderIR
+    target: PlacementIR
+    tool: PlacementIR
     source_kind: str = "difference"
 
 
@@ -103,8 +118,7 @@ class LegacyShapeIR:
 
 
 IRNode = (
-    BoxIR
-    | CylinderIR
+    PlacementIR
     | CircleExtrudeIR
     | ChamferIR
     | BooleanSubtractIR
@@ -155,16 +169,80 @@ def _parameter_ir(shape: Shape) -> tuple[ParameterIR, ...]:
     )
 
 
-def _portable_cylinder(shape: Shape) -> CylinderIR | None:
-    if shape.kind != "cylinder":
-        return None
-    height, diameter, axis, anchor = shape.data
-    return CylinderIR(
-        height=height,
-        diameter=diameter,
-        axis=axis,
-        anchor=tuple(int(value) for value in anchor.vector),
+def _anchor_vector(anchor) -> tuple[int, int, int]:
+    return tuple(int(value) for value in anchor.vector)
+
+
+def _shift_point(point, delta):
+    return tuple(
+        _dim_add(current, added)
+        for current, added in zip(point, delta)
     )
+
+
+def _portable_placement(shape: Shape) -> PlacementIR | None:
+    """Normalize supported primitive/placement authoring into one IR form."""
+    if shape.kind == "box":
+        length, width, height, anchor = shape.data
+        return PlacementIR(
+            primitive=BoxIR(length=length, width=width, height=height),
+            point=(0, 0, 0),
+            anchor=_anchor_vector(anchor),
+        )
+
+    if shape.kind == "cylinder":
+        height, diameter, axis, anchor = shape.data
+        return PlacementIR(
+            primitive=CylinderIR(
+                height=height,
+                diameter=diameter,
+                axis=axis,
+            ),
+            point=(0, 0, 0),
+            anchor=_anchor_vector(anchor),
+        )
+
+    if shape.kind == "placed_box":
+        box, x, y, z, anchor = shape.data
+        if box.kind != "box":
+            return None
+        length, width, height, _constructor_anchor = box.data
+        return PlacementIR(
+            primitive=BoxIR(length=length, width=width, height=height),
+            point=(x, y, z),
+            anchor=_anchor_vector(anchor),
+            explicit=True,
+        )
+
+    if shape.kind == "placed3d":
+        child, x, y, z = shape.data
+        if child.kind != "cylinder":
+            return None
+        height, diameter, axis, anchor = child.data
+        return PlacementIR(
+            primitive=CylinderIR(
+                height=height,
+                diameter=diameter,
+                axis=axis,
+            ),
+            point=(x, y, z),
+            anchor=_anchor_vector(anchor),
+            explicit=True,
+        )
+
+    if shape.kind == "translated":
+        child, delta = shape.data
+        placement = _portable_placement(child)
+        if placement is None:
+            return None
+        return PlacementIR(
+            primitive=placement.primitive,
+            point=_shift_point(placement.point, delta),
+            anchor=placement.anchor,
+            explicit=True,
+        )
+
+    return None
 
 
 def _portable_circle_extrude(shape: Shape) -> CircleExtrudeIR | None:
@@ -221,15 +299,13 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
         return None
 
     base, distance, edges = shape.data
-    if base.kind != "box":
-        return None
-    if not isinstance(edges, _FaceBoundarySelection):
-        return None
-    if len(edges.faces) != 1:
-        return None
-
-    base_ir = _normalize_node(base)
-    if not isinstance(base_ir, BoxIR):
+    base_ir = _portable_placement(base)
+    if (
+        base_ir is None
+        or not isinstance(base_ir.primitive, BoxIR)
+        or not isinstance(edges, _FaceBoundarySelection)
+        or len(edges.faces) != 1
+    ):
         return None
 
     return ChamferIR(
@@ -242,24 +318,20 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
 
 
 def _normalize_node(shape: Shape) -> IRNode:
-    if shape.kind == "box":
-        length, width, height, anchor = shape.data
-        return BoxIR(
-            length=length,
-            width=width,
-            height=height,
-            anchor=tuple(int(value) for value in anchor.vector),
-        )
-
-    cylinder = _portable_cylinder(shape)
-    if cylinder is not None:
-        return cylinder
+    placement = _portable_placement(shape)
+    if placement is not None:
+        return placement
 
     if shape.kind == "difference":
         target_shape, tool_shape = shape.data
         target = _normalize_node(target_shape)
         tool = _normalize_node(tool_shape)
-        if isinstance(target, BoxIR) and isinstance(tool, CylinderIR):
+        if (
+            isinstance(target, PlacementIR)
+            and isinstance(target.primitive, BoxIR)
+            and isinstance(tool, PlacementIR)
+            and isinstance(tool.primitive, CylinderIR)
+        ):
             return BooleanSubtractIR(target=target, tool=tool)
         return LegacyShapeIR(shape=shape, source_kind=shape.kind)
 
@@ -293,13 +365,15 @@ __all__ = [
     "BooleanSubtractIR",
     "BoxIR",
     "ChamferIR",
-    "CylinderIR",
     "CircleExtrudeIR",
+    "CylinderIR",
     "FaceBoundaryIR",
     "IRNode",
     "LegacyShapeIR",
     "ModelIR",
     "ParameterIR",
+    "PlacementIR",
+    "PrimitiveIR",
     "is_portable",
     "normalize_shape",
 ]

@@ -38,6 +38,9 @@
 17. The qualified Cylinder extension is represented once as typed `CylinderIR`; the first qualified subtractive boolean is `BooleanSubtractIR` with a `BoxIR` target and `CylinderIR` tool. Broader boolean combinations remain unsupported until separately qualified.
 18. Native backend lowering may choose different engine instructions for the same boolean IR. SolidCraft may emit its existing CSG primitive cut sequence while Mitcad may emit a Cylinder feature with native `operation: "cut"`; both must preserve the same Forge semantics.
 19. Mitcad subtract lowering must not predict native body ids. The initial one-target slice uses the engine's native empty-participant meaning (“all existing bodies”) only in a document state where Forge has emitted exactly one target body before the tool.
+20. Qualified primitive placement is represented once by typed `PlacementIR`, which owns the world-space point of a semantic anchor independently from `BoxIR` or `CylinderIR` geometry. Native backends must not re-interpret raw `placed_box`, `placed3d` or translation payloads for this migrated slice.
+21. SolidCraft lowering must preserve the existing native command/replay output of migrated Box/Cylinder placement, including symbolic placement expressions.
+22. The initial Mitcad placement slice preserves symbolic coordinates in primitive plane coordinates but requires the primitive's axial placement coordinate to remain on the corresponding origin plane. Unsupported axial offsets must fail closed rather than be numerically baked or approximated.
 
 ## SCPF native associativity
 
