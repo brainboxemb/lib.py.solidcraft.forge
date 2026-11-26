@@ -1,0 +1,390 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "b29e54b08b58575bb025207ae24ccc9744519b56e25fb4c02b7e75f1a0478d3a",
+          "size": 2786
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "AsymmetricChamfer",
+                "max": [
+                  20.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  20.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "selector": "sole",
+            "volume": {
+              "actual": 7995.319999999999,
+              "delta": 9.094947017729282e-13,
+              "expected": 7995.32,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.02
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "depth": 20.0,
+            "height": 10.0,
+            "primary_distance": 0.18,
+            "secondary_distance": 0.65,
+            "width": 40.0
+          },
+          "expected": {
+            "depth": 20.0,
+            "height": 10.0,
+            "primary_distance": 0.18,
+            "secondary_distance": 0.65,
+            "width": 40.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Chamfer profile",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Chamfer profile",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Chamfer profile sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Chamfer profile",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Chamfer profile",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/resized_asymmetric_chamfer/model.sc",
+          "sha256": "a6f62149e6612632d0324954f2fe35ff90cf4f24e31017cbd885b87b3467f069",
+          "size": 8768
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/resized_asymmetric_chamfer/measurements.json",
+          "sha256": "a8900f9bfaa31c79cd21f0b149ddbfdc438243e20d96377f93acaec615f603d7",
+          "size": 2804
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "AsymmetricChamfer",
+                "max": [
+                  25.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  -25.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  25.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  -25.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 6392.679999999999,
+                "baseline": 7995.319999999999,
+                "mutated": 14387.999999999998
+              },
+              "expected": {
+                "absolute_delta_gt": 1000.0
+              },
+              "label": "SolidCraft saved design change asymmetric_chamfer_volume",
+              "pass": true
+            },
+            "id": "asymmetric_chamfer_volume",
+            "path": [
+              "bodies",
+              0,
+              "volume_mm3"
+            ]
+          }
+        ],
+        "named_bodies": [
+          {
+            "selector": "sole",
+            "volume": {
+              "actual": 14387.999999999998,
+              "delta": 1.8189894035458565e-12,
+              "expected": 14388.0,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.03
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "depth": 24.0,
+            "height": 12.0,
+            "primary_distance": 0.3,
+            "secondary_distance": 0.8,
+            "width": 50.0
+          },
+          "expected": {
+            "depth": 24.0,
+            "height": 12.0,
+            "primary_distance": 0.3,
+            "secondary_distance": 0.8,
+            "width": 50.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Chamfer profile",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Chamfer profile",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Chamfer profile sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Chamfer profile",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Chamfer profile",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "saved_design_resized_asymmetric_chamfer",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/chamfer-definition/results.json",
+          "sha256": "a8d50f5a4b217c530ef29815aa546594250720d4ac032c8755de68e0fc7b36ef",
+          "size": 826
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": "primary_distance",
+              "expected": "primary_distance",
+              "label": "SolidCraft inspection check primary-distance",
+              "pass": true
+            },
+            "id": "primary-distance",
+            "path": [
+              0,
+              "definition",
+              "distance"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "secondary_distance",
+              "expected": "secondary_distance",
+              "label": "SolidCraft inspection check secondary-distance",
+              "pass": true
+            },
+            "id": "secondary-distance",
+            "path": [
+              0,
+              "definition",
+              "distance2"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check flipped-face-order",
+              "pass": true
+            },
+            "id": "flipped-face-order",
+            "path": [
+              0,
+              "definition",
+              "flip"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_chamfer-definition",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/asymmetric-chamfer/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "asymmetric-chamfer"
+}

@@ -1,0 +1,10 @@
+{
+  "adapter": "mesh-geometry",
+  "id": "asymmetric-chamfer--scpf",
+  "implementation": "scpf",
+  "owner": "asymmetric-chamfer",
+  "schema": 1,
+  "stage_id": "geometry",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6"
+}

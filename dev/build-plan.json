@@ -6,6 +6,7 @@
     "as-built-attach",
     "assembly-decorator",
     "assembly-owned-anchor",
+    "asymmetric-chamfer",
     "attach-angle",
     "attached-through-all",
     "bracket",
@@ -137,6 +138,16 @@
         "build123d",
         "pythonscad",
         "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "asymmetric-chamfer",
+      "implementations": [
+        "scpf"
       ],
       "primary": "scpf",
       "purpose": [
@@ -806,6 +817,7 @@
     "as-built-attach",
     "assembly-decorator",
     "assembly-owned-anchor",
+    "asymmetric-chamfer",
     "attach-angle",
     "attached-through-all",
     "bracket",
@@ -859,5 +871,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "15b383171d9a869b69a3485449419017207ba5c2"
+  "source_sha": "79332ba55a52f205c0b469707bac1911a4cd3b6c"
 }

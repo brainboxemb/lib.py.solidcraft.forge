@@ -1,0 +1,114 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "20",
+        "name": "depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "10",
+        "name": "height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "0.18",
+        "name": "primary_distance",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "0.65",
+        "name": "secondary_distance",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Chamfer profile",
+        "plane": "XZ"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "closed": true,
+        "ids": [
+          "bottom",
+          "right",
+          "top",
+          "left"
+        ],
+        "points": [
+          [
+            "(-(width)) / 2",
+            0
+          ],
+          [
+            "width / 2",
+            0
+          ],
+          [
+            "width / 2",
+            "-(height)"
+          ],
+          [
+            "(-(width)) / 2",
+            "-(height)"
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "body_name": "AsymmetricChamfer",
+        "direction": "symmetric",
+        "distance": "depth"
+      }
+    },
+    {
+      "command": "solid.chamfer",
+      "params": {
+        "body": "AsymmetricChamfer",
+        "distance": "primary_distance",
+        "distance2": "secondary_distance",
+        "edges": [
+          [
+            0.0,
+            -10.0,
+            10.0
+          ],
+          [
+            0.0,
+            10.0,
+            10.0
+          ]
+        ],
+        "flip": true
+      }
+    }
+  ]
+}
