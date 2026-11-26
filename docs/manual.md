@@ -37,6 +37,13 @@ both review PRs and removes the unchanged resolution ref. If the original PR
 becomes mergeable, use normal `/merge` instead. This recovery is forbidden
 for temporary, release and governance PRs.
 
+The green-CI gate uses the newest `pull_request` run of
+`.github/workflows/ci.yml` for the exact head SHA and pull request. Historical
+failed runs on the same commit do not permanently poison a replacement PR once
+a newer qualification succeeds. If the newest qualification is pending or
+failed, `/merge` remains blocked. Permanent `workflow_dispatch` runs never
+substitute for PR qualification.
+
 ## Library
 
 The public package is under `cadlib/` and imports as `scpf`. A library-only work branch can use:
