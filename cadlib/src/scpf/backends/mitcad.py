@@ -21,6 +21,7 @@ from ..core import (
     parameters_in,
 )
 from ..ir import (
+    AxisLineIR,
     BooleanIR,
     BoxIR,
     ChamferIR,
@@ -542,8 +543,24 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
         or node.region != RegionIR(outer=0)
     ):
         raise ModelError("Mitcad RevolveIR requires one polygon region")
-    if node.axis != "X" or node.direction is not None:
-        raise ModelError("Mitcad RevolveIR currently requires the world X axis")
+    if not isinstance(node.axis, AxisLineIR) or node.direction is not None:
+        raise ModelError(
+            "Mitcad RevolveIR requires one non-symmetric AxisLineIR"
+        )
+    if node.operation != "new_body" or node.target is not None:
+        raise ModelError(
+            "Mitcad RevolveIR cut lowering is not qualified yet"
+        )
+    if (
+        node.axis.direction != "X"
+        or any(
+            parameters_in(value) or abs(pv(value)) > 1e-12
+            for value in node.axis.origin
+        )
+    ):
+        raise ModelError(
+            "Mitcad shifted AxisLineIR lowering is not qualified yet"
+        )
 
     try:
         pick = _region_interior_point(sketch, node.region)
@@ -617,7 +634,7 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
                     "sketch": {"ref": "sk.uid"},
                     "point": [pick[0], pick[1]],
                 }],
-                "axis": node.axis.lower(),
+                "axis": node.axis.direction.lower(),
                 "extent": extent,
                 "operation": "new_body",
             },
