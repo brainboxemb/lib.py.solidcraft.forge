@@ -52,7 +52,8 @@ The accepted baseline now includes:
 - the first owner-integrated Mitcad slice stays inside the existing physical owners: `simple-box`, `circle-negative-extrude` and `topology-face-boundary-box` declare secondary `scpf-mitcad` implementations over the same SCPF source while SolidCraft remains primary; all three enter generic reference-runtime mesh verification, including an explicit two-edge chamfer geometry contract for the topology owner;
 - experimental Pages now makes that second backend inspectable instead of merely green: `builder-scpf-mitcad` retains validated `mitcad.json`, durable output includes native `model.mitcad` plus Mitcad-exported `model.stl`/preview, shared SCPF source is shown once, and the published `/exp/` pages expose generated Mitcad commands and replay bindings alongside result/verification evidence; permanent exp build `45817979939` and Pages run `45818223238` passed after #243;
 - the experimental compiler boundary is now explicit: trusted SCPF source is evaluated once, final Shape intent is normalized to engine-neutral `ModelIR`, and SolidCraft/Mitcad lower the same typed `BoxIR`, `CircleExtrudeIR`, `ChamferIR` and semantic face-boundary intent; not-yet-migrated stable SolidCraft surface is isolated behind SolidCraft-only `LegacyShapeIR`; permanent exp build `45824024029` passed with library=true and all 52 owners, followed by successful Pages run `45824616018`;
-- the first capability added through that compiler boundary is qualified: `CylinderIR` and bounded `BooleanSubtractIR(BoxIR, CylinderIR)` are shared semantic nodes, SolidCraft preserves its existing CSG command contract, Mitcad lowers the same intent to native Box + Cylinder Cut without predicted body ids, and the focused `cylinder-subtract` owner extends only the experimental catalog to 53 owners; permanent exp build `45828904100` passed with both SolidCraft and Mitcad geometry evidence, followed by successful Pages run `45829424750`.
+- the first capability added through that compiler boundary is qualified: `CylinderIR` and bounded `BooleanSubtractIR(BoxIR, CylinderIR)` are shared semantic nodes, SolidCraft preserves its existing CSG command contract, Mitcad lowers the same intent to native Box + Cylinder Cut without predicted body ids, and the focused `cylinder-subtract` owner extends only the experimental catalog to 53 owners; permanent exp build `45828904100` passed with both SolidCraft and Mitcad geometry evidence, followed by successful Pages run `45829424750`;
+- primitive geometry and placement are now separate semantic compiler concepts: `BoxIR` / `CylinderIR` hold geometry while shared `PlacementIR` owns world-space point + anchor for direct primitives, `.at(...)` and qualified translations; SolidCraft preserves exact native placement commands, Mitcad keeps transverse placement symbolic and fails closed on unqualified axial offsets; permanent exp build `45832874520` passed with all 53 owners and the published off-centre `cylinder-subtract` Mitcad stream retains `center: ["bore_x", "bore_y"]`, followed by successful Pages run `45833401412`.
 
 Release evidence for v0.19.0:
 - promoted full product baseline:
@@ -75,23 +76,23 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #268 make primitive placement first-class in Forge semantic IR
+### Experimental: #280 split Sketch and Extrude into composable Forge semantic IR
 
-Remove the next portability leak before adding more CAD features:
+Remove the next combined-node special case from the compiler boundary:
 
-- represent absolute primitive placement as one engine-neutral typed IR concept
-  instead of leaving `placed_box`, `placed3d` or primitive-specific point
-  fields for backends to reinterpret;
-- migrate qualified Box and Cylinder placement through that shared IR;
-- preserve semantic anchor intent and symbolic placement coordinates until
-  backend lowering where possible;
-- allow the existing `BooleanSubtractIR` to consume a placed Cylinder tool;
-- prove the same off-centre Cylinder cut through the existing
-  `cylinder-subtract` owner on SolidCraft and Mitcad;
-- preserve exact existing SolidCraft command/replay behavior for the migrated
-  placement slice;
-- keep assemblies, arbitrary rotation/matrices and generic multi-body boolean
-  targeting outside this issue;
+- replace the qualified `CircleExtrudeIR` path with separate typed sketch /
+  profile intent and `ExtrudeIR`;
+- keep the initial profile capability limited to the already-qualified
+  standalone `Circle2D` slice while making the IR composable for future
+  profile types;
+- preserve sketch name, plane, symbolic diameter and signed extrusion distance
+  without backend-specific interpretation;
+- make SolidCraft and Mitcad lower the same Sketch/Extrude IR independently;
+- preserve exact existing SolidCraft command output and current Mitcad native
+  sketch + extrude behavior for `circle-negative-extrude`;
+- do not create one combined `*ExtrudeIR` type per future profile shape;
+- keep attached sketches, multi-profile extrusion, broader sketch constraints
+  and boolean extrudes outside this issue;
 - do not integrate `exp -> dev`.
 
 ### Queued: #162 / #163 verification evidence cleanup
