@@ -6,6 +6,7 @@ from scpf.backends import BackendAdapter, backend_ids, get_backend
 
 ROOT = Path(__file__).resolve().parents[2]
 SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
+REVOLUTE_JOINT = ROOT / "models/revolute-joint/scpf/model.py"
 
 
 class BackendRegistryTests(unittest.TestCase):
@@ -48,6 +49,15 @@ class BackendRegistryTests(unittest.TestCase):
             run_script(SIMPLE_BOX),
             run_script(SIMPLE_BOX, backend="solidcraft"),
         )
+
+    def test_solidcraft_lookup_keeps_public_assembly_decorator_callable(self):
+        from scpf import assembly
+        from scpf.runner import run_script
+
+        get_backend("solidcraft")
+        self.assertTrue(callable(assembly))
+        document = run_script(REVOLUTE_JOINT)
+        self.assertEqual(document["format"], "scpf-replay")
 
     def test_backend_ids_are_explicit_and_unknown_is_rejected(self):
         self.assertEqual(backend_ids(), ("solidcraft", "mitcad"))
