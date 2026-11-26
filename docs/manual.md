@@ -31,13 +31,20 @@ resolution-pr <review-pr-number>
 resolution resolve/<name> <reviewed-resolution-commit-sha> <reviewed-tree-sha>
 ```
 
+For a genuinely conflicted direct permanent PR, GitHub may not create a
+`pull_request` CI run at all. The original permanent head is therefore
+qualified by exact durable evidence: its live branch SHA must equal the
+reviewed head and `build/<head>/build-plan.json.source_sha` must equal that
+same SHA. The separate resolution PR still requires normal green PR-specific
+central CI.
+
 The policy creates exactly one verified `[base, head]` merge commit, advances
 the permanent base non-force, dispatches normal permanent CI/cleanup, closes
 both review PRs and removes the unchanged resolution ref. If the original PR
 becomes mergeable, use normal `/merge` instead. This recovery is forbidden
 for temporary, release and governance PRs.
 
-The green-CI gate uses the newest `pull_request` run of
+The green-CI gate for normal merges and for the resolution review uses the newest `pull_request` run of
 `.github/workflows/ci.yml` for the exact head SHA and pull request. Historical
 failed runs on the same commit do not permanently poison a replacement PR once
 a newer qualification succeeds. If the newest qualification is pending or
