@@ -6,6 +6,7 @@ import hashlib
 import os
 from pathlib import Path
 import stat
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -31,6 +32,15 @@ ASSET_SHA256 = (
 )
 REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
 MODEL = ROOT / "models/simple-box/scpf/model.py"
+
+
+def ensure_appimage_runtime() -> None:
+    """Install the one Ubuntu desktop library absent from GitHub's runner."""
+    subprocess.run(["sudo", "apt-get", "update", "-qq"], check=True)
+    subprocess.run(
+        ["sudo", "apt-get", "install", "-y", "-qq", "libopengl0"],
+        check=True,
+    )
 
 
 def download_asset(destination: Path) -> None:
@@ -73,6 +83,7 @@ class MitcadNativeSmokeTests(unittest.TestCase):
     def test_simple_box_executes_in_exact_v070_release(self):
         with tempfile.TemporaryDirectory(prefix="forge-mitcad-native-") as tmp:
             root = Path(tmp)
+            ensure_appimage_runtime()
             appimage = root / "Mitcad-0.70.0-x86_64.AppImage"
             download_asset(appimage)
             executable = cli_wrapper(root, appimage)
