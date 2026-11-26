@@ -3,6 +3,14 @@
     {
       "command": "parameters.add",
       "params": {
+        "expression": "20",
+        "name": "tube_d",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
         "expression": "20.4",
         "name": "fit_diameter",
         "unit": "mm"
@@ -10,11 +18,11 @@
     },
     {
       "bind": {
-        "$flexible_sleeve": "occurrence"
+        "$left_sleeve": "occurrence"
       },
       "command": "component.create",
       "params": {
-        "grounded": true,
+        "grounded": false,
         "name": "FlexibleSleeve"
       }
     },
@@ -28,9 +36,26 @@
           -10.0
         ],
         "body_name": "FlexibleSleeve",
-        "diameter": "fit_diameter",
+        "diameter": "tube_d + 4 mm",
         "height": 20.0,
         "operation": "new"
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          -11.0
+        ],
+        "diameter": "fit_diameter",
+        "height": 22.0,
+        "operation": "cut",
+        "targets": [
+          "FlexibleSleeve"
+        ]
       }
     },
     {
@@ -41,7 +66,7 @@
           0.0,
           0.0
         ],
-        "height": 22,
+        "height": 22.0,
         "length": 12,
         "operation": "cut",
         "targets": [
@@ -57,60 +82,138 @@
       }
     },
     {
+      "bind": {
+        "$right_sleeve": "occurrence"
+      },
+      "command": "occurrence.copy",
+      "params": {
+        "component": "FlexibleSleeve"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "80 mm",
+        "name": "frame_width"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$left_sleeve",
+        "translate": [
+          "(-(frame_width)) / 4",
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$right_sleeve",
+        "translate": [
+          "frame_width / 4",
+          0,
+          0
+        ]
+      }
+    },
+    {
       "command": "config.configure",
       "params": {
         "params": [
+          "frame_width",
           "fit_diameter"
         ]
       }
     },
     {
       "bind": {
-        "$config_row_f411a1fb6275": {
+        "$config_row_5263293fc202": {
           "field": "rows",
           "select": "id",
           "where": {
-            "name": "Free"
+            "name": "Small"
           }
         }
       },
       "command": "config.row",
       "params": {
         "name": "Default",
-        "rename": "Free"
+        "rename": "Small"
       }
     },
     {
       "command": "config.row",
       "params": {
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
         }
       }
     },
     {
       "bind": {
-        "$config_row_f8b32f4e92bd": {
+        "$config_row_8e588cd18774": {
           "field": "rows",
           "select": "id",
           "where": {
-            "name": "Installed"
+            "name": "Medium"
           }
         }
       },
       "command": "config.row",
       "params": {
-        "name": "Installed",
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_ab80540d98d2": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Large"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "100 mm"
+        }
+      }
+    },
+    {
+      "command": "config.rule",
+      "params": {
+        "rule": {
+          "condition": {
+            "type": "always"
+          },
+          "effect": {
+            "expression": "tube_d",
+            "parameter": "fit_diameter",
+            "type": "drive_parameter"
+          },
+          "enabled": true,
+          "id": "installed",
+          "name": "Installed"
         }
       }
     },
     {
       "command": "config.activate",
       "params": {
-        "row": "$config_row_f411a1fb6275"
+        "row": "$config_row_8e588cd18774"
       }
     },
     {
