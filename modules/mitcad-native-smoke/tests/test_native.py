@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import stat
@@ -133,6 +134,17 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             self.assertIn("add_feature", catalog["commands"])
             self.assertIn("box", catalog["features"])
 
+            evidence = ROOT / "build/qualification/mitcad-v0.70.0"
+            evidence.mkdir(parents=True, exist_ok=True)
+            (evidence / "runtime-commands.md").write_text(
+                reference,
+                encoding="utf-8",
+            )
+            (evidence / "commands.json").write_text(
+                json.dumps(catalog, indent=2, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+
             command_document = run_script(MODEL, backend="mitcad")
             result = run_document(
                 command_document,
@@ -165,8 +177,6 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             self.assertTrue(stl.is_file())
             self.assertGreater(stl.stat().st_size, 0)
 
-            evidence = ROOT / "build/qualification/mitcad-v0.70.0"
-            evidence.mkdir(parents=True, exist_ok=True)
             (evidence / "native-smoke.txt").write_text(
                 "\n".join(
                     [
