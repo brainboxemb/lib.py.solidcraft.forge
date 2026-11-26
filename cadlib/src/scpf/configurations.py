@@ -1,6 +1,7 @@
 """Document-level native SolidCraft configuration-table intent and lowering."""
 
 from dataclasses import dataclass
+import hashlib
 from math import isfinite
 
 from .core import Parameter, Shape, number_text
@@ -104,6 +105,12 @@ def _feature_prefix(root, source):
     ):
         return _feature_prefix(root.data[0], source)
     return None
+
+
+def _row_variable(name):
+    """Return one stable replay identity for an authored configuration row."""
+    digest = hashlib.sha256(name.encode("utf-8")).hexdigest()[:12]
+    return f"$config_row_{digest}"
 
 
 def _same_native_command(left, right):
@@ -266,7 +273,7 @@ def _configuration_commands(configured, name, commands):
     first = configured.rows[0][0]
     if first != "Default":
         rename = command("config.row", name="Default", rename=first)
-        variable = "$config_row_1"
+        variable = _row_variable(first)
         rename["bind"] = row_binding(variable, first)
         row_refs[first] = variable
         commands.append(rename)
@@ -278,7 +285,7 @@ def _configuration_commands(configured, name, commands):
             values=dict(zip(keys, cells)),
         )
         if row not in row_refs:
-            variable = f"$config_row_{row_number}"
+            variable = _row_variable(row)
             update["bind"] = row_binding(variable, row)
             row_refs[row] = variable
         commands.append(update)

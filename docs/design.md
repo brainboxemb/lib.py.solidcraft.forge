@@ -97,11 +97,12 @@ config.configure / config.row / config.activate / config.table
 saved SolidCraft .sc owns editable configs + native row identities
 ```
 
-Forge assigns deterministic replay row references (`$config_row_1`,
-`$config_row_2`, ...), binds each to the actual native row id returned by
-SolidCraft and activates by that id. SolidCraft persists its own
-`row_identities` map in the saved document. This avoids guessed numeric ids
-while retaining stable native row identity after replay.
+Forge assigns a deterministic replay row reference from each authored row name,
+binds it to the actual native row id returned by SolidCraft and activates by
+that bound id. Reordering rows therefore does not change Forge's logical row
+reference. SolidCraft persists its own `row_identities` map in the saved
+document. The SolidCraft command API does not accept caller-chosen native row
+ids, so Forge does not patch or predict them.
 
 `Configure` never rewrites Python model structure for each row. A row may only
 change native configuration columns. Whole-component presence, alternate
@@ -122,7 +123,7 @@ consumer repositories. The verification catalog has its own
 | --- | --- |
 | `configuration-table` | named rows, active row, multiple parameter columns, two independent feature-suppression columns, saved native table and row switching |
 | `configuration-position` | one configuration table around a complete Assembly, with parameter-driven occurrence positions for Front, Below and Service |
-| replay row identity | Forge-generated deterministic row references bind to SolidCraft-returned native row ids; activation uses the bound id |
+| replay row identity | Forge-generated name-stable row references bind to SolidCraft-returned native row ids; activation uses the bound id |
 | saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
 
 The use-case boundary is intentional:

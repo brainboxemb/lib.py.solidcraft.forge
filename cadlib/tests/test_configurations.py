@@ -6,6 +6,7 @@ from pathlib import Path
 from scpf import Anchor, Box, Configure, Hole, Param, Parameter, Suppress, compile_model
 from scpf.compiler import ModelError
 from scpf.replay import resolve_value, validate_replay_document, variables_in
+from scpf.configurations import _row_variable
 from scpf.runner import run_script
 
 
@@ -22,15 +23,15 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(commands[-3]["params"], {"name": "Large", "values": {"param:width": "100 mm"}})
         self.assertEqual(
             commands[-2],
-            {"command": "config.activate", "params": {"row": "$config_row_2"}},
+            {"command": "config.activate", "params": {"row": _row_variable("Medium")}},
         )
         self.assertEqual(commands[-1]["command"], "config.table")
         self.assertEqual(
-            commands[-6]["bind"]["$config_row_1"],
+            commands[-6]["bind"][_row_variable("Small")],
             {"field": "rows", "where": {"name": "Small"}, "select": "id"},
         )
         self.assertEqual(
-            commands[-4]["bind"]["$config_row_2"],
+            commands[-4]["bind"][_row_variable("Medium")],
             {"field": "rows", "where": {"name": "Medium"}, "select": "id"},
         )
 
@@ -70,6 +71,10 @@ class ConfigurationTests(unittest.TestCase):
             Configure(body, active="A", columns=(Param("width"),), rows={"A": ()})
         with self.assertRaisesRegex(TypeError, "suppression cells"):
             Configure(body, active="A", columns=(Suppress(body),), rows={"A": (1,)})
+
+    def test_row_replay_identity_is_stable_across_order(self):
+        self.assertEqual(_row_variable("Medium"), _row_variable("Medium"))
+        self.assertNotEqual(_row_variable("Medium"), _row_variable("Large"))
 
     def test_configure_wraps_parametric_assembly_placement(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -114,7 +119,7 @@ class ConfigurationTests(unittest.TestCase):
         )
         self.assertEqual(
             next(row for row in commands if row["command"] == "config.activate")["params"],
-            {"row": "$config_row_1"},
+            {"row": _row_variable("Front")},
         )
 
 
