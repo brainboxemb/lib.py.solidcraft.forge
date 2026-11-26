@@ -440,6 +440,7 @@ def compile_standalone_sketch(
         }
     return sketch, meta
 
+
 def compile_base(shape, name, *, operation="new"):
     """Create or apply a native editable base feature."""
     if operation not in ("new", "join", "cut", "intersect"):
