@@ -128,3 +128,16 @@ shared = body &amp; tool       # intersection, where supported</code></pre>
 history and CSG trees are not interchangeable for every operation.
 For manufacturing features such as holes, prefer the native
 <a href="../features/">feature operations</a>.</p>
+
+<h2 id="configuration-tables">Configuration tables</h2>
+<p>Use <code>Configure</code> on the completed Shape to author an editable
+native table. <code>Param</code> selects an existing native model parameter;
+<code>Suppress</code> selects an exact applied Forge feature. Each named row
+contains one cell per column. The active row must be declared.</p>
+<pre><code>Configure(plate - hole, active="Medium",
+    columns=(Param("width"), Suppress(hole)),
+    rows={"Medium": ("80 mm", True),
+          "Large": ("100 mm", False)})</code></pre>
+<p>The native table remains in the saved SolidCraft document. The initial
+single-Shape path is under qualification; reusable assemblies are not yet
+qualified.</p>

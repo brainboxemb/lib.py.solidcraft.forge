@@ -67,6 +67,20 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Native configuration-table boundary
+
+Configuration is final design intent rather than a Python model variant. The
+initial authoring shape is `Configure(geometry, active=..., columns=..., rows=...)`,
+with `Param(...)` and `Suppress(feature)` columns. Suppression references an
+exact Forge-authored applied feature. Lowering binds native feature ID/name
+from that feature command's result; a suppression key in replay is resolved
+only after the actual ID is available. Native `config.configure`, `config.row`,
+`config.activate` and `config.table` author the editable table.
+
+The first implementation qualifies a single Shape; component/assembly lowering,
+stable native row identity and saved-design verification are acceptance gates
+for #216, not claims about the released baseline.
+
 ## Native revolute-relationship boundary
 
 Revolute motion stays inside the existing occurrence-attachment model. A

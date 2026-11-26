@@ -83,7 +83,12 @@ def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
 
 def _compile_model_with_dependencies(shape: Shape, name: str):
     """Compile one Shape and retain actual native parameter dependencies."""
-    commands = _compile_model_commands(shape, name)
+    from .configurations import _ConfiguredDesign, _configuration_commands
+    if isinstance(shape, _ConfiguredDesign):
+        commands = _compile_model_commands(shape.geometry, name)
+        commands = _configuration_commands(shape, name, commands)
+    else:
+        commands = _compile_model_commands(shape, name)
     plain_commands = _plain_command_value(commands)
     document = (
         replay_document(plain_commands)

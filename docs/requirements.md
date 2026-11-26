@@ -37,6 +37,14 @@
 4. Native qualification must prove that changing a driving parameter in a saved
    SolidCraft design rebuilds the fold successfully.
 
+## SCPF configuration tables
+
+1. Author one native editable configuration table on the finished design, with named rows and an explicit active row.
+2. Parameter columns refer to existing native parameters; suppression columns refer to exact Forge feature identities, never caller-supplied native IDs.
+3. Lower native feature IDs from actual replay results and preserve native row identities in the saved design. Verify deterministic row identity behavior.
+4. Verify all authored cells, active-row state and row switching on a reopened saved design, including suppression and geometry changes.
+5. Support reusable component/assembly consumers; unsupported authoring must fail explicitly rather than emulate configuration rows in Python.
+
 ## SCPF revolute relationships
 
 1. `ModelInstance.attach(...)` must preserve its existing automatic rigid/planar behavior when no explicit relationship kind is requested.

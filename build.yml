@@ -1,6 +1,6 @@
 schema: 1
-branch: docs/206-reconcile-dispatch-plan
-modules: [ci]
-library: false
-models: []
+branch: issue/216-configuration-tables
+modules: [builder-scpf, verification, pages]
+library: true
+models: [configuration-table]
 tasks: [test]

@@ -19,6 +19,7 @@ import sys
 import warnings
 
 from . import core
+from .configurations import Configure, Param, Suppress, _ConfiguredDesign
 from .compiler import ModelError, _compile_model_with_dependencies
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
 from .assembly import _compile_assembly_with_dependencies
@@ -533,7 +534,7 @@ def _design_object(cls, *args, **kwargs):
     result, concrete, _, _, _, _, pv_parameters = _build_object(
         cls, *args, **kwargs
     )
-    if not isinstance(result, (Shape, ModelInstance, Assembly)):
+    if not isinstance(result, (Shape, ModelInstance, Assembly, _ConfiguredDesign)):
         raise TypeError(
             f"{cls.__name__}.build() must finish with a Shape or assembly"
         )
@@ -938,6 +939,9 @@ def run_script(path: str | Path) -> dict:
         "Axis": core.Axis,
         "Shape": core.Shape,
         "Parameter": core.Parameter,
+        "Configure": Configure,
+        "Param": Param,
+        "Suppress": Suppress,
         "CENTER": core.CENTER,
         "TOP": core.TOP,
         "BOTTOM": core.BOTTOM,
@@ -1065,7 +1069,7 @@ def run_script(path: str | Path) -> dict:
                 f"an imported model/component/assembly: {name}"
             )
 
-    if isinstance(result, Shape):
+    if isinstance(result, (Shape, _ConfiguredDesign)):
         document, dependencies = _compile_model_with_dependencies(
             result, name
         )

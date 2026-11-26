@@ -68,6 +68,14 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
+### Dev: #216 native configuration-table authoring
+
+Keep this product work isolated on dev. Qualify native parameter and suppression
+columns, saved editable configuration rows and row switching. First establish
+the single-shape native command/replay contract, then qualify reusable component
+and assembly targets as required by the HUB75 frame-coupler consumer. Record
+native row identity behavior and do not accept the issue until it is proven.
+
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
 The permanent experimental line is accepted. Begin #192 only on `exp` and keep

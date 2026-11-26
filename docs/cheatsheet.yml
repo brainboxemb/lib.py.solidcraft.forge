@@ -265,3 +265,14 @@ groups:
         description: "Give the finished body a visual color without changing material/BOM semantics."
         snippet: 'body.with_appearance("#FFD21A")'
         example: appearance-color
+
+  - heading: Configuration tables
+    items:
+      - title: "Configure(geometry, active=..., columns=..., rows=...)"
+        description: "Author one editable native SolidCraft configuration table."
+        snippet: |
+          Configure(plate, active="Medium",
+              columns=(Param("width"), Suppress(hole)),
+              rows={"Medium": ("80 mm", True),
+                    "Large": ("100 mm", False)})
+        example: configuration-table
