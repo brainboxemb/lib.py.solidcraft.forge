@@ -48,6 +48,29 @@ def _validate_replay(value: Any) -> list[dict[str, Any]]:
             raise MitcadHeadlessError(
                 f"Mitcad replay stage {index} has no bind_single_body"
             )
+        boundary = stage.get("bind_face_boundary_edges")
+        if boundary is not None:
+            if not isinstance(boundary, dict):
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} face-boundary binding "
+                    "must be an object"
+                )
+            if not isinstance(boundary.get("name"), str) or not boundary["name"]:
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} face-boundary binding "
+                    "has no name"
+                )
+            if not isinstance(boundary.get("body"), str) or not boundary["body"]:
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} face-boundary binding "
+                    "has no body binding"
+                )
+            face = boundary.get("face")
+            if not isinstance(face, dict) or not face:
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} face-boundary binding "
+                    "has no face query"
+                )
         _validate_commands(
             stage.get("commands"),
             context=f"Mitcad replay stage {index}",
@@ -257,6 +280,124 @@ def _body_query(session: _Session, handle: str) -> list[dict[str, Any]]:
     return bodies
 
 
+def _query(
+    session: _Session,
+    handle: str,
+    query: dict[str, Any],
+) -> Any:
+    reply = session.tool(
+        "model_query",
+        {
+            "document": handle,
+            "query": query,
+        },
+    )
+    if "result" not in reply:
+        raise MitcadHeadlessError(
+            f"Mitcad query {query.get('query')!r} returned no result"
+        )
+    return reply["result"]
+
+
+def _edge_faces(name: str) -> tuple[str, str] | None:
+    """Parse Mitcad's native E{faceA|faceB} topology name.
+
+    This mirrors Mitcad v0.70.0's own edge_faces parser: the separator is the
+    top-level bar, not bars nested in feature-name arguments.
+    """
+    if not name.startswith("E{"):
+        return None
+    close = name.rfind("}")
+    if close < 2:
+        return None
+    inner = name[2:close]
+    depth = 0
+    for index, char in enumerate(inner):
+        if char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth -= 1
+        elif char == "|" and depth == 0:
+            return inner[:index], inner[index + 1 :]
+    return None
+
+
+def _same_face_name(left: str, right: str) -> bool:
+    """Treat Mitcad split-face #k names as the same native face family."""
+    return left.split("#", 1)[0] == right.split("#", 1)[0]
+
+
+def _bind_face_boundary_edges(
+    session: _Session,
+    handle: str,
+    *,
+    body_uid: str,
+    face_query: dict[str, Any],
+) -> list[str]:
+    """Resolve one Forge face-boundary intent through Mitcad native topology."""
+    faces_result = _query(
+        session,
+        handle,
+        {
+            "query": "faces",
+            "body": body_uid,
+            **face_query,
+        },
+    )
+    if not isinstance(faces_result, dict):
+        raise MitcadHeadlessError(
+            "Mitcad filtered faces query returned no page object"
+        )
+    faces = faces_result.get("faces")
+    total = faces_result.get("total")
+    if total != 1 or not isinstance(faces, list) or len(faces) != 1:
+        raise MitcadHeadlessError(
+            "Mitcad face-boundary binding requires exactly one native "
+            f"face, got total={total!r}"
+        )
+    names = faces[0].get("names") if isinstance(faces[0], dict) else None
+    if not isinstance(names, list) or not names or not all(
+        isinstance(name, str) and name for name in names
+    ):
+        raise MitcadHeadlessError(
+            "Mitcad selected face has no native topology names"
+        )
+
+    edges_result = _query(
+        session,
+        handle,
+        {
+            "query": "edges",
+            "body": body_uid,
+        },
+    )
+    if not isinstance(edges_result, list):
+        raise MitcadHeadlessError(
+            "Mitcad edges query returned no edge list"
+        )
+
+    boundary: list[str] = []
+    for row in edges_result:
+        edge_name = row.get("name") if isinstance(row, dict) else None
+        if not isinstance(edge_name, str) or not edge_name:
+            continue
+        adjacent = _edge_faces(edge_name)
+        if adjacent is None:
+            continue
+        if any(
+            _same_face_name(face_name, own)
+            for face_name in names
+            for own in adjacent
+        ):
+            boundary.append(edge_name)
+
+    if not boundary:
+        raise MitcadHeadlessError(
+            "Mitcad selected face has no native boundary edges"
+        )
+    return boundary
+
+
 def _apply_commands(
     session: _Session,
     handle: str,
@@ -366,6 +507,23 @@ def run_document(
                         f"Mitcad replay stage {index} body has no uid"
                     )
                 bindings[stage["bind_single_body"]] = body_uid
+
+                boundary = stage.get("bind_face_boundary_edges")
+                if boundary is not None:
+                    source_binding = boundary["body"]
+                    source_body = bindings.get(source_binding)
+                    if not isinstance(source_body, str) or not source_body:
+                        raise MitcadHeadlessError(
+                            "Mitcad face-boundary binding refers to unknown "
+                            f"body binding: {source_binding!r}"
+                        )
+                    bindings[boundary["name"]] = _bind_face_boundary_edges(
+                        session,
+                        handle,
+                        body_uid=source_body,
+                        face_query=boundary["face"],
+                    )
+
                 stage_commands = _bind_values(
                     stage["commands"],
                     bindings,

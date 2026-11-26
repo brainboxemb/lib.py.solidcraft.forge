@@ -239,6 +239,15 @@ def _chamfer_document(shape: Shape, name: str):
     replay = [
         {
             "bind_single_body": "body",
+            "bind_face_boundary_edges": {
+                "name": "edges",
+                "body": "body",
+                "face": {
+                    "surface": "plane",
+                    "normal": _FACE_NORMALS[face],
+                    "normal_tolerance": 1e-6,
+                },
+            },
             "commands": [
                 {
                     "cmd": "add_feature",
@@ -246,11 +255,7 @@ def _chamfer_document(shape: Shape, name: str):
                     "def": {
                         "type": "chamfer",
                         "body": {"$mitcad_bind": "body"},
-                        "faces": {
-                            "surface": "plane",
-                            "normal": _FACE_NORMALS[face],
-                            "normal_tolerance": 1e-6,
-                        },
+                        "edges": {"$mitcad_bind": "edges"},
                         "size": {
                             "type": "equal_distance",
                             "distance": command_value(distance),

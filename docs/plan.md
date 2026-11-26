@@ -84,7 +84,10 @@ First spike:
    backend boundary;
 6. add Mitcad only far enough to prove one unchanged Forge source through both
    native engines and the existing verification architecture;
-7. fail explicitly for unsupported Mitcad intent rather than weakening the
+7. resolve Forge topology intent through Mitcad's native `faces` / `edges`
+   queries and native topology names before feeding modify features; do not
+   substitute coordinate picks;
+8. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
 Current spike evidence:

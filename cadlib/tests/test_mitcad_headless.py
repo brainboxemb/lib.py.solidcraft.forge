@@ -63,21 +63,51 @@ class FakeSession:
                 "failed_features": [],
             }
         if name == "model_query":
-            return {
-                "document": "D1",
-                "result": [
-                    {
-                        "uid": "F1.b0",
-                        "name": "Body1",
-                        "kind": "solid",
-                        "volume": 12000,
-                        "bbox": {
-                            "min": [0, 0, 0],
-                            "max": [40, 30, 10],
-                        },
-                    }
-                ],
-            }
+            query = arguments["query"]
+            if query["query"] == "bodies":
+                return {
+                    "document": "D1",
+                    "result": [
+                        {
+                            "uid": "F1.b0",
+                            "name": "Body1",
+                            "kind": "solid",
+                            "volume": 12000,
+                            "bbox": {
+                                "min": [0, 0, 0],
+                                "max": [40, 30, 10],
+                            },
+                        }
+                    ],
+                }
+            if query["query"] == "faces":
+                return {
+                    "document": "D1",
+                    "result": {
+                        "total": 1,
+                        "offset": 0,
+                        "faces": [
+                            {
+                                "index": 1,
+                                "names": ["F1:top"],
+                                "surface": "plane",
+                                "area": 1200,
+                            }
+                        ],
+                    },
+                }
+            if query["query"] == "edges":
+                return {
+                    "document": "D1",
+                    "result": [
+                        {"name": "E{F1:bottom|F1:side0}", "curve": "line", "length": 40},
+                        {"name": "E{F1:side0|F1:top}", "curve": "line", "length": 40},
+                        {"name": "E{F1:side1|F1:top}", "curve": "line", "length": 30},
+                        {"name": "E{F1:side2|F1:top}", "curve": "line", "length": 40},
+                        {"name": "E{F1:side3|F1:top}", "curve": "line", "length": 30},
+                    ],
+                }
+            raise AssertionError(query)
         if name == "document_save":
             (self.workspace / arguments["path"]).write_text(
                 "native mitcad", encoding="utf-8"
@@ -96,16 +126,22 @@ def replay_document():
     value["replay"] = [
         {
             "bind_single_body": "body",
+            "bind_face_boundary_edges": {
+                "name": "edges",
+                "body": "body",
+                "face": {
+                    "surface": "plane",
+                    "normal": [0, 0, 1],
+                    "normal_tolerance": 1e-6,
+                },
+            },
             "commands": [
                 {
                     "cmd": "add_feature",
                     "def": {
                         "type": "chamfer",
                         "body": {"$mitcad_bind": "body"},
-                        "faces": {
-                            "surface": "plane",
-                            "normal": [0, 0, 1],
-                        },
+                        "edges": {"$mitcad_bind": "edges"},
                         "size": {
                             "type": "equal_distance",
                             "distance": 2,
@@ -181,7 +217,18 @@ class MitcadHeadlessTests(unittest.TestCase):
                 work_dir=root / "workspace",
             )
             self.assertEqual(result["completed"], 2)
-            self.assertEqual(result["bindings"], {"body": "F1.b0"})
+            self.assertEqual(
+                result["bindings"],
+                {
+                    "body": "F1.b0",
+                    "edges": [
+                        "E{F1:side0|F1:top}",
+                        "E{F1:side1|F1:top}",
+                        "E{F1:side2|F1:top}",
+                        "E{F1:side3|F1:top}",
+                    ],
+                },
+            )
             session = FakeSession.instances[-1]
             commands = [
                 args["command"]
@@ -190,6 +237,10 @@ class MitcadHeadlessTests(unittest.TestCase):
             ]
             self.assertEqual(len(commands), 2)
             self.assertEqual(commands[1][0]["def"]["body"], "F1.b0")
+            self.assertEqual(
+                commands[1][0]["def"]["edges"],
+                result["bindings"]["edges"],
+            )
 
     @patch("scpf.backends.mitcad_headless._Session", FakeSession)
     def test_unsupported_export_suffix_fails_before_export_call(self):

@@ -99,12 +99,20 @@ class MitcadBackendTests(unittest.TestCase):
         self.assertEqual(definition["type"], "chamfer")
         self.assertEqual(definition["body"], {"$mitcad_bind": "body"})
         self.assertEqual(
-            definition["faces"],
+            stage["bind_face_boundary_edges"],
             {
-                "surface": "plane",
-                "normal": [0, 0, 1],
-                "normal_tolerance": 1e-06,
+                "name": "edges",
+                "body": "body",
+                "face": {
+                    "surface": "plane",
+                    "normal": [0, 0, 1],
+                    "normal_tolerance": 1e-06,
+                },
             },
+        )
+        self.assertEqual(
+            definition["edges"],
+            {"$mitcad_bind": "edges"},
         )
         self.assertEqual(
             definition["size"],
