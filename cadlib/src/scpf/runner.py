@@ -73,13 +73,13 @@ def _warn_missing_model_parameters(
             if name in native:
                 detail = (
                     "remains a native dependency, but pv() also consumes its "
-                    "current Python value. Changing the SolidCraft parameter "
-                    "may therefore update only part of the model."
+                    f"current Python value. Changing the {backend_name} "
+                    "parameter may therefore update only part of the model."
                 )
             else:
                 detail = (
-                    "has no native {backend_name} dependency and pv() consumes its "
-                    "current Python value."
+                    f"has no native {backend_name} dependency and pv() "
+                    "consumes its current Python value."
                 )
             warnings.warn(
                 f"{context} parameter {name!r} {detail} Preserve the symbolic "
@@ -90,7 +90,7 @@ def _warn_missing_model_parameters(
             )
         elif name not in native:
             warnings.warn(
-                f"{context} parameter {name!r} has no native SolidCraft "
+                f"{context} parameter {name!r} has no native {backend_name} "
                 "dependency; publishing a parameter alone does not make model "
                 "geometry or placement associative. Preserve the symbolic "
                 f"value, or rename it to _{name} if it is intentionally "

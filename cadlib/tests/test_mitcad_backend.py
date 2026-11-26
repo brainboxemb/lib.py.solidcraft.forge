@@ -63,9 +63,17 @@ class MitcadBackendTests(unittest.TestCase):
         self.assertEqual(sketch["def"]["type"], "sketch")
         self.assertEqual(sketch["def"]["plane"], "xy")
         self.assertEqual(sketch["def"]["entities"][1]["type"], "circle")
-        self.assertIn(
-            "diameter",
-            str(sketch["def"]["entities"][1]["radius"]),
+        self.assertEqual(sketch["def"]["entities"][1]["radius"], 10.0)
+        self.assertEqual(
+            sketch["def"]["dimensions"],
+            [
+                {
+                    "id": "k1",
+                    "type": "diameter",
+                    "curve": "c1",
+                    "value": "diameter",
+                }
+            ],
         )
 
         extrusion = document["commands"][-1]

@@ -14,6 +14,7 @@ from ..core import (
     _box_corner_from_anchor,
     _native_dependencies,
     _plain_command_value,
+    _pv as pv,
     command_value,
 )
 
@@ -139,10 +140,10 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
     _require_positive(diameter, "circle diameter")
     _require_positive(distance, "sketch extrusion distance")
 
-    radius = diameter / 2
-    extent_distance = command_value(distance)
-    if direction == "negative":
-        extent_distance = f"-({extent_distance})"
+    radius = pv(diameter) / 2.0
+    extent_distance = command_value(
+        -distance if direction == "negative" else distance
+    )
 
     sketch_definition = {
         "type": "sketch",
@@ -158,11 +159,18 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
                 "id": "c1",
                 "type": "circle",
                 "center": "p1",
-                "radius": command_value(radius),
+                "radius": radius,
             },
         ],
         "constraints": [],
-        "dimensions": [],
+        "dimensions": [
+            {
+                "id": "k1",
+                "type": "diameter",
+                "curve": "c1",
+                "value": command_value(diameter),
+            }
+        ],
     }
     extrude_definition = {
         "type": "extrude",
