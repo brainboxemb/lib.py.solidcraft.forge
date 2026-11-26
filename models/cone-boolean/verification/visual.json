@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/front.json"
+    },
+    "right": {
+      "baseline_payload": "baselines/right.json"
+    },
+    "iso": {
+      "baseline_payload": "baselines/iso.json"
+    }
+  },
+  "expected_views": [
+    "iso",
+    "front",
+    "right"
+  ],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "90b7eba19227032766dc1309ae8d851c4cb09553",
+    "workflow_run": 45873531238,
+    "solidcraft_version": "0.49.0",
+    "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+  },
+  "expected_boxes": [
+    {
+      "label": "cone-boolean",
+      "minimum": [
+        -25,
+        -20,
+        0
+      ],
+      "maximum": [
+        25,
+        20,
+        26
+      ]
+    }
+  ],
+  "expected_features": []
+}

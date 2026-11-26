@@ -100,6 +100,16 @@ SCPF_ONLY_IDS = {
     "topology-face-boundary-xz",
 }
 
+VISUAL_SCPF_ONLY_IDS = {
+    "attached-through-all",
+    "cone-boolean",
+    "native-revolve",
+    "rotated-sketch-cutter",
+    "sheet-contour-flange-recess",
+    "topology-face-boundary-box",
+    "topology-face-boundary-xz",
+}
+
 class ModelTests(unittest.TestCase):
     def setUp(self):
         self.repo = Path.cwd()
@@ -216,6 +226,15 @@ class ModelTests(unittest.TestCase):
                     [stage.runtime for stage in model.verifications],
                     ["solidcraft", "reference", "solidcraft"],
                 )
+            elif model_id in VISUAL_SCPF_ONLY_IDS:
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "solidcraft"],
+                )
             else:
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
@@ -315,7 +334,7 @@ class ModelTests(unittest.TestCase):
                             if model.id in {
                                 "multi-profile-extrude",
                                 "asymmetric-chamfer",
-                            }
+                            } | VISUAL_SCPF_ONLY_IDS
                             else [("scpf", "native")]
                         )
                     )
