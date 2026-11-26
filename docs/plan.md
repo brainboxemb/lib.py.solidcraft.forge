@@ -148,31 +148,37 @@ minor-release capability.
 #315 is not a v0.22.1 prerequisite because that patch only publishes the
 already-stable #306 qualification.
 
-### Experimental lane: #320 annular RegionIR on Mitcad
+### Experimental lane checkpoint
 
-#297 is complete. Current accepted normal `dev` was synchronized into
-permanent `exp` through the reviewed conflict-recovery path:
+The isolated semantic-IR / Mitcad line is currently at a qualified checkpoint.
 
-- direct permanent `dev -> exp` PR #337 remained genuinely conflicted;
-- review-only resolution PR #338 qualified the exact combined tree;
-- permanent merge commit
-  `3a467642cabbb1b2920a6d30fce8e507131ef3a9` has parents exactly
-  `[3bb91eb5e05f3cc788c85d90b59b3e5a3d9621ae, abeb6d10479802e4866783b9d67431c53786d0dd]`
-  = `[exp, dev]`;
-- permanent exp CI run 45854046610 is green;
-- durable `build/exp/build-plan.json` records that exact source with
-  `full=true`, `library=true` and all 60 active owners.
+#297 synchronized the accepted v0.22.1 normal baseline into permanent `exp`
+through reviewed conflict recovery. #320 then qualified the already-public
+two-concentric-circle annular standalone Sketch extrusion through the same
+engine-neutral compiler boundary:
 
-Continue the isolated compiler/backend experiment with #320. Qualify the
-already-public two-concentric-circle / annular standalone
-`Sketch.extrude(..., exact_regions=True)` semantics through the existing
-engine-neutral `SketchIR` / `RegionIR` / `ExtrudeIR` boundary for
-SolidCraft and Mitcad.
+- #320 / PR #342 merged to permanent `exp` as
+  `95f70ef93eaaf86fece51b8e560aa895281ac7fe`;
+- permanent exp CI run 45856878722 is green and durable `build/exp` names
+  that exact source;
+- one SCPF source now lowers through
+  `SketchIR` / `CircleProfileIR` / `RegionIR` / `ExtrudeIR` to both
+  SolidCraft and Mitcad;
+- the annulus retains only semantic membership
+  `RegionIR(outer=0, holes=(1,))`; backend coordinate picks and Mitcad native
+  region ids remain lowering details rather than IR intent;
+- the existing `multi-profile-extrude` owner retains native
+  `model.mitcad`, `mitcad.json` and STL evidence;
+- its Mitcad geometry verification passes the 10 mm OD / 8 mm ID / 30 mm
+  length contract, including watertight mesh and inner-wall/volume checks;
+- arbitrary profile types, non-concentric/nonnested membership and more than
+  two profiles remain outside the qualified portable slice and fail closed on
+  Mitcad.
 
-Keep the public SCPF authoring unchanged. `RegionIR` owns semantic profile
-membership; backend-native coordinate picks or Mitcad region ids are lowering
-details and must not become IR intent. Unsupported arbitrary multi-profile
-forms remain fail-closed.
+No further experimental capability is selected by this plan. Keep `exp`
+isolated at this qualified checkpoint until a demonstrated consumer need or a
+separately scoped issue justifies the next compiler/backend expansion. Do not
+promote `exp -> dev` merely because the experiment is green.
 
 ## Later
 
