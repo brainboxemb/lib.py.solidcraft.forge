@@ -39,6 +39,7 @@ EXPECTED_IDS = {
     "group-hierarchy",
     "hole-family",
     "native-revolve",
+    "multi-profile-extrude",
     "parameter-scope",
     "parametric-anchor",
     "parametric-attach",
@@ -69,6 +70,7 @@ EXPECTED_IDS = {
     "slot-family",
     "top-sketch-after-chamfer",
     "topology-face-boundary-box",
+    "topology-face-boundary-xz",
     "xz-anchor",
 }
 
@@ -84,7 +86,6 @@ SCPF_ONLY_IDS = {
     "cone-boolean",
     "exploded-views",
     "native-revolve",
-    "multi-profile-extrude",
     "revolute-joint",
     "rotated-sketch-cutter",
     "sheet-contour-flange",
