@@ -264,17 +264,19 @@ class ConfigurationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "model.py"
             path.write_text(
-                "@component(include=('fit_diameter',))\n"
+                "@component(include=('tube_d', 'fit_diameter'))\n"
                 "class Clamp:\n"
+                "    tube_d = 20.0\n"
                 "    fit_diameter = 20.4\n"
                 "    def build(self):\n"
-                "        return Cylinder(d=self.fit_diameter, h=10)\n"
+                "        return Cylinder(d=self.tube_d + 4, h=10) - Cylinder(d=self.fit_diameter, h=12)\n"
                 "class Frame:\n"
                 "    frame_width = 80.0\n"
+                "    tube_d = 20.0\n"
                 "    clamp_bore = 20.4\n"
                 "    def build(self):\n"
                 "        left = Clamp(\n"
-                "            fit_diameter=self.clamp_bore, name='left',\n"
+                "            tube_d=self.tube_d, fit_diameter=self.clamp_bore, name='left',\n"
                 "            placement=Placement(x=-self.frame_width / 4),\n"
                 "        )\n"
                 "        right = left.copy(\n"
@@ -293,7 +295,7 @@ class ConfigurationTests(unittest.TestCase):
                 "                ConfigRule(\n"
                 "                    'installed', 'Installed', enabled=True,\n"
                 "                    condition=Always(),\n"
-                "                    effect=DriveParameter(self.clamp_bore, 20.0),\n"
+                "                    effect=DriveParameter(self.clamp_bore, self.tube_d),\n"
                 "                ),\n"
                 "            ),\n"
                 "        )\n"
@@ -326,7 +328,7 @@ class ConfigurationTests(unittest.TestCase):
             {
                 "type": "drive_parameter",
                 "parameter": "clamp_bore",
-                "expression": "20",
+                "expression": "tube_d",
             },
         )
 
