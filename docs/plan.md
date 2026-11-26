@@ -145,6 +145,8 @@ Experimental `exp` lane:
 - #393 is the immediate architecture/control checkpoint before more backend capability code;
 - treat Forge as a generic CAD compiler: SCPF is one frontend, typed engine-neutral Forge CAD IR is the compiler contract, and SolidCraft/Mitcad are independent lowerings rather than separate source interpreters;
 - maintain an explicit IR inventory by semantic layer (values, reference geometry, sketches, profiles/regions, features/history, body operations, topology references, assemblies and configurations) and mark each layer accepted, bounded/partial or still legacy;
+- current typed/accepted core: `ParameterIR`; Box/Cylinder/Sphere + `PlacementIR`; `SketchIR` with Circle/Polygon profiles and `RegionIR`; bounded `ExtrudeIR`, recursive `BooleanIR`, face-boundary `ChamferIR`, and the first principal-axis new-body `RevolveIR` slice;
+- current generic gaps: no general reference-geometry IR (`AxisLineIR`/Plane/Point), no complete Sketch constraint/dimension IR, only partial feature/history and topology-reference identity, and no experimental assembly/occurrence or configuration/suppression IR yet;
 - require every experimental capability to progress in this order: define generic CAD meaning -> pure normalization/IR tests -> backend lowering -> backend contract tests -> real native runtime qualification -> permanent `exp` merge;
 - backend implementation details may never drive semantic IR fields: a Mitcad construction helper, native feature uid/curve id, SolidCraft command spelling or topology id remains backend transport only;
 - symbolic Parameters/Expressions and authored feature identity must survive normalization; current evaluated values may validate semantics but may not replace them;
