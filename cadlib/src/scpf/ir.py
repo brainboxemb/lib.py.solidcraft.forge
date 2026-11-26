@@ -304,21 +304,53 @@ class ExtrudeIR:
 
 
 @dataclass(frozen=True)
+class AxisLineIR:
+    """Engine-neutral principal-direction axis through a semantic XYZ point."""
+
+    direction: str
+    origin: tuple[Any, Any, Any] = (0, 0, 0)
+    source_kind: str = "axis_line"
+
+    def __post_init__(self):
+        if self.direction not in {"X", "Y", "Z"}:
+            raise ValueError("AxisLineIR direction must be X, Y or Z")
+        if (
+            not isinstance(self.origin, tuple)
+            or len(self.origin) != 3
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.origin
+            )
+        ):
+            raise ValueError(
+                "AxisLineIR origin must contain three finite CAD dimensions"
+            )
+
+
+@dataclass(frozen=True)
 class RevolveIR:
-    """Angular sweep of one semantic Sketch region around a principal axis."""
+    """Angular sweep of one Sketch region as one authored body feature."""
 
     sketch: SketchIR
     region: RegionIR
-    axis: str
+    axis: AxisLineIR
     angle: Any
     direction: str | None = None
+    operation: str = "new_body"
+    target: PlacementIR | None = None
     source_kind: str = "sketch_base_revolve"
 
     def __post_init__(self):
-        if self.axis not in {"X", "Y", "Z"}:
-            raise ValueError("RevolveIR axis must be X, Y or Z")
+        if not isinstance(self.axis, AxisLineIR):
+            raise ValueError("RevolveIR axis must be AxisLineIR")
         if self.direction not in (None, "symmetric"):
             raise ValueError("RevolveIR direction must be None or symmetric")
+        if self.operation not in {"new_body", "cut"}:
+            raise ValueError("RevolveIR operation must be new_body or cut")
+        if self.operation == "new_body" and self.target is not None:
+            raise ValueError("new-body RevolveIR must not have a target")
+        if self.operation == "cut" and not isinstance(self.target, PlacementIR):
+            raise ValueError("cut RevolveIR requires one typed target placement")
 
 
 @dataclass(frozen=True)
@@ -675,8 +707,77 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     )
 
 
-def _portable_revolve(shape: Shape) -> RevolveIR | None:
-    """Normalize the first qualified standalone Sketch + Revolve slice."""
+def _axis_line_ir(axis) -> AxisLineIR | None:
+    """Normalize public principal/custom axis intent without native ids."""
+    if isinstance(axis, str):
+        if axis not in {"X", "Y", "Z"}:
+            return None
+        return AxisLineIR(direction=axis)
+
+    if (
+        not isinstance(axis, (tuple, list))
+        or len(axis) != 2
+    ):
+        return None
+    origin, direction = axis
+    if (
+        not isinstance(origin, (tuple, list))
+        or len(origin) != 3
+        or not isinstance(direction, (tuple, list))
+        or len(direction) != 3
+    ):
+        return None
+
+    vector = tuple(float(value) for value in direction)
+    principal = {
+        "X": (1.0, 0.0, 0.0),
+        "Y": (0.0, 1.0, 0.0),
+        "Z": (0.0, 0.0, 1.0),
+    }
+    semantic_direction = next(
+        (
+            name
+            for name, expected in principal.items()
+            if all(
+                abs(actual - wanted) <= 1e-12
+                for actual, wanted in zip(vector, expected)
+            )
+        ),
+        None,
+    )
+    if semantic_direction is None:
+        return None
+
+    try:
+        return AxisLineIR(
+            direction=semantic_direction,
+            origin=tuple(origin),
+        )
+    except ValueError:
+        return None
+
+
+def _axis_line_in_sketch_plane(axis: AxisLineIR, plane: str) -> bool:
+    axes = {
+        "XY": {"X", "Y"},
+        "XZ": {"X", "Z"},
+        "YZ": {"Y", "Z"},
+    }
+    normal_index = {"XY": 2, "XZ": 1, "YZ": 0}
+    if plane not in axes or axis.direction not in axes[plane]:
+        return False
+
+    normal = axis.origin[normal_index[plane]]
+    return not parameters_in(normal) and abs(pv(normal)) <= 1e-12
+
+
+def _portable_revolve(
+    shape: Shape,
+    *,
+    operation: str = "new_body",
+    target: PlacementIR | None = None,
+) -> RevolveIR | None:
+    """Normalize the qualified standalone/cut Sketch + Revolve semantic slice."""
     if shape.kind != "sketch_base_revolve":
         return None
 
@@ -693,13 +794,23 @@ def _portable_revolve(shape: Shape) -> RevolveIR | None:
         rotation,
     ) = shape.data
 
-    if plane != "XZ":
+    if plane not in ("XY", "XZ", "YZ"):
         return None
     if origin is not None or plane_offset is not None or rotation is not None:
         return None
-    if operations or direction is not None or axis != "X":
+    if operations or direction is not None:
+        return None
+    if operation not in {"new_body", "cut"}:
+        return None
+    if operation == "new_body" and target is not None:
+        return None
+    if operation == "cut" and not isinstance(target, PlacementIR):
         return None
     if len(profiles) != 1:
+        return None
+
+    axis_ir = _axis_line_ir(axis)
+    if axis_ir is None or not _axis_line_in_sketch_plane(axis_ir, plane):
         return None
 
     profile, profile_anchor, offset = profiles[0]
@@ -748,10 +859,13 @@ def _portable_revolve(shape: Shape) -> RevolveIR | None:
     return RevolveIR(
         sketch=sketch,
         region=region,
-        axis=axis,
+        axis=axis_ir,
         angle=angle,
         direction=direction,
+        operation=operation,
+        target=target,
     )
+
 
 
 def _portable_chamfer(shape: Shape) -> ChamferIR | None:
@@ -812,6 +926,23 @@ def _normalize_node(shape: Shape) -> IRNode:
 
     if shape.kind in {"union", "difference", "intersection"}:
         target_shape, tool_shape = shape.data
+
+        # Preserve an authored subtractive Revolve as that feature rather than
+        # manufacturing a new-body Revolve followed by a generic Boolean.
+        if shape.kind == "difference":
+            target_placement = _portable_placement(target_shape)
+            if (
+                target_placement is not None
+                and isinstance(target_placement.primitive, BoxIR)
+            ):
+                revolve_cut = _portable_revolve(
+                    tool_shape,
+                    operation="cut",
+                    target=target_placement,
+                )
+                if revolve_cut is not None:
+                    return revolve_cut
+
         target = _normalize_node(target_shape)
         tool = _normalize_node(tool_shape)
         if (
@@ -862,6 +993,7 @@ def is_portable(model: ModelIR) -> bool:
 
 
 __all__ = [
+    "AxisLineIR",
     "BooleanIR",
     "BoxIR",
     "ChamferIR",
