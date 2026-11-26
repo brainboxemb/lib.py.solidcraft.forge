@@ -3,7 +3,7 @@
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "8hvpsyndsvmzn",
+    "id": "6gyky8bra35pf",
     "language": "en",
     "line_group": "0.5",
     "name": "Compact Sample Plate Drawing",
@@ -26,14 +26,14 @@
       {
         "documents": {
           "component": 1,
-          "source": "e3dab81s8324j"
+          "source": "dksk72x0b1esm"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "73sk497psxvwf",
+        "id": "5haykd6kv3tjz",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -525,15 +525,7 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "87r3fb1qnzrqd",
-            "kind": "base",
-            "label": "Iso front right",
-            "notes": []
-          },
-          {
-            "balloons": [],
-            "dimensions": [],
-            "id": "eej37fzv5764m",
+            "id": "cpcjtn6dscfn4",
             "kind": "base",
             "label": "Front",
             "notes": []
@@ -541,29 +533,37 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "4skrqdwcq8ah0",
+            "id": "b0p81xjnnjakq",
+            "kind": "projected",
+            "label": "Right of Front",
+            "notes": [],
+            "parent": "cpcjtn6dscfn4",
+            "side": "right"
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "fpez0tnadaj3c",
             "kind": "projected",
             "label": "Above Front",
             "notes": [],
-            "parent": "eej37fzv5764m",
+            "parent": "cpcjtn6dscfn4",
             "side": "above"
           },
           {
             "balloons": [],
             "dimensions": [],
-            "id": "a7sx03fd5qj11",
-            "kind": "projected",
-            "label": "Right of Front",
-            "notes": [],
-            "parent": "eej37fzv5764m",
-            "side": "right"
+            "id": "d48rr7kc55qz8",
+            "kind": "base",
+            "label": "Iso front right",
+            "notes": []
           }
         ]
       }
     ],
     "sources": [
       {
-        "id": "e3dab81s8324j"
+        "id": "dksk72x0b1esm"
       }
     ],
     "symbols": [],
@@ -579,8 +579,8 @@
       "source"
     ],
     "followers": [
-      "4skrqdwcq8ah0",
-      "a7sx03fd5qj11"
+      "b0p81xjnnjakq",
+      "fpez0tnadaj3c"
     ],
     "outside": [
       {
@@ -594,7 +594,7 @@
             58.6327526665666
           ]
         },
-        "view": "eej37fzv5764m"
+        "view": "cpcjtn6dscfn4"
       },
       {
         "boundary_mm": {
@@ -607,24 +607,24 @@
             58.6327526665666
           ]
         },
-        "view": "a7sx03fd5qj11"
+        "view": "b0p81xjnnjakq"
       }
     ],
-    "view": "eej37fzv5764m"
+    "view": "cpcjtn6dscfn4"
   },
   {
     "changed": [
       "source"
     ],
     "followers": [],
-    "view": "87r3fb1qnzrqd"
+    "view": "d48rr7kc55qz8"
   },
   {
     "changed": [
       "place"
     ],
     "followers": [],
-    "view": "eej37fzv5764m"
+    "view": "cpcjtn6dscfn4"
   },
   {
     "changed": [
@@ -632,7 +632,7 @@
       "label"
     ],
     "followers": [],
-    "view": "4skrqdwcq8ah0"
+    "view": "fpez0tnadaj3c"
   },
   {
     "changed": [
@@ -640,7 +640,7 @@
       "label"
     ],
     "followers": [],
-    "view": "a7sx03fd5qj11"
+    "view": "b0p81xjnnjakq"
   },
   {
     "changed": [
@@ -648,7 +648,7 @@
       "place"
     ],
     "followers": [],
-    "view": "87r3fb1qnzrqd"
+    "view": "d48rr7kc55qz8"
   },
   {
     "balloons": [],
@@ -802,15 +802,15 @@
         "value": "shaded"
       }
     },
-    "sheet": "73sk497psxvwf",
-    "source": "e3dab81s8324j",
-    "view": "87r3fb1qnzrqd"
+    "sheet": "5haykd6kv3tjz",
+    "source": "dksk72x0b1esm",
+    "view": "d48rr7kc55qz8"
   },
   {
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "8hvpsyndsvmzn",
+    "id": "6gyky8bra35pf",
     "language": "en",
     "line_group": "0.5",
     "name": "Compact Sample Plate Drawing",
@@ -833,14 +833,14 @@
       {
         "documents": {
           "component": 1,
-          "source": "e3dab81s8324j"
+          "source": "dksk72x0b1esm"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "73sk497psxvwf",
+        "id": "5haykd6kv3tjz",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -1332,15 +1332,7 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "87r3fb1qnzrqd",
-            "kind": "base",
-            "label": "Iso front right",
-            "notes": []
-          },
-          {
-            "balloons": [],
-            "dimensions": [],
-            "id": "eej37fzv5764m",
+            "id": "cpcjtn6dscfn4",
             "kind": "base",
             "label": "Front",
             "notes": []
@@ -1348,29 +1340,37 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "4skrqdwcq8ah0",
+            "id": "b0p81xjnnjakq",
+            "kind": "projected",
+            "label": "Right of Front",
+            "notes": [],
+            "parent": "cpcjtn6dscfn4",
+            "side": "right"
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "fpez0tnadaj3c",
             "kind": "projected",
             "label": "Above Front",
             "notes": [],
-            "parent": "eej37fzv5764m",
+            "parent": "cpcjtn6dscfn4",
             "side": "above"
           },
           {
             "balloons": [],
             "dimensions": [],
-            "id": "a7sx03fd5qj11",
-            "kind": "projected",
-            "label": "Right of Front",
-            "notes": [],
-            "parent": "eej37fzv5764m",
-            "side": "right"
+            "id": "d48rr7kc55qz8",
+            "kind": "base",
+            "label": "Iso front right",
+            "notes": []
           }
         ]
       }
     ],
     "sources": [
       {
-        "id": "e3dab81s8324j"
+        "id": "dksk72x0b1esm"
       }
     ],
     "symbols": [],
@@ -1382,6 +1382,6 @@
     }
   },
   {
-    "closed": "8hvpsyndsvmzn"
+    "closed": "6gyky8bra35pf"
   }
 ]
