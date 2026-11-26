@@ -67,6 +67,215 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Symbolic CAD math boundary
+
+Forge exposes non-linear native expression intent through the `cadmath`
+namespace rather than shadowing Python built-ins or exposing raw SolidCraft
+expression strings:
+
+```python
+mid_g = cadmath.min(self.mid_round, self.mid_wall / 2 - 0.05)
+mid_tip = cadmath.sqrt(
+    (self.mid_outer_r - mid_g) ** 2
+    - (self.mid_outer_r - self.mid_wall + mid_g) ** 2
+)
+lane = cadmath.round(self.mid_z / 2 / self.ref_lane_grid) * self.ref_lane_grid
+angle = -cadmath.atan((self.ref_d - self.ref_tip_d) / (2 * self.ref_tip_h))
+```
+
+`cadmath.min/max/sqrt/abs/round/floor/atan` return ordinary numbers when all
+inputs are numeric and a typed `Expression` when any input is symbolic.
+Expression arithmetic retains every contributing `Parameter`; command lowering
+emits the native SolidCraft expression and the existing dependency audit sees
+the same source parameters. `cadmath.atan` follows SolidCraft CAD semantics and
+evaluates in degrees.
+
+This is expression authoring, not a general Python symbolic algebra system.
+Forge only exposes operations that have a qualified native SolidCraft spelling
+and current-value evaluation.
+
+## Native multi-profile Sketch extrusion boundary
+
+Standalone Sketch compilation preserves one authored Sketch even when it
+contains several closed loops. Every supported profile is lowered between the
+same `sketch.create` / `sketch.finish` pair; Forge does not manufacture one
+Sketch per loop.
+
+Extrusion keeps SolidCraft's native region model. For ambiguous/nested loops,
+consumer code uses the existing typed selection:
+
+```python
+with Sketch(name="Tube profile", plane="XY") as profile:
+    Circle2D(d=outer_diameter)
+    Circle2D(d=inner_diameter)
+
+tube = profile.extrude(
+    length,
+    profiles=[(4.5, 0)],
+    exact_regions=True,
+)
+```
+
+The fixed point is authoring intent only. SolidCraft resolves the exact region
+and retains the surrounding native curves so the selected annulus can survive
+saved-design diameter changes. No native profile index or generated curve id is
+part of the public API.
+
+The compiler's base-shape metadata remains intentionally conservative for
+multi-profile Sketches: profile-specific edge selectors such as
+`Edges.from_profile(...)` continue to require their already-qualified single
+Polygon2D extrusion. Multi-profile support is an extrusion-region capability,
+not a blanket expansion of every Sketch consumer. `Sketch.revolve()` retains
+its one-closed-profile limit.
+
+## Native axis-line and shifted revolve boundary
+
+`AxisLine(direction, origin=...)` is the public typed line contract for native
+features that need a fixed direction through an explicit, optionally symbolic
+XYZ point. Principal `Axis.X/Y/Z` remains the concise world-origin form.
+
+For Sketch revolve, the first shifted-axis contract is deliberately bounded:
+- one standalone unrotated XY/XZ/YZ Sketch;
+- optional symbolic standalone plane offset;
+- one closed profile;
+- `AxisLine` direction lies in that plane;
+- the axis origin's normal coordinate matches the Sketch plane offset;
+- lowering emits SolidCraft `solid.revolve.axis = {origin, dir}` directly.
+
+The Shape returned by `Sketch.revolve(...)` remains the authored feature
+identity. When used as `body - revolve`, lowering emits one native
+`solid.revolve(operation="cut")`; `Suppress(revolve)` therefore binds that
+one history feature rather than an approximation made from multiple primitives.
+
+`AxisLine` is also accepted by circular-pattern axis authoring so shifted axis
+intent has one public vocabulary. Topology-selected/construction axes and
+rotated Sketch frames remain separate future contracts.
+
+## Native two-distance chamfer boundary
+
+Chamfer remains one Shape feature and one SolidCraft `solid.chamfer` history
+operation. The public form extends the existing equal-distance API without
+introducing a second edge-selection path:
+
+```python
+body.chamfer(
+    0.18,
+    distance2=0.65,
+    flip=True,
+    edges=Edges.from_profile("top"),
+)
+```
+
+Internally the existing edge-selection intent stays in the same Shape-data
+position used by current Forge code. Optional `distance2` and `flip` are
+additional feature intent. Lowering always emits `distance`; it emits
+`distance2` only when authored and emits `flip` only when true. Therefore
+an existing equal-distance call keeps the same generated command document.
+
+SolidCraft owns adjacent-face ordering. `flip=True` maps directly to native
+`solid.chamfer.flip`; Forge does not infer a new face vocabulary from the
+selected edge. Both distance expressions preserve normal parameter
+dependencies. Named profile/vertex, cardinal Box, face-boundary and explicit
+edge picks all continue through the existing resolver before the same chamfer
+command is emitted.
+
+The first qualification uses a named top segment from an XZ Polygon2D
+extrusion. This deliberately proves asymmetric chamfer intent composes with the
+existing semantic profile-edge selector and remains one native ChamferFeature
+after saved-design parameter changes.
+
+## Native configuration-table boundary
+
+Configuration is final design intent rather than a Python model variant. The
+public authoring boundary is:
+
+```python
+Configure(design, active=..., columns=(...), rows={...})
+```
+
+The configured `design` may be a single `Shape`, one component occurrence or
+an `Assembly`. `Param(...)` points at an existing native model parameter, so
+the same column type can drive dimensions, occurrence `Placement`, attachment
+offsets and other native associative dependencies. A parameter explicitly published from a reusable child component is one of those native dependencies: when the parent passes one shared Parameter into the child, a root configuration table may address that parent parameter and every occurrence using the same component definition follows it. `Suppress(feature)` points
+at the exact Forge-authored feature object; consumer code never names or predicts
+SolidCraft history ids.
+
+Lowering is deliberately two-stage:
+
+```text
+Forge configuration intent
+        ↓
+compile normal Shape / component / Assembly design
+        ↓
+bind replay-returned native feature names and configuration row ids
+        ↓
+config.configure / config.row / config.activate / config.table
+        ↓
+saved SolidCraft .sc owns editable configs + native row identities
+```
+
+Forge assigns a deterministic replay row reference from each authored row name,
+binds it to the actual native row id returned by SolidCraft and activates by
+that bound id. Reordering rows therefore does not change Forge's logical row
+reference. SolidCraft persists its own `row_identities` map in the saved
+document. The SolidCraft command API does not accept caller-chosen native row
+ids, so Forge does not patch or predict them.
+
+`Configure` never rewrites Python model structure for each row. A row may only
+change native configuration columns. Whole-component presence, alternate
+attachment graphs and arbitrary Python branching therefore require a separate
+native contract rather than being hidden behind configuration syntax.
+
+Native material and appearance columns also exist in SolidCraft's configuration
+model. They are intentionally not exposed by #216 until a typed Forge authoring
+contract and verification case exist for them.
+
+## Configuration verification cases
+
+Configuration qualification is Forge-owned and independent of downstream
+consumer repositories. The verification catalog has its own
+**Configurations** section and uses focused cases:
+
+| Case | Contract proved |
+| --- | --- |
+| `configuration-table` | named rows, active row, multiple parameter columns, two independent feature-suppression columns, saved native table and row switching |
+| `configuration-position` | one configuration table around a complete Assembly, with parameter-driven occurrence positions for Front, Below and Service |
+| `configuration-installed-state` | one reusable flexible-fit child component publishes its fit parameter to the parent; `Free` manufacturing and `Installed` mounted rows switch that same child definition natively after saving |
+| replay row identity | Forge-generated name-stable row references bind to SolidCraft-returned native row ids; activation uses the bound id |
+| saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
+
+The use-case boundary is intentional:
+
+| Use case | #216 public contract |
+| --- | --- |
+| product sizes / dimensional presets | `Param(...)` |
+| front/below/service assembly positions | `Param(...)` driving associative `Placement` |
+| optional authored feature | `Suppress(feature)` |
+| dimensions plus suppression in one row | supported by the same table |
+| parent size table + published reusable-child parameter | supported by the same `Param(...)` contract; shared child occurrences follow one parent native parameter |
+| flexible-fit free/mounted state | `Free` / `Installed` rows using ordinary native parameters; this is a physical configuration, not a display state |
+| material or appearance variants | native SolidCraft supports them, but Forge waits for a typed, separately verified column contract |
+| whole component present/absent | not silently mapped to feature suppression |
+| alternate attachment/joint graph | not a configuration cell; requires explicit relationship authoring |
+| arbitrary Python branches per row | rejected as a configuration-table substitute |
+
+A suppression reference must be an actual Forge feature handle available to the
+configured design. #216 does not invent string paths into hidden child-component
+implementation details. If cross-component exported feature handles are needed,
+that is a reusable component API capability and must be designed explicitly.
+
+For flexible parts, `Free` and `Installed` name physical/model states:
+`Free` is the uninstalled shape used for manufacturing or print output;
+`Installed` is the mounted working shape. A render may choose to show
+`Installed`, but rendering is presentation policy and does not redefine the
+configuration. The current generic preview consumes the built artifact, so an
+owner whose active row is `Free` publishes a Free-state manufacturing preview
+unless a future presentation feature explicitly selects another saved row.
+
+The HUB75 display and frame-coupler models remain downstream consumers. They are
+useful adoption tests after a Forge release, but they do not define or special
+case the public API.
+
 ## Native revolute-relationship boundary
 
 Revolute motion stays inside the existing occurrence-attachment model. A
@@ -176,7 +385,8 @@ The public authoring objects are deliberately small intent records:
 - `DrawingNote(...)` authors native sheet text;
 - `DrawingRevision(...)` authors one native revision row;
 - drawing `properties={...}` and `title_block={...}` populate native drawing
-  metadata/title cells.
+  metadata/title cells;
+- `title_block_style="compact"` lowers to native `drawing.sheet.set(title_block="compact")`, using SolidCraft's compact 49 mm block rather than Forge-rendered replacement graphics. The builder confirms the replayed sheet reports a 49 mm native title-block height before publishing drawing artifacts.
 
 Forge lowers that intent to native `drawing.create`, `drawing.sheet.set`,
 `drawing.properties.set`, `drawing.revision.add`,
@@ -311,7 +521,54 @@ Forge consumes the qualified optional `exp` contract from `template.cad.library`
 
 Permanent experimental builds keep durable evidence under `build/exp/`. Pages assembles `/exp/` only while the branch exists and marks that projection as experimental. The same single serialized Pages publication continues to own the complete `gh-pages` tree.
 
+## Manufacturing-output visual boundary
+
+Some native CAD capabilities intentionally do not alter the display B-rep.
+For those cases, visual verification follows the authoritative manufacturing
+representation. `sheet.perforate` is the first explicit example: SolidCraft
+stores the field in flat-pattern/DXF/volume semantics while the regular model
+snapshot remains a plain sheet.
+
+The `solidcraft-sheet-flat-pattern-visual` adapter opens the saved native
+`.sc`, exports `sheet.export_dxf`, reads native `CIRCLE` entities on layer
+`PERFORATION`, compares centres/diameters to the approved owner contract and
+retains DXF plus Actual/Goal/Overlay SVGs. Pages projects only these durable
+artifacts and never executes CAD.
+
+## Verification evidence boundary
+
+Verification evidence is selected from the contract a physical owner is meant
+to prove rather than from one repository-wide screenshot rule.
+
+- visible geometry/state combines deterministic review views with an approved
+  expectation and structural checks where a wrong topology/shape could still
+  look superficially plausible;
+- native feature/history behavior uses saved-design mutation or inspection so a
+  successful replay is not mistaken for proof of editability or stored intent;
+- manufacturing-only behavior uses its authoritative exported/manufacturing
+  representation instead of altering the display B-rep for verification;
+- negative or runtime-divergence behavior records the expected failure/result
+  explicitly rather than inferring it from a missing output.
+
+Model-specific expectations remain owner-local below `models/<id>/verification`.
+Generic adapters in `modules/verification` consume those expectations and
+produce durable evidence below `build/<scope>/models/**`. Pages only projects
+that retained evidence. `docs/verification/evidence-audit.md` records the
+current owner-by-owner classification; concrete missing evidence is repaired in
+separate owner-focused follow-up issues rather than inside the audit itself.
+
 ## Pages projection
+
+Verification detail pages identify their role with **What this verifies** and
+collapse detailed measured checks by default using the same
+`cad-collapsible` interaction as generated command sequences. Owner-local
+`page.md` remains **Engineering explanation** and is shown directly after the
+primary Forge/source code, before generated commands and detailed evidence.
+
+These behaviors are owned generically by `template.cad.library#82` and
+`template.cad.library#84`; Forge adopts them and only owns case-specific
+explanation such as `models/configuration-position/page.md`.
+
 
 `models/<id>/` remains the single physical owner. Pages creates views from that owner according to `model.yml.purpose`:
 
@@ -364,6 +621,68 @@ Before moving historical code, classify it as:
 - **obsolete orchestration/duplication** → remove after parity.
 
 Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining graph.
+
+## Reviewed permanent-branch conflict recovery
+
+The branch topology remains authoritative even when GitHub cannot merge a
+direct permanent PR automatically. A conflict must not turn a permanent merge
+into a temporary squash.
+
+For the exact merge-commit directions `dev -> main`, `main -> dev`,
+`dev -> exp` and `exp -> dev`, Forge uses the generic template-owned
+reviewed recovery boundary:
+
+```text
+conflicted permanent PR: base=A, head=B
+        |
+        +-- resolve/<name>
+        |      -> separate PR to same base A
+        |      -> mergeable + green central CI
+        |      -> exact commit R / tree T
+        |
+        +-- /merge-resolved
+               base A
+               head B
+               resolution-pr N
+               resolution resolve/<name> R T
+                    |
+                    -> revalidate both PRs and A/B/R/T
+                    -> create tree=T, parents=[A,B]
+                    -> read back exact merge object
+                    -> revalidate refs again
+                    -> non-force advance permanent base
+                    -> normal permanent CI + cleanup dispatch
+```
+
+The resolution PR is review evidence only and is never integrated. The
+temporary resolution commit is therefore not a third parent of permanent
+history. A moved parent/ref/tree, fork review, non-green review,
+non-`resolve/*` head or non-permanent original direction fails closed. If the
+original PR becomes normally mergeable, ordinary `/merge` is required.
+
+Forge adopts this behavior from stable
+`template.cad.library@04ff29b9ba80719b2954e1439db12ef9434b0b97`; it does not
+own a second conflict-recovery design.
+
+## Main-owned governance merge boundary
+
+Normal product work still integrates through `dev` or `exp`. A repository
+may keep its small volatile governance entrypoints directly on stable `main`
+without using the development lane as a staging copy.
+
+The merge-policy route is deliberately narrow:
+
+- the source branch uses the existing `docs/` temporary prefix;
+- the target is `main`;
+- the merge method is squash;
+- changed paths are exhaustively read from the pull request and may contain
+  only `AGENTS.md`, `docs/plan.md` and `docs/handoff.md`;
+- any other path fails closed before merge;
+- ordinary `docs/* -> dev|exp` work keeps its existing behavior.
+
+Branch cleanup accepts a successfully merged `docs/* -> main` PR as a valid
+temporary-branch completion, but this does not make stable a valid target for
+issue/fix/feature/chore branches.
 
 ## Release boundary
 

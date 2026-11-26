@@ -43,7 +43,7 @@ class SamplePlate:
 def sample_plate_drawing():
     """Consumer-grade native engineering drawing authored through public Forge API."""
     plate = SamplePlate()
-    return plate.with_drawing(
+    drawing = plate.with_drawing(
         name="Sample Plate Drawing",
         scale="1:1",
         gap_mm=14,
@@ -135,6 +135,32 @@ def sample_plate_drawing():
                 decimals=0,
             ),
         ),
+    )
+
+    return drawing.with_drawing(
+        plate,
+        name="Compact Sample Plate Drawing",
+        scale="1:1",
+        gap_mm=14,
+        title_block_style="compact",
+        views={
+            "front": DrawingView(at=(62, 128)),
+            "top": DrawingView(at=(62, 62)),
+            "right": DrawingView(at=(137, 128)),
+            "iso": DrawingView(
+                at=(220, 128),
+                scale="1:1",
+                visual_style="shaded",
+            ),
+        },
+        properties={
+            "part_number": "SCPF-C-001",
+            "organization": "brainboxemb",
+        },
+        title_block={
+            "title": "Sample Plate",
+            "identification_number": "SCPF-C-001",
+        },
     )
 
 

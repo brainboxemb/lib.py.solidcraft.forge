@@ -926,6 +926,8 @@ def _compile_assembly_with_dependencies(value, name):
                 "component": component_ref,
             },
         }
+        if drawing.title_block_style is not None:
+            sheet_params["title_block"] = drawing.title_block_style
         if drawing.title_block:
             sheet_params["title_block_overrides"] = dict(drawing.title_block)
         commands.append(_command("drawing.sheet.set", **sheet_params))
@@ -1114,6 +1116,8 @@ def _compile_assembly_with_dependencies(value, name):
                     if view.visual_style is not None
                 },
             }
+            if drawing.title_block_style is not None:
+                expected["title_block_style"] = drawing.title_block_style
             if drawing.revision is not None:
                 expected["revision"] = {
                     key: value

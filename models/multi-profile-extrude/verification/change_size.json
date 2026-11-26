@@ -1,0 +1,25 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "outer_diameter",
+        "expression": "12 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "inner_diameter",
+        "expression": "10 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "length",
+        "expression": "40 mm"
+      }
+    }
+  ]
+}

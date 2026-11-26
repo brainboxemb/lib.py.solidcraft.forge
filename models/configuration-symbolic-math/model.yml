@@ -1,0 +1,17 @@
+schema: 1
+purpose: [example, verification]
+section: configurations
+priority: 40
+title: Configuration Symbolic Math
+tagline: Native configuration rows drive min, sqrt, round, floor, max and abs expressions
+description: >
+  One box keeps derived dimensions native instead of baking the current Python
+  values. Switching Small, Medium and Large changes one source parameter and
+  SolidCraft recomputes several non-linear and quantized expressions.
+parameters: Small size=60; Medium size=70; Large size=100
+stages:
+  - Keep all source dimensions as native model parameters
+  - Derive length through min plus sqrt and squared symbolic expressions
+  - Derive width through round and grid spacing
+  - Derive height through floor plus max and abs
+  - Reopen the saved design and switch native configuration rows

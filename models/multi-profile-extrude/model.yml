@@ -1,0 +1,15 @@
+schema: 1
+purpose: verification
+section: fundamentals
+priority: 35
+title: Multi-profile annular Sketch extrusion
+tagline: Two concentric closed loops become one native hollow extrusion
+description: >
+  One standalone Sketch owns concentric Ø10 and Ø8 circles. One exact-region
+  extrusion selects the annulus and preserves it as a single native extrusion
+  when the saved design dimensions change.
+parameters: Ø10 outer; Ø8 inner; 30 mm length
+stages:
+  - Create one standalone XY Sketch with two concentric Circle2D profiles
+  - Select the annular region between the loops
+  - Extrude that exact region as one native hollow body

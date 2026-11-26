@@ -21,7 +21,11 @@ def merge_target(branch: str, config: CleanupConfig) -> str:
 
 def merge_targets(branch: str, config: CleanupConfig) -> tuple[str, ...]:
     primary = merge_target(branch, config)
-    return (primary,) if branch.startswith("release/") else (primary, "exp")
+    if branch.startswith("release/"):
+        return (primary,)
+    if branch.startswith("docs/"):
+        return (primary, "exp", config.stable)
+    return (primary, "exp")
 
 
 def eligible_post_merge(

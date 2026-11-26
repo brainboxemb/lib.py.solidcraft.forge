@@ -136,9 +136,9 @@ groups:
         snippet: "body.fillet(2, edges=Edges.VERTICAL)"
         example:
       - title: "shape.chamfer(...)"
-        description: "Bevel selected edges using the same edge selectors as fillet."
-        snippet: "body.chamfer(2, edges=Edges.VERTICAL)"
-        example:
+        description: "Bevel selected edges; add distance2 for SolidCraft's native asymmetric two-distance chamfer."
+        snippet: "body.chamfer(0.18, distance2=0.65, edges=Edges.VERTICAL)"
+        example: asymmetric-chamfer
       - title: "shape.shell(...)"
         description: "Create an open-sided shell (supported feature trees only)."
         snippet: "Box(80, 50, 30).shell(2, open=Faces.TOP)"
@@ -265,3 +265,32 @@ groups:
         description: "Give the finished body a visual color without changing material/BOM semantics."
         snippet: 'body.with_appearance("#FFD21A")'
         example: appearance-color
+
+  - heading: Configuration tables
+    items:
+      - title: "Configure(design, active=..., columns=..., rows=...)"
+        description: "Author one editable native SolidCraft configuration table."
+        snippet: |
+          Configure(design, active="Medium",
+              columns=(Param(self.width), Suppress(hole)),
+              rows={"Medium": ("80 mm", True),
+                    "Large": ("100 mm", False)})
+        example: configuration-table
+
+  - heading: Symbolic CAD math
+    items:
+      - title: "cadmath.min / max / sqrt / abs / round / floor / atan"
+        description: "Keep non-linear and quantized derived dimensions native and configuration-driven."
+        snippet: |
+          g = cadmath.min(self.rounding, self.wall / 2 - 0.05)
+          tip = cadmath.sqrt((self.radius - g) ** 2 - (self.radius - self.wall + g) ** 2)
+        example: configuration-symbolic-math
+
+  - heading: Shifted native revolve
+    items:
+      - title: "AxisLine(direction, origin=...)"
+        description: "Author one shifted/custom native axis with parameter-driven XYZ origin."
+        snippet: |
+          axis = AxisLine(Axis.Y, origin=(self.pin_x, 0, self.pin_z))
+          cut = profile.revolve(axis=axis)
+        example: shifted-axis-revolve

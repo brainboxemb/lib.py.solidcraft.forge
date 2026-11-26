@@ -63,7 +63,7 @@ class SolidCraftVisualAdapterTests(unittest.TestCase):
     def test_all_migrated_visual_policies_are_approved_and_supported(self):
         repo = Path(__file__).resolve().parents[3]
         paths = sorted((repo / "models").glob("*/verification/visual.json"))
-        self.assertEqual(len(paths), 36)
+        self.assertEqual(len(paths), 38)
         feature_types = set()
         for path in paths:
             policy = solidcraft_visual.load_visual_policy(path)

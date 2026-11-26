@@ -13,6 +13,7 @@ from cad_library_ci.models import discover_models, select_models
 
 EXPECTED_IDS = {
     "anchor-topology-mutation",
+    "asymmetric-chamfer",
     "appearance-color",
     "anchored-holes",
     "as-built-attach",
@@ -25,6 +26,10 @@ EXPECTED_IDS = {
     "circular-feature-pattern",
     "cylinder-subtract",
     "components",
+    "configuration-installed-state",
+    "configuration-position",
+    "configuration-symbolic-math",
+    "configuration-table",
     "cone-boolean",
     "corner-anchor",
     "eight-corner-brackets",
@@ -34,6 +39,7 @@ EXPECTED_IDS = {
     "group-hierarchy",
     "hole-family",
     "native-revolve",
+    "multi-profile-extrude",
     "parameter-scope",
     "parametric-anchor",
     "parametric-attach",
@@ -55,6 +61,7 @@ EXPECTED_IDS = {
     "sheet-contour-flange-recess",
     "sheet-edge-flange",
     "sheet-fold",
+    "shifted-axis-revolve",
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
@@ -70,15 +77,22 @@ EXPECTED_IDS = {
 
 SCPF_ONLY_IDS = {
     "appearance-color",
+    "asymmetric-chamfer",
     "attached-through-all",
+    "configuration-installed-state",
+    "configuration-position",
+    "configuration-symbolic-math",
+    "configuration-table",
     "cone-boolean",
     "exploded-views",
     "native-revolve",
+    "multi-profile-extrude",
     "revolute-joint",
     "rotated-sketch-cutter",
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
     "sheet-edge-flange",
+    "shifted-axis-revolve",
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
@@ -115,7 +129,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 53)
+        self.assertEqual(len(self.models), 60)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -125,6 +139,11 @@ class ModelTests(unittest.TestCase):
             "corner-anchor",
             "components",
             "sample-plate-drawing",
+            "configuration-installed-state",
+            "configuration-position",
+            "configuration-symbolic-math",
+            "configuration-table",
+            "shifted-axis-revolve",
         ):
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -136,6 +155,11 @@ class ModelTests(unittest.TestCase):
             "corner-anchor",
             "components",
             "sample-plate-drawing",
+            "configuration-installed-state",
+            "configuration-position",
+            "configuration-symbolic-math",
+            "configuration-table",
+            "shifted-axis-revolve",
         }:
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -201,11 +225,38 @@ class ModelTests(unittest.TestCase):
             if model_id == "sample-plate-drawing":
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
-                    ["native", "drawing-sheet"],
+                    ["native", "drawing-sheet", "compact-drawing-sheet"],
                 )
                 self.assertEqual(
                     [stage.runtime for stage in model.verifications],
-                    ["solidcraft", "reference"],
+                    ["solidcraft", "reference", "reference"],
+                )
+            elif model_id == "sheet-perforate":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "manufacturing-visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "solidcraft"],
+                )
+            elif model_id == "multi-profile-extrude":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "geometry", "visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference", "solidcraft"],
+                )
+            elif model_id == "asymmetric-chamfer":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "geometry", "visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference", "solidcraft"],
                 )
             else:
                 self.assertEqual(
@@ -309,7 +360,18 @@ class ModelTests(unittest.TestCase):
                 pair
                 for model in self.models
                 for pair in (
-                    [("scpf", "native")]
+                    (
+                        [("scpf", "native"), ("scpf", "manufacturing-visual")]
+                        if model.id == "sheet-perforate"
+                        else (
+                            [("scpf", "native"), ("scpf", "visual")]
+                            if model.id in {
+                                "multi-profile-extrude",
+                                "asymmetric-chamfer",
+                            }
+                            else [("scpf", "native")]
+                        )
+                    )
                     if model.id in SCPF_ONLY_IDS
                     or model.id in MITCAD_FOCUSED_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
@@ -339,7 +401,7 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
             (set(EXPECTED_IDS) - set(SCPF_ONLY_IDS))
-            | {"sample-plate-drawing"},
+            | {"sample-plate-drawing", "multi-profile-extrude", "asymmetric-chamfer"},
         )
         self.assertEqual(
             {
@@ -354,6 +416,7 @@ class ModelTests(unittest.TestCase):
                 ("pybosl2", "geometry"),
                 ("scpf-mitcad", "geometry"),
                 ("scpf", "drawing-sheet"),
+                ("scpf", "compact-drawing-sheet"),
             },
         )
 

@@ -6,5 +6,11 @@ implementations:
   - {id: scpf, builder: builder-scpf, source: scpf/model.py, preview: false}
 verifications:
   - {id: native, module: verification, adapter: solidcraft-model, definition: verification/solidcraft.py, artifact: model.sc, implementations: [scpf]}
+  - id: manufacturing-visual
+    module: verification
+    adapter: solidcraft-sheet-flat-pattern-visual
+    definition: verification/manufacturing_visual.json
+    artifact: model.sc
+    implementations: [scpf]
 dependencies: []
 needs: [cadlib]

@@ -307,6 +307,34 @@ class SemanticIRTests(unittest.TestCase):
             "chamfer",
         )
 
+    def test_asymmetric_chamfer_stays_solidcraft_legacy_until_portable(self):
+        shape = Box(
+            60,
+            40,
+            12,
+            anchor=Anchor.BOTTOM,
+        ).chamfer(
+            0.18,
+            distance2=0.65,
+            edges=Edges.from_faces(Faces.TOP),
+        )
+
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        self.assertEqual(model.root.source_kind, "chamfer")
+        self.assertEqual(
+            compile_solidcraft_ir(model, "AsymmetricChamfer"),
+            _compile_shape_legacy_with_dependencies(
+                shape,
+                "AsymmetricChamfer",
+            )[0],
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "does not yet support Forge shape kind 'chamfer'",
+        ):
+            compile_mitcad_ir(model, "AsymmetricChamfer")
+
     def test_unmigrated_surface_is_explicit_legacy_ir_only_for_solidcraft(self):
         shape = Sphere(10)
         model = normalize_shape(shape)

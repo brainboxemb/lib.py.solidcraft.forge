@@ -85,7 +85,14 @@ def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
 
 def _compile_shape_legacy_with_dependencies(shape: Shape, name: str):
     """Compile one not-yet-migrated Shape through the stable legacy lowering."""
-    commands = _compile_model_commands(shape, name)
+    from .configurations import _ConfiguredDesign, _configuration_commands
+    if isinstance(shape, _ConfiguredDesign):
+        if not isinstance(shape.design, Shape):
+            raise TypeError("compile_model Configure design must contain one Shape")
+        commands = _compile_model_commands(shape.design, name)
+        commands = _configuration_commands(shape, name, commands)
+    else:
+        commands = _compile_model_commands(shape, name)
     plain_commands = _plain_command_value(commands)
     document = (
         replay_document(plain_commands)
@@ -96,10 +103,19 @@ def _compile_shape_legacy_with_dependencies(shape: Shape, name: str):
 
 
 def _compile_model_with_dependencies(shape: Shape, name: str):
-    """Normalize one Shape to Forge IR, then lower it to SolidCraft."""
+    """Compile stable SolidCraft product intent through the IR boundary.
+
+    Geometry Shapes normalize to ModelIR. Configure(...) remains a
+    SolidCraft-only document-level wrapper until configuration semantics gain
+    their own portable IR boundary, so it deliberately uses the stable legacy
+    lowering that already owns native configuration-table authoring.
+    """
+    from .configurations import _ConfiguredDesign
+    if isinstance(shape, _ConfiguredDesign):
+        return _compile_shape_legacy_with_dependencies(shape, name)
+
     from .backends.solidcraft import compile_ir_with_dependencies
     from .ir import normalize_shape
-
     return compile_ir_with_dependencies(normalize_shape(shape), name)
 
 

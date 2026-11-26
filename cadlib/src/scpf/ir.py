@@ -347,7 +347,23 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     if shape.kind != "chamfer":
         return None
 
-    base, distance, edges = shape.data
+    if len(shape.data) == 3:
+        # Compatibility with the pre-#271 equal-distance frontend payload.
+        base, distance, edges = shape.data
+        distance2 = None
+        flip = False
+    elif len(shape.data) == 5:
+        base, distance, edges, distance2, flip = shape.data
+    else:
+        return None
+
+    # #271 extends stable SolidCraft authoring with two-distance chamfer.
+    # That surface is not yet a qualified portable IR capability: keep it
+    # behind LegacyShapeIR so SolidCraft retains the native product behavior
+    # while Mitcad fails closed instead of guessing asymmetric semantics.
+    if distance2 is not None or flip:
+        return None
+
     base_ir = _portable_placement(base)
     if (
         base_ir is None
