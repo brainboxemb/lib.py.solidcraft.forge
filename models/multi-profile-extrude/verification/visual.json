@@ -2,13 +2,13 @@
   "schema": 1,
   "views": {
     "front": {
-      "baseline": "baselines/front.png"
+      "baseline_payload": "baselines/front.json"
     },
     "right": {
-      "baseline": "baselines/right.png"
+      "baseline_payload": "baselines/right.json"
     },
     "iso": {
-      "baseline": "baselines/iso.png"
+      "baseline_payload": "baselines/iso.json"
     }
   },
   "expected_views": [
@@ -29,8 +29,10 @@
   },
   "baseline_provenance": {
     "approval": "approved",
-    "source_commit": "capture-pending",
-    "purpose": "temporary native baseline capture; replace before merge"
+    "source_commit": "be7d538af3f1cf7f73dc7506a88c294978c67283",
+    "workflow_run": 45837739797,
+    "solidcraft_version": "0.49.0",
+    "purpose": "native multi-profile hollow extrusion review views"
   },
   "expected_boxes": [
     {
