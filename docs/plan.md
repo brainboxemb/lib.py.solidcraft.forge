@@ -90,20 +90,31 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: consumer capability blocker #271
+### Dev: v0.22.0 stabilization
 
-Implement native two-distance / asymmetric chamfer for CAD catalog #200:
+The consumer-driven development line for v0.22.0 is complete on `dev`:
 
-- expose SolidCraft's primary/secondary chamfer-distance intent directly;
-- preserve the existing semantic edge-selection forms;
-- lower to one native `solid.chamfer` history feature;
-- keep equal-distance `Shape.chamfer(distance, ...)` source-compatible;
-- qualify both stored distances, deterministic edge selection and visibly
-  asymmetric geometry.
+- #163 established the repository-wide verification evidence contract and the
+  future-owner rule for visibly meaningful geometry;
+- #267 adds multiple closed profiles in one standalone Sketch extrusion,
+  including the annular-region authoring needed by CAD catalog #198;
+- #294 adds approved SolidCraft visual evidence for that new visible-geometry
+  owner;
+- #271 adds native two-distance / asymmetric chamfer authoring for CAD catalog
+  #200 while preserving the existing equal-distance command contract;
+- the current development catalogue contains 59 physical owners.
 
-After #271, resume **#163** as the normal dev task. Keep its concrete evidence
-gaps in focused follow-ups #255, #256 and #257 rather than mixing them into
-consumer capability work.
+Finish the stable release without mixing further product work into this line:
+
+1. require the permanent `dev` qualification on the exact #271 merge head;
+2. promote the complete `dev -> main` product through a dedicated
+   merge-policy issue/PR;
+3. publish v0.22.0 through release issue #299;
+4. synchronize the stable-only release metadata back with `main -> dev`;
+5. reconcile this plan after publication.
+
+Only after v0.22.0 is stable, continue the concrete evidence follow-ups from
+the completed #163 audit: #255, #256 and #257.
 
 ### Experimental lane
 
@@ -116,8 +127,8 @@ an experiment is explicitly accepted for the product.
 
 ## Later
 
-1. After #163 is accepted, execute its concrete verification-evidence follow-ups
-   #255, #256 and #257 in the order justified by the final audit.
+1. Execute verification-evidence follow-ups #255, #256 and #257 after the
+   v0.22.0 stable release, in the order justified by the completed #163 audit.
 2. Continue the migrated Forge product/research backlog (#59-#72) according to
    demonstrated consumer value and dependencies rather than treating the whole
    historical backlog as release-blocking.
