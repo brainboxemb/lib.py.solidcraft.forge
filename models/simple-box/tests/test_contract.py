@@ -21,7 +21,7 @@ class SimpleBoxCommandTests(unittest.TestCase):
         box = document["commands"][-1]
         self.assertEqual(box["name"], "SimpleBox")
         self.assertEqual(box["def"]["type"], "box")
-        self.assertEqual(box["def"]["corner"], ["-length / 2", "-width / 2"])
+        self.assertEqual(box["def"]["corner"], ["-(length / 2)", "-(width / 2)"])
         self.assertEqual(box["def"]["height"], "height")
 
     def test_box_lowers_directly_to_native_solid_box(self):

@@ -36,7 +36,7 @@ class MitcadBackendTests(unittest.TestCase):
             {
                 "type": "box",
                 "plane": "xy",
-                "corner": ["-length / 2", "-width / 2"],
+                "corner": ["-(length / 2)", "-(width / 2)"],
                 "length": "length",
                 "width": "width",
                 "height": "height",
