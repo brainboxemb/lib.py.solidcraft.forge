@@ -62,7 +62,17 @@ top_perimeter = body.chamfer(
     edges=Edges.from_faces(Faces.TOP),
 )
 rounded = body.fillet(3, edges=Edges.VERTICAL)
-one_edge = body.chamfer(3, edges=FRONT + LEFT)</code></pre>
+one_edge = body.chamfer(3, edges=FRONT + LEFT)
+asymmetric = body.chamfer(
+    0.18,
+    distance2=0.65,
+    edges=FRONT + LEFT,
+)</code></pre>
+<p><code>chamfer(distance)</code> keeps the equal-distance behavior.
+<code>distance2=</code> authors one native SolidCraft two-distance chamfer.
+Use <code>flip=True</code> when the primary/secondary distances must apply to
+the opposite adjacent-face ordering; Forge does not replace the operation with
+cutter geometry.</p>
 <p><code>fillet()</code> and <code>chamfer()</code> use the same edge-selection
 forms. Prefer <code>Edges.from_faces(...)</code> when the intent is the complete
 boundary of named planar faces. Forge queries SolidCraft for those faces and

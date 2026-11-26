@@ -1,0 +1,15 @@
+schema: 1
+purpose: verification
+section: features
+priority: 25
+title: Native asymmetric chamfer
+tagline: One semantic edge set keeps two independent native chamfer distances
+description: >
+  A named top segment on an XZ profile selects the two broad-face edges of one
+  extrusion. SolidCraft stores one ChamferFeature with independent primary and
+  secondary distances and preserves it when the saved design is resized.
+parameters: 40 × 20 × 10 mm body; 0.18 / 0.65 mm chamfer
+stages:
+  - Create one named rectangular XZ profile
+  - Extrude it symmetrically along Y
+  - Apply one two-distance native chamfer to the named top profile edge

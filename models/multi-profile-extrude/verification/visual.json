@@ -1,0 +1,53 @@
+{
+  "schema": 1,
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/front.json"
+    },
+    "right": {
+      "baseline_payload": "baselines/right.json"
+    },
+    "iso": {
+      "baseline_payload": "baselines/iso.json"
+    }
+  },
+  "expected_views": [
+    "front",
+    "right",
+    "iso"
+  ],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "be7d538af3f1cf7f73dc7506a88c294978c67283",
+    "workflow_run": 45837739797,
+    "solidcraft_version": "0.49.0",
+    "purpose": "native multi-profile hollow extrusion review views"
+  },
+  "expected_boxes": [
+    {
+      "label": "MultiProfileExtrude",
+      "minimum": [
+        -5,
+        -5,
+        0
+      ],
+      "maximum": [
+        5,
+        5,
+        30
+      ]
+    }
+  ],
+  "expected_features": []
+}

@@ -179,6 +179,13 @@ body = body.chamfer(
     1.5,
     edges=Edges.from_faces(Faces.FRONT, Faces.BACK),
 )
+
+# The same selectors work with a native two-distance chamfer.
+body = body.chamfer(
+    0.18,
+    distance2=0.65,
+    edges=Edges.from_faces(Faces.FRONT),
+)
 ```
 
 Forge resolves these faces and their boundary edges from SolidCraft during
@@ -271,6 +278,26 @@ selected profile can be found again when the saved design recomputes.
 Profile pick points are fixed numeric authoring picks, not editable Forge
 Parameters. SolidCraft 0.42's point-selection command field accepts numeric
 Sketch coordinates rather than parameter expressions.
+
+Standalone Sketches may contain multiple closed profiles. Nested loops stay in
+one native Sketch; use an exact region pick when the intended material is only
+one of the resulting regions. For example, a hollow tube is one two-loop
+Sketch plus one extrusion:
+
+```python
+with Sketch(name="Tube profile", plane="XY") as profile:
+    Circle2D(d=10)
+    Circle2D(d=8)
+
+tube = profile.extrude(
+    30,
+    profiles=[(4.5, 0)],
+    exact_regions=True,
+)
+```
+
+This does not change the separate `Sketch.revolve()` contract, which still
+requires exactly one closed profile.
 
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
@@ -886,6 +913,10 @@ See [change 0016](background/changes/0016-parameter-dependency-diagnostics.md).
 - `shell()`, `fillet()` and `chamfer()` are modifiers of supported feature trees.
 - `rectangular_pattern()` and `circular_pattern()` repeat already-applied native history features. Both keep one native SolidCraft pattern feature instead of expanding independent Python copies. Circular patterns support principal or fixed XYZ axes plus an optional fixed axis origin; native construction/edge/face axis selectors are separate future extensions.
 - `fillet(..., edges=...)` and `chamfer(..., edges=...)` use the same edge-selection vocabulary. Prefer `Edges.from_faces(...)` when intent is a named face perimeter; existing `Edges.VERTICAL`, supported two-direction Box selectors, `Edges.from_profile(...)`, `Edges.from_vertices(...)` and explicit XYZ picks remain supported.
+- `chamfer(distance, distance2=..., flip=...)` maps directly to SolidCraft's
+  native two-distance chamfer when the two adjacent faces need different taper
+  distances. Omit `distance2` for the existing equal-distance behavior; use
+  `flip=True` only to swap which adjacent face receives the primary distance.
 - `Lip`, `SnapFit`, `Boss` and `Rest` are object-level feature intents;
   the compiler chooses the appropriate native SolidCraft representation.
 - `Anchor.INNER_BOTTOM` refers to the inner floor of a shelled body.

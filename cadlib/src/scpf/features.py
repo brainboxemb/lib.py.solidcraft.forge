@@ -421,14 +421,26 @@ def _fillet_command(base, radius, edges, name, *, vertical=False):
     )
 
 
-def _chamfer_command(distance, edges, name):
+def _chamfer_command(
+    distance,
+    edges,
+    name,
+    *,
+    distance2=None,
+    flip=False,
+):
     _require_positive(distance, "chamfer distance")
-    return _command(
-        "solid.chamfer",
-        edges=_edge_params(edges),
-        distance=command_value(distance),
-        body=name,
-    )
+    params = {
+        "edges": _edge_params(edges),
+        "distance": command_value(distance),
+        "body": name,
+    }
+    if distance2 is not None:
+        _require_positive(distance2, "chamfer distance2")
+        params["distance2"] = command_value(distance2)
+        if flip:
+            params["flip"] = True
+    return _command("solid.chamfer", **params)
 
 
 def _shell_command(thickness, faces, name):
@@ -1902,7 +1914,7 @@ def _to_commands(shape, name):
             )
         ], base
     if shape.kind == "chamfer":
-        original, distance, edges = shape.data
+        original, distance, edges, distance2, flip = shape.data
         steps, base = _to_commands(original, name)
         topology = []
         if isinstance(edges, _FaceBoundarySelection):
@@ -1910,7 +1922,13 @@ def _to_commands(shape, name):
         else:
             resolved = _resolve_feature_edges(base, edges)
         return steps + topology + [
-            _chamfer_command(distance, resolved, name)
+            _chamfer_command(
+                distance,
+                resolved,
+                name,
+                distance2=distance2,
+                flip=flip,
+            )
         ], base
     if shape.kind in ("union", "difference", "intersection"):
         original, added = shape.data

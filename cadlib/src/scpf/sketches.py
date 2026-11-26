@@ -308,9 +308,8 @@ def compile_standalone_sketch(
         )
     if plane not in ("XY", "XZ", "YZ"):
         raise ModelError("standalone Sketch requires an XY, XZ or YZ plane")
-    if len(profiles) != 1:
-        raise ModelError("standalone Sketch currently requires exactly one profile")
-    profile, profile_anchor, (ox, oy) = profiles[0]
+    if not profiles:
+        raise ModelError("standalone Sketch requires at least one profile")
     if (origin is not None or rotation is not None) and plane_offset is not None:
         raise ModelError("explicit Sketch frame cannot use plane offset")
 
@@ -329,99 +328,116 @@ def compile_standalone_sketch(
             sketch_params["offset"] = command_value(plane_offset)
     sketch = [_command("sketch.create", **sketch_params)]
 
-    if profile.kind in ("rectangle", "rounded_rectangle"):
-        width, depth = profile.data[:2]
-        _require_positive(width, "rectangle width")
-        _require_positive(depth, "rectangle depth")
-        if profile_anchor is Anchor.CENTER:
-            x0 = _combine_dimension(ox, -half(width))
-            y0 = _combine_dimension(oy, -half(depth))
-            x1 = _combine_dimension(ox, half(width))
-            y1 = _combine_dimension(oy, half(depth))
-        else:
-            x0, y0 = ox, oy
-            x1 = _combine_dimension(ox, width)
-            y1 = _combine_dimension(oy, depth)
-        rectangle = dict(
-            p0=[command_value(x0), command_value(y0)],
-            p1=[command_value(x1), command_value(y1)],
-        )
-        if profile.kind == "rounded_rectangle":
-            radius = profile.data[2]
-            _require_positive(radius, "rounded rectangle radius")
-            if pv(radius) * 2 >= min(pv(width), pv(depth)):
-                raise ModelError(
-                    "rounded rectangle radius exceeds half the shorter side"
-                )
-            rectangle["radius"] = command_value(radius)
-            command = "sketch.rectangle.rounded"
-        else:
-            command = "sketch.rectangle.two_point"
-        sketch.append(_command(command, **rectangle))
-        meta = {
-            "profile": profile.kind,
-            "width": width,
-            "depth": depth,
-            "origin": (x0, y0, 0),
-        }
-    elif profile.kind == "circle":
-        (diameter,) = profile.data
-        _require_positive(diameter, "circle diameter")
-        if profile_anchor not in (None, Anchor.CENTER):
-            raise ModelError("Circle2D sketch anchor must be CENTER")
-        sketch.append(_command(
-            "sketch.circle.center",
-            center=[command_value(ox), command_value(oy)],
-            diameter=command_value(diameter),
-        ))
-        meta = {"profile": "circle"}
-    elif profile.kind == "connected_profile":
-        if profile_anchor is not None:
-            raise ModelError(
-                "connected profiles use authored sketch coordinates"
+    profile_meta = []
+    for profile, profile_anchor, (ox, oy) in profiles:
+        if profile.kind in ("rectangle", "rounded_rectangle"):
+            width, depth = profile.data[:2]
+            _require_positive(width, "rectangle width")
+            _require_positive(depth, "rectangle depth")
+            if profile_anchor is Anchor.CENTER:
+                x0 = _combine_dimension(ox, -half(width))
+                y0 = _combine_dimension(oy, -half(depth))
+                x1 = _combine_dimension(ox, half(width))
+                y1 = _combine_dimension(oy, half(depth))
+            else:
+                x0, y0 = ox, oy
+                x1 = _combine_dimension(ox, width)
+                y1 = _combine_dimension(oy, depth)
+            rectangle = dict(
+                p0=[command_value(x0), command_value(y0)],
+                p1=[command_value(x1), command_value(y1)],
             )
-        connected, meta = compile_connected_profile(
-            profile,
-            offset=(ox, oy),
-        )
-        sketch.extend(connected)
-        meta.update(
-            {
+            if profile.kind == "rounded_rectangle":
+                radius = profile.data[2]
+                _require_positive(radius, "rounded rectangle radius")
+                if pv(radius) * 2 >= min(pv(width), pv(depth)):
+                    raise ModelError(
+                        "rounded rectangle radius exceeds half the shorter side"
+                    )
+                rectangle["radius"] = command_value(radius)
+                command = "sketch.rectangle.rounded"
+            else:
+                command = "sketch.rectangle.two_point"
+            sketch.append(_command(command, **rectangle))
+            current_meta = {
+                "profile": profile.kind,
+                "width": width,
+                "depth": depth,
+                "origin": (x0, y0, 0),
+            }
+        elif profile.kind == "circle":
+            (diameter,) = profile.data
+            _require_positive(diameter, "circle diameter")
+            if profile_anchor not in (None, Anchor.CENTER):
+                raise ModelError("Circle2D sketch anchor must be CENTER")
+            sketch.append(_command(
+                "sketch.circle.center",
+                center=[command_value(ox), command_value(oy)],
+                diameter=command_value(diameter),
+            ))
+            current_meta = {"profile": "circle"}
+        elif profile.kind == "connected_profile":
+            if profile_anchor is not None:
+                raise ModelError(
+                    "connected profiles use authored sketch coordinates"
+                )
+            connected, current_meta = compile_connected_profile(
+                profile,
+                offset=(ox, oy),
+            )
+            sketch.extend(connected)
+            current_meta.update(
+                {
+                    "sketch_plane": plane,
+                    "sketch_plane_offset": (
+                        plane_offset if plane_offset is not None else 0
+                    ),
+                }
+            )
+        elif profile.kind == "polygon":
+            if profile_anchor is not None:
+                raise ModelError(
+                    "Polygon2D uses authored sketch coordinates; "
+                    "semantic CENTER is not supported yet"
+                )
+            points, _profile_plane, ids = profile.data
+            if pv(ox) or pv(oy):
+                raise ModelError("standalone Polygon2D offset is not supported yet")
+            sketch.append(
+                _polygon_profile_command(
+                    profile,
+                    plane=plane,
+                    offset=(ox, oy),
+                )
+            )
+            current_meta = {
+                "profile": "polygon",
                 "sketch_plane": plane,
                 "sketch_plane_offset": (
                     plane_offset if plane_offset is not None else 0
                 ),
+                "profile_points": points,
+                "profile_ids": ids,
             }
-        )
-    elif profile.kind == "polygon":
-        if profile_anchor is not None:
+        else:
             raise ModelError(
-                "Polygon2D uses authored sketch coordinates; "
-                "semantic CENTER is not supported yet"
+                "standalone Sketch supports Rectangle2D, RoundedRectangle2D, "
+                "Circle2D, Polygon2D and connected profiles"
             )
-        points, _profile_plane, ids = profile.data
-        if pv(ox) or pv(oy):
-            raise ModelError("standalone Polygon2D offset is not supported yet")
-        sketch.append(
-            _polygon_profile_command(
-                profile,
-                plane=plane,
-                offset=(ox, oy),
-            )
-        )
-        meta = {
-            "profile": "polygon",
-            "sketch_plane": plane,
-            "sketch_plane_offset": plane_offset if plane_offset is not None else 0,
-            "profile_points": points,
-            "profile_ids": ids,
-        }
-    else:
-        raise ModelError(
-            "standalone Sketch supports Rectangle2D, RoundedRectangle2D, Circle2D, Polygon2D and connected profiles"
-        )
+        profile_meta.append(current_meta)
 
     sketch.append(_command("sketch.finish"))
+    if len(profile_meta) == 1:
+        meta = profile_meta[0]
+    else:
+        meta = {
+            "profile": "multiple",
+            "profile_count": len(profile_meta),
+            "sketch_plane": plane,
+            "sketch_plane_offset": (
+                plane_offset if plane_offset is not None else 0
+            ),
+        }
     return sketch, meta
 
 

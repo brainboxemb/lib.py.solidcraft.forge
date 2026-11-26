@@ -37,6 +37,26 @@
 4. Native qualification must prove that changing a driving parameter in a saved
    SolidCraft design rebuilds the fold successfully.
 
+## SCPF standalone Sketch regions
+
+1. A standalone `Sketch` may contain one or more supported closed profiles;
+   Forge must lower all authored loops into one native SolidCraft Sketch rather
+   than split them into unrelated sketches/features.
+2. `Sketch.extrude(..., profiles=..., exact_regions=True)` is the public
+   region-selection contract for nested or otherwise ambiguous closed loops.
+   User code selects with fixed sketch-local points and never names native
+   profile/curve ids.
+3. Nested closed loops must preserve SolidCraft region semantics so an inner
+   loop may become a hole in the explicitly selected outer region.
+4. Existing one-profile standalone Sketch extrusion remains source- and
+   command-compatible.
+5. Multi-profile extrusion does not broaden other features implicitly:
+   `Sketch.revolve()` remains limited to exactly one closed profile until a
+   separately qualified contract changes it.
+6. Native qualification must prove one Sketch contains both loops, one native
+   extrusion consumes the intended annular region, and saved-design parameter
+   changes preserve that region association.
+
 ## SCPF configuration tables
 
 1. Author one native editable configuration table around a finished Shape, component occurrence or Assembly, with named rows and an explicit active row.
@@ -68,6 +88,25 @@
 4. Appearance authoring must not create or mutate physical material, density or BOM metadata.
 5. Native qualification must inspect the saved appearance chain after replay.
 6. The first contract remains body-wide and opaque; face-level/PBR appearance work is consumer-driven future scope.
+
+## SCPF native chamfer
+
+1. Existing `Shape.chamfer(distance, edges=...)` remains the equal-distance,
+   source-compatible public form and must keep its existing native command
+   shape when no asymmetric options are requested.
+2. A consumer may supply `distance2=` to author SolidCraft's native
+   two-distance chamfer as one history feature; Forge must not approximate the
+   taper with cutters, lofts or multiple chamfers.
+3. `flip=True` selects the opposite adjacent-face ordering for the two native
+   distances and is only valid when `distance2` is supplied.
+4. Both distances may retain normal Forge Parameter/Expression dependencies and
+   must remain editable in the saved SolidCraft design.
+5. Equal- and two-distance chamfers use the same existing edge-selection
+   vocabulary, including replay-resolved face boundaries and named
+   Polygon2D profile edges.
+6. Native qualification must prove one ChamferFeature, both driving
+   parameters, saved-design recomputation and geometry that differs from the
+   corresponding equal-distance chamfer.
 
 ## SCPF topology selection
 
@@ -174,6 +213,9 @@
 3. A migration slice is accepted only with retained evidence equivalent to the historical Forge baseline for the behavior under migration.
 4. Every model owner whose `model.yml.purpose` contains `verification` must appear in the public Verification catalogue. Every owner whose purpose contains `example` must appear in Examples. An owner with both purposes appears in both views while remaining one physical owner.
 5. Verification detail pages must state the human verification intent before implementation detail. Durable measurement/check evidence remains available but may be collapsed by default; owner-local explanatory content stays source-owned and Pages must not execute CAD to produce it.
+6. Every verification owner must state the contract it proves and retain the minimum evidence capable of catching a meaningful regression in that contract; successful command generation, replay or model build is not sufficient by itself when visible or structural output could still be wrong.
+7. Visibly meaningful geometry or state must have deterministic review views and an approved expected visual baseline, with structural/geometry checks where topology or shape is part of the contract; Pages must make retained expected-vs-actual evidence reviewable rather than generating it.
+8. Native feature/history contracts require saved-design mutation or inspection as appropriate. Manufacturing-only geometry must be checked from its authoritative manufacturing representation, and negative/runtime contracts must record an explicit expected failure or cross-runtime result rather than treating a missing artifact as evidence.
 
 ## Migration
 

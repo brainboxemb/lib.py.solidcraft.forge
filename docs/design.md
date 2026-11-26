@@ -94,6 +94,40 @@ This is expression authoring, not a general Python symbolic algebra system.
 Forge only exposes operations that have a qualified native SolidCraft spelling
 and current-value evaluation.
 
+## Native multi-profile Sketch extrusion boundary
+
+Standalone Sketch compilation preserves one authored Sketch even when it
+contains several closed loops. Every supported profile is lowered between the
+same `sketch.create` / `sketch.finish` pair; Forge does not manufacture one
+Sketch per loop.
+
+Extrusion keeps SolidCraft's native region model. For ambiguous/nested loops,
+consumer code uses the existing typed selection:
+
+```python
+with Sketch(name="Tube profile", plane="XY") as profile:
+    Circle2D(d=outer_diameter)
+    Circle2D(d=inner_diameter)
+
+tube = profile.extrude(
+    length,
+    profiles=[(4.5, 0)],
+    exact_regions=True,
+)
+```
+
+The fixed point is authoring intent only. SolidCraft resolves the exact region
+and retains the surrounding native curves so the selected annulus can survive
+saved-design diameter changes. No native profile index or generated curve id is
+part of the public API.
+
+The compiler's base-shape metadata remains intentionally conservative for
+multi-profile Sketches: profile-specific edge selectors such as
+`Edges.from_profile(...)` continue to require their already-qualified single
+Polygon2D extrusion. Multi-profile support is an extrusion-region capability,
+not a blanket expansion of every Sketch consumer. `Sketch.revolve()` retains
+its one-closed-profile limit.
+
 ## Native axis-line and shifted revolve boundary
 
 `AxisLine(direction, origin=...)` is the public typed line contract for native
@@ -116,6 +150,39 @@ one history feature rather than an approximation made from multiple primitives.
 `AxisLine` is also accepted by circular-pattern axis authoring so shifted axis
 intent has one public vocabulary. Topology-selected/construction axes and
 rotated Sketch frames remain separate future contracts.
+
+## Native two-distance chamfer boundary
+
+Chamfer remains one Shape feature and one SolidCraft `solid.chamfer` history
+operation. The public form extends the existing equal-distance API without
+introducing a second edge-selection path:
+
+```python
+body.chamfer(
+    0.18,
+    distance2=0.65,
+    flip=True,
+    edges=Edges.from_profile("top"),
+)
+```
+
+Internally the existing edge-selection intent stays in the same Shape-data
+position used by current Forge code. Optional `distance2` and `flip` are
+additional feature intent. Lowering always emits `distance`; it emits
+`distance2` only when authored and emits `flip` only when true. Therefore
+an existing equal-distance call keeps the same generated command document.
+
+SolidCraft owns adjacent-face ordering. `flip=True` maps directly to native
+`solid.chamfer.flip`; Forge does not infer a new face vocabulary from the
+selected edge. Both distance expressions preserve normal parameter
+dependencies. Named profile/vertex, cardinal Box, face-boundary and explicit
+edge picks all continue through the existing resolver before the same chamfer
+command is emitted.
+
+The first qualification uses a named top segment from an XZ Polygon2D
+extrusion. This deliberately proves asymmetric chamfer intent composes with the
+existing semantic profile-edge selector and remains one native ChamferFeature
+after saved-design parameter changes.
 
 ## Native configuration-table boundary
 
@@ -466,6 +533,28 @@ The `solidcraft-sheet-flat-pattern-visual` adapter opens the saved native
 `PERFORATION`, compares centres/diameters to the approved owner contract and
 retains DXF plus Actual/Goal/Overlay SVGs. Pages projects only these durable
 artifacts and never executes CAD.
+
+## Verification evidence boundary
+
+Verification evidence is selected from the contract a physical owner is meant
+to prove rather than from one repository-wide screenshot rule.
+
+- visible geometry/state combines deterministic review views with an approved
+  expectation and structural checks where a wrong topology/shape could still
+  look superficially plausible;
+- native feature/history behavior uses saved-design mutation or inspection so a
+  successful replay is not mistaken for proof of editability or stored intent;
+- manufacturing-only behavior uses its authoritative exported/manufacturing
+  representation instead of altering the display B-rep for verification;
+- negative or runtime-divergence behavior records the expected failure/result
+  explicitly rather than inferring it from a missing output.
+
+Model-specific expectations remain owner-local below `models/<id>/verification`.
+Generic adapters in `modules/verification` consume those expectations and
+produce durable evidence below `build/<scope>/models/**`. Pages only projects
+that retained evidence. `docs/verification/evidence-audit.md` records the
+current owner-by-owner classification; concrete missing evidence is repaired in
+separate owner-focused follow-up issues rather than inside the audit itself.
 
 ## Pages projection
 
