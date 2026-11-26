@@ -1,0 +1,64 @@
+{
+  "commands": [
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 2,
+        "translate": [
+          -50,
+          0,
+          0
+        ],
+        "move_grounded": true
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "coupler_width"
+        ],
+        "features": [
+          "Hole1"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:coupler_width": "30 mm",
+          "suppress:Hole1": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Medium",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:Hole1": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:Hole1": "false"
+        }
+      }
+    }
+  ]
+}

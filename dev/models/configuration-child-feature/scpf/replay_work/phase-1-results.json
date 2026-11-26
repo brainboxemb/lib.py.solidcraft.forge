@@ -1,0 +1,50 @@
+[
+  {
+    "display_value": 40.0,
+    "name": "coupler_width",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "FeatureCoupler",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "FeatureCoupler"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "FeatureCoupler"
+    ],
+    "feature": 3,
+    "ms": 3.4767930000000002,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "FeatureCoupler"
+    ],
+    "changed_bodies": [
+      "FeatureCoupler"
+    ],
+    "created_bodies": [],
+    "feature": 4,
+    "ms": 23.687454,
+    "name": "Hole1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 1,
+    "occurrence": 5
+  }
+]

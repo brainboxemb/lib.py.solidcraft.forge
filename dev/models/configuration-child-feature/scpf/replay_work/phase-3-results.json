@@ -1,0 +1,111 @@
+[
+  {
+    "active": "Medium",
+    "columns": [
+      "param:coupler_width",
+      "suppress:Hole1"
+    ],
+    "errors": [],
+    "matches": true,
+    "rows": [
+      {
+        "id": 6,
+        "name": "Small",
+        "values": {
+          "param:coupler_width": "30 mm",
+          "suppress:Hole1": "true"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Medium",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:Hole1": "true"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Large",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:Hole1": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "styles": [],
+    "targets": [
+      {
+        "key": "param:coupler_width",
+        "label": "param:coupler_width",
+        "target": {
+          "param": "coupler_width"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ],
+    "trace": []
+  },
+  {
+    "active": "Medium",
+    "columns": [
+      "param:coupler_width",
+      "suppress:Hole1"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 6,
+        "name": "Small",
+        "values": {
+          "param:coupler_width": "30 mm",
+          "suppress:Hole1": "true"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Medium",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:Hole1": "true"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Large",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:Hole1": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:coupler_width",
+        "label": "param:coupler_width",
+        "target": {
+          "param": "coupler_width"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  }
+]
