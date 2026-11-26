@@ -728,8 +728,17 @@ history. A moved parent/ref/tree, fork review, non-green review,
 non-`resolve/*` head or non-permanent original direction fails closed. If the
 original PR becomes normally mergeable, ordinary `/merge` is required.
 
+A genuinely conflicted direct permanent PR may have no `pull_request` CI run
+because GitHub cannot synthesize its merge ref. For `/merge-resolved` only,
+Forge therefore uses the stable template-owned durable original-head gate: the
+permanent head ref must still equal the reviewed SHA and
+`build/<head>/build-plan.json.source_sha` must equal that same SHA. The
+separate `resolve/*` review PR remains mergeable and green through ordinary
+PR-specific central CI. Missing, stale or malformed durable evidence fails
+closed.
+
 Forge adopts this behavior from stable
-`template.cad.library@8f05e030151535e46ba4c6a1cf2aec59945542f3`; it does not
+`template.cad.library@4f5e7451a07607691fb6b54230b5569ff29b053b`; it does not
 own a second conflict-recovery design.
 
 ## Main-owned governance merge boundary
