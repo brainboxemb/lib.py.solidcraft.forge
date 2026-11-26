@@ -37,17 +37,22 @@ VERIFICATION = SolidCraftVerification(
                 SolidCraftInspectionCheck(
                     id="axis-x",
                     path=(0, "definition", "axis", "origin", 0),
-                    expected=8.0,
+                    expected="axis_x",
                 ),
                 SolidCraftInspectionCheck(
                     id="axis-z",
                     path=(0, "definition", "axis", "origin", 2),
-                    expected=3.0,
+                    expected="axis_z",
                 ),
                 SolidCraftInspectionCheck(
                     id="axis-dir",
                     path=(0, "definition", "axis", "dir"),
                     expected=[0.0, 1.0, 0.0],
+                ),
+                SolidCraftInspectionCheck(
+                    id="axis-type",
+                    path=(0, "definition", "axis", "type"),
+                    expected="line",
                 ),
                 SolidCraftInspectionCheck(
                     id="operation",
