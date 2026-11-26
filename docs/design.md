@@ -1009,11 +1009,11 @@ the point to its MCP, which resolves and stores the engine-owned native region
 reference. Forge never predicts or retains a Mitcad region id.
 
 Both symbolic diameters and extrusion distance remain semantic values through
-IR. The qualified slice is deliberately bounded to one circle or one
-two-concentric-circle annulus. Arbitrary profile types, non-concentric/nonnested
-membership and more than two profiles remain LegacyShapeIR for the stable
-SolidCraft surface and fail closed on Mitcad rather than gaining a second
-backend parser.
+IR. The circle slice is deliberately bounded to one circle or one
+two-concentric-circle annulus. Non-concentric/nonnested circle membership and
+more than two circle profiles remain LegacyShapeIR. Other profile families
+require separately qualified semantic IR; #351 later adds the bounded convex
+PolygonProfileIR path without introducing a second backend parser.
 
 SolidCraft lowering remains byte-for-byte compatible with the accepted legacy
 command plan for both qualified owners. `circle-negative-extrude` retains the
