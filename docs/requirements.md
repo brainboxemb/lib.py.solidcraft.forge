@@ -41,6 +41,9 @@
 20. Qualified primitive placement is represented once by typed `PlacementIR`, which owns the world-space point of a semantic anchor independently from `BoxIR` or `CylinderIR` geometry. Native backends must not re-interpret raw `placed_box`, `placed3d` or translation payloads for this migrated slice.
 21. SolidCraft lowering must preserve the existing native command/replay output of migrated Box/Cylinder placement, including symbolic placement expressions.
 22. The initial Mitcad placement slice preserves symbolic coordinates in primitive plane coordinates but requires the primitive's axial placement coordinate to remain on the corresponding origin plane. Unsupported axial offsets must fail closed rather than be numerically baked or approximated.
+23. Qualified standalone sketch extrusion must use separate typed `SketchIR`, profile, `RegionIR` and `ExtrudeIR` semantics rather than a fused shape-specific sketch/extrude node.
+24. `RegionIR` identifies semantic profile membership with compiler-local profile indexes only. It must not contain SolidCraft curve ids, Mitcad region ids, BRep identities or native coordinate-pick transport.
+25. The first split Sketch/Extrude slice qualifies one centered `CircleProfileIR` and one region without holes. Nested-loop region structure may be represented in IR, but backends must fail closed until multi-loop behavior is separately qualified; #282 does not implement consumer issue #267.
 
 ## SCPF native associativity
 

@@ -21,11 +21,13 @@ from ..ir import (
     BooleanSubtractIR,
     BoxIR,
     ChamferIR,
-    CircleExtrudeIR,
+    CircleProfileIR,
     CylinderIR,
+    ExtrudeIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
+    RegionIR,
     normalize_shape,
 )
 
@@ -184,26 +186,55 @@ def _cylinder_command(
     }
 
 
-def _circle_extrude_commands(
-    node: CircleExtrudeIR,
+def _extrude_commands(
+    node: ExtrudeIR,
     name: str,
 ) -> list[dict]:
-    _require_positive(node.diameter, "circle diameter")
+    """Lower semantic Sketch/Profile + Extrude IR to native Mitcad features."""
+    sketch = node.sketch
+    if sketch.plane not in ("XY", "XZ", "YZ"):
+        raise ModelError("Mitcad Sketch IR requires XY, XZ or YZ")
+    if len(sketch.profiles) != 1 or len(node.regions) != 1:
+        raise ModelError(
+            "Mitcad Extrude IR currently requires one circle region"
+        )
+
+    profile = sketch.profiles[0]
+    region = node.regions[0]
+    if not isinstance(profile, CircleProfileIR):
+        raise ModelError(
+            "Mitcad Extrude IR currently requires CircleProfileIR"
+        )
+    if not isinstance(region, RegionIR) or region.outer != 0 or region.holes:
+        raise ModelError(
+            "Mitcad Extrude IR currently requires one region without holes"
+        )
+    if any(parameters_in(value) or pv(value) != 0 for value in profile.center):
+        raise ModelError(
+            "Mitcad CircleProfileIR currently requires origin center"
+        )
+    if node.direction not in ("positive", "negative"):
+        raise ModelError(
+            "Mitcad Extrude IR requires positive or negative direction"
+        )
+
+    _require_positive(profile.diameter, "circle diameter")
     _require_positive(node.distance, "sketch extrusion distance")
 
-    radius = pv(node.diameter) / 2.0
+    radius = pv(profile.diameter) / 2.0
     extent_distance = command_value(
         -node.distance if node.direction == "negative" else node.distance
     )
+    center = [command_value(value) for value in profile.center]
 
     sketch_definition = {
         "type": "sketch",
-        "plane": node.plane.lower(),
+        "plane": sketch.plane.lower(),
         "entities": [
             {
                 "id": "p1",
                 "type": "point",
-                "at": [0, 0],
+                "at": center,
                 "fixed": True,
             },
             {
@@ -219,7 +250,7 @@ def _circle_extrude_commands(
                 "id": "k1",
                 "type": "diameter",
                 "curve": "c2",
-                "value": command_value(node.diameter),
+                "value": command_value(profile.diameter),
             }
         ],
     }
@@ -228,7 +259,7 @@ def _circle_extrude_commands(
         "profiles": [
             {
                 "sketch": {"ref": "sk.uid"},
-                "point": [0, 0],
+                "point": center,
             }
         ],
         "extent": {
@@ -243,7 +274,7 @@ def _circle_extrude_commands(
         {
             "cmd": "add_feature",
             "as": "sk",
-            "name": node.sketch_name,
+            "name": sketch.name,
             "def": sketch_definition,
         },
         {
@@ -252,8 +283,6 @@ def _circle_extrude_commands(
             "def": extrude_definition,
         },
     ]
-
-
 def _chamfer_document(
     model: ModelIR,
     node: ChamferIR,
@@ -343,8 +372,8 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
                 f"Mitcad backend does not support placed Forge IR primitive "
                 f"{type(node.primitive).__name__!r}"
             )
-    elif isinstance(node, CircleExtrudeIR):
-        geometry_commands = _circle_extrude_commands(node, name)
+    elif isinstance(node, ExtrudeIR):
+        geometry_commands = _extrude_commands(node, name)
     elif isinstance(node, BooleanSubtractIR):
         geometry_commands = [
             _box_command(node.target, f"{name}Base"),

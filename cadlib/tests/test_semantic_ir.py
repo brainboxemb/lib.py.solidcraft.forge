@@ -22,10 +22,14 @@ from scpf.ir import (
     BooleanSubtractIR,
     BoxIR,
     ChamferIR,
-    CircleExtrudeIR,
+    CircleProfileIR,
     CylinderIR,
+    ExtrudeIR,
     LegacyShapeIR,
+    ModelIR,
     PlacementIR,
+    RegionIR,
+    SketchIR,
     normalize_shape,
 )
 
@@ -202,7 +206,7 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(features[1]["center"], ["bore_x", "bore_y"])
         self.assertIn("thickness", str(features[1]["height"]))
 
-    def test_circle_extrude_is_one_typed_ir_for_solidcraft_and_mitcad(self):
+    def test_circle_extrude_is_separate_sketch_region_and_extrude_ir(self):
         diameter = Parameter("diameter", 20)
         height = Parameter("height", 30)
         with Sketch(name="Profile", plane="XY") as sketch:
@@ -213,9 +217,16 @@ class SemanticIRTests(unittest.TestCase):
             shape,
             "NegativeCircleExtrude",
         )
-        self.assertIsInstance(model.root, CircleExtrudeIR)
-        self.assertEqual(model.root.sketch_name, "Profile")
-        self.assertEqual(model.root.plane, "XY")
+        self.assertIsInstance(model.root, ExtrudeIR)
+        self.assertIsInstance(model.root.sketch, SketchIR)
+        self.assertEqual(model.root.sketch.name, "Profile")
+        self.assertEqual(model.root.sketch.plane, "XY")
+        self.assertEqual(len(model.root.sketch.profiles), 1)
+        profile = model.root.sketch.profiles[0]
+        self.assertIsInstance(profile, CircleProfileIR)
+        self.assertEqual(profile.diameter, diameter)
+        self.assertEqual(profile.center, (0, 0))
+        self.assertEqual(model.root.regions, (RegionIR(outer=0),))
         self.assertEqual(model.root.direction, "negative")
 
         mitcad = compile_mitcad_ir(model, "NegativeCircleExtrude")
@@ -227,6 +238,30 @@ class SemanticIRTests(unittest.TestCase):
             mitcad["commands"][-1]["def"]["type"],
             "extrude",
         )
+
+    def test_nested_region_shape_is_representable_but_fails_closed_until_qualified(self):
+        outer = CircleProfileIR(diameter=10)
+        inner = CircleProfileIR(diameter=8)
+        future = ModelIR(
+            root=ExtrudeIR(
+                sketch=SketchIR(
+                    name="Annulus",
+                    plane="XY",
+                    profiles=(outer, inner),
+                ),
+                regions=(RegionIR(outer=0, holes=(1,)),),
+                distance=20,
+                direction="positive",
+            ),
+            parameters=(),
+        )
+
+        self.assertEqual(future.root.regions[0].holes, (1,))
+        with self.assertRaisesRegex(
+            ModelError,
+            "currently requires one circle region",
+        ):
+            compile_mitcad_ir(future, "FutureAnnulus")
 
     def test_face_boundary_chamfer_keeps_semantic_selector_and_placement(self):
         shape = Box(

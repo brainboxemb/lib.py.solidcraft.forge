@@ -72,12 +72,41 @@ class PlacementIR:
 
 
 @dataclass(frozen=True)
-class CircleExtrudeIR:
-    """One standalone circular sketch extruded by a signed direction."""
+class CircleProfileIR:
+    """One closed circular 2D profile inside a semantic Sketch."""
 
-    sketch_name: str
-    plane: str
     diameter: Any
+    center: tuple[Any, Any] = (0, 0)
+    source_kind: str = "circle"
+
+
+ProfileIR = CircleProfileIR
+
+
+@dataclass(frozen=True)
+class SketchIR:
+    """Standalone 2D sketch geometry independent of downstream features."""
+
+    name: str
+    plane: str
+    profiles: tuple[ProfileIR, ...]
+    source_kind: str = "sketch"
+
+
+@dataclass(frozen=True)
+class RegionIR:
+    """Closed sketch region described by semantic profile membership."""
+
+    outer: int
+    holes: tuple[int, ...] = ()
+
+
+@dataclass(frozen=True)
+class ExtrudeIR:
+    """Distance extrusion over semantic Sketch regions."""
+
+    sketch: SketchIR
+    regions: tuple[RegionIR, ...]
     distance: Any
     direction: str
     source_kind: str = "sketch_base_extrusion"
@@ -119,7 +148,7 @@ class LegacyShapeIR:
 
 IRNode = (
     PlacementIR
-    | CircleExtrudeIR
+    | ExtrudeIR
     | ChamferIR
     | BooleanSubtractIR
     | LegacyShapeIR
@@ -245,7 +274,8 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
     return None
 
 
-def _portable_circle_extrude(shape: Shape) -> CircleExtrudeIR | None:
+def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
+    """Normalize the first qualified standalone Sketch + Extrude slice."""
     if shape.kind != "sketch_base_extrusion":
         return None
 
@@ -285,15 +315,17 @@ def _portable_circle_extrude(shape: Shape) -> CircleExtrudeIR | None:
         return None
 
     (diameter,) = profile.data
-    return CircleExtrudeIR(
-        sketch_name=sketch_name,
+    sketch = SketchIR(
+        name=sketch_name,
         plane=plane,
-        diameter=diameter,
+        profiles=(CircleProfileIR(diameter=diameter),),
+    )
+    return ExtrudeIR(
+        sketch=sketch,
+        regions=(RegionIR(outer=0),),
         distance=distance,
         direction=direction,
     )
-
-
 def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     if shape.kind != "chamfer":
         return None
@@ -335,9 +367,9 @@ def _normalize_node(shape: Shape) -> IRNode:
             return BooleanSubtractIR(target=target, tool=tool)
         return LegacyShapeIR(shape=shape, source_kind=shape.kind)
 
-    circle_extrude = _portable_circle_extrude(shape)
-    if circle_extrude is not None:
-        return circle_extrude
+    extrude = _portable_extrude(shape)
+    if extrude is not None:
+        return extrude
 
     chamfer = _portable_chamfer(shape)
     if chamfer is not None:
@@ -365,8 +397,9 @@ __all__ = [
     "BooleanSubtractIR",
     "BoxIR",
     "ChamferIR",
-    "CircleExtrudeIR",
+    "CircleProfileIR",
     "CylinderIR",
+    "ExtrudeIR",
     "FaceBoundaryIR",
     "IRNode",
     "LegacyShapeIR",
@@ -374,6 +407,9 @@ __all__ = [
     "ParameterIR",
     "PlacementIR",
     "PrimitiveIR",
+    "ProfileIR",
+    "RegionIR",
+    "SketchIR",
     "is_portable",
     "normalize_shape",
 ]
