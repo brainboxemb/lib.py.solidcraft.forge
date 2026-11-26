@@ -37,7 +37,10 @@ class BackendRegistryTests(unittest.TestCase):
                 {
                     "primitive.box",
                     "primitive.cylinder",
+                    "primitive.sphere",
                     "boolean.subtract",
+                    "boolean.join",
+                    "boolean.intersect",
                     "placement.primitive",
                     "sketch.circle",
                     "profile.region",
