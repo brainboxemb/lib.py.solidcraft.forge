@@ -37,9 +37,10 @@ from ..ir import (
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
+    PolygonProfileIR,
     RegionIR,
     SphereIR,
-    _circle_region_interior_point,
+    _region_interior_point,
 )
 from ..replay import replay_document
 
@@ -279,7 +280,7 @@ def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
 
 
 def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
-    """Lower the qualified Sketch/Profile + Extrude IR slice."""
+    """Lower qualified Sketch/Profile + Extrude IR without backend parsing."""
     sketch = node.sketch
     if sketch.plane not in ("XY", "XZ", "YZ"):
         raise ModelError("portable SolidCraft Sketch IR requires XY, XZ or YZ")
@@ -289,13 +290,9 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
     region = node.regions[0]
     if not isinstance(region, RegionIR):
         raise ModelError("portable SolidCraft Extrude IR requires RegionIR")
-    if node.direction not in ("positive", "negative"):
-        raise ModelError(
-            "portable SolidCraft Extrude IR requires positive or negative direction"
-        )
 
     try:
-        pick = _circle_region_interior_point(sketch, region)
+        pick = _region_interior_point(sketch, region)
     except ValueError as exc:
         raise ModelError(str(exc)) from exc
 
@@ -306,23 +303,65 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
             plane=sketch.plane,
         )
     ]
-    for profile in sketch.profiles:
-        if not isinstance(profile, CircleProfileIR):
+
+    polygon = (
+        len(sketch.profiles) == 1
+        and isinstance(sketch.profiles[0], PolygonProfileIR)
+    )
+    if polygon:
+        if node.direction != "symmetric":
             raise ModelError(
-                "portable SolidCraft Extrude IR currently requires CircleProfileIR"
+                "portable SolidCraft PolygonProfileIR currently requires "
+                "symmetric extrusion"
             )
-        if tuple(profile.center) != (0, 0):
-            raise ModelError(
-                "portable SolidCraft CircleProfileIR currently requires origin center"
-            )
-        _require_positive(profile.diameter, "circle diameter")
+        profile = sketch.profiles[0]
+        ids = (
+            list(profile.segment_ids)
+            if profile.segment_ids is not None
+            else [
+                chr(ord("a") + index)
+                for index in range(len(profile.points))
+            ]
+        )
         commands.append(
             _command(
-                "sketch.circle.center",
-                center=[command_value(value) for value in profile.center],
-                diameter=command_value(profile.diameter),
+                "sketch.line",
+                points=[
+                    [command_value(value) for value in point]
+                    for point in profile.points
+                ],
+                closed=True,
+                ids=ids,
             )
         )
+    else:
+        if node.direction not in ("positive", "negative"):
+            raise ModelError(
+                "portable SolidCraft circle Extrude IR requires "
+                "positive or negative direction"
+            )
+        for profile in sketch.profiles:
+            if not isinstance(profile, CircleProfileIR):
+                raise ModelError(
+                    "portable SolidCraft Extrude IR requires one qualified "
+                    "profile family"
+                )
+            if tuple(profile.center) != (0, 0):
+                raise ModelError(
+                    "portable SolidCraft CircleProfileIR currently requires "
+                    "origin center"
+                )
+            _require_positive(profile.diameter, "circle diameter")
+            commands.append(
+                _command(
+                    "sketch.circle.center",
+                    center=[
+                        command_value(value)
+                        for value in profile.center
+                    ],
+                    diameter=command_value(profile.diameter),
+                )
+            )
 
     _require_positive(node.distance, "sketch extrusion distance")
     commands.append(_command("sketch.finish"))
@@ -342,43 +381,51 @@ def _face_boundary_commands(
     selection: FaceBoundaryIR,
     name: str,
 ) -> tuple[list[dict], str]:
-    if len(selection.faces) != 1:
-        raise ModelError(
-            "portable SolidCraft face-boundary IR currently requires one face"
+    if not selection.faces:
+        raise ModelError("portable SolidCraft face-boundary IR has no faces")
+
+    commands = []
+    previous_edges = None
+    for index, face in enumerate(selection.faces, start=1):
+        try:
+            normal = _FACE_NORMALS[face]
+        except KeyError as exc:
+            raise ModelError(
+                f"unsupported Forge face in IR: {face!r}"
+            ) from exc
+
+        face_variable = f"$topology_face_{index}"
+        edge_variable = f"$topology_edges_{index}"
+        commands.append(
+            {
+                "command": "model.faces",
+                "params": {"body": name},
+                "bind": {
+                    face_variable: {
+                        "field": "faces",
+                        "where": {"plane_normal": normal},
+                        "max": "area",
+                    }
+                },
+            }
         )
-    face = selection.faces[0]
-    try:
-        normal = _FACE_NORMALS[face]
-    except KeyError as exc:
-        raise ModelError(f"unsupported Forge face in IR: {face!r}") from exc
+        binding = {
+            "field": "edges",
+            "body": name,
+            "boundary_of": face_variable,
+        }
+        if previous_edges is not None:
+            binding["prepend"] = previous_edges
+        commands.append(
+            {
+                "command": "model.edges",
+                "params": {"body": name},
+                "bind": {edge_variable: binding},
+            }
+        )
+        previous_edges = edge_variable
 
-    face_variable = "$topology_face_1"
-    edge_variable = "$topology_edges_1"
-    return [
-        {
-            "command": "model.faces",
-            "params": {"body": name},
-            "bind": {
-                face_variable: {
-                    "field": "faces",
-                    "where": {"plane_normal": normal},
-                    "max": "area",
-                }
-            },
-        },
-        {
-            "command": "model.edges",
-            "params": {"body": name},
-            "bind": {
-                edge_variable: {
-                    "field": "edges",
-                    "body": name,
-                    "boundary_of": face_variable,
-                }
-            },
-        },
-    ], edge_variable
-
+    return commands, previous_edges
 
 def _portable_commands(model: ModelIR, name: str) -> list[dict]:
     node = model.root
@@ -411,9 +458,21 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
     if isinstance(node, ChamferIR):
         _require_positive(node.distance, "chamfer distance")
         topology, edges = _face_boundary_commands(node.edges, name)
+        if isinstance(node.base, PlacementIR):
+            if not isinstance(node.base.primitive, BoxIR):
+                raise ModelError(
+                    "portable SolidCraft ChamferIR placement base requires BoxIR"
+                )
+            base_commands = [_box_command(node.base, name)]
+        elif isinstance(node.base, ExtrudeIR):
+            base_commands = _extrude_commands(node.base, name)
+        else:
+            raise ModelError(
+                "portable SolidCraft ChamferIR has unsupported typed base"
+            )
         return [
             *parameters,
-            _box_command(node.base, name),
+            *base_commands,
             *topology,
             _command(
                 "solid.chamfer",
