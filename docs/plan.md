@@ -90,20 +90,42 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: consumer capability blocker #271
+### Release checkpoint: #299 Forge v0.22.0
 
-Implement native two-distance / asymmetric chamfer for CAD catalog #200:
+The consumer-driven v0.22 product line is accepted on permanent `dev`.
 
-- expose SolidCraft's primary/secondary chamfer-distance intent directly;
-- preserve the existing semantic edge-selection forms;
-- lower to one native `solid.chamfer` history feature;
-- keep equal-distance `Shape.chamfer(distance, ...)` source-compatible;
-- qualify both stored distances, deterministic edge selection and visibly
-  asymmetric geometry.
+Accepted development work:
+- #163 established the repository-wide verification evidence contract and
+  future-owner minimum;
+- #267 added multiple closed profiles in one standalone Sketch extrusion,
+  required by CAD catalog #198;
+- #294 added approved native visual evidence for that new visible-geometry
+  owner;
+- #271 added native two-distance/asymmetric chamfer authoring, required by CAD
+  catalog #200, with direct native definition inspection, saved-design
+  mutation, geometry and approved visual evidence;
+- the development catalogue now contains 59 physical owners and 38 ordinary
+  SolidCraft visual policies.
 
-After #271, resume **#163** as the normal dev task. Keep its concrete evidence
-gaps in focused follow-ups #255, #256 and #257 rather than mixing them into
-consumer capability work.
+Permanent development evidence:
+- exact product head:
+  `79332ba55a52f205c0b469707bac1911a4cd3b6c`;
+- permanent dev build run `45840231474`: success;
+- selected project graph: success;
+- durable `build/dev` publication: success;
+- independent Pages dispatch: success.
+
+Next:
+1. promote the exact qualified `dev -> main` product through repository-local
+   `/merge`;
+2. require the permanent stable full product build to succeed;
+3. prepare metadata-only `release/v0.22.0` from qualified stable `main`;
+4. publish v0.22.0 through the explicit `/release` workflow;
+5. synchronize stable-only release metadata back with `main -> dev`;
+6. reconcile the plan after publication.
+
+Do not start #255/#256/#257 before this release checkpoint unless a new
+demonstrated consumer blocker supersedes the release.
 
 ### Experimental lane
 
@@ -116,8 +138,10 @@ an experiment is explicitly accepted for the product.
 
 ## Later
 
-1. After #163 is accepted, execute its concrete verification-evidence follow-ups
-   #255, #256 and #257 in the order justified by the final audit.
+1. After v0.22.0 publication and stable -> dev synchronization, execute the
+   concrete verification-evidence follow-ups #255, #256 and #257 in the order
+   justified by the accepted audit unless a newer consumer blocker takes
+   priority.
 2. Continue the migrated Forge product/research backlog (#59-#72) according to
    demonstrated consumer value and dependencies rather than treating the whole
    historical backlog as release-blocking.
