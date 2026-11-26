@@ -5,10 +5,10 @@ This file contains unfinished work only.
 ## Accepted baseline
 
 The Forge migration is complete and the current public product baseline is
-released as **v0.20.0**.
+released as **v0.21.0**.
 
 The accepted baseline now includes:
-- 55 physical model owners, with SCPF primary per owner and historically real
+- 57 physical model owners, with SCPF primary per owner and historically real
   reference implementations kept inside the same physical owner;
 - native, geometry, inspection and applicable visual verification with durable
   generated evidence below `build/<scope>/models/**`;
@@ -39,6 +39,16 @@ The accepted baseline now includes:
   complete Assembly Front/Below/Service positions and flexible-fit
   `Free` / `Installed` physical states, including native saved-design
   switching after replay;
+- public symbolic CAD math through `scpf.cadmath`, preserving parameter
+  dependencies in native expressions for configuration-driven geometry;
+- typed `AxisLine(...)` support for shifted/custom native revolve axes,
+  including parameter-driven origins and suppressible revolve history;
+- native compact technical-drawing presentation through
+  `title_block_style="compact"`, replay-qualified as SolidCraft's 49 mm
+  title block while preserving the existing built-in block as the default;
+- sheet perforation qualified from authoritative SolidCraft
+  flat-pattern/DXF manufacturing output with deterministic review evidence
+  rather than fabricated display geometry;
 - policy-owned integration through PR comment `/merge`, including merge
   commits for permanent branch synchronization;
 - the library workflow split: pull requests run central `ci`; permanent
@@ -55,17 +65,17 @@ The accepted baseline now includes:
 - stable Pages quality and the canonical Pages deployment;
 - policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks.
 
-Release evidence for v0.20.0:
+Release evidence for v0.21.0:
 - promoted full product baseline:
-  `186ce9663e35222f487fa267353931c8daa3c89e`;
-- full durable `build/main` evidence: library=true and 55/55 owners;
+  `fe1c6fd699e7df872e962fdee31ea002747b88f5`;
+- full durable `build/main` evidence: library=true and 57/57 owners;
 - release metadata commit:
-  `8d3c789cb239b6c6a164de23a6cdd5d7d3108eac`;
-- annotated tag `v0.20.0` points exactly to that release commit;
+  `5a176ab1a5c1eb04e920b896f6df382ac85888e6`;
+- annotated tag `v0.21.0` points exactly to that release commit;
 - the metadata-only permanent stable run selected release + library + zero
   models and retained the full product baseline;
 - stable -> dev synchronization completed through merge commit
-  `f096066ee2bf2c0b8f90f344d1b2583171ab4ca1`.
+  `46f77cc9078adb7e63a0ddd2b1694bd1fbdf4662`.
 
 The pinned SolidCraft 0.49 registry still has no native centre-mark or
 centre-line drawing-authoring command; Forge deliberately does not emulate
@@ -76,39 +86,31 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #192 Forge multi-backend feasibility on `exp`
+### Dev: consumer capability blockers
 
-The permanent experimental line is accepted. Begin #192 only on `exp` and keep
-normal product development on `dev`.
+Consumer-driven Forge capability stays ahead of the broad verification audit.
 
-First spike:
-1. keep the existing public `scpf` model source unchanged;
-2. select a minimal primitive/plate, then sketch+extrude, then one topology
-   modification;
-3. identify the current feature-tree intent that is already backend-neutral;
-4. isolate SolidCraft-specific lowering/replay/topology behind an explicit
-   backend boundary;
-5. add Mitcad only far enough to prove one unchanged Forge source through both
-   native engines and the existing verification architecture;
-6. fail explicitly for unsupported Mitcad intent rather than weakening the
-   SolidCraft path or inventing lowest-common-denominator behavior.
+1. **#267 — multiple closed profiles in standalone Sketch extrusion**
+   - required by CAD catalog #198 for the reusable hollow Ø10/Ø8 tube;
+   - support nested closed loops in one standalone Sketch;
+   - select the annular extrusion region explicitly and deterministically;
+   - preserve one native Sketch and one native extrusion history feature;
+   - keep current single-profile behavior backwards compatible.
 
-### Dev: v0.21.0 consumer stabilization
+2. **#271 — native two-distance / asymmetric chamfer**
+   - required by CAD catalog #200 for the HUB75 Edge/Corner coupler taper;
+   - expose the native primary/secondary chamfer-distance intent directly;
+   - preserve semantic edge selection and one native chamfer feature;
+   - keep existing equal-distance `chamfer(distance)` source-compatible.
 
-Finish the consumer-facing development line and release it before resuming the
-broad verification audit:
+3. **#163 — verification evidence audit**
+   - resume the repository-wide verification audit after #267 and #271;
+   - use the already-created focused follow-ups #255, #256 and #257 rather
+     than mixing verification cleanup into consumer feature work.
 
-1. complete #250 native compact title-block authoring and qualification;
-2. #210 is complete: canonical pattern examples now use the released
-   `rectangular_pattern(...)` contract;
-3. promote the fully qualified `dev` product through #265;
-4. publish v0.21.0 through release issue #264;
-5. resume #163 only after the stable release and `main -> dev`
-   synchronization are complete.
-
-The compact drawing path must remain native and backwards compatible with the
-existing `iso-a4-part` / `iso-a3-part` behavior. Experimental multi-backend
-work stays isolated on `exp` and is not part of v0.21.0.
+Experimental compiler/backend development remains isolated on permanent
+`exp`. The `exp` branch plan is authoritative for that stream; normal dev
+work must not absorb unfinished experimental IR/backend changes.
 
 ## Later
 
