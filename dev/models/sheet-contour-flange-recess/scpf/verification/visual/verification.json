@@ -1,0 +1,198 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/front/camera.json",
+          "sha256": "871ed321a7d449918ae5e5d142ebc124648c94ad2429a59f94aebb8af5d500d5",
+          "size": 150
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/actual.png",
+          "sha256": "4aa2553328e8c96207e5e212ce0383edad376d612e17aa3d0a7672d1bbd21f6e",
+          "size": 9991
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/goal.png",
+          "sha256": "0fa84614e3fe66f4f0d1b06473a82f78c39124062a517c085c8185484a57a0b1",
+          "size": 1989
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/overlay.png",
+          "sha256": "860cd130ed49f3cf57f2b909a239f7a50d4e0e0a0217c4d6f3e6fca6417a1aaf",
+          "size": 3030
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/diff.png",
+          "sha256": "fb4818d4ed6ad1f5fe4ad91373b7a4b7e9e955c891cf8513e364b4e9936ad5d3",
+          "size": 430
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/front/actual.png",
+        "baseline": "baselines/front.json",
+        "baseline_status": "pass",
+        "camera": "visual/front/camera.json",
+        "diff_image": "visual/front/diff.png",
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/front/goal.png",
+        "overlay_image": "visual/front/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "front"
+      },
+      "id": "front",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/right/camera.json",
+          "sha256": "c91fa1c0eadb6c67575edcea28883d9ce07098abe0895cf4f474089a719f2828",
+          "size": 166
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/actual.png",
+          "sha256": "1b0c42979bbb80fc033c4bdf4ab5013e6f2ad380959da2f99bab1f84a86dd03c",
+          "size": 11319
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/goal.png",
+          "sha256": "db8f56b8321a75ed3ebd75ff2869e3db9cc05eff34aefaf42ac5424ac25923ed",
+          "size": 1986
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/overlay.png",
+          "sha256": "5cffb6900f08a4c1bf322d18b98f275a8c6f7c857d3bc8b172051943f2592634",
+          "size": 4022
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/diff.png",
+          "sha256": "5498d8b1a03efa97111d5691605d2776567cc8b34a31e72f31427a5509d49a1b",
+          "size": 438
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/right/actual.png",
+        "baseline": "baselines/right.json",
+        "baseline_status": "pass",
+        "camera": "visual/right/camera.json",
+        "diff_image": "visual/right/diff.png",
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/right/goal.png",
+        "overlay_image": "visual/right/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "right"
+      },
+      "id": "right",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/iso/camera.json",
+          "sha256": "726375b8bf8bf1673e627b8b7e275b61acb994b0cba4ace26ef8b43a6ec12947",
+          "size": 181
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/actual.png",
+          "sha256": "a49ffb9024db081efce1bc9fe6dfb22b837069d831ce1532a54b42f74cd7f265",
+          "size": 43230
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/goal.png",
+          "sha256": "f5e43eac00d4f40cdd03d83532c2cdf96c5612bd273eb480b74ede1be0438f9b",
+          "size": 2921
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/overlay.png",
+          "sha256": "d2ca57d961c39e4ad6e6454362b68cd0bf1fcaf9a0957d202428e81af71f9bc9",
+          "size": 28283
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/diff.png",
+          "sha256": "a99ca5115234409b1bb4455837b5bfcd06582ba055632a8ec9740dc21bf9a9d0",
+          "size": 1560
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/iso/actual.png",
+        "baseline": "baselines/iso.json",
+        "baseline_status": "pass",
+        "camera": "visual/iso/camera.json",
+        "diff_image": "visual/iso/diff.png",
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/iso/goal.png",
+        "overlay_image": "visual/iso/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "iso"
+      },
+      "id": "iso",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sheet-contour-flange-recess/scpf/model.sc",
+  "metadata": {
+    "baseline_provenance": {
+      "approval": "approved",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "90b7eba19227032766dc1309ae8d851c4cb09553",
+      "workflow_run": 45873531238
+    },
+    "kind": "solidcraft-visual",
+    "measurements": "measurements.json",
+    "visual_report": "visual.json"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sheet-contour-flange-recess-scpf-visual"
+}

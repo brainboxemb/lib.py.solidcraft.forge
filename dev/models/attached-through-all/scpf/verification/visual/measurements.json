@@ -1,0 +1,127 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 10719.999999999998,
+      "bbox": {
+        "max": [
+          40.0,
+          30.0,
+          5.0
+        ],
+        "min": [
+          -40.0,
+          -30.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        6.496390726949494e-16,
+        -3.891173098021942e-15,
+        2.5
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 24,
+      "face_types": {
+        "plane": 10
+      },
+      "faces": 10,
+      "kernel": {
+        "edges": 24,
+        "faces": 10,
+        "shells": 1,
+        "vertices": 16
+      },
+      "mass_g": 28.895999999999997,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "AttachedThroughAll",
+      "notes": [],
+      "vertices": 16,
+      "volume_mm3": 22399.999999999996
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "80",
+      "model": false,
+      "name": "width",
+      "unit": "mm",
+      "value": 80.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "60",
+      "model": false,
+      "name": "depth",
+      "unit": "mm",
+      "value": 60.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "5",
+      "model": false,
+      "name": "thickness",
+      "unit": "mm",
+      "value": 5.0
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 4,
+      "dof": 8,
+      "id": 2,
+      "name": "Through cut",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 3.746317,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 0.163918,
+      "name": "Through cut",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 8.225361000000001,
+      "name": "Through cut",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 10719.999999999998,
+    "edges": 24,
+    "faces": 10,
+    "mass_g": 28.895999999999997,
+    "open_bodies_skipped": 0,
+    "vertices": 16,
+    "volume_mm3": 22399.999999999996
+  }
+}

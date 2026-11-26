@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-visual",
+  "id": "rotated-sketch-cutter--scpf",
+  "implementation": "scpf",
+  "owner": "rotated-sketch-cutter",
+  "schema": 1,
+  "stage_id": "visual",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+}
