@@ -2451,7 +2451,7 @@
       "guide": "guide/geometry/",
       "reference": "reference/Configure/",
       "use_when": "Define editable native configuration rows rather than Python-only variants.",
-      "limits": "Initial single-Shape configuration path; assembly support is not yet qualified.",
+      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
       "parameters": [
         {
           "name": "geometry",
@@ -2479,7 +2479,7 @@
       "guide": "guide/geometry/",
       "reference": "reference/Param/",
       "use_when": "Define editable native configuration rows rather than Python-only variants.",
-      "limits": "Initial single-Shape configuration path; assembly support is not yet qualified.",
+      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
       "parameters": [
         {
           "name": "name",
@@ -2495,7 +2495,7 @@
       "guide": "guide/geometry/",
       "reference": "reference/Suppress/",
       "use_when": "Define editable native configuration rows rather than Python-only variants.",
-      "limits": "Initial single-Shape configuration path; assembly support is not yet qualified.",
+      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
       "parameters": [
         {
           "name": "feature",

@@ -41,9 +41,9 @@
 
 1. Author one native editable configuration table on the finished design, with named rows and an explicit active row.
 2. Parameter columns refer to existing native parameters; suppression columns refer to exact Forge feature identities, never caller-supplied native IDs.
-3. Lower native feature IDs from actual replay results and preserve native row identities in the saved design. Verify deterministic row identity behavior.
-4. Verify all authored cells, active-row state and row switching on a reopened saved design, including suppression and geometry changes.
-5. Support reusable component/assembly consumers; unsupported authoring must fail explicitly rather than emulate configuration rows in Python.
+3. Resolve suppression columns from actual replay-returned native feature identity; callers never supply SolidCraft feature ids. The saved design must retain SolidCraft's native feature-id references.
+4. Preserve stable authored row identity and verify deterministic native row behavior across a clean rebuild.
+5. Verify all authored cells, active-row state and row switching on a reopened saved design, including parameter and suppression changes. Unsupported configuration intent must fail explicitly rather than be emulated with Python variants.
 
 ## SCPF revolute relationships
 

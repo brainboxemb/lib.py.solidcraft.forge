@@ -138,6 +138,7 @@ contains one cell per column. The active row must be declared.</p>
     columns=(Param("width"), Suppress(hole)),
     rows={"Medium": ("80 mm", True),
           "Large": ("100 mm", False)})</code></pre>
-<p>The native table remains in the saved SolidCraft document. The initial
-single-Shape path is under qualification; reusable assemblies are not yet
-qualified.</p>
+<p>The native table remains editable in the saved SolidCraft document. Forge's
+own configuration-table model qualifies the public contract; downstream CAD
+models consume the released API rather than serving as its implementation
+fixture.</p>

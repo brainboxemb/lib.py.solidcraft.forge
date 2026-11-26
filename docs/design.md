@@ -72,14 +72,16 @@ parameter edits.
 Configuration is final design intent rather than a Python model variant. The
 initial authoring shape is `Configure(geometry, active=..., columns=..., rows=...)`,
 with `Param(...)` and `Suppress(feature)` columns. Suppression references an
-exact Forge-authored applied feature. Lowering binds native feature ID/name
-from that feature command's result; a suppression key in replay is resolved
-only after the actual ID is available. Native `config.configure`, `config.row`,
+exact Forge-authored applied feature. Lowering binds the native feature name from that feature command's replay
+result; SolidCraft resolves that name to the native feature-id reference stored
+in the saved configuration table. The caller never supplies or predicts an id. Native `config.configure`, `config.row`,
 `config.activate` and `config.table` author the editable table.
 
-The first implementation qualifies a single Shape; component/assembly lowering,
-stable native row identity and saved-design verification are acceptance gates
-for #216, not claims about the released baseline.
+The qualification model is Forge-owned and intentionally independent of any
+consumer repository. It proves the generic authoring contract against native
+SolidCraft: rows, active state, parameter cells, suppression cells, saved-design
+editability and row switching. Downstream models such as HUB75 are consumers
+after release, not acceptance fixtures for this API.
 
 ## Native revolute-relationship boundary
 

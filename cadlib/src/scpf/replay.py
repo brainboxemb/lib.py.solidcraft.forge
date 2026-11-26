@@ -13,7 +13,7 @@ import re
 REPLAY_FORMAT = "scpf-replay"
 REPLAY_VERSION = 2
 _VARIABLE = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
-# Native configuration suppression column keys contain a replay-bound feature ID.
+# Native configuration suppression keys may contain a replay-bound feature name.
 _SUPPRESSION_KEY = re.compile(r"^suppress:(\$[A-Za-z_][A-Za-z0-9_]*)$")
 
 
@@ -75,8 +75,15 @@ def resolve_value(value, variables):
             match = _SUPPRESSION_KEY.fullmatch(key) if isinstance(key, str) else None
             if match:
                 feature = resolve_value(match.group(1), variables)
-                if not isinstance(feature, int) or isinstance(feature, bool) or feature <= 0:
-                    raise ValueError("configuration suppression needs a native feature ID")
+                if (
+                    not isinstance(feature, (str, int))
+                    or isinstance(feature, bool)
+                    or (isinstance(feature, str) and not feature)
+                    or (isinstance(feature, int) and feature <= 0)
+                ):
+                    raise ValueError(
+                        "configuration suppression needs a native feature reference"
+                    )
                 key = f"suppress:{feature}"
             if key in resolved:
                 raise ValueError(f"duplicate resolved replay key {key!r}")

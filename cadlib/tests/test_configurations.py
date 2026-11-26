@@ -30,11 +30,14 @@ class ConfigurationTests(unittest.TestCase):
                                   "Large": ("100 mm", False)}), "Plate")
         validate_replay_document(doc)
         feature = next(c for c in doc["commands"] if c["command"] == "solid.hole")
-        self.assertEqual(feature["bind"]["$config_feature_2"], "feature")
+        self.assertNotIn("$config_feature_2", feature["bind"])
         self.assertEqual(feature["bind"]["$config_name_2"], "name")
-        cell = {"suppress:$config_feature_2": "true"}
-        self.assertEqual(variables_in(cell), {"$config_feature_2"})
-        self.assertEqual(resolve_value(cell, {"$config_feature_2": 41}), {"suppress:41": "true"})
+        cell = {"suppress:$config_name_2": "true"}
+        self.assertEqual(variables_in(cell), {"$config_name_2"})
+        self.assertEqual(
+            resolve_value(cell, {"$config_name_2": "Hole1"}),
+            {"suppress:Hole1": "true"},
+        )
 
     def test_reject_unknown_param_and_unapplied_feature(self):
         body = Box(80, 30, 5)

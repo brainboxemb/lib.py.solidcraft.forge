@@ -144,14 +144,15 @@ def _configuration_commands(configured, name, commands):
         if index in bound_indexes:
             raise ModelError("duplicate native suppression feature")
         bound_indexes.add(index)
-        feature_id = f"$config_feature_{number}"
+        # The command API addresses configuration feature columns by the
+        # replay-returned native feature name. SolidCraft stores the resolved
+        # feature id in the saved configuration table; callers never supply it.
         feature_name = f"$config_name_{number}"
         bindings = dict(commands[index].get("bind", {}))
-        bindings[feature_id] = "feature"
         bindings[feature_name] = "name"
         commands[index]["bind"] = bindings
         features.append(feature_name)
-        keys.append(f"suppress:{feature_id}")
+        keys.append(f"suppress:{feature_name}")
 
     options = {}
     if params:

@@ -70,11 +70,12 @@ The historical repository remains an archived A/B/provenance reference at
 
 ### Dev: #216 native configuration-table authoring
 
-Keep this product work isolated on dev. Qualify native parameter and suppression
-columns, saved editable configuration rows and row switching. First establish
-the single-shape native command/replay contract, then qualify reusable component
-and assembly targets as required by the HUB75 frame-coupler consumer. Record
-native row identity behavior and do not accept the issue until it is proven.
+Keep this product work isolated on dev. Deliver a generic public SCPF
+configuration-table capability and qualify it entirely with a Forge-owned
+verification model. Prove native parameter and suppression columns, all authored
+rows/cells, active state, saved-design editability, deterministic row identity
+behavior and row switching. Consumer repositories are not part of the acceptance
+fixture; they adopt the released API afterwards.
 
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
