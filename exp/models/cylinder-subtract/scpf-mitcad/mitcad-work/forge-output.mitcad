@@ -1,0 +1,115 @@
+{
+  "format": "mitcad",
+  "version": 2,
+  "units": {
+    "length": "mm",
+    "angle": "deg"
+  },
+  "parameters": [
+    {
+      "name": "length",
+      "expression": "60 mm",
+      "unit": "mm",
+      "value": 60.0,
+      "comment": ""
+    },
+    {
+      "name": "width",
+      "expression": "40 mm",
+      "unit": "mm",
+      "value": 40.0,
+      "comment": ""
+    },
+    {
+      "name": "thickness",
+      "expression": "12 mm",
+      "unit": "mm",
+      "value": 12.0,
+      "comment": ""
+    },
+    {
+      "name": "bore_d",
+      "expression": "10 mm",
+      "unit": "mm",
+      "value": 10.0,
+      "comment": ""
+    },
+    {
+      "name": "d1",
+      "expression": "-(length / 2)",
+      "unit": "mm",
+      "value": -30.0,
+      "comment": "CylinderSubtractBase x",
+      "owner": "F1"
+    },
+    {
+      "name": "d2",
+      "expression": "-(width / 2)",
+      "unit": "mm",
+      "value": -20.0,
+      "comment": "CylinderSubtractBase y",
+      "owner": "F1"
+    },
+    {
+      "name": "d3",
+      "expression": "thickness + 20 mm",
+      "unit": "mm",
+      "value": 32.0,
+      "comment": "CylinderSubtractCut height",
+      "owner": "F2"
+    }
+  ],
+  "components": [
+    {
+      "uid": "C1",
+      "name": "Component1"
+    }
+  ],
+  "occurrences": [
+    {
+      "uid": "O1",
+      "component": "C1",
+      "parent": "C0",
+      "number": 1
+    }
+  ],
+  "active_component": "C1",
+  "features": [
+    {
+      "uid": "F1",
+      "name": "CylinderSubtractBase",
+      "component": "C1",
+      "type": "box",
+      "plane": "xy",
+      "corner": [
+        "d1",
+        "d2"
+      ],
+      "length": "length",
+      "width": "width",
+      "height": "thickness",
+      "operation": "new_body"
+    },
+    {
+      "uid": "F2",
+      "name": "CylinderSubtractCut",
+      "component": "C1",
+      "type": "cylinder",
+      "plane": "xy",
+      "center": [
+        0.0,
+        0.0
+      ],
+      "diameter": "bore_d",
+      "height": "d3",
+      "symmetric": true,
+      "operation": "cut"
+    }
+  ],
+  "bodies": [
+    {
+      "uid": "F1.b0",
+      "name": "Body1"
+    }
+  ]
+}
