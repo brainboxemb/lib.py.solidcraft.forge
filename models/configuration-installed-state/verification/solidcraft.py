@@ -19,6 +19,7 @@ VERIFICATION = SolidCraftVerification(
         body_count=2,
         parameters={
             "frame_width": 80.0,
+            "tube_d": 20.0,
             "fit_diameter": 20.0,
         },
         parameter_match="subset",
@@ -91,7 +92,7 @@ VERIFICATION = SolidCraftVerification(
                         "effect",
                         "expression",
                     ),
-                    expected="20",
+                    expected="tube_d",
                 ),
             ),
         ),
@@ -104,6 +105,7 @@ VERIFICATION = SolidCraftVerification(
                 body_count=2,
                 parameters={
                     "frame_width": 80.0,
+                    "tube_d": 20.0,
                     "fit_diameter": 20.4,
                 },
                 parameter_match="subset",
@@ -123,6 +125,7 @@ VERIFICATION = SolidCraftVerification(
                 body_count=2,
                 parameters={
                     "frame_width": 100.0,
+                    "tube_d": 20.0,
                     "fit_diameter": 20.0,
                 },
                 parameter_match="subset",
@@ -135,6 +138,7 @@ VERIFICATION = SolidCraftVerification(
                 body_count=2,
                 parameters={
                     "frame_width": 100.0,
+                    "tube_d": 20.0,
                     "fit_diameter": 20.4,
                 },
                 parameter_match="subset",
