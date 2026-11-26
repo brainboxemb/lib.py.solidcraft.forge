@@ -15,7 +15,7 @@ class RuntimeRoleTests(unittest.TestCase):
         models = discover_models(repo, project, modules)
         self.assertEqual(
             runtime_order(models),
-            ("solidcraft", "reference"),
+            ("mitcad", "solidcraft", "reference"),
         )
 
 
