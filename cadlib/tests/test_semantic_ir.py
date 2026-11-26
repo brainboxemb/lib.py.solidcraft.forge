@@ -4,6 +4,7 @@ import unittest
 from scpf import (
     Anchor,
     Axis,
+    AxisLine,
     Box,
     Circle2D,
     Cone,
@@ -677,6 +678,73 @@ class SemanticIRTests(unittest.TestCase):
             {"type": "angle", "angle": "sweep"},
         )
         self.assertEqual(revolve_def["operation"], "new_body")
+
+    def test_shifted_axis_revolve_cut_is_one_semantic_feature(self):
+        axis_x = Parameter("axis_x", 8)
+        panel = Box(80, 46, 10)
+        with Sketch(name="PassThrough", plane="XY") as profile:
+            Polygon2D(
+                [
+                    (12, -5),
+                    (16, -5),
+                    (16, 5),
+                    (12, 5),
+                ],
+                plane="XY",
+            )
+        shape = panel - profile.revolve(
+            axis=AxisLine(
+                Axis.Y,
+                origin=(axis_x, 0, 0),
+            ),
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ShiftedRevolveCut",
+        )
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(model.root.operation, "cut")
+        self.assertIsInstance(model.root.target, PlacementIR)
+        self.assertEqual(
+            model.root.axis,
+            AxisLineIR(
+                direction="Y",
+                origin=(axis_x, 0, 0),
+            ),
+        )
+
+        solidcraft = compile_solidcraft_ir(
+            model,
+            "ShiftedRevolveCut",
+        )
+        revolve = solidcraft["commands"][-1]
+        self.assertEqual(revolve["command"], "solid.revolve")
+        self.assertEqual(revolve["params"]["operation"], "cut")
+        self.assertEqual(
+            revolve["params"]["axis"],
+            {
+                "origin": ["axis_x", 0, 0],
+                "dir": [0.0, 1.0, 0.0],
+            },
+        )
+        self.assertEqual(revolve["params"]["targets"], ["ShiftedRevolveCut"])
+        self.assertFalse(
+            any(
+                row["command"] in {
+                    "solid.boolean",
+                    "solid.cut",
+                    "solid.subtract",
+                }
+                for row in solidcraft["commands"]
+            )
+        )
+
+        with self.assertRaisesRegex(
+            ModelError,
+            "RevolveIR cut lowering is not qualified yet",
+        ):
+            compile_mitcad_ir(model, "ShiftedRevolveCut")
 
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
         with Sketch(name="HalfProfile", plane="XZ") as sketch:
