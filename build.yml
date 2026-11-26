@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/243-mitcad-pages-evidence
-modules: [builder-scpf-mitcad, pages, preview]
+branch: feature/253-forge-semantic-ir
+modules: all
+models: all
 library: true
-models: [simple-box, circle-negative-extrude, topology-face-boundary-box]
 tasks: [test]

@@ -13,7 +13,7 @@ from typing import Callable, Any
 # Importing scpf.assembly lazily after package initialization would overwrite the
 # public scpf.assembly decorator with Python's submodule attribute.
 from ..assembly import _compile_assembly_with_dependencies as _solidcraft_compile_assembly
-from ..compiler import _compile_model_with_dependencies as _solidcraft_compile_shape
+from .solidcraft import compile_ir_with_dependencies as _solidcraft_compile_ir
 
 
 Compile = Callable[[Any, str], tuple[dict, frozenset[str]]]
@@ -25,7 +25,7 @@ class BackendAdapter:
 
     id: str
     display_name: str
-    compile_shape: Compile
+    compile_ir: Compile
     compile_assembly: Compile | None
     document_family: str
     executor: str
@@ -36,12 +36,17 @@ class BackendAdapter:
     def supports_assemblies(self) -> bool:
         return self.compile_assembly is not None
 
+    @property
+    def compile_shape(self) -> Compile:
+        """Compatibility alias while internal callers migrate to compile_ir."""
+        return self.compile_ir
+
 
 def _solidcraft_adapter() -> BackendAdapter:
     return BackendAdapter(
         id="solidcraft",
         display_name="SolidCraft",
-        compile_shape=_solidcraft_compile_shape,
+        compile_ir=_solidcraft_compile_ir,
         compile_assembly=_solidcraft_compile_assembly,
         document_family="solidcraft-command-or-scpf-replay",
         executor="solidcraft-cli",
@@ -57,12 +62,12 @@ def _solidcraft_adapter() -> BackendAdapter:
 
 
 def _mitcad_adapter() -> BackendAdapter:
-    from .mitcad import compile_model_with_dependencies
+    from .mitcad import compile_ir_with_dependencies
 
     return BackendAdapter(
         id="mitcad",
         display_name="Mitcad",
-        compile_shape=compile_model_with_dependencies,
+        compile_ir=compile_ir_with_dependencies,
         compile_assembly=None,
         document_family="scpf-mitcad",
         executor="mitcad-mcp",

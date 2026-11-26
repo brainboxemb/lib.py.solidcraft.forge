@@ -31,6 +31,10 @@
 10. Every published `scpf-mitcad` build must retain the validated pre-execution Forge-to-Mitcad command document as `mitcad.json` alongside `model.mitcad` and `model.stl`. Pages may project that durable command document but must not reconstruct it.
 11. Experimental Pages must present a Mitcad result from the actual exported `model.stl`, label it as an STL-derived Mitcad result rather than a native screenshot, and expose the saved `model.mitcad` document.
 12. When multiple backends consume the same owner-local SCPF source, Pages shows that source once and presents the secondary backend as an alternate result, not as independent reference code.
+13. Trusted SCPF model source is evaluated once into Forge model objects; final Shape intent is normalized into an engine-neutral typed `ModelIR` before native backend lowering.
+14. Portable Forge IR must express CAD semantics and selection intent only. It must not contain SolidCraft command names, Mitcad native ids, engine-owned BRep entities or backend transport details.
+15. Native shape backends consume `ModelIR`. New multi-backend features must be introduced once in Forge IR and then lowered independently by each backend; they must not add parallel raw `Shape.data` interpreters.
+16. `LegacyShapeIR` is a temporary SolidCraft-only compatibility node for stable surface not yet migrated to typed IR. Experimental backends must fail closed when they receive it.
 
 ## SCPF native associativity
 

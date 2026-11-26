@@ -16,6 +16,7 @@ class BackendRegistryTests(unittest.TestCase):
         self.assertEqual(backend.id, "solidcraft")
         self.assertEqual(backend.display_name, "SolidCraft")
         self.assertEqual(backend.executor, "solidcraft-cli")
+        self.assertTrue(callable(backend.compile_ir))
         self.assertTrue(backend.supports_assemblies)
         self.assertFalse(backend.experimental)
         self.assertIn("stable-forge-surface", backend.capabilities)
@@ -27,6 +28,7 @@ class BackendRegistryTests(unittest.TestCase):
         self.assertEqual(backend.display_name, "Mitcad")
         self.assertEqual(backend.document_family, "scpf-mitcad")
         self.assertEqual(backend.executor, "mitcad-mcp")
+        self.assertTrue(callable(backend.compile_ir))
         self.assertFalse(backend.supports_assemblies)
         self.assertTrue(backend.experimental)
         self.assertEqual(

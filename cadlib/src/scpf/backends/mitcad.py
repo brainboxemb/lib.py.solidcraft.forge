@@ -1,23 +1,28 @@
-"""Lower the first portable SCPF intent to native Mitcad commands.
+"""Lower typed Forge semantic IR to native Mitcad commands.
 
-This is deliberately small. The #192 feasibility spike proves that Forge model
-intent can reach a second native CAD engine without translating through
-SolidCraft commands or weakening the public SCPF model source.
+Mitcad never interprets raw Shape.data. Unsupported Forge semantics arrive as
+LegacyShapeIR and fail explicitly until they receive a typed IR node and a
+qualified native lowering.
 """
-
 from __future__ import annotations
 
-from ..compiler import ModelError, _collect, _require_positive
+from ..compiler import ModelError, _require_positive
 from ..core import (
-    Anchor,
-    Faces,
     Shape,
-    _FaceBoundarySelection,
+    _DirectionSelector,
     _box_corner_from_anchor,
     _native_dependencies,
     _plain_command_value,
     _pv as pv,
     command_value,
+)
+from ..ir import (
+    BoxIR,
+    ChamferIR,
+    CircleExtrudeIR,
+    LegacyShapeIR,
+    ModelIR,
+    normalize_shape,
 )
 
 
@@ -25,38 +30,46 @@ FORMAT = "scpf-mitcad"
 VERSION = 1
 
 
-def _parameter_commands(shape: Shape) -> list[dict]:
+_FACE_NORMALS = {
+    "top": [0, 0, 1],
+    "bottom": [0, 0, -1],
+    "left": [-1, 0, 0],
+    "right": [1, 0, 0],
+    "front": [0, -1, 0],
+    "back": [0, 1, 0],
+}
+
+
+def _parameter_commands(model: ModelIR) -> list[dict]:
     """Publish Forge model parameters as native Mitcad user parameters."""
     return [
         {
             "cmd": "add_parameter",
             "name": parameter.name,
             "value": parameter.value,
-            "unit": "mm",
+            "unit": parameter.unit,
         }
-        for parameter in _collect(shape)
+        for parameter in model.parameters
     ]
 
 
-def _box_command(shape: Shape, name: str) -> dict:
-    length, width, height, anchor = shape.data
-    _require_positive(length, "box length")
-    _require_positive(width, "box width")
-    _require_positive(height, "box height")
+def _box_command(node: BoxIR, name: str) -> dict:
+    _require_positive(node.length, "box length")
+    _require_positive(node.width, "box width")
+    _require_positive(node.height, "box height")
 
-    anchor_vector = tuple(anchor.vector)
-    if anchor_vector not in ((0, 0, -1), (0, 0, 0)):
+    if node.anchor not in ((0, 0, -1), (0, 0, 0)):
         raise ModelError(
             "Mitcad Box lowering currently supports Anchor.BOTTOM or "
             "Anchor.CENTER only"
         )
 
     corner = _box_corner_from_anchor(
-        length,
-        width,
-        height,
+        node.length,
+        node.width,
+        node.height,
         (0, 0, 0),
-        anchor,
+        _DirectionSelector(node.anchor),
     )
 
     definition = {
@@ -66,10 +79,10 @@ def _box_command(shape: Shape, name: str) -> dict:
             command_value(corner[0]),
             command_value(corner[1]),
         ],
-        "length": command_value(length),
-        "width": command_value(width),
-        "height": command_value(height),
-        "symmetric": anchor_vector == (0, 0, 0),
+        "length": command_value(node.length),
+        "width": command_value(node.width),
+        "height": command_value(node.height),
+        "symmetric": node.anchor == (0, 0, 0),
         "operation": "new_body",
         "participants": [],
     }
@@ -80,76 +93,21 @@ def _box_command(shape: Shape, name: str) -> dict:
     }
 
 
-def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
-    (
-        sketch_name,
-        plane,
-        origin,
-        plane_offset,
-        profiles,
-        distance,
-        direction,
-        operations,
-        profile_picks,
-        exact_regions,
-        rotation,
-    ) = shape.data
+def _circle_extrude_commands(
+    node: CircleExtrudeIR,
+    name: str,
+) -> list[dict]:
+    _require_positive(node.diameter, "circle diameter")
+    _require_positive(node.distance, "sketch extrusion distance")
 
-    if plane not in ("XY", "XZ", "YZ"):
-        raise ModelError("Mitcad standalone Sketch requires XY, XZ or YZ")
-    if origin is not None or plane_offset is not None or rotation is not None:
-        raise ModelError(
-            "Mitcad standalone Sketch frame/offset is not qualified yet"
-        )
-    if operations:
-        raise ModelError(
-            "Mitcad Sketch pattern/mirror lowering is not qualified yet"
-        )
-    if profile_picks is not None or exact_regions:
-        raise ModelError(
-            "Mitcad selective Sketch profile lowering is not qualified yet"
-        )
-    if len(profiles) != 1:
-        raise ModelError(
-            "Mitcad standalone Sketch extrusion currently requires "
-            "exactly one profile"
-        )
-
-    profile, profile_anchor, offset = profiles[0]
-    if profile.kind != "circle":
-        raise ModelError(
-            "Mitcad standalone Sketch extrusion currently supports "
-            "Circle2D only"
-        )
-    if profile_anchor is not Anchor.CENTER:
-        raise ModelError(
-            "Mitcad Circle2D extrusion currently requires Anchor.CENTER"
-        )
-    if tuple(command_value(value) for value in offset) != (0, 0):
-        raise ModelError(
-            "Mitcad Circle2D extrusion offset is not qualified yet"
-        )
-    if direction == "symmetric":
-        raise ModelError(
-            "Mitcad symmetric Sketch extrusion is not qualified yet"
-        )
-    if direction not in ("positive", "negative"):
-        raise ModelError(
-            f"Mitcad Sketch extrusion direction is unsupported: {direction!r}"
-        )
-
-    (diameter,) = profile.data
-    _require_positive(diameter, "circle diameter")
-    _require_positive(distance, "sketch extrusion distance")
-
-    radius = pv(diameter) / 2.0
+    radius = pv(node.diameter) / 2.0
     extent_distance = command_value(
-        -distance if direction == "negative" else distance
+        -node.distance if node.direction == "negative" else node.distance
     )
 
     sketch_definition = {
         "type": "sketch",
-        "plane": plane.lower(),
+        "plane": node.plane.lower(),
         "entities": [
             {
                 "id": "p1",
@@ -170,7 +128,7 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
                 "id": "k1",
                 "type": "diameter",
                 "curve": "c2",
-                "value": command_value(diameter),
+                "value": command_value(node.diameter),
             }
         ],
     }
@@ -194,7 +152,7 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
         {
             "cmd": "add_feature",
             "as": "sk",
-            "name": sketch_name,
+            "name": node.sketch_name,
             "def": sketch_definition,
         },
         {
@@ -205,36 +163,28 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
     ]
 
 
-_FACE_NORMALS = {
-    Faces.TOP: [0, 0, 1],
-    Faces.BOTTOM: [0, 0, -1],
-    Faces.LEFT: [-1, 0, 0],
-    Faces.RIGHT: [1, 0, 0],
-    Faces.FRONT: [0, -1, 0],
-    Faces.BACK: [0, 1, 0],
-}
-
-
-def _chamfer_document(shape: Shape, name: str):
-    base, distance, edges = shape.data
-    _require_positive(distance, "chamfer distance")
-    if base.kind != "box":
-        raise ModelError(
-            "Mitcad face-boundary chamfer currently requires a Box base"
-        )
-    if not isinstance(edges, _FaceBoundarySelection):
-        raise ModelError(
-            "Mitcad chamfer currently qualifies only Edges.from_faces(...)"
-        )
-    if len(edges.faces) != 1:
+def _chamfer_document(
+    model: ModelIR,
+    node: ChamferIR,
+    name: str,
+):
+    _require_positive(node.distance, "chamfer distance")
+    if len(node.edges.faces) != 1:
         raise ModelError(
             "Mitcad face-boundary chamfer currently requires one Faces value"
         )
 
-    face = edges.faces[0]
+    face = node.edges.faces[0]
+    try:
+        normal = _FACE_NORMALS[face]
+    except KeyError as exc:
+        raise ModelError(
+            f"Mitcad backend does not support Forge face {face!r}"
+        ) from exc
+
     commands = [
-        *_parameter_commands(shape),
-        _box_command(base, f"{name}Base"),
+        *_parameter_commands(model),
+        _box_command(node.base, f"{name}Base"),
     ]
     replay = [
         {
@@ -244,7 +194,7 @@ def _chamfer_document(shape: Shape, name: str):
                 "body": "body",
                 "face": {
                     "surface": "plane",
-                    "normal": _FACE_NORMALS[face],
+                    "normal": normal,
                     "normal_tolerance": 1e-6,
                 },
             },
@@ -258,7 +208,7 @@ def _chamfer_document(shape: Shape, name: str):
                         "edges": {"$mitcad_bind": "edges"},
                         "size": {
                             "type": "equal_distance",
-                            "distance": command_value(distance),
+                            "distance": command_value(node.distance),
                         },
                     },
                 }
@@ -275,27 +225,35 @@ def _chamfer_document(shape: Shape, name: str):
     }, dependencies
 
 
-def compile_model_with_dependencies(shape: Shape, name: str):
-    """Compile one supported Forge Shape directly to Mitcad native intent."""
-    if not isinstance(shape, Shape):
-        raise TypeError("the final script expression must produce a Shape")
+def compile_ir_with_dependencies(model: ModelIR, name: str):
+    """Compile the qualified Forge semantic IR subset to Mitcad intent."""
+    if not isinstance(model, ModelIR):
+        raise TypeError("Mitcad backend requires Forge ModelIR")
     if not name or not name.isidentifier():
         raise ModelError("the model name must be a valid identifier")
 
-    if shape.kind == "chamfer":
-        return _chamfer_document(shape, name)
-    if shape.kind == "box":
-        geometry_commands = [_box_command(shape, name)]
-    elif shape.kind == "sketch_base_extrusion":
-        geometry_commands = _sketch_extrusion_commands(shape, name)
+    node = model.root
+    if isinstance(node, LegacyShapeIR):
+        raise ModelError(
+            "Mitcad backend does not yet support Forge shape kind "
+            f"{node.source_kind!r}; no qualified semantic IR lowering exists"
+        )
+
+    if isinstance(node, ChamferIR):
+        return _chamfer_document(model, node, name)
+
+    if isinstance(node, BoxIR):
+        geometry_commands = [_box_command(node, name)]
+    elif isinstance(node, CircleExtrudeIR):
+        geometry_commands = _circle_extrude_commands(node, name)
     else:
         raise ModelError(
-            f"Mitcad backend does not yet support Forge shape kind "
-            f"{shape.kind!r}; #192 intentionally fails unsupported intent"
+            f"Mitcad backend does not support Forge IR node "
+            f"{type(node).__name__!r}"
         )
 
     commands = [
-        *_parameter_commands(shape),
+        *_parameter_commands(model),
         *geometry_commands,
     ]
     dependencies = _native_dependencies(commands)
@@ -307,14 +265,25 @@ def compile_model_with_dependencies(shape: Shape, name: str):
     }, dependencies
 
 
+def compile_ir(model: ModelIR, name: str) -> dict:
+    return compile_ir_with_dependencies(model, name)[0]
+
+
+def compile_model_with_dependencies(shape: Shape, name: str):
+    """Compatibility wrapper: normalize Shape before Mitcad lowering."""
+    return compile_ir_with_dependencies(normalize_shape(shape), name)
+
+
 def compile_model(shape: Shape, name: str) -> dict:
-    """Compile the supported portable Forge subset to Mitcad commands."""
+    """Compile one Forge Shape through semantic IR to Mitcad commands."""
     return compile_model_with_dependencies(shape, name)[0]
 
 
 __all__ = [
     "FORMAT",
     "VERSION",
+    "compile_ir",
+    "compile_ir_with_dependencies",
     "compile_model",
     "compile_model_with_dependencies",
 ]

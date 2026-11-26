@@ -531,10 +531,10 @@ def _plain_command_value(value):
 
 @dataclass(frozen=True)
 class Parameter:
-    """Represent one named editable CAD dimension.
+    """Represent one named editable Forge CAD dimension.
 
     Parameters:
-        name: SolidCraft parameter name. It must be a valid Python identifier.
+        name: CAD parameter name. It must be a valid Python identifier.
         value: Current numeric value of the parameter.
 
     Use when:
@@ -877,7 +877,8 @@ def pv(dim) -> float:
     Limits:
         Calling pv() intentionally removes the symbolic dependency at that
         point. Geometry and placement should normally keep Parameter/Expression
-        objects symbolic so SolidCraft remains editable and associative.
+        objects symbolic so backend lowering can preserve editable native CAD
+        dependencies.
 
     Example:
         if pv(clearance) < 0:
@@ -1228,7 +1229,7 @@ def _feature_pattern_sources(root, feature, operation):
 
 @dataclass(frozen=True)
 class Shape:
-    """Store Forge geometry and feature operations before SolidCraft executes them.
+    """Store Forge authoring geometry and feature intent before IR normalization.
 
     Parameters:
         kind: Forge node type. Public constructors set this; normal model code should not invent kind values.
@@ -1240,9 +1241,11 @@ class Shape:
         with the supported Shape methods/operators.
 
     Limits:
-        Shape is only Forge's description of the model. SolidCraft owns the final
-        BRep and feature history; users normally do not instantiate
-        Shape(kind, data) directly.
+        Shape is Forge's frontend authoring representation, not a native CAD
+        BRep. The runner normalizes final Shape intent into semantic ModelIR
+        before backend lowering; the selected native CAD engine owns final BRep
+        and feature history. Users normally do not instantiate Shape(kind, data)
+        directly.
 
     Example:
         body = Box(80, 50, 12)
