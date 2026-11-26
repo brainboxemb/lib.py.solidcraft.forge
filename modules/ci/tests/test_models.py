@@ -218,7 +218,15 @@ class ModelTests(unittest.TestCase):
                 model.verifications[0].implementations,
                 ("scpf",),
             )
-            self.assertIsNone(model.verifications[1].implementations)
+            expected_geometry_implementations = (
+                ("scpf", "scpf-mitcad")
+                if model_id == "native-revolve"
+                else None
+            )
+            self.assertEqual(
+                model.verifications[1].implementations,
+                expected_geometry_implementations,
+            )
 
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]

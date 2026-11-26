@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/381-revolve-ir
-modules: [builder-scpf-mitcad]
-models: [native-revolve]
-library: true
+branch: issue/387-native-revolve-verification-inventory
+modules: [ci]
+library: false
+models: []
 tasks: [test]
