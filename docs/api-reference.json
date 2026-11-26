@@ -2515,9 +2515,76 @@
         {
           "name": "rows",
           "description": "Ordered mapping of row names to cell sequences."
+        },
+        {
+          "name": "rules",
+          "description": "Optional ordered ConfigRule entries, independent from row activation."
         }
       ],
-      "example": "Configure(design, active='Medium', columns=(Param(self.width),), rows={'Medium': ('80 mm',)})"
+      "example": "Configure(design, active='Medium', columns=(Param(self.width),), rows={'Medium': ('80 mm',)}, rules=(ConfigRule('installed', 'Installed', condition=Always(), effect=DriveParameter(self.fit, self.tube_d)),))"
+    },
+    {
+      "kind": "function",
+      "name": "ConfigRule",
+      "summary": "Author one typed native configuration rule with independent enabled state.",
+      "guide": "guide/geometry/",
+      "reference": "reference/ConfigRule/",
+      "use_when": "A physical state such as Installed must remain independent from an existing size-row axis.",
+      "limits": "The initial Forge rule slice accepts Always() with DriveParameter(...). Rule enabled state is native SolidCraft state, not a model boolean.",
+      "parameters": [
+        {
+          "name": "rule_id",
+          "description": "Stable rule id, 1..64 non-space characters."
+        },
+        {
+          "name": "name",
+          "description": "Display name for the native rule."
+        },
+        {
+          "name": "enabled",
+          "description": "Initial native rule checkbox state."
+        },
+        {
+          "name": "condition",
+          "description": "Typed condition; initially Always()."
+        },
+        {
+          "name": "effect",
+          "description": "Typed effect; initially DriveParameter(...)."
+        }
+      ],
+      "example": "ConfigRule('installed', 'Installed', enabled=True, condition=Always(), effect=DriveParameter(self.fit, self.tube_d))"
+    },
+    {
+      "kind": "function",
+      "name": "Always",
+      "summary": "Match every configuration activation for a native configuration rule.",
+      "guide": "guide/geometry/",
+      "reference": "reference/Always/",
+      "use_when": "An independently enabled rule should apply regardless of the active configuration row.",
+      "limits": "This is the initial qualified condition form for ConfigRule.",
+      "parameters": [],
+      "example": "Always()"
+    },
+    {
+      "kind": "function",
+      "name": "DriveParameter",
+      "summary": "Drive one configured parameter from a native expression while a rule is enabled.",
+      "guide": "guide/geometry/",
+      "reference": "reference/DriveParameter/",
+      "use_when": "An independent rule must override a Param column while preserving the row's stored base expression.",
+      "limits": "The target must also be an explicit Param(...) column of the same Configure table.",
+      "parameters": [
+        {
+          "name": "parameter",
+          "description": "Configured Parameter, Param column, or native parameter name."
+        },
+        {
+          "name": "expression",
+          "description": "Finite number, expression string, Parameter or Expression."
+        }
+      ],
+      "example": "DriveParameter(self.fit_diameter, self.tube_d)"
     },
     {
       "kind": "function",
