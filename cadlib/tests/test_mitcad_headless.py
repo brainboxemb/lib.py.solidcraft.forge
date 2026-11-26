@@ -91,6 +91,33 @@ class FakeSession:
         raise AssertionError(name)
 
 
+def replay_document():
+    value = document()
+    value["replay"] = [
+        {
+            "bind_single_body": "body",
+            "commands": [
+                {
+                    "cmd": "add_feature",
+                    "def": {
+                        "type": "chamfer",
+                        "body": {"$mitcad_bind": "body"},
+                        "faces": {
+                            "surface": "plane",
+                            "normal": [0, 0, 1],
+                        },
+                        "size": {
+                            "type": "equal_distance",
+                            "distance": 2,
+                        },
+                    },
+                }
+            ],
+        }
+    ]
+    return value
+
+
 class MitcadHeadlessTests(unittest.TestCase):
     def setUp(self):
         FakeSession.instances.clear()
@@ -143,6 +170,26 @@ class MitcadHeadlessTests(unittest.TestCase):
                 query,
                 {"query": "bodies", "properties": True},
             )
+
+    @patch("scpf.backends.mitcad_headless._Session", FakeSession)
+    def test_replay_binds_single_native_body_without_predicting_uid(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = run_document(
+                replay_document(),
+                save=root / "out.mitcad",
+                work_dir=root / "workspace",
+            )
+            self.assertEqual(result["completed"], 2)
+            self.assertEqual(result["bindings"], {"body": "F1.b0"})
+            session = FakeSession.instances[-1]
+            commands = [
+                args["command"]
+                for name, args in session.calls
+                if name == "model_command"
+            ]
+            self.assertEqual(len(commands), 2)
+            self.assertEqual(commands[1][0]["def"]["body"], "F1.b0")
 
     @patch("scpf.backends.mitcad_headless._Session", FakeSession)
     def test_unsupported_export_suffix_fails_before_export_call(self):

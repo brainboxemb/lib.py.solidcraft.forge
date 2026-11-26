@@ -35,6 +35,7 @@ SOURCE_REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
 RUNTIME_REFERENCE_BLOB = "c839084ba223e814370a55c761644da362fabc93"
 SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
+TOPOLOGY_BOX = ROOT / "models/topology-face-boundary-box/scpf/model.py"
 
 
 def ensure_appimage_runtime() -> None:
@@ -197,11 +198,40 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            topology = run_document(
+                run_script(TOPOLOGY_BOX, backend="mitcad"),
+                save=root / "out/topology-face-boundary-box.mitcad",
+                export=root / "out/topology-face-boundary-box.stl",
+                executable=str(executable),
+                work_dir=root / "topology-workspace",
+            )
+            self.assertEqual(topology["completed"], 2)
+            self.assertEqual(len(topology["bodies"]), 1)
+            topology_body = topology["bodies"][0]
+            self.assertEqual(topology_body["kind"], "solid")
+            self.assertAlmostEqual(
+                topology_body["volume"],
+                28410.666666666664,
+                places=4,
+            )
+            for actual, expected in zip(
+                topology_body["bbox"]["min"],
+                [-30.0, -20.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                topology_body["bbox"]["max"],
+                [30.0, 20.0, 12.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
             for filename in (
                 "simple-box.mitcad",
                 "simple-box.stl",
                 "circle-negative-extrude.mitcad",
                 "circle-negative-extrude.stl",
+                "topology-face-boundary-box.mitcad",
+                "topology-face-boundary-box.stl",
             ):
                 output = root / "out" / filename
                 self.assertTrue(output.is_file(), filename)
@@ -218,6 +248,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"simple_box_bbox={box_body['bbox']}",
                         f"negative_circle_volume={circle_body['volume']}",
                         f"negative_circle_bbox={circle_body['bbox']}",
+                        f"topology_volume={topology_body['volume']}",
+                        f"topology_bbox={topology_body['bbox']}",
+                        f"topology_bindings={topology['bindings']}",
                     ]
                 )
                 + "\n",

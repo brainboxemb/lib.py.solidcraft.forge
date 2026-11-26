@@ -17,6 +17,44 @@ class MitcadHeadlessError(RuntimeError):
     """Native Mitcad MCP execution failed."""
 
 
+def _validate_commands(commands: Any, *, context: str) -> list[dict[str, Any]]:
+    if not isinstance(commands, list) or not commands:
+        raise MitcadHeadlessError(f"{context} has no commands")
+    for index, command in enumerate(commands):
+        if not isinstance(command, dict):
+            raise MitcadHeadlessError(
+                f"{context} command {index} is not an object"
+            )
+        name = command.get("cmd")
+        if not isinstance(name, str) or not name:
+            raise MitcadHeadlessError(
+                f"{context} command {index} has no cmd"
+            )
+    return commands
+
+
+def _validate_replay(value: Any) -> list[dict[str, Any]]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise MitcadHeadlessError("Mitcad replay must be an array")
+    for index, stage in enumerate(value):
+        if not isinstance(stage, dict):
+            raise MitcadHeadlessError(
+                f"Mitcad replay stage {index} is not an object"
+            )
+        binding = stage.get("bind_single_body")
+        if not isinstance(binding, str) or not binding:
+            raise MitcadHeadlessError(
+                f"Mitcad replay stage {index} has no bind_single_body"
+            )
+        _validate_commands(
+            stage.get("commands"),
+            context=f"Mitcad replay stage {index}",
+        )
+    return value
+
+
 def validate_document(document: Any) -> list[dict[str, Any]]:
     if not isinstance(document, dict):
         raise MitcadHeadlessError("Mitcad command document must be an object")
@@ -29,19 +67,11 @@ def validate_document(document: Any) -> list[dict[str, Any]]:
     if document.get("backend") != "mitcad":
         raise MitcadHeadlessError("Mitcad command document has wrong backend")
 
-    commands = document.get("commands")
-    if not isinstance(commands, list) or not commands:
-        raise MitcadHeadlessError("Mitcad command document has no commands")
-    for index, command in enumerate(commands):
-        if not isinstance(command, dict):
-            raise MitcadHeadlessError(
-                f"Mitcad command {index} is not an object"
-            )
-        name = command.get("cmd")
-        if not isinstance(name, str) or not name:
-            raise MitcadHeadlessError(
-                f"Mitcad command {index} has no cmd"
-            )
+    commands = _validate_commands(
+        document.get("commands"),
+        context="Mitcad command document",
+    )
+    _validate_replay(document.get("replay"))
     return commands
 
 
@@ -190,6 +220,68 @@ class _Session:
         return structured
 
 
+def _bind_values(value: Any, bindings: dict[str, Any]) -> Any:
+    if isinstance(value, dict):
+        if set(value) == {"$mitcad_bind"}:
+            name = value["$mitcad_bind"]
+            if not isinstance(name, str) or name not in bindings:
+                raise MitcadHeadlessError(
+                    f"unknown Mitcad replay binding: {name!r}"
+                )
+            return bindings[name]
+        return {
+            key: _bind_values(item, bindings)
+            for key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_bind_values(item, bindings) for item in value]
+    return value
+
+
+def _body_query(session: _Session, handle: str) -> list[dict[str, Any]]:
+    reply = session.tool(
+        "model_query",
+        {
+            "document": handle,
+            "query": {
+                "query": "bodies",
+                "properties": True,
+            },
+        },
+    )
+    bodies = reply.get("result")
+    if not isinstance(bodies, list):
+        raise MitcadHeadlessError(
+            "Mitcad bodies query returned no body list"
+        )
+    return bodies
+
+
+def _apply_commands(
+    session: _Session,
+    handle: str,
+    commands: list[dict[str, Any]],
+) -> dict[str, Any]:
+    applied = session.tool(
+        "model_command",
+        {
+            "document": handle,
+            "command": commands,
+            "timeline": "none",
+        },
+    )
+    if applied.get("applied") is not True:
+        raise MitcadHeadlessError(
+            "Mitcad model_command did not report applied=true"
+        )
+    failed = applied.get("failed_features", [])
+    if failed:
+        raise MitcadHeadlessError(
+            f"Mitcad model has failed features: {failed!r}"
+        )
+    return applied
+
+
 def _export_format(path: Path) -> str:
     suffix = path.suffix.lower().lstrip(".")
     aliases = {
@@ -224,6 +316,7 @@ def run_document(
     """
 
     commands = validate_document(document)
+    replay = _validate_replay(document.get("replay"))
     save = Path(save).resolve()
     save.parent.mkdir(parents=True, exist_ok=True)
     export_path = Path(export).resolve() if export is not None else None
@@ -255,39 +348,34 @@ def run_document(
                     "Mitcad document_create returned no document handle"
                 )
 
-            applied = session.tool(
-                "model_command",
-                {
-                    "document": handle,
-                    "command": commands,
-                    "timeline": "none",
-                },
-            )
-            if applied.get("applied") is not True:
-                raise MitcadHeadlessError(
-                    "Mitcad model_command did not report applied=true"
-                )
-            failed = applied.get("failed_features", [])
-            if failed:
-                raise MitcadHeadlessError(
-                    f"Mitcad model has failed features: {failed!r}"
-                )
+            command_results = [_apply_commands(session, handle, commands)]
+            completed = len(commands)
+            bindings: dict[str, Any] = {}
 
-            bodies_reply = session.tool(
-                "model_query",
-                {
-                    "document": handle,
-                    "query": {
-                        "query": "bodies",
-                        "properties": True,
-                    },
-                },
-            )
-            bodies = bodies_reply.get("result")
-            if not isinstance(bodies, list):
-                raise MitcadHeadlessError(
-                    "Mitcad bodies query returned no body list"
+            for index, stage in enumerate(replay):
+                bodies_before = _body_query(session, handle)
+                if len(bodies_before) != 1:
+                    raise MitcadHeadlessError(
+                        "Mitcad replay stage "
+                        f"{index} requires exactly one body, got "
+                        f"{len(bodies_before)}"
+                    )
+                body_uid = bodies_before[0].get("uid")
+                if not isinstance(body_uid, str) or not body_uid:
+                    raise MitcadHeadlessError(
+                        f"Mitcad replay stage {index} body has no uid"
+                    )
+                bindings[stage["bind_single_body"]] = body_uid
+                stage_commands = _bind_values(
+                    stage["commands"],
+                    bindings,
                 )
+                command_results.append(
+                    _apply_commands(session, handle, stage_commands)
+                )
+                completed += len(stage_commands)
+
+            bodies = _body_query(session, handle)
 
             session.tool(
                 "document_save",
@@ -334,9 +422,11 @@ def run_document(
             shutil.copy2(native_export, export_path)
 
         return {
-            "completed": len(commands),
+            "completed": completed,
             "bodies": bodies,
-            "command_result": applied,
+            "command_result": command_results[-1],
+            "command_results": command_results,
+            "bindings": bindings,
             "export_result": export_reply,
         }
     finally:

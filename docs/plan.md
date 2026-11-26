@@ -102,7 +102,11 @@ Current spike evidence:
   checking native volume/bounds and .mitcad/STL output;
 - the same direct backend now lowers the unchanged
   `circle-negative-extrude` source as a native Mitcad sketch feature plus
-  negative-distance extrude, with native volume/bounds qualification.
+  negative-distance extrude, with native volume/bounds qualification;
+- `Edges.from_faces(Faces.TOP)` lowers to a Mitcad-native planar-face filter.
+  A backend-specific staged replay binds the actual body UID returned by
+  Mitcad before applying the chamfer; Forge never predicts `F<n>.b<n>`
+  topology identifiers.
 
 ### Queued: #162 / #163 verification evidence cleanup
 

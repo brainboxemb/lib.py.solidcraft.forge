@@ -10,7 +10,9 @@ from __future__ import annotations
 from ..compiler import ModelError, _collect, _require_positive
 from ..core import (
     Anchor,
+    Faces,
     Shape,
+    _FaceBoundarySelection,
     _box_corner_from_anchor,
     _native_dependencies,
     _plain_command_value,
@@ -203,6 +205,71 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
     ]
 
 
+_FACE_NORMALS = {
+    Faces.TOP: [0, 0, 1],
+    Faces.BOTTOM: [0, 0, -1],
+    Faces.LEFT: [-1, 0, 0],
+    Faces.RIGHT: [1, 0, 0],
+    Faces.FRONT: [0, -1, 0],
+    Faces.BACK: [0, 1, 0],
+}
+
+
+def _chamfer_document(shape: Shape, name: str):
+    base, distance, edges = shape.data
+    _require_positive(distance, "chamfer distance")
+    if base.kind != "box":
+        raise ModelError(
+            "Mitcad face-boundary chamfer currently requires a Box base"
+        )
+    if not isinstance(edges, _FaceBoundarySelection):
+        raise ModelError(
+            "Mitcad chamfer currently qualifies only Edges.from_faces(...)"
+        )
+    if len(edges.faces) != 1:
+        raise ModelError(
+            "Mitcad face-boundary chamfer currently requires one Faces value"
+        )
+
+    face = edges.faces[0]
+    commands = [
+        *_parameter_commands(shape),
+        _box_command(base, f"{name}Base"),
+    ]
+    replay = [
+        {
+            "bind_single_body": "body",
+            "commands": [
+                {
+                    "cmd": "add_feature",
+                    "name": name,
+                    "def": {
+                        "type": "chamfer",
+                        "body": {"$mitcad_bind": "body"},
+                        "faces": {
+                            "surface": "plane",
+                            "normal": _FACE_NORMALS[face],
+                            "normal_tolerance": 1e-6,
+                        },
+                        "size": {
+                            "type": "equal_distance",
+                            "distance": command_value(distance),
+                        },
+                    },
+                }
+            ],
+        }
+    ]
+    dependencies = _native_dependencies((commands, replay))
+    return {
+        "format": FORMAT,
+        "version": VERSION,
+        "backend": "mitcad",
+        "commands": _plain_command_value(commands),
+        "replay": _plain_command_value(replay),
+    }, dependencies
+
+
 def compile_model_with_dependencies(shape: Shape, name: str):
     """Compile one supported Forge Shape directly to Mitcad native intent."""
     if not isinstance(shape, Shape):
@@ -210,6 +277,8 @@ def compile_model_with_dependencies(shape: Shape, name: str):
     if not name or not name.isidentifier():
         raise ModelError("the model name must be a valid identifier")
 
+    if shape.kind == "chamfer":
+        return _chamfer_document(shape, name)
     if shape.kind == "box":
         geometry_commands = [_box_command(shape, name)]
     elif shape.kind == "sketch_base_extrusion":

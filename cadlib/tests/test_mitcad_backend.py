@@ -12,6 +12,7 @@ from scpf.runner import run_script
 ROOT = Path(__file__).resolve().parents[2]
 SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
+TOPOLOGY_BOX = ROOT / "models/topology-face-boundary-box/scpf/model.py"
 
 
 class MitcadBackendTests(unittest.TestCase):
@@ -87,6 +88,28 @@ class MitcadBackendTests(unittest.TestCase):
         self.assertTrue(distance.startswith("-("))
         self.assertIn("height", distance)
         self.assertEqual(extrusion["def"]["operation"], "new_body")
+
+    def test_face_boundary_chamfer_uses_native_filter_and_runtime_body_binding(self):
+        document = run_script(TOPOLOGY_BOX, backend="mitcad")
+        self.assertEqual([row["cmd"] for row in document["commands"]], ["add_feature"])
+        self.assertEqual(len(document["replay"]), 1)
+        stage = document["replay"][0]
+        self.assertEqual(stage["bind_single_body"], "body")
+        definition = stage["commands"][0]["def"]
+        self.assertEqual(definition["type"], "chamfer")
+        self.assertEqual(definition["body"], {"$mitcad_bind": "body"})
+        self.assertEqual(
+            definition["faces"],
+            {
+                "surface": "plane",
+                "normal": [0, 0, 1],
+                "normal_tolerance": 1e-06,
+            },
+        )
+        self.assertEqual(
+            definition["size"],
+            {"type": "equal_distance", "distance": 2},
+        )
 
     def test_centered_box_uses_native_mitcad_symmetric_height(self):
         document = compile_model(
