@@ -87,6 +87,14 @@ First spike:
 7. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
+Current spike evidence:
+- Mitcad v0.70.0 command reference is pinned locally from upstream tag
+  `v0.70.0` / commit `806a4210126ab977ba678708dd476496ddbd2968`;
+- `simple-box` now lowers from the unchanged SCPF source directly to either
+  SolidCraft `solid.box` or Mitcad `add_feature {type: box}`;
+- Mitcad lowering does not translate through SolidCraft command JSON;
+- unsupported Mitcad shape kinds fail explicitly.
+
 ### Queued: #162 / #163 verification evidence cleanup
 
 After the permanent `exp` line is stable:

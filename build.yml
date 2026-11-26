@@ -1,6 +1,6 @@
 schema: 1
 branch: feature/192-mitcad-backend-spike
 modules: [mitcad-reference]
-library: false
-models: []
+library: true
+models: [simple-box]
 tasks: [test]
