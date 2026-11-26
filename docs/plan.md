@@ -148,7 +148,7 @@ minor-release capability.
 #315 is not a v0.22.1 prerequisite because that patch only publishes the
 already-stable #306 qualification.
 
-### Experimental lane checkpoint
+### Experimental lane: #343 recursive primitive CSG IR
 
 The isolated semantic-IR / Mitcad line is currently at a qualified checkpoint.
 
@@ -175,10 +175,18 @@ engine-neutral compiler boundary:
   two profiles remain outside the qualified portable slice and fail closed on
   Mitcad.
 
-No further experimental capability is selected by this plan. Keep `exp`
-isolated at this qualified checkpoint until a demonstrated consumer need or a
-separately scoped issue justifies the next compiler/backend expansion. Do not
-promote `exp -> dev` merely because the experiment is green.
+#343 is the separately scoped next compiler/backend expansion. It generalizes
+the current special-case Box-Cylinder subtraction into recursive typed
+primitive CSG intent, adds the bounded `SphereIR` needed by the existing
+`primitive-csg` owner, and qualifies that unchanged public SCPF source through
+native Mitcad Sphere plus join/cut/intersect operations.
+
+The existing #246 `cylinder-subtract` owner must migrate through the same
+generic boolean IR so the experiment reduces special cases rather than adding
+a parallel representation. SolidCraft command behavior remains compatible,
+Mitcad predicts no body ids, and unsupported primitive/boolean forms remain
+fail-closed. Keep #315 independent on the normal lane and do not promote
+`exp -> dev` merely because an experimental checkpoint is green.
 
 ## Later
 
