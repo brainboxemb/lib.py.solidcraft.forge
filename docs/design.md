@@ -318,7 +318,7 @@ The public authoring objects are deliberately small intent records:
 - `DrawingRevision(...)` authors one native revision row;
 - drawing `properties={...}` and `title_block={...}` populate native drawing
   metadata/title cells;
-- `title_block_style="compact"` lowers to native `drawing.sheet.set(title_block="compact")`, using SolidCraft's compact 49 mm block rather than Forge-rendered replacement graphics.
+- `title_block_style="compact"` lowers to native `drawing.sheet.set(title_block="compact")`, using SolidCraft's compact 49 mm block rather than Forge-rendered replacement graphics. The builder confirms the replayed sheet reports a 49 mm native title-block height before publishing drawing artifacts.
 
 Forge lowers that intent to native `drawing.create`, `drawing.sheet.set`,
 `drawing.properties.set`, `drawing.revision.add`,
