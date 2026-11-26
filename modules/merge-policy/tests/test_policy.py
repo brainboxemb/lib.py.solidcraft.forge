@@ -20,11 +20,21 @@ from cad_model_merge_policy.policy import (
 )
 
 
-def check(name, status, conclusion, *prs):
+def workflow_run(
+    run_id,
+    status,
+    conclusion,
+    created_at,
+    *prs,
+    path=".github/workflows/ci.yml",
+):
     return {
-        "name": name,
+        "id": run_id,
+        "event": "pull_request",
+        "path": path,
         "status": status,
         "conclusion": conclusion,
+        "created_at": created_at,
         "pull_requests": [{"number": number} for number in prs],
     }
 
@@ -258,38 +268,149 @@ class MergePolicyTests(unittest.TestCase):
         self.assertIn('--resolution-prefix "resolve/"', workflow)
 
     @patch("cad_model_merge_policy.__main__.api")
-    def test_green_ci_allows_unrelated_pending_merge_check(self, api):
+    def test_green_ci_ignores_unrelated_workflow_runs(self, api):
         api.return_value = {
-            "check_runs": [
-                check("ci", "completed", "success", 25),
-                check("merge", "in_progress", None, 25),
-                check("cleanup", "queued", None, 25),
+            "workflow_runs": [
+                workflow_run(
+                    30,
+                    "in_progress",
+                    None,
+                    "2026-01-03T00:00:00Z",
+                    25,
+                    path=".github/workflows/merge-policy.yml",
+                ),
+                workflow_run(
+                    20,
+                    "completed",
+                    "success",
+                    "2026-01-02T00:00:00Z",
+                    25,
+                ),
+            ]
+        }
+        require_green_ci("owner/repo", "sha", 25, "token")
+        self.assertIn(
+            "event=pull_request",
+            api.call_args.args[1],
+        )
+        self.assertIn("head_sha=sha", api.call_args.args[1])
+
+    @patch("cad_model_merge_policy.__main__.api")
+    def test_newer_green_ci_supersedes_historical_failure(self, api):
+        api.return_value = {
+            "workflow_runs": [
+                workflow_run(
+                    101,
+                    "completed",
+                    "failure",
+                    "2026-01-01T00:00:00Z",
+                    25,
+                ),
+                workflow_run(
+                    103,
+                    "completed",
+                    "success",
+                    "2026-01-03T00:00:00Z",
+                    25,
+                ),
+                workflow_run(
+                    102,
+                    "completed",
+                    "failure",
+                    "2026-01-02T00:00:00Z",
+                    25,
+                ),
             ]
         }
         require_green_ci("owner/repo", "sha", 25, "token")
 
     @patch("cad_model_merge_policy.__main__.api")
-    def test_pending_ci_blocks_merge(self, api):
+    def test_latest_pending_ci_blocks_merge_even_after_older_green(self, api):
         api.return_value = {
-            "check_runs": [check("ci", "in_progress", None, 25)]
+            "workflow_runs": [
+                workflow_run(
+                    20,
+                    "completed",
+                    "success",
+                    "2026-01-01T00:00:00Z",
+                    25,
+                ),
+                workflow_run(
+                    21,
+                    "in_progress",
+                    None,
+                    "2026-01-02T00:00:00Z",
+                    25,
+                ),
+            ]
         }
         with self.assertRaisesRegex(MergePolicyError, "still running"):
             require_green_ci("owner/repo", "sha", 25, "token")
 
     @patch("cad_model_merge_policy.__main__.api")
-    def test_failed_ci_blocks_merge(self, api):
+    def test_latest_failed_ci_blocks_merge_even_after_older_green(self, api):
         api.return_value = {
-            "check_runs": [check("ci", "completed", "failure", 25)]
+            "workflow_runs": [
+                workflow_run(
+                    20,
+                    "completed",
+                    "success",
+                    "2026-01-01T00:00:00Z",
+                    25,
+                ),
+                workflow_run(
+                    21,
+                    "completed",
+                    "failure",
+                    "2026-01-02T00:00:00Z",
+                    25,
+                ),
+            ]
         }
         with self.assertRaisesRegex(MergePolicyError, "not green"):
             require_green_ci("owner/repo", "sha", 25, "token")
 
     @patch("cad_model_merge_policy.__main__.api")
+    def test_same_timestamp_uses_higher_run_id_as_latest(self, api):
+        api.return_value = {
+            "workflow_runs": [
+                workflow_run(
+                    20,
+                    "completed",
+                    "failure",
+                    "2026-01-01T00:00:00Z",
+                    25,
+                ),
+                workflow_run(
+                    21,
+                    "completed",
+                    "success",
+                    "2026-01-01T00:00:00Z",
+                    25,
+                ),
+            ]
+        }
+        require_green_ci("owner/repo", "sha", 25, "token")
+
+    @patch("cad_model_merge_policy.__main__.api")
     def test_missing_pr_specific_ci_blocks_merge(self, api):
         api.return_value = {
-            "check_runs": [
-                check("ci", "completed", "success", 99),
-                check("merge", "completed", "success", 25),
+            "workflow_runs": [
+                workflow_run(
+                    20,
+                    "completed",
+                    "success",
+                    "2026-01-01T00:00:00Z",
+                    99,
+                ),
+                workflow_run(
+                    21,
+                    "completed",
+                    "success",
+                    "2026-01-02T00:00:00Z",
+                    25,
+                    path=".github/workflows/merge-policy.yml",
+                ),
             ]
         }
         with self.assertRaisesRegex(MergePolicyError, "no central ci"):
