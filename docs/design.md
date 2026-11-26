@@ -830,7 +830,8 @@ SolidCraft declares the stable Forge surface plus assemblies/native
 topology/drawings. Typed portable nodes lower directly in the SolidCraft
 backend; `LegacyShapeIR` delegates only not-yet-migrated stable surface to the
 historical compiler. Mitcad declares only the already-qualified experimental
-slice: `primitive.box`, `primitive.cylinder`, `boolean.subtract`,
+slice: `primitive.box`, `primitive.cylinder`, `primitive.sphere`,
+`boolean.subtract`, `boolean.join`, `boolean.intersect`,
 `placement.primitive`, `sketch.circle`, `profile.region`,
 `feature.extrude.distance`,
 `modify.chamfer.face-boundary` and `native-topology`; its assembly compiler is absent, so assembly intent fails
@@ -849,49 +850,72 @@ normal Forge owners. The native smoke retains the Mitcad STL and feeds it to
 Mitcad body properties remain additional engine-specific evidence, not a
 replacement verifier.
 
-### Experimental Cylinder + subtract IR (#246)
+### Experimental recursive primitive CSG IR (#246, #343)
 
-The first capability added after the semantic-IR boundary proves that the IR,
-not a backend parser, owns new CAD semantics:
+#246 first proved that new multi-backend CAD semantics belong in Forge IR by
+migrating one Box-minus-Cylinder case. #343 generalizes that proof without
+adding a second boolean model:
 
 ```text
-SCPF: Box(...) - Cylinder(...)
-            ↓
-BooleanSubtractIR(
-  target=PlacementIR(BoxIR(...)),
-  tool=PlacementIR(CylinderIR(...))
+SCPF primitive CSG
+        ↓
+BooleanIR(
+  operation="intersect",
+  target=BooleanIR(
+    operation="cut",
+    target=BooleanIR(
+      operation="join",
+      target=PlacementIR(SphereIR(...)),
+      tool=PlacementIR(BoxIR(...))
+    ),
+    tool=PlacementIR(CylinderIR(...))
+  ),
+  tool=PlacementIR(BoxIR(...))
 )
-       ├── SolidCraft lowering
-       │     solid.box(operation=new)
-       │     solid.cylinder(operation=cut, targets=[body])
-       └── Mitcad lowering
-             box(operation=new_body)
-             cylinder(operation=cut, participants=[])
+        ├── SolidCraft
+        │     primitive(new) → primitive(join)
+        │     → primitive(cut) → primitive(intersect)
+        └── Mitcad
+              primitive(new_body) → primitive(join)
+              → primitive(cut) → primitive(intersect)
 ```
 
-`CylinderIR` keeps only primitive geometry: height, diameter and principal
-axis. #268 moves semantic anchor and world-space point into shared
-`PlacementIR`, so primitive geometry no longer carries backend-facing
-placement state.
+`BooleanIR` owns only semantic `join`, `cut` and `intersect` intent.
+Its current qualified form is deliberately left-associated: the target may be a
+previous `BooleanIR`, while each tool is one placed typed primitive. This
+covers the existing public `primitive-csg` owner and the earlier
+`cylinder-subtract` owner through one representation. The old
+`BooleanSubtractIR` special case is removed rather than retained beside the
+generic tree.
 
-`BooleanSubtractIR` is intentionally narrower than a general boolean tree:
-#246 qualifies one `BoxIR` target and one `CylinderIR` tool. Other target/tool
-combinations stay `LegacyShapeIR` for SolidCraft and fail closed on Mitcad
-until separately migrated.
+`SphereIR` stores Forge's radius semantic directly. SolidCraft lowers that to
+its native radius field; Mitcad derives its native diameter during lowering.
+Only the centered Sphere placement needed by the existing owner is qualified.
+Translated/tangent-anchor Sphere intent remains legacy/fail-closed until a
+separate placement slice proves it.
 
-Mitcad v0.70.0 gives primitives the same native operation vocabulary as
-Extrude. For the one-target slice Forge emits the Box first, then a Cylinder
-with `operation: "cut"` and empty `participants`. In Mitcad that means the
-existing bodies; Forge uses it only where its IR guarantees exactly one target
-body exists. No feature or body id is predicted, and no replay binding is
-needed for this boolean. SolidCraft is free to lower the same semantic boolean
-to its existing CSG command pair.
+The typed SolidCraft lowering deliberately reproduces the existing stable CSG
+command order and spelling. This is checked against the legacy compiler for
+both the focused Box-Cylinder subtraction and the complete primitive CSG
+source.
 
-The focused `cylinder-subtract` verification owner exists because the
-pre-existing `primitive-csg` owner also requires Sphere, union and
-intersection. Reusing that owner would have expanded the Mitcad capability
-surface merely to prove this slice. Both `scpf` and `scpf-mitcad`
-implementations of the focused owner consume the same SCPF source.
+Pinned Mitcad v0.70.0 gives Box, Cylinder and Sphere the same primitive
+operation vocabulary. Forge therefore emits one native Sphere `new_body`,
+then the translated Box as `join`, Cylinder as `cut` and final translated
+Box as `intersect`. Empty participants remain engine-owned meaning for the
+existing component body set; Forge predicts no body id and does not import
+BRep or use a generic geometry fallback.
+
+The two translated centered Boxes in `primitive-csg` have their semantic
+bottom faces exactly on the XY origin plane. Mitcad may therefore lower those
+equivalent solids as one-sided Boxes on XY instead of pretending arbitrary
+axial placement is portable. Other axial Box offsets remain fail-closed.
+
+The existing `primitive-csg` physical owner adds `scpf-mitcad` beside its
+SolidCraft-primary implementation and reuses the same SCPF source plus the
+existing engine-neutral geometry contract. That contract distinguishes the
+surviving spherical material, joined box extension, cylindrical bore and final
+intersection clip plane, so simple bounds are not enough to pass.
 
 ### Experimental primitive placement IR (#268)
 
@@ -911,7 +935,7 @@ PlacementIR(
 
 Direct primitives use `point=(0, 0, 0)`; `.at(...)` and qualified
 translations change the same `PlacementIR` instead of introducing a second
-backend-specific interpretation path. `BooleanSubtractIR` therefore combines
+backend-specific interpretation path. `BooleanIR` therefore combines
 placed semantic solids, not raw authoring payloads.
 
 SolidCraft lowers the full qualified world-space point through its established
