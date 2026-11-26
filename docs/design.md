@@ -67,6 +67,56 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Symbolic CAD math boundary
+
+Forge exposes non-linear native expression intent through the `cadmath`
+namespace rather than shadowing Python built-ins or exposing raw SolidCraft
+expression strings:
+
+```python
+mid_g = cadmath.min(self.mid_round, self.mid_wall / 2 - 0.05)
+mid_tip = cadmath.sqrt(
+    (self.mid_outer_r - mid_g) ** 2
+    - (self.mid_outer_r - self.mid_wall + mid_g) ** 2
+)
+lane = cadmath.round(self.mid_z / 2 / self.ref_lane_grid) * self.ref_lane_grid
+angle = -cadmath.atan((self.ref_d - self.ref_tip_d) / (2 * self.ref_tip_h))
+```
+
+`cadmath.min/max/sqrt/abs/round/floor/atan` return ordinary numbers when all
+inputs are numeric and a typed `Expression` when any input is symbolic.
+Expression arithmetic retains every contributing `Parameter`; command lowering
+emits the native SolidCraft expression and the existing dependency audit sees
+the same source parameters. `cadmath.atan` follows SolidCraft CAD semantics and
+evaluates in degrees.
+
+This is expression authoring, not a general Python symbolic algebra system.
+Forge only exposes operations that have a qualified native SolidCraft spelling
+and current-value evaluation.
+
+## Native axis-line and shifted revolve boundary
+
+`AxisLine(direction, origin=...)` is the public typed line contract for native
+features that need a fixed direction through an explicit, optionally symbolic
+XYZ point. Principal `Axis.X/Y/Z` remains the concise world-origin form.
+
+For Sketch revolve, the first shifted-axis contract is deliberately bounded:
+- one standalone unrotated XY/XZ/YZ Sketch;
+- optional symbolic standalone plane offset;
+- one closed profile;
+- `AxisLine` direction lies in that plane;
+- the axis origin's normal coordinate matches the Sketch plane offset;
+- lowering emits SolidCraft `solid.revolve.axis = {origin, dir}` directly.
+
+The Shape returned by `Sketch.revolve(...)` remains the authored feature
+identity. When used as `body - revolve`, lowering emits one native
+`solid.revolve(operation="cut")`; `Suppress(revolve)` therefore binds that
+one history feature rather than an approximation made from multiple primitives.
+
+`AxisLine` is also accepted by circular-pattern axis authoring so shifted axis
+intent has one public vocabulary. Topology-selected/construction axes and
+rotated Sketch frames remain separate future contracts.
+
 ## Native configuration-table boundary
 
 Configuration is final design intent rather than a Python model variant. The
@@ -267,7 +317,8 @@ The public authoring objects are deliberately small intent records:
 - `DrawingNote(...)` authors native sheet text;
 - `DrawingRevision(...)` authors one native revision row;
 - drawing `properties={...}` and `title_block={...}` populate native drawing
-  metadata/title cells.
+  metadata/title cells;
+- `title_block_style="compact"` lowers to native `drawing.sheet.set(title_block="compact")`, using SolidCraft's compact 49 mm block rather than Forge-rendered replacement graphics. The builder confirms the replayed sheet reports a 49 mm native title-block height before publishing drawing artifacts.
 
 Forge lowers that intent to native `drawing.create`, `drawing.sheet.set`,
 `drawing.properties.set`, `drawing.revision.add`,
@@ -402,7 +453,32 @@ Forge consumes the qualified optional `exp` contract from `template.cad.library`
 
 Permanent experimental builds keep durable evidence under `build/exp/`. Pages assembles `/exp/` only while the branch exists and marks that projection as experimental. The same single serialized Pages publication continues to own the complete `gh-pages` tree.
 
+## Manufacturing-output visual boundary
+
+Some native CAD capabilities intentionally do not alter the display B-rep.
+For those cases, visual verification follows the authoritative manufacturing
+representation. `sheet.perforate` is the first explicit example: SolidCraft
+stores the field in flat-pattern/DXF/volume semantics while the regular model
+snapshot remains a plain sheet.
+
+The `solidcraft-sheet-flat-pattern-visual` adapter opens the saved native
+`.sc`, exports `sheet.export_dxf`, reads native `CIRCLE` entities on layer
+`PERFORATION`, compares centres/diameters to the approved owner contract and
+retains DXF plus Actual/Goal/Overlay SVGs. Pages projects only these durable
+artifacts and never executes CAD.
+
 ## Pages projection
+
+Verification detail pages identify their role with **What this verifies** and
+collapse detailed measured checks by default using the same
+`cad-collapsible` interaction as generated command sequences. Owner-local
+`page.md` remains **Engineering explanation** and is shown directly after the
+primary Forge/source code, before generated commands and detailed evidence.
+
+These behaviors are owned generically by `template.cad.library#82` and
+`template.cad.library#84`; Forge adopts them and only owns case-specific
+explanation such as `models/configuration-position/page.md`.
+
 
 `models/<id>/` remains the single physical owner. Pages creates views from that owner according to `model.yml.purpose`:
 

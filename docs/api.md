@@ -39,8 +39,16 @@ Inside one component, geometry remains a lightweight feature/expression model:
 class Board:
     def build(self):
         body = Box(self.width, self.depth, self.height)
-        holes = Hole(d=5, depth=Depth.THROUGH_ALL).repeat_linear(...)
-        return body - holes
+        source_hole = Hole(d=5, depth=Depth.THROUGH_ALL).on(
+            body, face=Faces.TOP
+        )
+        body = body - source_hole
+        return body.rectangular_pattern(
+            source_hole,
+            count=2,
+            spacing=self.width - 24,
+            direction=Axis.X,
+        )
 ```
 
 Do not turn every primitive or feature into an assembly object. Conversely, do
@@ -183,11 +191,16 @@ edge selectors remain supported for their established use cases.
 `on()` selects a target surface for a within-component feature.
 
 ```python
-holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
+source_hole = Hole(d=8, depth=Depth.THROUGH_ALL).on(
+    plate, face=Faces.TOP
+)
+plate = plate - source_hole
+plate = plate.rectangular_pattern(
+    source_hole,
     count=2,
     spacing=self.width - 24,
-    axis=Axis.X,
-).on(plate, face=Faces.TOP)
+    direction=Axis.X,
+)
 
 boss = Cylinder(d=24, h=14).on(plate, face=Faces.TOP)
 ```
@@ -489,6 +502,8 @@ landscape and preserves an explicitly selected `iso-a3-part` template.
 
 The public drawing authoring controls are:
 
+- `title_block_style="compact"` selects SolidCraft's native compact 49 mm title block; omit it for the normal template block;
+
 ```python
 DrawingView(at=(x_mm, y_mm), scale="1:1", visual_style="shaded")
 
@@ -596,6 +611,28 @@ Supported drawing properties are `project`, `part_number`, `revision`,
 `author`, `organization`, `description` and `license`. Title-block
 override keys are passed to the native SolidCraft sheet template and therefore
 must name cells supported by that template.
+
+For small-part A4 sheets, request SolidCraft's native compact 49 mm block
+explicitly and use only cells that block contains:
+
+```python
+part.with_drawing(
+    name="Wall Hook Drawing",
+    title_block_style="compact",
+    properties={
+        "part_number": "WH-001",
+        "organization": "Example Engineering",
+    },
+    title_block={
+        "title": "Wall Hook",
+        "identification_number": "WH-001",
+    },
+)
+```
+
+The compact block intentionally omits scale, document type/status, language,
+revision and department cells. Omit `title_block_style` when those richer
+built-in title-block fields are required.
 
 A normal SCPF build publishes three sibling drawing artifacts below
 `drawings/`:
@@ -902,7 +939,7 @@ See [change 0037](background/changes/0037-explicit-native-hole-family.md).
 
 ### Native history patterns
 
-`rectangular_pattern()` and `circular_pattern()` operate on already-applied
+There is no public `repeat_linear()` feature-pattern alias. Use the explicit native-history pattern methods below.\n\n`rectangular_pattern()` and `circular_pattern()` operate on already-applied
 native history features rather than expanding independent Python copies. The
 source argument is the Forge `Shape` that was applied to the body; callers do
 not pass SolidCraft timeline-name strings. Forge resolves that exact source to

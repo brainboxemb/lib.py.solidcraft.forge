@@ -276,3 +276,21 @@ groups:
               rows={"Medium": ("80 mm", True),
                     "Large": ("100 mm", False)})
         example: configuration-table
+
+  - heading: Symbolic CAD math
+    items:
+      - title: "cadmath.min / max / sqrt / abs / round / floor / atan"
+        description: "Keep non-linear and quantized derived dimensions native and configuration-driven."
+        snippet: |
+          g = cadmath.min(self.rounding, self.wall / 2 - 0.05)
+          tip = cadmath.sqrt((self.radius - g) ** 2 - (self.radius - self.wall + g) ** 2)
+        example: configuration-symbolic-math
+
+  - heading: Shifted native revolve
+    items:
+      - title: "AxisLine(direction, origin=...)"
+        description: "Author one shifted/custom native axis with parameter-driven XYZ origin."
+        snippet: |
+          axis = AxisLine(Axis.Y, origin=(self.pin_x, 0, self.pin_z))
+          cut = profile.revolve(axis=axis)
+        example: shifted-axis-revolve

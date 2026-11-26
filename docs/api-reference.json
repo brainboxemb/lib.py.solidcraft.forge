@@ -626,6 +626,10 @@
           "description": "Native title-block cell overrides supported by the selected SolidCraft template."
         },
         {
+          "name": "title_block_style",
+          "description": "Optional native title-block presentation: built-in or compact. Compact selects SolidCraft's native compact 49 mm block."
+        },
+        {
           "name": "revision",
           "description": "Optional DrawingRevision row."
         },
@@ -638,8 +642,8 @@
           "description": "Iterable of DrawingDimension objects."
         }
       ],
-      "example": "part.with_drawing(name=\"Bracket drawing\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
-      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
+      "example": "part.with_drawing(name=\"Bracket drawing\", title_block_style=\"compact\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
+      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, title_block_style=None, revision=None, notes=(), dimensions=())"
     },
     {
       "kind": "callable",
@@ -716,6 +720,10 @@
           "description": "Native title-block cell overrides supported by the selected SolidCraft template."
         },
         {
+          "name": "title_block_style",
+          "description": "Optional native title-block presentation: built-in or compact. Compact selects SolidCraft's native compact 49 mm block."
+        },
+        {
           "name": "revision",
           "description": "Optional DrawingRevision row."
         },
@@ -729,7 +737,7 @@
         }
       ],
       "example": "assembly.with_drawing(left, name=\"Left bracket\", views={\"front\": DrawingView(at=(62,128))}, dimensions=(DrawingDimension.faces(\"front\", (-20,0,5), (20,0,5)),))",
-      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
+      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, title_block_style=None, revision=None, notes=(), dimensions=())"
     },
     {
       "kind": "callable",
@@ -2270,6 +2278,17 @@
         },
         {
           "kind": "callable",
+          "name": "cadmath",
+          "summary": "Namespace for native symbolic CAD math.",
+          "use_when": "Derived editable dimensions need min/max, roots, quantization or atan while retaining Parameter dependencies.",
+          "limits": "Use cadmath.min/max/sqrt/abs/round/floor/atan. It is native CAD-expression authoring, not a general symbolic algebra package.",
+          "parameters": [],
+          "example": "tip = cadmath.sqrt(cadmath.min(self.size, self.limit) ** 2 - self.offset ** 2)",
+          "signature": "cadmath.min|max|sqrt|abs|round|floor|atan(...)",
+          "reference": "reference/parameters-positioning/#cadmath"
+        },
+        {
+          "kind": "callable",
           "name": "pv",
           "summary": "Return the concrete Python value of a symbolic CAD dimension.",
           "use_when": "Python itself genuinely needs a number for validation or control flow.",
@@ -2283,6 +2302,26 @@
           "example": "if pv(clearance) < 0:\nraise ValueError(\"clearance must not be negative\")",
           "signature": "pv(dim) -> float",
           "reference": "reference/parameters-positioning/#pv"
+        },
+        {
+          "kind": "callable",
+          "name": "AxisLine",
+          "summary": "Describe a native axis through an explicit XYZ point.",
+          "use_when": "A revolve, circular pattern or other qualified native feature needs an axis shifted from the world origin while retaining parameter-driven origin coordinates.",
+          "limits": "Direction is fixed Axis.X/Y/Z or a fixed non-zero XYZ vector. Each consuming feature still validates its own geometric restrictions.",
+          "parameters": [
+            {
+              "name": "direction",
+              "description": "Axis.X/Y/Z or fixed non-zero XYZ direction."
+            },
+            {
+              "name": "origin",
+              "description": "XYZ point on the axis; coordinates may be numeric, Parameter or Expression."
+            }
+          ],
+          "example": "axis = AxisLine(Axis.Y, origin=(self.pin_x, 0, self.pin_z))",
+          "signature": "AxisLine(direction, origin=(0, 0, 0))",
+          "reference": "reference/parameters-positioning/#AxisLine"
         }
       ]
     },

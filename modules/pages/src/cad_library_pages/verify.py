@@ -219,8 +219,25 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
                         if (evidence / report).is_file():
                             expected.append(f"/blob/build/{build_scope.name}/models/{item}/{report}")
             explanation = html.find("engineering-explanation")
-            if explanation != -1 and explanation < html.find("check-overview"):
-                raise RuntimeError(f"{route}: engineering explanation must follow image/check overview")
+            if explanation != -1:
+                source = html.find("primary-source")
+                anchor = source if source != -1 else html.find("expected-setup")
+                following = [
+                    position
+                    for position in (
+                        html.find("cad-command-section"),
+                        html.find("drawing-sheet"),
+                        html.find("reference-code"),
+                    )
+                    if position != -1
+                ]
+                if explanation < anchor or (
+                    following and explanation > min(following)
+                ):
+                    raise RuntimeError(
+                        f"{route}: engineering explanation must follow primary source "
+                        "and precede generated commands/reference evidence"
+                    )
             stages = html.find("model-stages")
             if stages != -1 and stages < html.find("check-overview"):
                 raise RuntimeError(f"{route}: model stages must follow image/check overview")

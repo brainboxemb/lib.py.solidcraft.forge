@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/228-ci-configuration-owner-baseline
-modules: [ci]
+branch: issue/162-sheet-perforate-visual
+modules: [verification, pages]
 library: false
-models: []
+models: [sheet-perforate]
 tasks: [test]

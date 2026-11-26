@@ -5,10 +5,10 @@ This file contains unfinished work only.
 ## Accepted baseline
 
 The Forge migration is complete and the current public product baseline is
-released as **v0.19.0**.
+released as **v0.20.0**.
 
 The accepted baseline now includes:
-- 52 physical model owners, with SCPF primary per owner and historically real
+- 55 physical model owners, with SCPF primary per owner and historically real
   reference implementations kept inside the same physical owner;
 - native, geometry, inspection and applicable visual verification with durable
   generated evidence below `build/<scope>/models/**`;
@@ -31,6 +31,14 @@ The accepted baseline now includes:
   `Occurrence.attach(..., kind="revolute", ...)`;
 - display-only `Shape.with_appearance("#RRGGBB")` authoring without changing
   material/density/BOM semantics;
+- native editable configuration-table authoring through
+  `Configure(design, active=..., columns=..., rows=...)`, with
+  `Param(...)` parameter columns and `Suppress(feature)` feature-suppression
+  columns across Shape, component occurrence and Assembly results;
+- Forge-owned Configurations verification for dimensional/suppression variants,
+  complete Assembly Front/Below/Service positions and flexible-fit
+  `Free` / `Installed` physical states, including native saved-design
+  switching after replay;
 - policy-owned integration through PR comment `/merge`, including merge
   commits for permanent branch synchronization;
 - the library workflow split: pull requests run central `ci`; permanent
@@ -47,17 +55,17 @@ The accepted baseline now includes:
 - stable Pages quality and the canonical Pages deployment;
 - policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks.
 
-Release evidence for v0.19.0:
+Release evidence for v0.20.0:
 - promoted full product baseline:
-  `e19c362e3703ae0d62638d76728b29d3315320f0`;
-- full durable `build/main` evidence: library=true and 52/52 owners;
+  `186ce9663e35222f487fa267353931c8daa3c89e`;
+- full durable `build/main` evidence: library=true and 55/55 owners;
 - release metadata commit:
-  `ce9cd4439efe51edc360b7bfffb77b950e218d32`;
-- annotated tag `v0.19.0` points exactly to that release commit;
+  `8d3c789cb239b6c6a164de23a6cdd5d7d3108eac`;
+- annotated tag `v0.20.0` points exactly to that release commit;
 - the metadata-only permanent stable run selected release + library + zero
   models and retained the full product baseline;
 - stable -> dev synchronization completed through merge commit
-  `6e569782592ebd9d51fef991b032b6fb51eb7eb7`.
+  `f096066ee2bf2c0b8f90f344d1b2583171ab4ca1`.
 
 The pinned SolidCraft 0.49 registry still has no native centre-mark or
 centre-line drawing-authoring command; Forge deliberately does not emulate
@@ -85,15 +93,22 @@ First spike:
 6. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
-### Queued: #162 / #163 verification evidence cleanup
+### Dev: v0.21.0 consumer stabilization
 
-After the permanent `exp` line is stable:
-- #162 fixes the concrete `sheet-perforate` case where native perforation
-  metadata passes but the published model preview does not visibly show the
-  perforations, and adds an explicit approved visual expectation;
-- #163 audits every verification owner against the current evidence contract
-  so visually meaningful owners cannot remain green on metadata/native checks
-  alone.
+Finish the consumer-facing development line and release it before resuming the
+broad verification audit:
+
+1. complete #250 native compact title-block authoring and qualification;
+2. #210 is complete: canonical pattern examples now use the released
+   `rectangular_pattern(...)` contract;
+3. promote the fully qualified `dev` product through #265;
+4. publish v0.21.0 through release issue #264;
+5. resume #163 only after the stable release and `main -> dev`
+   synchronization are complete.
+
+The compact drawing path must remain native and backwards compatible with the
+existing `iso-a4-part` / `iso-a3-part` behavior. Experimental multi-backend
+work stays isolated on `exp` and is not part of v0.21.0.
 
 ## Later
 

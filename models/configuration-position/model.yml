@@ -3,12 +3,13 @@ purpose: [example, verification]
 section: configurations
 priority: 20
 title: Configuration Position
-tagline: Native rows drive an assembly occurrence to front, below and service positions
+tagline: One saved native table moves a front-plate occurrence through Front, Below and Service states
 description: >
-  A screen stays fixed while a separate front plate follows two native model
-  parameters. Configuration rows select three useful assembly positions without
-  rebuilding or branching the assembly in Python.
-parameters: Front, Below and Service positions
+  This case proves that one complete assembly can keep a fixed screen while a
+  separate front-plate occurrence follows two native Placement parameters.
+  Reopening the saved design and activating Front, Below or Service moves only
+  that occurrence without rebuilding the Python assembly.
+parameters: Front y=8 z=0; Below y=0 z=-55; Service y=25 z=0
 stages:
   - Build screen and front-plate component occurrences
   - Keep front-plate Y and Z placement associative to model parameters

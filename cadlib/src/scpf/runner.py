@@ -18,7 +18,7 @@ from pathlib import Path
 import sys
 import warnings
 
-from . import core
+from . import core, cadmath
 from .configurations import (
     Configure, Param, Suppress, _ConfiguredDesign, _apply_configuration_document,
 )
@@ -939,8 +939,10 @@ def run_script(path: str | Path) -> dict:
         "AnchorFrame": core.AnchorFrame,
         "AnchorTopology": core.AnchorTopology,
         "Axis": core.Axis,
+        "AxisLine": core.AxisLine,
         "Shape": core.Shape,
         "Parameter": core.Parameter,
+        "cadmath": cadmath,
         "Configure": Configure,
         "Param": Param,
         "Suppress": Suppress,

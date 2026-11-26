@@ -26,6 +26,7 @@ EXPECTED_IDS = {
     "components",
     "configuration-installed-state",
     "configuration-position",
+    "configuration-symbolic-math",
     "configuration-table",
     "cone-boolean",
     "corner-anchor",
@@ -57,6 +58,7 @@ EXPECTED_IDS = {
     "sheet-contour-flange-recess",
     "sheet-edge-flange",
     "sheet-fold",
+    "shifted-axis-revolve",
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
@@ -75,6 +77,7 @@ SCPF_ONLY_IDS = {
     "attached-through-all",
     "configuration-installed-state",
     "configuration-position",
+    "configuration-symbolic-math",
     "configuration-table",
     "cone-boolean",
     "exploded-views",
@@ -84,6 +87,7 @@ SCPF_ONLY_IDS = {
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
     "sheet-edge-flange",
+    "shifted-axis-revolve",
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
@@ -104,7 +108,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 55)
+        self.assertEqual(len(self.models), 57)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -116,7 +120,9 @@ class ModelTests(unittest.TestCase):
             "sample-plate-drawing",
             "configuration-installed-state",
             "configuration-position",
+            "configuration-symbolic-math",
             "configuration-table",
+            "shifted-axis-revolve",
         ):
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -130,7 +136,9 @@ class ModelTests(unittest.TestCase):
             "sample-plate-drawing",
             "configuration-installed-state",
             "configuration-position",
+            "configuration-symbolic-math",
             "configuration-table",
+            "shifted-axis-revolve",
         }:
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -171,11 +179,20 @@ class ModelTests(unittest.TestCase):
             if model_id == "sample-plate-drawing":
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
-                    ["native", "drawing-sheet"],
+                    ["native", "drawing-sheet", "compact-drawing-sheet"],
                 )
                 self.assertEqual(
                     [stage.runtime for stage in model.verifications],
-                    ["solidcraft", "reference"],
+                    ["solidcraft", "reference", "reference"],
+                )
+            elif model_id == "sheet-perforate":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "manufacturing-visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "solidcraft"],
                 )
             else:
                 self.assertEqual(
@@ -268,7 +285,11 @@ class ModelTests(unittest.TestCase):
                 pair
                 for model in self.models
                 for pair in (
-                    [("scpf", "native")]
+                    (
+                        [("scpf", "native"), ("scpf", "manufacturing-visual")]
+                        if model.id == "sheet-perforate"
+                        else [("scpf", "native")]
+                    )
                     if model.id in SCPF_ONLY_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
                 )
@@ -280,7 +301,7 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
         self.assertEqual(
             len(reference["verify_items"]),
-            multi_engine * 5 + 1,
+            multi_engine * 5 + 2,
         )
         self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
         self.assertEqual(
@@ -300,6 +321,7 @@ class ModelTests(unittest.TestCase):
                 ("pythonscad", "geometry"),
                 ("pybosl2", "geometry"),
                 ("scpf", "drawing-sheet"),
+                ("scpf", "compact-drawing-sheet"),
             },
         )
 

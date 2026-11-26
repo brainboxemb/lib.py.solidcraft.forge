@@ -203,6 +203,7 @@ class SCPFBuilderTests(unittest.TestCase):
                             "note_count": 0,
                             "properties": {},
                             "title_block": {},
+                            "title_block_style": "compact",
                             "view_styles": {
                                 "$drawing_1_iso": "shaded",
                             },
@@ -251,6 +252,7 @@ class SCPFBuilderTests(unittest.TestCase):
                                 {"dimensions": []},
                             ],
                             "notes": [],
+                            "title_block": {"size_mm": [180.0, 49.0]},
                             "title_block_overrides": {},
                             "title_block_cells": [],
                         }

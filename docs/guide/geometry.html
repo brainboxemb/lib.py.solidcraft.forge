@@ -170,3 +170,22 @@ display-state names.</p>
 <p>Keeping <code>Free</code> active makes the normal built artifact the
 manufacturing state. A presentation may later choose <code>Installed</code>,
 but that selection belongs to presentation tooling rather than the model API.</p>
+
+<h2 id="shifted-revolve-axis">Shifted revolve axes</h2>
+<p>Use <code>AxisLine</code> when a native revolve must run around a line that
+does not pass through the world origin. Its origin coordinates may remain model
+parameters or expressions.</p>
+<pre><code>with Sketch(plane="XY", offset=self.pin_z) as profile:
+    Polygon2D([...], plane="XY")
+
+cut = profile.revolve(
+    axis=AxisLine(
+        Axis.Y,
+        origin=(self.pin_x, 0, self.pin_z),
+    ),
+)
+body = panel - cut</code></pre>
+<p>The axis line must be coplanar with the standalone Sketch. A parameter-driven
+Sketch offset and the matching AxisLine origin remain native SolidCraft
+expressions. The returned revolve is one feature and can therefore be passed to
+<code>Suppress(cut)</code>.</p>
