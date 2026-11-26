@@ -48,7 +48,8 @@ The accepted baseline now includes:
 - policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks;
 - the experimental `exp` line has a proven second native CAD backend boundary: Mitcad v0.70.0 reference/runtime identity is pinned, unchanged SCPF sources qualify native Box, Circle Sketch+Extrude and face-boundary Chamfer, native Mitcad topology remains engine-owned, retained Mitcad STL passes the existing geometry verifier, and the internal `BackendAdapter` centralizes backend selection while SolidCraft remains the stable default;
 - the adapter-boundary regression found by the permanent 52-owner gate is fixed: SolidCraft compiler/assembly imports occur during package initialization so public `scpf.assembly` remains the callable decorator; permanent `build/exp` at `4e2a6a7feb0de7f750efe1d073852208f1a25b5a` passed with library=true and 52/52 owners, followed by successful `/exp/` Pages publication;
-- the experimental builder/runtime boundary is complete: `builder-scpf-mitcad` compiles unchanged SCPF sources through the Mitcad adapter and retains `model.mitcad` + `model.stl`; `docker.cad.solidcraft v0.3.7` publishes the isolated immutable `cad-mitcad` role pinned to Mitcad 0.70.0; temporary Forge evidence PR #230 qualified the exact release candidate through normal CAD-CI with `simple-box` and `circle-negative-extrude` Mitcad geometry PASS and was closed unmerged.
+- the experimental builder/runtime boundary is complete: `builder-scpf-mitcad` compiles unchanged SCPF sources through the Mitcad adapter and retains `model.mitcad` + `model.stl`; `docker.cad.solidcraft v0.3.7` publishes the isolated immutable `cad-mitcad` role pinned to Mitcad 0.70.0; temporary Forge evidence PR #230 qualified the exact release candidate through normal CAD-CI with `simple-box` and `circle-negative-extrude` Mitcad geometry PASS and was closed unmerged;
+- the first owner-integrated Mitcad slice stays inside the existing physical owners: `simple-box`, `circle-negative-extrude` and `topology-face-boundary-box` declare secondary `scpf-mitcad` implementations over the same SCPF source while SolidCraft remains primary; all three enter generic reference-runtime mesh verification, including an explicit two-edge chamfer geometry contract for the topology owner.
 
 Release evidence for v0.19.0:
 - promoted full product baseline:
@@ -71,21 +72,7 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #232 attach Mitcad to qualified model owners
-
-The backend, builder and immutable runtime boundaries are accepted on `exp`.
-The next boundary is owner integration for the already-qualified portable slice:
-
-- add secondary `scpf-mitcad` implementations inside the existing
-  `simple-box`, `circle-negative-extrude` and
-  `topology-face-boundary-box` owners;
-- reuse each owner's unchanged `scpf/model.py` source and keep SolidCraft
-  `scpf` as primary;
-- preserve the owner-local verification contract for every implementation and
-  add only missing evidence needed by the Mitcad secondary path;
-- do not add new Mitcad CAD feature coverage and do not integrate `exp -> dev`.
-
-### Queued: #162 / #163 verification evidence cleanup
+### #162 / #163 verification evidence cleanup
 
 After the permanent `exp` line is stable:
 - #162 fixes the concrete `sheet-perforate` case where native perforation

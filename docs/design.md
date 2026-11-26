@@ -539,4 +539,24 @@ runtime-candidate manifest through normal CAD-CI and proved both
 `simple-box--scpf-mitcad:geometry` and
 `circle-negative-extrude--scpf-mitcad:geometry` PASS. That PR was closed
 unmerged so candidate-only owner declarations did not enter `exp`.
-#232 owns the later secondary owner attachment.
+#232 owns the secondary owner attachment.
+
+### Experimental Mitcad owner integration (#232)
+
+The first persistent Mitcad implementations do not create a second model tree.
+The existing owners `simple-box`, `circle-negative-extrude` and
+`topology-face-boundary-box` each add one secondary `scpf-mitcad`
+implementation that points to the same owner-local `scpf/model.py` as the
+primary SolidCraft `scpf` implementation.
+
+`simple-box` and `circle-negative-extrude` reuse their existing generic mesh
+geometry contracts. `topology-face-boundary-box` adds a generic geometry
+contract because its previous evidence was SolidCraft-native only: common box
+bounds and watertightness are supplemented by two surface-distance probes at
+the original top boundary edges. A correct 2 mm equal-distance chamfer moves
+those surfaces by `sqrt(2)` mm, so an unchamfered box cannot satisfy the
+contract. The same contract applies to both SolidCraft and Mitcad STL.
+
+SolidCraft remains the primary implementation and owns native/visual checks.
+Mitcad remains a secondary experimental implementation and enters the normal
+reference-runtime mesh verification path.

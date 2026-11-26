@@ -26,7 +26,8 @@
 5. CI batches compatible implementation work and does not start one Docker container per model implementation.
 6. The experimental `builder-scpf-mitcad` capability lowers the same trusted SCPF source through `run_script(..., backend="mitcad")` and must retain both the native `model.mitcad` document and exported `model.stl`.
 7. The Mitcad builder must not download or install a CAD runtime. Its runtime contract is an already-qualified `mitcad-cli` executable on `PATH`, optionally supplied through `CAD_LIBRARY_MITCAD_EXECUTABLE`.
-8. Root `runtimes.mitcad` must use the immutable released `cad-mitcad:v0.3.7` role. Owner `scpf-mitcad` implementations remain a separate experimental change and must preserve each physical owner's verification contract.
+8. Root `runtimes.mitcad` must use the immutable released `cad-mitcad:v0.3.7` role. Experimental `scpf-mitcad` implementations stay inside their existing physical owner, reuse the same SCPF source, keep SolidCraft `scpf` primary and must satisfy that owner's applicable verification contract.
+9. The initial owner-integrated Mitcad slice is limited to `simple-box`, `circle-negative-extrude` and `topology-face-boundary-box`; expanding that set requires separately qualified backend capability and owner evidence.
 
 ## SCPF native associativity
 

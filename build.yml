@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/221-adopt-mitcad-runtime
-modules: [ci]
-library: false
-models: []
+branch: feature/232-mitcad-owner-integration
+modules: [builder-scpf-mitcad, ci]
+library: true
+models: [simple-box, circle-negative-extrude, topology-face-boundary-box]
 tasks: [test]
