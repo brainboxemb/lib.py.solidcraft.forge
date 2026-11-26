@@ -239,30 +239,125 @@ class SemanticIRTests(unittest.TestCase):
             "extrude",
         )
 
-    def test_nested_region_shape_is_representable_but_fails_closed_until_qualified(self):
-        outer = CircleProfileIR(diameter=10)
-        inner = CircleProfileIR(diameter=8)
-        future = ModelIR(
-            root=ExtrudeIR(
-                sketch=SketchIR(
-                    name="Annulus",
-                    plane="XY",
-                    profiles=(outer, inner),
-                ),
-                regions=(RegionIR(outer=0, holes=(1,)),),
-                distance=20,
-                direction="positive",
-            ),
-            parameters=(),
+    def test_annular_profile_extrude_is_two_profiles_one_semantic_region(self):
+        outer = Parameter("outer_diameter", 10)
+        inner = Parameter("inner_diameter", 8)
+        length = Parameter("length", 30)
+        with Sketch(name="Tube profile", plane="XY") as sketch:
+            Circle2D(d=outer)
+            Circle2D(d=inner)
+
+        shape = sketch.extrude(
+            length,
+            profiles=[(4.5, 0)],
+            exact_regions=True,
+        )
+        model = self.assert_solidcraft_compatibility(shape, "Tube")
+
+        self.assertIsInstance(model.root, ExtrudeIR)
+        self.assertEqual(len(model.root.sketch.profiles), 2)
+        self.assertEqual(
+            [profile.diameter for profile in model.root.sketch.profiles],
+            [outer, inner],
+        )
+        self.assertEqual(
+            model.root.regions,
+            (RegionIR(outer=0, holes=(1,)),),
+        )
+        self.assertEqual(
+            [parameter.name for parameter in model.parameters],
+            ["outer_diameter", "inner_diameter", "length"],
         )
 
-        self.assertEqual(future.root.regions[0].holes, (1,))
-        for compiler in (compile_solidcraft_ir, compile_mitcad_ir):
-            with self.assertRaisesRegex(
-                ModelError,
-                "currently requires one circle region",
-            ):
-                compiler(future, "FutureAnnulus")
+        mitcad = compile_mitcad_ir(model, "Tube")
+        sketch_def = mitcad["commands"][-2]["def"]
+        extrude_def = mitcad["commands"][-1]["def"]
+        self.assertEqual(sketch_def["type"], "sketch")
+        self.assertEqual(
+            [entity["type"] for entity in sketch_def["entities"]],
+            ["point", "circle", "circle"],
+        )
+        self.assertEqual(
+            [dimension["value"] for dimension in sketch_def["dimensions"]],
+            ["outer_diameter", "inner_diameter"],
+        )
+        self.assertEqual(extrude_def["type"], "extrude")
+        self.assertEqual(
+            extrude_def["profiles"],
+            [{"sketch": {"ref": "sk.uid"}, "point": [4.5, 0.0]}],
+        )
+        self.assertEqual(
+            extrude_def["extent"]["distance"],
+            "length",
+        )
+
+    def test_annular_region_invalid_membership_fails_before_native_execution(self):
+        cases = (
+            ModelIR(
+                root=ExtrudeIR(
+                    sketch=SketchIR(
+                        name="MissingHole",
+                        plane="XY",
+                        profiles=(
+                            CircleProfileIR(diameter=10),
+                            CircleProfileIR(diameter=8),
+                        ),
+                    ),
+                    regions=(RegionIR(outer=0, holes=(2,)),),
+                    distance=20,
+                    direction="positive",
+                ),
+                parameters=(),
+            ),
+            ModelIR(
+                root=ExtrudeIR(
+                    sketch=SketchIR(
+                        name="InsideOut",
+                        plane="XY",
+                        profiles=(
+                            CircleProfileIR(diameter=8),
+                            CircleProfileIR(diameter=10),
+                        ),
+                    ),
+                    regions=(RegionIR(outer=0, holes=(1,)),),
+                    distance=20,
+                    direction="positive",
+                ),
+                parameters=(),
+            ),
+        )
+
+        for model in cases:
+            for compiler in (compile_solidcraft_ir, compile_mitcad_ir):
+                with self.subTest(model=model.root.sketch.name, compiler=compiler):
+                    with self.assertRaises(ModelError):
+                        compiler(model, model.root.sketch.name)
+
+    def test_three_profile_exact_region_stays_legacy_for_solidcraft_only(self):
+        with Sketch(name="Three circles", plane="XY") as sketch:
+            Circle2D(d=10)
+            Circle2D(d=8)
+            Circle2D(d=6)
+        shape = sketch.extrude(
+            20,
+            profiles=[(4.5, 0)],
+            exact_regions=True,
+        )
+
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        self.assertEqual(
+            compile_solidcraft_ir(model, "ThreeCircles"),
+            _compile_shape_legacy_with_dependencies(
+                shape,
+                "ThreeCircles",
+            )[0],
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "does not yet support Forge shape kind 'sketch_base_extrusion'",
+        ):
+            compile_mitcad_ir(model, "ThreeCircles")
 
     def test_region_ir_rejects_invalid_profile_membership(self):
         for kwargs in (
