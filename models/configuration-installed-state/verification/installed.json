@@ -25,6 +25,12 @@
           }
         }
       }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Medium"
+      }
     }
   ]
 }

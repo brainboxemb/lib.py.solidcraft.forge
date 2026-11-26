@@ -49,6 +49,12 @@
           }
         }
       }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Large"
+      }
     }
   ]
 }
