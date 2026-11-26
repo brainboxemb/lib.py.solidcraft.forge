@@ -740,11 +740,44 @@ class SemanticIRTests(unittest.TestCase):
             )
         )
 
-        with self.assertRaisesRegex(
-            ModelError,
-            "RevolveIR cut lowering is not qualified yet",
-        ):
-            compile_mitcad_ir(model, "ShiftedRevolveCut")
+        mitcad = compile_mitcad_ir(
+            model,
+            "ShiftedRevolveCut",
+        )
+        self.assertEqual(
+            [row["cmd"] for row in mitcad["commands"]],
+            ["add_parameter", "add_feature"],
+        )
+        self.assertEqual(
+            mitcad["replay"][0]["bind_single_body"],
+            "body",
+        )
+        replay_commands = mitcad["replay"][0]["commands"]
+        sketch_def = replay_commands[0]["def"]
+        revolve_def = replay_commands[1]["def"]
+        construction = [
+            entity
+            for entity in sketch_def["entities"]
+            if entity.get("construction") is True
+        ]
+        self.assertEqual(len(construction), 1)
+        self.assertEqual(construction[0]["type"], "line")
+        self.assertIn(
+            "axis_x",
+            [dimension["value"] for dimension in sketch_def["dimensions"]],
+        )
+        self.assertEqual(
+            revolve_def["axis"],
+            {
+                "sketch": {"ref": "sk.uid"},
+                "curve": construction[0]["id"],
+            },
+        )
+        self.assertEqual(revolve_def["operation"], "cut")
+        self.assertEqual(
+            revolve_def["participants"],
+            [{"$mitcad_bind": "body"}],
+        )
 
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
         with Sketch(name="HalfProfile", plane="XZ") as sketch:
