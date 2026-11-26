@@ -128,8 +128,9 @@
     repository/build-root paths.
 12. The SCPF builder must validate the fully-authored native drawing inspection
     against the compiled drawing intent before publishing PDF/PNG evidence:
-    orientation, view count, dimension count, note count, properties, revision
-    and authored title-block values must survive native replay.
+    orientation, view count, dimension count, note count, properties, revision,
+    authored title-block values and requested compact title-block geometry must
+    survive native replay.
 13. Drawing qualification must also include an approved visual baseline of the
     generated native sheet. Image comparison is generic verification behavior,
     not a drawing renderer; it consumes the already-generated sheet PNG.
