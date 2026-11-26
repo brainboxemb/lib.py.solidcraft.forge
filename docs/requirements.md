@@ -159,6 +159,12 @@
 5. Forge CI must compare the checked registry with the root-pinned immutable
    SolidCraft runtime whenever the reference module/reference tree is selected.
 
+## Manufacturing visual verification
+
+1. Native manufacturing-only features must be visually qualified from their authoritative manufacturing output rather than fabricated B-rep geometry.
+2. SolidCraft sheet perforation fields use native flat-pattern/DXF semantics; Forge must not replace them with repeated solid holes solely to make a 3D preview look perforated.
+3. Manufacturing visual evidence must retain the native exported artifact plus deterministic Actual/Goal/Overlay review images and a model-owned approved geometry contract.
+
 ## Verification
 
 1. Generic `cad_verification` source is local under `modules/verification/`.

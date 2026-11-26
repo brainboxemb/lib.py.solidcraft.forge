@@ -1,0 +1,128 @@
+{
+  "schema": 1,
+  "approval": "approved",
+  "body": "SheetPerforate",
+  "outline": {
+    "minimum": [
+      -30,
+      -20
+    ],
+    "maximum": [
+      30,
+      20
+    ]
+  },
+  "perforations": [
+    {
+      "center": [
+        -20,
+        -10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        -10,
+        -10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        0,
+        -10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        10,
+        -10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        20,
+        -10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        -20,
+        0
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        -10,
+        0
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        0,
+        0
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        10,
+        0
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        20,
+        0
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        -20,
+        10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        -10,
+        10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        0,
+        10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        10,
+        10
+      ],
+      "diameter": 5
+    },
+    {
+      "center": [
+        20,
+        10
+      ],
+      "diameter": 5
+    }
+  ],
+  "tolerance_mm": 0.001,
+  "provenance": {
+    "rationale": "60 x 40 sheet, 5 mm edge clearance, 5 mm diameter, 10 mm square pitch",
+    "native_contract": "sheet.perforate manufacturing field; not B-rep holes",
+    "issue": 162
+  }
+}

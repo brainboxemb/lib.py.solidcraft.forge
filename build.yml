@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/242-shifted-axis-revolve
-modules: [builder-scpf, verification, pages, ci]
-library: true
-models: [shifted-axis-revolve]
+branch: issue/162-sheet-perforate-visual
+modules: [verification, pages]
+library: false
+models: [sheet-perforate]
 tasks: [test]
