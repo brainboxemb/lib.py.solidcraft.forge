@@ -47,6 +47,10 @@ class SemanticIRTests(unittest.TestCase):
         )
 
         model = self.assert_solidcraft_compatibility(shape, "Panel")
+        self.assert_solidcraft_compatibility(
+            Box(length, width, height, anchor=Anchor.CENTER),
+            "CenteredPanel",
+        )
         self.assertIsInstance(model.root, BoxIR)
         self.assertEqual(model.root.anchor, (0, 0, -1))
         self.assertEqual(

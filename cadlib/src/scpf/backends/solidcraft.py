@@ -13,9 +13,11 @@ from ..compiler import (
     _compile_shape_legacy_with_dependencies,
 )
 from ..core import (
+    Expression,
+    Parameter,
     _DirectionSelector,
-    _box_corner_from_anchor,
     _native_dependencies,
+    _native_expression,
     _plain_command_value,
     _pv as pv,
     command_value,
@@ -65,6 +67,47 @@ def _parameter_commands(model: ModelIR) -> list[dict]:
     ]
 
 
+def _negative_half(value):
+    """Match the stable SolidCraft symbolic half-expression spelling."""
+    if isinstance(value, Parameter):
+        return _native_expression(
+            f"-{value.name} / 2",
+            (value.name,),
+        )
+    if isinstance(value, Expression):
+        expression = command_value(value)
+        return _native_expression(
+            f"-({expression}) / 2",
+            expression.parameters,
+        )
+    return -pv(value) / 2
+
+
+def _negative_value(value):
+    if isinstance(value, Parameter):
+        return _native_expression(f"-{value.name}", (value.name,))
+    if isinstance(value, Expression):
+        expression = command_value(value)
+        return _native_expression(
+            f"-({expression})",
+            expression.parameters,
+        )
+    return -pv(value)
+
+
+def _box_corner(node: BoxIR):
+    dimensions = (node.length, node.width, node.height)
+    corner = []
+    for dimension, side in zip(dimensions, node.anchor):
+        if side < 0:
+            corner.append(0)
+        elif side > 0:
+            corner.append(_negative_value(dimension))
+        else:
+            corner.append(_negative_half(dimension))
+    return corner
+
+
 def _box_command(node: BoxIR, name: str) -> dict:
     _require_positive(node.length, "box length")
     _require_positive(node.width, "box width")
@@ -75,20 +118,13 @@ def _box_command(node: BoxIR, name: str) -> dict:
         "width": command_value(node.width),
         "height": command_value(node.height),
     }
-    selector = _DirectionSelector(node.anchor)
+    _DirectionSelector(node.anchor)
     if node.anchor == (0, 0, 0):
         params["center"] = [0, 0, 0]
     else:
-        corner = _box_corner_from_anchor(
-            node.length,
-            node.width,
-            node.height,
-            (0, 0, 0),
-            selector,
-        )
         params["corner"] = [
             command_value(value)
-            for value in corner
+            for value in _box_corner(node)
         ]
     params["body_name"] = name
     return _command("solid.box", **params)
