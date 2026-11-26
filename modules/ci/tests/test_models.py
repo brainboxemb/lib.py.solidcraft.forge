@@ -320,9 +320,17 @@ class ModelTests(unittest.TestCase):
         reference = manifests[2]
         multi_engine = len(STANDARD_MULTI_ENGINE_IDS)
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
+        expected_reference_verify_count = sum(
+            len(stage.implementations)
+            if stage.implementations is not None
+            else len(model.implementations)
+            for model in self.models
+            for stage in model.verifications
+            if stage.runtime == "reference"
+        )
         self.assertEqual(
             len(reference["verify_items"]),
-            multi_engine * 5 + len(MITCAD_IDS) + len(MITCAD_FOCUSED_IDS),
+            expected_reference_verify_count,
         )
         self.assertEqual(
             len(reference["preview_items"]),
