@@ -316,7 +316,10 @@ class ModelTests(unittest.TestCase):
             len(reference["verify_items"]),
             multi_engine * 5 + len(MITCAD_IDS) + 2,
         )
-        self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
+        self.assertEqual(
+            len(reference["preview_items"]),
+            multi_engine * 4 + len(MITCAD_IDS),
+        )
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
             (set(EXPECTED_IDS) - set(SCPF_ONLY_IDS))
