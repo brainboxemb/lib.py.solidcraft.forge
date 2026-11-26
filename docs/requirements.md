@@ -56,6 +56,12 @@
 33. The initial Mitcad parameterized Revolve lowering is bounded to the origin-based XZ rectangle used by `native-revolve`. It seeds native Sketch points from current values, constrains the rectangle natively and binds its radial/axial line dimensions to the Forge parameters before creating one native Revolve. Unsupported parameterized polygon layouts fail closed rather than being baked.
 34. Angle-valued Revolve parameters use degree units in `ParameterIR`. A parameterized 360-degree sweep remains an angle-driven native feature so later edits to 180 degrees are preserved; lowering must not collapse that parameter dependency into an unconditional full-revolution flag.
 
+35. Revolve axes are semantic reference geometry. Principal world axes and the bounded shifted principal-axis form must normalize through one typed `AxisLineIR(direction, origin)`; backend-native axis strings, sketch curve ids and construction helpers are not IR.
+36. `AxisLineIR.origin` may retain Forge Parameters/Expressions. Backends may derive transport geometry from current values, but the authored dependency remains symbolic and must drive the native axis after parameter changes.
+37. An authored subtractive Sketch Revolve over a qualified typed target must remain one `RevolveIR(operation="cut", target=...)` feature. Forge must not replace that identity with a new-body Revolve plus an unrelated generic Boolean when the semantic feature itself owns the cut.
+38. SolidCraft lowering of the bounded Revolve-cut slice must remain behaviorally equivalent to the existing one-feature native `solid.revolve(operation="cut")` contract. Mitcad may express the same `AxisLineIR` as backend-only construction geometry and must bind the existing target body at runtime rather than storing native ids in IR.
+39. The first shifted Mitcad `AxisLineIR` slice is bounded to a principal X/Y direction lying in an unshifted XY Sketch and one Box target. Shifted Sketch planes, non-principal axis directions and portable configuration/suppression remain explicit later semantic gaps and must fail closed rather than be baked.
+
 ## SCPF native associativity
 
 1. When SolidCraft exposes a durable native reference for editable intent, Forge

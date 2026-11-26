@@ -4,6 +4,7 @@ import unittest
 from scpf import (
     Anchor,
     Axis,
+    AxisLine,
     Box,
     Circle2D,
     Cone,
@@ -22,6 +23,7 @@ from scpf.compiler import (
     _compile_shape_legacy_with_dependencies,
 )
 from scpf.ir import (
+    AxisLineIR,
     BooleanIR,
     BoxIR,
     ChamferIR,
@@ -629,7 +631,10 @@ class SemanticIRTests(unittest.TestCase):
 
         model = self.assert_solidcraft_compatibility(shape, "NativeRevolve")
         self.assertIsInstance(model.root, RevolveIR)
-        self.assertEqual(model.root.axis, "X")
+        self.assertEqual(
+            model.root.axis,
+            AxisLineIR(direction="X", origin=(0, 0, 0)),
+        )
         self.assertIsNone(model.root.direction)
         self.assertEqual(model.root.region, RegionIR(outer=0))
         self.assertIsInstance(model.root.sketch.profiles[0], PolygonProfileIR)
@@ -673,6 +678,106 @@ class SemanticIRTests(unittest.TestCase):
             {"type": "angle", "angle": "sweep"},
         )
         self.assertEqual(revolve_def["operation"], "new_body")
+
+    def test_shifted_axis_revolve_cut_is_one_semantic_feature(self):
+        axis_x = Parameter("axis_x", 8)
+        panel = Box(80, 46, 10)
+        with Sketch(name="PassThrough", plane="XY") as profile:
+            Polygon2D(
+                [
+                    (12, -5),
+                    (16, -5),
+                    (16, 5),
+                    (12, 5),
+                ],
+                plane="XY",
+            )
+        shape = panel - profile.revolve(
+            axis=AxisLine(
+                Axis.Y,
+                origin=(axis_x, 0, 0),
+            ),
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ShiftedRevolveCut",
+        )
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(model.root.operation, "cut")
+        self.assertIsInstance(model.root.target, PlacementIR)
+        self.assertEqual(
+            model.root.axis,
+            AxisLineIR(
+                direction="Y",
+                origin=(axis_x, 0, 0),
+            ),
+        )
+
+        solidcraft = compile_solidcraft_ir(
+            model,
+            "ShiftedRevolveCut",
+        )
+        revolve = solidcraft["commands"][-1]
+        self.assertEqual(revolve["command"], "solid.revolve")
+        self.assertEqual(revolve["params"]["operation"], "cut")
+        self.assertEqual(
+            revolve["params"]["axis"],
+            {
+                "origin": ["axis_x", 0, 0],
+                "dir": [0.0, 1.0, 0.0],
+            },
+        )
+        self.assertEqual(revolve["params"]["targets"], ["ShiftedRevolveCut"])
+        self.assertFalse(
+            any(
+                row["command"] in {
+                    "solid.boolean",
+                    "solid.cut",
+                    "solid.subtract",
+                }
+                for row in solidcraft["commands"]
+            )
+        )
+
+        mitcad = compile_mitcad_ir(
+            model,
+            "ShiftedRevolveCut",
+        )
+        self.assertEqual(
+            [row["cmd"] for row in mitcad["commands"]],
+            ["add_parameter", "add_feature"],
+        )
+        self.assertEqual(
+            mitcad["replay"][0]["bind_single_body"],
+            "body",
+        )
+        replay_commands = mitcad["replay"][0]["commands"]
+        sketch_def = replay_commands[0]["def"]
+        revolve_def = replay_commands[1]["def"]
+        construction = [
+            entity
+            for entity in sketch_def["entities"]
+            if entity.get("construction") is True
+        ]
+        self.assertEqual(len(construction), 1)
+        self.assertEqual(construction[0]["type"], "line")
+        self.assertIn(
+            "axis_x",
+            [dimension["value"] for dimension in sketch_def["dimensions"]],
+        )
+        self.assertEqual(
+            revolve_def["axis"],
+            {
+                "sketch": {"ref": "sk.uid"},
+                "curve": construction[0]["id"],
+            },
+        )
+        self.assertEqual(revolve_def["operation"], "cut")
+        self.assertEqual(
+            revolve_def["participants"],
+            [{"$mitcad_bind": "body"}],
+        )
 
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
         with Sketch(name="HalfProfile", plane="XZ") as sketch:

@@ -48,6 +48,8 @@ class BackendRegistryTests(unittest.TestCase):
                     "feature.extrude.distance",
                     "feature.extrude.symmetric",
                     "feature.revolve.angle",
+                    "feature.revolve.cut",
+                    "reference.axis-line.shifted-principal",
                     "modify.chamfer.face-boundary",
                     "native-topology",
                 }

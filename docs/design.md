@@ -44,17 +44,19 @@ CI selects `simple-box` once. Its `ci.yml` expands the implementations required 
 
 The template role `cadlib` is the actual `scpf` package. Forge-specific compilation is consumer-owned logic.
 
-The intended Forge path is:
+The intended Forge compiler path is:
 
 ```text
 models/<id>/scpf/model.py
-        ↓ cadlib/scpf compiler
-SolidCraft command JSON
-        ↓ generic builder-solidcraft
-model.sc + model.stl + native model.png
-        ↓ reference verifier
-owner-local geometry/semantic evidence
+        ↓ one SCPF evaluation / semantic normalization
+typed engine-neutral Forge ModelIR
+        ├── SolidCraft lowering -> SolidCraft commands/replay
+        └── Mitcad lowering     -> Mitcad commands/replay
 ```
+
+SCPF is the current authoring frontend, while `ModelIR` is the compiler
+contract. Native backends lower that semantic representation independently;
+they do not re-interpret model source or raw portable `Shape.data`.
 
 Reference implementations use the standard PythonSCAD, pyBOSL2, CadQuery and build123d builders directly inside the same physical owner.
 
@@ -834,14 +836,31 @@ than introducing a second revolve-specific frontend. Symbolic Forge
 lowering.
 
 For the #381 checkpoint, the existing `native-revolve` source evaluates once
-to a parameterized XZ polygon plus `RevolveIR(axis="X", angle=sweep)`.
-SolidCraft lowers that node to its existing native Sketch + `solid.revolve`
-sequence. Mitcad lowers the same node to one native Sketch and one native
-Revolve. Mitcad's Sketch points are seeded from current parameter values only
-because its entity coordinates are numeric; native horizontal/vertical
-constraints and line dimensions bind the rectangle back to `radius` and
-`length`. The point used to resolve the closed native region is derived at
-lowering time and is not retained in `RegionIR`.
+to a parameterized XZ polygon plus `RevolveIR`. #389 refactors its principal
+world axis through `AxisLineIR(direction="X", origin=(0, 0, 0))`, so principal
+and shifted axis intent use one semantic reference-geometry form. SolidCraft
+lowers that node to its existing native Sketch + `solid.revolve` sequence.
+Mitcad lowers the same node to one native Sketch and one native Revolve.
+Mitcad's Sketch points are seeded from current parameter values only because
+its entity coordinates are numeric; native horizontal/vertical constraints and
+line dimensions bind the rectangle back to `radius` and `length`. The point
+used to resolve the closed native region is derived at lowering time and is not
+retained in `RegionIR`.
+
+#389 extends that compiler boundary rather than adding a Mitcad-specific model
+path. `AxisLineIR` records only a principal semantic direction and symbolic
+XYZ origin. A subtractive public composition such as `body - profile.revolve(...)`
+normalizes to one `RevolveIR(operation="cut", target=...)`, retaining the
+authored feature identity required by later suppression/configuration work.
+
+SolidCraft lowers the shifted semantic axis directly to its native axis-line
+form. Mitcad v0.70.0 needs a Sketch curve reference for the same shifted axis,
+so the Mitcad backend alone derives a construction line and native dimensions
+from `AxisLineIR`. The construction curve id never enters Forge IR. For the
+cut, Mitcad replay binds the already-created target body at runtime and supplies
+that returned body as the native Revolve participant; Forge never predicts the
+body uid. The first qualified transport slice is deliberately bounded to an
+unshifted XY Sketch, principal X/Y shifted axis and one Box target.
 
 Angle units are semantic compiler data. The `sweep` model parameter becomes
 `ParameterIR(unit="deg")`, and the Mitcad Revolve extent references that
