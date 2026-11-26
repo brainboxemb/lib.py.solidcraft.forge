@@ -1,3 +1,5 @@
+import base64
+import json
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
@@ -8,6 +10,7 @@ from cad_model_merge_policy.__main__ import (
     merge_required,
     pull_request_files,
     require_conflicted_permanent_pr,
+    require_durable_permanent_head,
     require_green_ci,
     require_main_governance_paths,
     run_resolved,
@@ -205,8 +208,8 @@ class MergePolicyTests(unittest.TestCase):
             "cad_model_merge_policy.__main__.require_conflicted_permanent_pr",
             side_effect=[pr, pr],
         ), patch(
-            "cad_model_merge_policy.__main__.require_green_ci"
-        ), patch(
+            "cad_model_merge_policy.__main__.require_durable_permanent_head"
+        ) as require_head_evidence, patch(
             "cad_model_merge_policy.__main__.require_resolution_review",
             side_effect=[review, review],
         ), patch(
@@ -244,7 +247,13 @@ class MergePolicyTests(unittest.TestCase):
             advance.kwargs["body"],
             {"sha": "e" * 40, "force": False},
         )
-        self.assertEqual(require_ref.call_count, 6)
+        self.assertEqual(require_ref.call_count, 7)
+        require_head_evidence.assert_called_once_with(
+            "owner/repo",
+            "dev",
+            "b" * 40,
+            "token",
+        )
         self.assertEqual(require_tree.call_count, 2)
         dispatch.assert_any_call("owner/repo", "ci.yml", "exp", "token")
         dispatch.assert_any_call(
@@ -266,6 +275,61 @@ class MergePolicyTests(unittest.TestCase):
         self.assertIn("MERGE_COMMAND: ${{ github.event.comment.body }}", workflow)
         self.assertIn('--command "$MERGE_COMMAND"', workflow)
         self.assertIn('--resolution-prefix "resolve/"', workflow)
+
+    @patch("cad_model_merge_policy.__main__.api")
+    def test_conflicted_head_uses_exact_durable_permanent_qualification(self, api):
+        plan = base64.b64encode(
+            json.dumps({"schema": 2, "source_sha": "b" * 40}).encode("utf-8")
+        ).decode("ascii")
+        api.return_value = {"encoding": "base64", "content": plan}
+
+        require_durable_permanent_head(
+            "owner/repo",
+            "dev",
+            "b" * 40,
+            "token",
+        )
+
+        api.assert_called_once_with(
+            "owner/repo",
+            "contents/dev/build-plan.json?ref=build",
+            "token",
+        )
+
+    @patch("cad_model_merge_policy.__main__.api")
+    def test_conflicted_head_rejects_stale_durable_qualification(self, api):
+        plan = base64.b64encode(
+            json.dumps({"schema": 2, "source_sha": "a" * 40}).encode("utf-8")
+        ).decode("ascii")
+        api.return_value = {"encoding": "base64", "content": plan}
+
+        with self.assertRaisesRegex(MergePolicyError, "does not match"):
+            require_durable_permanent_head(
+                "owner/repo",
+                "dev",
+                "b" * 40,
+                "token",
+            )
+
+    @patch("cad_model_merge_policy.__main__.api")
+    def test_conflicted_head_rejects_malformed_durable_evidence(self, api):
+        for payload in (
+            {},
+            {"encoding": "utf-8", "content": "{}"},
+            {"encoding": "base64", "content": "not-base64"},
+        ):
+            with self.subTest(payload=payload):
+                api.return_value = payload
+                with self.assertRaisesRegex(
+                    MergePolicyError,
+                    "durable build evidence|build evidence is malformed",
+                ):
+                    require_durable_permanent_head(
+                        "owner/repo",
+                        "dev",
+                        "b" * 40,
+                        "token",
+                    )
 
     @patch("cad_model_merge_policy.__main__.api")
     def test_green_ci_ignores_unrelated_workflow_runs(self, api):
