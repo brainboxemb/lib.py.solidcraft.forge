@@ -61,7 +61,7 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "full": true,
+  "full": false,
   "library": true,
   "models": [
     {
@@ -400,7 +400,8 @@
     {
       "id": "multi-profile-extrude",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -887,5 +888,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "3a467642cabbb1b2920a6d30fce8e507131ef3a9"
+  "source_sha": "95f70ef93eaaf86fece51b8e560aa895281ac7fe"
 }

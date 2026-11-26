@@ -1,0 +1,19 @@
+{
+  "build_status": "pass",
+  "builder": "builder-scpf-mitcad",
+  "id": "multi-profile-extrude--scpf-mitcad",
+  "implementation": "scpf-mitcad",
+  "owner": "multi-profile-extrude",
+  "preview_status": null,
+  "runtime": "ghcr.io/brainboxemb/cad-mitcad:v0.3.7",
+  "schema": 2,
+  "status": "pass",
+  "verification_stages": {
+    "geometry": {
+      "adapter": "mesh-geometry",
+      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+      "status": "pass"
+    }
+  },
+  "verification_status": "pass"
+}
