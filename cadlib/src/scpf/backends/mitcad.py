@@ -532,15 +532,182 @@ def _parameterized_rectangle_sketch(profile: PolygonProfileIR):
     return entities, constraints, dimensions
 
 
-def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
-    """Lower the qualified semantic RevolveIR to native Mitcad Revolve."""
-    sketch = node.sketch
-    if node.operation != "new_body" or node.target is not None:
+def _next_sketch_entity_number(entities: list[dict]) -> int:
+    numbers = []
+    for entity in entities:
+        uid = entity.get("id")
+        if (
+            isinstance(uid, str)
+            and len(uid) > 1
+            and uid[0] in {"p", "c", "t"}
+            and uid[1:].isdigit()
+        ):
+            numbers.append(int(uid[1:]))
+    return max(numbers, default=0) + 1
+
+
+def _next_sketch_relation_number(
+    constraints: list[dict],
+    dimensions: list[dict],
+) -> int:
+    numbers = []
+    for relation in (*constraints, *dimensions):
+        uid = relation.get("id")
+        if (
+            isinstance(uid, str)
+            and uid.startswith("k")
+            and uid[1:].isdigit()
+        ):
+            numbers.append(int(uid[1:]))
+    return max(numbers, default=0) + 1
+
+
+def _shifted_xy_axis_transport(
+    axis: AxisLineIR,
+    entities: list[dict],
+    constraints: list[dict],
+    dimensions: list[dict],
+) -> dict:
+    """Append Mitcad-only construction geometry for one shifted XY axis."""
+    if axis.direction not in {"X", "Y"}:
         raise ModelError(
-            "Mitcad RevolveIR cut lowering is not qualified yet"
+            "Mitcad shifted AxisLineIR on XY requires X or Y direction"
         )
-    if sketch.plane != "XZ":
-        raise ModelError("Mitcad RevolveIR currently requires an XZ Sketch")
+    if parameters_in(axis.origin[2]) or abs(pv(axis.origin[2])) > 1e-12:
+        raise ModelError(
+            "Mitcad shifted AxisLineIR must lie in the XY Sketch plane"
+        )
+
+    next_entity = _next_sketch_entity_number(entities)
+    origin_id = f"p{next_entity}"
+    first_id = f"p{next_entity + 1}"
+    second_id = f"p{next_entity + 2}"
+    curve_id = f"c{next_entity + 3}"
+
+    entities.append(
+        {
+            "id": origin_id,
+            "type": "point",
+            "at": [0.0, 0.0],
+            "fixed": True,
+        }
+    )
+
+    if axis.direction == "Y":
+        offset = axis.origin[0]
+        offset_value = float(pv(offset))
+        first = [offset_value, -1.0]
+        second = [offset_value, 1.0]
+        orientation = "vertical"
+        offset_dimension = "horizontal_distance"
+        along_dimension = "vertical_distance"
+    else:
+        offset = axis.origin[1]
+        offset_value = float(pv(offset))
+        first = [-1.0, offset_value]
+        second = [1.0, offset_value]
+        orientation = "horizontal"
+        offset_dimension = "vertical_distance"
+        along_dimension = "horizontal_distance"
+
+    entities.extend(
+        [
+            {"id": first_id, "type": "point", "at": first},
+            {"id": second_id, "type": "point", "at": second},
+            {
+                "id": curve_id,
+                "type": "line",
+                "start": first_id,
+                "end": second_id,
+                "construction": True,
+            },
+        ]
+    )
+
+    next_relation = _next_sketch_relation_number(
+        constraints,
+        dimensions,
+    )
+    constraints.append(
+        {
+            "id": f"k{next_relation}",
+            "type": orientation,
+            "line": curve_id,
+        }
+    )
+    dimensions.extend(
+        [
+            {
+                "id": f"k{next_relation + 1}",
+                "type": offset_dimension,
+                "a": origin_id,
+                "b": first_id,
+                "signed": True,
+                "value": command_value(offset),
+            },
+            {
+                "id": f"k{next_relation + 2}",
+                "type": along_dimension,
+                "a": origin_id,
+                "b": first_id,
+                "signed": True,
+                "value": -1.0,
+            },
+            {
+                "id": f"k{next_relation + 3}",
+                "type": along_dimension,
+                "a": origin_id,
+                "b": second_id,
+                "signed": True,
+                "value": 1.0,
+            },
+        ]
+    )
+
+    return {
+        "sketch": {"ref": "sk.uid"},
+        "curve": curve_id,
+    }
+
+
+def _mitcad_revolve_axis(
+    node: RevolveIR,
+    entities: list[dict],
+    constraints: list[dict],
+    dimensions: list[dict],
+):
+    axis = node.axis
+    if not isinstance(axis, AxisLineIR):
+        raise ModelError("Mitcad RevolveIR requires AxisLineIR")
+
+    if all(
+        not parameters_in(value) and abs(pv(value)) <= 1e-12
+        for value in axis.origin
+    ):
+        return axis.direction.lower()
+
+    if node.sketch.plane != "XY":
+        raise ModelError(
+            "Mitcad shifted AxisLineIR transport currently requires an XY Sketch"
+        )
+    return _shifted_xy_axis_transport(
+        axis,
+        entities,
+        constraints,
+        dimensions,
+    )
+
+
+def _revolve_commands(
+    node: RevolveIR,
+    name: str,
+    *,
+    participant=None,
+) -> list[dict]:
+    """Lower semantic RevolveIR to native Mitcad Sketch + Revolve."""
+    sketch = node.sketch
+    if sketch.plane not in ("XY", "XZ", "YZ"):
+        raise ModelError("Mitcad RevolveIR requires XY, XZ or YZ Sketch")
     if (
         len(sketch.profiles) != 1
         or not isinstance(sketch.profiles[0], PolygonProfileIR)
@@ -551,15 +718,21 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
         raise ModelError(
             "Mitcad RevolveIR requires one non-symmetric AxisLineIR"
         )
-    if (
-        node.axis.direction != "X"
-        or any(
-            parameters_in(value) or abs(pv(value)) > 1e-12
-            for value in node.axis.origin
-        )
-    ):
+    if node.operation == "new_body":
+        if node.target is not None or participant is not None:
+            raise ModelError("new-body Mitcad RevolveIR must not have a target")
+    elif node.operation == "cut":
+        if (
+            not isinstance(node.target, PlacementIR)
+            or not isinstance(node.target.primitive, BoxIR)
+            or participant is None
+        ):
+            raise ModelError(
+                "Mitcad Revolve cut currently requires one bound Box participant"
+            )
+    else:
         raise ModelError(
-            "Mitcad shifted AxisLineIR lowering is not qualified yet"
+            f"unsupported Mitcad Revolve operation {node.operation!r}"
         )
 
     try:
@@ -605,12 +778,32 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
         constraints = []
         dimensions = []
 
+    native_axis = _mitcad_revolve_axis(
+        node,
+        entities,
+        constraints,
+        dimensions,
+    )
+
     if parameters_in(node.angle):
         extent = {"type": "angle", "angle": command_value(node.angle)}
     elif abs(sweep - 360.0) <= 1e-12:
         extent = {"type": "full"}
     else:
         extent = {"type": "angle", "angle": f"{number_text(sweep)} deg"}
+
+    revolve_definition = {
+        "type": "revolve",
+        "profiles": [{
+            "sketch": {"ref": "sk.uid"},
+            "point": [pick[0], pick[1]],
+        }],
+        "axis": native_axis,
+        "extent": extent,
+        "operation": node.operation,
+    }
+    if node.operation == "cut":
+        revolve_definition["participants"] = [participant]
 
     return [
         {
@@ -628,18 +821,49 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
         {
             "cmd": "add_feature",
             "name": name,
-            "def": {
-                "type": "revolve",
-                "profiles": [{
-                    "sketch": {"ref": "sk.uid"},
-                    "point": [pick[0], pick[1]],
-                }],
-                "axis": node.axis.direction.lower(),
-                "extent": extent,
-                "operation": "new_body",
-            },
+            "def": revolve_definition,
         },
     ]
+
+
+def _revolve_cut_document(
+    model: ModelIR,
+    node: RevolveIR,
+    name: str,
+):
+    """Bind the existing target body at runtime before one native Revolve cut."""
+    if (
+        node.operation != "cut"
+        or not isinstance(node.target, PlacementIR)
+        or not isinstance(node.target.primitive, BoxIR)
+    ):
+        raise ModelError(
+            "Mitcad Revolve cut currently requires one typed Box target"
+        )
+
+    commands = [
+        *_parameter_commands(model),
+        _box_command(node.target, f"{name}Base"),
+    ]
+    replay = [
+        {
+            "bind_single_body": "body",
+            "commands": _revolve_commands(
+                node,
+                name,
+                participant={"$mitcad_bind": "body"},
+            ),
+        }
+    ]
+    dependencies = _native_dependencies((commands, replay))
+    return {
+        "format": FORMAT,
+        "version": VERSION,
+        "backend": "mitcad",
+        "commands": _plain_command_value(commands),
+        "replay": _plain_command_value(replay),
+    }, dependencies
+
 
 
 def _chamfer_document(
@@ -738,6 +962,8 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
 
     if isinstance(node, ChamferIR):
         return _chamfer_document(model, node, name)
+    if isinstance(node, RevolveIR) and node.operation == "cut":
+        return _revolve_cut_document(model, node, name)
 
     if isinstance(node, PlacementIR):
         if isinstance(node.primitive, BoxIR):
