@@ -142,13 +142,20 @@ Normal `dev` lane:
 - keep later verification-evidence follow-ups #256 and #257 separate from #380.
 
 Experimental `exp` lane:
-- #389 is the active compiler checkpoint after completed #381/#387;
-- refactor accepted principal-axis Revolve through one typed engine-neutral `AxisLineIR` that also preserves a parameter-driven shifted origin;
-- qualify one subtractive Sketch Revolve as the authored cut feature itself, retaining the target body, profile/region, axis and `axis_x` dependency rather than lowering new-body Revolve plus an unrelated Boolean;
-- lower Mitcad custom-axis transport through a native parameter-following Sketch construction line referenced as the Revolve axis; never bake the current axis coordinate into a fixed native axis;
-- prove the compiled document against the exact pinned Mitcad v0.70.0 AppImage through `modules/mitcad-native-smoke` without creating a duplicate physical model owner;
-- keep parameter-driven Sketch-plane placement and portable `ConfigureIR` / exact `Suppress(feature)` semantics outside #389; those remain the explicit blockers before the existing `shifted-axis-revolve` owner can become a full two-backend consumer;
-- work from a short-lived branch based on current permanent `exp`, integrate only through `/merge`, and do not perform `exp -> dev` as part of #389.
+- #393 is the immediate architecture/control checkpoint before more backend capability code;
+- treat Forge as a generic CAD compiler: SCPF is one frontend, typed engine-neutral Forge CAD IR is the compiler contract, and SolidCraft/Mitcad are independent lowerings rather than separate source interpreters;
+- maintain an explicit IR inventory by semantic layer (values, reference geometry, sketches, profiles/regions, features/history, body operations, topology references, assemblies and configurations) and mark each layer accepted, bounded/partial or still legacy;
+- current typed/accepted core: `ParameterIR`; Box/Cylinder/Sphere + `PlacementIR`; `SketchIR` with Circle/Polygon profiles and `RegionIR`; bounded `ExtrudeIR`, recursive `BooleanIR`, face-boundary `ChamferIR`, and the first principal-axis new-body `RevolveIR` slice;
+- current generic gaps: no general reference-geometry IR (`AxisLineIR`/Plane/Point), no complete Sketch constraint/dimension IR, only partial feature/history and topology-reference identity, and no experimental assembly/occurrence or configuration/suppression IR yet;
+- require every experimental capability to progress in this order: define generic CAD meaning -> pure normalization/IR tests -> backend lowering -> backend contract tests -> real native runtime qualification -> permanent `exp` merge;
+- backend implementation details may never drive semantic IR fields: a Mitcad construction helper, native feature uid/curve id, SolidCraft command spelling or topology id remains backend transport only;
+- symbolic Parameters/Expressions and authored feature identity must survive normalization; current evaluated values may validate semantics but may not replace them;
+- a backend may lower a typed IR node or fail explicitly; it may not reinterpret raw `Shape.data`, silently approximate unsupported intent or create a second CAD interpreter;
+- `LegacyShapeIR` remains a visible migration boundary for stable SolidCraft compatibility, not a second permanent compiler architecture; experimental backends continue to fail closed on it;
+- #389 remains the first candidate capability after #393 because a generic `AxisLineIR` plus feature-operation/target semantics fills real gaps in the inventory; its Mitcad construction-line mechanics are secondary lowering detail and must not determine the IR shape;
+- do not change #389 implementation until #393 is merged to canonical `main`; the existing #389 work branch remains a clean branch from permanent `exp`;
+- keep parameter-driven Sketch-plane placement and portable configuration/suppression semantics as later generic IR gaps rather than hiding them in backend workarounds;
+- do not perform `exp -> dev` as part of #393 or #389.
 
 ## Later
 
