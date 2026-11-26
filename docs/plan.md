@@ -93,15 +93,12 @@ First spike:
 6. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
-### Dev: #162 / #163 verification evidence cleanup
+### Dev: #163 verification evidence audit
 
-With the configuration-driven CAD consumer blockers #241 and #242 qualified:
-- #162 fixes the concrete `sheet-perforate` case where native perforation
-  metadata passes but the published model preview does not visibly show the
-  perforations, and adds an explicit approved visual expectation;
-- #163 audits every verification owner against the current evidence contract
-  so visually meaningful owners cannot remain green on metadata/native checks
-  alone.
+With #162 now qualifying native sheet perforation from authoritative
+manufacturing DXF/flat-pattern output, audit every remaining Verification owner
+against the current evidence contract so visually meaningful geometry cannot
+remain green on metadata/native checks alone.
 
 ## Later
 

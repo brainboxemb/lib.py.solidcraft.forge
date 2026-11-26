@@ -13,6 +13,9 @@ verifier:
     solidcraft-visual:
       runtime: solidcraft
       entrypoint: cad_verification.runtime:run
+    solidcraft-sheet-flat-pattern-visual:
+      runtime: solidcraft
+      entrypoint: cad_verification.runtime:run
     image-regression:
       runtime: reference
       entrypoint: cad_verification.runtime:run

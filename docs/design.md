@@ -452,6 +452,20 @@ Forge consumes the qualified optional `exp` contract from `template.cad.library`
 
 Permanent experimental builds keep durable evidence under `build/exp/`. Pages assembles `/exp/` only while the branch exists and marks that projection as experimental. The same single serialized Pages publication continues to own the complete `gh-pages` tree.
 
+## Manufacturing-output visual boundary
+
+Some native CAD capabilities intentionally do not alter the display B-rep.
+For those cases, visual verification follows the authoritative manufacturing
+representation. `sheet.perforate` is the first explicit example: SolidCraft
+stores the field in flat-pattern/DXF/volume semantics while the regular model
+snapshot remains a plain sheet.
+
+The `solidcraft-sheet-flat-pattern-visual` adapter opens the saved native
+`.sc`, exports `sheet.export_dxf`, reads native `CIRCLE` entities on layer
+`PERFORATION`, compares centres/diameters to the approved owner contract and
+retains DXF plus Actual/Goal/Overlay SVGs. Pages projects only these durable
+artifacts and never executes CAD.
+
 ## Pages projection
 
 Verification detail pages identify their role with **What this verifies** and
