@@ -1,0 +1,17 @@
+schema: 1
+purpose: verification
+section: features
+priority: 96
+title: Cylinder subtract semantic IR
+tagline: One Box minus one Cylinder lowers from shared Forge IR to two native CAD backends
+description: >
+  A bottom-anchored rectangular body is cut by a centered Z-axis Cylinder.
+  Forge evaluates the SCPF source once, normalizes the model to typed
+  BooleanSubtractIR with BoxIR and CylinderIR children, and lowers that same
+  semantic intent independently to SolidCraft and Mitcad.
+parameters: 60 × 40 × 12 mm Box; Ø10 mm centered through bore
+stages:
+  - Create the typed BoxIR target
+  - Create the typed CylinderIR tool with symbolic height from thickness
+  - Normalize subtraction to BooleanSubtractIR
+  - Lower the same IR to SolidCraft and Mitcad native cut operations

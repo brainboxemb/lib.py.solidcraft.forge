@@ -74,6 +74,8 @@ def _mitcad_adapter() -> BackendAdapter:
         capabilities=frozenset(
             {
                 "primitive.box",
+                "primitive.cylinder",
+                "boolean.subtract",
                 "sketch.circle",
                 "feature.extrude.distance",
                 "modify.chamfer.face-boundary",

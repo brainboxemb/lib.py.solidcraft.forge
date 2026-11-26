@@ -84,9 +84,9 @@ Build the first new CAD capability on top of the accepted semantic IR boundary:
 - preserve symbolic parameter intent and bind engine-owned body results rather
   than predicting native ids;
 - keep unsupported boolean cases explicit and fail closed;
-- prove the slice in focused IR/backend/headless tests and one existing
-  physical owner with durable command/native/result/verification evidence on
-  `/exp/`;
+- prove the slice in focused IR/backend/headless tests and the focused
+  `cylinder-subtract` verification owner with durable
+  command/native/result/verification evidence on `/exp/`;
 - do not add new raw `Shape.data` interpretation to the Mitcad backend;
 - do not integrate `exp -> dev`.
 

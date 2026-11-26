@@ -36,6 +36,8 @@ class BackendRegistryTests(unittest.TestCase):
             frozenset(
                 {
                     "primitive.box",
+                    "primitive.cylinder",
+                    "boolean.subtract",
                     "sketch.circle",
                     "feature.extrude.distance",
                     "modify.chamfer.face-boundary",

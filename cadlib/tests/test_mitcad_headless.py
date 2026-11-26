@@ -121,6 +121,25 @@ class FakeSession:
         raise AssertionError(name)
 
 
+def cylinder_cut_document():
+    value = document()
+    value["commands"].append({
+        "cmd": "add_feature",
+        "name": "Bore",
+        "def": {
+            "type": "cylinder",
+            "plane": "xy",
+            "center": [0, 0],
+            "diameter": 10,
+            "height": 30,
+            "symmetric": True,
+            "operation": "cut",
+            "participants": [],
+        },
+    })
+    return value
+
+
 def replay_document():
     value = document()
     value["replay"] = [
@@ -205,6 +224,32 @@ class MitcadHeadlessTests(unittest.TestCase):
             self.assertEqual(
                 query,
                 {"query": "bodies", "properties": True},
+            )
+
+    @patch("scpf.backends.mitcad_headless._Session", FakeSession)
+    def test_native_cylinder_cut_runs_as_one_command_array_without_replay_ids(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = run_document(
+                cylinder_cut_document(),
+                save=root / "out.mitcad",
+                work_dir=root / "workspace",
+            )
+            self.assertEqual(result["completed"], 2)
+            session = FakeSession.instances[-1]
+            model_commands = [
+                args["command"]
+                for name, args in session.calls
+                if name == "model_command"
+            ]
+            self.assertEqual(model_commands, [cylinder_cut_document()["commands"]])
+            self.assertEqual(
+                model_commands[0][-1]["def"]["operation"],
+                "cut",
+            )
+            self.assertEqual(
+                model_commands[0][-1]["def"]["participants"],
+                [],
             )
 
     @patch("scpf.backends.mitcad_headless._Session", FakeSession)

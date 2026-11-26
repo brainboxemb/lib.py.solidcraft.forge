@@ -16,6 +16,7 @@ from ..core import (
     Expression,
     Parameter,
     _DirectionSelector,
+    _cylinder_base_from_anchor,
     _native_dependencies,
     _native_expression,
     _plain_command_value,
@@ -24,9 +25,11 @@ from ..core import (
     number_text,
 )
 from ..ir import (
+    BooleanSubtractIR,
     BoxIR,
     ChamferIR,
     CircleExtrudeIR,
+    CylinderIR,
     FaceBoundaryIR,
     LegacyShapeIR,
     ModelIR,
@@ -130,6 +133,42 @@ def _box_command(node: BoxIR, name: str) -> dict:
     return _command("solid.box", **params)
 
 
+def _csg_box_command(node: BoxIR, name: str) -> dict:
+    command = _box_command(node, name)
+    command["params"]["operation"] = "new"
+    return command
+
+
+def _cylinder_command(
+    node: CylinderIR,
+    name: str,
+    *,
+    operation: str = "new",
+) -> dict:
+    _require_positive(node.height, "cylinder height")
+    _require_positive(node.diameter, "cylinder diameter")
+    selector = _DirectionSelector(node.anchor)
+    base = _cylinder_base_from_anchor(
+        node.height,
+        node.diameter,
+        node.axis,
+        node.point,
+        selector,
+    )
+    params = {
+        "height": command_value(node.height),
+        "diameter": command_value(node.diameter),
+        "base": [command_value(value) for value in base],
+        "axis": node.axis,
+        "operation": operation,
+    }
+    if operation == "new":
+        params["body_name"] = name
+    else:
+        params["targets"] = [name]
+    return _command("solid.cylinder", **params)
+
+
 def _circle_extrude_commands(node: CircleExtrudeIR, name: str) -> list[dict]:
     _require_positive(node.diameter, "circle diameter")
     _require_positive(node.distance, "sketch extrusion distance")
@@ -203,10 +242,20 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
     if isinstance(node, BoxIR):
         return [*parameters, _box_command(node, name)]
 
+    if isinstance(node, CylinderIR):
+        return [*parameters, _cylinder_command(node, name)]
+
     if isinstance(node, CircleExtrudeIR):
         return [
             *parameters,
             *_circle_extrude_commands(node, name),
+        ]
+
+    if isinstance(node, BooleanSubtractIR):
+        return [
+            *parameters,
+            _csg_box_command(node.target, name),
+            _cylinder_command(node.tool, name, operation="cut"),
         ]
 
     if isinstance(node, ChamferIR):

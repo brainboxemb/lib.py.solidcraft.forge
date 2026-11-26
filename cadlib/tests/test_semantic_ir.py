@@ -10,6 +10,7 @@ from scpf import (
     Faces,
     Parameter,
     Sketch,
+    Sphere,
 )
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.solidcraft import compile_ir as compile_solidcraft_ir
@@ -18,9 +19,11 @@ from scpf.compiler import (
     _compile_shape_legacy_with_dependencies,
 )
 from scpf.ir import (
+    BooleanSubtractIR,
     BoxIR,
     ChamferIR,
     CircleExtrudeIR,
+    CylinderIR,
     LegacyShapeIR,
     normalize_shape,
 )
@@ -69,6 +72,68 @@ class SemanticIRTests(unittest.TestCase):
                 "add_feature",
             ],
         )
+
+    def test_cylinder_is_one_typed_ir_for_solidcraft_and_mitcad(self):
+        height = Parameter("height", 30)
+        diameter = Parameter("diameter", 10)
+        shape = Cylinder(d=diameter, h=height)
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "CylinderTest",
+        )
+        self.assertIsInstance(model.root, CylinderIR)
+        self.assertEqual(model.root.axis, "Z")
+        self.assertEqual(model.root.anchor, (0, 0, 0))
+
+        mitcad = compile_mitcad_ir(model, "CylinderTest")
+        definition = mitcad["commands"][-1]["def"]
+        self.assertEqual(definition["type"], "cylinder")
+        self.assertEqual(definition["plane"], "xy")
+        self.assertEqual(definition["diameter"], "diameter")
+        self.assertEqual(definition["height"], "height")
+        self.assertTrue(definition["symmetric"])
+        self.assertEqual(definition["operation"], "new_body")
+
+    def test_box_minus_cylinder_is_typed_boolean_for_both_backends(self):
+        thickness = Parameter("thickness", 12)
+        bore = Parameter("bore", 10)
+        shape = Box(
+            60,
+            40,
+            thickness,
+            anchor=Anchor.BOTTOM,
+        ) - Cylinder(
+            d=bore,
+            h=thickness + 20,
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "CylinderSubtract",
+        )
+        self.assertIsInstance(model.root, BooleanSubtractIR)
+        self.assertIsInstance(model.root.target, BoxIR)
+        self.assertIsInstance(model.root.tool, CylinderIR)
+        self.assertEqual(
+            [parameter.name for parameter in model.parameters],
+            ["thickness", "bore"],
+        )
+
+        mitcad = compile_mitcad_ir(model, "CylinderSubtract")
+        features = [
+            row["def"]
+            for row in mitcad["commands"]
+            if row["cmd"] == "add_feature"
+        ]
+        self.assertEqual(
+            [feature["type"] for feature in features],
+            ["box", "cylinder"],
+        )
+        self.assertEqual(features[0]["operation"], "new_body")
+        self.assertEqual(features[1]["operation"], "cut")
+        self.assertEqual(features[1]["participants"], [])
+        self.assertIn("thickness", str(features[1]["height"]))
 
     def test_circle_extrude_is_one_typed_ir_for_solidcraft_and_mitcad(self):
         diameter = Parameter("diameter", 20)
@@ -126,19 +191,19 @@ class SemanticIRTests(unittest.TestCase):
         )
 
     def test_unmigrated_surface_is_explicit_legacy_ir_only_for_solidcraft(self):
-        shape = Cylinder(d=10, h=20)
+        shape = Sphere(10)
         model = normalize_shape(shape)
 
         self.assertIsInstance(model.root, LegacyShapeIR)
-        self.assertEqual(model.root.source_kind, "cylinder")
+        self.assertEqual(model.root.source_kind, "sphere")
         solidcraft = compile_solidcraft_ir(model, "CylinderTest")
         self.assertEqual(
             solidcraft["commands"][-1]["command"],
-            "solid.cylinder",
+            "solid.sphere",
         )
         with self.assertRaisesRegex(
             ModelError,
-            "does not yet support Forge shape kind 'cylinder'",
+            "does not yet support Forge shape kind 'sphere'",
         ):
             compile_mitcad_ir(model, "CylinderTest")
 
