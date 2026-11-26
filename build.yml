@@ -1,6 +1,6 @@
 schema: 1
-branch: docs/217-reconcile-backend-plan
-modules: [ci]
+branch: feature/218-scpf-mitcad-builder
+modules: [builder-scpf-mitcad, ci]
 library: false
 models: []
 tasks: [test]

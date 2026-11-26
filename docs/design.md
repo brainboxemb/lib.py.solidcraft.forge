@@ -503,3 +503,33 @@ normal Forge owners. The native smoke retains the Mitcad STL and feeds it to
 `cad_verification.geometry` with the owner-local `geometry.json`; native
 Mitcad body properties remain additional engine-specific evidence, not a
 replacement verifier.
+
+### Experimental Mitcad builder boundary (#218)
+
+The normal Forge build integration is a thin consumer of that accepted backend
+boundary:
+
+```text
+owner-local SCPF source
+        ↓
+builder-scpf-mitcad
+        ↓ run_script(source, backend="mitcad")
+scpf-mitcad command document
+        ↓ scpf.backends.mitcad_headless.run_document(...)
+model.mitcad + model.stl
+        ↓
+cad_library_ci.runtime writes normal build.json
+```
+
+The builder does not own Mitcad installation, version discovery or downloads.
+Its runtime contract is an already-qualified `mitcad-cli` executable on
+`PATH`; a runtime may provide an explicit executable through
+`CAD_LIBRARY_MITCAD_EXECUTABLE`. The builder validates the command document,
+executes it through the existing native headless boundary and fails closed if
+either the native document or STL is missing.
+
+This capability deliberately exists before a root `runtimes.mitcad` entry.
+Module tests mock the executor boundary, so #218 can qualify builder behavior
+without fetching an AppImage. #221 owns the later immutable runtime role. Only
+after that role is accepted may a separate change attach `scpf-mitcad` as a
+secondary implementation to qualified model owners.
