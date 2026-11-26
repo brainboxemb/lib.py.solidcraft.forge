@@ -1974,15 +1974,25 @@ class Shape:
             (self, radius, _feature_edge_selection(edges, operation="fillet")),
         )
 
-    def chamfer(self, distance, *, edges=Edges.VERTICAL):
-        """Chamfer selected solid edges by one equal distance.
+    def chamfer(
+        self,
+        distance,
+        *,
+        distance2=None,
+        flip=False,
+        edges=Edges.VERTICAL,
+    ):
+        """Chamfer selected solid edges by equal or two native distances.
 
         Parameters:
-            distance: Chamfer distance in mm.
+            distance: Primary chamfer distance in mm.
+            distance2: Optional secondary distance along the adjacent face. Omit for the existing equal-distance chamfer.
+            flip: Swap which adjacent face receives the primary/secondary distance. Only meaningful with distance2. Defaults to False.
             edges: Edge selection. Use Edges.from_faces(...) for native face-boundary topology, Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.
 
         Use when:
-            Bevel one or more edges of a supported feature-based body. Chamfer
+            Bevel one or more edges of a supported feature-based body. Supply
+            distance2 for an asymmetric native two-distance chamfer. Chamfer
             and fillet use the same edge-selection forms.
 
         Limits:
@@ -1990,15 +2000,33 @@ class Shape:
             cardinal faces. Edges.VERTICAL and cardinal Box edge selectors
             require a supported rectangular body. Named profile/vertex
             selectors require matching Polygon2D ids in a supported extrusion.
+            flip=True requires distance2 because equal-distance chamfers have
+            no meaningful primary/secondary face ordering.
 
         Example:
             body = Box(80, 50, 15)
-            bevelled = body.chamfer(3, edges=Edges.VERTICAL)
+            bevelled = body.chamfer(
+                0.18,
+                distance2=0.65,
+                edges=Edges.VERTICAL,
+            )
         """
         _pv(distance)
+        if distance2 is not None:
+            _pv(distance2)
+        if not isinstance(flip, bool):
+            raise TypeError("chamfer flip must be True or False")
+        if flip and distance2 is None:
+            raise ValueError("chamfer flip requires distance2")
         return Shape(
             "chamfer",
-            (self, distance, _feature_edge_selection(edges, operation="chamfer")),
+            (
+                self,
+                distance,
+                _feature_edge_selection(edges, operation="chamfer"),
+                distance2,
+                flip,
+            ),
         )
 
     def shell(self, thickness, *, open=Faces.TOP):

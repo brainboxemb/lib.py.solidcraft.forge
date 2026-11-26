@@ -151,6 +151,39 @@ one history feature rather than an approximation made from multiple primitives.
 intent has one public vocabulary. Topology-selected/construction axes and
 rotated Sketch frames remain separate future contracts.
 
+## Native two-distance chamfer boundary
+
+Chamfer remains one Shape feature and one SolidCraft `solid.chamfer` history
+operation. The public form extends the existing equal-distance API without
+introducing a second edge-selection path:
+
+```python
+body.chamfer(
+    0.18,
+    distance2=0.65,
+    flip=True,
+    edges=Edges.from_profile("top"),
+)
+```
+
+Internally the existing edge-selection intent stays in the same Shape-data
+position used by current Forge code. Optional `distance2` and `flip` are
+additional feature intent. Lowering always emits `distance`; it emits
+`distance2` only when authored and emits `flip` only when true. Therefore
+an existing equal-distance call keeps the same generated command document.
+
+SolidCraft owns adjacent-face ordering. `flip=True` maps directly to native
+`solid.chamfer.flip`; Forge does not infer a new face vocabulary from the
+selected edge. Both distance expressions preserve normal parameter
+dependencies. Named profile/vertex, cardinal Box, face-boundary and explicit
+edge picks all continue through the existing resolver before the same chamfer
+command is emitted.
+
+The first qualification uses a named top segment from an XZ Polygon2D
+extrusion. This deliberately proves asymmetric chamfer intent composes with the
+existing semantic profile-edge selector and remains one native ChamferFeature
+after saved-design parameter changes.
+
 ## Native configuration-table boundary
 
 Configuration is final design intent rather than a Python model variant. The

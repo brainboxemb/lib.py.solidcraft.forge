@@ -89,6 +89,25 @@
 5. Native qualification must inspect the saved appearance chain after replay.
 6. The first contract remains body-wide and opaque; face-level/PBR appearance work is consumer-driven future scope.
 
+## SCPF native chamfer
+
+1. Existing `Shape.chamfer(distance, edges=...)` remains the equal-distance,
+   source-compatible public form and must keep its existing native command
+   shape when no asymmetric options are requested.
+2. A consumer may supply `distance2=` to author SolidCraft's native
+   two-distance chamfer as one history feature; Forge must not approximate the
+   taper with cutters, lofts or multiple chamfers.
+3. `flip=True` selects the opposite adjacent-face ordering for the two native
+   distances and is only valid when `distance2` is supplied.
+4. Both distances may retain normal Forge Parameter/Expression dependencies and
+   must remain editable in the saved SolidCraft design.
+5. Equal- and two-distance chamfers use the same existing edge-selection
+   vocabulary, including replay-resolved face boundaries and named
+   Polygon2D profile edges.
+6. Native qualification must prove one ChamferFeature, both driving
+   parameters, saved-design recomputation and geometry that differs from the
+   corresponding equal-distance chamfer.
+
 ## SCPF topology selection
 
 1. `Faces.TOP/BOTTOM/LEFT/RIGHT/FRONT/BACK` is the shared world-cardinal

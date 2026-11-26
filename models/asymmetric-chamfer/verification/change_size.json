@@ -1,0 +1,39 @@
+{
+  "commands": [
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "width",
+        "expression": "50 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "depth",
+        "expression": "24 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "height",
+        "expression": "12 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "primary_distance",
+        "expression": "0.3 mm"
+      }
+    },
+    {
+      "command": "parameters.change",
+      "params": {
+        "name": "secondary_distance",
+        "expression": "0.8 mm"
+      }
+    }
+  ]
+}
