@@ -39,8 +39,16 @@ Inside one component, geometry remains a lightweight feature/expression model:
 class Board:
     def build(self):
         body = Box(self.width, self.depth, self.height)
-        holes = Hole(d=5, depth=Depth.THROUGH_ALL).repeat_linear(...)
-        return body - holes
+        source_hole = Hole(d=5, depth=Depth.THROUGH_ALL).on(
+            body, face=Faces.TOP
+        )
+        body = body - source_hole
+        return body.rectangular_pattern(
+            source_hole,
+            count=2,
+            spacing=self.width - 24,
+            direction=Axis.X,
+        )
 ```
 
 Do not turn every primitive or feature into an assembly object. Conversely, do
@@ -183,11 +191,16 @@ edge selectors remain supported for their established use cases.
 `on()` selects a target surface for a within-component feature.
 
 ```python
-holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
+source_hole = Hole(d=8, depth=Depth.THROUGH_ALL).on(
+    plate, face=Faces.TOP
+)
+plate = plate - source_hole
+plate = plate.rectangular_pattern(
+    source_hole,
     count=2,
     spacing=self.width - 24,
-    axis=Axis.X,
-).on(plate, face=Faces.TOP)
+    direction=Axis.X,
+)
 
 boss = Cylinder(d=24, h=14).on(plate, face=Faces.TOP)
 ```
