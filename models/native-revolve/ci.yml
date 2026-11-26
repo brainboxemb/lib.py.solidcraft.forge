@@ -8,6 +8,10 @@ implementations:
     builder: builder-scpf
     source: scpf/model.py
     preview: false
+  - id: scpf-mitcad
+    builder: builder-scpf-mitcad
+    source: scpf/model.py
+    preview: false
 
 verifications:
   - id: native
@@ -16,6 +20,12 @@ verifications:
     definition: verification/solidcraft.py
     artifact: model.sc
     implementations: [scpf]
+  - id: geometry
+    module: verification
+    adapter: mesh-geometry
+    definition: verification/geometry.json
+    artifact: model.stl
+    implementations: [scpf, scpf-mitcad]
 
 dependencies: []
 needs: [cadlib]

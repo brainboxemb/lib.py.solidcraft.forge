@@ -85,7 +85,6 @@ SCPF_ONLY_IDS = {
     "configuration-table",
     "cone-boolean",
     "exploded-views",
-    "native-revolve",
     "multi-profile-extrude",
     "revolute-joint",
     "rotated-sketch-cutter",
@@ -104,6 +103,7 @@ MITCAD_IDS = {
     "circle-negative-extrude",
     "cylinder-subtract",
     "multi-profile-extrude",
+    "native-revolve",
     "primitive-csg",
     "simple-box",
     "topology-face-boundary-box",
@@ -112,6 +112,7 @@ MITCAD_IDS = {
 
 MITCAD_FOCUSED_IDS = {
     "cylinder-subtract",
+    "native-revolve",
     "topology-face-boundary-box",
 }
 

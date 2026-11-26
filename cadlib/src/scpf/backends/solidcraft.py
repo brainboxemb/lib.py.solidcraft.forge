@@ -39,6 +39,7 @@ from ..ir import (
     PlacementIR,
     PolygonProfileIR,
     RegionIR,
+    RevolveIR,
     SphereIR,
     _region_interior_point,
 )
@@ -377,6 +378,60 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
     commands.append(_command("solid.extrude", **extrude))
     return commands
 
+
+def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
+    """Lower semantic Sketch/Profile + Revolve IR without raw Shape parsing."""
+    sketch = node.sketch
+    if sketch.plane != "XZ":
+        raise ModelError("portable SolidCraft RevolveIR currently requires XZ")
+    if (
+        len(sketch.profiles) != 1
+        or not isinstance(sketch.profiles[0], PolygonProfileIR)
+        or node.region != RegionIR(outer=0)
+    ):
+        raise ModelError("portable SolidCraft RevolveIR requires one polygon region")
+    if node.axis != "X" or node.direction is not None:
+        raise ModelError("portable SolidCraft RevolveIR currently requires world X")
+
+    try:
+        _region_interior_point(sketch, node.region)
+    except ValueError as exc:
+        raise ModelError(str(exc)) from exc
+
+    sweep = pv(node.angle)
+    if not isfinite(sweep) or sweep <= 0 or sweep > 360:
+        raise ModelError(
+            "sketch revolve angle must be above 0 and at most 360 degrees"
+        )
+
+    profile = sketch.profiles[0]
+    ids = (
+        list(profile.segment_ids)
+        if profile.segment_ids is not None
+        else [chr(ord("a") + index) for index in range(len(profile.points))]
+    )
+    return [
+        _command("sketch.create", name=sketch.name, plane=sketch.plane),
+        _command(
+            "sketch.line",
+            points=[
+                [command_value(value) for value in point]
+                for point in profile.points
+            ],
+            closed=True,
+            ids=ids,
+        ),
+        _command("sketch.finish"),
+        _command(
+            "solid.revolve",
+            sketch=sketch.name,
+            axis=node.axis,
+            angle=command_value(node.angle),
+            body_name=name,
+        ),
+    ]
+
+
 def _face_boundary_commands(
     selection: FaceBoundaryIR,
     name: str,
@@ -453,6 +508,12 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
         return [
             *parameters,
             *_boolean_commands(node, name),
+        ]
+
+    if isinstance(node, RevolveIR):
+        return [
+            *parameters,
+            *_revolve_commands(node, name),
         ]
 
     if isinstance(node, ChamferIR):
