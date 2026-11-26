@@ -22,6 +22,7 @@ from scpf.compiler import (
     _compile_shape_legacy_with_dependencies,
 )
 from scpf.ir import (
+    AxisLineIR,
     BooleanIR,
     BoxIR,
     ChamferIR,
@@ -629,7 +630,10 @@ class SemanticIRTests(unittest.TestCase):
 
         model = self.assert_solidcraft_compatibility(shape, "NativeRevolve")
         self.assertIsInstance(model.root, RevolveIR)
-        self.assertEqual(model.root.axis, "X")
+        self.assertEqual(
+            model.root.axis,
+            AxisLineIR(direction="X", origin=(0, 0, 0)),
+        )
         self.assertIsNone(model.root.direction)
         self.assertEqual(model.root.region, RegionIR(outer=0))
         self.assertIsInstance(model.root.sketch.profiles[0], PolygonProfileIR)
