@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "bounds_min": [
+    -5,
+    -5,
+    0
+  ],
+  "bounds_max": [
+    5,
+    5,
+    30
+  ],
+  "bounds_tolerance_mm": 0.3,
+  "volume_mm3": 848.2300164692441,
+  "volume_tolerance_mm3": 8,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "Ø8 inner wall from tube axis",
+      "point": [
+        0,
+        0,
+        15
+      ],
+      "distance_mm": 4,
+      "tolerance_mm": 0.2
+    }
+  ]
+}
