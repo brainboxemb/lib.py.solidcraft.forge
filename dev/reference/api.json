@@ -1423,7 +1423,7 @@
       "guide": "guide/geometry/#profile-selection",
       "reference": "reference/Sketch.extrude/",
       "use_when": "Leave the Sketch context and create or cut material normal to the sketch plane. Use profiles= when the Sketch contains more closed regions than the extrusion should use.",
-      "limits": "A standalone Sketch requires a finite non-zero distance. Depth.THROUGH_ALL is only meaningful for a Sketch attached to an existing Shape and cannot be combined with sym=True. Profile pick points must be fixed finite numbers; Parameters and expressions are not accepted because SolidCraft 0.42 profile points are numeric.",
+      "limits": "A standalone Sketch requires a finite non-zero distance and may contain multiple supported closed profiles. Nested/ambiguous regions should be selected with profiles= plus exact_regions=True. Depth.THROUGH_ALL is only meaningful for a Sketch attached to an existing Shape and cannot be combined with sym=True. Profile pick points must be fixed finite numbers; Parameters and expressions are not accepted because SolidCraft profile points are numeric. Multi-profile support does not expand Sketch.revolve(), which still requires exactly one closed profile.",
       "parameters": [
         {
           "name": "distance",
@@ -1442,7 +1442,7 @@
           "description": "When True, each profile point selects exactly the SolidCraft region containing that point. Only valid together with profiles=. Defaults to False."
         }
       ],
-      "example": "cut = sketch.extrude(\nDepth.THROUGH_ALL,\nprofiles=[(-30, 0), (-10, 0), (30, 0)],\nexact_regions=True,\n)",
+      "example": "with Sketch(name=\"Tube profile\", plane=\"XY\") as profile:\n    Circle2D(d=10)\n    Circle2D(d=8)\ntube = profile.extrude(30, profiles=[(4.5, 0)], exact_regions=True)",
       "signature": "Sketch.extrude(self, distance, *, sym=False, profiles=None, exact_regions=False)"
     },
     {
