@@ -10,7 +10,7 @@ from scpf.runner import run_script
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SIMPLE_BOX = ROOT.parent / "models/simple-box/scpf/model.py"
+SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 
 
 class MitcadBackendTests(unittest.TestCase):
@@ -61,7 +61,7 @@ class MitcadBackendTests(unittest.TestCase):
             "does not yet support Forge shape kind 'cylinder'",
         ):
             from scpf import Cylinder
-            compile_model(Cylinder(20, 10), "CylinderTest")
+            compile_model(Cylinder(d=10, h=20), "CylinderTest")
 
     def test_unknown_runner_backend_is_rejected_before_model_execution(self):
         with self.assertRaisesRegex(ValueError, "unknown SCPF backend"):

@@ -41,7 +41,8 @@ def _box_command(shape: Shape, name: str) -> dict:
     _require_positive(width, "box width")
     _require_positive(height, "box height")
 
-    if anchor not in (Anchor.BOTTOM, Anchor.CENTER):
+    anchor_vector = tuple(anchor.vector)
+    if anchor_vector not in ((0, 0, -1), (0, 0, 0)):
         raise ModelError(
             "Mitcad Box lowering currently supports Anchor.BOTTOM or "
             "Anchor.CENTER only"
@@ -65,7 +66,7 @@ def _box_command(shape: Shape, name: str) -> dict:
         "length": command_value(length),
         "width": command_value(width),
         "height": command_value(height),
-        "symmetric": anchor is Anchor.CENTER,
+        "symmetric": anchor_vector == (0, 0, 0),
         "operation": "new_body",
         "participants": [],
     }
