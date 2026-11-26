@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "67nj2hjh8k7r9",
+  "id": "21756gk2mndfh",
   "language": "en",
   "line_group": "0.5",
   "name": "Sample Plate Drawing",
@@ -29,7 +29,7 @@
         "designer": "Forge",
         "hidden": false,
         "revision": "A",
-        "row": "2p6yd3scw8qpk"
+        "row": "90j02s0ejs56t"
       }
     ],
     "tags": []
@@ -38,19 +38,19 @@
     {
       "documents": {
         "component": 1,
-        "source": "2yq34nh180k28"
+        "source": "1mxf0j53czxw1"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "65b213qztaav7",
+      "id": "b5pmgrf8gry4c",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
       "notes": [
-        "e9ees4m0yfcmt"
+        "8g7bjw4vzta8a"
       ],
       "orientation": "landscape",
       "revision_tags": [],
@@ -761,7 +761,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "7sw4xv1rdgktq",
+          "id": "21fzmavnrm3g0",
           "kind": "base",
           "label": "Iso front right",
           "notes": []
@@ -769,10 +769,10 @@
         {
           "balloons": [],
           "dimensions": [
-            "9q4wxdr3w0xd1",
-            "ajnwzj7r138yy"
+            "1krh172w24ftm",
+            "9z83qw8a6fhh9"
           ],
-          "id": "f03zkx2q6d6f2",
+          "id": "3ma4vhvbp0jm6",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -780,26 +780,26 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "65txm8axk7rwd",
+          "id": "1sqx1kedm455s",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "f03zkx2q6d6f2",
+          "parent": "3ma4vhvbp0jm6",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [
-            "5c1aczae61n7q",
-            "5eascn85q67g8",
-            "5fx6txv4k7brk",
-            "dg8tqk9hte360"
+            "52wssegkqkmgs",
+            "5f5j6p8ek3ck8",
+            "dtn99bxyvpn3r",
+            "eyz7benjcm59q"
           ],
-          "id": "btq61rr37v5ex",
+          "id": "agff1akcfj9jd",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "f03zkx2q6d6f2",
+          "parent": "3ma4vhvbp0jm6",
           "side": "above"
         }
       ]
@@ -807,7 +807,7 @@
   ],
   "sources": [
     {
-      "id": "2yq34nh180k28"
+      "id": "1mxf0j53czxw1"
     }
   ],
   "symbols": [],
