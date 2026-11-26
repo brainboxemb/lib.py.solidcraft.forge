@@ -30,7 +30,8 @@ ASSET_URL = (
 ASSET_SHA256 = (
     "9e1e8919a0ccd8f48bba4b3d443c70fb92f44d6104357fc00c25bf4c18379551"
 )
-REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
+SOURCE_REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
+RUNTIME_REFERENCE_BLOB = "c839084ba223e814370a55c761644da362fabc93"
 MODEL = ROOT / "models/simple-box/scpf/model.py"
 
 
@@ -125,7 +126,10 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 workspace=root / "reference-workspace",
             )
             self.assertIn(VERSION, cli_version)
-            self.assertEqual(git_blob_sha(reference), REFERENCE_BLOB)
+            self.assertEqual(
+                git_blob_sha(reference),
+                RUNTIME_REFERENCE_BLOB,
+            )
             self.assertIn("add_feature", catalog["commands"])
             self.assertIn("box", catalog["features"])
 
@@ -168,7 +172,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                     [
                         f"version={cli_version}",
                         f"appimage_sha256={ASSET_SHA256}",
-                        f"reference_blob={REFERENCE_BLOB}",
+                        f"source_reference_blob={SOURCE_REFERENCE_BLOB}",
+                        f"runtime_reference_blob={RUNTIME_REFERENCE_BLOB}",
                         f"volume={body['volume']}",
                         f"bbox={body['bbox']}",
                     ]

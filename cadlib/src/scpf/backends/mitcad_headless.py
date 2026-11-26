@@ -76,6 +76,10 @@ class _Session:
         except subprocess.TimeoutExpired:
             self.process.kill()
             self.process.wait(timeout=15)
+        if self.process.stdout is not None:
+            self.process.stdout.close()
+        if self.process.stderr is not None:
+            self.process.stderr.close()
 
     def _send(self, value: dict[str, Any]) -> None:
         assert self.process.stdin is not None

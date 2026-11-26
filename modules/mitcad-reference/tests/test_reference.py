@@ -18,7 +18,8 @@ from cad_library_mitcad_reference import (
 
 ROOT = Path(__file__).resolve().parents[3]
 VERSION = "0.70.0"
-REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
+SOURCE_REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
+RUNTIME_REFERENCE_BLOB = "c839084ba223e814370a55c761644da362fabc93"
 
 
 def catalog():
@@ -38,7 +39,10 @@ def catalog():
 class MitcadReferenceTests(unittest.TestCase):
     def test_checked_source_reference_is_exact_upstream_blob(self):
         snapshot = ROOT / "docs/reference/mitcad/0.70.0"
-        verify_source_snapshot(snapshot, reference_blob=REFERENCE_BLOB)
+        verify_source_snapshot(
+            snapshot,
+            reference_blob=SOURCE_REFERENCE_BLOB,
+        )
         source = (snapshot / "SOURCE.md").read_text(encoding="utf-8")
         self.assertIn("v0.70.0", source)
         self.assertIn(
@@ -56,52 +60,82 @@ class MitcadReferenceTests(unittest.TestCase):
                 }
             )
 
-    def test_write_snapshot_requires_reference_blob_identity(self):
+    def test_write_snapshot_keeps_source_and_runtime_references_separate(self):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
-            reference = "# exact reference\n"
-            blob = git_blob_sha(reference)
+            source_reference = "# complete source reference\n"
+            runtime_reference = "# filtered runtime reference\n"
+            source_blob = git_blob_sha(source_reference)
+            runtime_blob = git_blob_sha(runtime_reference)
+            (out / "commands.md").write_text(
+                source_reference,
+                encoding="utf-8",
+            )
+
             write_snapshot(
                 out=out,
                 version=VERSION,
                 upstream_commit="8" * 40,
                 release_tag="v0.70.0",
-                reference_blob=blob,
+                source_reference_blob=source_blob,
+                runtime_reference_blob=runtime_blob,
                 cli_version="mitcad-cli 0.70.0",
-                reference=reference,
+                reference=runtime_reference,
                 catalog=catalog(),
+            )
+
+            self.assertEqual(
+                (out / "commands.md").read_text(encoding="utf-8"),
+                source_reference,
+            )
+            self.assertEqual(
+                (out / "runtime-commands.md").read_text(encoding="utf-8"),
+                runtime_reference,
             )
             self.assertEqual(
                 json.loads((out / "commands.json").read_text()),
                 catalog(),
             )
+
             with self.assertRaisesRegex(
-                MitcadReferenceError, "differs from the pinned upstream blob"
+                MitcadReferenceError,
+                "pinned runtime blob",
             ):
                 write_snapshot(
                     out=out,
                     version=VERSION,
                     upstream_commit="8" * 40,
                     release_tag="v0.70.0",
-                    reference_blob="0" * 40,
+                    source_reference_blob=source_blob,
+                    runtime_reference_blob="0" * 40,
                     cli_version="mitcad-cli 0.70.0",
-                    reference=reference,
+                    reference=runtime_reference,
                     catalog=catalog(),
                 )
 
     @patch("cad_library_mitcad_reference.capture_runtime")
-    def test_runtime_verify_compares_reference_and_catalog(self, capture):
+    def test_runtime_verify_compares_both_references_and_catalog(self, capture):
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp)
-            reference = "# exact reference\n"
-            blob = git_blob_sha(reference)
-            (out / "commands.md").write_text(reference, encoding="utf-8")
+            source_reference = "# complete source reference\n"
+            runtime_reference = "# filtered runtime reference\n"
+            source_blob = git_blob_sha(source_reference)
+            runtime_blob = git_blob_sha(runtime_reference)
+            (out / "commands.md").write_text(
+                source_reference,
+                encoding="utf-8",
+            )
+            (out / "runtime-commands.md").write_text(
+                runtime_reference,
+                encoding="utf-8",
+            )
             (out / "commands.json").write_text(
-                json.dumps(catalog()) + "\n", encoding="utf-8"
+                json.dumps(catalog()) + "\n",
+                encoding="utf-8",
             )
             capture.return_value = (
                 "mitcad-cli 0.70.0",
-                reference,
+                runtime_reference,
                 catalog(),
             )
             self.assertEqual(
@@ -109,7 +143,8 @@ class MitcadReferenceTests(unittest.TestCase):
                     executable="mitcad-cli",
                     version=VERSION,
                     snapshot=out,
-                    reference_blob=blob,
+                    source_reference_blob=source_blob,
+                    runtime_reference_blob=runtime_blob,
                 ),
                 len(catalog()["commands"]),
             )

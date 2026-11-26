@@ -11,7 +11,8 @@ from . import capture_snapshot, verify_runtime_snapshot, verify_source_snapshot
 VERSION = "0.70.0"
 RELEASE_TAG = "v0.70.0"
 UPSTREAM_COMMIT = "806a4210126ab977ba678708dd476496ddbd2968"
-REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
+SOURCE_REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
+RUNTIME_REFERENCE_BLOB = "c839084ba223e814370a55c761644da362fabc93"
 
 
 def main() -> int:
@@ -41,7 +42,8 @@ def main() -> int:
             version=VERSION,
             upstream_commit=UPSTREAM_COMMIT,
             release_tag=RELEASE_TAG,
-            reference_blob=REFERENCE_BLOB,
+            source_reference_blob=SOURCE_REFERENCE_BLOB,
+            runtime_reference_blob=RUNTIME_REFERENCE_BLOB,
             out=args.out,
         )
         print(f"Captured Mitcad {VERSION}: {count} model commands")
@@ -52,15 +54,19 @@ def main() -> int:
             executable=args.mitcad_cli,
             version=VERSION,
             snapshot=args.snapshot,
-            reference_blob=REFERENCE_BLOB,
+            source_reference_blob=SOURCE_REFERENCE_BLOB,
+            runtime_reference_blob=RUNTIME_REFERENCE_BLOB,
         )
         print(f"Mitcad {VERSION} runtime reference matches: {count} commands")
     else:
         verify_source_snapshot(
             args.snapshot,
-            reference_blob=REFERENCE_BLOB,
+            reference_blob=SOURCE_REFERENCE_BLOB,
         )
-        print(f"Mitcad {VERSION} source reference matches {REFERENCE_BLOB}")
+        print(
+            f"Mitcad {VERSION} source reference matches "
+            f"{SOURCE_REFERENCE_BLOB}"
+        )
     return 0
 
 

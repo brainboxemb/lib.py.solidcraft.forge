@@ -14,7 +14,8 @@ python -m cad_library_mitcad_reference capture \
 ```
 
 That capture reads both:
-- `mitcad://reference/commands` for the complete native command reference;
+- `mitcad://reference/commands`, the runtime-filtered native reference whose
+  blob identity is pinned separately from the complete upstream source;
 - `model_reference {}` for the machine-readable commands, queries, feature
   types and JSON-schema catalogue.
 

@@ -78,6 +78,10 @@ class _Session:
         except subprocess.TimeoutExpired:
             self.process.kill()
             self.process.wait(timeout=10)
+        if self.process.stdout is not None:
+            self.process.stdout.close()
+        if self.process.stderr is not None:
+            self.process.stderr.close()
 
     @property
     def stdin(self) -> TextIO:
@@ -205,103 +209,6 @@ def capture_runtime(
             owned.cleanup()
 
 
-def source_text(
-    *,
-    version: str,
-    upstream_commit: str,
-    release_tag: str,
-    reference_blob: str,
-    captured_cli: str | None,
-) -> str:
-    runtime = (
-        f"- Captured CLI version: `{captured_cli}`\n"
-        if captured_cli
-        else "- Runtime catalog: not captured in this source-only snapshot\n"
-    )
-    return f"""# Mitcad {version} reference snapshot
-
-This directory is pinned to the exact Mitcad release source used by Forge's
-experimental backend work.
-
-- Mitcad release: `{release_tag}`
-- Upstream commit: `{upstream_commit}`
-- Upstream command-reference blob: `{reference_blob}`
-{runtime}
-## Evidence
-
-- `commands.md` is the exact upstream `core/model-api/src/commands.md`
-  blob from the release tag; it is not a hand-selected subset.
-- When `commands.json` is present, it is the exact no-argument
-  `model_reference` structured catalog captured from `mitcad-cli mcp`.
-- The reference module can capture and verify the runtime resource
-  `mitcad://reference/commands` against these files.
-
-Do not edit a checked version snapshot by hand. Add a new version directory
-when the Mitcad target changes.
-"""
-
-
-def write_snapshot(
-    *,
-    out: Path,
-    version: str,
-    upstream_commit: str,
-    release_tag: str,
-    reference_blob: str,
-    cli_version: str,
-    reference: str,
-    catalog: dict[str, Any],
-) -> None:
-    if git_blob_sha(reference) != reference_blob:
-        raise MitcadReferenceError(
-            "runtime command reference differs from the pinned upstream blob"
-        )
-    out.mkdir(parents=True, exist_ok=True)
-    (out / "commands.md").write_text(reference, encoding="utf-8")
-    (out / "commands.json").write_text(
-        json.dumps(validate_catalog(catalog), indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    (out / "SOURCE.md").write_text(
-        source_text(
-            version=version,
-            upstream_commit=upstream_commit,
-            release_tag=release_tag,
-            reference_blob=reference_blob,
-            captured_cli=cli_version,
-        ),
-        encoding="utf-8",
-    )
-
-
-def capture_snapshot(
-    *,
-    executable: str,
-    version: str,
-    upstream_commit: str,
-    release_tag: str,
-    reference_blob: str,
-    out: Path,
-) -> int:
-    cli_version, reference, catalog = capture_runtime(executable)
-    if version not in cli_version:
-        raise MitcadReferenceError(
-            f"Mitcad CLI version mismatch: expected {version!r} in "
-            f"{cli_version!r}"
-        )
-    write_snapshot(
-        out=out,
-        version=version,
-        upstream_commit=upstream_commit,
-        release_tag=release_tag,
-        reference_blob=reference_blob,
-        cli_version=cli_version,
-        reference=reference,
-        catalog=catalog,
-    )
-    return len(catalog["commands"])
-
-
 def verify_source_snapshot(
     snapshot: Path,
     *,
@@ -318,12 +225,92 @@ def verify_source_snapshot(
         )
 
 
-def verify_runtime_snapshot(
+def source_text(
+    *,
+    version: str,
+    upstream_commit: str,
+    release_tag: str,
+    source_reference_blob: str,
+    runtime_reference_blob: str | None,
+    captured_cli: str | None,
+) -> str:
+    runtime = (
+        f"- Captured CLI version: `{captured_cli}`\n"
+        if captured_cli
+        else "- Runtime machine catalog: not captured\n"
+    )
+    runtime_blob = runtime_reference_blob or "not captured"
+    return f"""# Mitcad {version} reference snapshot
+
+This directory is pinned to the exact Mitcad release source and runtime used by
+Forge's experimental backend work.
+
+- Mitcad release: `{release_tag}`
+- Upstream commit: `{upstream_commit}`
+- Upstream command-reference blob: `{source_reference_blob}`
+- Live MCP command-resource blob: `{runtime_blob}`
+{runtime}
+## Evidence
+
+- `commands.md` is the exact upstream `core/model-api/src/commands.md`
+  blob from the release tag; it is the complete source reference.
+- Mitcad's live `mitcad://reference/commands` resource is generated from
+  that source but filters entries outside the server vocabulary; its exact
+  runtime text is therefore tracked separately as `runtime-commands.md`.
+- `commands.json` is the exact no-argument `model_reference` structured
+  catalog captured from `mitcad-cli mcp`.
+
+Do not edit a checked version snapshot by hand. Add a new version directory
+when the Mitcad target changes.
+"""
+
+
+def write_snapshot(
+    *,
+    out: Path,
+    version: str,
+    upstream_commit: str,
+    release_tag: str,
+    source_reference_blob: str,
+    runtime_reference_blob: str,
+    cli_version: str,
+    reference: str,
+    catalog: dict[str, Any],
+) -> None:
+    verify_source_snapshot(out, reference_blob=source_reference_blob)
+    actual_runtime_blob = git_blob_sha(reference)
+    if actual_runtime_blob != runtime_reference_blob:
+        raise MitcadReferenceError(
+            "runtime command resource differs from the pinned runtime blob: "
+            f"{actual_runtime_blob} != {runtime_reference_blob}"
+        )
+    (out / "runtime-commands.md").write_text(reference, encoding="utf-8")
+    (out / "commands.json").write_text(
+        json.dumps(validate_catalog(catalog), indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    (out / "SOURCE.md").write_text(
+        source_text(
+            version=version,
+            upstream_commit=upstream_commit,
+            release_tag=release_tag,
+            source_reference_blob=source_reference_blob,
+            runtime_reference_blob=runtime_reference_blob,
+            captured_cli=cli_version,
+        ),
+        encoding="utf-8",
+    )
+
+
+def capture_snapshot(
     *,
     executable: str,
     version: str,
-    snapshot: Path,
-    reference_blob: str,
+    upstream_commit: str,
+    release_tag: str,
+    source_reference_blob: str,
+    runtime_reference_blob: str,
+    out: Path,
 ) -> int:
     cli_version, reference, catalog = capture_runtime(executable)
     if version not in cli_version:
@@ -331,11 +318,48 @@ def verify_runtime_snapshot(
             f"Mitcad CLI version mismatch: expected {version!r} in "
             f"{cli_version!r}"
         )
-    verify_source_snapshot(snapshot, reference_blob=reference_blob)
-    if git_blob_sha(reference) != reference_blob:
+    write_snapshot(
+        out=out,
+        version=version,
+        upstream_commit=upstream_commit,
+        release_tag=release_tag,
+        source_reference_blob=source_reference_blob,
+        runtime_reference_blob=runtime_reference_blob,
+        cli_version=cli_version,
+        reference=reference,
+        catalog=catalog,
+    )
+    return len(catalog["commands"])
+
+
+def verify_runtime_snapshot(
+    *,
+    executable: str,
+    version: str,
+    snapshot: Path,
+    source_reference_blob: str,
+    runtime_reference_blob: str,
+) -> int:
+    cli_version, reference, catalog = capture_runtime(executable)
+    if version not in cli_version:
         raise MitcadReferenceError(
-            "live Mitcad reference differs from pinned release reference"
+            f"Mitcad CLI version mismatch: expected {version!r} in "
+            f"{cli_version!r}"
         )
+    verify_source_snapshot(snapshot, reference_blob=source_reference_blob)
+    actual_runtime_blob = git_blob_sha(reference)
+    if actual_runtime_blob != runtime_reference_blob:
+        raise MitcadReferenceError(
+            "live Mitcad command resource differs from pinned runtime "
+            f"reference: {actual_runtime_blob} != {runtime_reference_blob}"
+        )
+    runtime_path = snapshot / "runtime-commands.md"
+    if runtime_path.is_file():
+        expected_runtime = runtime_path.read_text(encoding="utf-8")
+        if expected_runtime != reference:
+            raise MitcadReferenceError(
+                "live Mitcad command resource differs from runtime-commands.md"
+            )
     catalog_path = snapshot / "commands.json"
     if not catalog_path.is_file():
         raise FileNotFoundError(
