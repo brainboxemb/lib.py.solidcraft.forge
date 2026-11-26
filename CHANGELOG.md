@@ -8,6 +8,39 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-11-26
+
+### Added
+
+- Add public symbolic CAD math through `scpf.cadmath.min()`,
+  `max()`, `sqrt()`, `abs()`, `round()`, `floor()` and `atan()`,
+  preserving parameter dependencies in SolidCraft expressions for
+  configuration-driven geometry.
+- Add typed `AxisLine(...)` support for shifted/custom
+  `Sketch.revolve(...)` axes, including parameter-driven origins, while
+  keeping the resulting revolve one feature that can be used by
+  `Suppress(feature)`.
+- Add `title_block_style="compact"` to component and Assembly drawing
+  authoring, selecting SolidCraft's compact 49 mm title block while preserving
+  the existing built-in title block as the default.
+
+### Changed
+
+- Qualify sheet perforation from SolidCraft flat-pattern/DXF manufacturing
+  output with deterministic review evidence instead of fabricating perforations
+  in display geometry.
+- Qualify compact technical-drawing presentation with replayed 49 mm title-block
+  geometry and a separate approved sheet-image baseline while retaining the
+  existing full Sample Plate drawing qualification.
+- Clarify configuration-position verification intent and place the
+  owner-authored engineering explanation before generated command/evidence
+  details on verification pages.
+
+### Fixed
+
+- Replace stale public `repeat_linear(...)` documentation with the released
+  `rectangular_pattern(...)` feature-history pattern contract.
+
 ## [0.20.0] - 2026-11-26
 
 ### Added
