@@ -46,6 +46,8 @@
 5. Parameter columns must remain generic native dependencies: dimensions, assembly occurrence placement and other associative uses all switch through the same Param contract.
 6. Verify all authored cells, active-row state and row switching on a reopened saved design, including parameter, placement and suppression changes. Unsupported configuration intent must fail explicitly rather than be emulated with Python variants.
 7. Flexible-fit physical states use the conventional row names `Free` for uninstalled manufacturing/print geometry and `Installed` for mounted working geometry. These are model configurations, not render/display-state labels.
+8. Configuration-driven derived geometry must remain native when it uses public symbolic CAD math. The public API must cover min/max, sqrt, abs, round, floor and atan without exposing raw SolidCraft expression strings or private expression helpers.
+9. Symbolic multiplication, division and numeric powers must preserve all source Parameter dependencies so native configuration changes recompute the resulting feature inputs.
 
 ## SCPF revolute relationships
 

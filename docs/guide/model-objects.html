@@ -98,3 +98,21 @@ constraints are not implemented as a complete assembly solver.</p>
 <p><strong>Next:</strong> <a href="../transformations/">Positioning and orientation</a>
 explains how to place geometry and component occurrences, and when
 <code>at()</code>, <code>on()</code> or <code>attach()</code> is the right choice.</p>
+
+<h2 id="symbolic-cad-math">Symbolic CAD math</h2>
+<p>Use <code>cadmath</code> when an editable model relationship needs native
+math beyond ordinary arithmetic. The namespace avoids replacing Python built-ins
+such as <code>min</code>, <code>max</code>, <code>abs</code> and
+<code>round</code>.</p>
+<pre><code>mid_g = cadmath.min(self.mid_round, self.mid_wall / 2 - 0.05)
+mid_tip = cadmath.sqrt(
+    (self.mid_outer_r - mid_g) ** 2
+    - (self.mid_outer_r - self.mid_wall + mid_g) ** 2
+)
+lane = cadmath.round(self.mid_z / 2 / self.grid) * self.grid</code></pre>
+<p>Supported functions are <code>cadmath.min</code>,
+<code>cadmath.max</code>, <code>cadmath.sqrt</code>,
+<code>cadmath.abs</code>, <code>cadmath.round</code>,
+<code>cadmath.floor</code> and <code>cadmath.atan</code>. The result remains a
+native symbolic dependency whenever any input is a Parameter or Expression.
+<code>cadmath.atan</code> returns degrees, matching SolidCraft CAD expressions.</p>

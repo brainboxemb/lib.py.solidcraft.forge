@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/239-clarify-verification-intent
-modules: [pages]
-library: false
-models: [configuration-position]
+branch: issue/241-symbolic-cad-math
+modules: [builder-scpf, verification, pages, ci]
+library: true
+models: [configuration-symbolic-math]
 tasks: [test]

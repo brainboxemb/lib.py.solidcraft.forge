@@ -571,15 +571,51 @@ class Parameter:
             "or other Python-only logic."
         )
 
-    def __truediv__(self, other: float):
-        if not isinstance(other, (float, int)) or other == 0:
-            return NotImplemented
-        return Expression(self.value / other, f"{self.name} / {number_text(other)}", (self,))
+    def __truediv__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            if other == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                self.value / other,
+                f"{self.name} / {number_text(other)}",
+                (self,),
+            )
+        if isinstance(other, (Parameter, Expression)):
+            divisor = _pv(other)
+            if divisor == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                self.value / divisor,
+                f"({self.name}) / ({command_value(other)})",
+                parameters_in(self, other),
+            )
+        return NotImplemented
 
-    def __mul__(self, other: float):
-        if not isinstance(other, (float, int)):
-            return NotImplemented
-        return Expression(self.value * other, f"{self.name} * {number_text(other)}", (self,))
+    def __rtruediv__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            if self.value == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                other / self.value,
+                f"{number_text(other)} / ({self.name})",
+                (self,),
+            )
+        return NotImplemented
+
+    def __mul__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            return Expression(
+                self.value * other,
+                f"{self.name} * {number_text(other)}",
+                (self,),
+            )
+        if isinstance(other, (Parameter, Expression)):
+            return Expression(
+                self.value * _pv(other),
+                f"({self.name}) * ({command_value(other)})",
+                parameters_in(self, other),
+            )
+        return NotImplemented
 
     __rmul__ = __mul__
 
@@ -598,9 +634,12 @@ class Parameter:
     __radd__ = __add__
 
     def __sub__(self, other):
-        if isinstance(other, (int, float)):
-            return Expression(self.value - other,
-                              f"{self.name} - {number_text(other)} mm", (self,))
+        if isinstance(other, (int, float)) and not isinstance(other, bool):
+            return Expression(
+                self.value - other,
+                f"{self.name} - {number_text(other)} mm",
+                (self,),
+            )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value - _pv(other),
@@ -608,6 +647,28 @@ class Parameter:
                 parameters_in(self, other),
             )
         return NotImplemented
+
+    def __rsub__(self, other):
+        if isinstance(other, (int, float)) and not isinstance(other, bool):
+            return Expression(
+                other - self.value,
+                f"{number_text(other)} mm - ({self.name})",
+                (self,),
+            )
+        return NotImplemented
+
+    def __pow__(self, exponent):
+        if (
+            not isinstance(exponent, (int, float))
+            or isinstance(exponent, bool)
+            or not isfinite(exponent)
+        ):
+            return NotImplemented
+        return Expression(
+            self.value ** exponent,
+            f"({self.name}) ^ {number_text(exponent)}",
+            (self,),
+        )
 
     def __neg__(self):
         return Expression(-self.value, f"-({self.name})", (self,))
@@ -620,17 +681,52 @@ class Expression:
     parameters: tuple[Parameter, ...]
 
     def __mul__(self, other):
-        if not isinstance(other, (float, int)):
-            return NotImplemented
-        return Expression(self.value * other,
-                          f"({self.expression}) * {number_text(other)}", self.parameters)
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            return Expression(
+                self.value * other,
+                f"({self.expression}) * {number_text(other)}",
+                self.parameters,
+            )
+        if isinstance(other, (Parameter, Expression)):
+            return Expression(
+                self.value * _pv(other),
+                f"({self.expression}) * ({command_value(other)})",
+                parameters_in(self, other),
+            )
+        return NotImplemented
 
     __rmul__ = __mul__
 
-    def __truediv__(self, other: float):
-        if not isinstance(other, (float, int)) or other == 0:
-            return NotImplemented
-        return Expression(self.value / other, f"({self.expression}) / {number_text(other)}", self.parameters)
+    def __truediv__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            if other == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                self.value / other,
+                f"({self.expression}) / {number_text(other)}",
+                self.parameters,
+            )
+        if isinstance(other, (Parameter, Expression)):
+            divisor = _pv(other)
+            if divisor == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                self.value / divisor,
+                f"({self.expression}) / ({command_value(other)})",
+                parameters_in(self, other),
+            )
+        return NotImplemented
+
+    def __rtruediv__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            if self.value == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                other / self.value,
+                f"{number_text(other)} / ({self.expression})",
+                self.parameters,
+            )
+        return NotImplemented
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
@@ -648,9 +744,12 @@ class Expression:
     __radd__ = __add__
 
     def __sub__(self, other):
-        if isinstance(other, (int, float)):
-            return Expression(self.value - other,
-                              f"({self.expression}) - {number_text(other)} mm", self.parameters)
+        if isinstance(other, (int, float)) and not isinstance(other, bool):
+            return Expression(
+                self.value - other,
+                f"({self.expression}) - {number_text(other)} mm",
+                self.parameters,
+            )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value - _pv(other),
@@ -658,6 +757,28 @@ class Expression:
                 parameters_in(self, other),
             )
         return NotImplemented
+
+    def __rsub__(self, other):
+        if isinstance(other, (int, float)) and not isinstance(other, bool):
+            return Expression(
+                other - self.value,
+                f"{number_text(other)} mm - ({self.expression})",
+                self.parameters,
+            )
+        return NotImplemented
+
+    def __pow__(self, exponent):
+        if (
+            not isinstance(exponent, (int, float))
+            or isinstance(exponent, bool)
+            or not isfinite(exponent)
+        ):
+            return NotImplemented
+        return Expression(
+            self.value ** exponent,
+            f"({self.expression}) ^ {number_text(exponent)}",
+            self.parameters,
+        )
 
     def __neg__(self):
         # Unary minus is used by signed dimensions such as Sketch.extrude(-h).

@@ -26,6 +26,7 @@ EXPECTED_IDS = {
     "components",
     "configuration-installed-state",
     "configuration-position",
+    "configuration-symbolic-math",
     "configuration-table",
     "cone-boolean",
     "corner-anchor",
@@ -75,6 +76,7 @@ SCPF_ONLY_IDS = {
     "attached-through-all",
     "configuration-installed-state",
     "configuration-position",
+    "configuration-symbolic-math",
     "configuration-table",
     "cone-boolean",
     "exploded-views",
@@ -104,7 +106,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 55)
+        self.assertEqual(len(self.models), 56)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -116,6 +118,7 @@ class ModelTests(unittest.TestCase):
             "sample-plate-drawing",
             "configuration-installed-state",
             "configuration-position",
+            "configuration-symbolic-math",
             "configuration-table",
         ):
             self.assertEqual(
@@ -130,6 +133,7 @@ class ModelTests(unittest.TestCase):
             "sample-plate-drawing",
             "configuration-installed-state",
             "configuration-position",
+            "configuration-symbolic-math",
             "configuration-table",
         }:
             self.assertEqual(
