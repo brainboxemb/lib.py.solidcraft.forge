@@ -915,7 +915,7 @@ See [change 0037](background/changes/0037-explicit-native-hole-family.md).
 
 ### Native history patterns
 
-`rectangular_pattern()` and `circular_pattern()` operate on already-applied
+There is no public `repeat_linear()` feature-pattern alias. Use the explicit native-history pattern methods below.\n\n`rectangular_pattern()` and `circular_pattern()` operate on already-applied
 native history features rather than expanding independent Python copies. The
 source argument is the Forge `Shape` that was applied to the body; callers do
 not pass SolidCraft timeline-name strings. Forge resolves that exact source to
