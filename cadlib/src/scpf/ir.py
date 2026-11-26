@@ -326,6 +326,8 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
         distance=distance,
         direction=direction,
     )
+
+
 def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     if shape.kind != "chamfer":
         return None

@@ -253,6 +253,8 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
             distance=command_value(node.distance),
         ),
     ]
+
+
 def _face_boundary_commands(
     selection: FaceBoundaryIR,
     name: str,

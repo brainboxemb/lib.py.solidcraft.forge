@@ -512,7 +512,8 @@ topology/drawings. Typed portable nodes lower directly in the SolidCraft
 backend; `LegacyShapeIR` delegates only not-yet-migrated stable surface to the
 historical compiler. Mitcad declares only the already-qualified experimental
 slice: `primitive.box`, `primitive.cylinder`, `boolean.subtract`,
-`placement.primitive`, `sketch.circle`, `feature.extrude.distance`,
+`placement.primitive`, `sketch.circle`, `profile.region`,
+`feature.extrude.distance`,
 `modify.chamfer.face-boundary` and `native-topology`; its assembly compiler is absent, so assembly intent fails
 explicitly at the boundary. This registry is intentionally internal: it does
 not rename `scpf`, expose a new public backend API or imply feature parity.

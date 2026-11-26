@@ -257,11 +257,12 @@ class SemanticIRTests(unittest.TestCase):
         )
 
         self.assertEqual(future.root.regions[0].holes, (1,))
-        with self.assertRaisesRegex(
-            ModelError,
-            "currently requires one circle region",
-        ):
-            compile_mitcad_ir(future, "FutureAnnulus")
+        for compiler in (compile_solidcraft_ir, compile_mitcad_ir):
+            with self.assertRaisesRegex(
+                ModelError,
+                "currently requires one circle region",
+            ):
+                compiler(future, "FutureAnnulus")
 
     def test_face_boundary_chamfer_keeps_semantic_selector_and_placement(self):
         shape = Box(
