@@ -4,8 +4,10 @@ This file contains unfinished work only.
 
 ## Accepted baseline
 
-The Forge migration is complete and the current public product baseline is
-released as **v0.19.0**.
+The Forge migration is complete. The current public stable product baseline on
+the normal main/dev line is **v0.21.0**. Permanent `exp` intentionally has not
+yet synchronized the normal product changes after its earlier v0.19-derived
+baseline; #297 owns that checkpoint before the next backend experiment.
 
 The accepted baseline now includes:
 - 52 physical model owners, with SCPF primary per owner and historically real
@@ -54,6 +56,8 @@ The accepted baseline now includes:
 - the experimental compiler boundary is now explicit: trusted SCPF source is evaluated once, final Shape intent is normalized to engine-neutral `ModelIR`, and SolidCraft/Mitcad lower the same typed `BoxIR`, `CircleExtrudeIR`, `ChamferIR` and semantic face-boundary intent; not-yet-migrated stable SolidCraft surface is isolated behind SolidCraft-only `LegacyShapeIR`; permanent exp build `45824024029` passed with library=true and all 52 owners, followed by successful Pages run `45824616018`;
 - the first capability added through that compiler boundary is qualified: `CylinderIR` and bounded `BooleanSubtractIR(BoxIR, CylinderIR)` are shared semantic nodes, SolidCraft preserves its existing CSG command contract, Mitcad lowers the same intent to native Box + Cylinder Cut without predicted body ids, and the focused `cylinder-subtract` owner extends only the experimental catalog to 53 owners; permanent exp build `45828904100` passed with both SolidCraft and Mitcad geometry evidence, followed by successful Pages run `45829424750`.
 - primitive geometry and absolute placement are now separate semantic IR concepts: `PlacementIR` owns world-space point + semantic anchor around typed `BoxIR` / `CylinderIR`, qualified `.at(...)` and translations use that same boundary, and `BooleanSubtractIR` consumes placed solids; the off-centre `cylinder-subtract` proof keeps symbolic `bore_x` / `bore_y` through Mitcad native Cylinder Cut while unsupported axial offsets fail closed; permanent exp build `45832874520` passed with library=true and all 53 owners, followed by successful Pages run `45833401412`.
+- standalone Sketch geometry, semantic region membership and extrusion are now separate compiler concepts: `CircleProfileIR` lives inside `SketchIR`, `RegionIR` owns compiler-local outer/hole profile membership and `ExtrudeIR` consumes regions without engine ids; the existing `circle-negative-extrude` source remains unchanged and both native backends lower the same semantic nodes; unqualified nested-loop regions fail closed; permanent exp build `45836358625` passed with library=true and all 53 owners, followed by successful Pages run `45836994007`.
+- normal `dev` has independently advanced to the v0.21.0 product line and now includes #267 multi-profile standalone Sketch extrusion with 58 normal owners; that capability is not copied into `exp` and becomes available to the experiment only through the #297 dev→exp synchronization checkpoint.
 
 Release evidence for v0.19.0:
 - promoted full product baseline:
@@ -76,38 +80,27 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #282 split Sketch/Profile and Extrude semantics in Forge IR
+### Experimental checkpoint: #297 sync current dev product baseline into exp
 
-Remove the next fused compiler node before adding broader sketch authoring:
+Bring the real normal Forge product back underneath the experimental compiler
+line before adding another Mitcad capability:
 
-- replace the qualified Circle-specific `CircleExtrudeIR` path with separate
-  typed sketch/profile intent and typed Extrude intent;
-- keep the current public SCPF authoring unchanged for this experimental
-  refactor;
-- represent profile/region selection without SolidCraft curve ids, Mitcad
-  region ids, BRep entities or coordinate picking;
-- make the engine-neutral region form structurally extensible to nested
-  loops/holes while qualifying only the existing single Circle2D region here;
-- preserve symbolic diameter and extrusion-distance dependencies;
-- make SolidCraft and Mitcad lower the same Sketch/Profile + Extrude semantics
-  independently;
-- preserve exact existing SolidCraft command/replay output for the qualified
-  circle-extrude slice;
-- prove the boundary through focused IR/backend tests and the existing
-  `circle-negative-extrude` owner on both backends;
-- do not implement consumer issue #267 multi-closed-profile authoring in this
-  experimental issue;
-- do not integrate `exp -> dev`.
+- wait for current normal dev consumer blocker #271 to complete and for the
+  resulting dev plan to be reconciled;
+- synchronize permanent `dev -> exp` through a PR and the repository
+  `/merge` policy; do not cherry-pick or reimplement normal product changes;
+- preserve the accepted experimental IR/backend commits while bringing in the
+  current v0.21-era normal product baseline, including #267 multi-profile
+  standalone Sketch extrusion;
+- require a full permanent `exp` library + owner qualification/publication
+  after the synchronization;
+- do not integrate `exp -> dev` in this checkpoint;
+- only after the synchronized baseline is green, open the next experimental
+  issue to qualify the already-public nested/multi-profile Sketch semantics
+  through `RegionIR` on Mitcad without changing the public SCPF API.
 
-### Queued: #162 / #163 verification evidence cleanup
-
-After the Mitcad experiment checkpoint:
-- #162 fixes the concrete `sheet-perforate` case where native perforation
-  metadata passes but the published model preview does not visibly show the
-  perforations, and adds an explicit approved visual expectation;
-- #163 audits every verification owner against the current evidence contract
-  so visually meaningful owners cannot remain green on metadata/native checks
-  alone.
+Normal dev verification follow-ups (#255/#256/#257/#294) and consumer work
+remain owned by the normal dev lane; do not duplicate them on `exp`.
 
 ## Later
 
