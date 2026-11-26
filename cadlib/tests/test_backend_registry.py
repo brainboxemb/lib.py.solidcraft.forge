@@ -1,6 +1,11 @@
 import unittest
+from pathlib import Path
 
 from scpf.backends import BackendAdapter, backend_ids, get_backend
+
+
+ROOT = Path(__file__).resolve().parents[2]
+SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 
 
 class BackendRegistryTests(unittest.TestCase):
@@ -34,6 +39,14 @@ class BackendRegistryTests(unittest.TestCase):
                     "native-topology",
                 }
             ),
+        )
+
+    def test_default_runner_output_equals_explicit_solidcraft(self):
+        from scpf.runner import run_script
+
+        self.assertEqual(
+            run_script(SIMPLE_BOX),
+            run_script(SIMPLE_BOX, backend="solidcraft"),
         )
 
     def test_backend_ids_are_explicit_and_unknown_is_rejected(self):
