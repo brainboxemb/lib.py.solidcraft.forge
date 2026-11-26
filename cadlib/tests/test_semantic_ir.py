@@ -3,6 +3,7 @@ import unittest
 
 from scpf import (
     Anchor,
+    Axis,
     Box,
     Circle2D,
     Cylinder,
@@ -19,7 +20,7 @@ from scpf.compiler import (
     _compile_shape_legacy_with_dependencies,
 )
 from scpf.ir import (
-    BooleanSubtractIR,
+    BooleanIR,
     BoxIR,
     ChamferIR,
     CircleProfileIR,
@@ -30,6 +31,7 @@ from scpf.ir import (
     PlacementIR,
     RegionIR,
     SketchIR,
+    SphereIR,
     normalize_shape,
 )
 
@@ -179,7 +181,8 @@ class SemanticIRTests(unittest.TestCase):
             shape,
             "CylinderSubtract",
         )
-        self.assertIsInstance(model.root, BooleanSubtractIR)
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(model.root.operation, "cut")
         self.assertIsInstance(model.root.target, PlacementIR)
         self.assertIsInstance(model.root.target.primitive, BoxIR)
         self.assertIsInstance(model.root.tool, PlacementIR)
@@ -205,6 +208,70 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(features[1]["participants"], [])
         self.assertEqual(features[1]["center"], ["bore_x", "bore_y"])
         self.assertIn("thickness", str(features[1]["height"]))
+
+    def test_sphere_and_primitive_csg_use_recursive_typed_ir(self):
+        sphere = self.assert_solidcraft_compatibility(
+            Sphere(20),
+            "SphereTest",
+        )
+        self.assertIsInstance(sphere.root, PlacementIR)
+        self.assertIsInstance(sphere.root.primitive, SphereIR)
+        self.assertEqual(sphere.root.primitive.radius, 20)
+        self.assertEqual(sphere.root.anchor, (0, 0, 0))
+
+        shape = Sphere(20)
+        shape = shape + Box(30, 30, 20).move(x=18, z=10)
+        shape = shape - Cylinder(d=8, h=60, axis=Axis.X)
+        shape = shape & Box(50, 50, 30).move(z=15)
+
+        model = self.assert_solidcraft_compatibility(shape, "PrimitiveCsg")
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(model.root.operation, "intersect")
+        self.assertIsInstance(model.root.tool, PlacementIR)
+        self.assertIsInstance(model.root.tool.primitive, BoxIR)
+
+        cut = model.root.target
+        self.assertIsInstance(cut, BooleanIR)
+        self.assertEqual(cut.operation, "cut")
+        self.assertIsInstance(cut.tool.primitive, CylinderIR)
+
+        join = cut.target
+        self.assertIsInstance(join, BooleanIR)
+        self.assertEqual(join.operation, "join")
+        self.assertIsInstance(join.target, PlacementIR)
+        self.assertIsInstance(join.target.primitive, SphereIR)
+        self.assertIsInstance(join.tool.primitive, BoxIR)
+
+        mitcad = compile_mitcad_ir(model, "PrimitiveCsg")
+        features = [
+            row["def"]
+            for row in mitcad["commands"]
+            if row["cmd"] == "add_feature"
+        ]
+        self.assertEqual(
+            [feature["type"] for feature in features],
+            ["sphere", "box", "cylinder", "box"],
+        )
+        self.assertEqual(
+            [feature["operation"] for feature in features],
+            ["new_body", "join", "cut", "intersect"],
+        )
+        self.assertEqual(features[0]["diameter"], 40)
+        self.assertEqual(features[0]["center"], [0, 0])
+        self.assertFalse(features[1]["symmetric"])
+        self.assertFalse(features[3]["symmetric"])
+        self.assertEqual(features[1]["corner"], [3.0, -15.0])
+        self.assertEqual(features[3]["corner"], [-25.0, -25.0])
+
+    def test_unqualified_sphere_placement_stays_legacy_and_mitcad_fails_closed(self):
+        for shape in (
+            Sphere(20, anchor=Anchor.TOP),
+            Sphere(20).move(z=10),
+        ):
+            model = normalize_shape(shape)
+            self.assertIsInstance(model.root, LegacyShapeIR)
+            with self.assertRaises(ModelError):
+                compile_mitcad_ir(model, "UnsupportedSphere")
 
     def test_circle_extrude_is_separate_sketch_region_and_extrude_ir(self):
         diameter = Parameter("diameter", 20)
