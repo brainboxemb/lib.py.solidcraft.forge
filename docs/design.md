@@ -470,18 +470,25 @@ reference, not a CAD model and not generated Pages content.
 root ci.yml immutable SolidCraft runtime pin
         ↓ modules/solidcraft-reference
 solidcraft-cli --version + commands
+targeted engine.describe for typed contracts that gate Forge API design
         ↓
 docs/reference/solidcraft/<version>/
   commands.json
   commands.md
+  describe/<command-id>.json
   SOURCE.md
 ```
 
 `modules/solidcraft-reference` validates registry completeness, captures and
 normalizes the exact runtime registry, renders the human catalog/provenance, and
-compares the checked snapshot back to the same immutable runtime. Its item watch
-includes `docs/reference/solidcraft/**`, so reference changes select their
-own verifier. Historical version directories remain immutable evidence.
+compares the checked snapshot back to the same immutable runtime. When a typed
+native contract gates Forge API design, the same module may additionally retain
+the exact read-only `engine.describe` result for that command below
+`describe/<command-id>.json`. Those targeted schemas are evidence, not a
+second hand-maintained native API catalog, and are compared byte-semantically
+as JSON against the same root-pinned immutable runtime. Its item watch includes
+`docs/reference/solidcraft/**`, so reference changes select their own verifier.
+Historical version directories remain immutable evidence.
 
 ## Runtime graph
 
