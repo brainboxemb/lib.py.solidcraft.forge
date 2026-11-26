@@ -3,8 +3,8 @@
     {
       "command": "sketch.create",
       "params": {
-        "plane": "XZ",
-        "name": "Hook profile"
+        "name": "Hook profile",
+        "plane": "XZ"
       }
     },
     {
@@ -44,9 +44,9 @@
     {
       "command": "solid.extrude",
       "params": {
-        "distance": 15,
+        "body_name": "TopologyFaceBoundaryXz",
         "direction": "symmetric",
-        "body_name": "TopologyFaceBoundaryXz"
+        "distance": 15
       }
     },
     {

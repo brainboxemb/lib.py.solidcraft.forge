@@ -1,0 +1,154 @@
+{
+  "backend": "mitcad",
+  "commands": [
+    {
+      "as": "sk",
+      "cmd": "add_feature",
+      "def": {
+        "constraints": [],
+        "dimensions": [],
+        "entities": [
+          {
+            "at": [
+              -20.0,
+              0.0
+            ],
+            "fixed": true,
+            "id": "p1",
+            "type": "point"
+          },
+          {
+            "at": [
+              20.0,
+              0.0
+            ],
+            "fixed": true,
+            "id": "p2",
+            "type": "point"
+          },
+          {
+            "at": [
+              20.0,
+              -30.0
+            ],
+            "fixed": true,
+            "id": "p3",
+            "type": "point"
+          },
+          {
+            "at": [
+              -20.0,
+              -30.0
+            ],
+            "fixed": true,
+            "id": "p4",
+            "type": "point"
+          },
+          {
+            "end": "p2",
+            "id": "c5",
+            "start": "p1",
+            "type": "line"
+          },
+          {
+            "end": "p3",
+            "id": "c6",
+            "start": "p2",
+            "type": "line"
+          },
+          {
+            "end": "p4",
+            "id": "c7",
+            "start": "p3",
+            "type": "line"
+          },
+          {
+            "end": "p1",
+            "id": "c8",
+            "start": "p4",
+            "type": "line"
+          }
+        ],
+        "plane": "xz",
+        "type": "sketch"
+      },
+      "name": "Hook profile"
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "extent": {
+          "distance": 15,
+          "full_length": true,
+          "type": "symmetric"
+        },
+        "flip": false,
+        "operation": "new_body",
+        "participants": [],
+        "profiles": [
+          {
+            "point": [
+              0.0,
+              -15.0
+            ],
+            "sketch": {
+              "ref": "sk.uid"
+            }
+          }
+        ],
+        "type": "extrude"
+      },
+      "name": "TopologyFaceBoundaryXzBase"
+    }
+  ],
+  "format": "scpf-mitcad",
+  "replay": [
+    {
+      "bind_face_boundary_edges": {
+        "body": "body",
+        "faces": [
+          {
+            "normal": [
+              0,
+              -1,
+              0
+            ],
+            "normal_tolerance": 1e-06,
+            "surface": "plane"
+          },
+          {
+            "normal": [
+              0,
+              1,
+              0
+            ],
+            "normal_tolerance": 1e-06,
+            "surface": "plane"
+          }
+        ],
+        "name": "edges"
+      },
+      "bind_single_body": "body",
+      "commands": [
+        {
+          "cmd": "add_feature",
+          "def": {
+            "body": {
+              "$mitcad_bind": "body"
+            },
+            "edges": {
+              "$mitcad_bind": "edges"
+            },
+            "size": {
+              "distance": 1.5,
+              "type": "equal_distance"
+            },
+            "type": "chamfer"
+          },
+          "name": "TopologyFaceBoundaryXz"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}
