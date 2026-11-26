@@ -221,6 +221,39 @@ reference. SolidCraft persists its own `row_identities` map in the saved
 document. The SolidCraft command API does not accept caller-chosen native row
 ids, so Forge does not patch or predict them.
 
+Configuration Rules are authored on that same final table:
+
+```python
+Configure(
+    assembly,
+    active="Medium",
+    columns=(Param(self.frame_width), Param(self.fit_diameter)),
+    rows={
+        "Small": ("60 mm", "20.4 mm"),
+        "Medium": ("80 mm", "20.4 mm"),
+        "Large": ("100 mm", "20.4 mm"),
+    },
+    rules=(
+        ConfigRule(
+            "installed",
+            "Installed",
+            enabled=True,
+            condition=Always(),
+            effect=DriveParameter(self.fit_diameter, 20.0),
+        ),
+    ),
+)
+```
+
+The first public rule slice deliberately exposes only typed `Always()` and
+`DriveParameter(...)` intent. Lowering emits native `config.rule` after row
+authoring and before `config.activate`. The rule's `enabled` field is the
+SolidCraft Configuration Rules checkbox; Forge does not manufacture a boolean
+user parameter. A drive target must already be a `Param(...)` column, so
+disabling the rule lets SolidCraft restore the selected row's stored value.
+Rules therefore remain orthogonal to Small / Medium / Large rather than
+expanding those rows into a Cartesian state table.
+
 `Configure` never rewrites Python model structure for each row. A row may only
 change native configuration columns. Whole-component presence, alternate
 attachment graphs and arbitrary Python branching therefore require a separate
@@ -240,7 +273,7 @@ consumer repositories. The verification catalog has its own
 | --- | --- |
 | `configuration-table` | named rows, active row, multiple parameter columns, two independent feature-suppression columns, saved native table and row switching |
 | `configuration-position` | one configuration table around a complete Assembly, with parameter-driven occurrence positions for Front, Below and Service |
-| `configuration-installed-state` | one reusable flexible-fit child component publishes its fit parameter to the parent; `Free` manufacturing and `Installed` mounted rows switch that same child definition natively after saving |
+| `configuration-installed-state` | two reusable flexible-fit child occurrences share one published fit parameter; Small/Medium/Large remains the row axis while an independent native Installed rule drives or releases that parameter after saving |
 | replay row identity | Forge-generated name-stable row references bind to SolidCraft-returned native row ids; activation uses the bound id |
 | saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
 
@@ -253,7 +286,8 @@ The use-case boundary is intentional:
 | optional authored feature | `Suppress(feature)` |
 | dimensions plus suppression in one row | supported by the same table |
 | parent size table + published reusable-child parameter | supported by the same `Param(...)` contract; shared child occurrences follow one parent native parameter |
-| flexible-fit free/mounted state | `Free` / `Installed` rows using ordinary native parameters; this is a physical configuration, not a display state |
+| flexible-fit free/mounted state as the sole axis | `Free` / `Installed` rows using ordinary native parameters |
+| independent installed state beside size rows | `ConfigRule(..., condition=Always(), effect=DriveParameter(...))`; rule enabled is the native checkbox and disabled restores the row value |
 | material or appearance variants | native SolidCraft supports them, but Forge waits for a typed, separately verified column contract |
 | whole component present/absent | not silently mapped to feature suppression |
 | alternate attachment/joint graph | not a configuration cell; requires explicit relationship authoring |

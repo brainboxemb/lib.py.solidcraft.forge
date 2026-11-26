@@ -260,6 +260,76 @@ class ConfigurationTests(unittest.TestCase):
             },
         )
 
+    def test_rule_drives_published_child_parameter_with_size_rows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "model.py"
+            path.write_text(
+                "@component(include=('fit_diameter',))\n"
+                "class Clamp:\n"
+                "    fit_diameter = 20.4\n"
+                "    def build(self):\n"
+                "        return Cylinder(d=self.fit_diameter, h=10)\n"
+                "class Frame:\n"
+                "    frame_width = 80.0\n"
+                "    clamp_bore = 20.4\n"
+                "    def build(self):\n"
+                "        left = Clamp(\n"
+                "            fit_diameter=self.clamp_bore, name='left',\n"
+                "            placement=Placement(x=-self.frame_width / 4),\n"
+                "        )\n"
+                "        right = left.copy(\n"
+                "            name='right',\n"
+                "            placement=Placement(x=self.frame_width / 4),\n"
+                "        )\n"
+                "        return Configure(\n"
+                "            left + right, active='Medium',\n"
+                "            columns=(Param(self.frame_width), Param(self.clamp_bore)),\n"
+                "            rows={\n"
+                "                'Small': ('60 mm', '20.4 mm'),\n"
+                "                'Medium': ('80 mm', '20.4 mm'),\n"
+                "                'Large': ('100 mm', '20.4 mm'),\n"
+                "            },\n"
+                "            rules=(\n"
+                "                ConfigRule(\n"
+                "                    'installed', 'Installed', enabled=True,\n"
+                "                    condition=Always(),\n"
+                "                    effect=DriveParameter(self.clamp_bore, 20.0),\n"
+                "                ),\n"
+                "            ),\n"
+                "        )\n"
+                "Frame()\n",
+                encoding="utf-8",
+            )
+            document = run_script(path)
+
+        commands = document["commands"]
+        configure = next(
+            row for row in commands if row["command"] == "config.configure"
+        )
+        self.assertEqual(
+            configure["params"],
+            {"params": ["frame_width", "clamp_bore"]},
+        )
+        self.assertEqual(
+            [
+                row["params"]["name"]
+                for row in commands
+                if row["command"] == "parameters.add"
+            ].count("clamp_bore"),
+            1,
+        )
+        rule = next(row for row in commands if row["command"] == "config.rule")
+        self.assertEqual(rule["params"]["rule"]["id"], "installed")
+        self.assertTrue(rule["params"]["rule"]["enabled"])
+        self.assertEqual(
+            rule["params"]["rule"]["effect"],
+            {
+                "type": "drive_parameter",
+                "parameter": "clamp_bore",
+                "expression": "20",
+            },
+        )
+
     def test_configure_wraps_parametric_assembly_placement(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "model.py"
