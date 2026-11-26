@@ -24,7 +24,7 @@ verifications:
     adapter: mesh-geometry
     definition: verification/geometry.json
     artifact: model.stl
-    implementations: [scpf]
+    implementations: [scpf, scpf-mitcad]
   - id: visual
     module: verification
     adapter: solidcraft-visual
