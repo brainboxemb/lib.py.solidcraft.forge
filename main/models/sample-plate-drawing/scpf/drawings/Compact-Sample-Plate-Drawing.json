@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "2b0grzsbfc2dn",
+  "id": "6bzyc43eygr4x",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "8g0emjhw0fvw6"
+        "source": "0a7nkh9c8ak5d"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "cqzq4yxa13zh1",
+      "id": "etrgq4j7pycb8",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "7k78pkwdaz100",
+          "id": "7h2c9d5e3xafc",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,27 +532,27 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "1g71w7fjj4s85",
+          "id": "32w2406k8p7y6",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "7k78pkwdaz100",
+          "parent": "7h2c9d5e3xafc",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "abbyx63mtsah3",
+          "id": "71x9amywt9105",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "7k78pkwdaz100",
+          "parent": "7h2c9d5e3xafc",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "azt73kr4re345",
+          "id": "bd5y9wm85x57y",
           "kind": "base",
           "label": "Iso front right",
           "notes": []
@@ -562,7 +562,7 @@
   ],
   "sources": [
     {
-      "id": "8g0emjhw0fvw6"
+      "id": "0a7nkh9c8ak5d"
     }
   ],
   "symbols": [],
