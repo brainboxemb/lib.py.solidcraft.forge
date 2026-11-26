@@ -8,6 +8,29 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-11-26
+
+### Added
+
+- Add multiple closed profiles to standalone `Sketch.extrude(...)`, preserving
+  one native Sketch and one native ExtrudeFeature for nested-loop regions such
+  as annular Ø10/Ø8 hollow-tube profiles while keeping single-profile
+  authoring source-compatible.
+- Add native two-distance chamfer authoring through
+  `Shape.chamfer(distance, distance2=..., flip=..., edges=...)`, reusing the
+  existing semantic edge-selection vocabulary and preserving the exact
+  equal-distance command shape when asymmetric options are omitted.
+
+### Changed
+
+- Apply the completed verification-evidence contract to newly added visible
+  geometry: both multi-profile extrusion and asymmetric chamfer retain native
+  saved-design checks, mesh geometry checks and approved SolidCraft visual
+  baselines.
+- Grow the normal Forge catalogue from 57 to 59 physical model owners with the
+  focused multi-profile extrusion and asymmetric-chamfer qualification owners.
+
+
 ## [0.21.0] - 2026-11-26
 
 ### Added
