@@ -15,8 +15,8 @@
         ]
       },
       "center_of_mass": [
-        4.3691550908334893e-16,
-        1.894462661535629e-16,
+        -0.2706566044683502,
+        0.16916037779271942,
         6.0
       ],
       "closed": true,
@@ -79,6 +79,24 @@
       "name": "bore_d",
       "unit": "mm",
       "value": 10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "8",
+      "model": false,
+      "name": "bore_x",
+      "unit": "mm",
+      "value": 8.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "-5",
+      "model": false,
+      "name": "bore_y",
+      "unit": "mm",
+      "value": -5.0
     }
   ],
   "sketches": [],
@@ -86,7 +104,7 @@
     {
       "error": null,
       "id": 1,
-      "ms": 2.695662,
+      "ms": 3.02565,
       "name": "Box1",
       "rolled_back": false,
       "suppressed": false,
@@ -96,7 +114,7 @@
     {
       "error": null,
       "id": 2,
-      "ms": 10.459762,
+      "ms": 13.410578,
       "name": "Cylinder1",
       "rolled_back": false,
       "suppressed": false,

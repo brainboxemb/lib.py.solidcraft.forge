@@ -33,6 +33,22 @@
       }
     },
     {
+      "command": "parameters.add",
+      "params": {
+        "expression": "8",
+        "name": "bore_x",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "-5",
+        "name": "bore_y",
+        "unit": "mm"
+      }
+    },
+    {
       "command": "solid.box",
       "params": {
         "body_name": "CylinderSubtract",
@@ -52,8 +68,8 @@
       "params": {
         "axis": "Z",
         "base": [
-          0,
-          0,
+          "bore_x",
+          "bore_y",
           "-((thickness + 20 mm) / 2)"
         ],
         "diameter": "bore_d",

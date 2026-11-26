@@ -31,22 +31,22 @@
         },
         "surface_distance_probes": [
           {
-            "actual_mm": 4.996651301579926,
-            "delta_mm": 0.0033486984200736813,
+            "actual_mm": 4.996609489592186,
+            "delta_mm": 0.00339051040781424,
             "expected_mm": 5.0,
-            "label": "center of cylindrical through bore",
+            "label": "center of off-centre cylindrical through bore",
             "pass": true,
             "point": [
-              0.0,
-              0.0,
+              8.0,
+              -5.0,
               6.0
             ],
             "tolerance_mm": 0.3
           }
         ],
         "volume": {
-          "actual_mm3": 27857.911544197897,
-          "delta_mm3": 0.38934027483628597,
+          "actual_mm3": 27857.873631671566,
+          "delta_mm3": 0.35142774850464775,
           "expected_mm3": 27857.52220392306,
           "pass": true,
           "tolerance_mm3": 40.0

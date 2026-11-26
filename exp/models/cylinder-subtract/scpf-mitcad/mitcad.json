@@ -26,6 +26,18 @@
       "value": 10.0
     },
     {
+      "cmd": "add_parameter",
+      "name": "bore_x",
+      "unit": "mm",
+      "value": 8.0
+    },
+    {
+      "cmd": "add_parameter",
+      "name": "bore_y",
+      "unit": "mm",
+      "value": -5.0
+    },
+    {
       "cmd": "add_feature",
       "def": {
         "corner": [
@@ -47,8 +59,8 @@
       "cmd": "add_feature",
       "def": {
         "center": [
-          0,
-          0
+          "bore_x",
+          "bore_y"
         ],
         "diameter": "bore_d",
         "height": "thickness + 20 mm",

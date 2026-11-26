@@ -35,6 +35,20 @@
       "comment": ""
     },
     {
+      "name": "bore_x",
+      "expression": "8 mm",
+      "unit": "mm",
+      "value": 8.0,
+      "comment": ""
+    },
+    {
+      "name": "bore_y",
+      "expression": "-5 mm",
+      "unit": "mm",
+      "value": -5.0,
+      "comment": ""
+    },
+    {
       "name": "d1",
       "expression": "-(length / 2)",
       "unit": "mm",
@@ -97,8 +111,8 @@
       "type": "cylinder",
       "plane": "xy",
       "center": [
-        0.0,
-        0.0
+        "bore_x",
+        "bore_y"
       ],
       "diameter": "bore_d",
       "height": "d3",
