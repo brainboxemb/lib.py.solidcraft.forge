@@ -3,7 +3,7 @@
 from pathlib import Path
 import unittest
 
-from scpf import Anchor, Box, Sphere
+from scpf import Anchor, Box, Cylinder, Sphere
 from scpf.backends.mitcad import compile_model
 from scpf.compiler import ModelError
 from scpf.runner import run_script
@@ -144,6 +144,7 @@ class MitcadBackendTests(unittest.TestCase):
         self.assertEqual(features[0]["operation"], "new_body")
         self.assertEqual(features[1]["operation"], "cut")
         self.assertEqual(features[1]["participants"], [])
+        self.assertEqual(features[1]["center"], ["bore_x", "bore_y"])
         self.assertFalse(any(
             isinstance(value, str) and value.startswith("F")
             for feature in features
@@ -158,6 +159,16 @@ class MitcadBackendTests(unittest.TestCase):
         feature = document["commands"][-1]["def"]
         self.assertEqual(feature["corner"], [-20.0, -15.0])
         self.assertTrue(feature["symmetric"])
+
+    def test_axial_primitive_offset_fails_closed_until_qualified(self):
+        with self.assertRaisesRegex(
+            ModelError,
+            "axial coordinate on the origin plane",
+        ):
+            compile_model(
+                Cylinder(d=10, h=20).at(8, -5, 3),
+                "AxiallyOffsetCylinder",
+            )
 
     def test_unsupported_shape_fails_explicitly(self):
         with self.assertRaisesRegex(

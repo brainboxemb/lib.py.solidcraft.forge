@@ -16,6 +16,7 @@ from ..core import (
     Expression,
     Parameter,
     _DirectionSelector,
+    _box_corner_from_anchor,
     _cylinder_base_from_anchor,
     _native_dependencies,
     _native_expression,
@@ -33,6 +34,7 @@ from ..ir import (
     FaceBoundaryIR,
     LegacyShapeIR,
     ModelIR,
+    PlacementIR,
 )
 from ..replay import replay_document
 
@@ -71,7 +73,7 @@ def _parameter_commands(model: ModelIR) -> list[dict]:
 
 
 def _negative_half(value):
-    """Match the stable SolidCraft symbolic half-expression spelling."""
+    """Match the accepted SolidCraft symbolic half-expression spelling."""
     if isinstance(value, Parameter):
         return _native_expression(
             f"-{value.name} / 2",
@@ -98,10 +100,15 @@ def _negative_value(value):
     return -pv(value)
 
 
-def _box_corner(node: BoxIR):
-    dimensions = (node.length, node.width, node.height)
+def _origin_box_corner(primitive: BoxIR, anchor):
+    """Keep the already-qualified direct-Box expression spelling unchanged."""
+    dimensions = (
+        primitive.length,
+        primitive.width,
+        primitive.height,
+    )
     corner = []
-    for dimension, side in zip(dimensions, node.anchor):
+    for dimension, side in zip(dimensions, anchor):
         if side < 0:
             corner.append(0)
         elif side > 0:
@@ -111,55 +118,79 @@ def _box_corner(node: BoxIR):
     return corner
 
 
-def _box_command(node: BoxIR, name: str) -> dict:
-    _require_positive(node.length, "box length")
-    _require_positive(node.width, "box width")
-    _require_positive(node.height, "box height")
+def _box_command(node: PlacementIR, name: str) -> dict:
+    primitive = node.primitive
+    if not isinstance(primitive, BoxIR):
+        raise TypeError("SolidCraft box lowering requires PlacementIR(BoxIR)")
+
+    _require_positive(primitive.length, "box length")
+    _require_positive(primitive.width, "box width")
+    _require_positive(primitive.height, "box height")
+    selector = _DirectionSelector(node.anchor)
 
     params = {
-        "length": command_value(node.length),
-        "width": command_value(node.width),
-        "height": command_value(node.height),
+        "length": command_value(primitive.length),
+        "width": command_value(primitive.width),
+        "height": command_value(primitive.height),
     }
-    _DirectionSelector(node.anchor)
-    if node.anchor == (0, 0, 0):
+    if not node.explicit and node.anchor == (0, 0, 0):
         params["center"] = [0, 0, 0]
-    else:
+    elif not node.explicit and tuple(node.point) == (0, 0, 0):
         params["corner"] = [
             command_value(value)
-            for value in _box_corner(node)
+            for value in _origin_box_corner(primitive, node.anchor)
+        ]
+    else:
+        corner = _box_corner_from_anchor(
+            primitive.length,
+            primitive.width,
+            primitive.height,
+            node.point,
+            selector,
+        )
+        params["corner"] = [
+            command_value(value)
+            for value in corner
         ]
     params["body_name"] = name
     return _command("solid.box", **params)
 
 
-def _csg_box_command(node: BoxIR, name: str) -> dict:
+def _csg_box_command(node: PlacementIR, name: str) -> dict:
+    # Preserve the accepted #246 SolidCraft command shape rather than changing
+    # native command spelling merely because placement moved into typed IR.
     command = _box_command(node, name)
     command["params"]["operation"] = "new"
     return command
 
 
 def _cylinder_command(
-    node: CylinderIR,
+    node: PlacementIR,
     name: str,
     *,
     operation: str = "new",
 ) -> dict:
-    _require_positive(node.height, "cylinder height")
-    _require_positive(node.diameter, "cylinder diameter")
+    primitive = node.primitive
+    if not isinstance(primitive, CylinderIR):
+        raise TypeError(
+            "SolidCraft cylinder lowering requires PlacementIR(CylinderIR)"
+        )
+
+    _require_positive(primitive.height, "cylinder height")
+    _require_positive(primitive.diameter, "cylinder diameter")
     selector = _DirectionSelector(node.anchor)
     base = _cylinder_base_from_anchor(
-        node.height,
-        node.diameter,
-        node.axis,
+        primitive.height,
+        primitive.diameter,
+        primitive.axis,
         node.point,
         selector,
     )
     params = {
-        "height": command_value(node.height),
-        "diameter": command_value(node.diameter),
+        "height": command_value(primitive.height),
+        "diameter": command_value(primitive.diameter),
         "base": [command_value(value) for value in base],
-        "axis": node.axis,
+        "axis": primitive.axis,
         "operation": operation,
     }
     if operation == "new":
@@ -239,11 +270,15 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
     node = model.root
     parameters = _parameter_commands(model)
 
-    if isinstance(node, BoxIR):
-        return [*parameters, _box_command(node, name)]
-
-    if isinstance(node, CylinderIR):
-        return [*parameters, _cylinder_command(node, name)]
+    if isinstance(node, PlacementIR):
+        if isinstance(node.primitive, BoxIR):
+            return [*parameters, _box_command(node, name)]
+        if isinstance(node.primitive, CylinderIR):
+            return [*parameters, _cylinder_command(node, name)]
+        raise TypeError(
+            f"unsupported SolidCraft placed primitive "
+            f"{type(node.primitive).__name__}"
+        )
 
     if isinstance(node, CircleExtrudeIR):
         return [

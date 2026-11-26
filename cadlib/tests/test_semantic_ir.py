@@ -25,6 +25,7 @@ from scpf.ir import (
     CircleExtrudeIR,
     CylinderIR,
     LegacyShapeIR,
+    PlacementIR,
     normalize_shape,
 )
 
@@ -38,7 +39,7 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(current, legacy)
         return model
 
-    def test_parameterized_box_is_typed_once_then_lowered_by_both_backends(self):
+    def test_parameterized_box_is_geometry_plus_placement_ir(self):
         length = Parameter("length", 40)
         width = Parameter("width", 30)
         height = Parameter("height", 10)
@@ -54,8 +55,11 @@ class SemanticIRTests(unittest.TestCase):
             Box(length, width, height, anchor=Anchor.CENTER),
             "CenteredPanel",
         )
-        self.assertIsInstance(model.root, BoxIR)
+        self.assertIsInstance(model.root, PlacementIR)
+        self.assertIsInstance(model.root.primitive, BoxIR)
+        self.assertEqual(model.root.point, (0, 0, 0))
         self.assertEqual(model.root.anchor, (0, 0, -1))
+        self.assertFalse(model.root.explicit)
         self.assertEqual(
             [parameter.name for parameter in model.parameters],
             ["length", "width", "height"],
@@ -73,7 +77,33 @@ class SemanticIRTests(unittest.TestCase):
             ],
         )
 
-    def test_cylinder_is_one_typed_ir_for_solidcraft_and_mitcad(self):
+    def test_explicit_box_placement_keeps_solidcraft_commands_and_mitcad_values(self):
+        length = Parameter("length", 40)
+        width = Parameter("width", 30)
+        x = Parameter("x_position", 8)
+        y = Parameter("y_position", -5)
+        shape = Box(length, width, 10).at(
+            x,
+            y,
+            0,
+            anchor=Anchor.BOTTOM,
+        )
+
+        model = self.assert_solidcraft_compatibility(shape, "PlacedBox")
+        self.assertIsInstance(model.root, PlacementIR)
+        self.assertIsInstance(model.root.primitive, BoxIR)
+        self.assertEqual(model.root.point, (x, y, 0))
+        self.assertEqual(model.root.anchor, (0, 0, -1))
+        self.assertTrue(model.root.explicit)
+
+        feature = compile_mitcad_ir(model, "PlacedBox")["commands"][-1]["def"]
+        self.assertEqual(feature["type"], "box")
+        self.assertIn("x_position", str(feature["corner"][0]))
+        self.assertIn("length", str(feature["corner"][0]))
+        self.assertIn("y_position", str(feature["corner"][1]))
+        self.assertIn("width", str(feature["corner"][1]))
+
+    def test_cylinder_is_geometry_plus_placement_ir(self):
         height = Parameter("height", 30)
         diameter = Parameter("diameter", 10)
         shape = Cylinder(d=diameter, h=height)
@@ -82,22 +112,51 @@ class SemanticIRTests(unittest.TestCase):
             shape,
             "CylinderTest",
         )
-        self.assertIsInstance(model.root, CylinderIR)
-        self.assertEqual(model.root.axis, "Z")
+        self.assertIsInstance(model.root, PlacementIR)
+        self.assertIsInstance(model.root.primitive, CylinderIR)
+        self.assertEqual(model.root.primitive.axis, "Z")
+        self.assertEqual(model.root.point, (0, 0, 0))
         self.assertEqual(model.root.anchor, (0, 0, 0))
+        self.assertFalse(model.root.explicit)
 
-        mitcad = compile_mitcad_ir(model, "CylinderTest")
-        definition = mitcad["commands"][-1]["def"]
+        definition = compile_mitcad_ir(
+            model,
+            "CylinderTest",
+        )["commands"][-1]["def"]
         self.assertEqual(definition["type"], "cylinder")
         self.assertEqual(definition["plane"], "xy")
+        self.assertEqual(definition["center"], [0, 0])
         self.assertEqual(definition["diameter"], "diameter")
         self.assertEqual(definition["height"], "height")
         self.assertTrue(definition["symmetric"])
         self.assertEqual(definition["operation"], "new_body")
 
-    def test_box_minus_cylinder_is_typed_boolean_for_both_backends(self):
+    def test_explicit_cylinder_placement_is_shared_by_both_backends(self):
+        diameter = Parameter("diameter", 10)
+        height = Parameter("height", 30)
+        x = Parameter("x_position", 8)
+        y = Parameter("y_position", -5)
+        shape = Cylinder(d=diameter, h=height).at(x, y, 0)
+
+        model = self.assert_solidcraft_compatibility(shape, "PlacedCylinder")
+        self.assertIsInstance(model.root, PlacementIR)
+        self.assertIsInstance(model.root.primitive, CylinderIR)
+        self.assertEqual(model.root.point, (x, y, 0))
+        self.assertTrue(model.root.explicit)
+
+        definition = compile_mitcad_ir(
+            model,
+            "PlacedCylinder",
+        )["commands"][-1]["def"]
+        self.assertEqual(definition["center"], ["x_position", "y_position"])
+        self.assertEqual(definition["plane"], "xy")
+        self.assertTrue(definition["symmetric"])
+
+    def test_box_minus_placed_cylinder_is_typed_boolean_for_both_backends(self):
         thickness = Parameter("thickness", 12)
         bore = Parameter("bore", 10)
+        bore_x = Parameter("bore_x", 8)
+        bore_y = Parameter("bore_y", -5)
         shape = Box(
             60,
             40,
@@ -106,6 +165,10 @@ class SemanticIRTests(unittest.TestCase):
         ) - Cylinder(
             d=bore,
             h=thickness + 20,
+        ).at(
+            bore_x,
+            bore_y,
+            0,
         )
 
         model = self.assert_solidcraft_compatibility(
@@ -113,11 +176,14 @@ class SemanticIRTests(unittest.TestCase):
             "CylinderSubtract",
         )
         self.assertIsInstance(model.root, BooleanSubtractIR)
-        self.assertIsInstance(model.root.target, BoxIR)
-        self.assertIsInstance(model.root.tool, CylinderIR)
+        self.assertIsInstance(model.root.target, PlacementIR)
+        self.assertIsInstance(model.root.target.primitive, BoxIR)
+        self.assertIsInstance(model.root.tool, PlacementIR)
+        self.assertIsInstance(model.root.tool.primitive, CylinderIR)
+        self.assertEqual(model.root.tool.point, (bore_x, bore_y, 0))
         self.assertEqual(
             [parameter.name for parameter in model.parameters],
-            ["thickness", "bore"],
+            ["thickness", "bore", "bore_x", "bore_y"],
         )
 
         mitcad = compile_mitcad_ir(model, "CylinderSubtract")
@@ -133,6 +199,7 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(features[0]["operation"], "new_body")
         self.assertEqual(features[1]["operation"], "cut")
         self.assertEqual(features[1]["participants"], [])
+        self.assertEqual(features[1]["center"], ["bore_x", "bore_y"])
         self.assertIn("thickness", str(features[1]["height"]))
 
     def test_circle_extrude_is_one_typed_ir_for_solidcraft_and_mitcad(self):
@@ -161,7 +228,7 @@ class SemanticIRTests(unittest.TestCase):
             "extrude",
         )
 
-    def test_face_boundary_chamfer_keeps_semantic_selector_in_ir(self):
+    def test_face_boundary_chamfer_keeps_semantic_selector_and_placement(self):
         shape = Box(
             60,
             40,
@@ -177,6 +244,8 @@ class SemanticIRTests(unittest.TestCase):
             "TopologyFaceBoundaryBox",
         )
         self.assertIsInstance(model.root, ChamferIR)
+        self.assertIsInstance(model.root.base, PlacementIR)
+        self.assertIsInstance(model.root.base.primitive, BoxIR)
         self.assertEqual(model.root.edges.faces, ("top",))
 
         mitcad = compile_mitcad_ir(model, "TopologyFaceBoundaryBox")
@@ -196,7 +265,7 @@ class SemanticIRTests(unittest.TestCase):
 
         self.assertIsInstance(model.root, LegacyShapeIR)
         self.assertEqual(model.root.source_kind, "sphere")
-        solidcraft = compile_solidcraft_ir(model, "CylinderTest")
+        solidcraft = compile_solidcraft_ir(model, "SphereTest")
         self.assertEqual(
             solidcraft["commands"][-1]["command"],
             "solid.sphere",
@@ -205,7 +274,7 @@ class SemanticIRTests(unittest.TestCase):
             ModelError,
             "does not yet support Forge shape kind 'sphere'",
         ):
-            compile_mitcad_ir(model, "CylinderTest")
+            compile_mitcad_ir(model, "SphereTest")
 
 
 if __name__ == "__main__":

@@ -76,6 +76,7 @@ def _mitcad_adapter() -> BackendAdapter:
                 "primitive.box",
                 "primitive.cylinder",
                 "boolean.subtract",
+                "placement.primitive",
                 "sketch.circle",
                 "feature.extrude.distance",
                 "modify.chamfer.face-boundary",
