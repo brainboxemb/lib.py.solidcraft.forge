@@ -2,17 +2,18 @@ schema: 1
 purpose: [example, verification]
 section: configurations
 priority: 30
-title: Independent Installed state
-tagline: Small / Medium / Large stays independent from the native Installed rule
+title: Size rows + Installed rule
+tagline: Small/Medium/Large remains one row axis while Installed is an independent native checkbox
 description: >
-  A reusable split flexible sleeve keeps Small / Medium / Large as the ordinary
-  configuration-row axis. Native SolidCraft rule evidence proves an independent
-  Installed state can drive the shared fit parameter without replacing those
-  rows; disabling the rule restores the active row's Free expression.
-parameters: Tube 20.0 mm; Free interference 0.2 mm; sizes 20/30/40 mm
+  Two reusable flexible-fit child occurrences share one published fit diameter.
+  Small, Medium and Large control the parent span while an enabled Installed
+  configuration rule independently drives the shared child fit. Disabling the
+  rule restores the active row's Free manufacturing value without rerunning
+  Forge Python.
+parameters: Small/Medium/Large span 60/80/100 mm; Free fit 20.4 mm; Installed fit 20.0 mm
 stages:
-  - Build one reusable split flexible-fit child component
-  - Keep Small / Medium / Large as ordinary configuration rows
-  - Enable Installed as a native rule that drives the shared fit parameter
-  - Switch to Large while Installed remains active
-  - Disable Installed and prove Large remains active while Free fit returns
+  - Build one reusable flexible-fit child and copy it as two occurrences
+  - Publish one shared fit diameter to the parent Assembly
+  - Author Small, Medium and Large rows with the Free fit value
+  - Add one independent Installed rule that drives the same configured parameter
+  - Reopen the saved design and verify row switching with Installed enabled or disabled
