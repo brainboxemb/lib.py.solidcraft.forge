@@ -35,10 +35,42 @@ MODEL = ROOT / "models/simple-box/scpf/model.py"
 
 
 def ensure_appimage_runtime() -> None:
-    """Install the one Ubuntu desktop library absent from GitHub's runner."""
+    """Install Mitcad's documented Ubuntu AppImage runtime libraries."""
+    packages = [
+        "libgl1",
+        "libopengl0",
+        "libegl1",
+        "libglx-mesa0",
+        "libgl1-mesa-dri",
+        "libfontconfig1",
+        "libfreetype6",
+        "libdbus-1-3",
+        "libglib2.0-0t64",
+        "libx11-6",
+        "libx11-xcb1",
+        "libxext6",
+        "libxrender1",
+        "libxi6",
+        "libsm6",
+        "libice6",
+        "libxkbcommon0",
+        "libxkbcommon-x11-0",
+        "libxcb-cursor0",
+        "libxcb-icccm4",
+        "libxcb-image0",
+        "libxcb-keysyms1",
+        "libxcb-render-util0",
+        "libxcb-xinerama0",
+        "libxcb-xkb1",
+        "libxcb-shape0",
+        "libxcb-randr0",
+        "libwayland-client0",
+        "libwayland-cursor0",
+        "libwayland-egl1",
+    ]
     subprocess.run(["sudo", "apt-get", "update", "-qq"], check=True)
     subprocess.run(
-        ["sudo", "apt-get", "install", "-y", "-qq", "libopengl0"],
+        ["sudo", "apt-get", "install", "-y", "-qq", *packages],
         check=True,
     )
 
