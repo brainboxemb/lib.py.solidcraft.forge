@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
 TOPOLOGY_BOX = ROOT / "models/topology-face-boundary-box/scpf/model.py"
+NATIVE_REVOLVE = ROOT / "models/native-revolve/scpf/model.py"
 CYLINDER_SUBTRACT = ROOT / "models/cylinder-subtract/scpf/model.py"
 CONFIGURATION_TABLE = ROOT / "models/configuration-table/scpf/model.py"
 
@@ -90,6 +91,47 @@ class MitcadBackendTests(unittest.TestCase):
         self.assertTrue(distance.startswith("-("))
         self.assertIn("height", distance)
         self.assertEqual(extrusion["def"]["operation"], "new_body")
+
+
+    def test_native_revolve_source_lowers_to_native_mitcad_revolve(self):
+        document = run_script(NATIVE_REVOLVE, backend="mitcad")
+        self.assertEqual(
+            [row["cmd"] for row in document["commands"]],
+            [
+                "add_parameter",
+                "add_parameter",
+                "add_parameter",
+                "add_feature",
+                "add_feature",
+            ],
+        )
+        self.assertEqual(
+            [(row["name"], row["unit"]) for row in document["commands"][:3]],
+            [
+                ("radius", "mm"),
+                ("length", "mm"),
+                ("sweep", "deg"),
+            ],
+        )
+        self.assertNotIn("value", document["commands"][2])
+        self.assertEqual(
+            document["commands"][2]["expression"],
+            "360 deg",
+        )
+        sketch = document["commands"][-2]["def"]
+        revolve = document["commands"][-1]["def"]
+        self.assertEqual(sketch["type"], "sketch")
+        self.assertEqual(
+            [row["value"] for row in sketch["dimensions"]],
+            ["radius", "length"],
+        )
+        self.assertEqual(revolve["type"], "revolve")
+        self.assertEqual(revolve["axis"], "x")
+        self.assertEqual(
+            revolve["extent"],
+            {"type": "angle", "angle": "sweep"},
+        )
+        self.assertEqual(revolve["operation"], "new_body")
 
     def test_face_boundary_chamfer_uses_native_filter_and_runtime_body_binding(self):
         document = run_script(TOPOLOGY_BOX, backend="mitcad")

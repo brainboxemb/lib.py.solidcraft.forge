@@ -85,6 +85,7 @@ def _mitcad_adapter() -> BackendAdapter:
                 "profile.region",
                 "feature.extrude.distance",
                 "feature.extrude.symmetric",
+                "feature.revolve.angle",
                 "modify.chamfer.face-boundary",
                 "native-topology",
             }

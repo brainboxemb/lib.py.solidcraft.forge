@@ -33,6 +33,7 @@ from scpf.ir import (
     PlacementIR,
     PolygonProfileIR,
     RegionIR,
+    RevolveIR,
     SketchIR,
     SphereIR,
     normalize_shape,
@@ -608,6 +609,109 @@ class SemanticIRTests(unittest.TestCase):
             "does not yet support Forge shape kind 'chamfer'",
         ):
             compile_mitcad_ir(model, "AsymmetricChamfer")
+
+
+    def test_parameterized_polygon_revolve_is_typed_for_both_backends(self):
+        length = Parameter("length", 10)
+        radius = Parameter("radius", 4)
+        sweep = Parameter("sweep", 360)
+        with Sketch(name="RadialProfile", plane="XZ") as sketch:
+            Polygon2D(
+                [
+                    (0, 0),
+                    (0, radius),
+                    (length, radius),
+                    (length, 0),
+                ],
+                plane="XZ",
+            )
+        shape = sketch.revolve(axis=Axis.X, angle=sweep)
+
+        model = self.assert_solidcraft_compatibility(shape, "NativeRevolve")
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(model.root.axis, "X")
+        self.assertIsNone(model.root.direction)
+        self.assertEqual(model.root.region, RegionIR(outer=0))
+        self.assertIsInstance(model.root.sketch.profiles[0], PolygonProfileIR)
+        self.assertEqual(
+            [(parameter.name, parameter.unit) for parameter in model.parameters],
+            [
+                ("radius", "mm"),
+                ("length", "mm"),
+                ("sweep", "deg"),
+            ],
+        )
+
+        mitcad = compile_mitcad_ir(model, "NativeRevolve")
+        sketch_def = mitcad["commands"][-2]["def"]
+        revolve_def = mitcad["commands"][-1]["def"]
+        self.assertEqual(sketch_def["type"], "sketch")
+        self.assertEqual(sketch_def["plane"], "xz")
+        self.assertEqual(
+            [entity["type"] for entity in sketch_def["entities"]],
+            [
+                "point", "point", "point", "point",
+                "line", "line", "line", "line",
+            ],
+        )
+        self.assertEqual(
+            [constraint["type"] for constraint in sketch_def["constraints"]],
+            ["vertical", "horizontal", "vertical", "horizontal"],
+        )
+        self.assertEqual(
+            [dimension["value"] for dimension in sketch_def["dimensions"]],
+            ["radius", "length"],
+        )
+        self.assertEqual(revolve_def["type"], "revolve")
+        self.assertEqual(
+            revolve_def["profiles"],
+            [{"sketch": {"ref": "sk.uid"}, "point": [5.0, 2.0]}],
+        )
+        self.assertEqual(revolve_def["axis"], "x")
+        self.assertEqual(
+            revolve_def["extent"],
+            {"type": "angle", "angle": "sweep"},
+        )
+        self.assertEqual(revolve_def["operation"], "new_body")
+
+    def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
+        with Sketch(name="HalfProfile", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 4), (10, 4), (10, 0)],
+                plane="XZ",
+            )
+        model = normalize_shape(sketch.revolve(axis=Axis.X, angle=180))
+        self.assertIsInstance(model.root, RevolveIR)
+        definition = compile_mitcad_ir(
+            model,
+            "HalfRevolve",
+        )["commands"][-1]["def"]
+        self.assertEqual(
+            definition["extent"],
+            {"type": "angle", "angle": "180 deg"},
+        )
+
+    def test_unqualified_revolve_forms_remain_legacy(self):
+        shared = Parameter("shared", 4)
+        with Sketch(name="MixedRole", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, shared), (10, shared), (10, 0)],
+                plane="XZ",
+            )
+        mixed_role = sketch.revolve(axis=Axis.X, angle=shared)
+
+        with Sketch(name="ConcaveRevolve", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 5), (5, 2), (10, 5), (10, 0)],
+                plane="XZ",
+            )
+        concave = sketch.revolve(axis=Axis.X)
+
+        for shape in (mixed_role, concave):
+            model = normalize_shape(shape)
+            self.assertIsInstance(model.root, LegacyShapeIR)
+            with self.assertRaises(ModelError):
+                compile_mitcad_ir(model, "UnsupportedRevolve")
 
     def test_unmigrated_surface_is_explicit_legacy_ir_only_for_solidcraft(self):
         shape = Cone(d=10, h=20)

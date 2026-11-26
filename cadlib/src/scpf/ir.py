@@ -219,7 +219,12 @@ def _polygon_region_interior_point(
     sketch: SketchIR,
     region: RegionIR,
 ) -> tuple[float, float]:
-    """Return a deterministic interior point for one qualified convex polygon."""
+    """Return transport geometry for one qualified convex semantic polygon.
+
+    Symbolic coordinates remain untouched in PolygonProfileIR. Current values
+    are evaluated only to validate strict convexity and derive a backend
+    selector when a native API requires one.
+    """
 
     if (
         len(sketch.profiles) != 1
@@ -232,15 +237,6 @@ def _polygon_region_interior_point(
         )
 
     profile = sketch.profiles[0]
-    if any(
-        parameters_in(value)
-        for point in profile.points
-        for value in point
-    ):
-        raise ValueError(
-            "qualified polygon region currently requires fixed coordinates"
-        )
-
     points = tuple(
         tuple(float(pv(value)) for value in point)
         for point in profile.points
@@ -308,6 +304,24 @@ class ExtrudeIR:
 
 
 @dataclass(frozen=True)
+class RevolveIR:
+    """Angular sweep of one semantic Sketch region around a principal axis."""
+
+    sketch: SketchIR
+    region: RegionIR
+    axis: str
+    angle: Any
+    direction: str | None = None
+    source_kind: str = "sketch_base_revolve"
+
+    def __post_init__(self):
+        if self.axis not in {"X", "Y", "Z"}:
+            raise ValueError("RevolveIR axis must be X, Y or Z")
+        if self.direction not in (None, "symmetric"):
+            raise ValueError("RevolveIR direction must be None or symmetric")
+
+
+@dataclass(frozen=True)
 class FaceBoundaryIR:
     """Semantic request for all boundary edges of cardinal planar faces."""
 
@@ -356,6 +370,7 @@ class LegacyShapeIR:
 IRNode = (
     PlacementIR
     | ExtrudeIR
+    | RevolveIR
     | ChamferIR
     | BooleanIR
     | LegacyShapeIR
@@ -398,9 +413,48 @@ def _collect_parameters(value, found=None):
     return found
 
 
+def _angle_parameter_names(value, found=None):
+    """Collect parameters whose qualified semantic role is an angle."""
+    if found is None:
+        found = set()
+
+    if isinstance(value, Shape):
+        if value.kind == "sketch_base_revolve":
+            (
+                _sketch_name,
+                _plane,
+                _origin,
+                _plane_offset,
+                _profiles,
+                angle,
+                _axis,
+                _direction,
+                _operations,
+                _rotation,
+            ) = value.data
+            found.update(parameter.name for parameter in parameters_in(angle))
+        _angle_parameter_names(value.data, found)
+        return found
+
+    if isinstance(value, dict):
+        for item in value.values():
+            _angle_parameter_names(item, found)
+        return found
+
+    if isinstance(value, (tuple, list)):
+        for item in value:
+            _angle_parameter_names(item, found)
+    return found
+
+
 def _parameter_ir(shape: Shape) -> tuple[ParameterIR, ...]:
+    angle_parameters = _angle_parameter_names(shape)
     return tuple(
-        ParameterIR(name, value)
+        ParameterIR(
+            name,
+            value,
+            unit="deg" if name in angle_parameters else "mm",
+        )
         for name, value in _collect_parameters(shape).items()
     )
 
@@ -620,6 +674,86 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
         direction=direction,
     )
 
+
+def _portable_revolve(shape: Shape) -> RevolveIR | None:
+    """Normalize the first qualified standalone Sketch + Revolve slice."""
+    if shape.kind != "sketch_base_revolve":
+        return None
+
+    (
+        sketch_name,
+        plane,
+        origin,
+        plane_offset,
+        profiles,
+        angle,
+        axis,
+        direction,
+        operations,
+        rotation,
+    ) = shape.data
+
+    if plane != "XZ":
+        return None
+    if origin is not None or plane_offset is not None or rotation is not None:
+        return None
+    if operations or direction is not None or axis != "X":
+        return None
+    if len(profiles) != 1:
+        return None
+
+    profile, profile_anchor, offset = profiles[0]
+    if (
+        profile.kind != "polygon"
+        or profile_anchor is not None
+        or tuple(offset) != (0, 0)
+    ):
+        return None
+
+    points, profile_plane, ids = profile.data
+    if profile_plane != plane:
+        return None
+
+    sweep = pv(angle)
+    if not isfinite(sweep) or sweep <= 0 or sweep > 360:
+        return None
+
+    angle_parameters = {
+        parameter.name for parameter in parameters_in(angle)
+    }
+    coordinate_parameters = {
+        parameter.name
+        for point in points
+        for value in point
+        for parameter in parameters_in(value)
+    }
+    if angle_parameters & coordinate_parameters:
+        return None
+
+    polygon = PolygonProfileIR(
+        points=tuple(tuple(point) for point in points),
+        segment_ids=tuple(ids) if ids is not None else None,
+    )
+    sketch = SketchIR(
+        name=sketch_name,
+        plane=plane,
+        profiles=(polygon,),
+    )
+    region = RegionIR(outer=0)
+    try:
+        _polygon_region_interior_point(sketch, region)
+    except ValueError:
+        return None
+
+    return RevolveIR(
+        sketch=sketch,
+        region=region,
+        axis=axis,
+        angle=angle,
+        direction=direction,
+    )
+
+
 def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     if shape.kind != "chamfer":
         return None
@@ -701,6 +835,10 @@ def _normalize_node(shape: Shape) -> IRNode:
     if extrude is not None:
         return extrude
 
+    revolve = _portable_revolve(shape)
+    if revolve is not None:
+        return revolve
+
     chamfer = _portable_chamfer(shape)
     if chamfer is not None:
         return chamfer
@@ -740,6 +878,7 @@ __all__ = [
     "PrimitiveIR",
     "ProfileIR",
     "RegionIR",
+    "RevolveIR",
     "SketchIR",
     "SphereIR",
     "_polygon_region_interior_point",

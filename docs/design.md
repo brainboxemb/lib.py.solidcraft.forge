@@ -827,8 +827,27 @@ The typed IR began with the first qualified portable slice:
 `CylinderIR`; #343 later replaces the initial bounded Box-Cylinder boolean proof
 with recursive `BooleanIR` plus `SphereIR`. #282 splits the former fused
 Circle+Extrude node into `SketchIR`, `CircleProfileIR`, `RegionIR` and
-`ExtrudeIR`. Symbolic Forge `Parameter` / `Expression` values remain
-semantic values until backend lowering.
+`ExtrudeIR`. #351 adds strict-convex `PolygonProfileIR` composition, and
+#381 adds `RevolveIR` over the same Sketch/profile/region semantics rather
+than introducing a second revolve-specific frontend. Symbolic Forge
+`Parameter` / `Expression` values remain semantic values until backend
+lowering.
+
+For the #381 checkpoint, the existing `native-revolve` source evaluates once
+to a parameterized XZ polygon plus `RevolveIR(axis="X", angle=sweep)`.
+SolidCraft lowers that node to its existing native Sketch + `solid.revolve`
+sequence. Mitcad lowers the same node to one native Sketch and one native
+Revolve. Mitcad's Sketch points are seeded from current parameter values only
+because its entity coordinates are numeric; native horizontal/vertical
+constraints and line dimensions bind the rectangle back to `radius` and
+`length`. The point used to resolve the closed native region is derived at
+lowering time and is not retained in `RegionIR`.
+
+Angle units are semantic compiler data. The `sweep` model parameter becomes
+`ParameterIR(unit="deg")`, and the Mitcad Revolve extent references that
+parameter instead of replacing an authored 360-degree value with an
+unconditional full-revolution flag. This preserves the same dependency needed
+by the existing SolidCraft saved-design mutation to 180 degrees.
 
 The stable SolidCraft surface is larger than this first migration slice. A
 temporary `LegacyShapeIR` therefore wraps not-yet-migrated stable intent so
@@ -886,7 +905,8 @@ slice: `primitive.box`, `primitive.cylinder`, `primitive.sphere`,
 `boolean.subtract`, `boolean.join`, `boolean.intersect`,
 `placement.primitive`, `sketch.circle`, `sketch.polygon`, `profile.region`,
 `feature.extrude.distance`, `feature.extrude.symmetric`,
-`modify.chamfer.face-boundary` and `native-topology`; its assembly compiler is absent, so assembly intent fails
+`feature.revolve.angle`, `modify.chamfer.face-boundary` and
+`native-topology`; its assembly compiler is absent, so assembly intent fails
 explicitly at the boundary. This registry is intentionally internal: it does
 not rename `scpf`, expose a new public backend API or imply feature parity.
 

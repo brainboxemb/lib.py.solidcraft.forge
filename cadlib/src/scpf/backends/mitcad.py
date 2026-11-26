@@ -6,6 +6,8 @@ qualified native lowering.
 """
 from __future__ import annotations
 
+from math import isfinite
+
 from ..compiler import ModelError, _require_positive
 from ..core import (
     Shape,
@@ -15,6 +17,7 @@ from ..core import (
     _plain_command_value,
     _pv as pv,
     command_value,
+    number_text,
     parameters_in,
 )
 from ..ir import (
@@ -29,6 +32,7 @@ from ..ir import (
     PlacementIR,
     PolygonProfileIR,
     RegionIR,
+    RevolveIR,
     SphereIR,
     _region_interior_point,
     normalize_shape,
@@ -50,16 +54,25 @@ _FACE_NORMALS = {
 
 
 def _parameter_commands(model: ModelIR) -> list[dict]:
-    """Publish Forge model parameters as native Mitcad user parameters."""
-    return [
-        {
+    """Publish Forge model parameters with native Mitcad unit semantics."""
+    commands = []
+    for parameter in model.parameters:
+        command = {
             "cmd": "add_parameter",
             "name": parameter.name,
-            "value": parameter.value,
             "unit": parameter.unit,
         }
-        for parameter in model.parameters
-    ]
+        if parameter.unit == "deg":
+            # Mitcad JSON numbers in angular slots are radians even when the
+            # display unit is degrees. A unit-bearing expression preserves
+            # Forge's authored degree value and remains a native parameter.
+            command["expression"] = (
+                f"{number_text(parameter.value)} deg"
+            )
+        else:
+            command["value"] = parameter.value
+        commands.append(command)
+    return commands
 
 
 def _require_origin_plane(value, *, label):
@@ -453,6 +466,165 @@ def _extrude_commands(
         },
     ]
 
+
+def _same_semantic_value(left, right) -> bool:
+    """Compare authored scalar intent without using current values as identity."""
+    return str(command_value(left)) == str(command_value(right))
+
+
+def _parameterized_rectangle_sketch(profile: PolygonProfileIR):
+    """Return native Mitcad sketch relations for the #381 rectangle slice."""
+    if len(profile.points) != 4:
+        raise ModelError(
+            "Mitcad parameterized RevolveIR currently requires a rectangle"
+        )
+
+    p1, p2, p3, p4 = profile.points
+    values = tuple(
+        tuple(float(pv(value)) for value in point)
+        for point in profile.points
+    )
+    if any(
+        parameters_in(value)
+        for value in (p1[0], p1[1], p2[0], p4[1])
+    ):
+        raise ModelError(
+            "Mitcad parameterized RevolveIR rectangle must start at origin"
+        )
+    if (
+        abs(values[0][0]) > 1e-12
+        or abs(values[0][1]) > 1e-12
+        or abs(values[1][0]) > 1e-12
+        or abs(values[3][1]) > 1e-12
+        or not _same_semantic_value(p2[1], p3[1])
+        or not _same_semantic_value(p3[0], p4[0])
+        or values[1][1] <= 0
+        or values[2][0] <= 0
+    ):
+        raise ModelError(
+            "Mitcad parameterized RevolveIR currently requires an "
+            "origin-based axis-aligned rectangle"
+        )
+
+    entities = [
+        {"id": "p1", "type": "point", "at": list(values[0]), "fixed": True},
+        {"id": "p2", "type": "point", "at": list(values[1])},
+        {"id": "p3", "type": "point", "at": list(values[2])},
+        {"id": "p4", "type": "point", "at": list(values[3])},
+        {"id": "c5", "type": "line", "start": "p1", "end": "p2"},
+        {"id": "c6", "type": "line", "start": "p2", "end": "p3"},
+        {"id": "c7", "type": "line", "start": "p3", "end": "p4"},
+        {"id": "c8", "type": "line", "start": "p4", "end": "p1"},
+    ]
+    constraints = [
+        {"id": "k9", "type": "vertical", "line": "c5"},
+        {"id": "k10", "type": "horizontal", "line": "c6"},
+        {"id": "k11", "type": "vertical", "line": "c7"},
+        {"id": "k12", "type": "horizontal", "line": "c8"},
+    ]
+    dimensions = [
+        {"id": "k13", "type": "length", "line": "c5",
+         "value": command_value(p2[1])},
+        {"id": "k14", "type": "length", "line": "c6",
+         "value": command_value(p3[0])},
+    ]
+    return entities, constraints, dimensions
+
+
+def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
+    """Lower the qualified semantic RevolveIR to native Mitcad Revolve."""
+    sketch = node.sketch
+    if sketch.plane != "XZ":
+        raise ModelError("Mitcad RevolveIR currently requires an XZ Sketch")
+    if (
+        len(sketch.profiles) != 1
+        or not isinstance(sketch.profiles[0], PolygonProfileIR)
+        or node.region != RegionIR(outer=0)
+    ):
+        raise ModelError("Mitcad RevolveIR requires one polygon region")
+    if node.axis != "X" or node.direction is not None:
+        raise ModelError("Mitcad RevolveIR currently requires the world X axis")
+
+    try:
+        pick = _region_interior_point(sketch, node.region)
+    except ValueError as exc:
+        raise ModelError(str(exc)) from exc
+
+    sweep = pv(node.angle)
+    if not isfinite(sweep) or sweep <= 0 or sweep > 360:
+        raise ModelError(
+            "sketch revolve angle must be above 0 and at most 360 degrees"
+        )
+
+    profile = sketch.profiles[0]
+    parameterized = any(
+        parameters_in(value)
+        for point in profile.points
+        for value in point
+    )
+    if parameterized:
+        entities, constraints, dimensions = _parameterized_rectangle_sketch(profile)
+    else:
+        point_ids = []
+        entities = []
+        for index, point in enumerate(profile.points, start=1):
+            point_id = f"p{index}"
+            point_ids.append(point_id)
+            entities.append({
+                "id": point_id,
+                "type": "point",
+                "at": [pv(value) for value in point],
+                "fixed": True,
+            })
+        first_curve = len(point_ids) + 1
+        for offset, start_id in enumerate(point_ids):
+            end_id = point_ids[(offset + 1) % len(point_ids)]
+            entities.append({
+                "id": f"c{first_curve + offset}",
+                "type": "line",
+                "start": start_id,
+                "end": end_id,
+            })
+        constraints = []
+        dimensions = []
+
+    if parameters_in(node.angle):
+        extent = {"type": "angle", "angle": command_value(node.angle)}
+    elif abs(sweep - 360.0) <= 1e-12:
+        extent = {"type": "full"}
+    else:
+        extent = {"type": "angle", "angle": f"{number_text(sweep)} deg"}
+
+    return [
+        {
+            "cmd": "add_feature",
+            "as": "sk",
+            "name": sketch.name,
+            "def": {
+                "type": "sketch",
+                "plane": sketch.plane.lower(),
+                "entities": entities,
+                "constraints": constraints,
+                "dimensions": dimensions,
+            },
+        },
+        {
+            "cmd": "add_feature",
+            "name": name,
+            "def": {
+                "type": "revolve",
+                "profiles": [{
+                    "sketch": {"ref": "sk.uid"},
+                    "point": [pick[0], pick[1]],
+                }],
+                "axis": node.axis.lower(),
+                "extent": extent,
+                "operation": "new_body",
+            },
+        },
+    ]
+
+
 def _chamfer_document(
     model: ModelIR,
     node: ChamferIR,
@@ -564,6 +736,8 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
             )
     elif isinstance(node, ExtrudeIR):
         geometry_commands = _extrude_commands(node, name)
+    elif isinstance(node, RevolveIR):
+        geometry_commands = _revolve_commands(node, name)
     elif isinstance(node, BooleanIR):
         geometry_commands = _boolean_commands(node, name)
     else:
