@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 from types import ModuleType
 import sys
 import tempfile
@@ -64,6 +65,10 @@ class SCPFMitcadBuilderTests(unittest.TestCase):
                 build(source, output)
 
             self.assertEqual((output.parent / "model.mitcad").read_bytes(), b"mitcad")
+            self.assertEqual(
+                json.loads((output.parent / "mitcad.json").read_text()),
+                document,
+            )
             self.assertEqual(output.read_bytes(), b"stl")
 
         run_script.assert_called_once_with(source, backend="mitcad")

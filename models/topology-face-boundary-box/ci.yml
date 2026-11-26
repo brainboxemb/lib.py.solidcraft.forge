@@ -5,11 +5,15 @@ primary: scpf
 
 implementations:
   - {id: scpf, builder: builder-scpf, source: scpf/model.py, preview: false}
-  - {id: scpf-mitcad, builder: builder-scpf-mitcad, source: scpf/model.py, preview: false}
+  - {id: scpf-mitcad, builder: builder-scpf-mitcad, source: scpf/model.py}
 
 verifications:
   - {id: native, module: verification, adapter: solidcraft-model, definition: verification/solidcraft.py, artifact: model.sc, implementations: [scpf]}
   - {id: geometry, module: verification, adapter: mesh-geometry, definition: verification/geometry.json, artifact: model.stl}
+
+preview:
+  module: preview
+  adapter: mesh
 
 dependencies: []
 needs: [cadlib]

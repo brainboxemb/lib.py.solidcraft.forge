@@ -28,6 +28,9 @@
 7. The Mitcad builder must not download or install a CAD runtime. Its runtime contract is an already-qualified `mitcad-cli` executable on `PATH`, optionally supplied through `CAD_LIBRARY_MITCAD_EXECUTABLE`.
 8. Root `runtimes.mitcad` must use the immutable released `cad-mitcad:v0.3.7` role. Experimental `scpf-mitcad` implementations stay inside their existing physical owner, reuse the same SCPF source, keep SolidCraft `scpf` primary and must satisfy that owner's applicable verification contract.
 9. The initial owner-integrated Mitcad slice is limited to `simple-box`, `circle-negative-extrude` and `topology-face-boundary-box`; expanding that set requires separately qualified backend capability and owner evidence.
+10. Every published `scpf-mitcad` build must retain the validated pre-execution Forge-to-Mitcad command document as `mitcad.json` alongside `model.mitcad` and `model.stl`. Pages may project that durable command document but must not reconstruct it.
+11. Experimental Pages must present a Mitcad result from the actual exported `model.stl`, label it as an STL-derived Mitcad result rather than a native screenshot, and expose the saved `model.mitcad` document.
+12. When multiple backends consume the same owner-local SCPF source, Pages shows that source once and presents the secondary backend as an alternate result, not as independent reference code.
 
 ## SCPF native associativity
 

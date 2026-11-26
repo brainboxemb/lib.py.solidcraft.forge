@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/232-mitcad-owner-integration
-modules: [builder-scpf-mitcad, ci]
+branch: feature/243-mitcad-pages-evidence
+modules: [builder-scpf-mitcad, pages, preview]
 library: true
 models: [simple-box, circle-negative-extrude, topology-face-boundary-box]
 tasks: [test]

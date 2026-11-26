@@ -1,5 +1,6 @@
 """Experimental SCPF-to-Mitcad native builder."""
 from pathlib import Path
+import json
 import os
 
 
@@ -24,6 +25,13 @@ def build(source: Path, output: Path):
     target = output.parent
     target.mkdir(parents=True, exist_ok=True)
     native = target / "model.mitcad"
+    command_document = target / "mitcad.json"
+    command_document.write_text(
+        json.dumps(document, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    _require_artifact(command_document)
+
     executable = os.environ.get(
         "CAD_LIBRARY_MITCAD_EXECUTABLE",
         "mitcad-cli",

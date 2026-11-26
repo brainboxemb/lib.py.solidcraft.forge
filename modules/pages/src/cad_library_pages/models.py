@@ -177,6 +177,20 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
                 "lang": {".py": "python", ".json": "json", ".scad": "openscad"}.get(source.suffix, "text"),
                 "content": source.read_text(encoding="utf-8"),
             })
+        primary_source_path = next(
+            (
+                source["path"]
+                for source in params["sources"]
+                if source["id"] == featured
+            ),
+            None,
+        )
+        for source in params["sources"]:
+            source["sharedsource"] = (
+                source["id"] != featured
+                and source["path"] == primary_source_path
+            )
+
         background = owner / "page.md"
         if background.is_file():
             params["background"] = background.read_text(encoding="utf-8")
@@ -226,8 +240,10 @@ def prepare_models(source_root: Path, site: Path, build_scope: Path | None):
                     ("model.stl", "STL"),
                     ("model.sc", "SC"),
                     ("model.step", "STEP"),
+                    ("model.mitcad", "Mitcad"),
                     ("model.png", "Preview"),
                     ("solidcraft.json", "commands"),
+                    ("mitcad.json", "commands"),
                     ("verification/verification.json", "verification"),
                     ("result.json", "result"),
                 ):
