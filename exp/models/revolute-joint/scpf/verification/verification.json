@@ -1,0 +1,225 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "2ef1ffa35a46c72c03f57eb941eaeef2d310a7b4e75d717ccd105c18701da059",
+          "size": 2128
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft body count",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/joint/results.json",
+          "sha256": "d320a5bd405fb6aeb37516c45410a21104b3e079089f11bb7cc9a2821584e658",
+          "size": 2474
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": "revolute",
+              "expected": "revolute",
+              "label": "SolidCraft inspection check type",
+              "pass": true
+            },
+            "id": "type",
+            "path": [
+              0,
+              "joints",
+              0,
+              "type"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Hinge",
+              "expected": "Hinge",
+              "label": "SolidCraft inspection check name",
+              "pass": true
+            },
+            "id": "name",
+            "path": [
+              0,
+              "joints",
+              0,
+              "name"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 60.0,
+              "delta": 0.0,
+              "expected": 60.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check value",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "value",
+            "path": [
+              0,
+              "joints",
+              0,
+              "values",
+              0,
+              "value"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "deg",
+              "expected": "deg",
+              "label": "SolidCraft inspection check unit",
+              "pass": true
+            },
+            "id": "unit",
+            "path": [
+              0,
+              "joints",
+              0,
+              "values",
+              0,
+              "unit"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": [
+                0.0,
+                180.0
+              ],
+              "expected": [
+                0.0,
+                180.0
+              ],
+              "label": "SolidCraft inspection check limits",
+              "pass": true
+            },
+            "id": "limits",
+            "path": [
+              0,
+              "joints",
+              0,
+              "values",
+              0,
+              "limits"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_joint",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/drive_120/results.json",
+          "sha256": "9b02d851d358a9273a66766015779a43a1d2f52109a684da4a9ae2447feb3527",
+          "size": 780
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check moved",
+              "pass": true
+            },
+            "id": "moved",
+            "path": [
+              0,
+              "moved"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 120.0,
+              "delta": 0.0,
+              "expected": 120.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check value",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "value",
+            "path": [
+              0,
+              "values",
+              0,
+              "value"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "deg",
+              "expected": "deg",
+              "label": "SolidCraft inspection check unit",
+              "pass": true
+            },
+            "id": "unit",
+            "path": [
+              0,
+              "values",
+              0,
+              "unit"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": [
+                0.0,
+                180.0
+              ],
+              "expected": [
+                0.0,
+                180.0
+              ],
+              "label": "SolidCraft inspection check limits",
+              "pass": true
+            },
+            "id": "limits",
+            "path": [
+              0,
+              "values",
+              0,
+              "limits"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_drive_120",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/revolute-joint/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "revolute-joint"
+}

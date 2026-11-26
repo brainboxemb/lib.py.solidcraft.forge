@@ -1,0 +1,695 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "d904c4516774a995d31734573f8854dee979ed308663763ce6cb8e326d7ef50b",
+  "variables": {
+    "$sampleplate": 2,
+    "$component_1": 1,
+    "$d1_SamplePlate_face_point_1": [
+      -19.948684188300792,
+      4.94868418830112,
+      8.0
+    ],
+    "$d1_SamplePlate_face_index_1": 3,
+    "$drawing_1": "0xtqjbanfe621",
+    "$drawing_1_source": "14nxdkh4n06zg",
+    "$drawing_1_sheet": "0r3235fsthzdz",
+    "$drawing_1_orientation": "landscape",
+    "$drawing_1_front": "ezdg48xre2ey1",
+    "$drawing_1_top": "38d8mkamgfyvh",
+    "$drawing_1_right": "43nnj2by7krpz",
+    "$drawing_1_iso": "49ggxp9n8805s",
+    "$drawing_1_dimension_1": "01x9rfhd98m94",
+    "$drawing_1_dimension_2": "3janpmy65eza6",
+    "$drawing_1_dimension_3": "a5arkvmvdjh5r",
+    "$drawing_1_dimension_4": "9wcbsxr90ymf9",
+    "$drawing_1_dimension_5": "1kt9smnehprd2",
+    "$drawing_1_dimension_6": "ahajq01djh2px",
+    "$drawing_1_note_1": "eek7p2tp7jp8z"
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "SamplePlate",
+        "grounded": true
+      },
+      "bindings": {
+        "$sampleplate": 2,
+        "$component_1": 1
+      }
+    },
+    {
+      "index": 1,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XY",
+        "name": "d1_SamplePlate__Base"
+      }
+    },
+    {
+      "index": 2,
+      "command": "sketch.rectangle.two_point",
+      "resolved_params": {
+        "p0": [
+          -40.0,
+          -25.0
+        ],
+        "p1": [
+          40.0,
+          25.0
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 4,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "distance": 8.0,
+        "direction": "positive",
+        "body_name": "SamplePlate"
+      }
+    },
+    {
+      "index": 5,
+      "command": "solid.fillet",
+      "resolved_params": {
+        "edges": [
+          [
+            -40.0,
+            -25.0,
+            4.0
+          ],
+          [
+            40.0,
+            -25.0,
+            4.0
+          ],
+          [
+            40.0,
+            25.0,
+            4.0
+          ],
+          [
+            -40.0,
+            25.0,
+            4.0
+          ]
+        ],
+        "radius": 6,
+        "body": "SamplePlate"
+      }
+    },
+    {
+      "index": 6,
+      "command": "model.faces",
+      "resolved_params": {
+        "body": "SamplePlate"
+      },
+      "bindings": {
+        "$d1_SamplePlate_face_point_1": [
+          -19.948684188300792,
+          4.94868418830112,
+          8.0
+        ],
+        "$d1_SamplePlate_face_index_1": 3
+      }
+    },
+    {
+      "index": 7,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": {
+          "face": [
+            -19.948684188300792,
+            4.94868418830112,
+            8.0
+          ],
+          "body": "SamplePlate",
+          "index": 3
+        },
+        "project_edges": false,
+        "name": "d1_SamplePlate__Holes"
+      }
+    },
+    {
+      "index": 8,
+      "command": "sketch.circle.center",
+      "resolved_params": {
+        "center": [
+          -28.0,
+          0.0
+        ],
+        "diameter": 8
+      }
+    },
+    {
+      "index": 9,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 10,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "operation": "cut",
+        "targets": [
+          "SamplePlate"
+        ],
+        "name": "Holes",
+        "through_all": true,
+        "direction": "negative"
+      }
+    },
+    {
+      "index": 11,
+      "command": "solid.pattern.rectangular",
+      "resolved_params": {
+        "features": [
+          "Holes"
+        ],
+        "dir1": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "count1": 2,
+        "spacing1": 56.0,
+        "alignment": "right",
+        "reversed": false
+      }
+    },
+    {
+      "index": 12,
+      "command": "solid.cylinder",
+      "resolved_params": {
+        "height": 14,
+        "diameter": 24,
+        "base": [
+          0.0,
+          0.0,
+          8.0
+        ],
+        "axis": "Z",
+        "operation": "join",
+        "targets": [
+          "SamplePlate"
+        ],
+        "references": [
+          {
+            "edge": [
+              -40.0,
+              0.0,
+              8.0
+            ],
+            "distance": 40.0
+          },
+          {
+            "edge": [
+              0.0,
+              -25.0,
+              8.0
+            ],
+            "distance": 25.0
+          }
+        ]
+      }
+    },
+    {
+      "index": 13,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XY",
+        "name": "d1_SamplePlate__Bore",
+        "offset": 22.0
+      }
+    },
+    {
+      "index": 14,
+      "command": "sketch.circle.center",
+      "resolved_params": {
+        "center": [
+          0.0,
+          0.0
+        ],
+        "diameter": 12
+      }
+    },
+    {
+      "index": 15,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 16,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "distance": 22.0,
+        "direction": "negative",
+        "operation": "cut",
+        "targets": [
+          "SamplePlate"
+        ],
+        "name": "Bore"
+      }
+    },
+    {
+      "index": 17,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 18,
+      "command": "drawing.create",
+      "resolved_params": {
+        "name": "Sample Plate Drawing",
+        "template": "iso-a4-part",
+        "first_sheet_name": "Sheet 1"
+      },
+      "bindings": {
+        "$drawing_1": "0xtqjbanfe621",
+        "$drawing_1_source": "14nxdkh4n06zg",
+        "$drawing_1_sheet": "0r3235fsthzdz"
+      }
+    },
+    {
+      "index": 19,
+      "command": "drawing.sheet.set",
+      "resolved_params": {
+        "sheet": "0r3235fsthzdz",
+        "orientation": "landscape",
+        "documents": {
+          "source": "14nxdkh4n06zg",
+          "component": 1
+        },
+        "title_block_overrides": {
+          "title": "Sample Plate",
+          "identification_number": "SCPF-DWG-001",
+          "material": "Qualification material",
+          "finish": "As modelled",
+          "document_status": "Qualification",
+          "department": "Engineering"
+        }
+      }
+    },
+    {
+      "index": 20,
+      "command": "drawing.inspect",
+      "resolved_params": {},
+      "bindings": {
+        "$drawing_1_orientation": "landscape"
+      }
+    },
+    {
+      "index": 21,
+      "command": "drawing.properties.set",
+      "resolved_params": {
+        "values": {
+          "project": "Forge drawing qualification",
+          "part_number": "SCPF-DWG-001",
+          "author": "Forge",
+          "organization": "brainboxemb",
+          "description": "Sample plate engineering drawing"
+        }
+      }
+    },
+    {
+      "index": 22,
+      "command": "drawing.revision.add",
+      "resolved_params": {
+        "set": {
+          "revision": "A",
+          "description": "Initial qualified drawing",
+          "designer": "Forge",
+          "checker": "CI",
+          "date": "2026-11-25",
+          "hidden": false
+        }
+      }
+    },
+    {
+      "index": 23,
+      "command": "drawing.view.standard",
+      "resolved_params": {
+        "sheet": "0r3235fsthzdz",
+        "iso": true,
+        "gap_mm": 14.0,
+        "scale": "1:1"
+      },
+      "bindings": {
+        "$drawing_1_front": "ezdg48xre2ey1",
+        "$drawing_1_top": "38d8mkamgfyvh",
+        "$drawing_1_right": "43nnj2by7krpz",
+        "$drawing_1_iso": "49ggxp9n8805s"
+      }
+    },
+    {
+      "index": 24,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "ezdg48xre2ey1",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 25,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "49ggxp9n8805s",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 26,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "ezdg48xre2ey1",
+        "set": {
+          "place": {
+            "at": [
+              62.0,
+              128.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 27,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "38d8mkamgfyvh",
+        "set": {
+          "place": {
+            "at": [
+              62.0,
+              62.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 28,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "43nnj2by7krpz",
+        "set": {
+          "place": {
+            "at": [
+              137.0,
+              128.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 29,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "49ggxp9n8805s",
+        "set": {
+          "place": {
+            "at": [
+              220.0,
+              128.0
+            ]
+          },
+          "scale": "1:1",
+          "visual_style": "shaded"
+        }
+      }
+    },
+    {
+      "index": 30,
+      "command": "drawing.dimension.add",
+      "resolved_params": {
+        "view": "ezdg48xre2ey1",
+        "kind": {
+          "faces": {
+            "a": {
+              "point": [
+                -40.0,
+                0.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "b": {
+              "point": [
+                40.0,
+                0.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "direction": "horizontal"
+          }
+        },
+        "decimals": 0,
+        "offset_mm": 12.0
+      },
+      "bindings": {
+        "$drawing_1_dimension_1": "01x9rfhd98m94"
+      }
+    },
+    {
+      "index": 31,
+      "command": "drawing.dimension.add",
+      "resolved_params": {
+        "view": "ezdg48xre2ey1",
+        "kind": {
+          "faces": {
+            "a": {
+              "point": [
+                30.0,
+                20.0,
+                0.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "b": {
+              "point": [
+                30.0,
+                20.0,
+                8.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "direction": "vertical"
+          }
+        },
+        "decimals": 0,
+        "offset_mm": 10.0
+      },
+      "bindings": {
+        "$drawing_1_dimension_2": "3janpmy65eza6"
+      }
+    },
+    {
+      "index": 32,
+      "command": "drawing.dimension.add",
+      "resolved_params": {
+        "view": "38d8mkamgfyvh",
+        "kind": {
+          "faces": {
+            "a": {
+              "point": [
+                -40.0,
+                0.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "b": {
+              "point": [
+                40.0,
+                0.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "direction": "horizontal"
+          }
+        },
+        "decimals": 0,
+        "offset_mm": 12.0
+      },
+      "bindings": {
+        "$drawing_1_dimension_3": "a5arkvmvdjh5r"
+      }
+    },
+    {
+      "index": 33,
+      "command": "drawing.dimension.add",
+      "resolved_params": {
+        "view": "38d8mkamgfyvh",
+        "kind": {
+          "faces": {
+            "a": {
+              "point": [
+                0.0,
+                -25.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "b": {
+              "point": [
+                0.0,
+                25.0,
+                4.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "direction": "vertical"
+          }
+        },
+        "decimals": 0,
+        "offset_mm": 10.0
+      },
+      "bindings": {
+        "$drawing_1_dimension_4": "9wcbsxr90ymf9"
+      }
+    },
+    {
+      "index": 34,
+      "command": "drawing.dimension.add",
+      "resolved_params": {
+        "view": "38d8mkamgfyvh",
+        "kind": {
+          "radial": {
+            "edge": {
+              "point": [
+                -25.171573,
+                2.828427,
+                8.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "diameter": true
+          }
+        },
+        "decimals": 0,
+        "line_through_mm": [
+          92.0,
+          88.0
+        ],
+        "override_text": "2\u00d7 {value} THRU"
+      },
+      "bindings": {
+        "$drawing_1_dimension_5": "1kt9smnehprd2"
+      }
+    },
+    {
+      "index": 35,
+      "command": "drawing.dimension.add",
+      "resolved_params": {
+        "view": "38d8mkamgfyvh",
+        "kind": {
+          "radial": {
+            "edge": {
+              "point": [
+                8.485281,
+                8.485281,
+                22.0
+              ],
+              "path": [
+                2
+              ]
+            },
+            "diameter": true
+          }
+        },
+        "decimals": 0,
+        "line_through_mm": [
+          96.0,
+          69.0
+        ]
+      },
+      "bindings": {
+        "$drawing_1_dimension_6": "ahajq01djh2px"
+      }
+    },
+    {
+      "index": 36,
+      "command": "drawing.note.add",
+      "resolved_params": {
+        "anchor": {
+          "sheet": "0r3235fsthzdz"
+        },
+        "at": [
+          156.0,
+          88.0
+        ],
+        "content": "NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES.",
+        "cap_mm": 2.5,
+        "align": "left"
+      },
+      "bindings": {
+        "$drawing_1_note_1": "eek7p2tp7jp8z"
+      }
+    },
+    {
+      "index": 37,
+      "command": "drawing.view.inspect",
+      "resolved_params": {
+        "view": "49ggxp9n8805s"
+      }
+    },
+    {
+      "index": 38,
+      "command": "drawing.inspect",
+      "resolved_params": {}
+    },
+    {
+      "index": 39,
+      "command": "drawing.close",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 40
+}

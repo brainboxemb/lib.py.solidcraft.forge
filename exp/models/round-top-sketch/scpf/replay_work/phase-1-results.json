@@ -1,0 +1,134 @@
+[
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Disc",
+    "projected": null,
+    "sketch": 1,
+    "sketching_view": 1
+  },
+  {
+    "constraints": [
+      "k1"
+    ],
+    "created": {
+      "constraints": [
+        "k1"
+      ],
+      "curves": [
+        "c1"
+      ],
+      "dimensions": [],
+      "points": [
+        "c1.center"
+      ]
+    },
+    "curves": [
+      "c1"
+    ],
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 1
+  },
+  {
+    "bodies": [
+      "RoundTopSketch"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "RoundTopSketch"
+    ],
+    "feature": 2,
+    "ms": 4.012988,
+    "name": "Extrude1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "body": "RoundTopSketch",
+    "faces": [
+      {
+        "area": 3136.5175761189776,
+        "centroid": [
+          3.1896654415950614e-15,
+          3.842097009194051e-15,
+          4.999999999999998
+        ],
+        "cylinder": {
+          "axis": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "origin": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "radius": 50.0
+        },
+        "exact": true,
+        "index": 0,
+        "name": "F2:side:c1",
+        "plane_normal": null,
+        "point": [
+          -37.55485135832012,
+          33.009591628108346,
+          8.043495621600268
+        ]
+      },
+      {
+        "area": 7803.3052082515105,
+        "centroid": [
+          -9.906962189426026e-16,
+          -2.564154919616148e-15,
+          10.000000000000002
+        ],
+        "exact": true,
+        "index": 1,
+        "name": "F2:top",
+        "plane_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "point": [
+          -7.606039830534535,
+          -21.208755731120146,
+          10.0
+        ]
+      },
+      {
+        "area": 7803.305208251511,
+        "centroid": [
+          -1.646304010889913e-15,
+          -5.244862335578484e-16,
+          0.0
+        ],
+        "exact": true,
+        "index": 2,
+        "name": "F2:start",
+        "plane_normal": [
+          -0.0,
+          0.0,
+          -1.0
+        ],
+        "point": [
+          -22.064006537815573,
+          -5.563446189264019,
+          0.0
+        ]
+      }
+    ]
+  }
+]

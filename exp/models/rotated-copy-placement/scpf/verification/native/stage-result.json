@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-model",
+  "id": "rotated-copy-placement--scpf",
+  "implementation": "scpf",
+  "owner": "rotated-copy-placement",
+  "schema": 1,
+  "stage_id": "native",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+}

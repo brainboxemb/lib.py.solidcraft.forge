@@ -1,0 +1,10 @@
+{
+  "adapter": "mesh-geometry",
+  "id": "eight-corner-brackets--scpf",
+  "implementation": "scpf",
+  "owner": "eight-corner-brackets",
+  "schema": 1,
+  "stage_id": "geometry",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6"
+}

@@ -1,0 +1,19 @@
+{
+  "build_status": "pass",
+  "builder": "builder-pythonscad",
+  "id": "eight-flightcase-corners--pythonscad",
+  "implementation": "pythonscad",
+  "owner": "eight-flightcase-corners",
+  "preview_status": "pass",
+  "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+  "schema": 2,
+  "status": "pass",
+  "verification_stages": {
+    "geometry": {
+      "adapter": "mesh-geometry",
+      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+      "status": "pass"
+    }
+  },
+  "verification_status": "pass"
+}

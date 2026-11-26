@@ -1,0 +1,53 @@
+[
+  {
+    "attachment": "exact_face",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Broad face recess",
+    "projected": null,
+    "sketch": 3,
+    "sketching_view": 1
+  },
+  {
+    "constraints": [],
+    "created": {
+      "constraints": [],
+      "curves": [
+        "c1"
+      ],
+      "dimensions": [],
+      "points": [
+        "c1.center"
+      ]
+    },
+    "curves": [
+      "c1"
+    ],
+    "sketch": {
+      "dof": 3,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 3
+  },
+  {
+    "bodies": [
+      "SheetContourFlangeRecess"
+    ],
+    "changed_bodies": [
+      "SheetContourFlangeRecess"
+    ],
+    "created_bodies": [],
+    "feature": 4,
+    "ms": 48.415036,
+    "name": "Broad face recess",
+    "removed_bodies": [],
+    "warning": null
+  }
+]

@@ -1,0 +1,72 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "e3d46a9cf308d993095ce18f995fea9dd5154e15b826992aee78eea6386747be",
+          "size": 1760
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "ConeBoolean",
+                "max": [
+                  25.0,
+                  20.0,
+                  26.0
+                ],
+                "min": [
+                  -25.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  25.0,
+                  20.0,
+                  26.0
+                ],
+                "min": [
+                  -25.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/cone-boolean/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "cone-boolean"
+}

@@ -1,0 +1,186 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "45a22a4c51e31405f83b3da8055f28efcee70259a81655b5e31d9e6e05f2b262",
+          "size": 2118
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Block",
+                "max": [
+                  10.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  10.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Block (Block:2)",
+                "max": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  30.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  50.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  30.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/offset_70/model.sc",
+          "sha256": "77db1c539818da06fe43a3b244596e47e4aa16b605585e1ab8a57163391c0226",
+          "size": 4196
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/offset_70/measurements.json",
+          "sha256": "478ef730a01ee95ea7ed017a8a38e13579f823eb303d35eb1e01c538e16d3575",
+          "size": 2118
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Block",
+                "max": [
+                  10.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  10.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Block (Block:2)",
+                "max": [
+                  80.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  60.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  80.0,
+                  10.0,
+                  5.0
+                ],
+                "min": [
+                  60.0,
+                  -10.0,
+                  -5.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        }
+      },
+      "id": "saved_design_offset_70",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/parametric-move/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "parametric-move"
+}

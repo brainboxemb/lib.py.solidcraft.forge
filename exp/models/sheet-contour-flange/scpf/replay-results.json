@@ -1,0 +1,166 @@
+[
+  {
+    "display_value": 30.0,
+    "name": "end_height",
+    "unit": "mm",
+    "value": 30.0
+  },
+  {
+    "display_value": 50.0,
+    "name": "contour_width",
+    "unit": "mm",
+    "value": 50.0
+  },
+  {
+    "display_value": 2.5,
+    "name": "thickness",
+    "unit": "mm",
+    "value": 2.5
+  },
+  {
+    "display_value": 2.5,
+    "name": "bend_radius",
+    "unit": "mm",
+    "value": 2.5
+  },
+  {
+    "display_value": 0.44,
+    "name": "k_factor",
+    "unit": "",
+    "value": 0.44
+  },
+  {
+    "errors": [],
+    "rule": {
+      "angle_display": "bend",
+      "bend_radius": "bend_radius",
+      "corner_relief": "Thickness * 4.0",
+      "corner_relief_shape": "notch",
+      "gap": "Thickness",
+      "hem_gap": "0.01 mm",
+      "k_factor": "k_factor",
+      "name": "Contour Flange Rule",
+      "relief_depth": "Thickness * 0.5",
+      "relief_width": "Thickness",
+      "thickness": "thickness"
+    },
+    "values": {
+      "angle_display": "bend",
+      "bend_radius": 2.5,
+      "corner_relief": 10.0,
+      "corner_relief_shape": "notch",
+      "gap": 2.5,
+      "hem_gap": 0.01,
+      "k_factor": 0.44,
+      "relief_depth": 1.25,
+      "relief_width": 2.5,
+      "thickness": 2.5
+    }
+  },
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Contour",
+    "projected": null,
+    "sketch": 1,
+    "sketching_view": 1
+  },
+  {
+    "constraints": [
+      "k1"
+    ],
+    "created": {
+      "constraints": [
+        "k1"
+      ],
+      "curves": [
+        "l1"
+      ],
+      "dimensions": [],
+      "points": [
+        "l1.start",
+        "l1.end"
+      ]
+    },
+    "curves": [
+      "l1"
+    ],
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "constraints": [
+      "k2"
+    ],
+    "created": {
+      "constraints": [
+        "k2"
+      ],
+      "curves": [
+        "a1"
+      ],
+      "dimensions": [],
+      "points": [
+        "a1.center",
+        "a1.end"
+      ]
+    },
+    "curves": [
+      "a1"
+    ],
+    "sketch": {
+      "dof": 4,
+      "solved": true
+    }
+  },
+  {
+    "constraints": [
+      "k3"
+    ],
+    "created": {
+      "constraints": [
+        "k3"
+      ],
+      "curves": [
+        "l2"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1",
+        "l2.start"
+      ]
+    },
+    "curves": [
+      "l2"
+    ],
+    "sketch": {
+      "dof": 4,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 0,
+    "sketch": 1
+  },
+  {
+    "bodies": [
+      "SheetContourFlange"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "SheetContourFlange"
+    ],
+    "feature": 2,
+    "ms": 5.55793,
+    "name": "ContourFlange1",
+    "removed_bodies": [],
+    "warning": null
+  }
+]

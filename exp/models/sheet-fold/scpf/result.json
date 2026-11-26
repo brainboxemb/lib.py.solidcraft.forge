@@ -1,0 +1,29 @@
+{
+  "build_status": "pass",
+  "builder": "builder-scpf",
+  "id": "sheet-fold--scpf",
+  "implementation": "scpf",
+  "owner": "sheet-fold",
+  "preview_status": null,
+  "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+  "schema": 2,
+  "status": "pass",
+  "verification_stages": {
+    "geometry": {
+      "adapter": "mesh-geometry",
+      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+      "status": "pass"
+    },
+    "native": {
+      "adapter": "solidcraft-model",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "status": "pass"
+    },
+    "visual": {
+      "adapter": "solidcraft-visual",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "status": "pass"
+    }
+  },
+  "verification_status": "pass"
+}

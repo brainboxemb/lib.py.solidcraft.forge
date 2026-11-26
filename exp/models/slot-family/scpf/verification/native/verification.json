@@ -1,0 +1,326 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "b1d1f4bcb559a832c4b6b2b5342e4673238657c2bce7bc1cd8ba10288767b870",
+          "size": 6510
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SlotFamily",
+                "max": [
+                  80.0,
+                  60.0,
+                  5.000000000000003
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  -8.88178419700126e-16
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  80.0,
+                  60.0,
+                  5.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "max_delta": 2.6645352591003757e-15
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_count": {
+              "actual": 26,
+              "expected": 26,
+              "label": "sole body face count",
+              "pass": true
+            },
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 14,
+                "plane": 12
+              },
+              "expected": {
+                "cylinder": 14,
+                "plane": 12
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 89526.65799554957,
+              "delta": 0.0,
+              "expected": 89526.65799554957,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.01
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "c2c_end_x": -40.0,
+            "c2c_start_x": -60.0,
+            "center_point_end_x": 65.0,
+            "center_point_x": 55.0,
+            "overall_end_x": 20.0,
+            "overall_start_x": -10.0,
+            "slot_width": 8.0,
+            "straight_y": -35.0
+          },
+          "expected": {
+            "c2c_end_x": -40.0,
+            "c2c_start_x": -60.0,
+            "center_point_end_x": 65.0,
+            "center_point_x": 55.0,
+            "overall_end_x": 20.0,
+            "overall_start_x": -10.0,
+            "slot_width": 8.0,
+            "straight_y": -35.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 29,
+              "name": "Slot family",
+              "profiles": 5,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 29,
+              "name": "Slot family",
+              "profiles": 5,
+              "status": "solved"
+            },
+            "label": "Slot family sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Slot family",
+              "type": "Sketch"
+            },
+            {
+              "name": "Slot family",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Slot family",
+              "type": "Sketch"
+            },
+            {
+              "name": "Slot family",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/parametric_slots/model.sc",
+          "sha256": "fa51adb4a08b58f5c3b74c07ea68f1ca85b7952d2b65302df7f837cfe51e132a",
+          "size": 27264
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/parametric_slots/measurements.json",
+          "sha256": "cc30f57d1dac9ccb054fea07fa4c43c7d4285cb989d4e76cb497b2effa1eb72d",
+          "size": 6514
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "SlotFamily",
+                "max": [
+                  80.0,
+                  60.0,
+                  5.000000000000001
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  -2.220446053338701e-15
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  80.0,
+                  60.0,
+                  5.0
+                ],
+                "min": [
+                  -80.0,
+                  -60.0,
+                  0.0
+                ]
+              },
+              "max_delta": 2.220446053338701e-15
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_count": {
+              "actual": 26,
+              "expected": 26,
+              "label": "sole body face count",
+              "pass": true
+            },
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 14,
+                "plane": 12
+              },
+              "expected": {
+                "cylinder": 14,
+                "plane": 12
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 86615.62341029986,
+              "delta": 2.438377123326063e-06,
+              "expected": 86615.62341273823,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.02
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "c2c_end_x": -35.0,
+            "center_point_end_x": 70.0,
+            "overall_end_x": 25.0,
+            "slot_width": 10.0,
+            "straight_y": -20.0
+          },
+          "expected": {
+            "c2c_end_x": -35.0,
+            "center_point_end_x": 70.0,
+            "overall_end_x": 25.0,
+            "slot_width": 10.0,
+            "straight_y": -20.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 29,
+              "name": "Slot family",
+              "profiles": 5,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 29,
+              "name": "Slot family",
+              "profiles": 5,
+              "status": "solved"
+            },
+            "label": "Slot family sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "saved_design_parametric_slots",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/slot-family/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "slot-family"
+}

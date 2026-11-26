@@ -1,0 +1,177 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "94814ad29672d124736928dc65bb23b0f78a0565b62c2043461d3bb383e33491",
+  "variables": {
+    "$contour_curves_1": [
+      "l1"
+    ],
+    "$contour_curves_2": [
+      "l1",
+      "a1"
+    ],
+    "$contour_curves_3": [
+      "l1",
+      "a1",
+      "l2"
+    ]
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "end_height",
+        "expression": "30",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "contour_width",
+        "expression": "50",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "thickness",
+        "expression": "2.5",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "bend_radius",
+        "expression": "2.5",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 4,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "k_factor",
+        "expression": "0.44",
+        "unit": ""
+      }
+    },
+    {
+      "index": 5,
+      "command": "sheet.manage_rules",
+      "resolved_params": {
+        "name": "Contour Flange Rule",
+        "thickness": "thickness",
+        "k_factor": "k_factor",
+        "bend_radius": "bend_radius",
+        "active": true
+      }
+    },
+    {
+      "index": 6,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XZ",
+        "name": "Contour"
+      }
+    },
+    {
+      "index": 7,
+      "command": "sketch.line",
+      "resolved_params": {
+        "points": [
+          [
+            0,
+            0
+          ],
+          [
+            35,
+            0
+          ]
+        ],
+        "ids": [
+          "l1"
+        ],
+        "connect": true
+      },
+      "bindings": {
+        "$contour_curves_1": [
+          "l1"
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "command": "sketch.arc.tangent",
+      "resolved_params": {
+        "start": "l1.end",
+        "curve": "l1",
+        "end": [
+          40,
+          5
+        ]
+      },
+      "bindings": {
+        "$contour_curves_2": [
+          "l1",
+          "a1"
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "command": "sketch.line",
+      "resolved_params": {
+        "points": [
+          [
+            40,
+            5
+          ],
+          [
+            40,
+            "end_height"
+          ]
+        ],
+        "ids": [
+          "l2"
+        ],
+        "connect": true
+      },
+      "bindings": {
+        "$contour_curves_3": [
+          "l1",
+          "a1",
+          "l2"
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 11,
+      "command": "sheet.flange",
+      "resolved_params": {
+        "type": "contour",
+        "sketch": "Contour",
+        "curves": [
+          "l1",
+          "a1",
+          "l2"
+        ],
+        "distance": "contour_width",
+        "rule": "Contour Flange Rule",
+        "body_name": "SheetContourFlange"
+      }
+    }
+  ],
+  "completed": 12
+}

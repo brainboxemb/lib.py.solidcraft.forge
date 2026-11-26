@@ -1,0 +1,51 @@
+{
+  "commands": [
+    {
+      "bind": {
+        "$left": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Post"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Post",
+        "corner": [
+          -20.0,
+          -5.0,
+          0.0
+        ],
+        "height": 20,
+        "length": 10,
+        "operation": "new",
+        "width": 10
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$right": "occurrence"
+      },
+      "command": "occurrence.copy",
+      "params": {
+        "component": "Post",
+        "translate": [
+          30.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

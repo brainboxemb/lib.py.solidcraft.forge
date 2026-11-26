@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-model",
+  "id": "topology-face-boundary-box--scpf",
+  "implementation": "scpf",
+  "owner": "topology-face-boundary-box",
+  "schema": 1,
+  "stage_id": "native",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+}

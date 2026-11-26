@@ -1,0 +1,21 @@
+{
+  "commands": [
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": 1
+      }
+    },
+    {
+      "command": "sketch.arc.tangent",
+      "params": {
+        "start": "l1.end",
+        "curve": "l1",
+        "end": [
+          40,
+          5
+        ]
+      }
+    }
+  ]
+}

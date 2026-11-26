@@ -1,0 +1,30 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "9bq2vpp04891a"
+      }
+    },
+    {
+      "command": "drawing.export",
+      "params": {
+        "format": "pdf",
+        "path": "/output/models/components/scpf/drawings/Block-drawing.pdf"
+      }
+    },
+    {
+      "command": "drawing.export",
+      "params": {
+        "sheet": "4gsw5hvj809qa",
+        "format": "png",
+        "path": "/output/models/components/scpf/drawings/Block-drawing.png",
+        "dpi": 144
+      }
+    },
+    {
+      "command": "drawing.close",
+      "params": {}
+    }
+  ]
+}

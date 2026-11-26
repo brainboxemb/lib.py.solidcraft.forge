@@ -1,0 +1,63 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "53d5c2ab169cba776cd2f71daa4a5ae02d239792fef088d4b7774487a73702a6",
+          "size": 1572
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole"
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "type": "BoxFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "expected": [
+            {
+              "type": "BoxFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/topology-face-boundary-box/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "topology-face-boundary-box"
+}

@@ -1,0 +1,88 @@
+{
+  "id": "eight-flightcase-corners",
+  "implementations": {
+    "build123d": {
+      "build_status": "pass",
+      "builder": "builder-build123d",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "status": "pass"
+        }
+      },
+      "verification_status": "pass"
+    },
+    "cadquery": {
+      "build_status": "pass",
+      "builder": "builder-cadquery",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "status": "pass"
+        }
+      },
+      "verification_status": "pass"
+    },
+    "pybosl2": {
+      "build_status": "pass",
+      "builder": "builder-pybosl2",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "status": "pass"
+        }
+      },
+      "verification_status": "pass"
+    },
+    "pythonscad": {
+      "build_status": "pass",
+      "builder": "builder-pythonscad",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "status": "pass"
+        }
+      },
+      "verification_status": "pass"
+    },
+    "scpf": {
+      "build_status": "pass",
+      "builder": "builder-scpf",
+      "preview_status": null,
+      "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "status": "pass"
+        },
+        "native": {
+          "adapter": "solidcraft-model",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "status": "pass"
+        },
+        "visual": {
+          "adapter": "solidcraft-visual",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "status": "pass"
+        }
+      },
+      "verification_status": "pass"
+    }
+  },
+  "primary": "scpf",
+  "schema": 2,
+  "status": "pass"
+}

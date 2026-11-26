@@ -1,0 +1,20 @@
+{
+  "commands": [
+    {
+      "command": "sheet.path_flange",
+      "params": {
+        "edge": [
+          40.0,
+          0.0,
+          2.0
+        ],
+        "sketch": "Path",
+        "curves": [
+          "l1"
+        ],
+        "body": "SheetPathFlange",
+        "radius": "path_radius"
+      }
+    }
+  ]
+}

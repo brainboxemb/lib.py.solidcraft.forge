@@ -1,0 +1,180 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 11795.610416728245,
+      "bbox": {
+        "max": [
+          40.0,
+          25.0,
+          22.000000000000004
+        ],
+        "min": [
+          -40.0,
+          -25.0,
+          -5.382511634968694e-33
+        ]
+      },
+      "center_of_mass": [
+        -1.2583293167273163e-15,
+        2.4638619239109915e-15,
+        5.501730434309553
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 36,
+      "face_types": {
+        "cylinder": 8,
+        "plane": 7
+      },
+      "faces": 15,
+      "kernel": {
+        "edges": 36,
+        "faces": 15,
+        "shells": 1,
+        "vertices": 24
+      },
+      "mass_g": 44.88405408105234,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "SamplePlate",
+      "notes": [],
+      "vertices": 24,
+      "volume_mm3": 34793.84037290879
+    }
+  ],
+  "body_count": 1,
+  "params": [],
+  "sketches": [
+    {
+      "curves": 4,
+      "dof": 4,
+      "id": 3,
+      "name": "d1_SamplePlate__Base",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    },
+    {
+      "curves": 1,
+      "dof": 3,
+      "id": 6,
+      "name": "d1_SamplePlate__Holes",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    },
+    {
+      "curves": 1,
+      "dof": 1,
+      "id": 10,
+      "name": "d1_SamplePlate__Bore",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 3,
+      "ms": 0.162313,
+      "name": "d1_SamplePlate__Base",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 2.9103369999999997,
+      "name": "Extrude1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 5,
+      "ms": 46.484435999999995,
+      "name": "Fillet1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "FilletFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 6,
+      "ms": 0.038187,
+      "name": "d1_SamplePlate__Holes",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 7,
+      "ms": 15.004612,
+      "name": "Holes",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 8,
+      "ms": 16.24628,
+      "name": "RectangularPattern1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "RectangularPatternFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 9,
+      "ms": 38.438101,
+      "name": "Cylinder1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "CylinderFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 10,
+      "ms": 0.051917,
+      "name": "d1_SamplePlate__Bore",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 11,
+      "ms": 15.036018,
+      "name": "Bore",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 11795.610416728245,
+    "edges": 36,
+    "faces": 15,
+    "mass_g": 44.88405408105234,
+    "open_bodies_skipped": 0,
+    "vertices": 24,
+    "volume_mm3": 34793.84037290879
+  }
+}

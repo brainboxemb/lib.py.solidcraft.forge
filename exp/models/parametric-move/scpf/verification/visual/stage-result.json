@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-visual",
+  "id": "parametric-move--scpf",
+  "implementation": "scpf",
+  "owner": "parametric-move",
+  "schema": 1,
+  "stage_id": "visual",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+}

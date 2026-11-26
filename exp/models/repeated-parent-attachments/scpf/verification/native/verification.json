@@ -1,0 +1,496 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "4122675a2ec4edb3e7b3b2e373233488f654ff06c39b2bfc030da87fe20ee070",
+          "size": 3808
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 4,
+          "expected": 4,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 4,
+          "expected_count": 4,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Parent",
+                "max": [
+                  10.0,
+                  10.0,
+                  40.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  10.0,
+                  10.0,
+                  40.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Parent (Parent:2)",
+                "max": [
+                  70.0,
+                  10.0,
+                  40.0
+                ],
+                "min": [
+                  50.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  70.0,
+                  10.0,
+                  40.0
+                ],
+                "min": [
+                  50.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Marker",
+                "max": [
+                  5.0,
+                  5.0,
+                  50.0
+                ],
+                "min": [
+                  -5.0,
+                  -5.0,
+                  40.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  5.0,
+                  5.0,
+                  50.0
+                ],
+                "min": [
+                  -5.0,
+                  -5.0,
+                  40.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Marker (Marker:2)",
+                "max": [
+                  65.0,
+                  5.0,
+                  50.0
+                ],
+                "min": [
+                  55.0,
+                  -5.0,
+                  40.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  65.0,
+                  5.0,
+                  50.0
+                ],
+                "min": [
+                  55.0,
+                  -5.0,
+                  40.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "body_groups": [
+          {
+            "body_envelopes": {
+              "actual_count": 2,
+              "expected_count": 2,
+              "kind": "body_envelopes",
+              "matched_pairs": [
+                {
+                  "actual": {
+                    "label": "Marker",
+                    "max": [
+                      5.0,
+                      5.0,
+                      50.0
+                    ],
+                    "min": [
+                      -5.0,
+                      -5.0,
+                      40.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      5.0,
+                      5.0,
+                      50.0
+                    ],
+                    "min": [
+                      -5.0,
+                      -5.0,
+                      40.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "Marker (Marker:2)",
+                    "max": [
+                      65.0,
+                      5.0,
+                      50.0
+                    ],
+                    "min": [
+                      55.0,
+                      -5.0,
+                      40.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      65.0,
+                      5.0,
+                      50.0
+                    ],
+                    "min": [
+                      55.0,
+                      -5.0,
+                      40.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                }
+              ],
+              "pass": true,
+              "tolerance": 0.001,
+              "unmatched_actual": [],
+              "unmatched_expected": []
+            },
+            "count": {
+              "actual": 2,
+              "expected": 2,
+              "label": "Marker body group count",
+              "pass": true
+            },
+            "matched_names": [
+              "Marker",
+              "Marker (Marker:2)"
+            ],
+            "name_prefix": "Marker"
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "parent_height": 40.0
+          },
+          "expected": {
+            "parent_height": 40.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/height_60/model.sc",
+          "sha256": "6554665461cee066e6e452c2767892f8ac35820d0e8195c5f7f4690d0164aa88",
+          "size": 6345
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/height_60/measurements.json",
+          "sha256": "bdf3708a1895538fa070082650ee4684f78491316694c5df3d8be5ab64a2ca63",
+          "size": 3808
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 4,
+          "expected_count": 4,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Parent",
+                "max": [
+                  10.0,
+                  10.0,
+                  60.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  10.0,
+                  10.0,
+                  60.0
+                ],
+                "min": [
+                  -10.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Parent (Parent:2)",
+                "max": [
+                  70.0,
+                  10.0,
+                  60.0
+                ],
+                "min": [
+                  50.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  70.0,
+                  10.0,
+                  60.0
+                ],
+                "min": [
+                  50.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Marker",
+                "max": [
+                  5.0,
+                  5.0,
+                  70.0
+                ],
+                "min": [
+                  -5.0,
+                  -5.0,
+                  60.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  5.0,
+                  5.0,
+                  70.0
+                ],
+                "min": [
+                  -5.0,
+                  -5.0,
+                  60.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Marker (Marker:2)",
+                "max": [
+                  65.0,
+                  5.0,
+                  70.0
+                ],
+                "min": [
+                  55.0,
+                  -5.0,
+                  60.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  65.0,
+                  5.0,
+                  70.0
+                ],
+                "min": [
+                  55.0,
+                  -5.0,
+                  60.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "body_groups": [
+          {
+            "body_envelopes": {
+              "actual_count": 2,
+              "expected_count": 2,
+              "kind": "body_envelopes",
+              "matched_pairs": [
+                {
+                  "actual": {
+                    "label": "Marker",
+                    "max": [
+                      5.0,
+                      5.0,
+                      70.0
+                    ],
+                    "min": [
+                      -5.0,
+                      -5.0,
+                      60.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      5.0,
+                      5.0,
+                      70.0
+                    ],
+                    "min": [
+                      -5.0,
+                      -5.0,
+                      60.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                },
+                {
+                  "actual": {
+                    "label": "Marker (Marker:2)",
+                    "max": [
+                      65.0,
+                      5.0,
+                      70.0
+                    ],
+                    "min": [
+                      55.0,
+                      -5.0,
+                      60.0
+                    ]
+                  },
+                  "expected": {
+                    "label": null,
+                    "max": [
+                      65.0,
+                      5.0,
+                      70.0
+                    ],
+                    "min": [
+                      55.0,
+                      -5.0,
+                      60.0
+                    ]
+                  },
+                  "max_delta": 0.0
+                }
+              ],
+              "pass": true,
+              "tolerance": 0.001,
+              "unmatched_actual": [],
+              "unmatched_expected": []
+            },
+            "count": {
+              "actual": 2,
+              "expected": 2,
+              "label": "Marker body group count",
+              "pass": true
+            },
+            "matched_names": [
+              "Marker",
+              "Marker (Marker:2)"
+            ],
+            "name_prefix": "Marker"
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "parent_height": 60.0
+          },
+          "expected": {
+            "parent_height": 60.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_height_60",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/repeated-parent-attachments/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "repeated-parent-attachments"
+}

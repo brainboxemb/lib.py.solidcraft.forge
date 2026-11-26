@@ -1,0 +1,33 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "9bq2vpp04891a"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "sheet": "4gsw5hvj809qa",
+        "orientation": "landscape",
+        "documents": {
+          "source": "a47tvmh2fskf8",
+          "component": 1
+        }
+      }
+    },
+    {
+      "command": "drawing.inspect",
+      "params": {}
+    },
+    {
+      "command": "drawing.view.standard",
+      "params": {
+        "sheet": "4gsw5hvj809qa",
+        "iso": true,
+        "gap_mm": 20.0
+      }
+    }
+  ]
+}

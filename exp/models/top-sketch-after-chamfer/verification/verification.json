@@ -1,0 +1,97 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            50.0,
+            35.0,
+            10.0
+          ],
+          "actual_min": [
+            -50.0,
+            -35.0,
+            -3.961912902507919e-32
+          ],
+          "expected_max": [
+            50.0,
+            35.0,
+            10.0
+          ],
+          "expected_min": [
+            -50.0,
+            -35.0,
+            0.0
+          ],
+          "max_delta_mm": 3.961912902507919e-32,
+          "pass": true,
+          "tolerance_mm": 0.5
+        },
+        "surface_distance_probes": [
+          {
+            "actual_mm": 5.9785669066694505,
+            "delta_mm": 0.021433093330549546,
+            "expected_mm": 6.0,
+            "label": "center hole at z=1",
+            "pass": true,
+            "point": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 5.976639789155154,
+            "delta_mm": 0.023360210844845852,
+            "expected_mm": 6.0,
+            "label": "center hole at z=5",
+            "pass": true,
+            "point": [
+              0.0,
+              0.0,
+              5.0
+            ],
+            "tolerance_mm": 0.3
+          },
+          {
+            "actual_mm": 5.980954783459491,
+            "delta_mm": 0.01904521654050928,
+            "expected_mm": 6.0,
+            "label": "center hole at z=9",
+            "pass": true,
+            "point": [
+              0.0,
+              0.0,
+              9.0
+            ],
+            "tolerance_mm": 0.3
+          }
+        ],
+        "volume": {
+          "actual_mm3": 67591.65630616546,
+          "delta_mm3": 2.6296614577877335,
+          "expected_mm3": 67589.02664470767,
+          "pass": true,
+          "tolerance_mm3": 45.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/top-sketch-after-chamfer/scpf/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "top-sketch-after-chamfer-scpf-geometry"
+}

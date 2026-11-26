@@ -1,0 +1,133 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "width",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "depth",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "thickness",
+        "expression": "2",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "bend_radius",
+        "expression": "2",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "k_factor",
+        "expression": "0.5",
+        "unit": ""
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "path_height",
+        "expression": "14",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "path_radius",
+        "expression": "3",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sheet.manage_rules",
+      "params": {
+        "name": "Path Flange Rule",
+        "thickness": "thickness",
+        "k_factor": "k_factor",
+        "bend_radius": "bend_radius",
+        "active": true
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "Blank"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          "-(width / 2)",
+          "-(depth / 2)"
+        ],
+        "p1": [
+          "width / 2",
+          "depth / 2"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "sheet.flange",
+      "params": {
+        "type": "base",
+        "sketch": "Blank",
+        "rule": "Path Flange Rule",
+        "body_name": "SheetPathFlange"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XZ",
+        "name": "Path"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            40,
+            2
+          ],
+          [
+            40,
+            "path_height"
+          ]
+        ],
+        "ids": [
+          "l1"
+        ],
+        "connect": true
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    }
+  ]
+}

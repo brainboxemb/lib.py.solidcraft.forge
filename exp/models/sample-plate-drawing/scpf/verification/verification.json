@@ -1,0 +1,43 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "fc74e0a5063f792a3e9928484f63cd54bd670d96164a699906c24dceed44b7c3",
+          "size": 3659
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sample-plate-drawing/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sample-plate-drawing"
+}

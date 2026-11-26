@@ -1,0 +1,116 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "17632b5677c0c6cb2e0f1c6b643a546ed6648146c5c4ca5cbccf486c04d12879",
+  "variables": {
+    "$explodeblock_occurrence_1": 2,
+    "$explodeblock_occurrence_2": 4,
+    "$explodeblock_occurrence_3": 5
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "ExplodeBlock",
+        "grounded": true
+      },
+      "bindings": {
+        "$explodeblock_occurrence_1": 2
+      }
+    },
+    {
+      "index": 1,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 30.0,
+        "width": 20.0,
+        "height": 10.0,
+        "corner": [
+          -15.0,
+          -10.0,
+          0
+        ],
+        "body_name": "ExplodeBlock"
+      }
+    },
+    {
+      "index": 2,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 3,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "ExplodeBlock",
+        "translate": [
+          40.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bindings": {
+        "$explodeblock_occurrence_2": 4
+      }
+    },
+    {
+      "index": 4,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "ExplodeBlock",
+        "translate": [
+          80.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bindings": {
+        "$explodeblock_occurrence_3": 5
+      }
+    },
+    {
+      "index": 5,
+      "command": "explode.create",
+      "resolved_params": {
+        "name": "Automatic",
+        "scale": 1.25
+      }
+    },
+    {
+      "index": 6,
+      "command": "explode.create",
+      "resolved_params": {
+        "name": "Instructions",
+        "moves": [
+          {
+            "occurrence": 4,
+            "translate": [
+              0.0,
+              25.0,
+              0.0
+            ]
+          },
+          {
+            "occurrence": 5,
+            "translate": [
+              0.0,
+              50.0,
+              10.0
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "command": "explode.show",
+      "resolved_params": {
+        "view": null
+      }
+    }
+  ],
+  "completed": 8
+}

@@ -1,0 +1,735 @@
+[
+  {
+    "display_value": 160.0,
+    "name": "width",
+    "unit": "mm",
+    "value": 160.0
+  },
+  {
+    "display_value": 120.0,
+    "name": "depth",
+    "unit": "mm",
+    "value": 120.0
+  },
+  {
+    "display_value": 5.0,
+    "name": "thickness",
+    "unit": "mm",
+    "value": 5.0
+  },
+  {
+    "display_value": -60.0,
+    "name": "c2c_start_x",
+    "unit": "mm",
+    "value": -60.0
+  },
+  {
+    "display_value": -35.0,
+    "name": "straight_y",
+    "unit": "mm",
+    "value": -35.0
+  },
+  {
+    "display_value": -40.0,
+    "name": "c2c_end_x",
+    "unit": "mm",
+    "value": -40.0
+  },
+  {
+    "display_value": 8.0,
+    "name": "slot_width",
+    "unit": "mm",
+    "value": 8.0
+  },
+  {
+    "display_value": -10.0,
+    "name": "overall_start_x",
+    "unit": "mm",
+    "value": -10.0
+  },
+  {
+    "display_value": 20.0,
+    "name": "overall_end_x",
+    "unit": "mm",
+    "value": 20.0
+  },
+  {
+    "display_value": 55.0,
+    "name": "center_point_x",
+    "unit": "mm",
+    "value": 55.0
+  },
+  {
+    "display_value": 65.0,
+    "name": "center_point_end_x",
+    "unit": "mm",
+    "value": 65.0
+  },
+  {
+    "bodies": [
+      "SlotFamily"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "SlotFamily"
+    ],
+    "feature": 1,
+    "ms": 2.887683,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "body": "SlotFamily",
+    "faces": [
+      {
+        "area": 19200.0,
+        "centroid": [
+          0.0,
+          0.0,
+          5.0
+        ],
+        "exact": true,
+        "index": 0,
+        "name": "F1:+z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "point": [
+          -40.0,
+          -20.0,
+          5.0
+        ]
+      },
+      {
+        "area": 800.0,
+        "centroid": [
+          0.0,
+          60.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 1,
+        "name": "F1:+y",
+        "plane_normal": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "point": [
+          77.5390529679106,
+          60.0,
+          2.4609470320893916
+        ]
+      },
+      {
+        "area": 600.0,
+        "centroid": [
+          -80.0,
+          0.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 2,
+        "name": "F1:-x",
+        "plane_normal": [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          -80.0,
+          57.55206074732156,
+          2.4479392526784305
+        ]
+      },
+      {
+        "area": 800.0,
+        "centroid": [
+          0.0,
+          -60.0,
+          2.5000000000000004
+        ],
+        "exact": true,
+        "index": 3,
+        "name": "F1:-y",
+        "plane_normal": [
+          0.0,
+          -1.0,
+          0.0
+        ],
+        "point": [
+          -77.5390529679106,
+          -60.0,
+          2.4609470320893916
+        ]
+      },
+      {
+        "area": 600.0,
+        "centroid": [
+          80.0,
+          0.0,
+          2.5
+        ],
+        "exact": true,
+        "index": 4,
+        "name": "F1:+x",
+        "plane_normal": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "point": [
+          80.0,
+          -57.55206074732156,
+          2.4479392526784305
+        ]
+      },
+      {
+        "area": 19200.0,
+        "centroid": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "exact": true,
+        "index": 5,
+        "name": "F1:-z",
+        "plane_normal": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "point": [
+          -40.0,
+          -20.0,
+          0.0
+        ]
+      }
+    ]
+  },
+  {
+    "attachment": "exact_face",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Slot family",
+    "projected": null,
+    "sketch": 2,
+    "sketching_view": 1
+  },
+  {
+    "centre_line": "l3",
+    "constraints": [
+      "k1",
+      "k2",
+      "k3",
+      "k4",
+      "k5",
+      "k6",
+      "k7"
+    ],
+    "created": {
+      "constraints": [
+        "k1",
+        "k2",
+        "k3",
+        "k4",
+        "k5",
+        "k6"
+      ],
+      "curves": [
+        "l1",
+        "a1",
+        "l2",
+        "a2",
+        "l3"
+      ],
+      "dimensions": [
+        "k7",
+        "k8"
+      ],
+      "points": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "a1.center",
+        "a2.center",
+        "p5"
+      ]
+    },
+    "curves": [
+      "l1",
+      "a1",
+      "l2",
+      "a2"
+    ],
+    "dimensions": {
+      "length": {
+        "created": {
+          "constraints": [],
+          "curves": [],
+          "dimensions": [
+            "k8"
+          ],
+          "points": []
+        },
+        "expression": "abs(((c2c_end_x)) - ((c2c_start_x)))",
+        "measured": 20.0,
+        "param": "d5",
+        "sketch": {
+          "dof": 3,
+          "solved": true
+        },
+        "type": "LinearDimension",
+        "unit": "mm"
+      }
+    },
+    "middle": "p5",
+    "sketch": {
+      "dof": 3,
+      "solved": true
+    }
+  },
+  {
+    "constraint": "k9",
+    "created": {
+      "constraints": [
+        "k9"
+      ],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k10"
+      ],
+      "points": []
+    },
+    "expression": "abs((((c2c_start_x)) + ((c2c_end_x))) / 2)",
+    "measured": 50.0,
+    "param": "d6",
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k11"
+      ],
+      "points": []
+    },
+    "expression": "abs((((straight_y)) + ((straight_y))) / 2)",
+    "measured": 35.0,
+    "param": "d7",
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "centre_line": "l6",
+    "constraints": [
+      "k12",
+      "k13",
+      "k14",
+      "k15",
+      "k16",
+      "k17",
+      "k18"
+    ],
+    "created": {
+      "constraints": [
+        "k12",
+        "k13",
+        "k14",
+        "k15",
+        "k16",
+        "k17"
+      ],
+      "curves": [
+        "l4",
+        "a3",
+        "l5",
+        "a4",
+        "l6"
+      ],
+      "dimensions": [
+        "k18",
+        "k19"
+      ],
+      "points": [
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+        "a3.center",
+        "a4.center",
+        "p10"
+      ]
+    },
+    "curves": [
+      "l4",
+      "a3",
+      "l5",
+      "a4"
+    ],
+    "dimensions": {
+      "length": {
+        "created": {
+          "constraints": [],
+          "curves": [],
+          "dimensions": [
+            "k19"
+          ],
+          "points": []
+        },
+        "expression": "abs(((overall_end_x)) - ((overall_start_x)))",
+        "measured": 30.0,
+        "param": "d9",
+        "sketch": {
+          "dof": 3,
+          "solved": true
+        },
+        "type": "LinearDimension",
+        "unit": "mm"
+      }
+    },
+    "middle": "p10",
+    "sketch": {
+      "dof": 3,
+      "solved": true
+    }
+  },
+  {
+    "constraint": "k20",
+    "created": {
+      "constraints": [
+        "k20"
+      ],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k21"
+      ],
+      "points": []
+    },
+    "expression": "abs((((overall_start_x)) + ((overall_end_x))) / 2)",
+    "measured": 5.0,
+    "param": "d10",
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k22"
+      ],
+      "points": []
+    },
+    "expression": "abs((((straight_y)) + ((straight_y))) / 2)",
+    "measured": 35.0,
+    "param": "d11",
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "centre_line": "l9",
+    "constraints": [
+      "k23",
+      "k24",
+      "k25",
+      "k26",
+      "k27",
+      "k28",
+      "k29"
+    ],
+    "created": {
+      "constraints": [
+        "k23",
+        "k24",
+        "k25",
+        "k26",
+        "k27",
+        "k28"
+      ],
+      "curves": [
+        "l7",
+        "a5",
+        "l8",
+        "a6",
+        "l9"
+      ],
+      "dimensions": [
+        "k29",
+        "k30"
+      ],
+      "points": [
+        "p11",
+        "p12",
+        "p13",
+        "p14",
+        "a5.center",
+        "a6.center",
+        "p15"
+      ]
+    },
+    "curves": [
+      "l7",
+      "a5",
+      "l8",
+      "a6"
+    ],
+    "dimensions": {
+      "length": {
+        "created": {
+          "constraints": [],
+          "curves": [],
+          "dimensions": [
+            "k30"
+          ],
+          "points": []
+        },
+        "expression": "(abs(((center_point_end_x)) - ((center_point_x)))) * 2",
+        "measured": 20.0,
+        "param": "d13",
+        "sketch": {
+          "dof": 3,
+          "solved": true
+        },
+        "type": "LinearDimension",
+        "unit": "mm"
+      }
+    },
+    "middle": "p15",
+    "sketch": {
+      "dof": 3,
+      "solved": true
+    }
+  },
+  {
+    "constraint": "k31",
+    "created": {
+      "constraints": [
+        "k31"
+      ],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "sketch": {
+      "dof": 2,
+      "solved": true
+    }
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k32"
+      ],
+      "points": []
+    },
+    "expression": "abs((center_point_x))",
+    "measured": 55.0,
+    "param": "d14",
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [
+        "k33"
+      ],
+      "points": []
+    },
+    "expression": "abs((straight_y))",
+    "measured": 35.0,
+    "param": "d15",
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    },
+    "type": "LinearDimension",
+    "unit": "mm"
+  },
+  {
+    "centre_arc": "a11",
+    "constraints": [
+      "k34",
+      "k35",
+      "k36",
+      "k37",
+      "k38",
+      "k39",
+      "k40"
+    ],
+    "created": {
+      "constraints": [
+        "k34",
+        "k35",
+        "k36",
+        "k37",
+        "k38",
+        "k39"
+      ],
+      "curves": [
+        "a7",
+        "a8",
+        "a9",
+        "a10",
+        "a11",
+        "l10",
+        "l11"
+      ],
+      "dimensions": [
+        "k40"
+      ],
+      "points": [
+        "p16",
+        "p17",
+        "p18",
+        "p19",
+        "p20",
+        "p21",
+        "p22",
+        "p23"
+      ]
+    },
+    "curves": [
+      "a7",
+      "a9",
+      "a8",
+      "a10"
+    ],
+    "middle": "p19",
+    "sketch": {
+      "dof": 5,
+      "solved": true
+    }
+  },
+  {
+    "centre_arc": "a16",
+    "constraints": [
+      "k41",
+      "k42",
+      "k43",
+      "k44",
+      "k45",
+      "k46",
+      "k47"
+    ],
+    "created": {
+      "constraints": [
+        "k41",
+        "k42",
+        "k43",
+        "k44",
+        "k45",
+        "k46"
+      ],
+      "curves": [
+        "a12",
+        "a13",
+        "a14",
+        "a15",
+        "a16",
+        "l12",
+        "l13"
+      ],
+      "dimensions": [
+        "k47"
+      ],
+      "points": [
+        "p24",
+        "p25",
+        "p26",
+        "p27",
+        "p28",
+        "p29",
+        "p30",
+        "p31"
+      ]
+    },
+    "curves": [
+      "a12",
+      "a14",
+      "a13",
+      "a15"
+    ],
+    "middle": "p27",
+    "sketch": {
+      "dof": 10,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 5,
+    "sketch": 2
+  },
+  {
+    "bodies": [
+      "SlotFamily"
+    ],
+    "changed_bodies": [
+      "SlotFamily"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 84.52274799999999,
+    "name": "Slot family",
+    "removed_bodies": [],
+    "warning": null
+  }
+]

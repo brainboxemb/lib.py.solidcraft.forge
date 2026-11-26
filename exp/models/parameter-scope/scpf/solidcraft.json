@@ -1,0 +1,168 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "d1_Panel_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "bind": {
+        "$local": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Panel"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Panel",
+        "corner": [
+          "-(d1_Panel_width / 2)",
+          -10.0,
+          0.0
+        ],
+        "height": 10.0,
+        "length": "d1_Panel_width",
+        "operation": "new",
+        "width": 20.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "60",
+        "name": "d2_Panel_2_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "bind": {
+        "$override": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Panel 2"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Panel_2",
+        "corner": [
+          "-(d2_Panel_2_width / 2) + 100 mm",
+          -10.0,
+          0.0
+        ],
+        "height": 10.0,
+        "length": "d2_Panel_2_width",
+        "operation": "new",
+        "width": 20.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "80",
+        "name": "shared_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "bind": {
+        "$shared_a": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Panel 3"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Panel_3",
+        "corner": [
+          "-(shared_width / 2) + 220 mm",
+          -10.0,
+          0.0
+        ],
+        "height": 10.0,
+        "length": "shared_width",
+        "operation": "new",
+        "width": 20.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$shared_b": "occurrence"
+      },
+      "command": "occurrence.copy",
+      "params": {
+        "component": "Panel 3",
+        "translate": [
+          120.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$derived": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Panel 4"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Panel_4",
+        "corner": [
+          "-((shared_width / 2) / 2) + 460 mm",
+          -10.0,
+          0.0
+        ],
+        "height": 10.0,
+        "length": "shared_width / 2",
+        "operation": "new",
+        "width": 20.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

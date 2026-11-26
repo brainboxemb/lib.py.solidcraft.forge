@@ -1,0 +1,108 @@
+{
+  "commands": [
+    {
+      "bind": {
+        "$base": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Base"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Base",
+        "corner": [
+          -30.0,
+          -30.0,
+          0
+        ],
+        "height": 10.0,
+        "length": 60.0,
+        "width": 60.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$arm": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "Arm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Arm",
+        "corner": [
+          -15.0,
+          -5.0,
+          0
+        ],
+        "height": 6.0,
+        "length": 30.0,
+        "width": 10.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$arm",
+        "translate": [
+          0,
+          0,
+          10.0
+        ]
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "a": {
+          "face": [
+            0.0,
+            0.0,
+            10.0
+          ],
+          "occurrence": "$base"
+        },
+        "angle": 90.0,
+        "b": {
+          "face": [
+            0.0,
+            0.0,
+            10.0
+          ],
+          "occurrence": "$arm"
+        },
+        "name": "Attach Arm to Base",
+        "type": "rigid"
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

@@ -1,0 +1,59 @@
+{
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XZ",
+        "name": "Hook profile"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            -20,
+            0
+          ],
+          [
+            20,
+            0
+          ],
+          [
+            20,
+            -30
+          ],
+          [
+            -20,
+            -30
+          ]
+        ],
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": 15,
+        "direction": "symmetric",
+        "body_name": "TopologyFaceBoundaryXz"
+      }
+    },
+    {
+      "command": "model.faces",
+      "params": {
+        "body": "TopologyFaceBoundaryXz"
+      }
+    }
+  ]
+}

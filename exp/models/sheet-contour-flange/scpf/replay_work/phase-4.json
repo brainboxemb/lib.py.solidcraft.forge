@@ -1,0 +1,19 @@
+{
+  "commands": [
+    {
+      "command": "sheet.flange",
+      "params": {
+        "type": "contour",
+        "sketch": "Contour",
+        "curves": [
+          "l1",
+          "a1",
+          "l2"
+        ],
+        "distance": "contour_width",
+        "rule": "Contour Flange Rule",
+        "body_name": "SheetContourFlange"
+      }
+    }
+  ]
+}

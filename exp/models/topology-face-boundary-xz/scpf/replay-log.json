@@ -1,0 +1,329 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "5d959c6762c5757d780c9dbcf6aebe72d068a79fe1c89d3699d990894167432e",
+  "variables": {
+    "$topology_face_1": {
+      "area": 1200.0,
+      "centroid": [
+        0.0,
+        -7.5,
+        15.0
+      ],
+      "exact": true,
+      "index": 5,
+      "name": "F2:bottom",
+      "plane_normal": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "point": [
+        10.0,
+        -7.5,
+        10.0
+      ]
+    },
+    "$topology_edges_1": [
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 5
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 7
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 9
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 11
+      }
+    ],
+    "$topology_face_2": {
+      "area": 1200.0,
+      "centroid": [
+        0.0,
+        7.5,
+        15.0
+      ],
+      "exact": true,
+      "index": 0,
+      "name": "F2:top",
+      "plane_normal": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "point": [
+        10.0,
+        7.5,
+        10.0
+      ]
+    },
+    "$topology_edges_2": [
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 5
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 7
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 9
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 11
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 0
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 1
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 2
+      },
+      {
+        "body": "TopologyFaceBoundaryXz",
+        "index": 3
+      }
+    ]
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XZ",
+        "name": "Hook profile"
+      }
+    },
+    {
+      "index": 1,
+      "command": "sketch.line",
+      "resolved_params": {
+        "points": [
+          [
+            -20,
+            0
+          ],
+          [
+            20,
+            0
+          ],
+          [
+            20,
+            -30
+          ],
+          [
+            -20,
+            -30
+          ]
+        ],
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 3,
+      "command": "solid.extrude",
+      "resolved_params": {
+        "distance": 15,
+        "direction": "symmetric",
+        "body_name": "TopologyFaceBoundaryXz"
+      }
+    },
+    {
+      "index": 4,
+      "command": "model.faces",
+      "resolved_params": {
+        "body": "TopologyFaceBoundaryXz"
+      },
+      "bindings": {
+        "$topology_face_1": {
+          "area": 1200.0,
+          "centroid": [
+            0.0,
+            -7.5,
+            15.0
+          ],
+          "exact": true,
+          "index": 5,
+          "name": "F2:bottom",
+          "plane_normal": [
+            0.0,
+            -1.0,
+            0.0
+          ],
+          "point": [
+            10.0,
+            -7.5,
+            10.0
+          ]
+        }
+      }
+    },
+    {
+      "index": 5,
+      "command": "model.edges",
+      "resolved_params": {
+        "body": "TopologyFaceBoundaryXz"
+      },
+      "bindings": {
+        "$topology_edges_1": [
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 5
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 7
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 9
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 11
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "command": "model.faces",
+      "resolved_params": {
+        "body": "TopologyFaceBoundaryXz"
+      },
+      "bindings": {
+        "$topology_face_2": {
+          "area": 1200.0,
+          "centroid": [
+            0.0,
+            7.5,
+            15.0
+          ],
+          "exact": true,
+          "index": 0,
+          "name": "F2:top",
+          "plane_normal": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "point": [
+            10.0,
+            7.5,
+            10.0
+          ]
+        }
+      }
+    },
+    {
+      "index": 7,
+      "command": "model.edges",
+      "resolved_params": {
+        "body": "TopologyFaceBoundaryXz"
+      },
+      "bindings": {
+        "$topology_edges_2": [
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 5
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 7
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 9
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 11
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 0
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 1
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 2
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 3
+          }
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "command": "solid.chamfer",
+      "resolved_params": {
+        "edges": [
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 5
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 7
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 9
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 11
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 0
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 1
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 2
+          },
+          {
+            "body": "TopologyFaceBoundaryXz",
+            "index": 3
+          }
+        ],
+        "distance": 1.5,
+        "body": "TopologyFaceBoundaryXz"
+      }
+    }
+  ],
+  "completed": 9
+}

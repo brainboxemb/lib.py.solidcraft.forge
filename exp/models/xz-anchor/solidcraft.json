@@ -1,0 +1,278 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "board_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "20",
+        "name": "board_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "bind": {
+        "$board": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Board"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "d1_Board__Profile",
+        "plane": "XZ"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "closed": true,
+        "ids": [
+          "lower_left",
+          "lower_right",
+          "upper_right",
+          "upper_left"
+        ],
+        "points": [
+          [
+            "-(board_width / 2)",
+            0
+          ],
+          [
+            "board_width / 2",
+            0
+          ],
+          [
+            "board_width / 2",
+            "-(board_height)"
+          ],
+          [
+            "-(board_width / 2)",
+            "-(board_height)"
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "body_name": "Board",
+        "direction": "positive",
+        "distance": 12.0
+      }
+    },
+    {
+      "command": "material.create",
+      "params": {
+        "density_g_cm3": 0.55,
+        "name": "test board"
+      }
+    },
+    {
+      "command": "material.assign",
+      "params": {
+        "bodies": [
+          "Board"
+        ],
+        "material": "test board"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$rightmarker": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "RightMarker"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "RightMarker",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 10,
+        "length": 10,
+        "width": 10
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$leftmarker": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "LeftMarker"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "LeftMarker",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 10,
+        "length": 10,
+        "width": 10
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$rightmarker",
+        "translate": [
+          15.0,
+          -5.0,
+          15.0
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$leftmarker",
+        "translate": [
+          -15.0,
+          -5.0,
+          15.0
+        ]
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "a": {
+          "corner": [
+            20.0,
+            0.0,
+            20.0
+          ],
+          "edge": [
+            20.0,
+            0.0,
+            10.0
+          ],
+          "occurrence": "$board",
+          "on": [
+            0.0,
+            0.0,
+            10.0
+          ]
+        },
+        "b": {
+          "occurrence": "$rightmarker",
+          "point": [
+            20.0,
+            0.0,
+            20.0
+          ],
+          "x": [
+            -1.0,
+            0.0,
+            0.0
+          ],
+          "z": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        "name": "Attach RightMarker to Board",
+        "type": "rigid"
+      }
+    },
+    {
+      "command": "joint.create",
+      "params": {
+        "a": {
+          "corner": [
+            -20.0,
+            0.0,
+            20.0
+          ],
+          "edge": [
+            -20.0,
+            0.0,
+            10.0
+          ],
+          "occurrence": "$board",
+          "on": [
+            0.0,
+            0.0,
+            10.0
+          ]
+        },
+        "b": {
+          "occurrence": "$leftmarker",
+          "point": [
+            -20.0,
+            0.0,
+            20.0
+          ],
+          "x": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "z": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        "name": "Attach LeftMarker to Board",
+        "type": "rigid"
+      }
+    },
+    {
+      "command": "browser.visibility",
+      "params": {
+        "folder": "joints",
+        "visible": false
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

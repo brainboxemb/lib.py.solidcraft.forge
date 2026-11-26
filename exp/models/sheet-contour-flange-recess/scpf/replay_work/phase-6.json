@@ -1,0 +1,27 @@
+{
+  "commands": [
+    {
+      "command": "sheet.flange",
+      "params": {
+        "type": "contour",
+        "sketch": "C profile",
+        "curves": [
+          "l1",
+          "l2",
+          "l3",
+          "l4",
+          "l5"
+        ],
+        "distance": "length",
+        "rule": "Contour Recess Rule",
+        "body_name": "SheetContourFlangeRecess"
+      }
+    },
+    {
+      "command": "model.faces",
+      "params": {
+        "body": "SheetContourFlangeRecess"
+      }
+    }
+  ]
+}

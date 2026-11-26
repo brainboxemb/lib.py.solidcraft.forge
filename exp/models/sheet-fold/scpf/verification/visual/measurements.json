@@ -1,0 +1,195 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 6861.150444078208,
+      "bbox": {
+        "max": [
+          21.64380550980766,
+          20.000000000000004,
+          21.643805509807656
+        ],
+        "min": [
+          -40.0,
+          -20.000000000000004,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        -2.1880555571517695,
+        -3.647740152070377e-16,
+        3.691117820822088
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 26,
+      "face_types": {
+        "cylinder": 3,
+        "plane": 8
+      },
+      "faces": 11,
+      "kernel": {
+        "edges": 34,
+        "faces": 16,
+        "shells": 1,
+        "vertices": 20
+      },
+      "mass_g": 8.183052218583642,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "SheetFold",
+      "notes": [],
+      "sheet_metal": true,
+      "vertices": 18,
+      "volume_mm3": 6343.451332235381
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "80",
+      "model": false,
+      "name": "width",
+      "unit": "mm",
+      "value": 80.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "40",
+      "model": false,
+      "name": "depth",
+      "unit": "mm",
+      "value": 40.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "2",
+      "model": false,
+      "name": "thickness",
+      "unit": "mm",
+      "value": 2.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "2",
+      "model": false,
+      "name": "bend_radius",
+      "unit": "mm",
+      "value": 2.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "0.5",
+      "model": false,
+      "name": "k_factor",
+      "unit": "",
+      "value": 0.5
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "6",
+      "model": false,
+      "name": "hole_diameter",
+      "unit": "mm",
+      "value": 6.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "90",
+      "model": false,
+      "name": "fold_angle",
+      "unit": "deg",
+      "value": 1.5707963267948966
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 4,
+      "dof": 0,
+      "id": 1,
+      "name": "Blank",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    },
+    {
+      "curves": 1,
+      "dof": 0,
+      "id": 4,
+      "name": "Fold line",
+      "profiles": 0,
+      "status": "solved",
+      "visible": true,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 0.35249800000000003,
+      "name": "Blank",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 3.036025,
+      "name": "BaseFlange1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BaseFlangeFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 15.504007999999999,
+      "name": "Hole1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "HoleFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 0.050856000000000005,
+      "name": "Fold line",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 5,
+      "ms": 11.133897000000001,
+      "name": "Fold1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "FoldFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 6861.150444078208,
+    "edges": 26,
+    "faces": 11,
+    "mass_g": 8.183052218583642,
+    "open_bodies_skipped": 0,
+    "vertices": 18,
+    "volume_mm3": 6343.451332235381
+  }
+}

@@ -1,0 +1,53 @@
+[
+  {
+    "bend_zones": [],
+    "bends": [],
+    "body": "SheetPerforate",
+    "cutout_shapes": [],
+    "cutouts": [],
+    "flat_size_mm": [
+      60.0,
+      40.0,
+      2.0
+    ],
+    "k_factor": 0.5,
+    "outline": [
+      [
+        [
+          -30.0,
+          -20.0
+        ],
+        [
+          30.0,
+          -20.0
+        ],
+        [
+          30.0,
+          20.0
+        ],
+        [
+          -30.0,
+          20.0
+        ]
+      ]
+    ],
+    "perforations": [
+      {
+        "count": 15,
+        "diameter": 5.0,
+        "feature": 3,
+        "margin": 5.0,
+        "open_area_mm2": 294.5243112740431,
+        "pattern": "square",
+        "pitch": 10.0
+      }
+    ],
+    "pockets": [],
+    "roll_lines": [],
+    "roll_table": [],
+    "rolls": 0,
+    "rule": "Perforation Rule",
+    "thickness": 2.0,
+    "unfolded": false
+  }
+]

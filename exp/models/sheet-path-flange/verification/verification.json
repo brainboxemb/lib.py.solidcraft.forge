@@ -1,0 +1,308 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "90b3b484ecd08cbd2498e075e2a393183921f2197d39084d252b690666b633d8",
+          "size": 3563
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "bend_radius": 2.0,
+            "depth": 40.0,
+            "k_factor": 0.5,
+            "path_height": 14.0,
+            "path_radius": 3.0,
+            "thickness": 2.0,
+            "width": 80.0
+          },
+          "expected": {
+            "bend_radius": 2.0,
+            "depth": 40.0,
+            "k_factor": 0.5,
+            "path_height": 14.0,
+            "path_radius": 3.0,
+            "thickness": 2.0,
+            "width": 80.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Blank sketch",
+            "pass": true
+          },
+          {
+            "actual": {
+              "curves": 1,
+              "name": "Path",
+              "profiles": 0
+            },
+            "expected": {
+              "curves": 1,
+              "name": "Path",
+              "profiles": 0
+            },
+            "label": "Path sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/resize_path_flange/model.sc",
+          "sha256": "346eb4e2b275ab4f1df3601e4371f1416abe097889cbb011b6d601dc60b790a9",
+          "size": 10865
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/resize_path_flange/measurements.json",
+          "sha256": "b69abb1a1817dab7b567803f6a701a2c36edabe901a1c8aef0b6a3d3116a682f",
+          "size": 3545
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "path_height": 18.0,
+            "path_radius": 4.0
+          },
+          "expected": {
+            "path_height": 18.0,
+            "path_radius": 4.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 4,
+              "name": "Blank",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Blank sketch",
+            "pass": true
+          },
+          {
+            "actual": {
+              "curves": 1,
+              "name": "Path",
+              "profiles": 0
+            },
+            "expected": {
+              "curves": 1,
+              "name": "Path",
+              "profiles": 0
+            },
+            "label": "Path sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "saved_design_resize_path_flange",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/flat_pattern/results.json",
+          "sha256": "7181d630221cdedc8e2e426be80016fb6cb28dc331d21e3432c22619ccdc0f21",
+          "size": 1123
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check result_count",
+              "pass": true
+            },
+            "id": "result_count",
+            "path": []
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check bend_count",
+              "pass": true
+            },
+            "id": "bend_count",
+            "path": [
+              0,
+              "bends"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 3.0,
+              "delta": 0.0,
+              "expected": 3.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check bend_radius",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "bend_radius",
+            "path": [
+              0,
+              "bends",
+              0,
+              "radius"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Path Flange Rule",
+              "expected": "Path Flange Rule",
+              "label": "SolidCraft inspection check sheet_rule",
+              "pass": true
+            },
+            "id": "sheet_rule",
+            "path": [
+              0,
+              "rule"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2.0,
+              "delta": 0.0,
+              "expected": 2.0,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_thickness",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_thickness",
+            "path": [
+              0,
+              "thickness"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 0.5,
+              "delta": 0.0,
+              "expected": 0.5,
+              "kind": "scalar",
+              "label": "SolidCraft inspection check sheet_k_factor",
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "id": "sheet_k_factor",
+            "path": [
+              0,
+              "k_factor"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_flat_pattern",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sheet-path-flange/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sheet-path-flange"
+}

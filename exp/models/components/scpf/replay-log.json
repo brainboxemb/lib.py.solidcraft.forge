@@ -1,0 +1,161 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "24dbfba841f6a658310b3d7fe8d889cba2f647e3133c7e91974d7d1645798add",
+  "variables": {
+    "$block_occurrence_1": 2,
+    "$component_1": 1,
+    "$block_occurrence_2": 4,
+    "$drawing_1": "9bq2vpp04891a",
+    "$drawing_1_source": "a47tvmh2fskf8",
+    "$drawing_1_sheet": "4gsw5hvj809qa",
+    "$drawing_1_orientation": "landscape",
+    "$drawing_1_front": "6r1asj2tgemyt",
+    "$drawing_1_top": "eqtknjrrdb2q0",
+    "$drawing_1_right": "4qjd0k65775s2",
+    "$drawing_1_iso": "cg14pcq0wvyr9"
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "Block",
+        "grounded": true
+      },
+      "bindings": {
+        "$block_occurrence_1": 2,
+        "$component_1": 1
+      }
+    },
+    {
+      "index": 1,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 40.0,
+        "width": 30.0,
+        "height": 10.0,
+        "corner": [
+          -20.0,
+          -15.0,
+          0
+        ],
+        "body_name": "Block"
+      }
+    },
+    {
+      "index": 2,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 3,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "Block",
+        "translate": [
+          40.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bindings": {
+        "$block_occurrence_2": 4
+      }
+    },
+    {
+      "index": 4,
+      "command": "drawing.create",
+      "resolved_params": {
+        "name": "Block drawing",
+        "template": "iso-a4-part",
+        "first_sheet_name": "Sheet 1"
+      },
+      "bindings": {
+        "$drawing_1": "9bq2vpp04891a",
+        "$drawing_1_source": "a47tvmh2fskf8",
+        "$drawing_1_sheet": "4gsw5hvj809qa"
+      }
+    },
+    {
+      "index": 5,
+      "command": "drawing.sheet.set",
+      "resolved_params": {
+        "sheet": "4gsw5hvj809qa",
+        "orientation": "landscape",
+        "documents": {
+          "source": "a47tvmh2fskf8",
+          "component": 1
+        }
+      }
+    },
+    {
+      "index": 6,
+      "command": "drawing.inspect",
+      "resolved_params": {},
+      "bindings": {
+        "$drawing_1_orientation": "landscape"
+      }
+    },
+    {
+      "index": 7,
+      "command": "drawing.view.standard",
+      "resolved_params": {
+        "sheet": "4gsw5hvj809qa",
+        "iso": true,
+        "gap_mm": 20.0
+      },
+      "bindings": {
+        "$drawing_1_front": "6r1asj2tgemyt",
+        "$drawing_1_top": "eqtknjrrdb2q0",
+        "$drawing_1_right": "4qjd0k65775s2",
+        "$drawing_1_iso": "cg14pcq0wvyr9"
+      }
+    },
+    {
+      "index": 8,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "6r1asj2tgemyt",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 9,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "cg14pcq0wvyr9",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 10,
+      "command": "drawing.inspect",
+      "resolved_params": {}
+    },
+    {
+      "index": 11,
+      "command": "drawing.close",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 12
+}

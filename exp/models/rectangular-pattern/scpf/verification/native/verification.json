@@ -1,0 +1,358 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "aaf4e8ff95f867a381270ecb9701165bd612dacce0f99e4147d96591a6289b2f",
+          "size": 2803
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "RectangularPattern",
+                "max": [
+                  60.0,
+                  40.0,
+                  4.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  40.0,
+                  4.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_count": {
+              "actual": 30,
+              "expected": 30,
+              "label": "sole body face count",
+              "pass": true
+            },
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 12,
+                "plane": 18
+              },
+              "expected": {
+                "cylinder": 12,
+                "plane": 18
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 36281.41598682458,
+              "delta": 2.9103830456733704e-11,
+              "expected": 36281.415986824606,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.01
+            }
+          }
+        ],
+        "sketches": [
+          {
+            "actual": {
+              "curves": 5,
+              "name": "Slot",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 5,
+              "name": "Slot",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Slot sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Slot",
+              "type": "Sketch"
+            },
+            {
+              "name": "Slot",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "RectangularPattern1",
+              "type": "RectangularPatternFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Slot",
+              "type": "Sketch"
+            },
+            {
+              "name": "Slot",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "RectangularPattern1",
+              "type": "RectangularPatternFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/columns_2_pitch_30/model.sc",
+          "sha256": "3399c5be2eaf1ffb09923718707c8102d7b57c6776d6bec79c4c0ca85d684f98",
+          "size": 20283
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/columns_2_pitch_30/measurements.json",
+          "sha256": "b15136858e2b05a3a24464a1eae68406d2938e40f4a01ce78559e41786d75467",
+          "size": 2797
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "RectangularPattern",
+                "max": [
+                  60.0,
+                  40.0,
+                  4.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  40.0,
+                  4.0
+                ],
+                "min": [
+                  -60.0,
+                  -40.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "center_of_mass": {
+              "actual": [
+                -0.5727820682366423,
+                -0.5345965970208669,
+                2.0
+              ],
+              "deltas": [
+                3.3306690738754696e-16,
+                4.440892098500626e-16,
+                0.0
+              ],
+              "expected": [
+                -0.5727820682366427,
+                -0.5345965970208665,
+                2.0
+              ],
+              "kind": "vector",
+              "label": "sole body center of mass",
+              "max_delta": 4.440892098500626e-16,
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "face_count": {
+              "actual": 22,
+              "expected": 22,
+              "label": "sole body face count",
+              "pass": true
+            },
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 8,
+                "plane": 14
+              },
+              "expected": {
+                "cylinder": 8,
+                "plane": 14
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 36987.61065788305,
+              "delta": 2.1827872842550278e-11,
+              "expected": 36987.61065788307,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.01
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "columns": 2.0,
+            "pitch": 30.0,
+            "row_pitch": 28.0,
+            "rows": 2.0
+          },
+          "expected": {
+            "columns": 2.0,
+            "pitch": 30.0,
+            "row_pitch": 28.0,
+            "rows": 2.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 5,
+              "name": "Slot",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 5,
+              "name": "Slot",
+              "profiles": 1,
+              "status": "solved"
+            },
+            "label": "Slot sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Slot",
+              "type": "Sketch"
+            },
+            {
+              "name": "Slot",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "RectangularPattern1",
+              "type": "RectangularPatternFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Box1",
+              "type": "BoxFeature"
+            },
+            {
+              "name": "Slot",
+              "type": "Sketch"
+            },
+            {
+              "name": "Slot",
+              "type": "ExtrudeFeature"
+            },
+            {
+              "name": "RectangularPattern1",
+              "type": "RectangularPatternFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "saved_design_columns_2_pitch_30",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/rectangular-pattern/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "rectangular-pattern"
+}

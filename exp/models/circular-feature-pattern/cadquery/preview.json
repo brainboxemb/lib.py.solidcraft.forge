@@ -1,0 +1,32 @@
+{
+  "bounds": {
+    "max": [
+      50.0,
+      50.0,
+      6.0
+    ],
+    "min": [
+      -50.0,
+      -50.0,
+      0.0
+    ]
+  },
+  "camera": {
+    "distance": 79.26720381090783,
+    "pitch_deg": -32.0,
+    "target": [
+      0.0,
+      0.0,
+      3.0
+    ],
+    "yaw_deg": -45.0
+  },
+  "height": 540,
+  "image": "model.png",
+  "kind": "presentation-preview",
+  "renderer": "cad-trimesh-pillow-v1",
+  "schema": 1,
+  "source": "model.stl",
+  "view": "iso",
+  "width": 720
+}

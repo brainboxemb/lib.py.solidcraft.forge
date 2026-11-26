@@ -1,0 +1,68 @@
+[
+  {
+    "bend_zones": [
+      [
+        36.0,
+        40.71238898038469,
+        -20.0,
+        20.0
+      ]
+    ],
+    "bends": [
+      {
+        "allowance": 4.71238898038469,
+        "angle_deg": 90.0,
+        "bend": 1,
+        "direction": "up",
+        "end": [
+          38.356194490192344,
+          20.0
+        ],
+        "included_angle_deg": 90.0,
+        "length": 40.0,
+        "radius": 2.0,
+        "start": [
+          38.356194490192344,
+          -20.0
+        ]
+      }
+    ],
+    "body": "SheetEdgeFlange",
+    "cutout_shapes": [],
+    "cutouts": [],
+    "flat_size_mm": [
+      96.71238898,
+      40.0,
+      2.0
+    ],
+    "k_factor": 0.5,
+    "outline": [
+      [
+        [
+          -40.0,
+          20.0
+        ],
+        [
+          -40.0,
+          -20.0
+        ],
+        [
+          56.71238898,
+          -20.0
+        ],
+        [
+          56.71238898,
+          20.0
+        ]
+      ]
+    ],
+    "perforations": [],
+    "pockets": [],
+    "roll_lines": [],
+    "roll_table": [],
+    "rolls": 0,
+    "rule": "Edge Flange Rule",
+    "thickness": 2.0,
+    "unfolded": false
+  }
+]

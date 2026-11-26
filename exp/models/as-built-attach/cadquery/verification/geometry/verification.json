@@ -1,0 +1,56 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            55.0,
+            35.0,
+            19.0
+          ],
+          "actual_min": [
+            -20.0,
+            -15.0,
+            -5.0
+          ],
+          "expected_max": [
+            55.0,
+            35.0,
+            19.0
+          ],
+          "expected_min": [
+            -20.0,
+            -15.0,
+            -5.0
+          ],
+          "max_delta_mm": 0.0,
+          "pass": true,
+          "tolerance_mm": 0.5
+        },
+        "volume": {
+          "actual_mm3": 14400.0,
+          "delta_mm3": 0.0,
+          "expected_mm3": 14400.0,
+          "pass": true,
+          "tolerance_mm3": 2.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/as-built-attach/cadquery/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "as-built-attach-cadquery-geometry"
+}

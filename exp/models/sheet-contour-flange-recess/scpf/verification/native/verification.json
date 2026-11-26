@@ -1,0 +1,95 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "2c67723f9b5b4bf2c0e1543c644e7756d0d23c289a89de12caa9aba84bb04c7d",
+          "size": 2629
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole",
+            "sheet_metal": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body sheet_metal",
+              "pass": true
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "length": 250.0
+          },
+          "expected": {
+            "length": 250.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 5,
+              "name": "C profile",
+              "profiles": 0
+            },
+            "expected": {
+              "curves": 5,
+              "name": "C profile",
+              "profiles": 0
+            },
+            "label": "C profile sketch",
+            "pass": true
+          },
+          {
+            "actual": {
+              "curves": 1,
+              "name": "Broad face recess",
+              "profiles": 1
+            },
+            "expected": {
+              "curves": 1,
+              "name": "Broad face recess",
+              "profiles": 1
+            },
+            "label": "Broad face recess sketch",
+            "pass": true
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sheet-contour-flange-recess/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sheet-contour-flange-recess"
+}

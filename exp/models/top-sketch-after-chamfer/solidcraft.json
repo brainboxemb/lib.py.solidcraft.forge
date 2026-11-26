@@ -1,0 +1,119 @@
+{
+  "commands": [
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "TopSketchAfterChamfer",
+        "corner": [
+          -50.0,
+          -35.0,
+          0
+        ],
+        "height": 10,
+        "length": 100,
+        "width": 70
+      }
+    },
+    {
+      "command": "solid.chamfer",
+      "params": {
+        "body": "TopSketchAfterChamfer",
+        "distance": 8,
+        "edges": [
+          [
+            -50.0,
+            -35.0,
+            5.0
+          ],
+          [
+            50.0,
+            -35.0,
+            5.0
+          ],
+          [
+            50.0,
+            35.0,
+            5.0
+          ],
+          [
+            -50.0,
+            35.0,
+            5.0
+          ]
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$face_index_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "index",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        },
+        "$face_point_1": {
+          "field": "faces",
+          "max": "area",
+          "select": "point",
+          "where": {
+            "plane_normal": [
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "command": "model.faces",
+      "params": {
+        "body": "TopSketchAfterChamfer"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Top hole",
+        "plane": {
+          "body": "TopSketchAfterChamfer",
+          "face": "$face_point_1",
+          "index": "$face_index_1"
+        },
+        "project_edges": false
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0.0,
+          0.0
+        ],
+        "diameter": 12
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "direction": "negative",
+        "name": "Top hole",
+        "operation": "cut",
+        "targets": [
+          "TopSketchAfterChamfer"
+        ],
+        "through_all": true
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

@@ -1,0 +1,185 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 80242.12385965945,
+      "bbox": {
+        "max": [
+          120.0,
+          80.0,
+          5.000000000000001
+        ],
+        "min": [
+          -120.0,
+          -80.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        0.24914221168844808,
+        -2.235011898701521e-15,
+        2.5
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 132,
+      "face_types": {
+        "cylinder": 24,
+        "plane": 22
+      },
+      "faces": 46,
+      "kernel": {
+        "edges": 132,
+        "faces": 46,
+        "shells": 1,
+        "vertices": 88
+      },
+      "mass_g": 234.2366022103926,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "SketchPatternMirror",
+      "notes": [],
+      "vertices": 88,
+      "volume_mm3": 181578.7614034051
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "8",
+      "model": false,
+      "name": "hole_diameter",
+      "unit": "mm",
+      "value": 8.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "4",
+      "model": false,
+      "name": "hole_columns",
+      "unit": "",
+      "value": 4.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "25",
+      "model": false,
+      "name": "hole_pitch",
+      "unit": "mm",
+      "value": 25.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "2",
+      "model": false,
+      "name": "slot_count",
+      "unit": "",
+      "value": 2.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "50",
+      "model": false,
+      "name": "slot_pitch",
+      "unit": "mm",
+      "value": 50.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "hole_diameter",
+      "model": true,
+      "name": "d4",
+      "unit": "mm",
+      "value": 8.0
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 9,
+      "dof": 2,
+      "id": 2,
+      "name": "Dog holes",
+      "profiles": 8,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    },
+    {
+      "curves": 35,
+      "dof": 5,
+      "id": 4,
+      "name": "Clamp slots",
+      "profiles": 8,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 2.7231159999999996,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 0.384305,
+      "name": "Dog holes",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 65.854602,
+      "name": "Dog holes",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 0.75473,
+      "name": "Clamp slots",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 5,
+      "ms": 123.273837,
+      "name": "Clamp slots",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 80242.12385965945,
+    "edges": 132,
+    "faces": 46,
+    "mass_g": 234.2366022103926,
+    "open_bodies_skipped": 0,
+    "vertices": 88,
+    "volume_mm3": 181578.7614034051
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "commands": [
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": 1
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            -12.875,
+            0.625
+          ],
+          [
+            -12.875,
+            17.375
+          ]
+        ],
+        "ids": [
+          "l2"
+        ],
+        "connect": true
+      }
+    }
+  ]
+}

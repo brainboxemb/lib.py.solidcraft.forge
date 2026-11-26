@@ -1,0 +1,57 @@
+[
+  {
+    "attachment": "exact_face",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Top hole",
+    "projected": null,
+    "sketch": 3,
+    "sketching_view": 1
+  },
+  {
+    "constraints": [
+      "k1"
+    ],
+    "created": {
+      "constraints": [
+        "k1"
+      ],
+      "curves": [
+        "c1"
+      ],
+      "dimensions": [],
+      "points": [
+        "c1.center"
+      ]
+    },
+    "curves": [
+      "c1"
+    ],
+    "sketch": {
+      "dof": 1,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 3
+  },
+  {
+    "bodies": [
+      "TopSketchAfterChamfer"
+    ],
+    "changed_bodies": [
+      "TopSketchAfterChamfer"
+    ],
+    "created_bodies": [],
+    "feature": 4,
+    "ms": 13.488703,
+    "name": "Top hole",
+    "removed_bodies": [],
+    "warning": null
+  }
+]

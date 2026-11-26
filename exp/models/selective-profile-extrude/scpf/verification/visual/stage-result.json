@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-visual",
+  "id": "selective-profile-extrude--scpf",
+  "implementation": "scpf",
+  "owner": "selective-profile-extrude",
+  "schema": 1,
+  "stage_id": "visual",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+}

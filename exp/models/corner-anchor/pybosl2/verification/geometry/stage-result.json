@@ -1,0 +1,10 @@
+{
+  "adapter": "mesh-geometry",
+  "id": "corner-anchor--pybosl2",
+  "implementation": "pybosl2",
+  "owner": "corner-anchor",
+  "schema": 1,
+  "stage_id": "geometry",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6"
+}

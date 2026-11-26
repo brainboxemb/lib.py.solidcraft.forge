@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-model",
+  "id": "simple-box--scpf",
+  "implementation": "scpf",
+  "owner": "simple-box",
+  "schema": 1,
+  "stage_id": "native",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+}

@@ -1,0 +1,152 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "80",
+        "name": "width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2",
+        "name": "thickness",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2",
+        "name": "bend_radius",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "0.5",
+        "name": "k_factor",
+        "unit": ""
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "14",
+        "name": "path_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "3",
+        "name": "path_radius",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sheet.manage_rules",
+      "params": {
+        "active": true,
+        "bend_radius": "bend_radius",
+        "k_factor": "k_factor",
+        "name": "Path Flange Rule",
+        "thickness": "thickness"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Blank",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          "-(width / 2)",
+          "-(depth / 2)"
+        ],
+        "p1": [
+          "width / 2",
+          "depth / 2"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "sheet.flange",
+      "params": {
+        "body_name": "SheetPathFlange",
+        "rule": "Path Flange Rule",
+        "sketch": "Blank",
+        "type": "base"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Path",
+        "plane": "XZ"
+      }
+    },
+    {
+      "bind": {
+        "$contour_curves_1": "curves"
+      },
+      "command": "sketch.line",
+      "params": {
+        "connect": true,
+        "ids": [
+          "l1"
+        ],
+        "points": [
+          [
+            40,
+            2
+          ],
+          [
+            40,
+            "path_height"
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "sheet.path_flange",
+      "params": {
+        "body": "SheetPathFlange",
+        "curves": "$contour_curves_1",
+        "edge": [
+          40.0,
+          0.0,
+          2.0
+        ],
+        "radius": "path_radius",
+        "sketch": "Path"
+      }
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

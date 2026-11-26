@@ -1,0 +1,174 @@
+{
+  "artifacts": {
+    "drawings": [
+      {
+        "drawing": "$drawing_1",
+        "expected": {
+          "dimension_count": 0,
+          "note_count": 0,
+          "orientation": "landscape",
+          "properties": {},
+          "title_block": {},
+          "view_count": 4,
+          "view_styles": {}
+        },
+        "inspect": "drawings/Block-drawing.json",
+        "name": "Block drawing",
+        "orientation": "$drawing_1_orientation",
+        "pdf": "drawings/Block-drawing.pdf",
+        "png": "drawings/Block-drawing.png",
+        "sheet": "$drawing_1_sheet"
+      }
+    ]
+  },
+  "commands": [
+    {
+      "bind": {
+        "$block_occurrence_1": "occurrence",
+        "$component_1": "component"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Block"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Block",
+        "corner": [
+          -20.0,
+          -15.0,
+          0
+        ],
+        "height": 10.0,
+        "length": 40.0,
+        "width": 30.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$block_occurrence_2": "occurrence"
+      },
+      "command": "occurrence.copy",
+      "params": {
+        "component": "Block",
+        "translate": [
+          40.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$drawing_1": "id",
+        "$drawing_1_sheet": {
+          "field": "sheets",
+          "select": "id",
+          "where": {
+            "name": "Sheet 1"
+          }
+        },
+        "$drawing_1_source": {
+          "field": "sources",
+          "select": "id",
+          "where": {
+            "path": null
+          }
+        }
+      },
+      "command": "drawing.create",
+      "params": {
+        "first_sheet_name": "Sheet 1",
+        "name": "Block drawing",
+        "template": "iso-a4-part"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "documents": {
+          "component": "$component_1",
+          "source": "$drawing_1_source"
+        },
+        "orientation": "landscape",
+        "sheet": "$drawing_1_sheet"
+      }
+    },
+    {
+      "bind": {
+        "$drawing_1_orientation": {
+          "field": "sheets",
+          "select": "orientation",
+          "where": {
+            "name": "Sheet 1"
+          }
+        }
+      },
+      "command": "drawing.inspect",
+      "params": {}
+    },
+    {
+      "bind": {
+        "$drawing_1_front": "view",
+        "$drawing_1_iso": "iso",
+        "$drawing_1_right": "right",
+        "$drawing_1_top": "top"
+      },
+      "command": "drawing.view.standard",
+      "params": {
+        "gap_mm": 20.0,
+        "iso": true,
+        "sheet": "$drawing_1_sheet"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                "$block_occurrence_1"
+              ]
+            ]
+          }
+        },
+        "view": "$drawing_1_front"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                "$block_occurrence_1"
+              ]
+            ]
+          }
+        },
+        "view": "$drawing_1_iso"
+      }
+    },
+    {
+      "command": "drawing.inspect",
+      "params": {}
+    },
+    {
+      "command": "drawing.close",
+      "params": {}
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

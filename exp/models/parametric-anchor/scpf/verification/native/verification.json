@@ -1,0 +1,268 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "c5b2a5ddb8001ad65749301b9731c246e62b3e689b10407913b23d489e8a76d3",
+          "size": 2344
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Base",
+                "max": [
+                  20.0,
+                  15.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  20.0,
+                  15.0,
+                  10.0
+                ],
+                "min": [
+                  -20.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Block",
+                "max": [
+                  40.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  20.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  20.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "body_name": "Block",
+            "bounds": {
+              "actual_max": [
+                40.0,
+                10.0,
+                10.0
+              ],
+              "actual_min": [
+                20.0,
+                -10.0,
+                0.0
+              ],
+              "deltas": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                40.0,
+                10.0,
+                10.0
+              ],
+              "expected_min": [
+                20.0,
+                -10.0,
+                0.0
+              ],
+              "kind": "bounds",
+              "label": "Block bounds",
+              "max_delta": 0.0,
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "name_prefix": "Block"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/base_width_80/model.sc",
+          "sha256": "99a40a09831c20b87fb1a937e692ce8552c5d0405d03e6843b8d630ee532d244",
+          "size": 6412
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/base_width_80/measurements.json",
+          "sha256": "2b589fab67cb4850021aab3e0ba884089615785773c77e4846032f8b12f841a3",
+          "size": 2333
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Base",
+                "max": [
+                  40.0,
+                  15.0,
+                  10.0
+                ],
+                "min": [
+                  -40.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  15.0,
+                  10.0
+                ],
+                "min": [
+                  -40.0,
+                  -15.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "Block",
+                "max": [
+                  60.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  40.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  60.0,
+                  10.0,
+                  10.0
+                ],
+                "min": [
+                  40.0,
+                  -10.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "body_name": "Block",
+            "bounds": {
+              "actual_max": [
+                60.0,
+                10.0,
+                10.0
+              ],
+              "actual_min": [
+                40.0,
+                -10.0,
+                0.0
+              ],
+              "deltas": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              "expected_max": [
+                60.0,
+                10.0,
+                10.0
+              ],
+              "expected_min": [
+                40.0,
+                -10.0,
+                0.0
+              ],
+              "kind": "bounds",
+              "label": "Block bounds",
+              "max_delta": 0.0,
+              "pass": true,
+              "tolerance": 0.001
+            },
+            "name_prefix": "Block"
+          }
+        ]
+      },
+      "id": "saved_design_base_width_80",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/parametric-anchor/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "parametric-anchor"
+}
