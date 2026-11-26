@@ -103,8 +103,11 @@ SCPF_ONLY_IDS = {
 MITCAD_IDS = {
     "circle-negative-extrude",
     "cylinder-subtract",
+    "multi-profile-extrude",
+    "primitive-csg",
     "simple-box",
     "topology-face-boundary-box",
+    "topology-face-boundary-xz",
 }
 
 MITCAD_FOCUSED_IDS = {
@@ -218,9 +221,12 @@ class ModelTests(unittest.TestCase):
 
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
+            expected_implementations = ["scpf"]
+            if model_id in MITCAD_IDS:
+                expected_implementations.append("scpf-mitcad")
             self.assertEqual(
                 [impl.id for impl in model.implementations],
-                ["scpf"],
+                expected_implementations,
             )
             if model_id == "sample-plate-drawing":
                 self.assertEqual(
@@ -257,6 +263,15 @@ class ModelTests(unittest.TestCase):
                 self.assertEqual(
                     [stage.runtime for stage in model.verifications],
                     ["solidcraft", "reference", "solidcraft"],
+                )
+            elif model_id == "topology-face-boundary-xz":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "geometry"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference"],
                 )
             else:
                 self.assertEqual(
@@ -394,14 +409,24 @@ class ModelTests(unittest.TestCase):
             len(reference["verify_items"]),
             expected_reference_verify_count,
         )
+        expected_reference_preview_count = sum(
+            impl.preview_runtime == "reference"
+            for model in self.models
+            for impl in model.implementations
+        )
         self.assertEqual(
             len(reference["preview_items"]),
-            multi_engine * 4 + len(MITCAD_IDS),
+            expected_reference_preview_count,
         )
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
             (set(EXPECTED_IDS) - set(SCPF_ONLY_IDS))
-            | {"sample-plate-drawing", "multi-profile-extrude", "asymmetric-chamfer"},
+            | {
+                "sample-plate-drawing",
+                "multi-profile-extrude",
+                "asymmetric-chamfer",
+                "topology-face-boundary-xz",
+            },
         )
         self.assertEqual(
             {
