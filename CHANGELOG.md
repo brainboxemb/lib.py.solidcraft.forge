@@ -8,6 +8,31 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-11-26
+
+### Added
+
+- Add public native SolidCraft configuration-table authoring through
+  `Configure(design, active=..., columns=..., rows=...)`, with
+  `Param(...)` parameter columns and `Suppress(feature)` feature-suppression
+  columns.
+- Allow configuration intent around a final Shape, component occurrence or
+  Assembly, including associative occurrence Placement driven by ordinary model
+  parameters.
+
+### Changed
+
+- Keep generated configuration tables editable in saved SolidCraft `.sc`
+  designs, bind suppression to replay-returned native feature identity and bind
+  deterministic name-stable Forge row references to SolidCraft-owned native row
+  ids.
+- Qualify configuration behavior with Forge-owned cases for dimensional and
+  suppression variants, complete Assembly Front/Below/Service positions, and
+  flexible-fit `Free` / `Installed` physical states.
+- Define `Free` as the uninstalled manufacturing/print state and `Installed`
+  as the mounted working state while keeping render/display presentation
+  separate from physical configuration state.
+
 ## [0.19.0] - 2026-11-25
 
 ### Added
