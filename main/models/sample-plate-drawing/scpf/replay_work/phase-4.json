@@ -3,13 +3,13 @@
     {
       "command": "drawing.open",
       "params": {
-        "drawing": "6fcj9qfy6ss83"
+        "drawing": "dzybfc2dn0v2c"
       }
     },
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "71aa2e4m9t599",
+        "view": "5hmzn68jj1he1",
         "set": {
           "source": {
             "occurrences": [
@@ -24,7 +24,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "a5bxbgwan2mtw",
+        "view": "as7t7t2pc89s9",
         "set": {
           "source": {
             "occurrences": [
@@ -39,7 +39,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "71aa2e4m9t599",
+        "view": "5hmzn68jj1he1",
         "set": {
           "place": {
             "at": [
@@ -53,7 +53,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "2hf4m2sa03db0",
+        "view": "3jwd1rt3wrbaj",
         "set": {
           "place": {
             "at": [
@@ -67,7 +67,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "9yqvn8cjzjhx5",
+        "view": "fn02adnh6he4q",
         "set": {
           "place": {
             "at": [
@@ -81,7 +81,7 @@
     {
       "command": "drawing.view.edit",
       "params": {
-        "view": "a5bxbgwan2mtw",
+        "view": "as7t7t2pc89s9",
         "set": {
           "place": {
             "at": [
@@ -97,7 +97,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "71aa2e4m9t599",
+        "view": "5hmzn68jj1he1",
         "kind": {
           "faces": {
             "a": {
@@ -130,7 +130,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "71aa2e4m9t599",
+        "view": "5hmzn68jj1he1",
         "kind": {
           "faces": {
             "a": {
@@ -163,7 +163,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "2hf4m2sa03db0",
+        "view": "3jwd1rt3wrbaj",
         "kind": {
           "faces": {
             "a": {
@@ -196,7 +196,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "2hf4m2sa03db0",
+        "view": "3jwd1rt3wrbaj",
         "kind": {
           "faces": {
             "a": {
@@ -229,7 +229,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "2hf4m2sa03db0",
+        "view": "3jwd1rt3wrbaj",
         "kind": {
           "radial": {
             "edge": {
@@ -256,7 +256,7 @@
     {
       "command": "drawing.dimension.add",
       "params": {
-        "view": "2hf4m2sa03db0",
+        "view": "3jwd1rt3wrbaj",
         "kind": {
           "radial": {
             "edge": {
@@ -283,7 +283,7 @@
       "command": "drawing.note.add",
       "params": {
         "anchor": {
-          "sheet": "7aqgwp8n05475"
+          "sheet": "9vn7m5rh0m2t0"
         },
         "at": [
           156.0,
@@ -297,7 +297,7 @@
     {
       "command": "drawing.view.inspect",
       "params": {
-        "view": "a5bxbgwan2mtw"
+        "view": "as7t7t2pc89s9"
       }
     },
     {
@@ -307,6 +307,14 @@
     {
       "command": "drawing.close",
       "params": {}
+    },
+    {
+      "command": "drawing.create",
+      "params": {
+        "name": "Compact Sample Plate Drawing",
+        "template": "iso-a4-part",
+        "first_sheet_name": "Sheet 1"
+      }
     }
   ]
 }

@@ -1,0 +1,312 @@
+[
+  {
+    "display_value": 70.0,
+    "name": "size",
+    "unit": "mm",
+    "value": 70.0
+  },
+  {
+    "display_value": 80.0,
+    "name": "limit",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "display_value": 20.0,
+    "name": "offset",
+    "unit": "mm",
+    "value": 20.0
+  },
+  {
+    "display_value": 7.5,
+    "name": "grid",
+    "unit": "mm",
+    "value": 7.5
+  },
+  {
+    "display_value": 12.0,
+    "name": "pitch",
+    "unit": "mm",
+    "value": 12.0
+  },
+  {
+    "display_value": 1.0,
+    "name": "step",
+    "unit": "mm",
+    "value": 1.0
+  },
+  {
+    "display_value": 4.0,
+    "name": "wall",
+    "unit": "mm",
+    "value": 4.0
+  },
+  {
+    "display_value": -3.0,
+    "name": "bias",
+    "unit": "mm",
+    "value": -3.0
+  },
+  {
+    "bodies": [
+      "ConfigurationSymbolicMath"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "ConfigurationSymbolicMath"
+    ],
+    "feature": 1,
+    "ms": 3.003164,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": "Default",
+    "columns": [
+      "param:size"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Default",
+        "values": {
+          "param:size": "70"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:size"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Small",
+        "values": {
+          "param:size": "70"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:size"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:size"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      },
+      {
+        "id": 3,
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:size"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      },
+      {
+        "id": 3,
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Large",
+        "values": {
+          "param:size": "100 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Medium",
+    "columns": [
+      "param:size"
+    ],
+    "errors": [],
+    "matches": true,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      },
+      {
+        "id": 3,
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Large",
+        "values": {
+          "param:size": "100 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "styles": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ],
+    "trace": []
+  },
+  {
+    "active": "Medium",
+    "columns": [
+      "param:size"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      },
+      {
+        "id": 3,
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Large",
+        "values": {
+          "param:size": "100 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ]
+  }
+]

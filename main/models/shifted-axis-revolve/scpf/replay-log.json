@@ -1,0 +1,211 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "a509cf98a725160fc842397f7c58bc85b8e392a98239f1e1cc30ddae1a63c6b1",
+  "variables": {
+    "$config_name_1": "Revolve1",
+    "$config_row_1f45f02561f4": 4,
+    "$config_row_435c78310f60": 5
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "axis_z",
+        "expression": "3",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "axis_x",
+        "expression": "8",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "relief_d",
+        "expression": "4.5",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "core_d",
+        "expression": "3.7",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 4,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 40,
+        "width": 24,
+        "height": 20,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "ShiftedAxisRevolve"
+      }
+    },
+    {
+      "index": 5,
+      "command": "sketch.create",
+      "resolved_params": {
+        "plane": "XY",
+        "name": "Stepped pass through",
+        "offset": "axis_z"
+      }
+    },
+    {
+      "index": 6,
+      "command": "sketch.line",
+      "resolved_params": {
+        "points": [
+          [
+            "axis_x",
+            -12
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            -12
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            -9
+          ],
+          [
+            "axis_x + (core_d / 2)",
+            -9
+          ],
+          [
+            "axis_x + (core_d / 2)",
+            9
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            9
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            12
+          ],
+          [
+            "axis_x",
+            12
+          ]
+        ],
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "h"
+        ]
+      }
+    },
+    {
+      "index": 7,
+      "command": "sketch.finish",
+      "resolved_params": {}
+    },
+    {
+      "index": 8,
+      "command": "solid.revolve",
+      "resolved_params": {
+        "sketch": "Stepped pass through",
+        "axis": {
+          "origin": [
+            "axis_x",
+            0,
+            "axis_z"
+          ],
+          "dir": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        "angle": 360,
+        "operation": "cut",
+        "targets": [
+          "ShiftedAxisRevolve"
+        ]
+      },
+      "bindings": {
+        "$config_name_1": "Revolve1"
+      }
+    },
+    {
+      "index": 9,
+      "command": "config.configure",
+      "resolved_params": {
+        "features": [
+          "Revolve1"
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Default",
+        "rename": "Cut"
+      },
+      "bindings": {
+        "$config_row_1f45f02561f4": 4
+      }
+    },
+    {
+      "index": 11,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Cut",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      }
+    },
+    {
+      "index": 12,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Suppressed",
+        "values": {
+          "suppress:Revolve1": "true"
+        }
+      },
+      "bindings": {
+        "$config_row_435c78310f60": 5
+      }
+    },
+    {
+      "index": 13,
+      "command": "config.activate",
+      "resolved_params": {
+        "row": 4
+      }
+    },
+    {
+      "index": 14,
+      "command": "config.table",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 15
+}

@@ -9,6 +9,11 @@
   "schema": 2,
   "status": "pass",
   "verification_stages": {
+    "manufacturing-visual": {
+      "adapter": "solidcraft-sheet-flat-pattern-visual",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "status": "pass"
+    },
     "native": {
       "adapter": "solidcraft-model",
       "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",

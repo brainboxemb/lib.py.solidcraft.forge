@@ -15,6 +15,7 @@
     "cone-boolean",
     "configuration-installed-state",
     "configuration-position",
+    "configuration-symbolic-math",
     "configuration-table",
     "corner-anchor",
     "eight-corner-brackets",
@@ -48,6 +49,7 @@
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
+    "shifted-axis-revolve",
     "simple-box",
     "sketch-pattern-mirror",
     "slot-family",
@@ -244,6 +246,17 @@
     },
     {
       "id": "configuration-position",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-symbolic-math",
       "implementations": [
         "scpf"
       ],
@@ -671,6 +684,17 @@
       ]
     },
     {
+      "id": "shifted-axis-revolve",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
       "id": "simple-box",
       "implementations": [
         "scpf",
@@ -780,6 +804,7 @@
     "cone-boolean",
     "configuration-installed-state",
     "configuration-position",
+    "configuration-symbolic-math",
     "configuration-table",
     "corner-anchor",
     "eight-corner-brackets",
@@ -813,6 +838,7 @@
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
+    "shifted-axis-revolve",
     "simple-box",
     "sketch-pattern-mirror",
     "slot-family",
@@ -821,5 +847,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "186ce9663e35222f487fa267353931c8daa3c89e"
+  "source_sha": "fe1c6fd699e7df872e962fdee31ea002747b88f5"
 }

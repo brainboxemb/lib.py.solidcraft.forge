@@ -1,0 +1,304 @@
+[
+  {
+    "display_value": 3.0,
+    "name": "axis_z",
+    "unit": "mm",
+    "value": 3.0
+  },
+  {
+    "display_value": 8.0,
+    "name": "axis_x",
+    "unit": "mm",
+    "value": 8.0
+  },
+  {
+    "display_value": 4.5,
+    "name": "relief_d",
+    "unit": "mm",
+    "value": 4.5
+  },
+  {
+    "display_value": 3.7,
+    "name": "core_d",
+    "unit": "mm",
+    "value": 3.7
+  },
+  {
+    "bodies": [
+      "ShiftedAxisRevolve"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "ShiftedAxisRevolve"
+    ],
+    "feature": 1,
+    "ms": 2.9133620000000002,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "attachment": "fixed",
+    "created": {
+      "constraints": [],
+      "curves": [],
+      "dimensions": [],
+      "points": []
+    },
+    "name": "Stepped pass through",
+    "projected": null,
+    "sketch": 2,
+    "sketching_view": 1
+  },
+  {
+    "constraints": [],
+    "created": {
+      "constraints": [],
+      "curves": [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h"
+      ],
+      "dimensions": [],
+      "points": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8"
+      ]
+    },
+    "curves": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h"
+    ],
+    "sketch": {
+      "dof": 0,
+      "solved": true
+    }
+  },
+  {
+    "profiles": 1,
+    "sketch": 2
+  },
+  {
+    "bodies": [
+      "ShiftedAxisRevolve"
+    ],
+    "changed_bodies": [
+      "ShiftedAxisRevolve"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 125.71246799999999,
+    "name": "Revolve1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": "Default",
+    "columns": [
+      "suppress:Revolve1"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Default",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Revolve1",
+        "label": "suppress:Revolve1",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Cut",
+    "columns": [
+      "suppress:Revolve1"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Cut",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Revolve1",
+        "label": "suppress:Revolve1",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Cut",
+    "columns": [
+      "suppress:Revolve1"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Cut",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Revolve1",
+        "label": "suppress:Revolve1",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Cut",
+    "columns": [
+      "suppress:Revolve1"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Cut",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Suppressed",
+        "values": {
+          "suppress:Revolve1": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Revolve1",
+        "label": "suppress:Revolve1",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Cut",
+    "columns": [
+      "suppress:Revolve1"
+    ],
+    "errors": [],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Cut",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Suppressed",
+        "values": {
+          "suppress:Revolve1": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "styles": [],
+    "targets": [
+      {
+        "key": "suppress:Revolve1",
+        "label": "suppress:Revolve1",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ],
+    "trace": []
+  },
+  {
+    "active": "Cut",
+    "columns": [
+      "suppress:Revolve1"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Cut",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Suppressed",
+        "values": {
+          "suppress:Revolve1": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Revolve1",
+        "label": "suppress:Revolve1",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  }
+]

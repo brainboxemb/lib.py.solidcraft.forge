@@ -1,0 +1,163 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "70",
+        "name": "size",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "80",
+        "name": "limit",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "20",
+        "name": "offset",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "7.5",
+        "name": "grid",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "12",
+        "name": "pitch",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "1",
+        "name": "step",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "4",
+        "name": "wall",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "-3",
+        "name": "bias",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "ConfigurationSymbolicMath",
+        "corner": [
+          "-(sqrt(((min(size,limit)) ^ 2) - ((offset) ^ 2))) / 2",
+          "-((round((size) / (grid))) * (grid)) / 2",
+          0
+        ],
+        "height": "((floor((size) / (pitch))) * (step)) + (max(wall,abs(bias)))",
+        "length": "sqrt(((min(size,limit)) ^ 2) - ((offset) ^ 2))",
+        "width": "(round((size) / (grid))) * (grid)"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "size"
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$config_row_5263293fc202": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Small"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_8e588cd18774": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Medium"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_ab80540d98d2": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Large"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:size": "100 mm"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "$config_row_8e588cd18774"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}
