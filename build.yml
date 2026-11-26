@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/223-free-installed-configuration
-modules: [builder-scpf, verification, pages]
+branch: issue/228-ci-configuration-owner-baseline
+modules: [ci]
 library: false
-models: [configuration-installed-state]
+models: []
 tasks: [test]

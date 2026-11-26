@@ -24,7 +24,13 @@ EXPECTED_IDS = {
     "circle-negative-extrude",
     "circular-feature-pattern",
     "components",
+    "configuration-table",
+    "configuration-position",
+    "configuration-installed-state",
     "cone-boolean",
+    "configuration-table",
+    "configuration-position",
+    "configuration-installed-state",
     "corner-anchor",
     "eight-corner-brackets",
     "eight-flightcase-corners",
@@ -98,7 +104,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 52)
+        self.assertEqual(len(self.models), 55)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -108,6 +114,9 @@ class ModelTests(unittest.TestCase):
             "corner-anchor",
             "components",
             "sample-plate-drawing",
+            "configuration-installed-state",
+            "configuration-position",
+            "configuration-table",
         ):
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -119,6 +128,9 @@ class ModelTests(unittest.TestCase):
             "corner-anchor",
             "components",
             "sample-plate-drawing",
+            "configuration-installed-state",
+            "configuration-position",
+            "configuration-table",
         }:
             self.assertEqual(
                 by_id[model_id].purposes,
