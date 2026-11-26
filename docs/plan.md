@@ -93,12 +93,22 @@ First spike:
 6. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
-### Dev: #163 verification evidence audit
+### Dev: v0.21.0 consumer stabilization
 
-With #162 now qualifying native sheet perforation from authoritative
-manufacturing DXF/flat-pattern output, audit every remaining Verification owner
-against the current evidence contract so visually meaningful geometry cannot
-remain green on metadata/native checks alone.
+Finish the consumer-facing development line and release it before resuming the
+broad verification audit:
+
+1. complete #250 native compact title-block authoring and qualification;
+2. #210 is complete: canonical pattern examples now use the released
+   `rectangular_pattern(...)` contract;
+3. promote the fully qualified `dev` product through #265;
+4. publish v0.21.0 through release issue #264;
+5. resume #163 only after the stable release and `main -> dev`
+   synchronization are complete.
+
+The compact drawing path must remain native and backwards compatible with the
+existing `iso-a4-part` / `iso-a3-part` behavior. Experimental multi-backend
+work stays isolated on `exp` and is not part of v0.21.0.
 
 ## Later
 

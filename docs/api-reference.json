@@ -626,6 +626,10 @@
           "description": "Native title-block cell overrides supported by the selected SolidCraft template."
         },
         {
+          "name": "title_block_style",
+          "description": "Optional native title-block presentation: built-in or compact. Compact selects SolidCraft's native compact 49 mm block."
+        },
+        {
           "name": "revision",
           "description": "Optional DrawingRevision row."
         },
@@ -638,8 +642,8 @@
           "description": "Iterable of DrawingDimension objects."
         }
       ],
-      "example": "part.with_drawing(name=\"Bracket drawing\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
-      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
+      "example": "part.with_drawing(name=\"Bracket drawing\", title_block_style=\"compact\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
+      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, title_block_style=None, revision=None, notes=(), dimensions=())"
     },
     {
       "kind": "callable",
@@ -716,6 +720,10 @@
           "description": "Native title-block cell overrides supported by the selected SolidCraft template."
         },
         {
+          "name": "title_block_style",
+          "description": "Optional native title-block presentation: built-in or compact. Compact selects SolidCraft's native compact 49 mm block."
+        },
+        {
           "name": "revision",
           "description": "Optional DrawingRevision row."
         },
@@ -729,7 +737,7 @@
         }
       ],
       "example": "assembly.with_drawing(left, name=\"Left bracket\", views={\"front\": DrawingView(at=(62,128))}, dimensions=(DrawingDimension.faces(\"front\", (-20,0,5), (20,0,5)),))",
-      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
+      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, title_block_style=None, revision=None, notes=(), dimensions=())"
     },
     {
       "kind": "callable",

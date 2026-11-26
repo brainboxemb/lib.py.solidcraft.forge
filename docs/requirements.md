@@ -106,41 +106,43 @@
 5. Component drawings default to SolidCraft's native ISO A4 part template and
    explicitly set the first sheet to landscape. Callers may select the native
    ISO A3 part template; Forge preserves that paper size and landscape policy.
-6. The public drawing authoring contract must support explicit standard-view
+6. The public drawing authoring contract must support native `title_block_style="compact"` selection in addition to the normal built-in title block, while preserving existing template behavior.
+7. The public drawing authoring contract must support explicit standard-view
    placement/scale, a qualified per-view shaded presentation, drawing
    properties, title-block overrides, one revision row, sheet notes and native
    dimensions needed by a Wall-Hook-class part drawing.
-7. Omitting a view style keeps SolidCraft's normal line presentation.
+8. Omitting a view style keeps SolidCraft's normal line presentation.
    `DrawingView(visual_style="shaded")` is the qualified override for a
    pictorial/isometric consumer view; Forge must not invent its own shaded
    renderer.
-8. Dimension authoring must remain native and topology-resolved. Forge may expose
+9. Dimension authoring must remain native and topology-resolved. Forge may expose
    model-space picks for SolidCraft linear, parallel-face and radial dimensions;
    it must not convert dimensions into free lines/text. Stable face-to-face
    dimensions are the preferred overall-size form where fillets remove corners.
-9. Every declared drawing is retained in the native `.sc` design and the SCPF
+10. Every declared drawing is retained in the native `.sc` design and the SCPF
    builder exports a vector PDF, a native static PNG of the exact replay-bound
    sheet and the final native `drawing.inspect` JSON below the implementation's
    `drawings/` output directory.
-10. Build filesystem paths are builder-owned. Model/compiler intent may declare
+11. Build filesystem paths are builder-owned. Model/compiler intent may declare
     safe relative drawing artifact names and replay-bound ids, but must not embed
     repository/build-root paths.
-11. The SCPF builder must validate the fully-authored native drawing inspection
+12. The SCPF builder must validate the fully-authored native drawing inspection
     against the compiled drawing intent before publishing PDF/PNG evidence:
-    orientation, view count, dimension count, note count, properties, revision
-    and authored title-block values must survive native replay.
-12. Drawing qualification must also include an approved visual baseline of the
+    orientation, view count, dimension count, note count, properties, revision,
+    authored title-block values and requested compact title-block geometry must
+    survive native replay.
+13. Drawing qualification must also include an approved visual baseline of the
     generated native sheet. Image comparison is generic verification behavior,
     not a drawing renderer; it consumes the already-generated sheet PNG.
-13. Native qualification must execute drawing creation/export against the pinned
+14. Native qualification must execute drawing creation/export against the pinned
     SolidCraft runtime, not only compare generated JSON.
-14. Centre marks/centre lines remain unavailable until the pinned SolidCraft
+15. Centre marks/centre lines remain unavailable until the pinned SolidCraft
     command registry exposes native authoring for them. Balloons and parts lists
     remain later consumer requirements; Forge must not fake them.
-15. Guide, Cheatsheet and API Reference must be sufficient for an external CAD
+16. Guide, Cheatsheet and API Reference must be sufficient for an external CAD
     repository to reproduce the qualified drawing workflow without reading Forge
     internals.
-16. One physical owner with purpose `[example, verification]` demonstrates the
+17. One physical owner with purpose `[example, verification]` demonstrates the
     complete flow. Pages must not embed/auto-open drawing PDFs; it may load the
     durable static PNG sheet preview and expose explicit PDF actions.
 
