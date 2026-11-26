@@ -27,9 +27,10 @@ from ..ir import (
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
+    PolygonProfileIR,
     RegionIR,
     SphereIR,
-    _circle_region_interior_point,
+    _region_interior_point,
     normalize_shape,
 )
 
@@ -296,64 +297,123 @@ def _extrude_commands(
     region = node.regions[0]
     if not isinstance(region, RegionIR):
         raise ModelError("Mitcad Extrude IR requires RegionIR")
-    if node.direction not in ("positive", "negative"):
-        raise ModelError(
-            "Mitcad Extrude IR requires positive or negative direction"
-        )
-
     try:
-        pick = _circle_region_interior_point(sketch, region)
+        pick = _region_interior_point(sketch, region)
     except ValueError as exc:
         raise ModelError(str(exc)) from exc
 
-    profiles = []
-    for profile in sketch.profiles:
-        if not isinstance(profile, CircleProfileIR):
-            raise ModelError(
-                "Mitcad Extrude IR currently requires CircleProfileIR"
-            )
-        if any(parameters_in(value) or pv(value) != 0 for value in profile.center):
-            raise ModelError(
-                "Mitcad CircleProfileIR currently requires origin center"
-            )
-        _require_positive(profile.diameter, "circle diameter")
-        profiles.append(profile)
-
     _require_positive(node.distance, "sketch extrusion distance")
-
-    center = [command_value(value) for value in profiles[0].center]
-    entities = [
-        {
-            "id": "p1",
-            "type": "point",
-            "at": center,
-            "fixed": True,
-        }
-    ]
+    entities = []
     dimensions = []
-    for index, profile in enumerate(profiles, start=2):
-        curve = f"c{index}"
+
+    polygon = (
+        len(sketch.profiles) == 1
+        and isinstance(sketch.profiles[0], PolygonProfileIR)
+    )
+    if polygon:
+        if node.direction != "symmetric":
+            raise ModelError(
+                "Mitcad PolygonProfileIR currently requires symmetric extrusion"
+            )
+        profile = sketch.profiles[0]
+        if parameters_in(profile.points):
+            raise ModelError(
+                "Mitcad PolygonProfileIR currently requires fixed coordinates"
+            )
+
+        point_ids = []
+        for index, point in enumerate(profile.points, start=1):
+            point_id = f"p{index}"
+            point_ids.append(point_id)
+            entities.append(
+                {
+                    "id": point_id,
+                    "type": "point",
+                    "at": [pv(value) for value in point],
+                    "fixed": True,
+                }
+            )
+
+        first_curve = len(point_ids) + 1
+        for offset, start_id in enumerate(point_ids):
+            end_id = point_ids[(offset + 1) % len(point_ids)]
+            entities.append(
+                {
+                    "id": f"c{first_curve + offset}",
+                    "type": "line",
+                    "start": start_id,
+                    "end": end_id,
+                }
+            )
+
+        selector = [pick[0], pick[1]]
+        extent = {
+            "type": "symmetric",
+            "distance": command_value(node.distance),
+            "full_length": True,
+        }
+    else:
+        if node.direction not in ("positive", "negative"):
+            raise ModelError(
+                "Mitcad circle Extrude IR requires positive or negative direction"
+            )
+
+        profiles = []
+        for profile in sketch.profiles:
+            if not isinstance(profile, CircleProfileIR):
+                raise ModelError(
+                    "Mitcad Extrude IR requires one qualified profile family"
+                )
+            if any(
+                parameters_in(value) or pv(value) != 0
+                for value in profile.center
+            ):
+                raise ModelError(
+                    "Mitcad CircleProfileIR currently requires origin center"
+                )
+            _require_positive(profile.diameter, "circle diameter")
+            profiles.append(profile)
+
+        center = [
+            command_value(value)
+            for value in profiles[0].center
+        ]
         entities.append(
             {
-                "id": curve,
-                "type": "circle",
-                "center": "p1",
-                "radius": pv(profile.diameter) / 2.0,
+                "id": "p1",
+                "type": "point",
+                "at": center,
+                "fixed": True,
             }
         )
-        dimensions.append(
-            {
-                "id": f"k{index - 1}",
-                "type": "diameter",
-                "curve": curve,
-                "value": command_value(profile.diameter),
-            }
-        )
+        for index, profile in enumerate(profiles, start=2):
+            curve = f"c{index}"
+            entities.append(
+                {
+                    "id": curve,
+                    "type": "circle",
+                    "center": "p1",
+                    "radius": pv(profile.diameter) / 2.0,
+                }
+            )
+            dimensions.append(
+                {
+                    "id": f"k{index - 1}",
+                    "type": "diameter",
+                    "curve": curve,
+                    "value": command_value(profile.diameter),
+                }
+            )
 
-    extent_distance = command_value(
-        -node.distance if node.direction == "negative" else node.distance
-    )
-    selector = center if not region.holes else [pick[0], pick[1]]
+        selector = center if not region.holes else [pick[0], pick[1]]
+        extent = {
+            "type": "distance",
+            "distance": command_value(
+                -node.distance
+                if node.direction == "negative"
+                else node.distance
+            ),
+        }
 
     sketch_definition = {
         "type": "sketch",
@@ -370,10 +430,7 @@ def _extrude_commands(
                 "point": selector,
             }
         ],
-        "extent": {
-            "type": "distance",
-            "distance": extent_distance,
-        },
+        "extent": extent,
         "flip": False,
         "operation": "new_body",
         "participants": [],
@@ -398,35 +455,54 @@ def _chamfer_document(
     name: str,
 ):
     _require_positive(node.distance, "chamfer distance")
-    if len(node.edges.faces) != 1:
-        raise ModelError(
-            "Mitcad face-boundary chamfer currently requires one Faces value"
+    if not node.edges.faces:
+        raise ModelError("Mitcad face-boundary chamfer has no Faces values")
+
+    face_queries = []
+    for face in node.edges.faces:
+        try:
+            normal = _FACE_NORMALS[face]
+        except KeyError as exc:
+            raise ModelError(
+                f"Mitcad backend does not support Forge face {face!r}"
+            ) from exc
+        face_queries.append(
+            {
+                "surface": "plane",
+                "normal": normal,
+                "normal_tolerance": 1e-6,
+            }
         )
 
-    face = node.edges.faces[0]
-    try:
-        normal = _FACE_NORMALS[face]
-    except KeyError as exc:
-        raise ModelError(
-            f"Mitcad backend does not support Forge face {face!r}"
-        ) from exc
+    if isinstance(node.base, PlacementIR):
+        if not isinstance(node.base.primitive, BoxIR):
+            raise ModelError(
+                "Mitcad ChamferIR placement base currently requires BoxIR"
+            )
+        base_commands = [_box_command(node.base, f"{name}Base")]
+    elif isinstance(node.base, ExtrudeIR):
+        base_commands = _extrude_commands(node.base, f"{name}Base")
+    else:
+        raise ModelError("Mitcad ChamferIR has unsupported typed base")
+
+    boundary = {
+        "name": "edges",
+        "body": "body",
+    }
+    if len(face_queries) == 1:
+        # Keep the already-qualified v1 transport spelling stable.
+        boundary["face"] = face_queries[0]
+    else:
+        boundary["faces"] = face_queries
 
     commands = [
         *_parameter_commands(model),
-        _box_command(node.base, f"{name}Base"),
+        *base_commands,
     ]
     replay = [
         {
             "bind_single_body": "body",
-            "bind_face_boundary_edges": {
-                "name": "edges",
-                "body": "body",
-                "face": {
-                    "surface": "plane",
-                    "normal": normal,
-                    "normal_tolerance": 1e-6,
-                },
-            },
+            "bind_face_boundary_edges": boundary,
             "commands": [
                 {
                     "cmd": "add_feature",
@@ -452,7 +528,6 @@ def _chamfer_document(
         "commands": _plain_command_value(commands),
         "replay": _plain_command_value(replay),
     }, dependencies
-
 
 def compile_ir_with_dependencies(model: ModelIR, name: str):
     """Compile the qualified Forge semantic IR subset to Mitcad intent."""
