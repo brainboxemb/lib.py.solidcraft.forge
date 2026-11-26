@@ -12,10 +12,10 @@ maintain competing branch-local plans.
 ## Accepted baseline
 
 The Forge migration is complete and the current public product baseline is
-released as **v0.23.0**.
+released as **v0.24.0**.
 
 The accepted baseline now includes:
-- 59 physical model owners, with SCPF primary per owner and historically real
+- 60 physical model owners, with SCPF primary per owner and historically real
   reference implementations kept inside the same physical owner;
 - native, geometry, inspection and applicable visual verification with durable
   generated evidence below `build/<scope>/models/**`;
@@ -111,22 +111,32 @@ Release evidence for v0.23.0:
   `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689` and the GitHub Release is
   published.
 
-Qualified normal-lane evidence after v0.23.0:
-- #380 / PR #392 added explicit reusable-child feature exports through
-  `Shape.export_feature(name)` and definition-level
-  `Occurrence.feature(name)` references, allowing parent/root
-  `Suppress(...)` columns without exposing SolidCraft/replay feature ids;
-- the Forge-owned `configuration-child-feature` owner proves two separately
-  constructed occurrences share one parent-driven child parameter while
-  Small/Medium suppress the exported child cut and Large enables the same real
-  native history feature after save/reopen;
-- final PR CI 45908830410 is green, PR #392 merged to permanent `dev` as
-  `d23bc22e7a7af253664fae057d881c8170acd401`, permanent dev
-  qualification/build/publication run 45909235443 is green, and Pages run
-  45909580231 plus deployment 45909680743 are green;
-- this capability is qualified on `dev` but is not part of a published Forge
-  tag yet. Downstream CAD #189 must remain pinned to a released Forge version
-  until the normal-lane release below is published.
+Release evidence for v0.24.0:
+- #255 / PR #376 completed the first verification-audit visual follow-up for
+  seven visible-geometry owners while preserving their existing
+  native/history/topology checks; permanent dev run 45876667570 is green;
+- #380 / PR #392 added `Shape.export_feature(name)` plus definition-level
+  `Occurrence.feature(name)` and the Forge-owned
+  `configuration-child-feature` saved-design qualification; final PR CI
+  45908830410 is green and permanent dev run 45909235443 is green on
+  `d23bc22e7a7af253664fae057d881c8170acd401`;
+- #398 / PR #399 stabilized that qualified product through the permanent
+  `dev -> main` merge-commit path as
+  `ba4c655f552fb9c75a7fb9825e52ee5d3b185f45`; permanent stable full
+  qualification/build run 45910580497 is green on that product head;
+- #400 / PR #402 landed metadata-only v0.24.0 release state as
+  `61aef227ac6723b4fba526912749dc28bf474741`; stable release-only run
+  45911068181 is green, selected release + library and zero model owners, and
+  retained the existing full `build/main` product baseline;
+- annotated tag `v0.24.0` resolves through tag object
+  `fdfa92dd0437f78f7f03a0c102a7740f130e4aba` exactly to
+  `61aef227ac6723b4fba526912749dc28bf474741`, and the GitHub Release is
+  published;
+- PR #403 synchronized released `main -> dev` through the permanent merge
+  policy as `682f42d73aa91f66daab3a9dead4724537989966`; permanent dev
+  qualification/build/publication run 45911643864 is green.
+- downstream CAD #189 may now adopt the released v0.24.0 capability instead of
+  depending on an unreleased Forge branch.
 
 Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded `SphereIR` through native Mitcad join/cut/intersect;
@@ -153,20 +163,19 @@ The historical repository remains an archived A/B/provenance reference at
 Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
 
 Normal `dev` lane:
-- #380 / PR #392 is complete on permanent `dev`; the reusable-child feature
-  reference contract is qualified independently from experimental Mitcad work;
-- the next normal-lane product checkpoint is the **v0.24.0** minor release:
-  stabilize the already-qualified `dev` product to `main` through the
-  reviewed permanent `dev -> main` merge-commit path, then prepare
-  metadata-only release `release/v0.24.0` from qualified stable `main`;
-- do not integrate downstream CAD #189 against an unreleased Forge branch; it
-  may adopt this capability only after the v0.24.0 tag is published;
-- #255 / PR #376 remains complete on `dev`: seven audited visible-geometry
-  owners retain approved `front`, `right` and `iso` regression baselines
-  plus expected-shape evidence while preserving existing
-  native/history/topology checks;
-- keep later verification-evidence follow-ups #256 and #257 behind this
-  demonstrated consumer release checkpoint.
+- **v0.24.0 is released** and synchronized back to permanent `dev`; #255 and
+  #380 are now part of the public consumer baseline;
+- downstream CAD #189 may adopt v0.24.0 for parent/root suppression of an
+  explicitly exported feature inside a reusable child component;
+- **#256 is the next selected normal-lane item**: add deterministic visual
+  state/motion evidence for `appearance-color`, `exploded-views`,
+  `configuration-installed-state`, `configuration-position`,
+  `revolute-joint` and `shifted-axis-revolve`, while retaining their
+  existing native/history/state checks as authoritative;
+- follow #256 with **#257**, adding folded-result visual geometry baselines for
+  `sheet-contour-flange`, `sheet-edge-flange`, `sheet-hem` and
+  `sheet-path-flange` without replacing native/flat-pattern evidence;
+- keep normal verification work independent from experimental Mitcad/IR work.
 
 Experimental `exp` lane:
 - #393 is the immediate architecture/control checkpoint before more backend capability code;
@@ -186,11 +195,8 @@ Experimental `exp` lane:
 
 ## Later
 
-1. Continue verification-evidence follow-ups #256 and #257 after completed #255, in the order justified
-   by the completed #163 audit unless a newer demonstrated consumer blocker
-   takes priority.
-2. Continue the migrated Forge product/research backlog (#59-#72) according to
+1. Continue the migrated Forge product/research backlog (#59-#72) according to
    demonstrated consumer value and dependencies rather than treating the whole
    historical backlog as release-blocking.
-3. Retire duplicated historical orchestration only after all real consumers and
+2. Retire duplicated historical orchestration only after all real consumers and
    public documentation have equivalent coverage.
