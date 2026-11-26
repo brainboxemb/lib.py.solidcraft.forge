@@ -1,0 +1,330 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noindex, nofollow"><link rel="icon shortcut" href=/lib.py.solidcraft.forge/exp/favicon.ico sizes=32x32><link rel=icon href=/lib.py.solidcraft.forge/exp/favicon.svg type=image/svg+xml id=favicon-svg><link rel=icon href=/lib.py.solidcraft.forge/exp/favicon-16x16.png type=image/png sizes=16x16><link rel=icon href=/lib.py.solidcraft.forge/exp/favicon-32x32.png type=image/png sizes=32x32><link rel=apple-touch-icon href=/lib.py.solidcraft.forge/exp/apple-touch-icon.png sizes=180x180><link fetchpriority=low href=/lib.py.solidcraft.forge/exp/site.webmanifest rel=manifest><title>Verification – SolidCraft Forge</title><meta name=description content="Qualification cases and durable evidence for Forge/SCPF behaviour."><link rel=canonical href=https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/verification/ itemprop=url><meta property="og:title" content="Verification"><meta property="og:description" content="
+    Qualification cases and durable evidence for Forge/SCPF behaviour.
+  "><meta property="og:type" content="
+    website
+  "><meta property="og:url" content="https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/verification/"><meta itemprop=name content="Verification"><meta itemprop=description content="Qualification cases and durable evidence for Forge/SCPF behaviour."><meta itemprop=wordCount content="66"><meta name=twitter:card content="summary"><meta name=twitter:title content="Verification"><meta name=twitter:description content="Qualification cases and durable evidence for Forge/SCPF behaviour."><link href=/lib.py.solidcraft.forge/exp/css/compiled/main.css rel=stylesheet><link href=/lib.py.solidcraft.forge/exp/css/variables.css rel=stylesheet><link href=/lib.py.solidcraft.forge/exp/css/custom.css rel=stylesheet><script src=/lib.py.solidcraft.forge/exp/js/main-head.js integrity></script></head><body><a href=#content class="hx:sr-only hx:focus-visible:not-sr-only hx:focus-visible:fixed hx:focus-visible:z-50 hx:focus-visible:top-2 hx:focus-visible:left-2 hx:focus-visible:bg-primary-500 hx:focus-visible:text-white hx:focus-visible:px-4 hx:focus-visible:py-2 hx:focus-visible:rounded-md hx:focus-visible:text-sm hx:focus-visible:font-medium">Skip to content</a><div class="hextra-banner hx:max-md:sticky hx:top-0 hx:z-20 hx:px-6 hx:text-center hx:text-slate-50 hx:dark:text-white hx:bg-neutral-900 hx:dark:bg-neutral-800 hx:print:[display:none]"><div class="hx:relative hx:flex hx:items-center hx:justify-center hx:font-medium hx:text-sm hx:py-2.5"><div style=white-space:pre-wrap class=hx:px-8>Experimental development — not a stable release.</div><button class="hextra-banner-close-button hx:cursor-pointer hx:absolute hx:right-0 hx:text-white hx:font-bold hx:leading-none hx:hover:opacity-75 hx:transition hx:w-10 hx:h-10 hx:-mr-2 hx:md:mr-0 hx:flex hx:items-center hx:justify-center" aria-label="Close banner"><svg height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button></div></div><div class="hextra-nav-container hx:sticky hx:top-0 hx:z-20 hx:w-full hx:bg-transparent hx:print:hidden"><div class="hextra-nav-container-blur hx:pointer-events-none hx:absolute hx:z-[-1] hx:h-full hx:w-full hx:bg-white hx:dark:bg-dark hx:shadow-[0_2px_4px_rgba(0,0,0,.02),0_1px_0_rgba(0,0,0,.06)] hx:contrast-more:shadow-[0_0_0_1px_#000] hx:dark:shadow-[0_-1px_0_rgba(255,255,255,.1)_inset] hx:contrast-more:dark:shadow-[0_0_0_1px_#fff]"></div><nav class="hextra-max-navbar-width hx:mx-auto hx:flex hx:items-center hx:justify-end hx:gap-1 hx:md:gap-2 hx:h-[var(--hextra-navbar-height)] hx:px-6"><a class="hx:flex hx:items-center hx:hover:opacity-75 hx:ltr:mr-auto hx:rtl:ml-auto" href=/lib.py.solidcraft.forge/exp/><span class="hx:mr-2 hx:font-extrabold hx:inline hx:select-none">SolidCraft Forge</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/docs class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Documentation</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/guide class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Guide</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/reference class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>API Reference</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/cheatsheet class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Cheatsheet</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/examples class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Examples</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/verification class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:font-medium"><span class=hx:text-center>Verification</span>
+</a><button type=button class=hextra-search-trigger data-search-open aria-haspopup=dialog aria-controls=hextra-search-dialog aria-label=Search...><svg class="hextra-search-trigger-icon" focusable="false" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg><span class=hextra-search-trigger-label>Search...</span>
+<kbd class=hextra-search-trigger-kbd>CTRL K</kbd></button><div class="hx:flex hx:justify-items-start hx:group" data-theme=light><button title="Change theme" data-state=closed data-location=top class="hextra-theme-toggle hx:cursor-pointer hx:rounded-md hx:text-left hx:font-medium hx:p-1 hx:md:p-2 hx:grow" type=button aria-label="Change theme" aria-expanded=false aria-haspopup=menu><div class="hx:flex hx:items-center hx:gap-2 hx:capitalize"><svg height="24" class="hx:group-data-[theme=dark]:hidden hx:group-data-[theme=system]:hidden" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg><svg height="24" class="hx:group-data-[theme=light]:hidden hx:group-data-[theme=system]:hidden" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg><svg height="24" class="hx:group-data-[theme=dark]:hidden hx:group-data-[theme=light]:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M11.996094 2C6.4986225 2.0192368 2.03125 6.5024993 2.03125 12c0 5.497501 4.4673725 9.980763 9.964844 10H12 12.0039c5.497471-.01924 9.964844-4.502499 9.964844-10 0-5.4975007-4.467373-9.9807632-9.964844-10H12zM12 4c4.417218.017598 7.96875 3.5822356 7.96875 8 0 4.417764-3.551532 7.982402-7.96875 8z"/></svg></div></button><ul class="hextra-theme-toggle-options hx:hidden hx:z-20 hx:max-h-64 hx:overflow-auto hx:rounded-lg hx:border hx:border-gray-200 hx:bg-white hx:p-1 hx:text-sm hx:shadow-lg hx:dark:border-neutral-700 hx:dark:bg-neutral-900" style="position:fixed;inset:auto auto 0 0;margin:0;min-width:100px" data-theme=light role=menu><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=true tabindex=-1 data-item=light class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+Light
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=dark]:hidden hx:group-data-[theme=system]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=false tabindex=-1 data-item=dark class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+Dark
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=light]:hidden hx:group-data-[theme=system]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=false tabindex=-1 data-item=system class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+System
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=dark]:hidden hx:group-data-[theme=light]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li></ul></div><button type=button aria-label=Menu aria-expanded=false class="hextra-hamburger-menu hx:cursor-pointer hx:-mr-1 hx:rounded-sm hx:p-1 hx:active:bg-gray-400/20 hx:md:hidden hx:hextra-focus-visible-inset"><svg height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><g><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8H20"/></g><g><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16H20"/></g></svg></button></nav></div><main class="cad-page-shell cad-catalog-page" data-verification-catalog-layout><div class=forge-development-warning role=status data-forge-development-warning><strong>Development version.</strong>
+Forge is under active development and testing. APIs, behaviour, coverage and
+verification results may be incomplete or change without notice; published
+PASS results are not a support guarantee or production-readiness claim.</div><section class="cad-model-hero cad-model-hero-small"><p class=cad-model-kicker>CAD library</p><h1>Verification</h1><p>Qualification cases and durable evidence for Forge/SCPF behaviour.</p></section><section class="cad-section cad-catalog-section" data-verification-section=fundamentals data-verification-model-count=7><h2>1 · Basic geometry</h2><p>Primitives, profiles, CSG and simple reusable reference geometry.</p><div class=cad-model-grid><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/simple-box/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/simple-box/scpf/model.png alt="Parameterized Box preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Parameterized Box</strong>
+<span class=cad-card-tagline>Three editable dimensions driving one native box</span>
+<small class=cad-card-parameters>40 × 30 × 10 mm; editable length, width and height</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/round-top-sketch/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/round-top-sketch/scpf/model.png alt="TOP Sketch on circular body preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>TOP Sketch on circular body</strong>
+<span class=cad-card-tagline>A face-attached sketch resolves the largest +Z face of round geometry</span>
+<small class=cad-card-parameters>Ø100 × 10 mm disc; Ø44 × 16 mm hub</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/native-revolve/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/native-revolve/scpf/model.png alt="Native sketch revolve preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native sketch revolve</strong>
+<span class=cad-card-tagline>An editable radial profile creates a native revolved solid</span>
+<small class=cad-card-parameters>10 mm length; 4 mm radius; 360 degree sweep</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/circle-negative-extrude/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/circle-negative-extrude/scpf/model.png alt="Negative circle profile extrusion preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Negative circle profile extrusion</strong>
+<span class=cad-card-tagline>An explicit Circle2D sketch extrudes along negative Z</span>
+<small class=cad-card-parameters>Ø20 mm profile; 30 mm negative extrusion</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/primitive-csg/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/primitive-csg/scpf/model.png alt="Primitive CSG preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Primitive CSG</strong>
+<span class=cad-card-tagline>Direct primitives and Boolean operators form one native CSG result</span>
+<small class=cad-card-parameters>Sphere R20; 30 mm Box extension; Ø8 X-axis bore; 50 mm clipping Box</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/bracket/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/bracket/scpf/model.png alt="Minimal L-profile preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Minimal L-profile</strong>
+<span class=cad-card-tagline>A simple XZ L-profile provides a clean reusable geometry baseline</span>
+<small class=cad-card-parameters>24 mm extrusion width; 40 mm arms; 12 mm arm thickness</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/appearance-color/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/appearance-color/scpf/model.png alt="Display Appearance Color preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Display Appearance Color</strong>
+<span class=cad-card-tagline>One body with a native display-only color assignment</span>
+<small class=cad-card-parameters>40 × 30 × 10 mm box; display color</small>
+<b class="cad-card-state cad-card-ok">Verified</b></a></div></section><section class="cad-section cad-catalog-section" data-verification-section=features data-verification-model-count=12><h2>2 · Parent/child features and faces</h2><p>Features that belong to an existing object and use a meaningful parent face.</p><div class=cad-model-grid><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/anchored-holes/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/anchored-holes/scpf/model.png alt="Face-relative hole with native pattern preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Face-relative hole with native pattern</strong>
+<span class=cad-card-tagline>One attached source cut repeated by native rectangular history</span>
+<small class=cad-card-parameters>100 × 60 × 10 mm plate; two Ø8 through holes at 40 mm spacing</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/hole-family/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/hole-family/scpf/model.png alt="Native Hole family preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native Hole family</strong>
+<span class=cad-card-tagline>Four native mechanical hole intents on one plate</span>
+<small class=cad-card-parameters>120 × 40 × 12 mm plate; Ø6 simple, Ø6/Ø12 counterbore, Ø6/Ø12 90° countersink, M6 threaded hole</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/top-sketch-after-chamfer/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/top-sketch-after-chamfer/scpf/model.png alt="TOP Sketch after chamfer preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>TOP Sketch after chamfer</strong>
+<span class=cad-card-tagline>Face-attached sketch remains valid after topology-changing chamfer</span>
+<small class=cad-card-parameters>100 × 70 × 10 mm plate; 8 mm corner chamfers; Ø12 through hole</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/circular-feature-pattern/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/circular-feature-pattern/scpf/model.png alt="Native circular feature pattern preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native circular feature pattern</strong>
+<span class=cad-card-tagline>One direct Hole feature is repeated by a native circular History pattern</span>
+<small class=cad-card-parameters>100 × 100 × 6 mm plate; six Ø8 holes on 60 mm PCD</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/rectangular-pattern/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/rectangular-pattern/scpf/model.png alt="Native rectangular feature pattern preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native rectangular feature pattern</strong>
+<span class=cad-card-tagline>One Slot cut is repeated by a two-direction native History pattern</span>
+<small class=cad-card-parameters>120 × 80 × 4 mm plate; 3 × 2 Slot pattern; 24 × 28 mm pitch</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/slot-family/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/slot-family/scpf/model.png alt="Native sketch Slot family preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native sketch Slot family</strong>
+<span class=cad-card-tagline>SolidCraft 0.45 native Slots keep width, straight length and position editable</span>
+<small class=cad-card-parameters>160 × 120 × 5 mm plate; baseline 8 mm Slot width; editable straight-Slot length and Y position</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/rounded-rectangle-sketch/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/rounded-rectangle-sketch/scpf/model.png alt="Rounded Sketch pad and standalone world-plane cut preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Rounded Sketch pad and standalone world-plane cut</strong>
+<span class=cad-card-tagline>Attached and standalone Sketch extrusions remain native editable features</span>
+<small class=cad-card-parameters>80 × 60 × 5 mm base; 40 × 30 × 8 mm rounded pad; 10 × 2 mm world-plane cut; 100 mm symmetric cut extrusion</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/attached-through-all/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/attached-through-all/scpf/model.png alt="Attached Polygon through-all cutter preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Attached Polygon through-all cutter</strong>
+<span class=cad-card-tagline>Polygon2D works inside an explicit face-attached Sketch</span>
+<small class=cad-card-parameters>80 × 60 × 5 mm Box; 20 × 16 mm Polygon2D cutter</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/topology-face-boundary-box/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/topology-face-boundary-box/scpf/model.png alt="Native Box face-boundary selection preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native Box face-boundary selection</strong>
+<span class=cad-card-tagline>One named face resolves to its native boundary edges for chamfer</span>
+<small class=cad-card-parameters>60 × 40 × 12 mm Box; 2 mm TOP perimeter chamfer</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/topology-face-boundary-xz/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/topology-face-boundary-xz/scpf/model.png alt="Native XZ extrusion face-boundary selection preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native XZ extrusion face-boundary selection</strong>
+<span class=cad-card-tagline>Both broad extrusion faces resolve to native perimeter edges</span>
+<small class=cad-card-parameters>40 × 30 mm XZ profile; 15 mm symmetric Y extrusion; 1.5 mm face-perimeter chamfer</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/rotated-sketch-cutter/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/rotated-sketch-cutter/scpf/model.png alt="Rotated standalone Sketch cutters preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Rotated standalone Sketch cutters</strong>
+<span class=cad-card-tagline>Local Sketch frames drive non-axis-aligned native Boolean cuts</span>
+<small class=cad-card-parameters>60 × 60 × 30 mm Box; two 8 mm triangular cutters at ±45°</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/cone-boolean/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/cone-boolean/scpf/model.png alt="Cone as a native Boolean feature preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Cone as a native Boolean feature</strong>
+<span class=cad-card-tagline>A placed Cone joins an existing featured body without a temporary solid</span>
+<small class=cad-card-parameters>50 × 40 × 20 mm Box; R2 vertical fillet; Ø18→Ø10 × 8 mm Cone at Z18</small>
+<b class="cad-card-state cad-card-ok">Verified</b></a></div></section><section class="cad-section cad-catalog-section" data-verification-section=parameters data-verification-model-count=2><h2>3 · Parameters and dependencies</h2><p>Editable values, component-local parameters and inherited symbolic dependencies.</p><div class=cad-model-grid><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/parameter-scope/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/parameter-scope/scpf/model.png alt="Explicit component parameters and shared dependencies preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Explicit component parameters and shared dependencies</strong>
+<span class=cad-card-tagline>Published child parameters stay distinct from inherited shared values</span>
+<small class=cad-card-parameters>Panel widths 40, 60 and shared 80 mm; shared width is editable</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/parent-derived-child-size/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/parent-derived-child-size/scpf/model.png alt="Child dimensions derived from parent parameters preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Child dimensions derived from parent parameters</strong>
+<span class=cad-card-tagline>A reusable child keeps half-size expressions from its parent</span>
+<small class=cad-card-parameters>Parent 120 × 80 × 10 mm; child 60 × 40 × 6 mm derived from half width/depth</small>
+<b class="cad-card-state cad-card-ok">Verified</b></a></div></section><section class="cad-section cad-catalog-section" data-verification-section=components data-verification-model-count=11><h2>4 · Components and occurrences</h2><p>Reusable physical parts and more than one placed occurrence.</p><div class=cad-model-grid><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/components/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/components/scpf/model.png alt="Reuse one component definition in two placements preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Reuse one component definition in two placements</strong>
+<span class=cad-card-tagline>Two touching occurrences share one reusable Block definition</span>
+<small class=cad-card-parameters>Block 40 × 30 × 10 mm; second occurrence translated 40 mm in X</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/parametric-move/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/parametric-move/scpf/model.png alt="Native parametric occurrence Placement preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native parametric occurrence Placement</strong>
+<span class=cad-card-tagline>A reusable occurrence keeps its X placement as an editable native expression</span>
+<small class=cad-card-parameters>Two 20 × 20 × 10 mm Blocks; offset 40 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/parametric-placement-pair/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/parametric-placement-pair/scpf/model.png alt="Symmetric parametric occurrence Placement preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Symmetric parametric occurrence Placement</strong>
+<span class=cad-card-tagline>Two shared Block occurrences remain symmetric around one editable spacing parameter</span>
+<small class=cad-card-parameters>Two 20 × 20 × 10 mm Blocks; spacing 80 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/rotated-copy-placement/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/rotated-copy-placement/scpf/model.png alt="Copied Placement with rotation preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Copied Placement with rotation</strong>
+<span class=cad-card-tagline>Two copied Panel occurrences preserve both translation and Z-axis orientation</span>
+<small class=cad-card-parameters>Panel 20 × 10 × 4 mm; occurrence centers X=-40 mm and X=40 mm; Z rotation 90°</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/as-built-attach/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/as-built-attach/scpf/model.png alt="As-built rigid relationship preserves pose preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>As-built rigid relationship preserves pose</strong>
+<span class=cad-card-tagline>A pre-positioned child keeps its authored pose when a rigid as-built relationship is recorded</span>
+<small class=cad-card-parameters>Base 40 × 30 × 10 mm; Marker 30 × 10 × 8 mm at X=50, Y=20, Z=15 and Z rotation 90°</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/exploded-views/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/exploded-views/scpf/model.png alt="Native exploded assembly views preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native exploded assembly views</strong>
+<span class=cad-card-tagline>Persistent exploded presentations leave normal occurrence placements unchanged</span>
+<small class=cad-card-parameters>Three 30 × 20 × 10 mm blocks at X=0, 40 and 80 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/assembly-decorator/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/assembly-decorator/scpf/model.png alt="Imported @assembly subassembly preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Imported @assembly subassembly</strong>
+<span class=cad-card-tagline>An imported assembly returns reusable native component occurrences</span>
+<small class=cad-card-parameters>Two 10 × 10 × 20 mm posts centered at X=-15 mm and X=15 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/group-hierarchy/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/group-hierarchy/scpf/model.png alt="Named native group hierarchy preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Named native group hierarchy</strong>
+<span class=cad-card-tagline>A grouped pair of Panels remains a real nested SolidCraft component</span>
+<small class=cad-card-parameters>Two 10 × 2 × 20 mm Panels; one 35 × 10 × 40 mm Frame</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/four-corner-l/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/four-corner-l/scpf/model.png alt="Four centred vertical L-profiles preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Four centred vertical L-profiles</strong>
+<span class=cad-card-tagline>One L-profile definition is placed around all four frame corners</span>
+<small class=cad-card-parameters>Frame 120 × 80 × 60 mm; L-profile arm 28 mm, thickness 4 mm, height 16 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/eight-corner-brackets/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/eight-corner-brackets/scpf/model.png alt="Eight vertical L-profiles: two per side corner preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Eight vertical L-profiles: two per side corner</strong>
+<span class=cad-card-tagline>One reusable L-profile is placed at top and bottom of each frame corner</span>
+<small class=cad-card-parameters>Frame 120 × 80 × 60 mm; L-profile arm 28 mm, thickness 4 mm, height 16 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/eight-flightcase-corners/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/eight-flightcase-corners/scpf/model.png alt="Eight flightcase corner protectors preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Eight flightcase corner protectors</strong>
+<span class=cad-card-tagline>One neutral trihedral protector is reused on all eight case corners</span>
+<small class=cad-card-parameters>Case 120 × 80 × 60 mm; protector envelope 24 × 24 × 24 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b></a></div></section><section class="cad-section cad-catalog-section" data-verification-section=anchors data-verification-model-count=5><h2>5 · Anchors and local frames</h2><p>Richer component references — faces, corners, topology and oriented local frames.</p><div class=cad-model-grid><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/parametric-anchor/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/parametric-anchor/scpf/model.png alt="Face anchor follows parent geometry preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Face anchor follows parent geometry</strong>
+<span class=cad-card-tagline>RIGHT-to-LEFT attachment follows an editable parent width</span>
+<small class=cad-card-parameters>Base width 40 mm; Base depth 30 mm; Block 20 × 20 × 10 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/corner-anchor/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/corner-anchor/scpf/model.png alt="Topology-backed corner anchor preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Topology-backed corner anchor</strong>
+<span class=cad-card-tagline>A standard corner reference follows parent width and height</span>
+<small class=cad-card-parameters>Base 40 × 30 × 20 mm; Marker 10 mm cube</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/anchor-topology-mutation/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/anchor-topology-mutation/scpf/model.png alt="Explicit topology pick follows parent resize preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Explicit topology pick follows parent resize</strong>
+<span class=cad-card-tagline>A fixed baseline topology pick remains attached to the selected corner</span>
+<small class=cad-card-parameters>Board 40 × 20 × 20 mm; Marker 10 mm cube</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/assembly-owned-anchor/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/assembly-owned-anchor/scpf/model.png alt="Assembly-owned named anchor preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Assembly-owned named anchor</strong>
+<span class=cad-card-tagline>A semantic datum belongs to the assembly rather than the reusable part</span>
+<small class=cad-card-parameters>Base 40 × 30 × 20 mm; Companion 10 mm cube; Marker 10 mm cube</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/xz-anchor/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/xz-anchor/scpf/model.png alt="Anchors on XZ-profile extrusion preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Anchors on XZ-profile extrusion</strong>
+<span class=cad-card-tagline>Standard corner anchors work on an XZ-authored board</span>
+<small class=cad-card-parameters>Board 40 × 12 × 20 mm; two 10 mm Marker cubes</small>
+<b class="cad-card-state cad-card-ok">Verified</b></a></div></section><section class="cad-section cad-catalog-section" data-verification-section=associativity data-verification-model-count=7><h2>6 · Associative relationships</h2><p>Editable distances and local offsets that must keep their meaning after parameter changes.</p><div class=cad-model-grid><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/repeated-parent-attachments/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/repeated-parent-attachments/scpf/model.png alt="Attachments on repeated parent occurrences preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Attachments on repeated parent occurrences</strong>
+<span class=cad-card-tagline>Two disconnected joint graphs follow one shared parent height</span>
+<small class=cad-card-parameters>Parent height 40 mm; second parent at X=60 mm; editable shared parent_height</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/attach-angle/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/attach-angle/scpf/model.png alt="Native attachment clocking angle preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native attachment clocking angle</strong>
+<span class=cad-card-tagline>Joint clocking stays a native 90 degree attachment value</span>
+<small class=cad-card-parameters>Base 60 × 60 × 10 mm; Arm 30 × 10 × 6 mm; attachment angle 90°</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/parametric-attach/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/parametric-attach/scpf/model.png alt="Editable distance between attached components preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Editable distance between attached components</strong>
+<span class=cad-card-tagline>Attachment gap remains an editable native relationship parameter</span>
+<small class=cad-card-parameters>Base 40 × 30 × 10 mm; Block 20 × 20 × 10 mm; gap 10 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/parametric-offset/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/parametric-offset/scpf/model.png alt="Editable local offset at an attachment preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Editable local offset at an attachment</strong>
+<span class=cad-card-tagline>Attachment-plane offset keeps its local coordinate meaning</span>
+<small class=cad-card-parameters>Base 40 × 30 × 20 mm; Marker 10 mm cube; local shift 5 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sketch-pattern-mirror/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sketch-pattern-mirror/scpf/model.png alt="Associative sketch pattern and mirror preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Associative sketch pattern and mirror</strong>
+<span class=cad-card-tagline>Native sketch patterns and mirrors drive repeated holes and slots</span>
+<small class=cad-card-parameters>240 × 160 × 5 mm plate; Ø8 holes; 25 mm hole pitch; 8 mm slots</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/selective-profile-extrude/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/selective-profile-extrude/scpf/model.png alt="Selective Sketch profile extrusion preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Selective Sketch profile extrusion</strong>
+<span class=cad-card-tagline>One associative pattern keeps all profiles while a cut selects only three</span>
+<small class=cad-card-parameters>120 × 60 × 5 mm plate; Ø8 holes; 20 mm pattern pitch</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/revolute-joint/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/revolute-joint/scpf/model.png alt="Revolute Joint preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Revolute Joint</strong>
+<span class=cad-card-tagline>Two reusable leaves connected by a native bounded revolute relationship</span>
+<small class=cad-card-parameters>Two 40 × 30 × 3 mm leaves; 60° initial angle; 0–180° limits</small>
+<b class="cad-card-state cad-card-ok">Verified</b></a></div></section><section class="cad-section cad-catalog-section" data-verification-section=sheet-metal data-verification-model-count=7><h2>7 · Sheet metal</h2><p>Native sheet rules, folds, flanges, hems, paths and recoverable flat patterns.</p><div class=cad-model-grid><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sheet-fold/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sheet-fold/scpf/model.png alt="Parametric flat sheet, through hole and 90° fold preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Parametric flat sheet, through hole and 90° fold</strong>
+<span class=cad-card-tagline>Native sheet-metal history with an associative Sketch fold line</span>
+<small class=cad-card-parameters>80 × 40 × 2 mm sheet; R2 bend, K=0.5, 90° fold, Ø6 hole</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sheet-edge-flange/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sheet-edge-flange/scpf/model.png alt="Native sheet edge flange preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native sheet edge flange</strong>
+<span class=cad-card-tagline>Existing sheet edges grow editable flange history</span>
+<small class=cad-card-parameters>80 × 40 × 2 mm sheet; 20 mm flange; 90° bend; inherited sheet rule</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sheet-contour-flange/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sheet-contour-flange/scpf/model.png alt="Native contour flange preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native contour flange</strong>
+<span class=cad-card-tagline>An open connected Sketch chain creates one editable sheet body</span>
+<small class=cad-card-parameters>50 mm width; 2.5 mm sheet; R2.5 bend; K=0.44; open XZ contour</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sheet-contour-flange-recess/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sheet-contour-flange-recess/scpf/model.png alt="Contour flange recess replay preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Contour flange recess replay</strong>
+<span class=cad-card-tagline>A valid broad-face recess must replay identically headless and live</span>
+<small class=cad-card-parameters>250 mm rail; 27 × 18 × 1.25 mm C-profile; 15 mm opening; Ø12.5 mm cut at Y=37.5 mm</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sheet-hem/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sheet-hem/scpf/model.png alt="Native sheet hem preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native sheet hem</strong>
+<span class=cad-card-tagline>Existing sheet material folds back with inherited rule semantics</span>
+<small class=cad-card-parameters>80 × 40 × 2 mm sheet; 12 mm hem; 4 mm gap</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sheet-path-flange/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sheet-path-flange/scpf/model.png alt="Native path flange preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native path flange</strong>
+<span class=cad-card-tagline>A reusable line-only Sketch path drives an existing-edge flange</span>
+<small class=cad-card-parameters>80 × 40 × 2 mm sheet; 14 mm path; R3 feature override</small>
+<b class="cad-card-state cad-card-ok">Verified</b>
+</a><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sheet-perforate/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sheet-perforate/scpf/model.png alt="Native whole-sheet perforation preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Native whole-sheet perforation</strong>
+<span class=cad-card-tagline>Manufacturing perforations stay native sheet and flat-pattern history</span>
+<small class=cad-card-parameters>60 × 40 × 2 mm sheet; Ø5 mm perforations; 10 mm pitch; 5 mm margin; square pattern</small>
+<b class="cad-card-state cad-card-ok">Verified</b></a></div></section><section class="cad-section cad-catalog-section" data-verification-section=drawings data-verification-model-count=1><h2>8 · Drawings</h2><p>Native technical drawing creation, sheet templates, standard views and published vector PDF evidence.</p><div class=cad-model-grid><a class="cad-model-card cad-model-card-has-section" href=/lib.py.solidcraft.forge/exp/verification/sample-plate-drawing/><span class=cad-card-picture><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/model.png alt="Sample Plate Drawing preview">
+</span><span class=cad-card-section>scpf</span>
+<strong class=cad-card-title>Sample Plate Drawing</strong>
+<span class=cad-card-tagline>Consumer-grade native A4 engineering drawing with line views, shaded iso, dimensions and title data</span>
+<small class=cad-card-parameters>80 × 50 × 8 mm plate; R6 corners; Ø8 repeated holes; Ø24 × 14 boss; Ø12 bore</small>
+<b class="cad-card-state cad-card-ok">Verified</b></a></div></section></main><footer class="hextra-footer hx:bg-gray-100 hx:pb-[env(safe-area-inset-bottom)] hx:dark:bg-neutral-900 hx:print:bg-transparent"><div class="hextra-custom-footer hextra-max-footer-width hx:mx-auto hx:pl-[max(env(safe-area-inset-left),1.5rem)] hx:pr-[max(env(safe-area-inset-right),1.5rem)] hx:text-gray-600 hx:dark:text-gray-400"><p class="hx:py-3 hx:text-sm">Built with
+<a href=https://gohugo.io/ target=_blank rel="noopener noreferrer">Hugo</a>
+<span aria-hidden=true>·</span>
+Theme:
+<a href=https://imfing.github.io/hextra/ target=_blank rel="noopener noreferrer">Hextra</a></p></div></footer><dialog id=hextra-search-dialog class=hextra-search-dialog aria-label=Search...><div class=hextra-search><div class=hextra-search-input-wrapper><svg class="hextra-search-input-icon" focusable="false" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg><input class=hextra-search-input type=search role=combobox autocomplete=off autocorrect=off autocapitalize=off spellcheck=false placeholder=Search... aria-label=Search... aria-controls=hextra-search-results aria-expanded=false><button type=button class=hextra-search-input-kbd data-search-close aria-label=Close>ESC</button></div><div class=hextra-search-results-viewport data-search-viewport><div class="hextra-search-results-inner hextra-scrollbar" data-search-inner><ul id=hextra-search-results class=hextra-search-results role=listbox aria-label="Search results"></ul><div class=hextra-search-empty data-search-empty hidden>No results found.</div></div></div><div class="hextra-search-status hx:sr-only" aria-live=polite role=status></div></div></dialog><script defer src=/lib.py.solidcraft.forge/exp/js/main.js integrity></script><script defer src=/lib.py.solidcraft.forge/exp/js/flexsearch.9f5b5908f93ae86f1ecd4b043b799f580c2d1654e703dd9357d568ac41b2547a.js integrity="sha256-n1tZCPk66G8ezUsEO3mfWAwtFlTnA92TV9VorEGyVHo=" crossorigin=anonymous></script><script defer src=/lib.py.solidcraft.forge/exp/en.search.js integrity></script><script defer src=/lib.py.solidcraft.forge/exp/en.search-dialog.js integrity></script></body></html>

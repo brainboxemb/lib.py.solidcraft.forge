@@ -1,0 +1,903 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noindex, nofollow"><link rel="icon shortcut" href=/lib.py.solidcraft.forge/exp/favicon.ico sizes=32x32><link rel=icon href=/lib.py.solidcraft.forge/exp/favicon.svg type=image/svg+xml id=favicon-svg><link rel=icon href=/lib.py.solidcraft.forge/exp/favicon-16x16.png type=image/png sizes=16x16><link rel=icon href=/lib.py.solidcraft.forge/exp/favicon-32x32.png type=image/png sizes=32x32><link rel=apple-touch-icon href=/lib.py.solidcraft.forge/exp/apple-touch-icon.png sizes=180x180><link fetchpriority=low href=/lib.py.solidcraft.forge/exp/site.webmanifest rel=manifest><title>Sample Plate Drawing – SolidCraft Forge</title><meta name=description content=" Primary implementation: scpf Build source: fc1a78045a8bfff13522a7b8d6dee0d3a8597bf8 Durable scope: exp Implementations scpf — builder-scpf: build=pass, verification=pass · STL · SC · Preview · commands · verification · result drawing-sheet: status=pass, adapter=image-regression, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.6 · verification native: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.6 · verification "><link rel=canonical href=https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/examples/sample-plate-drawing/ itemprop=url><meta property="og:title" content="Sample Plate Drawing"><meta property="og:description" content="
+    
+      
+Primary implementation: scpf
+Build source: fc1a78045a8bfff13522a7b8d6dee0d3a8597bf8
+Durable scope: exp
+
+Implementations
+    
+scpf — builder-scpf: build=pass, verification=pass · STL · SC · Preview · commands · verification · result
+
+drawing-sheet: status=pass, adapter=image-regression, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.6 · verification
+native: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.6 · verification
+
+
+
+    
+  "><meta property="og:type" content="
+    article
+  "><meta property="og:url" content="https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/examples/sample-plate-drawing/"><meta property="article:section" content="examples"><meta itemprop=name content="Sample Plate Drawing"><meta itemprop=description content="Primary implementation: scpf Build source: fc1a78045a8bfff13522a7b8d6dee0d3a8597bf8 Durable scope: exp Implementations scpf — builder-scpf: build=pass, verification=pass · STL · SC · Preview · commands · verification · result drawing-sheet: status=pass, adapter=image-regression, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.6 · verification native: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.6 · verification"><meta itemprop=wordCount content="39"><meta name=twitter:card content="summary"><meta name=twitter:title content="Sample Plate Drawing"><meta name=twitter:description content="Primary implementation: scpf Build source: fc1a78045a8bfff13522a7b8d6dee0d3a8597bf8 Durable scope: exp Implementations scpf — builder-scpf: build=pass, verification=pass · STL · SC · Preview · commands · verification · result drawing-sheet: status=pass, adapter=image-regression, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.6 · verification native: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.6 · verification"><link href=/lib.py.solidcraft.forge/exp/css/compiled/main.css rel=stylesheet><link href=/lib.py.solidcraft.forge/exp/css/variables.css rel=stylesheet><link href=/lib.py.solidcraft.forge/exp/css/custom.css rel=stylesheet><script src=/lib.py.solidcraft.forge/exp/js/main-head.js integrity></script></head><body><a href=#content class="hx:sr-only hx:focus-visible:not-sr-only hx:focus-visible:fixed hx:focus-visible:z-50 hx:focus-visible:top-2 hx:focus-visible:left-2 hx:focus-visible:bg-primary-500 hx:focus-visible:text-white hx:focus-visible:px-4 hx:focus-visible:py-2 hx:focus-visible:rounded-md hx:focus-visible:text-sm hx:focus-visible:font-medium">Skip to content</a><div class="hextra-banner hx:max-md:sticky hx:top-0 hx:z-20 hx:px-6 hx:text-center hx:text-slate-50 hx:dark:text-white hx:bg-neutral-900 hx:dark:bg-neutral-800 hx:print:[display:none]"><div class="hx:relative hx:flex hx:items-center hx:justify-center hx:font-medium hx:text-sm hx:py-2.5"><div style=white-space:pre-wrap class=hx:px-8>Experimental development — not a stable release.</div><button class="hextra-banner-close-button hx:cursor-pointer hx:absolute hx:right-0 hx:text-white hx:font-bold hx:leading-none hx:hover:opacity-75 hx:transition hx:w-10 hx:h-10 hx:-mr-2 hx:md:mr-0 hx:flex hx:items-center hx:justify-center" aria-label="Close banner"><svg height="16" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button></div></div><div class="hextra-nav-container hx:sticky hx:top-0 hx:z-20 hx:w-full hx:bg-transparent hx:print:hidden"><div class="hextra-nav-container-blur hx:pointer-events-none hx:absolute hx:z-[-1] hx:h-full hx:w-full hx:bg-white hx:dark:bg-dark hx:shadow-[0_2px_4px_rgba(0,0,0,.02),0_1px_0_rgba(0,0,0,.06)] hx:contrast-more:shadow-[0_0_0_1px_#000] hx:dark:shadow-[0_-1px_0_rgba(255,255,255,.1)_inset] hx:contrast-more:dark:shadow-[0_0_0_1px_#fff]"></div><nav class="hextra-max-navbar-width hx:mx-auto hx:flex hx:items-center hx:justify-end hx:gap-1 hx:md:gap-2 hx:h-[var(--hextra-navbar-height)] hx:px-6"><a class="hx:flex hx:items-center hx:hover:opacity-75 hx:ltr:mr-auto hx:rtl:ml-auto" href=/lib.py.solidcraft.forge/exp/><span class="hx:mr-2 hx:font-extrabold hx:inline hx:select-none">SolidCraft Forge</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/docs class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Documentation</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/guide class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Guide</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/reference class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>API Reference</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/cheatsheet class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Cheatsheet</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/examples class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:font-medium"><span class=hx:text-center>Examples</span>
+</a><a title href=/lib.py.solidcraft.forge/exp/verification class="hx:text-sm hx:contrast-more:text-gray-700 hx:contrast-more:dark:text-gray-100 hx:relative hx:-ml-2 hx:hidden hx:whitespace-nowrap hx:p-2 hx:md:inline-flex hx:items-center hx:gap-1 hx:text-gray-600 hx:hover:text-gray-800 hx:dark:text-gray-400 hx:dark:hover:text-gray-200"><span class=hx:text-center>Verification</span>
+</a><button type=button class=hextra-search-trigger data-search-open aria-haspopup=dialog aria-controls=hextra-search-dialog aria-label=Search...><svg class="hextra-search-trigger-icon" focusable="false" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg><span class=hextra-search-trigger-label>Search...</span>
+<kbd class=hextra-search-trigger-kbd>CTRL K</kbd></button><div class="hx:flex hx:justify-items-start hx:group" data-theme=light><button title="Change theme" data-state=closed data-location=top class="hextra-theme-toggle hx:cursor-pointer hx:rounded-md hx:text-left hx:font-medium hx:p-1 hx:md:p-2 hx:grow" type=button aria-label="Change theme" aria-expanded=false aria-haspopup=menu><div class="hx:flex hx:items-center hx:gap-2 hx:capitalize"><svg height="24" class="hx:group-data-[theme=dark]:hidden hx:group-data-[theme=system]:hidden" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg><svg height="24" class="hx:group-data-[theme=light]:hidden hx:group-data-[theme=system]:hidden" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg><svg height="24" class="hx:group-data-[theme=dark]:hidden hx:group-data-[theme=light]:hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M11.996094 2C6.4986225 2.0192368 2.03125 6.5024993 2.03125 12c0 5.497501 4.4673725 9.980763 9.964844 10H12 12.0039c5.497471-.01924 9.964844-4.502499 9.964844-10 0-5.4975007-4.467373-9.9807632-9.964844-10H12zM12 4c4.417218.017598 7.96875 3.5822356 7.96875 8 0 4.417764-3.551532 7.982402-7.96875 8z"/></svg></div></button><ul class="hextra-theme-toggle-options hx:hidden hx:z-20 hx:max-h-64 hx:overflow-auto hx:rounded-lg hx:border hx:border-gray-200 hx:bg-white hx:p-1 hx:text-sm hx:shadow-lg hx:dark:border-neutral-700 hx:dark:bg-neutral-900" style="position:fixed;inset:auto auto 0 0;margin:0;min-width:100px" data-theme=light role=menu><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=true tabindex=-1 data-item=light class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+Light
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=dark]:hidden hx:group-data-[theme=system]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=false tabindex=-1 data-item=dark class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+Dark
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=light]:hidden hx:group-data-[theme=system]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li><li role=none class="hx:flex hx:flex-col"><button type=button role=menuitemradio aria-checked=false tabindex=-1 data-item=system class="hx:text-gray-700 hx:dark:text-gray-300 hx:hover:bg-gray-100 hx:hover:text-gray-900 hx:dark:hover:bg-neutral-800 hx:dark:hover:text-gray-100 hx:relative hx:cursor-pointer hx:whitespace-nowrap hx:rounded-sm hx:py-1.5 hx:transition-colors hx:ltr:pl-3 hx:ltr:pr-9 hx:rtl:pr-3 hx:rtl:pl-9 hx:text-left hx:w-full hx:bg-transparent hx:border-0">
+System
+<span class="hx:absolute hx:inset-y-0 hx:flex hx:items-center hx:ltr:right-3 hx:rtl:left-3 hx:group-data-[theme=dark]:hidden hx:group-data-[theme=light]:hidden"><svg height="1em" width="1em" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span></button></li></ul></div><button type=button aria-label=Menu aria-expanded=false class="hextra-hamburger-menu hx:cursor-pointer hx:-mr-1 hx:rounded-sm hx:p-1 hx:active:bg-gray-400/20 hx:md:hidden hx:hextra-focus-visible-inset"><svg height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><g><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8H20"/></g><g><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16H20"/></g></svg></button></nav></div><article class="cad-page-shell cad-model-detail"><div class=forge-development-warning role=status data-forge-development-warning><strong>Development version.</strong>
+Forge is under active development and testing. APIs, behaviour, coverage and
+verification results may be incomplete or change without notice; published
+PASS results are not a support guarantee or production-readiness claim.</div><header class=cad-model-hero><p class=cad-model-kicker>Examples</p><h1>Sample Plate Drawing</h1><p>Consumer-grade native A4 engineering drawing with line views, shaded iso, dimensions and title data</p></header><div class=cad-model-statusbar><span class="cad-status cad-status-ok">Verified</span>
+<span class=cad-status>scpf</span>
+<span class=cad-status>80 × 50 × 8 mm plate; R6 corners; Ø8 repeated holes; Ø24 × 14 boss; Ø12 bore</span></div><section class=cad-panel id=expected-setup><h2 class=cad-section-title>What this model makes</h2><p class=cad-model-description>Builds a small parameterized plate with two repeated holes, a raised boss and central bore, then uses only the public Forge drawing API to author a native SolidCraft engineering sheet with deliberate view layout, normal line orthographics, a shaded isometric, overall dimensions, diameter callouts, notes, drawing properties, title-block data and revision information.</p><div class=cad-model-overview><div class=cad-preview-panel id=featured-result><h3 class=cad-section-subtitle>SolidCraft native snapshot</h3><div class=cad-preview><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/model.png class=cad-preview-link><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/model.png alt="Sample Plate Drawing published scpf result"></a></div><p class=cad-section-help>Snapshot of the saved native SolidCraft model, not an STL render.</p></div><div class=cad-preview-panel><h3 class=cad-section-subtitle>Expected setup</h3><div class=cad-preview><div class=cad-preview-empty>No declared setup diagram is available.</div></div></div></div></section><section class="cad-code-section cad-source-section" id=primary-source><h2 class=cad-section-title>scpf source</h2><p class=cad-section-help>Complete primary source from the site branch; built revision below.</p><div class=cad-code-frame><div class=cad-code-label>scpf/model.py</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=nd>@component</span>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>SamplePlate</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Reusable part definition; drawing intent is deliberately not stored here.&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>width</span> <span class=o>=</span> <span class=mi>80</span>
+</span></span><span class=line><span class=cl>    <span class=n>depth</span> <span class=o>=</span> <span class=mi>50</span>
+</span></span><span class=line><span class=cl>    <span class=n>thickness</span> <span class=o>=</span> <span class=mi>8</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>build</span><span class=p>(</span><span class=bp>self</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=k>with</span> <span class=n>Sketch</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;Base&#34;</span><span class=p>,</span> <span class=n>plane</span><span class=o>=</span><span class=s2>&#34;XY&#34;</span><span class=p>)</span> <span class=k>as</span> <span class=n>sketch</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>Rectangle2D</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>width</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>depth</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>plate</span> <span class=o>=</span> <span class=n>sketch</span><span class=o>.</span><span class=n>extrude</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>thickness</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>plate</span> <span class=o>=</span> <span class=n>plate</span><span class=o>.</span><span class=n>fillet</span><span class=p>(</span><span class=mi>6</span><span class=p>,</span> <span class=n>edges</span><span class=o>=</span><span class=n>Edges</span><span class=o>.</span><span class=n>VERTICAL</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>with</span> <span class=n>Sketch</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;Holes&#34;</span><span class=p>,</span> <span class=n>on</span><span class=o>=</span><span class=n>plate</span><span class=p>,</span> <span class=n>parent</span><span class=o>=</span><span class=n>Anchor</span><span class=o>.</span><span class=n>TOP</span><span class=p>)</span> <span class=k>as</span> <span class=n>holes</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>holes</span><span class=o>.</span><span class=n>add</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=n>Circle2D</span><span class=p>(</span><span class=n>d</span><span class=o>=</span><span class=mi>8</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>offset</span><span class=o>=</span><span class=p>(</span><span class=o>-</span><span class=n>half</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>width</span> <span class=o>-</span> <span class=mi>24</span><span class=p>),</span> <span class=mi>0</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>source_cut</span> <span class=o>=</span> <span class=n>holes</span><span class=o>.</span><span class=n>extrude</span><span class=p>(</span><span class=n>Depth</span><span class=o>.</span><span class=n>THROUGH_ALL</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>plate</span> <span class=o>=</span> <span class=n>plate</span> <span class=o>-</span> <span class=n>source_cut</span>
+</span></span><span class=line><span class=cl>        <span class=n>plate</span> <span class=o>=</span> <span class=n>plate</span><span class=o>.</span><span class=n>rectangular_pattern</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>source_cut</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>count</span><span class=o>=</span><span class=mi>2</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>spacing</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>width</span> <span class=o>-</span> <span class=mi>24</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>direction</span><span class=o>=</span><span class=n>Axis</span><span class=o>.</span><span class=n>X</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>boss</span> <span class=o>=</span> <span class=n>Cylinder</span><span class=p>(</span><span class=n>d</span><span class=o>=</span><span class=mi>24</span><span class=p>,</span> <span class=n>h</span><span class=o>=</span><span class=mi>14</span><span class=p>)</span><span class=o>.</span><span class=n>attach</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>plate</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>parent</span><span class=o>=</span><span class=n>Anchor</span><span class=o>.</span><span class=n>TOP</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>child</span><span class=o>=</span><span class=n>Anchor</span><span class=o>.</span><span class=n>BOTTOM</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>plate</span> <span class=o>=</span> <span class=n>plate</span> <span class=o>+</span> <span class=n>boss</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=n>bore</span> <span class=o>=</span> <span class=n>Hole</span><span class=p>(</span><span class=n>d</span><span class=o>=</span><span class=mi>12</span><span class=p>,</span> <span class=n>depth</span><span class=o>=</span><span class=n>Depth</span><span class=o>.</span><span class=n>THROUGH_ALL</span><span class=p>)</span><span class=o>.</span><span class=n>attach</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>plate</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>parent</span><span class=o>=</span><span class=n>Anchor</span><span class=o>.</span><span class=n>TOP</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>plate</span> <span class=o>+</span> <span class=n>bore</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>sample_plate_drawing</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=s2>&#34;&#34;&#34;Consumer-grade native engineering drawing authored through public Forge API.&#34;&#34;&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=n>plate</span> <span class=o>=</span> <span class=n>SamplePlate</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>plate</span><span class=o>.</span><span class=n>with_drawing</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>name</span><span class=o>=</span><span class=s2>&#34;Sample Plate Drawing&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>scale</span><span class=o>=</span><span class=s2>&#34;1:1&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>gap_mm</span><span class=o>=</span><span class=mi>14</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>views</span><span class=o>=</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;front&#34;</span><span class=p>:</span> <span class=n>DrawingView</span><span class=p>(</span><span class=n>at</span><span class=o>=</span><span class=p>(</span><span class=mi>62</span><span class=p>,</span> <span class=mi>128</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;top&#34;</span><span class=p>:</span> <span class=n>DrawingView</span><span class=p>(</span><span class=n>at</span><span class=o>=</span><span class=p>(</span><span class=mi>62</span><span class=p>,</span> <span class=mi>62</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;right&#34;</span><span class=p>:</span> <span class=n>DrawingView</span><span class=p>(</span><span class=n>at</span><span class=o>=</span><span class=p>(</span><span class=mi>137</span><span class=p>,</span> <span class=mi>128</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;iso&#34;</span><span class=p>:</span> <span class=n>DrawingView</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=n>at</span><span class=o>=</span><span class=p>(</span><span class=mi>220</span><span class=p>,</span> <span class=mi>128</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>scale</span><span class=o>=</span><span class=s2>&#34;1:1&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>visual_style</span><span class=o>=</span><span class=s2>&#34;shaded&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=n>properties</span><span class=o>=</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;project&#34;</span><span class=p>:</span> <span class=s2>&#34;Forge drawing qualification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;part_number&#34;</span><span class=p>:</span> <span class=s2>&#34;SCPF-DWG-001&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;author&#34;</span><span class=p>:</span> <span class=s2>&#34;Forge&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;organization&#34;</span><span class=p>:</span> <span class=s2>&#34;brainboxemb&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;description&#34;</span><span class=p>:</span> <span class=s2>&#34;Sample plate engineering drawing&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=n>title_block</span><span class=o>=</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;title&#34;</span><span class=p>:</span> <span class=s2>&#34;Sample Plate&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;identification_number&#34;</span><span class=p>:</span> <span class=s2>&#34;SCPF-DWG-001&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;material&#34;</span><span class=p>:</span> <span class=s2>&#34;Qualification material&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;finish&#34;</span><span class=p>:</span> <span class=s2>&#34;As modelled&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;document_status&#34;</span><span class=p>:</span> <span class=s2>&#34;Qualification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=s2>&#34;department&#34;</span><span class=p>:</span> <span class=s2>&#34;Engineering&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=n>revision</span><span class=o>=</span><span class=n>DrawingRevision</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>revision</span><span class=o>=</span><span class=s2>&#34;A&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>description</span><span class=o>=</span><span class=s2>&#34;Initial qualified drawing&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>designer</span><span class=o>=</span><span class=s2>&#34;Forge&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>checker</span><span class=o>=</span><span class=s2>&#34;CI&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=n>date</span><span class=o>=</span><span class=s2>&#34;2026-11-25&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>notes</span><span class=o>=</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>DrawingNote</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;NOTES</span><span class=se>\n</span><span class=s2>1. ALL DIMENSIONS IN MM.</span><span class=se>\n</span><span class=s2>2. BREAK SHARP EDGES.&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>at</span><span class=o>=</span><span class=p>(</span><span class=mi>156</span><span class=p>,</span> <span class=mi>88</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>cap_mm</span><span class=o>=</span><span class=mf>2.5</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=n>dimensions</span><span class=o>=</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>            <span class=n>DrawingDimension</span><span class=o>.</span><span class=n>faces</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;front&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=o>-</span><span class=mi>40</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=mi>40</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>direction</span><span class=o>=</span><span class=s2>&#34;horizontal&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>offset_mm</span><span class=o>=</span><span class=mi>12</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>decimals</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=n>DrawingDimension</span><span class=o>.</span><span class=n>faces</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;front&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=mi>30</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=mi>0</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=mi>30</span><span class=p>,</span> <span class=mi>20</span><span class=p>,</span> <span class=mi>8</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>direction</span><span class=o>=</span><span class=s2>&#34;vertical&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>offset_mm</span><span class=o>=</span><span class=mi>10</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>decimals</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=n>DrawingDimension</span><span class=o>.</span><span class=n>faces</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;top&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=o>-</span><span class=mi>40</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=mi>40</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>direction</span><span class=o>=</span><span class=s2>&#34;horizontal&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>offset_mm</span><span class=o>=</span><span class=mi>12</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>decimals</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=n>DrawingDimension</span><span class=o>.</span><span class=n>faces</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;top&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=o>-</span><span class=mi>25</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=mi>0</span><span class=p>,</span> <span class=mi>25</span><span class=p>,</span> <span class=mi>4</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>direction</span><span class=o>=</span><span class=s2>&#34;vertical&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>offset_mm</span><span class=o>=</span><span class=mi>10</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>decimals</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=n>DrawingDimension</span><span class=o>.</span><span class=n>radial</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;top&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=o>-</span><span class=mf>25.171573</span><span class=p>,</span> <span class=mf>2.828427</span><span class=p>,</span> <span class=mi>8</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>diameter</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>override_text</span><span class=o>=</span><span class=s2>&#34;2× </span><span class=si>{value}</span><span class=s2> THRU&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>line_through_mm</span><span class=o>=</span><span class=p>(</span><span class=mi>92</span><span class=p>,</span> <span class=mi>88</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>decimals</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>),</span>
+</span></span><span class=line><span class=cl>            <span class=n>DrawingDimension</span><span class=o>.</span><span class=n>radial</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                <span class=s2>&#34;top&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=p>(</span><span class=mf>8.485281</span><span class=p>,</span> <span class=mf>8.485281</span><span class=p>,</span> <span class=mi>22</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>diameter</span><span class=o>=</span><span class=kc>True</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                <span class=n>line_through_mm</span><span class=o>=</span><span class=p>(</span><span class=mi>96</span><span class=p>,</span> <span class=mi>69</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                <span class=n>decimals</span><span class=o>=</span><span class=mi>0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=p>),</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>sample_plate_drawing</span><span class=p>()</span>
+</span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></section><details class="cad-code-section cad-command-section cad-collapsible" data-implementation=scpf><summary><span class="cad-section-title cad-collapsible-title">Generated command sequence — scpf (40)</span></summary><div class=cad-collapsible-body><p class=cad-section-help><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/solidcraft.json>Open published command JSON</a></p><ol class=cad-command-sequence><li class=cad-command-step><h3 class=cad-command-name><code>component.create</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$component_1&#34;: &#34;component&#34;,
+    &#34;$sampleplate&#34;: &#34;occurrence&#34;
+  },
+  &#34;command&#34;: &#34;component.create&#34;,
+  &#34;params&#34;: {
+    &#34;grounded&#34;: true,
+    &#34;name&#34;: &#34;SamplePlate&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.create</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.create&#34;,
+  &#34;params&#34;: {
+    &#34;name&#34;: &#34;d1_SamplePlate__Base&#34;,
+    &#34;plane&#34;: &#34;XY&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.rectangle.two_point</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.rectangle.two_point&#34;,
+  &#34;params&#34;: {
+    &#34;p0&#34;: [
+      -40.0,
+      -25.0
+    ],
+    &#34;p1&#34;: [
+      40.0,
+      25.0
+    ]
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.finish</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.finish&#34;,
+  &#34;params&#34;: {}
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.extrude</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.extrude&#34;,
+  &#34;params&#34;: {
+    &#34;body_name&#34;: &#34;SamplePlate&#34;,
+    &#34;direction&#34;: &#34;positive&#34;,
+    &#34;distance&#34;: 8.0
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.fillet</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.fillet&#34;,
+  &#34;params&#34;: {
+    &#34;body&#34;: &#34;SamplePlate&#34;,
+    &#34;edges&#34;: [
+      [
+        -40.0,
+        -25.0,
+        4.0
+      ],
+      [
+        40.0,
+        -25.0,
+        4.0
+      ],
+      [
+        40.0,
+        25.0,
+        4.0
+      ],
+      [
+        -40.0,
+        25.0,
+        4.0
+      ]
+    ],
+    &#34;radius&#34;: 6
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>model.faces</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$d1_SamplePlate_face_index_1&#34;: {
+      &#34;field&#34;: &#34;faces&#34;,
+      &#34;max&#34;: &#34;area&#34;,
+      &#34;select&#34;: &#34;index&#34;,
+      &#34;where&#34;: {
+        &#34;plane_normal&#34;: [
+          0,
+          0,
+          1
+        ]
+      }
+    },
+    &#34;$d1_SamplePlate_face_point_1&#34;: {
+      &#34;field&#34;: &#34;faces&#34;,
+      &#34;max&#34;: &#34;area&#34;,
+      &#34;select&#34;: &#34;point&#34;,
+      &#34;where&#34;: {
+        &#34;plane_normal&#34;: [
+          0,
+          0,
+          1
+        ]
+      }
+    }
+  },
+  &#34;command&#34;: &#34;model.faces&#34;,
+  &#34;params&#34;: {
+    &#34;body&#34;: &#34;SamplePlate&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.create</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.create&#34;,
+  &#34;params&#34;: {
+    &#34;name&#34;: &#34;d1_SamplePlate__Holes&#34;,
+    &#34;plane&#34;: {
+      &#34;body&#34;: &#34;SamplePlate&#34;,
+      &#34;face&#34;: &#34;$d1_SamplePlate_face_point_1&#34;,
+      &#34;index&#34;: &#34;$d1_SamplePlate_face_index_1&#34;
+    },
+    &#34;project_edges&#34;: false
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.circle.center</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.circle.center&#34;,
+  &#34;params&#34;: {
+    &#34;center&#34;: [
+      -28.0,
+      0.0
+    ],
+    &#34;diameter&#34;: 8
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.finish</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.finish&#34;,
+  &#34;params&#34;: {}
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.extrude</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.extrude&#34;,
+  &#34;params&#34;: {
+    &#34;direction&#34;: &#34;negative&#34;,
+    &#34;name&#34;: &#34;Holes&#34;,
+    &#34;operation&#34;: &#34;cut&#34;,
+    &#34;targets&#34;: [
+      &#34;SamplePlate&#34;
+    ],
+    &#34;through_all&#34;: true
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.pattern.rectangular</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.pattern.rectangular&#34;,
+  &#34;params&#34;: {
+    &#34;alignment&#34;: &#34;right&#34;,
+    &#34;count1&#34;: 2,
+    &#34;dir1&#34;: [
+      1.0,
+      0.0,
+      0.0
+    ],
+    &#34;features&#34;: [
+      &#34;Holes&#34;
+    ],
+    &#34;reversed&#34;: false,
+    &#34;spacing1&#34;: 56.0
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.cylinder</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.cylinder&#34;,
+  &#34;params&#34;: {
+    &#34;axis&#34;: &#34;Z&#34;,
+    &#34;base&#34;: [
+      0.0,
+      0.0,
+      8.0
+    ],
+    &#34;diameter&#34;: 24,
+    &#34;height&#34;: 14,
+    &#34;operation&#34;: &#34;join&#34;,
+    &#34;references&#34;: [
+      {
+        &#34;distance&#34;: 40.0,
+        &#34;edge&#34;: [
+          -40.0,
+          0.0,
+          8.0
+        ]
+      },
+      {
+        &#34;distance&#34;: 25.0,
+        &#34;edge&#34;: [
+          0.0,
+          -25.0,
+          8.0
+        ]
+      }
+    ],
+    &#34;targets&#34;: [
+      &#34;SamplePlate&#34;
+    ]
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.create</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.create&#34;,
+  &#34;params&#34;: {
+    &#34;name&#34;: &#34;d1_SamplePlate__Bore&#34;,
+    &#34;offset&#34;: 22.0,
+    &#34;plane&#34;: &#34;XY&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.circle.center</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.circle.center&#34;,
+  &#34;params&#34;: {
+    &#34;center&#34;: [
+      0.0,
+      0.0
+    ],
+    &#34;diameter&#34;: 12
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>sketch.finish</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;sketch.finish&#34;,
+  &#34;params&#34;: {}
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>solid.extrude</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;solid.extrude&#34;,
+  &#34;params&#34;: {
+    &#34;direction&#34;: &#34;negative&#34;,
+    &#34;distance&#34;: 22.0,
+    &#34;name&#34;: &#34;Bore&#34;,
+    &#34;operation&#34;: &#34;cut&#34;,
+    &#34;targets&#34;: [
+      &#34;SamplePlate&#34;
+    ]
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>component.activate</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;component.activate&#34;,
+  &#34;params&#34;: {
+    &#34;component&#34;: &#34;root&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.create</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1&#34;: &#34;id&#34;,
+    &#34;$drawing_1_sheet&#34;: {
+      &#34;field&#34;: &#34;sheets&#34;,
+      &#34;select&#34;: &#34;id&#34;,
+      &#34;where&#34;: {
+        &#34;name&#34;: &#34;Sheet 1&#34;
+      }
+    },
+    &#34;$drawing_1_source&#34;: {
+      &#34;field&#34;: &#34;sources&#34;,
+      &#34;select&#34;: &#34;id&#34;,
+      &#34;where&#34;: {
+        &#34;path&#34;: null
+      }
+    }
+  },
+  &#34;command&#34;: &#34;drawing.create&#34;,
+  &#34;params&#34;: {
+    &#34;first_sheet_name&#34;: &#34;Sheet 1&#34;,
+    &#34;name&#34;: &#34;Sample Plate Drawing&#34;,
+    &#34;template&#34;: &#34;iso-a4-part&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.sheet.set</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.sheet.set&#34;,
+  &#34;params&#34;: {
+    &#34;documents&#34;: {
+      &#34;component&#34;: &#34;$component_1&#34;,
+      &#34;source&#34;: &#34;$drawing_1_source&#34;
+    },
+    &#34;orientation&#34;: &#34;landscape&#34;,
+    &#34;sheet&#34;: &#34;$drawing_1_sheet&#34;,
+    &#34;title_block_overrides&#34;: {
+      &#34;department&#34;: &#34;Engineering&#34;,
+      &#34;document_status&#34;: &#34;Qualification&#34;,
+      &#34;finish&#34;: &#34;As modelled&#34;,
+      &#34;identification_number&#34;: &#34;SCPF-DWG-001&#34;,
+      &#34;material&#34;: &#34;Qualification material&#34;,
+      &#34;title&#34;: &#34;Sample Plate&#34;
+    }
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.inspect</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_orientation&#34;: {
+      &#34;field&#34;: &#34;sheets&#34;,
+      &#34;select&#34;: &#34;orientation&#34;,
+      &#34;where&#34;: {
+        &#34;name&#34;: &#34;Sheet 1&#34;
+      }
+    }
+  },
+  &#34;command&#34;: &#34;drawing.inspect&#34;,
+  &#34;params&#34;: {}
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.properties.set</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.properties.set&#34;,
+  &#34;params&#34;: {
+    &#34;values&#34;: {
+      &#34;author&#34;: &#34;Forge&#34;,
+      &#34;description&#34;: &#34;Sample plate engineering drawing&#34;,
+      &#34;organization&#34;: &#34;brainboxemb&#34;,
+      &#34;part_number&#34;: &#34;SCPF-DWG-001&#34;,
+      &#34;project&#34;: &#34;Forge drawing qualification&#34;
+    }
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.revision.add</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.revision.add&#34;,
+  &#34;params&#34;: {
+    &#34;set&#34;: {
+      &#34;checker&#34;: &#34;CI&#34;,
+      &#34;date&#34;: &#34;2026-11-25&#34;,
+      &#34;description&#34;: &#34;Initial qualified drawing&#34;,
+      &#34;designer&#34;: &#34;Forge&#34;,
+      &#34;hidden&#34;: false,
+      &#34;revision&#34;: &#34;A&#34;
+    }
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.view.standard</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_front&#34;: &#34;view&#34;,
+    &#34;$drawing_1_iso&#34;: &#34;iso&#34;,
+    &#34;$drawing_1_right&#34;: &#34;right&#34;,
+    &#34;$drawing_1_top&#34;: &#34;top&#34;
+  },
+  &#34;command&#34;: &#34;drawing.view.standard&#34;,
+  &#34;params&#34;: {
+    &#34;gap_mm&#34;: 14.0,
+    &#34;iso&#34;: true,
+    &#34;scale&#34;: &#34;1:1&#34;,
+    &#34;sheet&#34;: &#34;$drawing_1_sheet&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.view.edit</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.view.edit&#34;,
+  &#34;params&#34;: {
+    &#34;set&#34;: {
+      &#34;source&#34;: {
+        &#34;occurrences&#34;: [
+          [
+            &#34;$sampleplate&#34;
+          ]
+        ]
+      }
+    },
+    &#34;view&#34;: &#34;$drawing_1_front&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.view.edit</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.view.edit&#34;,
+  &#34;params&#34;: {
+    &#34;set&#34;: {
+      &#34;source&#34;: {
+        &#34;occurrences&#34;: [
+          [
+            &#34;$sampleplate&#34;
+          ]
+        ]
+      }
+    },
+    &#34;view&#34;: &#34;$drawing_1_iso&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.view.edit</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.view.edit&#34;,
+  &#34;params&#34;: {
+    &#34;set&#34;: {
+      &#34;place&#34;: {
+        &#34;at&#34;: [
+          62.0,
+          128.0
+        ]
+      }
+    },
+    &#34;view&#34;: &#34;$drawing_1_front&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.view.edit</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.view.edit&#34;,
+  &#34;params&#34;: {
+    &#34;set&#34;: {
+      &#34;place&#34;: {
+        &#34;at&#34;: [
+          62.0,
+          62.0
+        ]
+      }
+    },
+    &#34;view&#34;: &#34;$drawing_1_top&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.view.edit</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.view.edit&#34;,
+  &#34;params&#34;: {
+    &#34;set&#34;: {
+      &#34;place&#34;: {
+        &#34;at&#34;: [
+          137.0,
+          128.0
+        ]
+      }
+    },
+    &#34;view&#34;: &#34;$drawing_1_right&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.view.edit</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.view.edit&#34;,
+  &#34;params&#34;: {
+    &#34;set&#34;: {
+      &#34;place&#34;: {
+        &#34;at&#34;: [
+          220.0,
+          128.0
+        ]
+      },
+      &#34;scale&#34;: &#34;1:1&#34;,
+      &#34;visual_style&#34;: &#34;shaded&#34;
+    },
+    &#34;view&#34;: &#34;$drawing_1_iso&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.dimension.add</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_dimension_1&#34;: &#34;dimension&#34;
+  },
+  &#34;command&#34;: &#34;drawing.dimension.add&#34;,
+  &#34;params&#34;: {
+    &#34;decimals&#34;: 0,
+    &#34;kind&#34;: {
+      &#34;faces&#34;: {
+        &#34;a&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            -40.0,
+            0.0,
+            4.0
+          ]
+        },
+        &#34;b&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            40.0,
+            0.0,
+            4.0
+          ]
+        },
+        &#34;direction&#34;: &#34;horizontal&#34;
+      }
+    },
+    &#34;offset_mm&#34;: 12.0,
+    &#34;view&#34;: &#34;$drawing_1_front&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.dimension.add</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_dimension_2&#34;: &#34;dimension&#34;
+  },
+  &#34;command&#34;: &#34;drawing.dimension.add&#34;,
+  &#34;params&#34;: {
+    &#34;decimals&#34;: 0,
+    &#34;kind&#34;: {
+      &#34;faces&#34;: {
+        &#34;a&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            30.0,
+            20.0,
+            0.0
+          ]
+        },
+        &#34;b&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            30.0,
+            20.0,
+            8.0
+          ]
+        },
+        &#34;direction&#34;: &#34;vertical&#34;
+      }
+    },
+    &#34;offset_mm&#34;: 10.0,
+    &#34;view&#34;: &#34;$drawing_1_front&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.dimension.add</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_dimension_3&#34;: &#34;dimension&#34;
+  },
+  &#34;command&#34;: &#34;drawing.dimension.add&#34;,
+  &#34;params&#34;: {
+    &#34;decimals&#34;: 0,
+    &#34;kind&#34;: {
+      &#34;faces&#34;: {
+        &#34;a&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            -40.0,
+            0.0,
+            4.0
+          ]
+        },
+        &#34;b&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            40.0,
+            0.0,
+            4.0
+          ]
+        },
+        &#34;direction&#34;: &#34;horizontal&#34;
+      }
+    },
+    &#34;offset_mm&#34;: 12.0,
+    &#34;view&#34;: &#34;$drawing_1_top&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.dimension.add</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_dimension_4&#34;: &#34;dimension&#34;
+  },
+  &#34;command&#34;: &#34;drawing.dimension.add&#34;,
+  &#34;params&#34;: {
+    &#34;decimals&#34;: 0,
+    &#34;kind&#34;: {
+      &#34;faces&#34;: {
+        &#34;a&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            0.0,
+            -25.0,
+            4.0
+          ]
+        },
+        &#34;b&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            0.0,
+            25.0,
+            4.0
+          ]
+        },
+        &#34;direction&#34;: &#34;vertical&#34;
+      }
+    },
+    &#34;offset_mm&#34;: 10.0,
+    &#34;view&#34;: &#34;$drawing_1_top&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.dimension.add</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_dimension_5&#34;: &#34;dimension&#34;
+  },
+  &#34;command&#34;: &#34;drawing.dimension.add&#34;,
+  &#34;params&#34;: {
+    &#34;decimals&#34;: 0,
+    &#34;kind&#34;: {
+      &#34;radial&#34;: {
+        &#34;diameter&#34;: true,
+        &#34;edge&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            -25.171573,
+            2.828427,
+            8.0
+          ]
+        }
+      }
+    },
+    &#34;line_through_mm&#34;: [
+      92.0,
+      88.0
+    ],
+    &#34;override_text&#34;: &#34;2× {value} THRU&#34;,
+    &#34;view&#34;: &#34;$drawing_1_top&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.dimension.add</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_dimension_6&#34;: &#34;dimension&#34;
+  },
+  &#34;command&#34;: &#34;drawing.dimension.add&#34;,
+  &#34;params&#34;: {
+    &#34;decimals&#34;: 0,
+    &#34;kind&#34;: {
+      &#34;radial&#34;: {
+        &#34;diameter&#34;: true,
+        &#34;edge&#34;: {
+          &#34;path&#34;: [
+            &#34;$sampleplate&#34;
+          ],
+          &#34;point&#34;: [
+            8.485281,
+            8.485281,
+            22.0
+          ]
+        }
+      }
+    },
+    &#34;line_through_mm&#34;: [
+      96.0,
+      69.0
+    ],
+    &#34;view&#34;: &#34;$drawing_1_top&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.note.add</code></h3><pre class=cad-command-json><code>{
+  &#34;bind&#34;: {
+    &#34;$drawing_1_note_1&#34;: &#34;note&#34;
+  },
+  &#34;command&#34;: &#34;drawing.note.add&#34;,
+  &#34;params&#34;: {
+    &#34;align&#34;: &#34;left&#34;,
+    &#34;anchor&#34;: {
+      &#34;sheet&#34;: &#34;$drawing_1_sheet&#34;
+    },
+    &#34;at&#34;: [
+      156.0,
+      88.0
+    ],
+    &#34;cap_mm&#34;: 2.5,
+    &#34;content&#34;: &#34;NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES.&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.view.inspect</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.view.inspect&#34;,
+  &#34;params&#34;: {
+    &#34;view&#34;: &#34;$drawing_1_iso&#34;
+  }
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.inspect</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.inspect&#34;,
+  &#34;params&#34;: {}
+}</code></pre></li><li class=cad-command-step><h3 class=cad-command-name><code>drawing.close</code></h3><pre class=cad-command-json><code>{
+  &#34;command&#34;: &#34;drawing.close&#34;,
+  &#34;params&#34;: {}
+}</code></pre></li></ol></div></details><section class="cad-panel cad-drawing-panel" id=drawing-sheet><h2 class=cad-section-title>Drawing sheet</h2><p class=cad-section-help>Native SolidCraft drawing evidence from the durable build scope. The page loads only the static sheet preview; the vector PDF opens only when you ask for it.</p><article class=cad-drawing-sheet><h3 class=cad-section-subtitle>Sample Plate Drawing</h3><a class=cad-drawing-preview-link href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.png aria-label="Open static native drawing sheet preview"><img class=cad-drawing-preview src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.png alt="Sample Plate Drawing native SolidCraft drawing sheet preview" decoding=async></a><div class=cad-links><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.pdf>Open PDF on GitHub</a>
+<a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.pdf download>Download PDF</a></div></article></section><section class=cad-section id=reference-code><h2 class=cad-section-title>Reference code</h2><p>No independent implementation is declared.</p></section><section class=cad-panel id=image-overview><h2 class=cad-section-title>Image overview</h2><div class="cad-reference-grid cad-evidence-gallery"><figure class=cad-reference><strong>scpf — native snapshot</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/model.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/model.png alt="scpf published preview"></a></figure><figure class=cad-reference><strong>scpf — drawing-sheet / image-regression / actual.png</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/verification/drawing-sheet/actual.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/verification/drawing-sheet/actual.png alt="drawing-sheet / image-regression / actual.png"></a></figure><figure class=cad-reference><strong>scpf — drawing-sheet / image-regression / approved-baseline.png</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/verification/drawing-sheet/approved-baseline.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/verification/drawing-sheet/approved-baseline.png alt="drawing-sheet / image-regression / approved-baseline.png"></a></figure><figure class=cad-reference><strong>scpf — drawing-sheet / image-regression / diff.png</strong><a href=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/verification/drawing-sheet/diff.png><img src=https://raw.githubusercontent.com/brainboxemb/lib.py.solidcraft.forge/build/exp/models/sample-plate-drawing/scpf/verification/drawing-sheet/diff.png alt="drawing-sheet / image-regression / diff.png"></a></figure></div><p class=cad-section-help>Only images present in the published build are displayed. Presentation previews are not visual verification results.</p></section><section class=cad-panel id=check-overview><h2 class=cad-section-title>Verification checks</h2><h3 class=cad-section-subtitle>scpf — pass</h3><div class=cad-check><div class=cad-check-heading><strong>drawing-sheet / image-regression</strong><span class="cad-status cad-status-ok">pass</span></div></div><div class=cad-check><div class=cad-check-heading><strong>native / baseline</strong><span class="cad-status cad-status-ok">pass</span></div><div class=cad-check-table-scroll><table class=cad-check-table><thead><tr><th scope=col>Measurement</th><th scope=col>Expected</th><th scope=col>Measured</th><th scope=col>Check</th></tr></thead><tbody><tr><th scope=row>SolidCraft body count</th><td>1</td><td>1</td><td>pass</td></tr></tbody></table></div></div></section><section class=cad-panel id=model-stages><h2 class=cad-section-title>Model stages</h2><ol class=cad-stages><li>Build the reusable SamplePlate component</li><li>Keep drawing intent out of the reusable component definition</li><li>Attach a native ISO A4 landscape part drawing to the final design</li><li>Place the native front, top, right and isometric views explicitly on the sheet</li><li>Keep orthographic views as native line views and render only the isometric as native shaded presentation</li><li>Add native overall dimensions and diameter callouts from model-space topology picks</li><li>Populate native notes, drawing properties, title-block values and revision information</li><li>Publish vector PDF, static native PNG and final drawing.inspect JSON below the implementation drawings directory</li><li>Compare the generated sheet against the approved engineering-drawing visual baseline</li></ol></section><section class="cad-panel cad-verification-panel" id=build-verification><h2 class=cad-section-title>Build and verification</h2><div class=content><ul><li>Primary implementation: <code>scpf</code></li><li>Build source: <code>fc1a78045a8bfff13522a7b8d6dee0d3a8597bf8</code></li><li>Durable scope: <code>exp</code></li></ul><h3 data-hextra-search-id=implementations>Implementations<span class="hx:absolute hx:-mt-20" id=implementations></span>
+<a href=#implementations class=subheading-anchor aria-label="Permalink for this section"></a></h3><ul><li><strong>scpf</strong> — builder-scpf: build=pass, verification=pass · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/model.stl target=_blank rel=noopener>STL</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/model.sc target=_blank rel=noopener>SC</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/model.png target=_blank rel=noopener>Preview</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/solidcraft.json target=_blank rel=noopener>commands</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/verification/verification.json target=_blank rel=noopener>verification</a> · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/result.json target=_blank rel=noopener>result</a><ul><li><code>drawing-sheet</code>: status=pass, adapter=image-regression, runtime=ghcr.io/brainboxemb/cad-reference:v0.3.6 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/verification/drawing-sheet/verification.json target=_blank rel=noopener>verification</a></li><li><code>native</code>: status=pass, adapter=solidcraft-model, runtime=ghcr.io/brainboxemb/cad-solidcraft:v0.3.6 · <a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/verification/native/verification.json target=_blank rel=noopener>verification</a></li></ul></li></ul></div><h3 class=cad-section-subtitle>scpf</h3><details class=cad-collapsible><summary><strong>drawing-sheet — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/verification/drawing-sheet/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;actual.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;48841b3096c45d650cf37b71d65749e6ad6b68c70f4994033659ef1e78b029c6&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>57528</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;approved-baseline.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;6d63ae07c81e73c83acdcc1b6842ac1bfae47f2d923a78c2c81dd08592e29649&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>2657</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;diff.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;625e0de9516aefc3a70877c6a4a7dc7617dcf77117e5980a44b634f74b018ef4&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>5602</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;actual_image&#34;</span><span class=p>:</span> <span class=s2>&#34;actual.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;baseline_status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;diff_image&#34;</span><span class=p>:</span> <span class=s2>&#34;diff.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;expected_shape_status&#34;</span><span class=p>:</span> <span class=s2>&#34;missing&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;goal_image&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;overlay_image&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;regression&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;changed_pixel_fraction&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;changed_pixel_threshold&#34;</span><span class=p>:</span> <span class=mi>12</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_changed_fraction&#34;</span><span class=p>:</span> <span class=mf>0.02</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;max_mean_difference&#34;</span><span class=p>:</span> <span class=mf>1.5</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;mean_absolute_difference&#34;</span><span class=p>:</span> <span class=mf>0.0</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;image-regression&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/sample-plate-drawing/scpf/drawings/Sample-Plate-Drawing.png&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;baseline_payload&#34;</span><span class=p>:</span> <span class=s2>&#34;baselines/drawing-sheet.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;baseline_provenance&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;approval&#34;</span><span class=p>:</span> <span class=s2>&#34;approved&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;purpose&#34;</span><span class=p>:</span> <span class=s2>&#34;consumer-grade engineering drawing sheet with shaded isometric&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;solidcraft_version&#34;</span><span class=p>:</span> <span class=s2>&#34;0.49.0&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;source_commit&#34;</span><span class=p>:</span> <span class=s2>&#34;b69f7f082af76dc95fff372c269d741411be2178&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;workflow_run&#34;</span><span class=p>:</span> <span class=mi>45695415265</span>
+</span></span><span class=line><span class=cl>    <span class=p>},</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;image-regression&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=p>},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;sample-plate-drawing-scpf-drawing-sheet&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><details class=cad-collapsible><summary><strong>native — expected versus measured evidence</strong></summary><div class=cad-collapsible-body><p><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/scpf/verification/native/verification.json>Open published verification report</a></p><div class=cad-code-frame><div class=cad-code-label>verification.json</div><div class="hextra-code-block cad-code-block hx:relative hx:group/code"><div><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;checks&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;artifacts&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;kind&#34;</span><span class=p>:</span> <span class=s2>&#34;file&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;path&#34;</span><span class=p>:</span> <span class=s2>&#34;baseline/measurements.json&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;sha256&#34;</span><span class=p>:</span> <span class=s2>&#34;fc74e0a5063f792a3e9928484f63cd54bd670d96164a699906c24dceed44b7c3&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;size&#34;</span><span class=p>:</span> <span class=mi>3659</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>],</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;error&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;evidence&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;body_count&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;SolidCraft body count&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>          <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>        <span class=p>},</span>
+</span></span><span class=line><span class=cl>        <span class=nt>&#34;named_bodies&#34;</span><span class=p>:</span> <span class=p>[</span>
+</span></span><span class=line><span class=cl>          <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;closed&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;actual&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;expected&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;label&#34;</span><span class=p>:</span> <span class=s2>&#34;sole body closed&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>              <span class=nt>&#34;pass&#34;</span><span class=p>:</span> <span class=kc>true</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nt>&#34;selector&#34;</span><span class=p>:</span> <span class=s2>&#34;sole&#34;</span>
+</span></span><span class=line><span class=cl>          <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>]</span>
+</span></span><span class=line><span class=cl>      <span class=p>},</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;baseline&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;reason&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>],</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;input&#34;</span><span class=p>:</span> <span class=s2>&#34;/output/models/sample-plate-drawing/scpf/model.sc&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;metadata&#34;</span><span class=p>:</span> <span class=p>{},</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema&#34;</span><span class=p>:</span> <span class=s2>&#34;cad-verification&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;schema_version&#34;</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;status&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;verification_id&#34;</span><span class=p>:</span> <span class=s2>&#34;sample-plate-drawing&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div></div><div class="hextra-code-copy-btn-container hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0"><button class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50" title="Copy code" aria-label="Copy code" data-copied-label=Copied!><div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4"></div><div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4"></div></button></div></div></div></div></details><h3 class=cad-section-subtitle>Published files</h3><div class="cad-links cad-file-links"><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/model.stl>STL</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/model.sc>SolidCraft .sc</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/solidcraft.json>Commands</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/result.json>Build result</a><a href=https://github.com/brainboxemb/lib.py.solidcraft.forge/blob/build/exp/models/sample-plate-drawing/source.json>Build provenance</a></div></section></article><footer class="hextra-footer hx:bg-gray-100 hx:pb-[env(safe-area-inset-bottom)] hx:dark:bg-neutral-900 hx:print:bg-transparent"><div class="hextra-custom-footer hextra-max-footer-width hx:mx-auto hx:pl-[max(env(safe-area-inset-left),1.5rem)] hx:pr-[max(env(safe-area-inset-right),1.5rem)] hx:text-gray-600 hx:dark:text-gray-400"><p class="hx:py-3 hx:text-sm">Built with
+<a href=https://gohugo.io/ target=_blank rel="noopener noreferrer">Hugo</a>
+<span aria-hidden=true>·</span>
+Theme:
+<a href=https://imfing.github.io/hextra/ target=_blank rel="noopener noreferrer">Hextra</a></p></div></footer><dialog id=hextra-search-dialog class=hextra-search-dialog aria-label=Search...><div class=hextra-search><div class=hextra-search-input-wrapper><svg class="hextra-search-input-icon" focusable="false" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5A7 7 0 113 10a7 7 0 0114 0z"/></svg><input class=hextra-search-input type=search role=combobox autocomplete=off autocorrect=off autocapitalize=off spellcheck=false placeholder=Search... aria-label=Search... aria-controls=hextra-search-results aria-expanded=false><button type=button class=hextra-search-input-kbd data-search-close aria-label=Close>ESC</button></div><div class=hextra-search-results-viewport data-search-viewport><div class="hextra-search-results-inner hextra-scrollbar" data-search-inner><ul id=hextra-search-results class=hextra-search-results role=listbox aria-label="Search results"></ul><div class=hextra-search-empty data-search-empty hidden>No results found.</div></div></div><div class="hextra-search-status hx:sr-only" aria-live=polite role=status></div></div></dialog><script defer src=/lib.py.solidcraft.forge/exp/js/main.js integrity></script><script defer src=/lib.py.solidcraft.forge/exp/js/flexsearch.9f5b5908f93ae86f1ecd4b043b799f580c2d1654e703dd9357d568ac41b2547a.js integrity="sha256-n1tZCPk66G8ezUsEO3mfWAwtFlTnA92TV9VorEGyVHo=" crossorigin=anonymous></script><script defer src=/lib.py.solidcraft.forge/exp/en.search.js integrity></script><script defer src=/lib.py.solidcraft.forge/exp/en.search-dialog.js integrity></script></body></html>

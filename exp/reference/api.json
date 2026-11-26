@@ -1,0 +1,2448 @@
+{
+  "schema": 2,
+  "generated_from": "scpf public objects and docstrings",
+  "references": [
+    {
+      "kind": "enum",
+      "name": "Faces",
+      "summary": "Select world-cardinal planar faces consistently across within-component feature operations.",
+      "guide": "guide/features/#hole",
+      "reference": "reference/Faces/",
+      "use_when": "Use Faces with Shape.on(), Shape.shell() and Edges.from_faces() so placement and modify features share one surface vocabulary.",
+      "limits": "TOP/BOTTOM are +/-Z, LEFT/RIGHT are -/+X and FRONT/BACK are -/+Y. Native topology selection uses the largest planar face with the requested normal. Component assembly attachment uses Anchor instead.",
+      "parameters": [],
+      "example": "",
+      "members": [
+        {
+          "name": "TOP",
+          "value": "top"
+        },
+        {
+          "name": "BOTTOM",
+          "value": "bottom"
+        },
+        {
+          "name": "LEFT",
+          "value": "left"
+        },
+        {
+          "name": "RIGHT",
+          "value": "right"
+        },
+        {
+          "name": "FRONT",
+          "value": "front"
+        },
+        {
+          "name": "BACK",
+          "value": "back"
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "name": "Anchor",
+      "summary": "Select component attachment references and cardinal directions.",
+      "guide": "guide/assembly-basics/#anchor-choice",
+      "reference": "reference/Anchor/",
+      "use_when": "Use cardinal or corner anchors to attach reusable component occurrences, or combine cardinal values to identify Box edges/corners.",
+      "limits": "Anchor is the assembly/alignment vocabulary. Within-component feature placement normally uses Faces instead. INNER_BOTTOM has no direction vector and therefore cannot be used as a cardinal selector.",
+      "parameters": [],
+      "example": "",
+      "members": [
+        {
+          "name": "CENTER",
+          "value": "center"
+        },
+        {
+          "name": "TOP",
+          "value": "top"
+        },
+        {
+          "name": "BOTTOM",
+          "value": "bottom"
+        },
+        {
+          "name": "LEFT",
+          "value": "left"
+        },
+        {
+          "name": "RIGHT",
+          "value": "right"
+        },
+        {
+          "name": "FRONT",
+          "value": "front"
+        },
+        {
+          "name": "BACK",
+          "value": "back"
+        },
+        {
+          "name": "FRONT_TOP_LEFT",
+          "value": "front_top_left"
+        },
+        {
+          "name": "FRONT_TOP_RIGHT",
+          "value": "front_top_right"
+        },
+        {
+          "name": "FRONT_BOTTOM_LEFT",
+          "value": "front_bottom_left"
+        },
+        {
+          "name": "FRONT_BOTTOM_RIGHT",
+          "value": "front_bottom_right"
+        },
+        {
+          "name": "BACK_TOP_LEFT",
+          "value": "back_top_left"
+        },
+        {
+          "name": "BACK_TOP_RIGHT",
+          "value": "back_top_right"
+        },
+        {
+          "name": "BACK_BOTTOM_LEFT",
+          "value": "back_bottom_left"
+        },
+        {
+          "name": "BACK_BOTTOM_RIGHT",
+          "value": "back_bottom_right"
+        },
+        {
+          "name": "INNER_BOTTOM",
+          "value": "inner_bottom"
+        },
+        {
+          "name": "UP",
+          "value": "top"
+        },
+        {
+          "name": "DOWN",
+          "value": "bottom"
+        }
+      ],
+      "aliases": [
+        "CENTER",
+        "TOP",
+        "BOTTOM",
+        "LEFT",
+        "RIGHT",
+        "FRONT",
+        "BACK"
+      ]
+    },
+    {
+      "kind": "enum",
+      "name": "Axis",
+      "summary": "Select one of the native principal X, Y or Z axes.",
+      "guide": "guide/geometry/#solids",
+      "reference": "reference/Axis/",
+      "use_when": "Use Axis for primitive orientation and supported patterns, for example Cylinder(..., axis=Axis.X) or a linear Hole pattern along Axis.Y.",
+      "limits": "Axis is a principal-axis selector, not an attachment reference and not an extrusion Direction.",
+      "parameters": [],
+      "example": "",
+      "members": [
+        {
+          "name": "X",
+          "value": "X"
+        },
+        {
+          "name": "Y",
+          "value": "Y"
+        },
+        {
+          "name": "Z",
+          "value": "Z"
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "name": "Depth",
+      "summary": "Choose a supported feature-depth policy.",
+      "guide": "guide/features/#hole",
+      "reference": "reference/Depth/",
+      "use_when": "Use Depth.THROUGH_ALL for features such as Hole that should pass completely through their target instead of using a fixed distance.",
+      "limits": "THROUGH_ALL is currently the only named depth policy.",
+      "parameters": [],
+      "example": "",
+      "members": [
+        {
+          "name": "THROUGH_ALL",
+          "value": "through_all"
+        }
+      ]
+    },
+    {
+      "kind": "enum",
+      "name": "Edges",
+      "summary": "Select edge topology for supported fillet and chamfer feature operations.",
+      "guide": "guide/features/#fillet",
+      "reference": "reference/Edges/",
+      "use_when": "Use Edges.from_faces(...) for the complete boundary of one or more named Faces. Existing Edges.VERTICAL, from_profile() and from_vertices() remain available for their established selection contracts.",
+      "limits": "from_faces() resolves native SolidCraft topology at replay time. from_profile() currently supports sides=\"both\"; from_vertices() requires named Polygon2D vertices.",
+      "parameters": [],
+      "example": "",
+      "members": [
+        {
+          "name": "VERTICAL",
+          "value": "vertical"
+        }
+      ]
+    },
+    {
+      "kind": "callable",
+      "name": "Shape",
+      "summary": "Store Forge geometry and feature operations before SolidCraft executes them.",
+      "guide": "guide/model-objects/#shape",
+      "reference": "reference/Shape/",
+      "use_when": "Shape values are normally returned by constructors such as Box(), Cylinder(), Hole() and Sketch.extrude(), then transformed or combined with the supported Shape methods/operators.",
+      "limits": "Shape is only Forge's description of the model. SolidCraft owns the final BRep and feature history; users normally do not instantiate Shape(kind, data) directly.",
+      "parameters": [
+        {
+          "name": "kind",
+          "description": "Forge node type. Public constructors set this; normal model code should not invent kind values."
+        },
+        {
+          "name": "data",
+          "description": "Data stored for that node type. Public constructors and methods build this payload."
+        }
+      ],
+      "example": "body = Box(80, 50, 12)",
+      "signature": "Shape(kind: str, data: Any) -> None"
+    },
+    {
+      "kind": "callable",
+      "name": "component",
+      "summary": "Declare one reusable physical component definition.",
+      "guide": "guide/assembly-basics/#simple-component",
+      "reference": "reference/component/",
+      "use_when": "Decorate a model class whose build() result represents one reusable physical part. Child defaults stay fixed unless explicitly published with include=. Parent Parameter/Expression inputs remain symbolic.",
+      "limits": "build() must produce one Shape when reused as a component.",
+      "parameters": [
+        {
+          "name": "cls",
+          "description": "Model class whose build() returns one physical part. Omit when using @component(...) as a decorator factory."
+        },
+        {
+          "name": "include",
+          "description": "Child default parameters to publish. Use names, \"*\", or a mapping for renamed shared parameters."
+        }
+      ],
+      "example": "@component(include=(\"inside_corner_radius\",))\nclass CornerBracket:\npass",
+      "signature": "component(cls=None, *, include=())"
+    },
+    {
+      "kind": "callable",
+      "name": "assembly",
+      "summary": "Declare a reusable class that composes component occurrences.",
+      "guide": "guide/assembly-basics/#reusable-assembly",
+      "reference": "reference/assembly/",
+      "use_when": "Decorate a class when the class itself represents a reusable assembly or subassembly built from component occurrences and their relationships.",
+      "limits": "build() must return a component occurrence or Assembly. The decorator does not itself create grouping or attachment relationships; those come from the objects returned by build().",
+      "parameters": [
+        {
+          "name": "cls",
+          "description": "Model class whose build() returns a component occurrence or Assembly."
+        }
+      ],
+      "example": "@assembly\nclass Frame:\npass",
+      "signature": "assembly(cls)"
+    },
+    {
+      "kind": "callable",
+      "name": "Occurrence.copy",
+      "summary": "Create another occurrence of the same reusable definition.",
+      "guide": "guide/assembly-basics/#collection",
+      "reference": "reference/Occurrence.copy/",
+      "use_when": "Reuse one component definition for another physical occurrence.",
+      "limits": "Attachment state is occurrence-specific and is not copied.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Optional explicit Forge name for the new occurrence."
+        },
+        {
+          "name": "placement",
+          "description": "Optional absolute Placement for the new occurrence. When omitted, the source placement is inherited."
+        }
+      ],
+      "example": "right = left.copy(name=\"right\", placement=Placement(x=160))",
+      "signature": "Occurrence.copy(self, *, name=None, placement=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "Occurrence.attach",
+      "summary": "Create a rigid, planar or explicit native revolute relationship from this occurrence to another component.",
+      "guide": "guide/assembly-basics/#relationship",
+      "reference": "reference/Occurrence.attach/",
+      "use_when": "Placement should be expressed semantically between component references, including a bounded hinge/revolute axis, rather than as a calculated global XYZ pose.",
+      "limits": "Omit kind to retain automatic rigid/planar behavior. kind=\"revolute\" currently requires zero in-plane offset and accepts fixed finite degree value/limits. The target must be another component occurrence; AnchorFrame/AnchorTopology cover specific joint datums. as_built=True remains rigid-only.",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "Parent component occurrence to attach to."
+        },
+        {
+          "name": "parent",
+          "description": "Attachment reference on target. Defaults to Anchor.RIGHT."
+        },
+        {
+          "name": "child",
+          "description": "Attachment reference on this occurrence. Defaults to Anchor.LEFT."
+        },
+        {
+          "name": "offset",
+          "description": "In-plane (u, v) offset on the parent attachment plane, in mm. Defaults to (0, 0); revolute currently requires zero."
+        },
+        {
+          "name": "gap",
+          "description": "Separation along the parent anchor normal, in mm. Defaults to 0."
+        },
+        {
+          "name": "angle",
+          "description": "Optional joint-frame rotation in degrees."
+        },
+        {
+          "name": "as_built",
+          "description": "When True, keep existing poses and create an as-built rigid joint."
+        },
+        {
+          "name": "kind",
+          "description": "Optional explicit relationship kind. Currently supports \"revolute\"; omit for automatic rigid/planar behavior."
+        },
+        {
+          "name": "value",
+          "description": "Initial revolute angle in degrees. Defaults to 0 when kind=\"revolute\"."
+        },
+        {
+          "name": "limits",
+          "description": "Optional (minimum, maximum) revolute angular limits in degrees."
+        },
+        {
+          "name": "flip",
+          "description": "Native joint-origin flip for a revolute relationship. Defaults to False."
+        },
+        {
+          "name": "name",
+          "description": "Optional non-empty native joint name."
+        }
+      ],
+      "example": "moving = moving.attach(fixed, parent=\"hinge_axis\", child=\"hinge_axis\", kind=\"revolute\", value=60, limits=(0, 180), name=\"Hinge\")",
+      "signature": "Occurrence.attach(self, target, *, parent=<Anchor.RIGHT: 'right'>, child=<Anchor.LEFT: 'left'>, offset=(0, 0), gap=0, angle=None, as_built=False, kind=None, value=None, limits=None, flip=False, name=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "Occurrence.group",
+      "summary": "Place this occurrence in a named native subassembly component.",
+      "guide": "guide/assembly-basics/#group",
+      "reference": "reference/Occurrence.group/",
+      "use_when": "Give one occurrence a useful native browser/subassembly parent.",
+      "limits": "Grouping changes hierarchy only. It does not align, attach or otherwise create a mechanical relationship. One occurrence cannot belong to several different groups.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Native group/subassembly name."
+        }
+      ],
+      "example": "grouped = bracket.group(\"Mounting brackets\")",
+      "signature": "Occurrence.group(self, name)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingView",
+      "summary": "Describe explicit paper placement, optional scale and qualified native display style for one standard drawing view.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingView/",
+      "use_when": "Place a front, top, right or isometric native SolidCraft view at a deliberate paper coordinate, optionally override its scale, and use the qualified shaded style for a pictorial view.",
+      "limits": "at is paper-space millimetres. scale is SolidCraft scale text such as '1:1'. visual_style currently qualifies only 'shaded'; omit it for the normal native line presentation. DrawingView configures one of the standard native views rather than creating an arbitrary camera.",
+      "parameters": [
+        {
+          "name": "at",
+          "description": "Optional (x, y) paper position in millimetres."
+        },
+        {
+          "name": "scale",
+          "description": "Optional native drawing scale text such as '1:1'."
+        },
+        {
+          "name": "visual_style",
+          "description": "Optional native view style. 'shaded' is qualified; omit it for the normal line view."
+        }
+      ],
+      "example": "DrawingView(at=(220, 128), scale=\"1:1\", visual_style=\"shaded\")",
+      "signature": "DrawingView(at=None, scale=None, visual_style=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingNote",
+      "summary": "Author one native SolidCraft sheet note.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingNote/",
+      "use_when": "Add engineering notes or instructions to a drawing sheet at an explicit paper position.",
+      "limits": "content must be non-empty text; at is paper-space millimetres; cap_mm must be 0.5..100; align is left, centre or right.",
+      "parameters": [
+        {
+          "name": "content",
+          "description": "Native note text; newline characters create multiple lines."
+        },
+        {
+          "name": "at",
+          "description": "(x, y) paper position in millimetres."
+        },
+        {
+          "name": "cap_mm",
+          "description": "Text cap height in millimetres; default 3.5."
+        },
+        {
+          "name": "align",
+          "description": "Text alignment: left, centre or right."
+        }
+      ],
+      "example": "DrawingNote(\"NOTES\\n1. ALL DIMENSIONS IN MM.\", at=(156, 88), cap_mm=2.5)",
+      "signature": "DrawingNote(content, at, cap_mm=3.5, align=\"left\")"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingRevision",
+      "summary": "Describe one native drawing revision row.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingRevision/",
+      "use_when": "Populate the native revision table and its linked title-block fields for a consumer-authored engineering drawing.",
+      "limits": "At least one text field is required. The qualified drawing slice supports one revision row per with_drawing() call.",
+      "parameters": [
+        {
+          "name": "revision",
+          "description": "Revision identifier such as A or 01."
+        },
+        {
+          "name": "description",
+          "description": "Revision description."
+        },
+        {
+          "name": "designer",
+          "description": "Designer/created-by text."
+        },
+        {
+          "name": "checker",
+          "description": "Checker/approved-by text."
+        },
+        {
+          "name": "date",
+          "description": "Issue date text accepted by the native template."
+        },
+        {
+          "name": "hidden",
+          "description": "Whether the native revision row is hidden."
+        }
+      ],
+      "example": "DrawingRevision(revision=\"A\", description=\"Initial drawing\", designer=\"Forge\", checker=\"CI\", date=\"2026-11-25\")",
+      "signature": "DrawingRevision(revision=None, description=None, designer=None, checker=None, date=None, hidden=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingDimension",
+      "summary": "Native drawing-dimension intent resolved by SolidCraft from model-space picks.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingDimension/",
+      "use_when": "Create linear, parallel-face or radial/diameter dimensions through the class constructors linear(), faces() and radial().",
+      "limits": "Do not instantiate arbitrary kind payloads for normal use. Model-space picks must resolve to unique native topology; invalid or ambiguous picks fail rather than being approximated.",
+      "parameters": [],
+      "example": "DrawingDimension.faces(\"front\", (-40, 0, 4), (40, 0, 4), direction=\"horizontal\", offset_mm=12)",
+      "signature": "DrawingDimension(...)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingDimension.linear",
+      "summary": "Create a native linear dimension between two model-space point/corner picks.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingDimension.linear/",
+      "use_when": "Dimension between two real model points/corners that remain uniquely selectable in the authored topology.",
+      "limits": "Filleted-away corners are not valid picks. Prefer DrawingDimension.faces() for overall sizes on filleted parts.",
+      "parameters": [
+        {
+          "name": "view",
+          "description": "Standard view name: front, top, right or iso."
+        },
+        {
+          "name": "a",
+          "description": "First model-space XYZ pick."
+        },
+        {
+          "name": "b",
+          "description": "Second model-space XYZ pick."
+        },
+        {
+          "name": "direction",
+          "description": "aligned, horizontal or vertical."
+        },
+        {
+          "name": "offset_mm",
+          "description": "Native dimension offset in paper millimetres."
+        },
+        {
+          "name": "override_text",
+          "description": "Optional native dimension text override."
+        },
+        {
+          "name": "decimals",
+          "description": "Displayed decimal count, 0..6."
+        },
+        {
+          "name": "line_through_mm",
+          "description": "Optional explicit paper point for the dimension line."
+        }
+      ],
+      "example": "DrawingDimension.linear(\"front\", (0,0,0), (20,0,0), direction=\"horizontal\", offset_mm=12)",
+      "signature": "DrawingDimension.linear(view, a, b, *, direction=\"aligned\", offset_mm=10, override_text=None, decimals=2, line_through_mm=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingDimension.faces",
+      "summary": "Create a native dimension between two parallel planar model faces.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingDimension.faces/",
+      "use_when": "Dimension overall width, depth or thickness robustly when fillets/chamfers mean the nominal outer corners no longer exist.",
+      "limits": "Each XYZ pick must lie on a unique planar face and the native backend must accept the requested direction for that view.",
+      "parameters": [
+        {
+          "name": "view",
+          "description": "Standard view name: front, top, right or iso."
+        },
+        {
+          "name": "a",
+          "description": "XYZ point on the first planar face."
+        },
+        {
+          "name": "b",
+          "description": "XYZ point on the second planar face."
+        },
+        {
+          "name": "direction",
+          "description": "aligned, horizontal or vertical."
+        },
+        {
+          "name": "offset_mm",
+          "description": "Native dimension offset in paper millimetres."
+        },
+        {
+          "name": "override_text",
+          "description": "Optional native dimension text override."
+        },
+        {
+          "name": "decimals",
+          "description": "Displayed decimal count, 0..6."
+        },
+        {
+          "name": "line_through_mm",
+          "description": "Optional explicit paper point for the dimension line."
+        }
+      ],
+      "example": "DrawingDimension.faces(\"front\", (-40,0,4), (40,0,4), direction=\"horizontal\", offset_mm=12, decimals=0)",
+      "signature": "DrawingDimension.faces(view, a, b, *, direction=\"aligned\", offset_mm=10, override_text=None, decimals=2, line_through_mm=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "DrawingDimension.radial",
+      "summary": "Create a native radial or diameter dimension from a circular model-edge pick.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/DrawingDimension.radial/",
+      "use_when": "Dimension holes, bosses or other circular edges and optionally turn the displayed value into a native engineering callout.",
+      "limits": "The XYZ pick must resolve to one circular edge. Avoid the seam point where a circle may expose multiple coincident edge segments. Centre marks are not currently authored because SolidCraft 0.49 exposes no native centre-mark command.",
+      "parameters": [
+        {
+          "name": "view",
+          "description": "Standard view name: front, top, right or iso."
+        },
+        {
+          "name": "edge",
+          "description": "XYZ pick on the circular model edge."
+        },
+        {
+          "name": "diameter",
+          "description": "True for diameter presentation, false/None for native radial behavior."
+        },
+        {
+          "name": "offset_mm",
+          "description": "Native dimension offset in paper millimetres."
+        },
+        {
+          "name": "override_text",
+          "description": "Optional native text override such as '2\u00d7 {value} THRU'."
+        },
+        {
+          "name": "decimals",
+          "description": "Displayed decimal count, 0..6."
+        },
+        {
+          "name": "line_through_mm",
+          "description": "Optional explicit paper point for the dimension line."
+        }
+      ],
+      "example": "DrawingDimension.radial(\"top\", (-25.17,2.83,8), diameter=True, override_text=\"2\u00d7 {value} THRU\", line_through_mm=(92,88))",
+      "signature": "DrawingDimension.radial(view, edge, *, diameter=None, offset_mm=10, override_text=None, decimals=2, line_through_mm=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "Occurrence.with_drawing",
+      "summary": "Add a consumer-authored native SolidCraft engineering drawing for this standalone occurrence.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/Occurrence.with_drawing/",
+      "use_when": "Create a complete native engineering drawing for a standalone part while keeping reusable component geometry drawing-free.",
+      "limits": "Returns a one-occurrence Assembly. Views are limited to the native front/top/right/iso standard set. Dimension picks must resolve to real native topology. Centre marks/centre lines, balloons and parts lists are not currently authored.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Optional drawing name; also drives deterministic drawing artifact filenames."
+        },
+        {
+          "name": "template",
+          "description": "Native SolidCraft part template; defaults to iso-a4-part, with iso-a3-part available explicitly."
+        },
+        {
+          "name": "sheet_name",
+          "description": "First native sheet name; defaults to Sheet 1."
+        },
+        {
+          "name": "scale",
+          "description": "Optional common standard-view scale such as 1:1."
+        },
+        {
+          "name": "gap_mm",
+          "description": "Native standard-view spacing before explicit view edits; default 20."
+        },
+        {
+          "name": "views",
+          "description": "Mapping of front/top/right/iso to DrawingView placement/scale overrides."
+        },
+        {
+          "name": "properties",
+          "description": "Native drawing properties: project, part_number, revision, author, organization, description, license."
+        },
+        {
+          "name": "title_block",
+          "description": "Native title-block cell overrides supported by the selected SolidCraft template."
+        },
+        {
+          "name": "revision",
+          "description": "Optional DrawingRevision row."
+        },
+        {
+          "name": "notes",
+          "description": "Iterable of DrawingNote objects."
+        },
+        {
+          "name": "dimensions",
+          "description": "Iterable of DrawingDimension objects."
+        }
+      ],
+      "example": "part.with_drawing(name=\"Bracket drawing\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
+      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
+    },
+    {
+      "kind": "callable",
+      "name": "Assembly.group",
+      "summary": "Wrap these assembly occurrences in a real nested native component.",
+      "guide": "guide/assembly-basics/#group",
+      "reference": "reference/Assembly.group/",
+      "use_when": "The collection should appear as one named subassembly/browser unit in SolidCraft.",
+      "limits": "Grouping changes native hierarchy, not placement or relationships. Use attach() for mechanical relationships between occurrences.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Native subassembly/browser component name."
+        }
+      ],
+      "example": "frame = (left + right).group(\"Frame\")",
+      "signature": "Assembly.group(self, name)"
+    },
+    {
+      "kind": "callable",
+      "name": "Assembly.with_exploded_view",
+      "summary": "Add one native SolidCraft exploded presentation to this Assembly. Define exploded views after composing the final Assembly. Use either automatic scale mode or explicit occurrence translations.",
+      "guide": "guide/assembly-basics/#exploded-views",
+      "reference": "reference/Assembly.with_exploded_view/",
+      "use_when": "Define a named native exploded presentation after the final Assembly occurrences and attachments are composed, using either automatic scale mode or explicit occurrence translations.",
+      "limits": "Requires at least two occurrences. Use either scale or moves, not both. Explicit moves must target occurrences already owned by this Assembly, each occurrence may move once, and translations must be fixed finite non-zero XYZ values.",
+      "parameters": [],
+      "example": "",
+      "signature": "Assembly.with_exploded_view(self, name, *, scale=None, moves=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "Assembly.with_drawing",
+      "summary": "Add a consumer-authored native SolidCraft engineering drawing for one occurrence in the completed Assembly.",
+      "guide": "guide/drawings/#authoring",
+      "reference": "reference/Assembly.with_drawing/",
+      "use_when": "Document one selected occurrence after composing the final Assembly, including deliberate standard-view layout, dimensions, notes and native title information.",
+      "limits": "target must already belong to the Assembly. Views are limited to the native front/top/right/iso standard set. Dimension picks must resolve to real native topology. Centre marks/centre lines, balloons and parts lists are not currently authored.",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "Component occurrence already owned by this Assembly to document."
+        },
+        {
+          "name": "name",
+          "description": "Optional drawing name; also drives deterministic drawing artifact filenames."
+        },
+        {
+          "name": "template",
+          "description": "Native SolidCraft part template; defaults to iso-a4-part, with iso-a3-part available explicitly."
+        },
+        {
+          "name": "sheet_name",
+          "description": "First native sheet name; defaults to Sheet 1."
+        },
+        {
+          "name": "scale",
+          "description": "Optional common standard-view scale such as 1:1."
+        },
+        {
+          "name": "gap_mm",
+          "description": "Native standard-view spacing before explicit view edits; default 20."
+        },
+        {
+          "name": "views",
+          "description": "Mapping of front/top/right/iso to DrawingView placement/scale overrides."
+        },
+        {
+          "name": "properties",
+          "description": "Native drawing properties: project, part_number, revision, author, organization, description, license."
+        },
+        {
+          "name": "title_block",
+          "description": "Native title-block cell overrides supported by the selected SolidCraft template."
+        },
+        {
+          "name": "revision",
+          "description": "Optional DrawingRevision row."
+        },
+        {
+          "name": "notes",
+          "description": "Iterable of DrawingNote objects."
+        },
+        {
+          "name": "dimensions",
+          "description": "Iterable of DrawingDimension objects."
+        }
+      ],
+      "example": "assembly.with_drawing(left, name=\"Left bracket\", views={\"front\": DrawingView(at=(62,128))}, dimensions=(DrawingDimension.faces(\"front\", (-20,0,5), (20,0,5)),))",
+      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
+    },
+    {
+      "kind": "callable",
+      "name": "Assembly.show_exploded",
+      "summary": "Show one named exploded view after the assembly is built.",
+      "guide": "guide/assembly-basics/#exploded-views",
+      "reference": "reference/Assembly.show_exploded/",
+      "use_when": "Select one previously defined exploded view as the Assembly presentation that SolidCraft should show after the assembly is built.",
+      "limits": "The named exploded view must already exist on this Assembly. This changes presentation state only; it does not change occurrence placement, attachments or joint definitions.",
+      "parameters": [],
+      "example": "",
+      "signature": "Assembly.show_exploded(self, name)"
+    },
+    {
+      "kind": "callable",
+      "name": "Assembly.show_assembled",
+      "summary": "Explicitly show the normal assembled placement.",
+      "guide": "guide/assembly-basics/#exploded-views",
+      "reference": "reference/Assembly.show_assembled/",
+      "use_when": "Explicitly return the Assembly presentation to its normal assembled placement after defining or selecting exploded views.",
+      "limits": "This changes presentation state only. It does not delete named exploded views or modify occurrence placement, attachments or joints.",
+      "parameters": [],
+      "example": "",
+      "signature": "Assembly.show_assembled(self)"
+    },
+    {
+      "kind": "callable",
+      "name": "Assembly.with_anchor",
+      "summary": "Expose one named attachment datum owned by this assembly.",
+      "guide": "guide/components/#assembly-anchor",
+      "reference": "reference/Assembly.with_anchor/",
+      "use_when": "A mounting/reference name belongs to the meaning of the larger assembly rather than to the generic reusable component itself.",
+      "limits": "target must already belong to this Assembly. with_anchor() exposes a reference; it does not create an attachment by itself.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Public name for the assembly-owned attachment datum."
+        },
+        {
+          "name": "target",
+          "description": "Component occurrence in this Assembly that owns the real attachment reference."
+        },
+        {
+          "name": "reference",
+          "description": "Anchor, named component anchor, AnchorFrame or AnchorTopology on target."
+        },
+        {
+          "name": "offset",
+          "description": "Optional in-plane (u, v) correction passed through when attaching, in mm."
+        }
+      ],
+      "example": "frame = (left + right).with_anchor(\"front_mount\", left, Anchor.FRONT_TOP_LEFT)",
+      "signature": "Assembly.with_anchor(self, name, target, reference, *, offset=(0, 0))"
+    },
+    {
+      "kind": "callable",
+      "name": "Assembly.anchor",
+      "summary": "Return one named assembly-owned attachment datum.",
+      "guide": "guide/components/#assembly-anchor",
+      "reference": "reference/Assembly.anchor/",
+      "use_when": "A consumer needs the target/reference pair previously exposed with with_anchor() in order to create an attachment.",
+      "limits": "The name must resolve to exactly one assembly-owned anchor.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Name previously registered with with_anchor()."
+        }
+      ],
+      "example": "mount = frame.anchor(\"front_mount\")",
+      "signature": "Assembly.anchor(self, name)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.at",
+      "summary": "Place a shape at absolute coordinates or align it to another Shape.",
+      "guide": "guide/geometry/#solids",
+      "reference": "reference/Shape.at/",
+      "use_when": "Use shape.at(x, y, z) for geometric placement. Box, Cylinder, Cone and Sphere support their documented anchors. Use shape.at(target) for the supported shape-to-shape CENTER alignment.",
+      "limits": "Shape-to-shape alignment currently supports CENTER-to-CENTER only. at() is geometric placement/alignment; selecting a support face for a feature is the job of Shape.on().",
+      "parameters": [
+        {
+          "name": "x",
+          "description": "Absolute X coordinate in mm, or a target Shape for shape-to-shape alignment."
+        },
+        {
+          "name": "y",
+          "description": "Absolute Y coordinate in mm. Leave at 0 when x is a target Shape."
+        },
+        {
+          "name": "z",
+          "description": "Absolute Z coordinate in mm. Leave at 0 when x is a target Shape."
+        },
+        {
+          "name": "anchor",
+          "description": "Datum on this primitive that is placed at the requested coordinate. Defaults to Anchor.CENTER."
+        },
+        {
+          "name": "child",
+          "description": "Child datum for shape-to-shape alignment. Currently only Anchor.CENTER is supported."
+        }
+      ],
+      "example": "pin = Cylinder(d=8, h=20, axis=Axis.X).at(10, 0, 5, anchor=Anchor.LEFT)\ncentered = Sphere(5).at(body)",
+      "signature": "Shape.at(self, x=0, y=0, z=0, *, anchor=<Anchor.CENTER: 'center'>, child=<Anchor.CENTER: 'center'>)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.on",
+      "summary": "Place a supported within-component feature on a target face.",
+      "guide": "guide/features/#hole",
+      "reference": "reference/Shape.on/",
+      "use_when": "Put a Hole or another supported feature on an existing Shape and describe its entry/support surface with the same Faces vocabulary used by shell() and Edges.from_faces().",
+      "limits": "All six Faces values are accepted as topology intent. TOP/BOTTOM placement is qualified; side-face placement may still report an explicit native placement/topology limitation. Component assembly attachment uses Anchor.",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "Existing Shape that receives the feature."
+        },
+        {
+          "name": "face",
+          "description": "Cardinal target surface from the shared Faces vocabulary. Defaults to Faces.TOP."
+        },
+        {
+          "name": "offset",
+          "description": "In-plane (x, y) offset from the target face centre, in mm. Defaults to (0, 0)."
+        }
+      ],
+      "example": "Hole(d=8).on(plate, face=Faces.TOP, offset=(20, 0))",
+      "signature": "Shape.on(self, target, *, face=<Faces.TOP: 'top'>, offset=(0, 0))"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.attach",
+      "summary": "Anchor a supported feature explicitly to another Shape.",
+      "guide": "guide/features/#anchors",
+      "reference": "reference/Shape.attach/",
+      "use_when": "Use this lower-level feature-placement form when parent/child Anchor references are required explicitly.",
+      "limits": "This is legacy within-component feature anchoring. Prefer on() for simple face placement. It is separate from component occurrence attachment used by assemblies.",
+      "parameters": [
+        {
+          "name": "target",
+          "description": "Existing parent Shape that receives the feature."
+        },
+        {
+          "name": "parent",
+          "description": "Anchor on the target Shape. Defaults to Anchor.TOP."
+        },
+        {
+          "name": "child",
+          "description": "Anchor on the feature being placed. Defaults to Anchor.BOTTOM."
+        },
+        {
+          "name": "offset",
+          "description": "In-plane (x, y) offset on the parent anchor surface, in mm. Defaults to (0, 0)."
+        }
+      ],
+      "example": "Boss(d=7, h=12).attach(case, parent=Anchor.INNER_BOTTOM, offset=(10, 10))",
+      "signature": "Shape.attach(self, target, *, parent=<Anchor.TOP: 'top'>, child=<Anchor.BOTTOM: 'bottom'>, offset=(0, 0))"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.fillet",
+      "summary": "Round selected solid edges with one radius.",
+      "guide": "guide/features/#fillet",
+      "reference": "reference/Shape.fillet/",
+      "use_when": "Round one or more edges of a supported feature-based body. Fillet and chamfer use the same edge-selection forms.",
+      "limits": "Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids.",
+      "parameters": [
+        {
+          "name": "radius",
+          "description": "Fillet radius in mm."
+        },
+        {
+          "name": "edges",
+          "description": "Edge selection. Prefer Edges.from_faces(...) for named face perimeters; Edges.VERTICAL, supported two-direction Box selectors, Edges.from_profile(...), Edges.from_vertices(...) and non-empty XYZ edge-pick sequences remain supported. Defaults to Edges.VERTICAL."
+        }
+      ],
+      "example": "body = Box(80, 50, 15)\nrounded = body.fillet(3, edges=Edges.VERTICAL)",
+      "signature": "Shape.fillet(self, radius, *, edges=<Edges.VERTICAL: 'vertical'>)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.chamfer",
+      "summary": "Chamfer selected solid edges by one equal distance.",
+      "guide": "guide/features/#fillet",
+      "reference": "reference/Shape.chamfer/",
+      "use_when": "Bevel one or more edges of a supported feature-based body. Chamfer and fillet use the same edge-selection forms.",
+      "limits": "Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids.",
+      "parameters": [
+        {
+          "name": "distance",
+          "description": "Chamfer distance in mm."
+        },
+        {
+          "name": "edges",
+          "description": "Edge selection. Prefer Edges.from_faces(...) for named face perimeters; Edges.VERTICAL, supported two-direction Box selectors, Edges.from_profile(...), Edges.from_vertices(...) and non-empty XYZ edge-pick sequences remain supported. Defaults to Edges.VERTICAL."
+        }
+      ],
+      "example": "body = Box(80, 50, 15)\nbevelled = body.chamfer(3, edges=Edges.VERTICAL)",
+      "signature": "Shape.chamfer(self, distance, *, edges=<Edges.VERTICAL: 'vertical'>)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.shell",
+      "summary": "Hollow a supported solid and leave selected Faces open.",
+      "guide": "guide/features/#shell",
+      "reference": "reference/Shape.shell/",
+      "use_when": "Create an enclosure-like body with an even wall thickness while selecting open surfaces through the same Faces vocabulary used by on() and Edges.from_faces().",
+      "limits": "open= must be one Faces value or a non-empty sequence of Faces values. Support still depends on the underlying feature tree.",
+      "parameters": [
+        {
+          "name": "thickness",
+          "description": "Wall thickness in mm."
+        },
+        {
+          "name": "open",
+          "description": "Face to remove, or a non-empty sequence of Faces values. Defaults to Faces.TOP."
+        }
+      ],
+      "example": "Box(80, 50, 30).shell(2, open=Faces.TOP)",
+      "signature": "Shape.shell(self, thickness, *, open=<Faces.TOP: 'top'>)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.fold",
+      "summary": "Fold existing sheet material along one straight line.",
+      "guide": "guide/sheet-metal/#fold",
+      "reference": "reference/Shape.fold/",
+      "use_when": "Bend material that already exists in a sheet blank. Dimensions and bend allowance come from the sheet's shared rule. Prefer an authored Sketch line when the bend line must follow later parameter edits.",
+      "limits": "One straight fold line is supported. Fixed-point input remains numeric-only; associative input must be one Sketch.line(...) result.",
+      "parameters": [
+        {
+          "name": "line",
+          "description": "Either two fixed XY/XYZ points or the Shape returned by Sketch.line(...). The Sketch-line form preserves native associativity when its endpoints use Parameters/Expressions."
+        },
+        {
+          "name": "angle",
+          "description": "Bend angle in degrees. Defaults to 90."
+        },
+        {
+          "name": "fixed",
+          "description": "Optional XYZ point on the side that must stay fixed."
+        },
+        {
+          "name": "position",
+          "description": "Native bend-line position: \"centerline\", \"start\", \"end\" or \"mould\". Defaults to \"centerline\"."
+        },
+        {
+          "name": "flip",
+          "description": "Fold to the opposite side when True. Defaults to False."
+        }
+      ],
+      "example": "with Sketch(name=\"Fold line\", plane=\"XY\") as fold_sketch:\n    fold_line = fold_sketch.line(\n        start=(20, -(depth / 2)),\n        end=(20, depth / 2),\n    )\nsheet.fold(\n    line=fold_line,\n    angle=90,\n    fixed=(-20, 0, 0),\n)",
+      "signature": "Shape.fold(self, *, line, angle=90, fixed=None, position='centerline', flip=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.flange",
+      "summary": "Add a native edge flange to existing sheet material.",
+      "guide": "guide/sheet-metal/#edge-flange",
+      "reference": "reference/Shape.flange/",
+      "use_when": "Grow new sheet material from one or more existing sheet edges while inheriting thickness, K-factor and bend radius from the sheet rule.",
+      "limits": "This first slice accepts explicit fixed XYZ edge pick points only. Per-edge segment dictionaries, corner relief overrides, chained bends and radius overrides are intentionally not exposed.",
+      "parameters": [
+        {
+          "name": "edges",
+          "description": "Non-empty sequence of fixed XYZ pick points on sheet edges."
+        },
+        {
+          "name": "height",
+          "description": "Positive flange height in mm."
+        },
+        {
+          "name": "angle",
+          "description": "Bend angle in degrees. Defaults to 90."
+        },
+        {
+          "name": "height_from",
+          "description": "Optional native height datum: \"outer\", \"inner\" or \"tangent\"."
+        },
+        {
+          "name": "position",
+          "description": "Optional native bend position: \"inside\", \"outside\", \"middle\", \"material_outside\" or \"tangent\"."
+        },
+        {
+          "name": "flip",
+          "description": "Reverse the flange side when True. Defaults to False."
+        }
+      ],
+      "example": "",
+      "signature": "Shape.flange(self, *, edges, height, angle=90, height_from=None, position=None, flip=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.contour_flange",
+      "summary": "Create a native contour-flange sheet from an open Sketch chain. The receiver must be the Shape returned by Sketch.chain(...).finish(). Material dimensions define the sheet rule used by the new body; the contour feature itself receives only that rule name.",
+      "guide": "guide/sheet-metal/#contour-flange",
+      "reference": "reference/Shape.contour_flange/",
+      "use_when": "Create a new native sheet-metal body from a finished open connected Sketch chain, using a positive flange distance and a shared SolidCraft sheet rule derived from the supplied material values.",
+      "limits": "The receiver must be the Shape returned by Sketch.chain(...).finish(). Distance, thickness and bend radius must be positive; K-factor must be between 0 and 1. This API starts the sheet body from one open chain and exposes only rule name plus flip/reverse orientation controls.",
+      "parameters": [],
+      "example": "",
+      "signature": "Shape.contour_flange(self, *, distance, thickness, bend_radius, k_factor=0.5, rule_name='Forge Sheet', flip=False, reverse=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.hem",
+      "summary": "Add a native hem to existing sheet material.",
+      "guide": "guide/sheet-metal/#hem",
+      "reference": "reference/Shape.hem/",
+      "use_when": "Fold one or more existing sheet edges back on the sheet while preserving native sheet-metal history and the inherited rule.",
+      "limits": "This first slice accepts explicit fixed XYZ edge pick points only. Generic edge selectors and compound hem profiles are intentionally outside this contract.",
+      "parameters": [
+        {
+          "name": "edges",
+          "description": "Non-empty sequence of fixed XYZ pick points on sheet edges."
+        },
+        {
+          "name": "length",
+          "description": "Positive hem length in mm, measured to the outer face."
+        },
+        {
+          "name": "gap",
+          "description": "Optional positive clearance in mm between the returned leg and the face it folds over. When omitted, SolidCraft uses the sheet rule."
+        },
+        {
+          "name": "flip",
+          "description": "Reverse the hem side when True. Defaults to False."
+        }
+      ],
+      "example": "",
+      "signature": "Shape.hem(self, *, edges, length, gap=None, flip=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.path_flange",
+      "summary": "Add a native path flange to existing sheet material.",
+      "guide": "guide/sheet-metal/#path-flange",
+      "reference": "reference/Shape.path_flange/",
+      "use_when": "Create a multi-leg native flange from an existing sheet edge using one reusable open Sketch path.",
+      "limits": "The initial SolidCraft 0.45 contract accepts line-only open chains. Tangent arcs and generic edge selectors are intentionally rejected until the native path-flange runtime proves those contracts.",
+      "parameters": [
+        {
+          "name": "edge",
+          "description": "Fixed XYZ pick point on the existing sheet edge."
+        },
+        {
+          "name": "path",
+          "description": "Finished open connected Sketch chain describing the flange path across that edge."
+        },
+        {
+          "name": "radius",
+          "description": "Optional positive bend radius in mm. When omitted, SolidCraft inherits the active sheet rule."
+        }
+      ],
+      "example": "",
+      "signature": "Shape.path_flange(self, *, edge, path, radius=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.perforate",
+      "summary": "Add a native whole-sheet perforation field.",
+      "guide": "guide/sheet-metal/#perforation",
+      "reference": "reference/Shape.perforate/",
+      "use_when": "Describe manufacturing perforations that belong to sheet flat-pattern, DXF and measured-volume semantics without cutting repeated B-rep holes.",
+      "limits": "This first slice covers the whole sheet only. Sketch/profile-bounded local perforation regions are intentionally outside the contract.",
+      "parameters": [
+        {
+          "name": "diameter",
+          "description": "Positive perforation diameter in mm."
+        },
+        {
+          "name": "pitch",
+          "description": "Positive centre-to-centre perforation pitch in mm."
+        },
+        {
+          "name": "margin",
+          "description": "Optional positive clear margin in mm. When omitted, SolidCraft uses the perforation diameter."
+        },
+        {
+          "name": "pattern",
+          "description": "Native perforation layout: \"staggered\" or \"square\". Defaults to \"staggered\"."
+        }
+      ],
+      "example": "",
+      "signature": "Shape.perforate(self, *, diameter, pitch, margin=None, pattern='staggered')"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.rectangular_pattern",
+      "summary": "Pattern an existing native history feature in one or two directions.",
+      "guide": "guide/features/#feature-patterns",
+      "reference": "reference/Shape.rectangular_pattern/",
+      "use_when": "Repeat an already-created native feature while keeping one editable SolidCraft rectangular-pattern history feature.",
+      "limits": "The source feature must already be part of this Shape. Supplying a second direction requires both count2 and spacing2.",
+      "parameters": [
+        {
+          "name": "feature",
+          "description": "Existing applied feature Shape, or a non-empty sequence of applied feature Shapes. Forge resolves each source to its native history feature."
+        },
+        {
+          "name": "count",
+          "description": "Number of instances in the first direction. Use a positive integer or direct Parameter."
+        },
+        {
+          "name": "spacing",
+          "description": "Instance spacing in the first direction, in mm."
+        },
+        {
+          "name": "direction",
+          "description": "First pattern direction as Axis.X/Y/Z or a non-zero XYZ vector. Defaults to Axis.X."
+        },
+        {
+          "name": "count2",
+          "description": "Optional instance count for the second direction."
+        },
+        {
+          "name": "spacing2",
+          "description": "Optional spacing for the second direction, in mm."
+        },
+        {
+          "name": "direction2",
+          "description": "Second pattern direction as Axis.X/Y/Z or a non-zero XYZ vector. Defaults to Axis.Y."
+        },
+        {
+          "name": "alignment",
+          "description": "First-direction native alignment: \"left\", \"center\" or \"right\". Defaults to \"right\"."
+        },
+        {
+          "name": "alignment2",
+          "description": "Second-direction native alignment: \"left\", \"center\" or \"right\". Defaults to \"right\"."
+        },
+        {
+          "name": "reversed",
+          "description": "Reverse the first native pattern direction. Defaults to False."
+        },
+        {
+          "name": "reversed2",
+          "description": "Reverse the second native pattern direction. Defaults to False."
+        }
+      ],
+      "example": "plate.rectangular_pattern(cut, count=3, spacing=24, direction=Axis.X, count2=2, spacing2=28)",
+      "signature": "Shape.rectangular_pattern(self, feature, *, count, spacing, direction=<Axis.X: 'X'>, count2=None, spacing2=None, direction2=<Axis.Y: 'Y'>, alignment='right', alignment2='right', reversed=False, reversed2=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.circular_pattern",
+      "summary": "Pattern an existing native history feature around a fixed axis.",
+      "guide": "guide/features/#feature-patterns",
+      "reference": "reference/Shape.circular_pattern/",
+      "use_when": "Repeat an already-created native feature around an axis while keeping one editable SolidCraft circular-pattern history feature, for example a Hole-based bolt circle.",
+      "limits": "The source feature must already be part of this Shape. Axis values cover principal or fixed XYZ axes. Native construction-axis, edge-axis and face-axis selectors are not exposed yet.",
+      "parameters": [
+        {
+          "name": "feature",
+          "description": "Existing applied feature Shape, or a non-empty sequence of applied feature Shapes. Forge resolves each source to its native history feature."
+        },
+        {
+          "name": "count",
+          "description": "Total number of instances including the original. Use a positive integer or direct Parameter."
+        },
+        {
+          "name": "axis",
+          "description": "Rotation axis as Axis.X/Y/Z or a non-zero fixed XYZ direction. Defaults to Axis.Z."
+        },
+        {
+          "name": "angle",
+          "description": "Optional total pattern angle in degrees, as a fixed number or direct Parameter. Omit it for SolidCraft's native 360-degree default."
+        },
+        {
+          "name": "origin",
+          "description": "Optional XYZ point for a shifted fixed axis. With an Axis value and no origin, Forge emits the native principal-axis name directly."
+        },
+        {
+          "name": "alignment",
+          "description": "Native alignment: \"left\", \"center\" or \"right\". Defaults to \"right\"."
+        },
+        {
+          "name": "reversed",
+          "description": "Reverse the native pattern direction. Defaults to False."
+        }
+      ],
+      "example": "flange.circular_pattern(bolt_cut, count=6, axis=Axis.Z)",
+      "signature": "Shape.circular_pattern(self, feature, *, count, axis=<Axis.Z: 'Z'>, angle=None, origin=None, alignment='right', reversed=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "Sketch",
+      "summary": "Create an explicit named 2D sketch scope.",
+      "guide": "guide/geometry/#profiles",
+      "reference": "reference/Sketch/",
+      "use_when": "Author one or more 2D profiles before creating a 3D extrusion. A Sketch may be standalone on XY/XZ/YZ or supported by an existing Shape.",
+      "limits": "Sketch(on=target) selects the body modified by the later extrusion. With the default parent=Anchor.TOP, Forge selects the largest +Z planar face at replay time. An explicit plane/origin bypasses face lookup. BOTTOM/CENTER relative placement still requires supported base metadata. offset remains a standalone-plane option. Leave the with-scope before extruding.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Native sketch name. Defaults to \"Profile\"."
+        },
+        {
+          "name": "on",
+          "description": "Optional existing Shape whose surface supports the sketch."
+        },
+        {
+          "name": "parent",
+          "description": "Anchor selecting the supporting surface when on= is used. Defaults to Anchor.TOP."
+        },
+        {
+          "name": "plane",
+          "description": "Explicit sketch plane: \"XY\", \"XZ\" or \"YZ\". Defaults to \"XY\" when on= is not used. With on=, an explicit plane is world-based while on= still selects the body modified by the extrusion."
+        },
+        {
+          "name": "origin",
+          "description": "Optional explicit 3D origin for an explicit plane, in mm. May be used with on= when the Sketch should modify an existing body from a fixed world plane."
+        },
+        {
+          "name": "offset",
+          "description": "Optional signed offset from a standalone origin plane, in mm."
+        },
+        {
+          "name": "rotation",
+          "description": "Optional fixed (x, y, z) rotation in degrees for an explicit world-frame Sketch. Rotations are applied X, then Y, then Z."
+        }
+      ],
+      "example": "with Sketch(name=\"Base\", plane=\"XY\") as sketch:\nRectangle2D(80, 50)",
+      "signature": "Sketch(*, name='Profile', on=None, parent=<Anchor.TOP: 'top'>, plane=None, origin=None, offset=None, rotation=None)"
+    },
+    {
+      "kind": "callable",
+      "name": "Sketch.add",
+      "summary": "Add and place a supported 2D profile in this Sketch.",
+      "guide": "guide/geometry/#profiles",
+      "reference": "reference/Sketch.add/",
+      "use_when": "Add a profile explicitly or apply a deliberate sketch-local offset. Dimension-defined profiles default to semantic CENTER. Polygon2D, Text2D and native Slot profiles keep their authored coordinates.",
+      "limits": "Explicit Anchor.CENTER is supported for Circle2D, Rectangle2D and RoundedRectangle2D. Polygon2D, Text2D and native Slot profiles define their own sketch-local coordinates; leave anchor=None for those profile types.",
+      "parameters": [
+        {
+          "name": "profile",
+          "description": "Supported 2D Shape such as Rectangle2D, Circle2D, Polygon2D or a Slot constructor result."
+        },
+        {
+          "name": "anchor",
+          "description": "Optional profile datum. Dimension-defined profiles default to Anchor.CENTER; coordinate-defined profiles keep their own coordinates."
+        },
+        {
+          "name": "offset",
+          "description": "Sketch-local (u, v) displacement in mm. Defaults to (0, 0)."
+        }
+      ],
+      "example": "sketch.add(Circle2D(d=8), anchor=Anchor.CENTER, offset=(20, 0))",
+      "signature": "Sketch.add(self, profile, *, anchor=None, offset=(0, 0))"
+    },
+    {
+      "kind": "callable",
+      "name": "Sketch.line",
+      "summary": "Author and return one reusable straight Sketch line.",
+      "guide": "guide/geometry/#profiles",
+      "reference": "reference/Sketch.line/",
+      "use_when": "A downstream native feature needs one authored Sketch curve with stable identity, especially an associative Shape.fold().",
+      "limits": "This is the one-line convenience form of Sketch.chain() and currently follows the same standalone Sketch restrictions.",
+      "parameters": [
+        {
+          "name": "start",
+          "description": "Sketch-local (x, y) start point. Coordinates may retain Parameter/Expression dependencies."
+        },
+        {
+          "name": "end",
+          "description": "Sketch-local (x, y) end point. Coordinates may retain Parameter/Expression dependencies."
+        }
+      ],
+      "example": "with Sketch(name=\"Fold line\", plane=\"XY\") as sketch:\n    fold_line = sketch.line(\n        start=(20, -(depth / 2)),\n        end=(20, depth / 2),\n    )",
+      "signature": "Sketch.line(self, *, start, end)"
+    },
+    {
+      "kind": "callable",
+      "name": "Sketch.rectangular_pattern",
+      "summary": "Repeat a profile or earlier Sketch result with a native rectangular pattern.",
+      "guide": "guide/geometry/#pattern-mirror",
+      "reference": "reference/Sketch.rectangular_pattern/",
+      "use_when": "Repeat one Circle, Slot or other supported profile without drawing every copy separately. The returned Sketch result represents the source plus its copies and may be passed to mirror() or another supported Sketch operation.",
+      "limits": "The operation must be authored inside the active Sketch. Current native qualification covers attached Sketch(on=...) use. The two counts may create at most 500 instances in total. Per-instance suppression is not supported. SolidCraft 0.42 stores the curves selected by a mirror when that mirror is created. If a pattern later creates extra curves after its count changes, those new curves are not added to that existing mirror automatically.",
+      "parameters": [
+        {
+          "name": "source",
+          "description": "A profile already in this Sketch, or a result returned by rectangular_pattern() or mirror() in the same Sketch."
+        },
+        {
+          "name": "count",
+          "description": "Number of instances in the first direction, including the original. Use a whole number from 1 to 500; a dimensionless Parameter may remain editable in SolidCraft."
+        },
+        {
+          "name": "spacing",
+          "description": "Distance between instances in the first direction, in mm. A length Parameter may remain editable in SolidCraft."
+        },
+        {
+          "name": "direction",
+          "description": "First sketch-local direction: Axis.X, Axis.Y or a fixed non-zero (x, y) vector. Defaults to Axis.X."
+        },
+        {
+          "name": "count2",
+          "description": "Number of instances in the second direction, including the original. Use a whole number from 1 to 500. Defaults to 1."
+        },
+        {
+          "name": "spacing2",
+          "description": "Optional distance between instances in the second direction, in mm. When omitted, SolidCraft uses the first spacing."
+        },
+        {
+          "name": "direction2",
+          "description": "Optional second sketch-local direction: Axis.X, Axis.Y or a fixed non-zero (x, y) vector. When omitted, SolidCraft uses the direction perpendicular to the first."
+        },
+        {
+          "name": "alignment",
+          "description": "Position of the original along the first direction: \"left\", \"center\" or \"right\". Defaults to \"right\"."
+        },
+        {
+          "name": "alignment2",
+          "description": "Position of the original along the second direction: \"left\", \"center\" or \"right\". Defaults to \"right\"."
+        },
+        {
+          "name": "reversed",
+          "description": "Reverse placement along the first direction. Defaults to False."
+        },
+        {
+          "name": "reversed2",
+          "description": "Reverse placement along the second direction. Defaults to False."
+        }
+      ],
+      "example": "with Sketch(name=\"Holes\", on=board, parent=Anchor.TOP) as sketch:\ncircle = Circle2D(d=8)\nrow = sketch.rectangular_pattern(\ncircle, count=4, spacing=25, direction=Axis.X\n)\nwith Sketch(name=\"Slots\", on=board, parent=Anchor.TOP) as sketch:\nslot = SlotCenterToCenter2D((0, 0), (20, 0), 8)\npair = sketch.rectangular_pattern(\nslot, count=2, spacing=30, direction=Axis.Y\n)",
+      "signature": "Sketch.rectangular_pattern(self, source, *, count, spacing, direction=<Axis.X: 'X'>, count2=1, spacing2=None, direction2=None, alignment='right', alignment2='right', reversed=False, reversed2=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "Sketch.mirror",
+      "summary": "Mirror a profile or earlier Sketch result over the sketch X or Y axis.",
+      "guide": "guide/geometry/#pattern-mirror",
+      "reference": "reference/Sketch.mirror/",
+      "use_when": "Create symmetric sketch geometry from a Circle, Slot, pattern result or earlier mirror result. The returned Sketch result contains the mirrored copies and may be used by a later supported Sketch operation.",
+      "limits": "The operation must be authored inside the active Sketch. Current native qualification covers attached Sketch(on=...) use. Only the sketch X and Y origin axes are supported. SolidCraft 0.42 stores the curves selected when the mirror is created. If an upstream pattern later creates extra curves after its count changes, those new curves are not added to that existing mirror automatically.",
+      "parameters": [
+        {
+          "name": "source",
+          "description": "A profile already in this Sketch, or a result returned by rectangular_pattern() or mirror() in the same Sketch."
+        },
+        {
+          "name": "axis",
+          "description": "Mirror axis. Use Axis.X, Axis.Y, \"x\" or \"y\"."
+        }
+      ],
+      "example": "with Sketch(name=\"Holes\", on=board, parent=Anchor.TOP) as sketch:\ncircle = Circle2D(d=8)\nsketch.mirror(circle, axis=Axis.Y)\nwith Sketch(name=\"Slots\", on=board, parent=Anchor.TOP) as sketch:\nslot = SlotCenterToCenter2D((0, 0), (20, 0), 8)\npair = sketch.rectangular_pattern(\nslot, count=2, spacing=30, direction=Axis.X\n)\nsketch.mirror(pair, axis=Axis.X)",
+      "signature": "Sketch.mirror(self, source, *, axis)"
+    },
+    {
+      "kind": "callable",
+      "name": "Sketch.sheet_metal",
+      "summary": "Create a native sheet-metal body from this closed flat Sketch.",
+      "guide": "guide/sheet-metal/#base-sheet",
+      "reference": "reference/Sketch.sheet_metal/",
+      "use_when": "Start a fabricated sheet part from its flat blank before applying holes, folds, hems or other sheet-metal features.",
+      "limits": "The first qualified form requires one standalone XY Sketch with one closed profile. Leave the Sketch scope before creating the sheet.",
+      "parameters": [
+        {
+          "name": "thickness",
+          "description": "Sheet thickness in mm."
+        },
+        {
+          "name": "bend_radius",
+          "description": "Default inside bend radius in mm."
+        },
+        {
+          "name": "k_factor",
+          "description": "Neutral-axis K-factor. Must be greater than 0 and less than 1. Defaults to 0.5."
+        },
+        {
+          "name": "rule_name",
+          "description": "Native SolidCraft sheet-rule name. Defaults to \"Forge Sheet\"."
+        }
+      ],
+      "example": "with Sketch(name=\"Blank\", plane=\"XY\") as blank:\nRectangle2D(80, 40)\nsheet = blank.sheet_metal(\nthickness=2,\nbend_radius=2,\nk_factor=0.5,\n)",
+      "signature": "Sketch.sheet_metal(self, *, thickness, bend_radius, k_factor=0.5, rule_name='Forge Sheet')"
+    },
+    {
+      "kind": "callable",
+      "name": "Sketch.extrude",
+      "summary": "Extrude selected profiles from a completed Sketch.",
+      "guide": "guide/geometry/#profile-selection",
+      "reference": "reference/Sketch.extrude/",
+      "use_when": "Leave the Sketch context and create or cut material normal to the sketch plane. Use profiles= when the Sketch contains more closed regions than the extrusion should use.",
+      "limits": "A standalone Sketch requires a finite non-zero distance. Depth.THROUGH_ALL is only meaningful for a Sketch attached to an existing Shape and cannot be combined with sym=True. Profile pick points must be fixed finite numbers; Parameters and expressions are not accepted because SolidCraft 0.42 profile points are numeric.",
+      "parameters": [
+        {
+          "name": "distance",
+          "description": "Extrusion distance in mm, or Depth.THROUGH_ALL for an attached Sketch. Positive finite distances follow the plane normal; negative reverses it. THROUGH_ALL cuts through the attached target from the selected support face."
+        },
+        {
+          "name": "sym",
+          "description": "When True, split a positive distance equally across both sides of the sketch plane. Defaults to False."
+        },
+        {
+          "name": "profiles",
+          "description": "Optional non-empty sequence of fixed sketch-local (x, y) points. Each point selects the closed profile containing it. Leave None to extrude every profile."
+        },
+        {
+          "name": "exact_regions",
+          "description": "When True, each profile point selects exactly the SolidCraft region containing that point. Only valid together with profiles=. Defaults to False."
+        }
+      ],
+      "example": "cut = sketch.extrude(\nDepth.THROUGH_ALL,\nprofiles=[(-30, 0), (-10, 0), (30, 0)],\nexact_regions=True,\n)",
+      "signature": "Sketch.extrude(self, distance, *, sym=False, profiles=None, exact_regions=False)"
+    },
+    {
+      "kind": "group",
+      "name": "geometry-constructors",
+      "summary": "Direct 3D primitives and 2D profile constructors.",
+      "guide": "guide/geometry/#solids",
+      "reference": "reference/geometry-constructors/",
+      "members": [
+        {
+          "kind": "callable",
+          "name": "Box",
+          "summary": "Create a native rectangular solid around a declared anchor datum.",
+          "use_when": "Model a simple rectangular part directly without introducing a Sketch.",
+          "limits": "The default anchor is CENTER, so an unplaced Box is centred around the model origin in X, Y and Z. Use anchor=BOTTOM for a box whose bottom face centre is at Z=0. Use at() for later placement.",
+          "parameters": [
+            {
+              "name": "length",
+              "description": "Box size along X, in mm."
+            },
+            {
+              "name": "width",
+              "description": "Box size along Y, in mm."
+            },
+            {
+              "name": "thickness",
+              "description": "Box size along Z, in mm."
+            },
+            {
+              "name": "anchor",
+              "description": "Box datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER."
+            }
+          ],
+          "example": "Box(80, 50, 12, anchor=Anchor.BOTTOM)",
+          "signature": "Box(length, width, thickness, *, anchor=<Anchor.CENTER: 'center'>)",
+          "reference": "reference/geometry-constructors/#Box"
+        },
+        {
+          "kind": "callable",
+          "name": "Cylinder",
+          "summary": "Create a cylindrical solid centred around the origin by default.",
+          "use_when": "Model a cylinder along Axis.X, Axis.Y or Axis.Z. Use BOTTOM for a Z-axis base, LEFT for an X-axis base or FRONT for a Y-axis base.",
+          "limits": "Anchors refer to world XYZ bounds after choosing the cylinder axis. at() places the selected anchor at the requested coordinate.",
+          "parameters": [
+            {
+              "name": "d",
+              "description": "Cylinder diameter in mm."
+            },
+            {
+              "name": "h",
+              "description": "Cylinder length along the selected axis, in mm."
+            },
+            {
+              "name": "axis",
+              "description": "Cylinder axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z."
+            },
+            {
+              "name": "anchor",
+              "description": "Cylinder datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER."
+            }
+          ],
+          "example": "Cylinder(d=8, h=20, axis=Axis.X, anchor=Anchor.LEFT)",
+          "signature": "Cylinder(*, d, h, axis=<Axis.Z: 'Z'>, anchor=<Anchor.CENTER: 'center'>)",
+          "reference": "reference/geometry-constructors/#Cylinder"
+        },
+        {
+          "kind": "callable",
+          "name": "Cone",
+          "summary": "Create a native cone or tapered cylinder (frustum).",
+          "use_when": "Model a cone, tapered pin or lightly conical cylinder directly with SolidCraft's native solid.cone feature.",
+          "limits": "Because the two end radii may differ, transverse tangent anchors are intentionally not exposed. Use CENTER or the selected axis' two end anchors: LEFT/RIGHT for X, FRONT/BACK for Y, BOTTOM/TOP for Z.",
+          "parameters": [
+            {
+              "name": "d",
+              "description": "Diameter at the base end, in mm."
+            },
+            {
+              "name": "top_d",
+              "description": "Diameter at the other end, in mm. Defaults to 0 for a full cone."
+            },
+            {
+              "name": "h",
+              "description": "Length along the selected axis, in mm."
+            },
+            {
+              "name": "axis",
+              "description": "Cone axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z."
+            },
+            {
+              "name": "anchor",
+              "description": "CENTER or one of the two axial end datums."
+            }
+          ],
+          "example": "Cone(d=20, top_d=20.2, h=20, anchor=Anchor.BOTTOM)",
+          "signature": "Cone(*, d, top_d=0, h, axis=<Axis.Z: 'Z'>, anchor=<Anchor.CENTER: 'center'>)",
+          "reference": "reference/geometry-constructors/#Cone"
+        },
+        {
+          "kind": "callable",
+          "name": "Sphere",
+          "summary": "Create a sphere centred on the origin unless another anchor is given.",
+          "use_when": "Model a spherical primitive, optionally with a tangent-point anchor.",
+          "limits": "Cardinal anchors select points on the sphere's world-aligned bounds. Sphere has no separate orientation axis; use at() for placement.",
+          "parameters": [
+            {
+              "name": "radius",
+              "description": "Sphere radius in mm."
+            },
+            {
+              "name": "anchor",
+              "description": "Sphere datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER."
+            }
+          ],
+          "example": "Sphere(12, anchor=Anchor.BOTTOM)",
+          "signature": "Sphere(radius, *, anchor=<Anchor.CENTER: 'center'>)",
+          "reference": "reference/geometry-constructors/#Sphere"
+        },
+        {
+          "kind": "callable",
+          "name": "Rectangle2D",
+          "summary": "Create a rectangular 2D profile.",
+          "use_when": "Author a simple rectangle inside an explicit Sketch before extrusion.",
+          "limits": "The dimension-defined profile is centred on the Sketch origin by default. Use Sketch.add(..., offset=(u, v)) for a deliberate local displacement.",
+          "parameters": [
+            {
+              "name": "width",
+              "description": "Rectangle size along the first local sketch axis, in mm. On XY this is X."
+            },
+            {
+              "name": "depth",
+              "description": "Rectangle size along the second local sketch axis, in mm. On XY this is Y."
+            }
+          ],
+          "example": "Rectangle2D(80, 50)",
+          "signature": "Rectangle2D(width, depth)",
+          "reference": "reference/geometry-constructors/#Rectangle2D"
+        },
+        {
+          "kind": "callable",
+          "name": "RoundedRectangle2D",
+          "summary": "Create a native rounded-rectangle 2D profile.",
+          "use_when": "A sketch needs a rectangle with true circular corner arcs rather than a polygonal approximation.",
+          "limits": "Current support is inside an explicit Sketch. width and depth must be positive. radius must be positive and below half the shorter side.",
+          "parameters": [
+            {
+              "name": "width",
+              "description": "Rectangle size along the first local sketch axis, in mm."
+            },
+            {
+              "name": "depth",
+              "description": "Rectangle size along the second local sketch axis, in mm."
+            },
+            {
+              "name": "radius",
+              "description": "Radius of each corner arc, in mm."
+            }
+          ],
+          "example": "RoundedRectangle2D(80, 50, 6)",
+          "signature": "RoundedRectangle2D(width, depth, radius)",
+          "reference": "reference/geometry-constructors/#RoundedRectangle2D"
+        },
+        {
+          "kind": "callable",
+          "name": "Circle2D",
+          "summary": "Create a circular 2D profile by diameter or radius.",
+          "use_when": "Author a circular profile inside an explicit Sketch.",
+          "limits": "Supply exactly one of d= or r=. The Sketch determines the plane.",
+          "parameters": [
+            {
+              "name": "d",
+              "description": "Circle diameter in mm. Supply d or r, not both."
+            },
+            {
+              "name": "r",
+              "description": "Circle radius in mm. Supply r or d, not both."
+            }
+          ],
+          "example": "Circle2D(d=8)",
+          "signature": "Circle2D(*, d=None, r=None)",
+          "reference": "reference/geometry-constructors/#Circle2D"
+        },
+        {
+          "kind": "callable",
+          "name": "Polygon2D",
+          "summary": "Create a closed named or unnamed polygon profile.",
+          "use_when": "A 2D profile needs arbitrary straight segments or named vertices and segments that later drive selectors such as Edges.from_profile().",
+          "limits": "At least three 2D points are required. Named and unnamed points cannot be mixed. world=True currently supports only plane=\"XZ\".",
+          "parameters": [
+            {
+              "name": "points",
+              "description": "Polygon vertices in order. Use (u, v) pairs, or (name, (u, v)) pairs when naming vertices, in mm."
+            },
+            {
+              "name": "plane",
+              "description": "Sketch plane: \"XY\", \"XZ\" or \"YZ\". Defaults to \"XY\"."
+            },
+            {
+              "name": "ids",
+              "description": "Optional segment names, one per polygon edge in vertex order."
+            },
+            {
+              "name": "world",
+              "description": "When True with plane=\"XZ\", read each input point as world (x, z) instead of native sketch coordinates."
+            }
+          ],
+          "example": "Polygon2D([(0, 0), (40, 0), (40, 20), (0, 20)], plane=\"XY\")",
+          "signature": "Polygon2D(points, *, plane='XY', ids=None, world=False)",
+          "reference": "reference/geometry-constructors/#Polygon2D"
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "sketch-slot-constructors",
+      "summary": "Five explicit 2D Slot construction methods mapped directly to SolidCraft sketch.slot.* commands.",
+      "guide": "guide/geometry/#profiles",
+      "reference": "reference/sketch-slot-constructors/",
+      "members": [
+        {
+          "kind": "callable",
+          "name": "SlotCenterToCenter2D",
+          "summary": "Create a straight Slot from the centres of its two round ends.",
+          "use_when": "",
+          "limits": "p0 and p1 must be different points. Parameterized endpoints currently require a horizontal or vertical Slot and matching symbolic intent on the perpendicular coordinate. Fixed numeric diagonal Slots remain supported.",
+          "parameters": [
+            {
+              "name": "p0",
+              "description": "Centre of the first round end as (x, y) in sketch coordinates, in mm. Coordinates may be numeric or Parameter/Expression values."
+            },
+            {
+              "name": "p1",
+              "description": "Centre of the second round end as (x, y) in sketch coordinates, in mm. Coordinates may be numeric or Parameter/Expression values."
+            },
+            {
+              "name": "width",
+              "description": "Total Slot width in mm, numeric or Parameter/Expression. This is also the diameter of each round end."
+            }
+          ],
+          "example": "SlotCenterToCenter2D((-10, 0), (10, 0), 6)",
+          "signature": "SlotCenterToCenter2D(p0, p1, width)",
+          "reference": "reference/sketch-slot-constructors/#SlotCenterToCenter2D"
+        },
+        {
+          "kind": "callable",
+          "name": "SlotOverall2D",
+          "summary": "Create a straight Slot from its two outermost end points.",
+          "use_when": "",
+          "limits": "The distance from p0 to p1 is the total Slot length, including both round ends, and must be larger than width. Parameterized endpoints currently require a horizontal or vertical Slot and matching symbolic intent on the perpendicular coordinate.",
+          "parameters": [
+            {
+              "name": "p0",
+              "description": "Outermost point of the first round end as (x, y) in sketch coordinates, in mm. Coordinates may be numeric or Parameter/Expression values."
+            },
+            {
+              "name": "p1",
+              "description": "Outermost point of the second round end as (x, y) in sketch coordinates, in mm. Coordinates may be numeric or Parameter/Expression values."
+            },
+            {
+              "name": "width",
+              "description": "Total Slot width in mm, numeric or Parameter/Expression. This is also the diameter of each round end."
+            }
+          ],
+          "example": "SlotOverall2D((-15, 0), (15, 0), 6)",
+          "signature": "SlotOverall2D(p0, p1, width)",
+          "reference": "reference/sketch-slot-constructors/#SlotOverall2D"
+        },
+        {
+          "kind": "callable",
+          "name": "SlotCenterPoint2D",
+          "summary": "Create a straight Slot from its centre and one round-end centre.",
+          "use_when": "",
+          "limits": "center and end must differ. The other round-end centre is mirrored through center. Parameterized endpoints currently require a horizontal or vertical Slot.",
+          "parameters": [
+            {
+              "name": "center",
+              "description": "Centre of the complete Slot as (x, y) in sketch coordinates, in mm. Coordinates may be numeric or Parameter/Expression values."
+            },
+            {
+              "name": "end",
+              "description": "Centre of one round end as (x, y) in sketch coordinates, in mm. Coordinates may be numeric or Parameter/Expression values."
+            },
+            {
+              "name": "width",
+              "description": "Total Slot width in mm, numeric or Parameter/Expression. This is also the diameter of each round end."
+            }
+          ],
+          "example": "SlotCenterPoint2D((0, 0), (10, 0), 6)",
+          "signature": "SlotCenterPoint2D(center, end, width)",
+          "reference": "reference/sketch-slot-constructors/#SlotCenterPoint2D"
+        },
+        {
+          "kind": "callable",
+          "name": "SlotArcThreePoint2D",
+          "summary": "Create a curved Slot whose centre arc passes through three points.",
+          "use_when": "",
+          "limits": "start, through and end must be three different fixed numeric points. Arc-Slot authored points are not parameterized in this release.",
+          "parameters": [
+            {
+              "name": "start",
+              "description": "Start point of the Slot centre arc as (x, y) in sketch coordinates, in mm."
+            },
+            {
+              "name": "through",
+              "description": "A point that the centre arc must pass through, as (x, y) in mm."
+            },
+            {
+              "name": "end",
+              "description": "End point of the Slot centre arc as (x, y) in sketch coordinates, in mm."
+            },
+            {
+              "name": "width",
+              "description": "Total Slot width in mm, numeric or Parameter/Expression, measured perpendicular to the centre arc."
+            }
+          ],
+          "example": "SlotArcThreePoint2D((-15, 0), (0, 10), (15, 0), 6)",
+          "signature": "SlotArcThreePoint2D(start, through, end, width)",
+          "reference": "reference/sketch-slot-constructors/#SlotArcThreePoint2D"
+        },
+        {
+          "kind": "callable",
+          "name": "SlotArcCenter2D",
+          "summary": "Create a curved Slot from an arc centre and start point.",
+          "use_when": "",
+          "limits": "Supply exactly one of end= or sweep=. center, start and end are fixed numeric authored points in this release. center and start must differ. sweep must be greater than 0 and less than 360 degrees.",
+          "parameters": [
+            {
+              "name": "center",
+              "description": "Centre of the underlying circular arc as (x, y) in sketch coordinates, in mm."
+            },
+            {
+              "name": "start",
+              "description": "Start point of the Slot centre arc as (x, y) in sketch coordinates, in mm."
+            },
+            {
+              "name": "width",
+              "description": "Total Slot width in mm, numeric or Parameter/Expression, measured perpendicular to the centre arc."
+            },
+            {
+              "name": "end",
+              "description": "Optional fixed numeric end point of the centre arc as (x, y) in mm."
+            },
+            {
+              "name": "sweep",
+              "description": "Optional positive sweep angle in degrees."
+            }
+          ],
+          "example": "SlotArcCenter2D((0, 0), (12, 0), 6, sweep=120)",
+          "signature": "SlotArcCenter2D(center, start, width, *, end=None, sweep=None)",
+          "reference": "reference/sketch-slot-constructors/#SlotArcCenter2D"
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "feature-constructors",
+      "summary": "Mechanical Hole-family and plastic-feature intent added to supported bodies.",
+      "guide": "guide/features/#features",
+      "reference": "reference/feature-constructors/",
+      "members": [
+        {
+          "kind": "callable",
+          "name": "Hole",
+          "summary": "Create a simple cylindrical hole feature.",
+          "use_when": "Make an ordinary drilled hole without a head recess or thread intent.",
+          "limits": "d and finite depth values must be positive. Explicit native Hole features are positioned with at(); face-relative repeated simple holes may also use on() through the existing placement route.",
+          "parameters": [
+            {
+              "name": "d",
+              "description": "Finished hole diameter in mm."
+            },
+            {
+              "name": "depth",
+              "description": "Hole depth in mm, or Depth.THROUGH_ALL. Defaults to through all."
+            },
+            {
+              "name": "direction",
+              "description": "Optional non-zero XYZ direction vector from the entry point into the material."
+            }
+          ],
+          "example": "Hole(d=4.3).at(0, 0, 2)",
+          "signature": "Hole(*, d, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None)",
+          "reference": "reference/feature-constructors/#Hole"
+        },
+        {
+          "kind": "callable",
+          "name": "CounterboreHole",
+          "summary": "Create a hole with a cylindrical recess at its entry face.",
+          "use_when": "Seat a cylindrical screw head or other part below the entry surface.",
+          "limits": "counterbore_d must be larger than d. counterbore_depth and finite depth values must be positive. Position this native feature with at().",
+          "parameters": [
+            {
+              "name": "d",
+              "description": "Finished main-hole diameter in mm."
+            },
+            {
+              "name": "counterbore_d",
+              "description": "Diameter of the cylindrical recess in mm."
+            },
+            {
+              "name": "counterbore_depth",
+              "description": "Depth of the recess from the entry face in mm."
+            },
+            {
+              "name": "depth",
+              "description": "Main-hole depth in mm, or Depth.THROUGH_ALL. Defaults to through all."
+            },
+            {
+              "name": "direction",
+              "description": "Optional non-zero XYZ direction vector from the entry point into the material."
+            }
+          ],
+          "example": "CounterboreHole(\nd=6,\ncounterbore_d=12,\ncounterbore_depth=4,\n).at(0, 0, 12)",
+          "signature": "CounterboreHole(*, d, counterbore_d, counterbore_depth, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None)",
+          "reference": "reference/feature-constructors/#CounterboreHole"
+        },
+        {
+          "kind": "callable",
+          "name": "CountersinkHole",
+          "summary": "Create a hole with a conical countersink at its entry face.",
+          "use_when": "Seat a countersunk fastener or specify a hole whose conical entry is part of the hole feature itself.",
+          "limits": "countersink_d must be larger than d. countersink_angle must be between 0 and 180 degrees. Position this native feature with at().",
+          "parameters": [
+            {
+              "name": "d",
+              "description": "Finished main-hole diameter in mm."
+            },
+            {
+              "name": "countersink_d",
+              "description": "Diameter of the countersink at the entry face in mm."
+            },
+            {
+              "name": "countersink_angle",
+              "description": "Included countersink angle in degrees. Defaults to 90."
+            },
+            {
+              "name": "depth",
+              "description": "Main-hole depth in mm, or Depth.THROUGH_ALL. Defaults to through all."
+            },
+            {
+              "name": "direction",
+              "description": "Optional non-zero XYZ direction vector from the entry point into the material."
+            }
+          ],
+          "example": "CountersinkHole(\nd=6,\ncountersink_d=12,\ncountersink_angle=90,\n).at(0, 0, 12)",
+          "signature": "CountersinkHole(*, d, countersink_d, countersink_angle=90, depth=<Depth.THROUGH_ALL: 'through_all'>, direction=None)",
+          "reference": "reference/feature-constructors/#CountersinkHole"
+        },
+        {
+          "kind": "callable",
+          "name": "ThreadedHole",
+          "summary": "Create a tapped hole with native thread intent.",
+          "use_when": "Preserve tapped-hole manufacturing intent instead of representing the result as an ordinary cylindrical subtraction.",
+          "limits": "The thread designation must be supported by SolidCraft. modeled=True creates actual thread geometry and can be substantially heavier than cosmetic/native thread metadata. Position this native feature with at().",
+          "parameters": [
+            {
+              "name": "thread",
+              "description": "Thread designation such as \"M6\" or \"1/4-20 UNC\"."
+            },
+            {
+              "name": "depth",
+              "description": "Drill depth in mm, or Depth.THROUGH_ALL. Defaults to through all."
+            },
+            {
+              "name": "d",
+              "description": "Optional explicit tap-drill diameter in mm. When omitted, SolidCraft selects the drill from the thread designation."
+            },
+            {
+              "name": "direction",
+              "description": "Optional non-zero XYZ direction vector from the entry point into the material."
+            },
+            {
+              "name": "hand",
+              "description": "Thread hand, \"right\" or \"left\". Defaults to \"right\"."
+            },
+            {
+              "name": "thread_depth",
+              "description": "Optional positive threaded length in mm, independent of drill depth."
+            },
+            {
+              "name": "modeled",
+              "description": "Whether SolidCraft cuts modeled thread geometry. Defaults to False."
+            },
+            {
+              "name": "ease_out",
+              "description": "Optional modeled-thread runout: \"standard\", \"short\", or a positive length."
+            }
+          ],
+          "example": "ThreadedHole(\nthread=\"M6\",\nd=5,\nthread_depth=10,\nmodeled=True,\n).at(0, 0, 12)",
+          "signature": "ThreadedHole(*, thread, depth=<Depth.THROUGH_ALL: 'through_all'>, d=None, direction=None, hand='right', thread_depth=None, modeled=False, ease_out=None)",
+          "reference": "reference/feature-constructors/#ThreadedHole"
+        },
+        {
+          "kind": "callable",
+          "name": "Lip",
+          "summary": "Create a plastic enclosure lip feature.",
+          "use_when": "Add a lip to a supported shelled enclosure rim using feature placement.",
+          "limits": "width and height must be positive when compiled. Placement and parent-shape support follow the feature-placement API.",
+          "parameters": [
+            {
+              "name": "width",
+              "description": "Lip width in mm."
+            },
+            {
+              "name": "height",
+              "description": "Lip height in mm."
+            }
+          ],
+          "example": "Lip(width=2, height=3)",
+          "signature": "Lip(*, width, height)",
+          "reference": "reference/feature-constructors/#Lip"
+        },
+        {
+          "kind": "callable",
+          "name": "SnapFit",
+          "summary": "Create a cantilever snap-fit feature.",
+          "use_when": "Add a plastic snap feature to a supported face with an explicit hook direction.",
+          "limits": "All five dimensions must be positive when compiled. hook must contain three coordinates; direction, when supplied, must also contain three.",
+          "parameters": [
+            {
+              "name": "length",
+              "description": "Cantilever length in mm."
+            },
+            {
+              "name": "thickness",
+              "description": "Cantilever thickness in mm."
+            },
+            {
+              "name": "width",
+              "description": "Cantilever width in mm."
+            },
+            {
+              "name": "catch_depth",
+              "description": "Catch projection depth in mm."
+            },
+            {
+              "name": "catch_length",
+              "description": "Catch length in mm."
+            },
+            {
+              "name": "hook",
+              "description": "Non-zero XYZ direction vector for the hook direction."
+            },
+            {
+              "name": "direction",
+              "description": "Optional non-zero XYZ direction vector for the feature direction."
+            }
+          ],
+          "example": "SnapFit(length=20, thickness=2, width=8, catch_depth=1.5, catch_length=4, hook=(1, 0, 0))",
+          "signature": "SnapFit(*, length, thickness, width, catch_depth, catch_length, hook, direction=None)",
+          "reference": "reference/feature-constructors/#SnapFit"
+        },
+        {
+          "kind": "callable",
+          "name": "Boss",
+          "summary": "Create a plastic screw-boss feature.",
+          "use_when": "Add a cylindrical support boss, optionally with a central hole, to a supported face.",
+          "limits": "d and h must be positive when compiled. hole_d, when supplied, must be positive. direction, when supplied, must contain three coordinates.",
+          "parameters": [
+            {
+              "name": "d",
+              "description": "Boss outside diameter in mm."
+            },
+            {
+              "name": "h",
+              "description": "Boss height in mm."
+            },
+            {
+              "name": "hole_d",
+              "description": "Optional central-hole diameter in mm."
+            },
+            {
+              "name": "direction",
+              "description": "Optional non-zero XYZ direction vector for the boss axis."
+            }
+          ],
+          "example": "Boss(d=7, h=12, hole_d=2.5)",
+          "signature": "Boss(*, d, h, hole_d=None, direction=None)",
+          "reference": "reference/feature-constructors/#Boss"
+        },
+        {
+          "kind": "callable",
+          "name": "Rest",
+          "summary": "Create a plastic support/rest feature.",
+          "use_when": "Add a support pad or elongated rest to a supported face.",
+          "limits": "width and height must be positive when compiled. length, when supplied, must be positive. along and direction must contain three coordinates.",
+          "parameters": [
+            {
+              "name": "width",
+              "description": "Rest width in mm."
+            },
+            {
+              "name": "height",
+              "description": "Rest height in mm."
+            },
+            {
+              "name": "length",
+              "description": "Optional rest length in mm for an elongated support."
+            },
+            {
+              "name": "along",
+              "description": "Optional non-zero XYZ vector that sets the long direction."
+            },
+            {
+              "name": "direction",
+              "description": "Optional non-zero XYZ vector that sets the feature direction."
+            }
+          ],
+          "example": "Rest(width=12, height=4, length=30, along=(1, 0, 0))",
+          "signature": "Rest(*, width, height, length=None, along=None, direction=None)",
+          "reference": "reference/feature-constructors/#Rest"
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "parameters-positioning",
+      "summary": "Keep dimensions symbolic and express readable offsets or parent-bound positions.",
+      "guide": "guide/model-objects/#parameter-intent",
+      "reference": "reference/parameters-positioning/",
+      "members": [
+        {
+          "kind": "callable",
+          "name": "Parameter",
+          "summary": "Represent one named editable CAD dimension.",
+          "use_when": "Keep a value symbolic so generated SolidCraft commands can retain an editable dependency instead of baking in the current Python number.",
+          "limits": "value must be finite. Normal public lower-case model fields are usually promoted to parameters automatically, so explicit Parameter() is mainly useful in lower-level or assembly code.",
+          "parameters": [
+            {
+              "name": "name",
+              "description": "SolidCraft parameter name. It must be a valid Python identifier."
+            },
+            {
+              "name": "value",
+              "description": "Current numeric value of the parameter."
+            }
+          ],
+          "example": "wall = Parameter(\"wall\", 2.4)",
+          "signature": "Parameter(name: str, value: float) -> None",
+          "reference": "reference/parameters-positioning/#Parameter"
+        },
+        {
+          "kind": "callable",
+          "name": "Placement",
+          "summary": "Absolute pose of one occurrence in its parent coordinate frame.",
+          "use_when": "Declare the pose of a component occurrence at creation or copy time.",
+          "limits": "Placement is occurrence creation state, not a relative move action. Coordinates, rotation axis and angle must evaluate to finite values.",
+          "parameters": [
+            {
+              "name": "x",
+              "description": "Absolute X position in mm. May be numeric, Parameter or Expression."
+            },
+            {
+              "name": "y",
+              "description": "Absolute Y position in mm. May be numeric, Parameter or Expression."
+            },
+            {
+              "name": "z",
+              "description": "Absolute Z position in mm. May be numeric, Parameter or Expression."
+            },
+            {
+              "name": "rotation",
+              "description": "Optional (axis, degrees) absolute rotation. axis may be X/Y/Z, Axis, or a non-zero XYZ vector."
+            }
+          ],
+          "example": "Placement(x=160, z=20, rotation=(Axis.Z, 90))",
+          "signature": "Placement(x: object = 0, y: object = 0, z: object = 0, rotation: tuple[object, object] | None = None) -> None",
+          "reference": "reference/parameters-positioning/#Placement"
+        },
+        {
+          "kind": "constant",
+          "name": "X",
+          "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+          "use_when": "Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.",
+          "limits": "These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.",
+          "parameters": [],
+          "example": "",
+          "value": "X",
+          "reference": "reference/parameters-positioning/#X"
+        },
+        {
+          "kind": "constant",
+          "name": "Y",
+          "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+          "use_when": "Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.",
+          "limits": "These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.",
+          "parameters": [],
+          "example": "",
+          "value": "Y",
+          "reference": "reference/parameters-positioning/#Y"
+        },
+        {
+          "kind": "constant",
+          "name": "Z",
+          "summary": "Axis token with MIN, CENTER and MAX parent-bound placement selectors.",
+          "use_when": "Public X, Y and Z tokens let feature offsets refer to a parent bound, for example X.MIN + 10 or Y.MAX - 10, without hard-coding the current global coordinate.",
+          "limits": "These X/Y/Z tokens are bound selectors, not Axis.X/Y/Z primitive-axis enum values.",
+          "parameters": [],
+          "example": "",
+          "value": "Z",
+          "reference": "reference/parameters-positioning/#Z"
+        },
+        {
+          "kind": "callable",
+          "name": "up",
+          "summary": "Return a symbolic-safe XYZ offset in the +Z direction.",
+          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
+          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
+          "parameters": [
+            {
+              "name": "distance",
+              "description": "Numeric or symbolic CAD distance in mm."
+            }
+          ],
+          "example": "offset = up(12)",
+          "signature": "up(distance)",
+          "reference": "reference/parameters-positioning/#up"
+        },
+        {
+          "kind": "callable",
+          "name": "down",
+          "summary": "Return a symbolic-safe XYZ offset in the -Z direction.",
+          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
+          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
+          "parameters": [
+            {
+              "name": "distance",
+              "description": "Numeric or symbolic CAD distance in mm."
+            }
+          ],
+          "example": "offset = down(12)",
+          "signature": "down(distance)",
+          "reference": "reference/parameters-positioning/#down"
+        },
+        {
+          "kind": "callable",
+          "name": "left",
+          "summary": "Return a symbolic-safe XYZ offset in the -X direction.",
+          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
+          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
+          "parameters": [
+            {
+              "name": "distance",
+              "description": "Numeric or symbolic CAD distance in mm."
+            }
+          ],
+          "example": "offset = left(12)",
+          "signature": "left(distance)",
+          "reference": "reference/parameters-positioning/#left"
+        },
+        {
+          "kind": "callable",
+          "name": "right",
+          "summary": "Return a symbolic-safe XYZ offset in the +X direction.",
+          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
+          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
+          "parameters": [
+            {
+              "name": "distance",
+              "description": "Numeric or symbolic CAD distance in mm."
+            }
+          ],
+          "example": "offset = right(12)",
+          "signature": "right(distance)",
+          "reference": "reference/parameters-positioning/#right"
+        },
+        {
+          "kind": "callable",
+          "name": "front",
+          "summary": "Return a symbolic-safe XYZ offset in the -Y direction.",
+          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
+          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
+          "parameters": [
+            {
+              "name": "distance",
+              "description": "Numeric or symbolic CAD distance in mm."
+            }
+          ],
+          "example": "offset = front(12)",
+          "signature": "front(distance)",
+          "reference": "reference/parameters-positioning/#front"
+        },
+        {
+          "kind": "callable",
+          "name": "back",
+          "summary": "Return a symbolic-safe XYZ offset in the +Y direction.",
+          "use_when": "Express a readable placement offset while preserving Parameter or Expression values.",
+          "limits": "This returns an XYZ tuple; it does not create an Anchor relationship.",
+          "parameters": [
+            {
+              "name": "distance",
+              "description": "Numeric or symbolic CAD distance in mm."
+            }
+          ],
+          "example": "offset = back(12)",
+          "signature": "back(distance)",
+          "reference": "reference/parameters-positioning/#back"
+        },
+        {
+          "kind": "callable",
+          "name": "half",
+          "summary": "Return half of a numeric or symbolic CAD dimension.",
+          "use_when": "Keep midpoint-style arithmetic readable without converting a symbolic CAD dimension to a concrete Python value.",
+          "limits": "Equivalent to value / 2; the input must support that operation.",
+          "parameters": [
+            {
+              "name": "value",
+              "description": "Numeric, Parameter or Expression value to divide by two."
+            }
+          ],
+          "example": "centre = half(width)",
+          "signature": "half(value)",
+          "reference": "reference/parameters-positioning/#half"
+        },
+        {
+          "kind": "callable",
+          "name": "midpoint",
+          "summary": "Return the midpoint between two numeric or symbolic dimensions.",
+          "use_when": "Express a centre position while preserving symbolic CAD dependencies.",
+          "limits": "Equivalent to (start + end) / 2; inputs must support symbolic arithmetic.",
+          "parameters": [
+            {
+              "name": "start",
+              "description": "First numeric or symbolic coordinate/dimension."
+            },
+            {
+              "name": "end",
+              "description": "Second numeric or symbolic coordinate/dimension."
+            }
+          ],
+          "example": "centre_x = midpoint(left_x, right_x)",
+          "signature": "midpoint(start, end)",
+          "reference": "reference/parameters-positioning/#midpoint"
+        },
+        {
+          "kind": "callable",
+          "name": "pv",
+          "summary": "Return the concrete Python value of a symbolic CAD dimension.",
+          "use_when": "Python itself genuinely needs a number for validation or control flow.",
+          "limits": "Calling pv() intentionally removes the symbolic dependency at that point. Geometry and placement should normally keep Parameter/Expression objects symbolic so SolidCraft remains editable and associative.",
+          "parameters": [
+            {
+              "name": "dim",
+              "description": "Numeric value, Parameter or Expression to read as a Python float."
+            }
+          ],
+          "example": "if pv(clearance) < 0:\nraise ValueError(\"clearance must not be negative\")",
+          "signature": "pv(dim) -> float",
+          "reference": "reference/parameters-positioning/#pv"
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "attachment-references",
+      "summary": "Use richer local or topology-backed datums when a standard Anchor is not enough.",
+      "guide": "guide/assembly-basics/#anchor-choice",
+      "reference": "reference/attachment-references/",
+      "members": [
+        {
+          "kind": "callable",
+          "name": "AnchorFrame",
+          "summary": "Describe one local attachment point and orientation.",
+          "use_when": "A standard face or corner Anchor is not enough and the mounting datum needs its own local origin plus orientation. A reusable component may expose named AnchorFrame values from anchors(), or an assembly may pass one directly to attach().",
+          "limits": "z and x must be non-zero and must not be parallel. Direct frames on explicitly rotated occurrences have limited support as documented by the assembly guide.",
+          "parameters": [
+            {
+              "name": "origin",
+              "description": "Component-local XYZ attachment point in mm. Defaults to (0, 0, 0)."
+            },
+            {
+              "name": "z",
+              "description": "Attachment-normal direction as an XYZ vector or Anchor. Defaults to Anchor.UP."
+            },
+            {
+              "name": "x",
+              "description": "Local X/clocking direction as an XYZ vector or Anchor. Defaults to Anchor.RIGHT."
+            }
+          ],
+          "example": "mount = AnchorFrame(origin=(20, 0, 10), z=Anchor.FRONT, x=Anchor.RIGHT)",
+          "signature": "AnchorFrame(origin: tuple[float, float, float] = (0.0, 0.0, 0.0), z: tuple[float, float, float] | scpf.core.Anchor = <Anchor.TOP: 'top'>, x: tuple[float, float, float] | scpf.core.Anchor = <Anchor.RIGHT: 'right'>) -> None",
+          "reference": "reference/attachment-references/#AnchorFrame"
+        },
+        {
+          "kind": "callable",
+          "name": "AnchorTopology",
+          "summary": "Describe an attachment datum that follows native SolidCraft topology.",
+          "use_when": "A relationship should follow a particular edge, adjacent planar face and optionally one endpoint as dimensions change, rather than freezing one XYZ coordinate.",
+          "limits": "edge and on are native selection pick points. Current Forge support focuses on planar-face edges and non-rotated occurrences. z and x, when both supplied, must not be parallel.",
+          "parameters": [
+            {
+              "name": "edge",
+              "description": "XYZ pick point on the target edge, in component-local mm."
+            },
+            {
+              "name": "on",
+              "description": "XYZ pick point on the adjacent planar face, in component-local mm."
+            },
+            {
+              "name": "corner",
+              "description": "Optional XYZ endpoint/corner pick in component-local mm."
+            },
+            {
+              "name": "z",
+              "description": "Optional non-zero XYZ attachment-normal override."
+            },
+            {
+              "name": "x",
+              "description": "Optional non-zero XYZ clocking-direction override."
+            }
+          ],
+          "example": "mount = AnchorTopology(edge=(0, 25, 10), on=(0, 20, 10), corner=(0, 25, 0))",
+          "signature": "AnchorTopology(edge: tuple[float, float, float], on: tuple[float, float, float], corner: tuple[float, float, float] | None = None, z: tuple[float, float, float] | None = None, x: tuple[float, float, float] | None = None) -> None",
+          "reference": "reference/attachment-references/#AnchorTopology"
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "execution-api",
+      "summary": "Lower-level entry points for compiling Shapes or trusted model source files.",
+      "guide": "guide/getting-started/#run",
+      "reference": "reference/execution-api/",
+      "members": [
+        {
+          "kind": "callable",
+          "name": "compile_model",
+          "summary": "Compile one Shape tree to a native SolidCraft command document.",
+          "use_when": "Lower-level tooling already has a final Shape object and needs the JSON command plan without executing a model source file.",
+          "limits": "The final value must be a Shape. Normal user workflows usually call the scpf runner/CLI instead.",
+          "parameters": [
+            {
+              "name": "shape",
+              "description": "Final Shape tree to compile."
+            },
+            {
+              "name": "name",
+              "description": "Model/body name used for generated SolidCraft commands. It must be a valid identifier."
+            }
+          ],
+          "example": "document = compile_model(Box(80, 50, 12), \"Panel\")",
+          "signature": "compile_model(shape: scpf.core.Shape, name: str) -> dict",
+          "reference": "reference/execution-api/#compile_model"
+        },
+        {
+          "kind": "callable",
+          "name": "run_script",
+          "summary": "Execute a trusted SCPF model source file and return its command document.",
+          "use_when": "Programmatic tooling needs the same model-loading/root-selection and compilation behaviour as the SCPF CLI.",
+          "limits": "The source is executed as trusted Python. A file must either end in an explicit root model call or define exactly one unambiguous public model class with build().",
+          "parameters": [
+            {
+              "name": "path",
+              "description": "Path to the trusted Python model source file."
+            }
+          ],
+          "example": "document = run_script(\"models/panel/scpf/model.py\")",
+          "signature": "run_script(path: str | pathlib.Path) -> dict",
+          "reference": "reference/execution-api/#run_script"
+        }
+      ]
+    },
+    {
+      "kind": "group",
+      "name": "diagnostics",
+      "summary": "Public diagnostics for invalid model intent and lost symbolic parameter dependencies.",
+      "guide": null,
+      "reference": "reference/diagnostics/",
+      "members": [
+        {
+          "kind": "callable",
+          "name": "ModelError",
+          "summary": "Report unsupported or invalid CAD model intent.",
+          "use_when": "Catch Forge compilation/model validation failures separately from normal Python argument errors when integrating the lower-level compiler API.",
+          "limits": "User model code normally fixes the underlying model instead of handling this exception as a recoverable geometry result.",
+          "parameters": [],
+          "example": "",
+          "signature": null,
+          "reference": "reference/diagnostics/#ModelError"
+        },
+        {
+          "kind": "callable",
+          "name": "ModelParameterWarning",
+          "summary": "Warn that an editable model parameter lost a native CAD dependency.",
+          "use_when": "Tooling wants to detect parameters that became concrete Python values or are only partly associative in the generated SolidCraft model.",
+          "limits": "This is a warning category, not an exception. The preferred fix is to preserve the symbolic relationship or mark an intentional build-time input with a leading underscore.",
+          "parameters": [],
+          "example": "",
+          "signature": null,
+          "reference": "reference/diagnostics/#ModelParameterWarning"
+        }
+      ]
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.with_appearance",
+      "summary": "Assign one fixed display color to the final body without changing physical material semantics.",
+      "guide": "guide/features/#appearance",
+      "reference": "reference/Shape.with_appearance/",
+      "use_when": "A model should open with a specific visual color while material, density and BOM behavior remain unchanged.",
+      "limits": "This first contract accepts one opaque fixed #RRGGBB color and applies it to the final body. Call it after geometry operations.",
+      "parameters": [
+        {
+          "name": "color",
+          "description": "Display color as a #RRGGBB hex string."
+        }
+      ],
+      "example": "body = Box(40, 30, 10).with_appearance(\"#FFD21A\")",
+      "signature": "Shape.with_appearance(self, color)"
+    }
+  ]
+}
