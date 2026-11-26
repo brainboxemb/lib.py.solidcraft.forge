@@ -1,0 +1,89 @@
+[
+  {
+    "active": "Medium",
+    "columns": [
+      "param:size"
+    ],
+    "errors": [],
+    "matches": true,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      },
+      {
+        "id": 3,
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Large",
+        "values": {
+          "param:size": "100 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "styles": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ],
+    "trace": []
+  },
+  {
+    "active": "Medium",
+    "columns": [
+      "param:size"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 2,
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      },
+      {
+        "id": 3,
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Large",
+        "values": {
+          "param:size": "100 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:size",
+        "label": "param:size",
+        "target": {
+          "param": "size"
+        }
+      }
+    ]
+  }
+]
