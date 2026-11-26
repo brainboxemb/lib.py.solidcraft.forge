@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/212-backend-adapter-boundary
-modules: [mitcad-reference, mitcad-native-smoke]
+branch: fix/214-revolute-exp-regression
+modules: [verification]
 library: true
-models: [simple-box, circle-negative-extrude, topology-face-boundary-box]
+models: [revolute-joint]
 tasks: [test]
