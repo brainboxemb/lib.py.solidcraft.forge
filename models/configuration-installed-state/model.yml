@@ -3,14 +3,15 @@ purpose: [example, verification]
 section: configurations
 priority: 30
 title: Free / Installed state
-tagline: One flexible-fit component keeps manufacturing and mounted geometry as native configuration rows
+tagline: One reusable flexible-fit component keeps manufacturing and mounted geometry as native configuration rows
 description: >
-  A split flexible sleeve is slightly oversized in its Free manufacturing
-  state and compressed to its Installed working diameter after mounting.
-  Both are rows of one native SolidCraft configuration table.
+  A reusable split flexible sleeve publishes its fit diameter to the parent
+  design. The parent configuration keeps Free manufacturing geometry active
+  by default and can switch the same child definition to Installed geometry
+  without rebuilding Python.
 parameters: Free diameter 20.4 mm; Installed diameter 20.0 mm
 stages:
-  - Build one split flexible-fit sleeve
-  - Keep its fit diameter as the only editable native model parameter
-  - Author Free and Installed rows on the same physical component
-  - Reopen the saved design and switch to Installed
+  - Build one reusable split flexible-fit child component
+  - Publish its fit diameter as the shared native parent parameter
+  - Author Free and Installed rows around that component occurrence
+  - Reopen the saved design and switch the same child definition to Installed

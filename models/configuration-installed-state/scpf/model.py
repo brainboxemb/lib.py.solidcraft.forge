@@ -1,7 +1,8 @@
-"""Qualification: one flexible-fit component has Free and Installed native states."""
+"""Qualification: reusable flexible-fit component has Free and Installed states."""
 
 
-class FlexibleFitState:
+@component(include=("fit_diameter",))
+class FlexibleSleeve:
     fit_diameter = 20.4
     HEIGHT = 20.0
     RELIEF_WIDTH = 2.0
@@ -9,10 +10,19 @@ class FlexibleFitState:
     def build(self):
         sleeve = Cylinder(d=self.fit_diameter, h=self.HEIGHT)
         relief = Box(12, self.RELIEF_WIDTH, 22).move(x=6)
-        part = sleeve - relief
+        return sleeve - relief
 
+
+class FlexibleFitState:
+    fit_diameter = 20.4
+
+    def build(self):
+        sleeve = FlexibleSleeve(
+            fit_diameter=self.fit_diameter,
+            name="flexible_sleeve",
+        )
         return Configure(
-            part,
+            sleeve,
             active="Free",
             columns=(Param(self.fit_diameter),),
             rows={
