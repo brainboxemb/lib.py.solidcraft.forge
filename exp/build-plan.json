@@ -61,7 +61,7 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "full": false,
+  "full": true,
   "library": true,
   "models": [
     {
@@ -411,7 +411,8 @@
     {
       "id": "native-revolve",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -890,5 +891,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "e0180edf02b0ff50f1fda8732aa4da5262730599"
+  "source_sha": "a5470e171e1455b54905a51390a25531af93bd47"
 }

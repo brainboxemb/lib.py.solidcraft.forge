@@ -1,202 +1,56 @@
 {
   "checks": [
     {
-      "artifacts": [
-        {
-          "kind": "file",
-          "path": "baseline/measurements.json",
-          "sha256": "86211e9fd777c6efaed8e2ee421560bf27bb2285c12a918c090d24afb5349f90",
-          "size": 2234
-        }
-      ],
+      "artifacts": [],
       "error": null,
       "evidence": {
-        "body_count": {
-          "actual": 1,
-          "expected": 1,
-          "label": "SolidCraft body count",
-          "pass": true
-        },
-        "body_envelopes": {
-          "actual_count": 1,
-          "expected_count": 1,
-          "kind": "body_envelopes",
-          "matched_pairs": [
-            {
-              "actual": {
-                "label": "NativeRevolve",
-                "max": [
-                  10.000000000000002,
-                  4.0,
-                  4.0
-                ],
-                "min": [
-                  0.0,
-                  -4.0,
-                  -4.0
-                ]
-              },
-              "expected": {
-                "label": null,
-                "max": [
-                  10.0,
-                  4.0,
-                  4.0
-                ],
-                "min": [
-                  0.0,
-                  -4.0,
-                  -4.0
-                ]
-              },
-              "max_delta": 1.7763568394002505e-15
-            }
+        "bounds": {
+          "actual_max": [
+            10.0,
+            4.0,
+            4.0
           ],
+          "actual_min": [
+            0.0,
+            -4.0,
+            -4.0
+          ],
+          "expected_max": [
+            10.0,
+            4.0,
+            4.0
+          ],
+          "expected_min": [
+            0.0,
+            -4.0,
+            -4.0
+          ],
+          "max_delta_mm": 0.0,
           "pass": true,
-          "tolerance": 0.01,
-          "unmatched_actual": [],
-          "unmatched_expected": []
+          "tolerance_mm": 0.3
         },
-        "named_bodies": [
-          {
-            "closed": {
-              "actual": true,
-              "expected": true,
-              "label": "sole body closed",
-              "pass": true
-            },
-            "selector": "sole",
-            "volume": {
-              "actual": 502.654824574367,
-              "delta": 1.1368683772161603e-13,
-              "expected": 502.6548245743669,
-              "kind": "scalar",
-              "label": "sole body volume",
-              "pass": true,
-              "tolerance": 0.5
-            }
-          }
-        ],
-        "parameters": {
-          "actual": {
-            "length": 10.0,
-            "radius": 4.0,
-            "sweep": 6.283185307179586
-          },
-          "expected": {
-            "length": 10.0,
-            "radius": 4.0,
-            "sweep": 6.283185307179586
-          },
-          "label": "SolidCraft parameters",
-          "pass": true
+        "volume": {
+          "actual_mm3": 502.58572457428767,
+          "delta_mm3": 0.06910000007934514,
+          "expected_mm3": 502.654824574367,
+          "pass": true,
+          "tolerance_mm3": 5.0
         },
-        "sketch_count": {
-          "actual": 1,
-          "expected": 1,
-          "label": "SolidCraft sketch count",
-          "pass": true
-        },
-        "timeline": {
-          "actual": [
-            {
-              "name": "RadialProfile",
-              "type": "Sketch"
-            },
-            {
-              "type": "RevolveFeature"
-            }
-          ],
-          "expected": [
-            {
-              "name": "RadialProfile",
-              "type": "Sketch"
-            },
-            {
-              "type": "RevolveFeature"
-            }
-          ],
-          "label": "SolidCraft timeline",
+        "watertight": {
+          "actual": true,
+          "expected": true,
           "pass": true
         }
       },
-      "id": "baseline",
-      "reason": null,
-      "status": "pass"
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "file",
-          "path": "saved_designs/resize_revolved_solid/model.sc",
-          "sha256": "655ad193c176f5f1ad09a693a1b75271f4eeb01f063a1ef560cda27205edc3b6",
-          "size": 5146
-        },
-        {
-          "kind": "file",
-          "path": "saved_designs/resize_revolved_solid/measurements.json",
-          "sha256": "4a848a6d851fbffe08e9bb181e1a8646a0ac7881fefe9df8bb82910c2a9c787f",
-          "size": 2234
-        }
-      ],
-      "error": null,
-      "evidence": {
-        "body_count": {
-          "actual": 1,
-          "expected": 1,
-          "label": "SolidCraft body count",
-          "pass": true
-        },
-        "named_bodies": [
-          {
-            "closed": {
-              "actual": true,
-              "expected": true,
-              "label": "sole body closed",
-              "pass": true
-            },
-            "selector": "sole",
-            "volume": {
-              "actual": 392.69908169872417,
-              "delta": 0.0,
-              "expected": 392.69908169872417,
-              "kind": "scalar",
-              "label": "sole body volume",
-              "pass": true,
-              "tolerance": 0.5
-            }
-          }
-        ],
-        "parameters": {
-          "actual": {
-            "length": 10.0,
-            "radius": 5.0,
-            "sweep": 3.141592653589793
-          },
-          "expected": {
-            "length": 10.0,
-            "radius": 5.0,
-            "sweep": 3.141592653589793
-          },
-          "label": "SolidCraft parameters",
-          "pass": true
-        },
-        "sketch_count": {
-          "actual": 1,
-          "expected": 1,
-          "label": "SolidCraft sketch count",
-          "pass": true
-        }
-      },
-      "id": "saved_design_resize_revolved_solid",
+      "id": "geometry",
       "reason": null,
       "status": "pass"
     }
   ],
-  "input": "/output/models/native-revolve/scpf/model.sc",
+  "input": "/output/models/native-revolve/scpf/model.stl",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,
   "status": "pass",
-  "verification_id": "native-revolve"
+  "verification_id": "native-revolve-scpf-geometry"
 }

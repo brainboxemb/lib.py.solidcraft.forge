@@ -1,0 +1,174 @@
+{
+  "format": "mitcad",
+  "version": 2,
+  "units": {
+    "length": "mm",
+    "angle": "deg"
+  },
+  "parameters": [
+    {
+      "name": "radius",
+      "expression": "4 mm",
+      "unit": "mm",
+      "value": 4.0,
+      "comment": ""
+    },
+    {
+      "name": "length",
+      "expression": "10 mm",
+      "unit": "mm",
+      "value": 10.0,
+      "comment": ""
+    },
+    {
+      "name": "sweep",
+      "expression": "360 deg",
+      "unit": "deg",
+      "value": 6.283185307179586,
+      "comment": ""
+    }
+  ],
+  "components": [
+    {
+      "uid": "C1",
+      "name": "Component1"
+    }
+  ],
+  "occurrences": [
+    {
+      "uid": "O1",
+      "component": "C1",
+      "parent": "C0",
+      "number": 1
+    }
+  ],
+  "active_component": "C1",
+  "features": [
+    {
+      "uid": "F1",
+      "name": "RadialProfile",
+      "component": "C1",
+      "type": "sketch",
+      "plane": "xz",
+      "entities": [
+        {
+          "id": "p1",
+          "type": "point",
+          "at": [
+            0.0,
+            0.0
+          ],
+          "fixed": true
+        },
+        {
+          "id": "p2",
+          "type": "point",
+          "at": [
+            0.0,
+            4.0
+          ]
+        },
+        {
+          "id": "p3",
+          "type": "point",
+          "at": [
+            10.0,
+            4.0
+          ]
+        },
+        {
+          "id": "p4",
+          "type": "point",
+          "at": [
+            10.0,
+            0.0
+          ]
+        },
+        {
+          "id": "c5",
+          "type": "line",
+          "start": "p1",
+          "end": "p2"
+        },
+        {
+          "id": "c6",
+          "type": "line",
+          "start": "p2",
+          "end": "p3"
+        },
+        {
+          "id": "c7",
+          "type": "line",
+          "start": "p3",
+          "end": "p4"
+        },
+        {
+          "id": "c8",
+          "type": "line",
+          "start": "p4",
+          "end": "p1"
+        }
+      ],
+      "constraints": [
+        {
+          "id": "k9",
+          "type": "vertical",
+          "line": "c5"
+        },
+        {
+          "id": "k10",
+          "type": "horizontal",
+          "line": "c6"
+        },
+        {
+          "id": "k11",
+          "type": "vertical",
+          "line": "c7"
+        },
+        {
+          "id": "k12",
+          "type": "horizontal",
+          "line": "c8"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": "k13",
+          "type": "length",
+          "line": "c5",
+          "value": "radius"
+        },
+        {
+          "id": "k14",
+          "type": "length",
+          "line": "c6",
+          "value": "length"
+        }
+      ]
+    },
+    {
+      "uid": "F2",
+      "name": "NativeRevolve",
+      "component": "C1",
+      "type": "revolve",
+      "profiles": [
+        {
+          "sketch": "F1",
+          "region": "r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]}"
+        }
+      ],
+      "axis": "x",
+      "extent": {
+        "type": "angle",
+        "angle": "sweep"
+      },
+      "operation": "new_body"
+    }
+  ],
+  "bodies": [
+    {
+      "uid": "F2.b0",
+      "name": "Body1"
+    }
+  ]
+}
