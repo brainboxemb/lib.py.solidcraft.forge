@@ -125,6 +125,24 @@ consumer repositories. The verification catalog has its own
 | replay row identity | Forge-generated deterministic row references bind to SolidCraft-returned native row ids; activation uses the bound id |
 | saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
 
+The use-case boundary is intentional:
+
+| Use case | #216 public contract |
+| --- | --- |
+| product sizes / dimensional presets | `Param(...)` |
+| front/below/service assembly positions | `Param(...)` driving associative `Placement` |
+| optional authored feature | `Suppress(feature)` |
+| dimensions plus suppression in one row | supported by the same table |
+| material or appearance variants | native SolidCraft supports them, but Forge waits for a typed, separately verified column contract |
+| whole component present/absent | not silently mapped to feature suppression |
+| alternate attachment/joint graph | not a configuration cell; requires explicit relationship authoring |
+| arbitrary Python branches per row | rejected as a configuration-table substitute |
+
+A suppression reference must be an actual Forge feature handle available to the
+configured design. #216 does not invent string paths into hidden child-component
+implementation details. If cross-component exported feature handles are needed,
+that is a reusable component API capability and must be designed explicitly.
+
 The HUB75 display and frame-coupler models remain downstream consumers. They are
 useful adoption tests after a Forge release, but they do not define or special
 case the public API.

@@ -24,7 +24,7 @@ class ConfigurationPosition:
         return Configure(
             screen + front_plate,
             active="Front",
-            columns=(Param("plate_y"), Param("plate_z")),
+            columns=(Param(self.plate_y), Param(self.plate_z)),
             rows={
                 "Front": ("8 mm", "0 mm"),
                 "Below": ("0 mm", "-55 mm"),
