@@ -69,6 +69,12 @@ The accepted baseline now includes:
   default;
 - policy-owned integration through PR comment `/merge`, including merge
   commits for permanent branch synchronization;
+- reviewed `/merge-resolved` recovery for genuinely conflicted direct
+  permanent merges, with a separate green `resolve/*` review PR binding the
+  exact combined tree and one verified non-force `[base, head]` merge commit;
+- permanent `exp` now carries the accepted v0.22.1 normal/governance baseline
+  underneath the existing semantic-IR / Mitcad compiler experiment, without
+  copying unfinished experimental work into `dev`;
 - the library workflow split: pull requests run central `ci`; permanent
   `dev` / `main` runs qualify and publish durable scopes; Pages is
   dispatched independently;
@@ -144,12 +150,39 @@ minor-release capability.
 #315 is not a v0.22.1 prerequisite because that patch only publishes the
 already-stable #306 qualification.
 
-### Experimental lane
+### Experimental lane: #320 annular RegionIR on Mitcad
 
-Permanent `exp` keeps the accepted Mitcad/semantic-IR work isolated from
-normal development. The v0.22.1 stable/governance synchronization is settled;
-#297 may synchronize that accepted baseline into `exp` independently, without
-blocking #315 or reimplementing normal product work.
+#297 is complete. Permanent `exp` now combines the accepted v0.22.1
+normal/governance baseline with the existing semantic-IR / Mitcad history.
+
+The synchronization used direct permanent PR #337 plus review-only resolution
+PR #338 and produced merge commit
+`3a467642cabbb1b2920a6d30fce8e507131ef3a9`, whose parents are the prior
+`exp` head and the qualified `dev` head. Permanent exp full
+qualification/publication run 45854046610 is green and the subsequent Pages
+assembly is green.
+
+#320 is the active experimental checkpoint. Extend the existing compiler
+boundary for the already-public multi-profile standalone Sketch contract:
+
+- normalize the qualified two-concentric-circle annulus to one `SketchIR`
+  with two `CircleProfileIR` nodes;
+- represent the selected annular region as
+  `RegionIR(outer=0, holes=(1,))`;
+- keep profile membership, not a native coordinate/region id, as semantic IR;
+- preserve symbolic outer diameter, inner diameter and extrusion distance;
+- keep SolidCraft behavior equivalent to one native Sketch + two circles + one
+  native ExtrudeFeature;
+- let Mitcad lower the same typed IR and derive its native point selector from
+  semantic region/profile geometry, allowing Mitcad itself to bind the native
+  region id;
+- keep arbitrary/nonnested multi-profile forms fail-closed until separately
+  qualified;
+- make no public SCPF API change in this experimental slice.
+
+#320 progresses independently of normal consumer capability #315. Do not
+integrate `exp -> dev` merely to expose the experiment; acceptance into the
+normal product remains a later separately qualified decision.
 
 ## Later
 
