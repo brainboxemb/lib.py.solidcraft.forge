@@ -1,15 +1,19 @@
 {
   "schema": 1,
   "views": {
-    "top": {
-      "baseline": "baselines/top.png"
+    "front": {
+      "baseline": "baselines/front.png"
+    },
+    "right": {
+      "baseline": "baselines/right.png"
     },
     "iso": {
       "baseline": "baselines/iso.png"
     }
   },
   "expected_views": [
-    "top",
+    "front",
+    "right",
     "iso"
   ],
   "render": {
@@ -31,8 +35,16 @@
   "expected_boxes": [
     {
       "label": "MultiProfileExtrude",
-      "minimum": [-5, -5, 0],
-      "maximum": [5, 5, 30]
+      "minimum": [
+        -5,
+        -5,
+        0
+      ],
+      "maximum": [
+        5,
+        5,
+        30
+      ]
     }
   ],
   "expected_features": []
