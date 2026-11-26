@@ -1,4 +1,4 @@
-"""Execute a trusted SCPF model and compile it to native SolidCraft commands.
+"""Execute a trusted SCPF model and compile it through Forge semantic IR.
 
 A script may end with an explicit model call such as Plate(). If the file
 instead defines exactly one public class with build(), that class is used as
@@ -33,6 +33,7 @@ from .model_objects import (
 )
 from .explicit_sketch import Sketch
 from .backends import get_backend
+from .ir import normalize_shape
 
 
 class ModelParameterWarning(UserWarning):
@@ -840,8 +841,9 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
 
     Parameters:
         path: Path to the trusted Python model source file.
-        backend: Native lowering backend. "solidcraft" is the stable default;
-            "mitcad" is experimental and intentionally incomplete.
+        backend: Native lowering backend. Model evaluation and Forge IR
+            normalization are backend-independent. "solidcraft" is the stable
+            default; "mitcad" is experimental and intentionally incomplete.
 
     Use when:
         Programmatic tooling needs the same model-loading/root-selection and
@@ -1071,7 +1073,8 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
             )
 
     if isinstance(result, Shape):
-        document, dependencies = backend_adapter.compile_shape(result, name)
+        model_ir = normalize_shape(result)
+        document, dependencies = backend_adapter.compile_ir(model_ir, name)
     elif isinstance(result, (ModelInstance, Assembly)):
         if backend_adapter.compile_assembly is None:
             raise ModelError(

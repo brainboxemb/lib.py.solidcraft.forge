@@ -73,21 +73,28 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #246 qualify native Cylinder and subtractive boolean on Mitcad
+### Experimental: #253 introduce explicit Forge semantic IR
 
-Extend the accepted second-backend slice into the first constructive solid
-operation:
+Before adding more Mitcad features, make the multi-backend compiler boundary
+explicit:
 
-- lower SCPF `Cylinder` to native Mitcad intent without changing the public
-  SCPF source;
-- qualify a native subtractive body boolean/cut;
-- preserve symbolic parameter intent and bind engine-owned body results rather
-  than predicting native IDs;
-- keep unsupported boolean cases explicit and fail closed;
-- prove the slice in focused backend/headless tests and one existing physical
-  owner with the same durable command/native/result/verification evidence now
-  visible on `/exp/`;
+- evaluate trusted SCPF source once into Forge model objects;
+- normalize final Shape intent into typed, engine-neutral `ModelIR`;
+- migrate the already-qualified portable slice to typed `BoxIR`,
+  `CircleExtrudeIR`, `ChamferIR` and semantic face-boundary selection;
+- make SolidCraft and Mitcad lower the same typed IR instead of independently
+  interpreting portable `Shape.kind` / `Shape.data`;
+- keep a temporary SolidCraft-only `LegacyShapeIR` for stable surface not yet
+  migrated, and require Mitcad to reject it;
+- preserve existing SolidCraft command/replay output for the migrated slice and
+  qualify library + all 52 owners before accepting the boundary;
 - do not integrate `exp -> dev`.
+
+### Blocked next: #246 native Cylinder + subtractive boolean on Mitcad
+
+After #253 is accepted, add Cylinder and subtractive boolean **once** as Forge
+semantic IR and then implement the two backend lowerings. Do not add another
+raw-Shape backend parser.
 
 ### Queued: #162 / #163 verification evidence cleanup
 

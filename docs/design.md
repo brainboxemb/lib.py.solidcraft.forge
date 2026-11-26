@@ -429,34 +429,53 @@ Pages and `gh-pages` are not release evidence.
 Permanent `workflow_dispatch` qualification explicitly checks out `github.ref_name`, resolves that HEAD once, uses it as `CAD_SOURCE_SHA` for selection, and publishes against the same SHA. This avoids stale event-SHA races immediately after policy merges while keeping publisher freshness validation fail-closed.
 
 
-## Experimental native backend boundary (#192)
+## Experimental native backend boundary (#192, #253)
 
-The multi-backend feasibility spike does not introduce a universal CAD IR.
-Forge's existing `Shape` / feature-tree objects are already the semantic
-authoring intent for the qualified slice. Backend selection happens once after
-the trusted model source has been evaluated.
+The second native backend established the need for an explicit Forge compiler
+boundary. SCPF source is evaluated exactly once into Forge model objects.
+Those objects are then normalized into typed, engine-neutral semantic IR before
+any backend performs native command lowering.
 
 ```text
 unchanged scpf model source
         ↓
-Forge Shape / feature intent
-        ├── SolidCraft lowering -> SolidCraft replay/headless
-        └── Mitcad lowering     -> Mitcad replay/MCP
+one Forge frontend / model evaluation
+        ↓
+Forge semantic ModelIR
+        ├── SolidCraft backend lowering -> SolidCraft replay/headless
+        └── Mitcad backend lowering     -> Mitcad replay/MCP
 ```
 
+`Shape` remains the authoring/frontend representation used while Python model
+code is evaluated. `ModelIR` is the compiler boundary. Native backends do not
+interpret portable raw `Shape.kind` / `Shape.data` payloads independently.
+
+The first typed IR nodes cover the already-qualified portable slice:
+`BoxIR`, `CircleExtrudeIR`, `ChamferIR` and semantic
+`FaceBoundaryIR` selection intent. Symbolic Forge `Parameter` /
+`Expression` values remain semantic values until backend lowering.
+
+The stable SolidCraft surface is larger than this first migration slice. A
+temporary `LegacyShapeIR` therefore wraps not-yet-migrated stable intent so
+the SolidCraft backend can delegate it to the historical lowering without a
+whole-product rewrite. That node is an explicit transition boundary, not a
+second frontend: Mitcad must reject it, and new multi-backend capabilities
+must be introduced as typed IR rather than by adding new raw-shape parsing to
+each backend.
+
 The stable default remains SolidCraft. The Mitcad path is experimental and
-explicitly rejects shape kinds, assemblies and selection modes that have not
-been qualified. Forge must not silently replace unsupported native behavior
-with geometry approximations.
+explicitly rejects IR nodes, assemblies and selection modes that have not been
+qualified. Forge must not silently replace unsupported native behavior with
+geometry approximations.
 
 Backend responsibilities are:
 
-1. **lowering** — convert the existing Forge semantic objects to one engine's
-   native command document while preserving symbolic parameter dependencies;
+1. **lowering** — convert typed Forge IR to one engine's native command
+   document while preserving symbolic parameter dependencies;
 2. **native-result binding** — bind identities returned by that engine instead
    of predicting topology ids;
-3. **topology resolution** — translate Forge selectors such as
-   `Edges.from_faces(Faces.TOP)` into engine-native queries and references;
+3. **topology resolution** — translate semantic IR selectors such as a
+   top-face boundary into engine-native queries and references;
 4. **execution** — run only that engine's native command/replay protocol and
    retain its native document/export artifacts;
 5. **capability refusal** — raise a backend-specific `ModelError` before
@@ -477,15 +496,17 @@ The first qualified portable slice is deliberately small:
 
 The experiment keeps `run_script(..., backend="solidcraft")` as the stable
 default and permits `backend="mitcad"` only as an explicit experimental
-choice. #212 formalizes this as an internal `BackendAdapter` registry. Each adapter
-declares `id`, display name, `compile_shape`, optional
+choice. #212 formalizes this as an internal `BackendAdapter` registry and
+#253 moves its shape boundary from `compile_shape` to `compile_ir`. Each
+adapter declares `id`, display name, `compile_ir`, optional
 `compile_assembly`, document family, executor and a capability set. The
-runner resolves that adapter once before executing model source and thereafter
-calls the adapter without engine-specific compile branches.
+runner evaluates model source, normalizes final Shape intent to `ModelIR`,
+then hands that same semantic representation to the selected backend.
 
 SolidCraft declares the stable Forge surface plus assemblies/native
-topology/drawings and continues to call the existing compiler and assembly
-lowerers unchanged. Mitcad declares only the already-qualified experimental
+topology/drawings. Typed portable nodes lower directly in the SolidCraft
+backend; `LegacyShapeIR` delegates only not-yet-migrated stable surface to the
+historical compiler. Mitcad declares only the already-qualified experimental
 slice: `primitive.box`, `sketch.circle`,
 `feature.extrude.distance`, `modify.chamfer.face-boundary` and
 `native-topology`; its assembly compiler is absent, so assembly intent fails
