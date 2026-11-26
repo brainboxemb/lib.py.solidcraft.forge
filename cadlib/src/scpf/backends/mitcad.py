@@ -316,7 +316,11 @@ def _extrude_commands(
                 "Mitcad PolygonProfileIR currently requires symmetric extrusion"
             )
         profile = sketch.profiles[0]
-        if parameters_in(profile.points):
+        if any(
+            parameters_in(value)
+            for point in profile.points
+            for value in point
+        ):
             raise ModelError(
                 "Mitcad PolygonProfileIR currently requires fixed coordinates"
             )
