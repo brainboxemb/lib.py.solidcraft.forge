@@ -1,7 +1,8 @@
 [
   {
-    "active": "Free",
+    "active": "Medium",
     "columns": [
+      "param:sleeve_height",
       "param:fit_diameter"
     ],
     "errors": [],
@@ -9,16 +10,26 @@
     "rows": [
       {
         "id": 5,
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "20 mm"
         }
       },
       {
         "id": 6,
-        "name": "Installed",
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "30 mm"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "40 mm"
         }
       }
     ],
@@ -27,6 +38,13 @@
     "style_status": [],
     "styles": [],
     "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
@@ -38,24 +56,35 @@
     "trace": []
   },
   {
-    "active": "Free",
+    "active": "Medium",
     "columns": [
+      "param:sleeve_height",
       "param:fit_diameter"
     ],
     "matches": true,
     "rows": [
       {
         "id": 5,
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "20 mm"
         }
       },
       {
         "id": 6,
-        "name": "Installed",
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "30 mm"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "40 mm"
         }
       }
     ],
@@ -63,6 +92,13 @@
     "style_error": null,
     "style_status": [],
     "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",

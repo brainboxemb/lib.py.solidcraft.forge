@@ -1,9 +1,15 @@
 [
   {
-    "display_value": 20.4,
+    "display_value": 30.0,
+    "name": "sleeve_height",
+    "unit": "mm",
+    "value": 30.0
+  },
+  {
+    "display_value": 19.8,
     "name": "fit_diameter",
     "unit": "mm",
-    "value": 20.4
+    "value": 19.8
   },
   {
     "component": 1,
@@ -21,7 +27,7 @@
       "FlexibleSleeve"
     ],
     "feature": 3,
-    "ms": 5.015137,
+    "ms": 4.082476,
     "name": "Cylinder1",
     "removed_bodies": [],
     "warning": null
@@ -35,7 +41,7 @@
     ],
     "created_bodies": [],
     "feature": 4,
-    "ms": 15.822152999999998,
+    "ms": 10.568965,
     "name": "Box1",
     "removed_bodies": [],
     "warning": null
@@ -46,6 +52,7 @@
   {
     "active": "Default",
     "columns": [
+      "param:sleeve_height",
       "param:fit_diameter"
     ],
     "matches": true,
@@ -54,7 +61,8 @@
         "id": 5,
         "name": "Default",
         "values": {
-          "param:fit_diameter": "20.4"
+          "param:fit_diameter": "19.8",
+          "param:sleeve_height": "30"
         }
       }
     ],
@@ -62,6 +70,13 @@
     "style_error": null,
     "style_status": [],
     "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
@@ -72,17 +87,19 @@
     ]
   },
   {
-    "active": "Free",
+    "active": "Small",
     "columns": [
+      "param:sleeve_height",
       "param:fit_diameter"
     ],
     "matches": true,
     "rows": [
       {
         "id": 5,
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4"
+          "param:fit_diameter": "19.8",
+          "param:sleeve_height": "30"
         }
       }
     ],
@@ -90,6 +107,13 @@
     "style_error": null,
     "style_status": [],
     "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
@@ -100,17 +124,19 @@
     ]
   },
   {
-    "active": "Free",
+    "active": "Small",
     "columns": [
+      "param:sleeve_height",
       "param:fit_diameter"
     ],
     "matches": false,
     "rows": [
       {
         "id": 5,
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "20 mm"
         }
       }
     ],
@@ -118,6 +144,13 @@
     "style_error": null,
     "style_status": [],
     "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
@@ -128,24 +161,27 @@
     ]
   },
   {
-    "active": "Free",
+    "active": "Small",
     "columns": [
+      "param:sleeve_height",
       "param:fit_diameter"
     ],
     "matches": false,
     "rows": [
       {
         "id": 5,
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "20 mm"
         }
       },
       {
         "id": 6,
-        "name": "Installed",
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "30 mm"
         }
       }
     ],
@@ -153,6 +189,13 @@
     "style_error": null,
     "style_status": [],
     "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
@@ -163,8 +206,62 @@
     ]
   },
   {
-    "active": "Free",
+    "active": "Small",
     "columns": [
+      "param:sleeve_height",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "20 mm"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Medium",
+        "values": {
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "30 mm"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "40 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Medium",
+    "columns": [
+      "param:sleeve_height",
       "param:fit_diameter"
     ],
     "errors": [],
@@ -172,16 +269,26 @@
     "rows": [
       {
         "id": 5,
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "20 mm"
         }
       },
       {
         "id": 6,
-        "name": "Installed",
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "30 mm"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "40 mm"
         }
       }
     ],
@@ -190,6 +297,13 @@
     "style_status": [],
     "styles": [],
     "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
@@ -201,24 +315,35 @@
     "trace": []
   },
   {
-    "active": "Free",
+    "active": "Medium",
     "columns": [
+      "param:sleeve_height",
       "param:fit_diameter"
     ],
     "matches": true,
     "rows": [
       {
         "id": 5,
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "20 mm"
         }
       },
       {
         "id": 6,
-        "name": "Installed",
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "30 mm"
+        }
+      },
+      {
+        "id": 7,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "40 mm"
         }
       }
     ],
@@ -226,6 +351,13 @@
     "style_error": null,
     "style_status": [],
     "targets": [
+      {
+        "key": "param:sleeve_height",
+        "label": "param:sleeve_height",
+        "target": {
+          "param": "sleeve_height"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",

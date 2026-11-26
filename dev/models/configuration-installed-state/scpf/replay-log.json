@@ -1,24 +1,34 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "0d39b03ac1cbd930156b14382f51db9c274ec3eab3483008276db7b3e2139b7b",
+  "replay_sha256": "6cdd1a00172db3564c13626bc8c069f10a5b9b9dd5508286b82d0d1fb0da5806",
   "variables": {
     "$flexible_sleeve": 2,
-    "$config_row_f411a1fb6275": 5,
-    "$config_row_f8b32f4e92bd": 6
+    "$config_row_5263293fc202": 5,
+    "$config_row_8e588cd18774": 6,
+    "$config_row_ab80540d98d2": 7
   },
   "commands": [
     {
       "index": 0,
       "command": "parameters.add",
       "resolved_params": {
-        "name": "fit_diameter",
-        "expression": "20.4",
+        "name": "sleeve_height",
+        "expression": "30",
         "unit": "mm"
       }
     },
     {
       "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "fit_diameter",
+        "expression": "19.8",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
       "command": "component.create",
       "resolved_params": {
         "name": "FlexibleSleeve",
@@ -29,15 +39,15 @@
       }
     },
     {
-      "index": 2,
+      "index": 3,
       "command": "solid.cylinder",
       "resolved_params": {
-        "height": 20.0,
+        "height": "sleeve_height",
         "diameter": "fit_diameter",
         "base": [
           0,
           0,
-          -10.0
+          "-(sleeve_height / 2)"
         ],
         "axis": "Z",
         "operation": "new",
@@ -45,12 +55,12 @@
       }
     },
     {
-      "index": 3,
+      "index": 4,
       "command": "solid.box",
       "resolved_params": {
         "length": 12,
         "width": 2.0,
-        "height": 22,
+        "height": "sleeve_height + 2 mm",
         "operation": "cut",
         "center": [
           6.0,
@@ -63,67 +73,84 @@
       }
     },
     {
-      "index": 4,
+      "index": 5,
       "command": "component.activate",
       "resolved_params": {
         "component": "root"
       }
     },
     {
-      "index": 5,
+      "index": 6,
       "command": "config.configure",
       "resolved_params": {
         "params": [
+          "sleeve_height",
           "fit_diameter"
         ]
-      }
-    },
-    {
-      "index": 6,
-      "command": "config.row",
-      "resolved_params": {
-        "name": "Default",
-        "rename": "Free"
-      },
-      "bindings": {
-        "$config_row_f411a1fb6275": 5
       }
     },
     {
       "index": 7,
       "command": "config.row",
       "resolved_params": {
-        "name": "Free",
-        "values": {
-          "param:fit_diameter": "20.4 mm"
-        }
+        "name": "Default",
+        "rename": "Small"
+      },
+      "bindings": {
+        "$config_row_5263293fc202": 5
       }
     },
     {
       "index": 8,
       "command": "config.row",
       "resolved_params": {
-        "name": "Installed",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:sleeve_height": "20 mm",
+          "param:fit_diameter": "19.8 mm"
         }
-      },
-      "bindings": {
-        "$config_row_f8b32f4e92bd": 6
       }
     },
     {
       "index": 9,
-      "command": "config.activate",
+      "command": "config.row",
       "resolved_params": {
-        "row": 5
+        "name": "Medium",
+        "values": {
+          "param:sleeve_height": "30 mm",
+          "param:fit_diameter": "19.8 mm"
+        }
+      },
+      "bindings": {
+        "$config_row_8e588cd18774": 6
       }
     },
     {
       "index": 10,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Large",
+        "values": {
+          "param:sleeve_height": "40 mm",
+          "param:fit_diameter": "19.8 mm"
+        }
+      },
+      "bindings": {
+        "$config_row_ab80540d98d2": 7
+      }
+    },
+    {
+      "index": 11,
+      "command": "config.activate",
+      "resolved_params": {
+        "row": 6
+      }
+    },
+    {
+      "index": 12,
       "command": "config.table",
       "resolved_params": {}
     }
   ],
-  "completed": 11
+  "completed": 13
 }

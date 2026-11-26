@@ -3,8 +3,16 @@
     {
       "command": "parameters.add",
       "params": {
+        "name": "sleeve_height",
+        "expression": "30",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
         "name": "fit_diameter",
-        "expression": "20.4",
+        "expression": "19.8",
         "unit": "mm"
       }
     },
@@ -18,12 +26,12 @@
     {
       "command": "solid.cylinder",
       "params": {
-        "height": 20.0,
+        "height": "sleeve_height",
         "diameter": "fit_diameter",
         "base": [
           0,
           0,
-          -10.0
+          "-(sleeve_height / 2)"
         ],
         "axis": "Z",
         "operation": "new",
@@ -35,7 +43,7 @@
       "params": {
         "length": 12,
         "width": 2.0,
-        "height": 22,
+        "height": "sleeve_height + 2 mm",
         "operation": "cut",
         "center": [
           6.0,
@@ -57,6 +65,7 @@
       "command": "config.configure",
       "params": {
         "params": [
+          "sleeve_height",
           "fit_diameter"
         ]
       }
@@ -65,24 +74,36 @@
       "command": "config.row",
       "params": {
         "name": "Default",
-        "rename": "Free"
+        "rename": "Small"
       }
     },
     {
       "command": "config.row",
       "params": {
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:sleeve_height": "20 mm",
+          "param:fit_diameter": "19.8 mm"
         }
       }
     },
     {
       "command": "config.row",
       "params": {
-        "name": "Installed",
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:sleeve_height": "30 mm",
+          "param:fit_diameter": "19.8 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:sleeve_height": "40 mm",
+          "param:fit_diameter": "19.8 mm"
         }
       }
     }

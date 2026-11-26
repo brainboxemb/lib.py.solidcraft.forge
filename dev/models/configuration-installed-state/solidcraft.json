@@ -3,7 +3,15 @@
     {
       "command": "parameters.add",
       "params": {
-        "expression": "20.4",
+        "expression": "30",
+        "name": "sleeve_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "19.8",
         "name": "fit_diameter",
         "unit": "mm"
       }
@@ -25,11 +33,11 @@
         "base": [
           0,
           0,
-          -10.0
+          "-(sleeve_height / 2)"
         ],
         "body_name": "FlexibleSleeve",
         "diameter": "fit_diameter",
-        "height": 20.0,
+        "height": "sleeve_height",
         "operation": "new"
       }
     },
@@ -41,7 +49,7 @@
           0.0,
           0.0
         ],
-        "height": 22,
+        "height": "sleeve_height + 2 mm",
         "length": 12,
         "operation": "cut",
         "targets": [
@@ -60,57 +68,79 @@
       "command": "config.configure",
       "params": {
         "params": [
+          "sleeve_height",
           "fit_diameter"
         ]
       }
     },
     {
       "bind": {
-        "$config_row_f411a1fb6275": {
+        "$config_row_5263293fc202": {
           "field": "rows",
           "select": "id",
           "where": {
-            "name": "Free"
+            "name": "Small"
           }
         }
       },
       "command": "config.row",
       "params": {
         "name": "Default",
-        "rename": "Free"
+        "rename": "Small"
       }
     },
     {
       "command": "config.row",
       "params": {
-        "name": "Free",
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "20 mm"
         }
       }
     },
     {
       "bind": {
-        "$config_row_f8b32f4e92bd": {
+        "$config_row_8e588cd18774": {
           "field": "rows",
           "select": "id",
           "where": {
-            "name": "Installed"
+            "name": "Medium"
           }
         }
       },
       "command": "config.row",
       "params": {
-        "name": "Installed",
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "30 mm"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_ab80540d98d2": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Large"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "19.8 mm",
+          "param:sleeve_height": "40 mm"
         }
       }
     },
     {
       "command": "config.activate",
       "params": {
-        "row": "$config_row_f411a1fb6275"
+        "row": "$config_row_8e588cd18774"
       }
     },
     {

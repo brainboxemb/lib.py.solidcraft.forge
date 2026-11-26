@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "1c43b058a2c8050f7822bb49957e11033dc6ea6124e8728aaad0474e2369fbde",
-          "size": 1781
+          "sha256": "a74a6d3654a555818ea7d5dda11fc3308d23d36ef245dcf452280d7622b0287f",
+          "size": 1974
         }
       ],
       "error": null,
@@ -19,10 +19,12 @@
         },
         "parameters": {
           "actual": {
-            "fit_diameter": 20.4
+            "fit_diameter": 19.8,
+            "sleeve_height": 30.0
           },
           "expected": {
-            "fit_diameter": 20.4
+            "fit_diameter": 19.8,
+            "sleeve_height": 30.0
           },
           "label": "SolidCraft parameters",
           "pass": true
@@ -36,15 +38,15 @@
       "artifacts": [
         {
           "kind": "file",
-          "path": "saved_designs/installed/model.sc",
-          "sha256": "95ddc0875897aabdd38d91c93309746c698520acde7227d56f1fd9621a13cf39",
-          "size": 8092
+          "path": "saved_designs/installed-medium/model.sc",
+          "sha256": "c2f1dff9960696022922fc60cf8e96449aa1b56ea13ce5ac88d797c722926540",
+          "size": 8188
         },
         {
           "kind": "file",
-          "path": "saved_designs/installed/measurements.json",
-          "sha256": "991dbabfafaa24d9a2681c2710abd38eac11c44f475a81de09eefe912b136085",
-          "size": 1762
+          "path": "saved_designs/installed-medium/measurements.json",
+          "sha256": "8f9897dcd93604ecc46f2afa13bdf16ef913d26b66b70dcf168b1095102701b1",
+          "size": 2106
         }
       ],
       "error": null,
@@ -59,17 +61,17 @@
           {
             "comparison": {
               "actual": {
-                "absolute_delta": 245.82755649802493,
-                "baseline": 6129.680533933166,
-                "mutated": 5883.852977435141
+                "absolute_delta": 181.54293421597868,
+                "baseline": 8644.23653193673,
+                "mutated": 8825.77946615271
               },
               "expected": {
                 "absolute_delta_gt": 1.0
               },
-              "label": "SolidCraft saved design change physical-geometry",
+              "label": "SolidCraft saved design change installed-fit",
               "pass": true
             },
-            "id": "physical-geometry",
+            "id": "installed-fit",
             "path": [
               "bodies",
               0,
@@ -79,16 +81,148 @@
         ],
         "parameters": {
           "actual": {
-            "fit_diameter": 20.0
+            "fit_diameter": 20.0,
+            "sleeve_height": 30.0,
+            "tube_d": 20.0
           },
           "expected": {
-            "fit_diameter": 20.0
+            "fit_diameter": 20.0,
+            "sleeve_height": 30.0,
+            "tube_d": 20.0
           },
           "label": "SolidCraft parameters",
           "pass": true
         }
       },
-      "id": "saved_design_installed",
+      "id": "saved_design_installed-medium",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/installed-large/model.sc",
+          "sha256": "21caee503e86923d628938b5e9bc1a7b3db7e5c7887ef94964db15f675651ac1",
+          "size": 8285
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/installed-large/measurements.json",
+          "sha256": "64bb2a047992e7fa0be7f4d158c19fc2afc878b3ce334ca1f6ac88b57155f89d",
+          "size": 2099
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 3123.4694229335473,
+                "baseline": 8644.23653193673,
+                "mutated": 11767.705954870278
+              },
+              "expected": {
+                "absolute_delta_gt": 1.0
+              },
+              "label": "SolidCraft saved design change installed-large-geometry",
+              "pass": true
+            },
+            "id": "installed-large-geometry",
+            "path": [
+              "bodies",
+              0,
+              "volume_mm3"
+            ]
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "fit_diameter": 20.0,
+            "sleeve_height": 40.0,
+            "tube_d": 20.0
+          },
+          "expected": {
+            "fit_diameter": 20.0,
+            "sleeve_height": 40.0,
+            "tube_d": 20.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_installed-large",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/free-large/model.sc",
+          "sha256": "cfc7e0fc06086e80bd1be40e1f22906ab254d6fdd0374d63eee90e80f05bfe68",
+          "size": 8291
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/free-large/measurements.json",
+          "sha256": "bd97a1d822172fc1795bbf547c3b2a83eb4960f1a3b73e0c34da413e7de005d4",
+          "size": 2144
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 2881.412177312246,
+                "baseline": 8644.23653193673,
+                "mutated": 11525.648709248977
+              },
+              "expected": {
+                "absolute_delta_gt": 1.0
+              },
+              "label": "SolidCraft saved design change free-large-geometry",
+              "pass": true
+            },
+            "id": "free-large-geometry",
+            "path": [
+              "bodies",
+              0,
+              "volume_mm3"
+            ]
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "fit_diameter": 19.8,
+            "sleeve_height": 40.0,
+            "tube_d": 20.0
+          },
+          "expected": {
+            "fit_diameter": 19.8,
+            "sleeve_height": 40.0,
+            "tube_d": 20.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_free-large",
       "reason": null,
       "status": "pass"
     },
@@ -97,8 +231,8 @@
         {
           "kind": "file",
           "path": "inspections/table/results.json",
-          "sha256": "10bec412d05bdd55cd9a9f339f446714d979cd22c3cc0d4cf90b21aa9df1cc5b",
-          "size": 636
+          "sha256": "7f32d60be676aa897acfa3a6dfd6bda625c29393e58504b20d9240eeca9c34de",
+          "size": 1082
         }
       ],
       "error": null,
@@ -106,8 +240,8 @@
         "checks": [
           {
             "comparison": {
-              "actual": 2,
-              "expected": 2,
+              "actual": 3,
+              "expected": 3,
               "label": "SolidCraft inspection check rows",
               "pass": true
             },
@@ -119,8 +253,8 @@
           },
           {
             "comparison": {
-              "actual": "Free",
-              "expected": "Free",
+              "actual": "Medium",
+              "expected": "Medium",
               "label": "SolidCraft inspection check active",
               "pass": true
             },
@@ -145,40 +279,40 @@
           },
           {
             "comparison": {
-              "actual": "20.4 mm",
-              "expected": "20.4 mm",
-              "label": "SolidCraft inspection check free-diameter",
+              "actual": "30 mm",
+              "expected": "30 mm",
+              "label": "SolidCraft inspection check medium-size",
               "pass": true
             },
-            "id": "free-diameter",
+            "id": "medium-size",
             "path": [
               0,
               "rows",
               {
                 "select": {
                   "field": "name",
-                  "value": "Free"
+                  "value": "Medium"
                 }
               },
               "values",
-              "param:fit_diameter"
+              "param:sleeve_height"
             ]
           },
           {
             "comparison": {
-              "actual": "20.0 mm",
-              "expected": "20.0 mm",
-              "label": "SolidCraft inspection check installed-diameter",
+              "actual": "19.8 mm",
+              "expected": "19.8 mm",
+              "label": "SolidCraft inspection check medium-free-fit",
               "pass": true
             },
-            "id": "installed-diameter",
+            "id": "medium-free-fit",
             "path": [
               0,
               "rows",
               {
                 "select": {
                   "field": "name",
-                  "value": "Installed"
+                  "value": "Medium"
                 }
               },
               "values",

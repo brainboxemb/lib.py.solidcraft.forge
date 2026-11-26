@@ -1,23 +1,23 @@
 {
   "bodies": [
     {
-      "area_mm2": 2242.9503655574554,
+      "area_mm2": 3070.232899464426,
       "bbox": {
         "max": [
           9.9498743710662,
           10.0,
-          10.0
+          15.0
         ],
         "min": [
           -9.999999999999998,
           -9.999999999999998,
-          -10.0
+          -15.0
         ]
       },
       "center_of_mass": [
-        -0.338780275608154,
-        -5.708552955543639e-16,
-        5.048430569947939e-16
+        -0.33878027560815327,
+        -9.909090978292145e-16,
+        1.4786131005809931e-15
       ],
       "closed": true,
       "density_g_cm3": 1.29,
@@ -33,13 +33,13 @@
         "shells": 1,
         "vertices": 10
       },
-      "mass_g": 7.590170340891332,
+      "mass_g": 11.385255511336997,
       "material": "Default",
       "measured_by": "smlib",
       "name": "FlexibleSleeve",
       "notes": [],
       "vertices": 8,
-      "volume_mm3": 5883.852977435141
+      "volume_mm3": 8825.77946615271
     }
   ],
   "body_count": 1,
@@ -47,9 +47,27 @@
     {
       "comment": "",
       "error": null,
-      "expression": "20.0 mm",
+      "expression": "30 mm",
+      "model": false,
+      "name": "sleeve_height",
+      "unit": "mm",
+      "value": 30.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "tube_d",
       "model": false,
       "name": "fit_diameter",
+      "unit": "mm",
+      "value": 20.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "20",
+      "model": false,
+      "name": "tube_d",
       "unit": "mm",
       "value": 20.0
     }
@@ -59,7 +77,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 4.689869,
+      "ms": 2.0650299999999997,
       "name": "Cylinder1",
       "rolled_back": false,
       "suppressed": false,
@@ -69,7 +87,7 @@
     {
       "error": null,
       "id": 4,
-      "ms": 16.018144000000003,
+      "ms": 9.234519,
       "name": "Box1",
       "rolled_back": false,
       "suppressed": false,
@@ -78,12 +96,12 @@
     }
   ],
   "total": {
-    "area_mm2": 2242.9503655574554,
+    "area_mm2": 3070.232899464426,
     "edges": 12,
     "faces": 6,
-    "mass_g": 7.590170340891332,
+    "mass_g": 11.385255511336997,
     "open_bodies_skipped": 0,
     "vertices": 8,
-    "volume_mm3": 5883.852977435141
+    "volume_mm3": 8825.77946615271
   }
 }
