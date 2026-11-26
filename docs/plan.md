@@ -12,10 +12,10 @@ maintain competing branch-local plans.
 ## Accepted baseline
 
 The Forge migration is complete and the current public product baseline is
-released as **v0.23.0**.
+released as **v0.24.0**.
 
 The accepted baseline now includes:
-- 59 physical model owners, with SCPF primary per owner and historically real
+- 60 physical model owners, with SCPF primary per owner and historically real
   reference implementations kept inside the same physical owner;
 - native, geometry, inspection and applicable visual verification with durable
   generated evidence below `build/<scope>/models/**`;
@@ -55,6 +55,12 @@ The accepted baseline now includes:
   `DriveParameter(...)`, keeping Installed state independent from ordinary
   Small / Medium / Large rows while disabling the rule restores the active
   row's stored Free/base expression;
+- explicit reusable-child feature publication through
+  `Shape.export_feature(name)` plus definition-level
+  `Occurrence.feature(name)`, so a parent/root `Configure(...)` may use
+  `Suppress(child.feature(name))` without exposing SolidCraft/replay feature
+  ids; separately constructed occurrences that share the same component
+  definition resolve the same authored child history;
 - public symbolic CAD math through `scpf.cadmath.min()`, `max()`,
   `sqrt()`, `abs()`, `round()`, `floor()` and `atan()`, preserving
   source parameter dependencies in SolidCraft expressions;
@@ -111,22 +117,30 @@ Release evidence for v0.23.0:
   `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689` and the GitHub Release is
   published.
 
-Qualified normal-lane evidence after v0.23.0:
-- #380 / PR #392 added explicit reusable-child feature exports through
-  `Shape.export_feature(name)` and definition-level
-  `Occurrence.feature(name)` references, allowing parent/root
-  `Suppress(...)` columns without exposing SolidCraft/replay feature ids;
+Release evidence for v0.24.0:
+- #255 / PR #376 completed the seven-owner visible-geometry evidence follow-up,
+  and #380 / PR #392 added explicit reusable-child feature exports through
+  `Shape.export_feature(name)` plus definition-level
+  `Occurrence.feature(name)` references for parent/root `Suppress(...)`;
 - the Forge-owned `configuration-child-feature` owner proves two separately
-  constructed occurrences share one parent-driven child parameter while
-  Small/Medium suppress the exported child cut and Large enables the same real
-  native history feature after save/reopen;
-- final PR CI 45908830410 is green, PR #392 merged to permanent `dev` as
-  `d23bc22e7a7af253664fae057d881c8170acd401`, permanent dev
-  qualification/build/publication run 45909235443 is green, and Pages run
-  45909580231 plus deployment 45909680743 are green;
-- this capability is qualified on `dev` but is not part of a published Forge
-  tag yet. Downstream CAD #189 must remain pinned to a released Forge version
-  until the normal-lane release below is published.
+  constructed occurrences share one parent-driven child parameter, that
+  Small/Medium suppress the exported child cut, and that Large enables the
+  same real native history feature after save/reopen;
+- final #380 PR CI 45908830410 and permanent dev qualification/build/publication
+  run 45909235443 are green;
+- #398 / PR #399 stabilized the qualified dev product to stable `main` as
+  `ba4c655f552fb9c75a7fb9825e52ee5d3b185f45`, with permanent stable full
+  qualification/build run 45910580497 green;
+- #400 / PR #402 merged metadata-only release commit
+  `61aef227ac6723b4fba526912749dc28bf474741`; stable release-only run
+  45911068181 is green with release + library and zero selected model owners;
+- publication workflow 45911142762 is green, annotated tag `v0.24.0`
+  dereferences exactly to `61aef227ac6723b4fba526912749dc28bf474741`,
+  and the GitHub Release is published;
+- stable Pages run 45911099837 and deployment 45911155707 are green;
+- #403 synchronized released `main -> dev` as
+  `682f42d73aa91f66daab3a9dead4724537989966`, with permanent post-release
+  dev run 45911643864 green.
 
 Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded `SphereIR` through native Mitcad join/cut/intersect;
@@ -153,20 +167,15 @@ The historical repository remains an archived A/B/provenance reference at
 Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
 
 Normal `dev` lane:
-- #380 / PR #392 is complete on permanent `dev`; the reusable-child feature
-  reference contract is qualified independently from experimental Mitcad work;
-- the next normal-lane product checkpoint is the **v0.24.0** minor release:
-  stabilize the already-qualified `dev` product to `main` through the
-  reviewed permanent `dev -> main` merge-commit path, then prepare
-  metadata-only release `release/v0.24.0` from qualified stable `main`;
-- do not integrate downstream CAD #189 against an unreleased Forge branch; it
-  may adopt this capability only after the v0.24.0 tag is published;
-- #255 / PR #376 remains complete on `dev`: seven audited visible-geometry
-  owners retain approved `front`, `right` and `iso` regression baselines
-  plus expected-shape evidence while preserving existing
-  native/history/topology checks;
-- keep later verification-evidence follow-ups #256 and #257 behind this
-  demonstrated consumer release checkpoint.
+- **v0.24.0 is released** and synchronized back to permanent `dev`; #380 is
+  no longer a Forge release blocker for downstream CAD #189, which may now pin
+  the released v0.24.0 capability;
+- #255 remains complete and its approved visual evidence is part of the v0.24.0
+  baseline;
+- continue verification-evidence follow-up #256 next, then #257, unless a newer
+  demonstrated consumer blocker takes priority;
+- keep normal consumer work independent from experimental Mitcad/compiler work;
+  do not use `exp` as a staging lane for these verification follow-ups.
 
 Experimental `exp` lane:
 - #393 is the immediate architecture/control checkpoint before more backend capability code;
