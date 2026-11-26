@@ -179,11 +179,20 @@ class ModelTests(unittest.TestCase):
             if model_id == "sample-plate-drawing":
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
-                    ["native", "drawing-sheet"],
+                    ["native", "drawing-sheet", "compact-drawing-sheet"],
                 )
                 self.assertEqual(
                     [stage.runtime for stage in model.verifications],
-                    ["solidcraft", "reference"],
+                    ["solidcraft", "reference", "reference"],
+                )
+            elif model_id == "sheet-perforate":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "manufacturing-visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "solidcraft"],
                 )
             else:
                 self.assertEqual(
@@ -276,7 +285,11 @@ class ModelTests(unittest.TestCase):
                 pair
                 for model in self.models
                 for pair in (
-                    [("scpf", "native")]
+                    (
+                        [("scpf", "native"), ("scpf", "manufacturing-visual")]
+                        if model.id == "sheet-perforate"
+                        else [("scpf", "native")]
+                    )
                     if model.id in SCPF_ONLY_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
                 )
@@ -288,7 +301,7 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
         self.assertEqual(
             len(reference["verify_items"]),
-            multi_engine * 5 + 1,
+            multi_engine * 5 + 2,
         )
         self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
         self.assertEqual(
@@ -308,6 +321,7 @@ class ModelTests(unittest.TestCase):
                 ("pythonscad", "geometry"),
                 ("pybosl2", "geometry"),
                 ("scpf", "drawing-sheet"),
+                ("scpf", "compact-drawing-sheet"),
             },
         )
 
