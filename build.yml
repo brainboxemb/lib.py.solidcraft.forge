@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/218-scpf-mitcad-builder
+branch: feature/221-mitcad-runtime-candidate
 modules: [builder-scpf-mitcad, ci]
-library: false
-models: []
+library: true
+models: [simple-box, circle-negative-extrude]
 tasks: [test]
