@@ -1,6 +1,6 @@
 schema: 1
-branch: fix/202-exp-current-dispatch-head
-modules: [ci, build]
+branch: docs/206-exp-reconcile-dispatch-plan
+modules: [ci]
 library: false
 models: []
 tasks: [test]
