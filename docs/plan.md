@@ -68,6 +68,10 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
+### Experimental blocker: #214 isolate revolute-joint native failure
+
+The first permanent `exp` build after #212 reported only `revolute-joint--scpf:native` as an error while the same owner passed on the immediately preceding #192 baseline. Isolate that owner on current `exp` before changing backend code; #212 remains unfinished until durable `build/exp` publication succeeds.
+
 ### Experimental: #212 formalize the native backend adapter boundary
 
 #192 is accepted on `exp`: unchanged Forge sources proved native Mitcad
