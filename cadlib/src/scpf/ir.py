@@ -232,7 +232,11 @@ def _polygon_region_interior_point(
         )
 
     profile = sketch.profiles[0]
-    if parameters_in(profile.points):
+    if any(
+        parameters_in(value)
+        for point in profile.points
+        for value in point
+    ):
         raise ValueError(
             "qualified polygon region currently requires fixed coordinates"
         )
@@ -527,7 +531,11 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
         if profile_anchor is not None or tuple(offset) != (0, 0):
             return None
         points, profile_plane, ids = profile.data
-        if profile_plane != plane or parameters_in(points):
+        if profile_plane != plane or any(
+            parameters_in(value)
+            for point in points
+            for value in point
+        ):
             return None
 
         polygon = PolygonProfileIR(
