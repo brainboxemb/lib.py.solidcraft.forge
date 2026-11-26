@@ -48,6 +48,12 @@ class HistoryTests(unittest.TestCase):
             "baseline",
         )
 
+    @patch("cad_library_ci.history._json")
+    def test_experimental_history_requests_only_exp(self, get):
+        get.return_value = {"workflow_runs": []}
+        self.assertIsNone(last_successful_dev_sha(repository="owner/repo", branch="exp", token="token", current_run_id=1, target_sha="new"))
+        self.assertIn("branch=exp&", get.call_args.args[0])
+
     @patch("cad_library_ci.history.subprocess.run")
     def test_non_ancestor_baseline_forces_full_fallback(self, run):
         run.return_value.returncode = 1

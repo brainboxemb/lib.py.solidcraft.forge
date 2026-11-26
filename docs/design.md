@@ -301,9 +301,15 @@ Owner-level canonical artifacts come from the configured primary implementation.
 
 Pages reads the durable scope and links generated files on the build branch. Generated CAD artifacts are not copied into `gh-pages`.
 
-Workflow roles follow `template.cad.library`: pull requests run only the central `ci` qualification job; permanent `dev`/`main` events run one `build` job that executes selected project work and publishes the durable scope. After publication that build dispatches the independent `pages.yml` workflow and finishes without waiting for Pages.
+Workflow roles follow `template.cad.library`: pull requests run only the central `ci` qualification job; permanent `dev`/`main`/`exp` events run one `build` job that executes selected project work and publishes the durable scope. After publication that build dispatches the independent `pages.yml` workflow and finishes without waiting for Pages.
 
 The schema-2 `build-plan.json` also records whether the independent `cadlib` owner was selected and qualified. Stable release qualification requires `library: true`, a full build, all active owners selected, and owner-local successful evidence whose source provenance matches the exact release commit.
+
+## Experimental development line
+
+Forge consumes the qualified optional `exp` contract from `template.cad.library`. `exp` is a permanent integration branch for research that must not destabilize normal `dev` or stable `main`. Temporary work branches may squash into `exp`; `dev -> exp` synchronization and completed `exp -> dev` integration use merge commits with full PR qualification. `exp -> main` and releases from `exp` are rejected.
+
+Permanent experimental builds keep durable evidence under `build/exp/`. Pages assembles `/exp/` only while the branch exists and marks that projection as experimental. The same single serialized Pages publication continues to own the complete `gh-pages` tree.
 
 ## Pages projection
 
@@ -411,7 +417,7 @@ release-blockers and `TESTED_SOLIDCRAFT_VERSION`. It emits release notes but
 owns no generic build, tag or GitHub Release mechanics.
 
 `release/*` is a first-class temporary branch whose valid integration target
-is stable `main`; other temporary branches target `dev`. Branch cleanup uses
+is stable `main`; other temporary branches may target `dev` or `exp`. Branch cleanup uses
 the same target mapping so cleanup cannot legitimize an invalid branch
 integration.
 

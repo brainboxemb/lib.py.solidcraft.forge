@@ -12,11 +12,16 @@ def is_temporary(branch: str, config: CleanupConfig) -> bool:
 
 
 def merge_target(branch: str, config: CleanupConfig) -> str:
-    """Return the only permanent branch that may consume this temporary branch."""
+    """Return the primary integration target (release branches target stable)."""
 
     if branch.startswith("release/"):
         return config.stable
     return config.development
+
+
+def merge_targets(branch: str, config: CleanupConfig) -> tuple[str, ...]:
+    primary = merge_target(branch, config)
+    return (primary,) if branch.startswith("release/") else (primary, "exp")
 
 
 def eligible_post_merge(
@@ -31,7 +36,7 @@ def eligible_post_merge(
         merged
         and same_repository
         and is_temporary(head, config)
-        and base == merge_target(head, config)
+        and base in merge_targets(head, config)
     )
 
 

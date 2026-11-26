@@ -40,6 +40,14 @@ class MergePolicyTests(unittest.TestCase):
     def test_feature_to_dev_is_squash(self):
         self.assertEqual(merge_method(head="issue/10-change", base="dev"), "squash")
 
+    def test_experimental_routes(self):
+        self.assertEqual(merge_method(head="feature/190-work", base="exp"), "squash")
+        self.assertEqual(merge_method(head="dev", base="exp"), "merge")
+        self.assertEqual(merge_method(head="exp", base="dev"), "merge")
+        for head, base in (("exp", "main"), ("main", "exp"), ("release/v1", "exp"), ("release/v1", "dev")):
+            with self.subTest(head=head, base=base), self.assertRaises(MergePolicyError):
+                merge_method(head=head, base=base)
+
     def test_release_to_main_is_squash(self):
         self.assertEqual(
             merge_method(head="release/v1.2.3", base="main"),

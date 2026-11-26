@@ -21,6 +21,12 @@ class PolicyTests(unittest.TestCase):
         self.assertFalse(is_temporary("main", CONFIG))
         self.assertFalse(is_temporary("dev", CONFIG))
 
+    def test_experimental_cleanup(self):
+        self.assertFalse(is_temporary("exp", CONFIG))
+        self.assertTrue(eligible_post_merge(head="feature/190-work", base="exp", same_repository=True, merged=True, config=CONFIG))
+        self.assertFalse(eligible_post_merge(head="release/v1", base="exp", same_repository=True, merged=True, config=CONFIG))
+        self.assertFalse(eligible_post_merge(head="exp", base="dev", same_repository=True, merged=True, config=CONFIG))
+
     def test_allowed_prefix_is_temporary(self):
         self.assertTrue(is_temporary("issue/11-cleanup", CONFIG))
 

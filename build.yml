@@ -1,6 +1,6 @@
 schema: 1
-branch: fix/186-appearance-cheatsheet-group
-modules: [pages]
+branch: feature/190-exp-development-line
+modules: [ci, build, pages, merge-policy, branch-cleanup]
 library: false
 models: []
 tasks: [test]

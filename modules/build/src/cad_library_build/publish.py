@@ -133,6 +133,7 @@ def publish(repo, candidate, source_ref, source_sha):
     if source_ref not in (
         config["branches"]["stable"],
         config["branches"]["development"],
+        "exp",
     ):
         raise PublishError("publication requires permanent source branch")
     branch = config["generated"]["build_branch"]

@@ -2,7 +2,7 @@
 
 ## Working branches
 
-Create work from `dev`, set the exact branch in `build.yml`, select the smallest useful owners, and squash to `dev` after qualification. Promote `dev -> main` only with a full-green promotion run.
+Create normal work from `dev`. Long-running experimental work uses permanent `exp`; temporary work branches squash into the integration line they belong to. Synchronize `dev -> exp` and integrate a completed experiment with `exp -> dev` through merge commits. `exp -> main` and releases from `exp` are forbidden. Set the exact temporary branch in `build.yml` and select the smallest useful owners. Promote `dev -> main` only with a full-green promotion run.
 
 ## Library
 
@@ -52,7 +52,9 @@ build/<source-branch>/models/<owner>/
   <implementation>/...
 ```
 
-The owner root exposes canonical artifacts from its configured primary implementation. Pages reads durable build evidence and does not rebuild CAD. For implementations with named verification stages, the model page renders each stage status and links its stage-local durable report while retaining the aggregate verification status.
+`main`, `dev` and optional `exp` each own an isolated durable scope. The owner root exposes canonical artifacts from its configured primary implementation. Pages reads durable build evidence and does not rebuild CAD. For implementations with named verification stages, the model page renders each stage status and links its stage-local durable report while retaining the aggregate verification status.
+
+Stable Pages is published at `/`, normal development at `/dev/`, and an existing experimental line at `/exp/` with an explicit experimental banner.
 
 ## Pages homepage
 
