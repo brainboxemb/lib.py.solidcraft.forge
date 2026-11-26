@@ -772,8 +772,8 @@ interpret portable raw `Shape.kind` / `Shape.data` payloads independently.
 The typed IR began with the first qualified portable slice:
 `BoxIR`, standalone Circle2D Sketch+Extrude intent, `ChamferIR` and semantic
 `FaceBoundaryIR` selection intent. #246 extends the same boundary with
-`CylinderIR` and the deliberately bounded
-`BooleanSubtractIR(BoxIR, CylinderIR)`; #282 then splits the former fused
+`CylinderIR`; #343 later replaces the initial bounded Box-Cylinder boolean proof
+with recursive `BooleanIR` plus `SphereIR`. #282 splits the former fused
 Circle+Extrude node into `SketchIR`, `CircleProfileIR`, `RegionIR` and
 `ExtrudeIR`. Symbolic Forge `Parameter` / `Expression` values remain
 semantic values until backend lowering.
@@ -832,8 +832,8 @@ backend; `LegacyShapeIR` delegates only not-yet-migrated stable surface to the
 historical compiler. Mitcad declares only the already-qualified experimental
 slice: `primitive.box`, `primitive.cylinder`, `primitive.sphere`,
 `boolean.subtract`, `boolean.join`, `boolean.intersect`,
-`placement.primitive`, `sketch.circle`, `profile.region`,
-`feature.extrude.distance`,
+`placement.primitive`, `sketch.circle`, `sketch.polygon`, `profile.region`,
+`feature.extrude.distance`, `feature.extrude.symmetric`,
 `modify.chamfer.face-boundary` and `native-topology`; its assembly compiler is absent, so assembly intent fails
 explicitly at the boundary. This registry is intentionally internal: it does
 not rename `scpf`, expose a new public backend API or imply feature parity.
@@ -1019,6 +1019,76 @@ SolidCraft lowering remains byte-for-byte compatible with the accepted legacy
 command plan for both qualified owners. `circle-negative-extrude` retains the
 single-region A/B proof; `multi-profile-extrude` adds the annular proof and
 uses the same physical owner/source for SolidCraft and Mitcad.
+
+### Experimental polygon Extrude + feature-composition IR (#351)
+
+#351 extends the Sketch/Profile compiler boundary from circles to one bounded
+closed straight-segment profile and, more importantly, proves that one typed
+feature result may feed another typed feature without returning to raw Shape
+payloads:
+
+```text
+Polygon2D
+    ↓
+SketchIR(
+  profiles=(PolygonProfileIR(...),)
+)
+    ↓
+RegionIR(outer=0)
+    ↓
+ExtrudeIR(direction="symmetric", distance=15)
+    ↓
+ChamferIR(
+  base=<that ExtrudeIR>,
+  edges=FaceBoundaryIR(("front", "back"))
+)
+      ├── SolidCraft
+      │     one XZ Sketch + closed sketch.line
+      │     → symmetric solid.extrude
+      │     → replay-resolved FRONT/BACK boundaries
+      │     → one solid.chamfer
+      └── Mitcad
+            one native XZ Sketch with Point/Line entities
+            → native symmetric full-length Extrude
+            → runtime body + FRONT/BACK boundary queries
+            → one native Chamfer
+```
+
+`PolygonProfileIR` stores Sketch-local points and optional authored segment
+ids only. It contains no SolidCraft curve ids, Mitcad entity ids or native
+region ids. The first Mitcad-qualified slice is intentionally strict: one
+fixed, finite, strictly convex polygon. The frontend validates that shape and
+derives a deterministic interior selector from its semantic geometry only when
+native lowering needs a point-based region bind. Parameterized, concave or
+degenerate polygon forms stay behind `LegacyShapeIR` rather than being baked
+or approximated.
+
+Symmetric extrusion remains one Forge semantic. The public SCPF distance is the
+total full length. SolidCraft keeps its existing
+`direction="symmetric", distance=<total>` spelling. Mitcad lowers the same
+intent through v0.70.0's native symmetric extent with
+`full_length=true`; Forge does not reinterpret the authored 15 mm as 15 mm
+per side.
+
+This checkpoint also widens `ChamferIR.base` from only a placed Box to the
+qualified typed `ExtrudeIR` result. Lowerings therefore recurse through the
+semantic feature chain. SolidCraft reproduces the accepted legacy command
+document. Mitcad first creates the Sketch/Extrude body, then resolves topology
+against that native result. Neither backend inspects the original
+`sketch_base_extrusion` Shape payload after normalization.
+
+The existing Mitcad replay transport keeps its single-face `face={...}`
+contract unchanged and adds a backward-compatible multi-face
+`faces=[...]` form. Each query resolves one native face boundary; the adapter
+combines and deduplicates returned native edge names before executing one
+Chamfer feature. The query list and returned edge identities are transport
+details and never enter `FaceBoundaryIR`.
+
+The unchanged `topology-face-boundary-xz` physical owner is the qualification
+case. It adds `scpf-mitcad` beside SolidCraft and applies one shared mesh
+contract to both exports. Bounds prove the 40 × 15 × 30 symmetric extrusion;
+surface-distance probes on different FRONT/BACK boundary orientations prove
+the 1.5 mm equal-distance chamfer instead of accepting an unchanged prism.
 
 ### Experimental Mitcad builder boundary (#218)
 
