@@ -6,7 +6,7 @@ so authoring a sketch remains distinct from extruding/cutting it.
 from contextvars import ContextVar
 from math import isclose, isfinite
 
-from .core import Anchor, Axis, AxisLine, Depth, Shape, command_value, _pv as pv
+from .core import Anchor, Axis, AxisLine, Depth, Shape, command_value, parameters_in, _pv as pv
 
 _ACTIVE_SKETCH = ContextVar("scpf_active_sketch", default=None)
 
@@ -1034,15 +1034,18 @@ class Sketch:
                 raise ValueError("revolve AxisLine direction must lie in the Sketch plane")
             authored_plane = command_value(plane_coordinate)
             authored_axis = command_value(axis_origin[normal])
-            if (
-                str(authored_plane) != str(authored_axis)
-                and not isclose(
+            symbolic_plane = bool(parameters_in(plane_coordinate))
+            symbolic_axis = bool(parameters_in(axis_origin[normal]))
+            if symbolic_plane or symbolic_axis:
+                coplanar = str(authored_plane) == str(authored_axis)
+            else:
+                coplanar = isclose(
                     pv(plane_coordinate),
                     pv(axis_origin[normal]),
                     rel_tol=0.0,
                     abs_tol=1e-9,
                 )
-            ):
+            if not coplanar:
                 raise ValueError("revolve AxisLine origin must lie in the Sketch plane")
             axis_spec = (axis_origin, axis_direction)
         else:

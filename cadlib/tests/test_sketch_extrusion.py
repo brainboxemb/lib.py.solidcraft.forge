@@ -277,6 +277,12 @@ class SketchExtrusionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "requires AxisLine"):
             sketch.revolve(axis=Axis.Y)
 
+        other_plane_z = Parameter("other_plane_z", 3)
+        with self.assertRaisesRegex(ValueError, "origin must lie"):
+            sketch.revolve(
+                axis=AxisLine(Axis.Y, origin=(0, 0, other_plane_z))
+            )
+
     def test_sketch_revolve_validates_world_axis_plane_and_sweep(self):
         with Sketch(name="Profile", plane="XZ") as sketch:
             Polygon2D(
@@ -292,7 +298,7 @@ class SketchExtrusionTests(unittest.TestCase):
             sketch.revolve(axis=Axis.X, angle=361)
         with self.assertRaisesRegex(TypeError, "True or False"):
             sketch.revolve(axis=Axis.X, sym="yes")
-        with self.assertRaisesRegex(ValueError, "Axis.X, Axis.Y or Axis.Z"):
+        with self.assertRaisesRegex(ValueError, "Axis.X/Y/Z or AxisLine"):
             sketch.revolve(axis="X")
 
     def test_sketch_extrude_default_keeps_all_profiles(self):
