@@ -12,7 +12,7 @@ maintain competing branch-local plans.
 ## Accepted baseline
 
 The Forge migration is complete and the current public product baseline is
-released as **v0.22.1**.
+released as **v0.23.0**.
 
 The accepted baseline now includes:
 - 59 physical model owners, with SCPF primary per owner and historically real
@@ -50,6 +50,11 @@ The accepted baseline now includes:
   drives a deliberately published reusable-child parameter, multiple child
   occurrences share that one native parameter, and saved-design row switching
   recomputes child geometry without rerunning Forge Python;
+- typed native Configuration Rules through
+  `Configure(..., rules=...)`, `ConfigRule(...)`, `Always()` and
+  `DriveParameter(...)`, keeping Installed state independent from ordinary
+  Small / Medium / Large rows while disabling the rule restores the active
+  row's stored Free/base expression;
 - public symbolic CAD math through `scpf.cadmath.min()`, `max()`,
   `sqrt()`, `abs()`, `round()`, `floor()` and `atan()`, preserving
   source parameter dependencies in SolidCraft expressions;
@@ -87,23 +92,22 @@ The accepted baseline now includes:
 - stable Pages quality and the canonical Pages deployment;
 - policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks.
 
-Release evidence for v0.22.1:
-- #306 qualification product head:
-  `4370cc398ac8913dacda1c02a57edc13ef8c58ba`;
-- permanent stable full qualification run 45845367923 is green on that product
-  head;
-- canonical-main governance landed through #307 / PR #308 as
-  `5a982afe3bf7aa6ad07980df123ded50dfce98cf`, with permanent stable CI run
-  45848533724 green;
-- release metadata commit:
-  `d09a8d0d47166c4ae375685d9c7ebc09a234fcd9`;
-- annotated tag `v0.22.1` points exactly to that release commit and the
-  GitHub Release is published;
-- the metadata-only stable release path retained the prior full product evidence
-  rather than replacing it;
-- stable -> dev synchronization completed through #327 / PR #328 as merge
-  commit `3c1c7e3f9986fb31d0567c57802855d57df7dfb7`, with permanent dev CI run
-  45850246882 green.
+Release evidence for v0.23.0:
+- #315 completed through native-contract PR #336 and public typed API PR #348,
+  with permanent dev qualification/build run 45860020832 green;
+- #353 / PR #354 stabilized that qualified product through the permanent
+  `dev -> main` merge-commit path as
+  `4095f1b377a088f7d2c9b5eba319ddcc2c84af90`;
+- permanent stable full qualification/build run 45862411015 is green on that
+  product head;
+- release metadata landed through #356 / PR #357 as
+  `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689`;
+- stable release-only run 45863277563 is green, selected release + library and
+  zero model owners, and retained the prior full `build/main` product
+  baseline;
+- annotated tag `v0.23.0` points exactly to
+  `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689` and the GitHub Release is
+  published.
 
 The pinned SolidCraft 0.49 registry still has no native centre-mark or
 centre-line drawing-authoring command; Forge deliberately does not emulate
@@ -114,79 +118,53 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Active normal lane: prepare v0.23.0 release
+### Post-release permanent-lane synchronization
 
-#315 is complete on permanent `dev`. The consumer requirement is now proven
-through native SolidCraft Configuration Rules and exposed through typed Forge
-intent:
+The v0.23.0 product release and the current isolated compiler experiment are
+both at qualified checkpoints. No new product or experimental capability is
+selected until the accepted baseline has been synchronized across the
+permanent lanes.
 
-- #336 retained the exact SolidCraft 0.49 `config.rule` contract and proved
-  save/reopen independence of Small / Medium / Large row selection and the
-  Installed rule checkbox;
-- #348 added public `ConfigRule(...)`, `Always()` and
-  `DriveParameter(...)` authoring through `Configure(..., rules=...)`;
-- the `configuration-installed-state` owner proves two reusable child
-  occurrences share a parent-owned fit parameter while size rows remain one
-  ordinary axis;
-- Installed is enabled by default for the assembled case, disabling it restores
-  the active row's Free/base expression, and changing size does not change the
-  rule's enabled state;
-- no numeric boolean parameter, Cartesian size/state rows, duplicate bodies or
-  Python geometry branching are used;
-- permanent `dev` qualification/build run 45860020832 is green and published
-  durable `build/dev` evidence.
+Normal/stable checkpoint:
+- v0.23.0 is published at
+  `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689`;
+- #315's Small / Medium / Large row axis plus independent Installed rule is
+  released public Forge behavior;
+- the release-only stable path is green and did not replace the retained full
+  stable CAD evidence.
 
-Because #315 adds public Forge authoring API, the next normal-lane step is the
-minor **v0.23.0** product release. Stabilize the qualified `dev` product to
-`main` with the normal reviewed `dev -> main` merge-commit path, then prepare
-the metadata-only `release/v0.23.0` branch from stable `main`, publish through
-the owner-issued release workflow, and synchronize the stable-only release
-commit back with `main -> dev`. Do not rebuild the product on the release
-branch and do not involve `exp` in the stable release path.
+Experimental checkpoint:
+- #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded
+  `SphereIR` through native Mitcad primitive join/cut/intersect while keeping
+  SolidCraft behavior compatible; permanent exp
+  `6826ea2c6ca0dfefb054dd4791d4e0303489f413`, CI 45859528081 and Pages
+  45860055299 are green;
+- #351 / PR #355 then qualified typed
+  `PolygonProfileIR -> RegionIR -> symmetric ExtrudeIR -> ChamferIR`
+  composition from the unchanged public SCPF source; current permanent exp
+  `d9bb05d71e58a3b2069dfbf802f40a09a5ca32df`, CI 45862418767 and Pages
+  45862908963 are green;
+- neither checkpoint changes the public SCPF API and neither is promoted
+  `exp -> dev`.
 
-### Experimental lane: #343 recursive primitive CSG IR
+Complete the cross-lane checkpoint in this order:
 
-The isolated semantic-IR / Mitcad line is currently at a qualified checkpoint.
+1. synchronize accepted stable `main` governance and v0.23.0 release metadata
+   into permanent `dev` through a direct `main -> dev` PR and `/merge`;
+2. require permanent `dev` qualification/publication green on that exact
+   post-release synchronization head;
+3. execute already-open #358 as the final synchronization of this experimental
+   trajectory: direct `dev -> exp`, preserving all accepted experimental
+   compiler/backend work and all finalized normal v0.23.0 history;
+4. if that direct permanent merge conflicts, use only the qualified reviewed
+   `/merge-resolved` flow; then require permanent `exp` CI, durable
+   `build/exp` publication and Pages green.
 
-#297 synchronized the accepted v0.22.1 normal baseline into permanent `exp`
-through reviewed conflict recovery. #320 then qualified the already-public
-two-concentric-circle annular standalone Sketch extrusion through the same
-engine-neutral compiler boundary:
-
-- #320 / PR #342 merged to permanent `exp` as
-  `95f70ef93eaaf86fece51b8e560aa895281ac7fe`;
-- permanent exp CI run 45856878722 is green and durable `build/exp` names
-  that exact source;
-- one SCPF source now lowers through
-  `SketchIR` / `CircleProfileIR` / `RegionIR` / `ExtrudeIR` to both
-  SolidCraft and Mitcad;
-- the annulus retains only semantic membership
-  `RegionIR(outer=0, holes=(1,))`; backend coordinate picks and Mitcad native
-  region ids remain lowering details rather than IR intent;
-- the existing `multi-profile-extrude` owner retains native
-  `model.mitcad`, `mitcad.json` and STL evidence;
-- its Mitcad geometry verification passes the 10 mm OD / 8 mm ID / 30 mm
-  length contract, including watertight mesh and inner-wall/volume checks;
-- arbitrary profile types, non-concentric/nonnested membership and more than
-  two profiles remain outside the qualified portable slice and fail closed on
-  Mitcad.
-
-#343 is the separately scoped next compiler/backend expansion. It generalizes
-the current special-case Box-Cylinder subtraction into recursive typed
-primitive CSG intent, adds the bounded `SphereIR` needed by the existing
-`primitive-csg` owner, and qualifies that unchanged public SCPF source through
-native Mitcad Sphere plus join/cut/intersect operations.
-
-The existing #246 `cylinder-subtract` owner must migrate through the same
-generic boolean IR so the experiment reduces special cases rather than adding
-a parallel representation. SolidCraft command behavior remains compatible,
-Mitcad predicts no body ids, and unsupported primitive/boolean forms remain
-fail-closed. Keep #315 independent on the normal lane and do not promote
-`exp -> dev` merely because an experimental checkpoint is green.
+Do not start a new experimental compiler capability before #358 is complete.
 
 ## Later
 
-1. After the v0.23.0 release and stable -> dev synchronization, execute
+1. After the post-release permanent-lane synchronization checkpoint, execute
    verification-evidence follow-ups #255, #256 and #257 in the order justified
    by the completed #163 audit unless a newer demonstrated consumer blocker
    takes priority.
