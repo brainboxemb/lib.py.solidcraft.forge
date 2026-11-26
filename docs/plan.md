@@ -90,25 +90,27 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: #163 verification evidence audit
+### Dev: consumer capability blockers
 
-Resume the repository-wide verification evidence audit now that #162 and the
-v0.21.0 consumer release are complete.
+Consumer-driven Forge capability stays ahead of the broad verification audit.
 
-The #163 change should remain an audit/documentation change rather than mixing
-all identified verification fixes into one PR:
+1. **#267 — multiple closed profiles in standalone Sketch extrusion**
+   - required by CAD catalog #198 for the reusable hollow Ø10/Ø8 tube;
+   - preserve one native Sketch with nested closed loops and one native
+     extrusion of the explicitly selected annular region;
+   - keep current single-profile extrusion and one-profile revolve behavior
+     backwards compatible.
 
-1. audit every current verification owner against its intended contract;
-2. distinguish native/history, structural/geometry, visual, manufacturing and
-   negative-behavior evidence instead of treating a successful build as enough;
-3. keep deliberately non-visual cases explicit and require approved visual
-   expectations where visible geometry/state is part of the contract;
-4. reconcile the existing audit work against the current 57-owner `dev`
-   baseline before opening its PR;
-5. keep concrete evidence gaps in the already-created follow-up issues
-   #255, #256 and #257;
-6. document the minimum evidence contract so future verification owners do not
-   drift back to older mixed verification generations.
+2. **#271 — native two-distance / asymmetric chamfer**
+   - required by CAD catalog #200 for the HUB75 Edge/Corner coupler taper;
+   - expose native primary/secondary chamfer-distance intent directly;
+   - preserve semantic edge selection and one native chamfer history feature;
+   - keep existing equal-distance `chamfer(distance)` source-compatible.
+
+3. **#163 — verification evidence audit**
+   - resume the repository-wide audit after #267 and #271;
+   - keep concrete evidence gaps in focused follow-ups #255, #256 and #257
+     rather than mixing them into consumer capability work.
 
 ### Experimental lane
 
