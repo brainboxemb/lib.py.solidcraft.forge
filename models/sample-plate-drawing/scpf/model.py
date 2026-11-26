@@ -47,6 +47,7 @@ def sample_plate_drawing():
         name="Sample Plate Drawing",
         scale="1:1",
         gap_mm=14,
+        title_block_style="compact",
         views={
             "front": DrawingView(at=(62, 128)),
             "top": DrawingView(at=(62, 62)),
