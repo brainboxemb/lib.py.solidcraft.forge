@@ -114,39 +114,35 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Active consumer capability: #315 independent Free / Installed state
+### Active normal lane: prepare v0.23.0 release
 
-v0.22.1 is published; #315 is the active normal Forge consumer capability.
+#315 is complete on permanent `dev`. The consumer requirement is now proven
+through native SolidCraft Configuration Rules and exposed through typed Forge
+intent:
 
-The HUB75 contract requires two independent axes in one Assembly:
+- #336 retained the exact SolidCraft 0.49 `config.rule` contract and proved
+  save/reopen independence of Small / Medium / Large row selection and the
+  Installed rule checkbox;
+- #348 added public `ConfigRule(...)`, `Always()` and
+  `DriveParameter(...)` authoring through `Configure(..., rules=...)`;
+- the `configuration-installed-state` owner proves two reusable child
+  occurrences share a parent-owned fit parameter while size rows remain one
+  ordinary axis;
+- Installed is enabled by default for the assembled case, disabling it restores
+  the active row's Free/base expression, and changing size does not change the
+  rule's enabled state;
+- no numeric boolean parameter, Cartesian size/state rows, duplicate bodies or
+  Python geometry branching are used;
+- permanent `dev` qualification/build run 45860020832 is green and published
+  durable `build/dev` evidence.
 
-- Small / Medium / Large remains the ordinary configuration row axis;
-- Free / Installed is an independent physical-state checkbox, with Installed
-  enabled by default for the assembled frame while standalone clamp output can
-  remain Free for manufacturing/STL.
-
-#306 proves reusable child parameters compose with a parent configuration
-table, but it does not provide that independent state axis.
-
-Before designing public Forge syntax, retain the exact SolidCraft 0.49
-`config.rule` typed condition/effect schema in the repository. The retained
-registry already advertises read-only `engine.describe`, which returns typed
-input/output JSON Schemas when a command has a typed contract, while the
-existing Forge reference module currently snapshots only `engine.commands`.
-Extend that Forge-owned evidence path to retain
-`engine.describe("config.rule")` from the pinned immutable runtime. The
-current command row proves only the generic
-`{id,name,enabled,condition,effect}` envelope and does not document a
-`drive_parameter` effect. Forge must not guess the native schema or emulate
-the state with numeric 0/1 parameters or Cartesian size/state rows.
-
-If the pinned native contract supports the required rule semantics, #315 should
-expose them through typed Forge intent and qualify save/reopen independence of
-row selection and Installed state. A new public authoring API makes that a
-minor-release capability.
-
-#315 is not a v0.22.1 prerequisite because that patch only publishes the
-already-stable #306 qualification.
+Because #315 adds public Forge authoring API, the next normal-lane step is the
+minor **v0.23.0** product release. Stabilize the qualified `dev` product to
+`main` with the normal reviewed `dev -> main` merge-commit path, then prepare
+the metadata-only `release/v0.23.0` branch from stable `main`, publish through
+the owner-issued release workflow, and synchronize the stable-only release
+commit back with `main -> dev`. Do not rebuild the product on the release
+branch and do not involve `exp` in the stable release path.
 
 ### Experimental lane: #343 recursive primitive CSG IR
 
@@ -190,9 +186,10 @@ fail-closed. Keep #315 independent on the normal lane and do not promote
 
 ## Later
 
-1. After the active #315 consumer capability, execute verification-evidence
-   follow-ups #255, #256 and #257 in the order justified by the completed
-   #163 audit unless a newer demonstrated consumer blocker takes priority.
+1. After the v0.23.0 release and stable -> dev synchronization, execute
+   verification-evidence follow-ups #255, #256 and #257 in the order justified
+   by the completed #163 audit unless a newer demonstrated consumer blocker
+   takes priority.
 2. Continue the migrated Forge product/research backlog (#59-#72) according to
    demonstrated consumer value and dependencies rather than treating the whole
    historical backlog as release-blocking.
