@@ -196,7 +196,7 @@ Configure(design, active=..., columns=(...), rows={...})
 The configured `design` may be a single `Shape`, one component occurrence or
 an `Assembly`. `Param(...)` points at an existing native model parameter, so
 the same column type can drive dimensions, occurrence `Placement`, attachment
-offsets and other native associative dependencies. `Suppress(feature)` points
+offsets and other native associative dependencies. A parameter explicitly published from a reusable child component is one of those native dependencies: when the parent passes one shared Parameter into the child, a root configuration table may address that parent parameter and every occurrence using the same component definition follows it. `Suppress(feature)` points
 at the exact Forge-authored feature object; consumer code never names or predicts
 SolidCraft history ids.
 
@@ -240,7 +240,7 @@ consumer repositories. The verification catalog has its own
 | --- | --- |
 | `configuration-table` | named rows, active row, multiple parameter columns, two independent feature-suppression columns, saved native table and row switching |
 | `configuration-position` | one configuration table around a complete Assembly, with parameter-driven occurrence positions for Front, Below and Service |
-| `configuration-installed-state` | one physical flexible-fit component with `Free` manufacturing geometry and `Installed` mounted geometry, switched natively after saving |
+| `configuration-installed-state` | one reusable flexible-fit child component publishes its fit parameter to the parent; `Free` manufacturing and `Installed` mounted rows switch that same child definition natively after saving |
 | replay row identity | Forge-generated name-stable row references bind to SolidCraft-returned native row ids; activation uses the bound id |
 | saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
 
@@ -252,6 +252,7 @@ The use-case boundary is intentional:
 | front/below/service assembly positions | `Param(...)` driving associative `Placement` |
 | optional authored feature | `Suppress(feature)` |
 | dimensions plus suppression in one row | supported by the same table |
+| parent size table + published reusable-child parameter | supported by the same `Param(...)` contract; shared child occurrences follow one parent native parameter |
 | flexible-fit free/mounted state | `Free` / `Installed` rows using ordinary native parameters; this is a physical configuration, not a display state |
 | material or appearance variants | native SolidCraft supports them, but Forge waits for a typed, separately verified column contract |
 | whole component present/absent | not silently mapped to feature suppression |

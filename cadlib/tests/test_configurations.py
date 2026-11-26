@@ -76,6 +76,77 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(_row_variable("Medium"), _row_variable("Medium"))
         self.assertNotEqual(_row_variable("Medium"), _row_variable("Large"))
 
+    def test_configure_can_drive_published_child_parameter_with_parent_size(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "model.py"
+            path.write_text(
+                "@component(include=('width',))\n"
+                "class FrameBody:\n"
+                "    width = 80.0\n"
+                "    def build(self):\n"
+                "        return Box(self.width, 30, 4, anchor=Anchor.BOTTOM)\n"
+                "@component(include=('fit_diameter',))\n"
+                "class Clamp:\n"
+                "    fit_diameter = 20.0\n"
+                "    def build(self):\n"
+                "        return Cylinder(d=self.fit_diameter, h=10)\n"
+                "class Frame:\n"
+                "    frame_width = 80.0\n"
+                "    clamp_bore = 20.0\n"
+                "    def build(self):\n"
+                "        body = FrameBody(width=self.frame_width, name='frame')\n"
+                "        left = Clamp(fit_diameter=self.clamp_bore, name='left')\n"
+                "        right = left.copy(\n"
+                "            name='right', placement=Placement(x=40)\n"
+                "        )\n"
+                "        return Configure(\n"
+                "            body + left + right, active='Medium',\n"
+                "            columns=(Param(self.frame_width), Param(self.clamp_bore)),\n"
+                "            rows={\n"
+                "                'Small': ('60 mm', '19.8 mm'),\n"
+                "                'Medium': ('80 mm', '20.0 mm'),\n"
+                "                'Large': ('100 mm', '20.2 mm'),\n"
+                "            },\n"
+                "        )\n"
+                "Frame()\n",
+                encoding="utf-8",
+            )
+            document = run_script(path)
+
+        commands = document["commands"]
+        configure = next(
+            row for row in commands if row["command"] == "config.configure"
+        )
+        self.assertEqual(
+            configure["params"],
+            {"params": ["frame_width", "clamp_bore"]},
+        )
+        self.assertEqual(
+            [
+                row["params"]["name"]
+                for row in commands
+                if row["command"] == "parameters.add"
+            ].count("clamp_bore"),
+            1,
+        )
+        clamp = next(
+            row for row in commands
+            if row["command"] == "solid.cylinder"
+        )
+        self.assertEqual(clamp["params"]["diameter"], "clamp_bore")
+        large = next(
+            row for row in commands
+            if row["command"] == "config.row"
+            and row["params"].get("name") == "Large"
+        )
+        self.assertEqual(
+            large["params"]["values"],
+            {
+                "param:frame_width": "100 mm",
+                "param:clamp_bore": "20.2 mm",
+            },
+        )
+
     def test_configure_wraps_parametric_assembly_placement(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "model.py"
