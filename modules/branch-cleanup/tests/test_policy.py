@@ -6,6 +6,7 @@ from cad_model_branch_cleanup.policy import (
     eligible_sweep,
     is_temporary,
     merge_target,
+    merge_targets,
 )
 
 
@@ -35,6 +36,21 @@ class PolicyTests(unittest.TestCase):
             eligible_post_merge(
                 head="fix/7-cleanup",
                 base="dev",
+                same_repository=True,
+                merged=True,
+                config=CONFIG,
+            )
+        )
+
+    def test_docs_branch_may_be_cleaned_after_governance_merge_to_stable(self):
+        self.assertEqual(
+            merge_targets("docs/86-governance", CONFIG),
+            ("dev", "exp", "main"),
+        )
+        self.assertTrue(
+            eligible_post_merge(
+                head="docs/86-governance",
+                base="main",
                 same_repository=True,
                 merged=True,
                 config=CONFIG,
