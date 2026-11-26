@@ -280,6 +280,8 @@ immutable SolidCraft runtime. It is not a hand-authored Forge migration note.
 - `commands.json` is the exact normalized JSON registry captured from
   `solidcraft-cli commands`.
 - `commands.md` is generated from `commands.json` for human review.
+- `describe/*.json`, when present, are exact targeted read-only
+  `engine.describe` results captured from the same immutable runtime.
 
 Forge compatibility conclusions must be traceable to this captured registry,
 the exact runtime behavior, or separately recorded upstream source evidence.

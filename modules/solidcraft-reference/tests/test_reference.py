@@ -232,6 +232,35 @@ class SolidCraftReferenceTests(unittest.TestCase):
             self.assertIn("Captured runtime result", str(caught.exception))
             self.assertIn("Configuration Rule", str(caught.exception))
 
+    def test_checked_config_rule_contract_exposes_native_state_primitives(self):
+        snapshot = (
+            ROOT
+            / "docs"
+            / "reference"
+            / "solidcraft"
+            / "0.49.0"
+            / "describe"
+            / "config.rule.json"
+        )
+        contract = json.loads(snapshot.read_text(encoding="utf-8"))
+        self.assertEqual(contract[0]["id"], "config.rule")
+        rule = contract[0]["input"]["properties"]["rule"]
+        self.assertEqual(rule["properties"]["enabled"]["type"], "boolean")
+        effects = rule["properties"]["effect"]["anyOf"]
+        effect_types = {
+            option["properties"]["type"]["enum"][0]
+            for option in effects
+        }
+        self.assertIn("drive_parameter", effect_types)
+        drive = next(
+            option for option in effects
+            if option["properties"]["type"]["enum"] == ["drive_parameter"]
+        )
+        self.assertEqual(
+            drive["required"],
+            ["type", "parameter", "expression"],
+        )
+
     @unittest.skipUnless(
         shutil.which("docker"),
         "Docker is required for immutable runtime reference verification",
