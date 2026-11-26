@@ -185,6 +185,15 @@ class ModelTests(unittest.TestCase):
                     [stage.runtime for stage in model.verifications],
                     ["solidcraft", "reference"],
                 )
+            elif model_id == "sheet-perforate":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "manufacturing-visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "solidcraft"],
+                )
             else:
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
@@ -276,7 +285,11 @@ class ModelTests(unittest.TestCase):
                 pair
                 for model in self.models
                 for pair in (
-                    [("scpf", "native")]
+                    (
+                        [("scpf", "native"), ("scpf", "manufacturing-visual")]
+                        if model.id == "sheet-perforate"
+                        else [("scpf", "native")]
+                    )
                     if model.id in SCPF_ONLY_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
                 )
