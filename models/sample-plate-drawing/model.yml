@@ -20,4 +20,6 @@ stages:
   - Add native overall dimensions and diameter callouts from model-space topology picks
   - Populate native notes, drawing properties, title-block values and revision information
   - Publish vector PDF, static native PNG and final drawing.inspect JSON below the implementation drawings directory
-  - Compare the generated sheet against the approved engineering-drawing visual baseline
+  - Compare the generated full sheet against the approved engineering-drawing visual baseline
+  - Author a second A4 landscape sheet using SolidCraft's native compact 49 mm title block
+  - Verify the compact sheet survives replay as a native compact title block without replacement graphics
