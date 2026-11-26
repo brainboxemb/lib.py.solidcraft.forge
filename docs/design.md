@@ -528,8 +528,15 @@ Its runtime contract is an already-qualified `mitcad-cli` executable on
 executes it through the existing native headless boundary and fails closed if
 either the native document or STL is missing.
 
-This capability deliberately exists before a root `runtimes.mitcad` entry.
-Module tests mock the executor boundary, so #218 can qualify builder behavior
-without fetching an AppImage. #221 owns the later immutable runtime role. Only
-after that role is accepted may a separate change attach `scpf-mitcad` as a
-secondary implementation to qualified model owners.
+#218 deliberately qualified the builder before a root `runtimes.mitcad`
+entry. #221 then qualified the runtime independently in
+`brainboxemb/docker.cad.solidcraft`: v0.3.7 publishes an isolated
+`cad-mitcad` image pinned to Mitcad 0.70.0 and exposes `mitcad-cli` on
+`PATH`. Forge `exp` pins that immutable role in root `ci.yml`.
+
+Before the immutable release, temporary evidence PR #230 used the exact
+runtime-candidate manifest through normal CAD-CI and proved both
+`simple-box--scpf-mitcad:geometry` and
+`circle-negative-extrude--scpf-mitcad:geometry` PASS. That PR was closed
+unmerged so candidate-only owner declarations did not enter `exp`.
+#232 owns the later secondary owner attachment.

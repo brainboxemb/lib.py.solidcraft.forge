@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/218-scpf-mitcad-builder
-modules: [builder-scpf-mitcad, ci]
+branch: feature/221-adopt-mitcad-runtime
+modules: [ci]
 library: false
 models: []
 tasks: [test]
