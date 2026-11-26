@@ -7,16 +7,18 @@ LAYOUT = ROOT / "site/layouts/models/single.html"
 
 
 class ModelDetailLayoutTests(unittest.TestCase):
-    def test_verification_intent_is_promoted_and_examples_keep_existing_heading(self):
+    def test_verification_and_example_headings_are_distinct(self):
         text = LAYOUT.read_text(encoding="utf-8")
         self.assertIn("What this verifies", text)
         self.assertIn("What this model makes", text)
-        self.assertIn('id="verification-intent"', text)
-        self.assertIn('id="engineering-explanation"', text)
-        self.assertLess(
-            text.index('id="verification-intent"'),
-            text.index('id="primary-source"'),
-        )
+
+    def test_engineering_explanation_follows_primary_source(self):
+        text = LAYOUT.read_text(encoding="utf-8")
+        source = text.index('id="primary-source"')
+        explanation = text.index('id="engineering-explanation"')
+        commands = text.index('cad-command-section')
+        self.assertLess(source, explanation)
+        self.assertLess(explanation, commands)
 
     def test_verification_checks_are_collapsed_by_default(self):
         text = LAYOUT.read_text(encoding="utf-8")
