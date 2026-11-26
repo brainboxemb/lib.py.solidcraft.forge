@@ -12,7 +12,10 @@ that `sheet.flat_pattern` reports 15 square-pattern perforations at Ø5 mm,
 
 The **manufacturing-flat-pattern** visual check exports the saved `.sc` through
 native `sheet.export_dxf`. Actual is rendered from DXF `PERFORATION` circles;
-Goal is the approved 5 × 3 field. The check fails if native manufacturing output
-loses holes, moves them, changes their diameter or becomes a solid blank.
+Goal is the approved 5 × 3 field. The first Ø5 centre is at (-22.5, -12.5):
+that leaves the declared 5 mm material clearance from the sheet edge to the
+hole contour, after which centres repeat on the 10 mm square pitch. The check
+fails if native manufacturing output loses holes, moves them, changes their
+diameter or becomes a solid blank.
 
 Forge deliberately does not replace this feature with repeated solid holes.

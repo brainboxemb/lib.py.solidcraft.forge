@@ -15,113 +15,113 @@
   "perforations": [
     {
       "center": [
-        -20,
-        -10
+        -22.5,
+        -12.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        -10,
-        -10
+        -12.5,
+        -12.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        0,
-        -10
+        -2.5,
+        -12.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        10,
-        -10
+        7.5,
+        -12.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        20,
-        -10
+        17.5,
+        -12.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        -20,
-        0
+        -22.5,
+        -2.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        -10,
-        0
+        -12.5,
+        -2.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        0,
-        0
+        -2.5,
+        -2.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        10,
-        0
+        7.5,
+        -2.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        20,
-        0
+        17.5,
+        -2.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        -20,
-        10
+        -22.5,
+        7.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        -10,
-        10
+        -12.5,
+        7.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        0,
-        10
+        -2.5,
+        7.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        10,
-        10
+        7.5,
+        7.5
       ],
       "diameter": 5
     },
     {
       "center": [
-        20,
-        10
+        17.5,
+        7.5
       ],
       "diameter": 5
     }
   ],
   "tolerance_mm": 0.001,
   "provenance": {
-    "rationale": "60 x 40 sheet, 5 mm edge clearance, 5 mm diameter, 10 mm square pitch",
+    "rationale": "60 x 40 sheet; Ø5 holes keep 5 mm material clearance to minimum X/Y edges, then repeat on 10 mm square pitch",
     "native_contract": "sheet.perforate manufacturing field; not B-rep holes",
     "issue": 162
   }
