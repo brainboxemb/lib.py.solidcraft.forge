@@ -93,17 +93,22 @@ First spike:
 6. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
-### Dev: consumer release blockers
+### Dev: v0.21.0 consumer stabilization
 
-Prioritize current Forge consumer blockers before the broad verification audit:
+Finish the consumer-facing development line and release it before resuming the
+broad verification audit:
 
-1. #250 expose SolidCraft's native compact title block for small-part drawings;
-2. #210 reconcile stale public pattern authoring examples used by MCP consumers;
-3. resume #163 verification evidence audit after the consumer-facing release
-   blockers are merged.
+1. complete #250 native compact title-block authoring and qualification;
+2. #210 is complete: canonical pattern examples now use the released
+   `rectangular_pattern(...)` contract;
+3. promote the fully qualified `dev` product through #265;
+4. publish v0.21.0 through release issue #264;
+5. resume #163 only after the stable release and `main -> dev`
+   synchronization are complete.
 
-The compact drawing path must stay native and backwards compatible with the
-existing `iso-a4-part` / `iso-a3-part` behavior.
+The compact drawing path must remain native and backwards compatible with the
+existing `iso-a4-part` / `iso-a3-part` behavior. Experimental multi-backend
+work stays isolated on `exp` and is not part of v0.21.0.
 
 ## Later
 
