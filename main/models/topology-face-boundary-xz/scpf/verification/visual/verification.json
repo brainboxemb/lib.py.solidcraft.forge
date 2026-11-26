@@ -1,0 +1,198 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/front/camera.json",
+          "sha256": "3931e421c13c2fb1c390b05036f823a97f2f65fcaf165519f1c6400dabdc78d0",
+          "size": 179
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/actual.png",
+          "sha256": "2bcf0ec653a8c90b98c8bb018f9f82aa34c34b5cfa5c68960805ca2610adabf4",
+          "size": 11442
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/goal.png",
+          "sha256": "eb3a18db8255fb25c7ab95ee86de2784ea2be272f6e8d100c7f6a613ab9e2498",
+          "size": 1986
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/overlay.png",
+          "sha256": "007985c5acb4883c3037cc0d60519515095bf291675c9b6d784dbda41c401fb6",
+          "size": 4367
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/diff.png",
+          "sha256": "39782f4bc69fc4a42a0665f81825307de52bbfe8e5fe6414256de365f11b60f2",
+          "size": 706
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/front/actual.png",
+        "baseline": "baselines/front.json",
+        "baseline_status": "pass",
+        "camera": "visual/front/camera.json",
+        "diff_image": "visual/front/diff.png",
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/front/goal.png",
+        "overlay_image": "visual/front/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "front"
+      },
+      "id": "front",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/right/camera.json",
+          "sha256": "24c4669b955828baf61bcf480aaa304e81149500ad9a04448b5769f69d187153",
+          "size": 195
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/actual.png",
+          "sha256": "f9677cac2b792719f0b5b10427f01d191f946a2078e9e27003b391d8c4370b58",
+          "size": 10998
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/goal.png",
+          "sha256": "ccf86f4822fb90ac2de329c12c561bfa5ba78619d6bd73f37f626dc5d0c6bf5e",
+          "size": 1985
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/overlay.png",
+          "sha256": "662ae2683a33ec183f6c62c674dd2f082a8cbdffaf62bdf3086fcfb6e69f9e4a",
+          "size": 3724
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/diff.png",
+          "sha256": "fb78f1264c1caf33d8a57d0b6b52de7310163839043955c7fe54a548b7f1a4c7",
+          "size": 680
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/right/actual.png",
+        "baseline": "baselines/right.json",
+        "baseline_status": "pass",
+        "camera": "visual/right/camera.json",
+        "diff_image": "visual/right/diff.png",
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/right/goal.png",
+        "overlay_image": "visual/right/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "right"
+      },
+      "id": "right",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/iso/camera.json",
+          "sha256": "3be32e17bcf84e5d6f9dd0a9a9463df70802a780a1bf7045b629f7b215a68a4f",
+          "size": 210
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/actual.png",
+          "sha256": "375c952f13e46eb58ce7af63aca3a57d159be6276b01b47dd9f0c5015c9e87d9",
+          "size": 34726
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/goal.png",
+          "sha256": "2c6fa541c37e52930d6954cd315663d10e740e35a626b05b137e4e913a768b47",
+          "size": 3889
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/overlay.png",
+          "sha256": "2331ca86b0d5b56a9d8606db1d739b6b2654ec170a7afda44e9bb40fe7c82b15",
+          "size": 25728
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/diff.png",
+          "sha256": "a48f0b9616df4b3cbea4d39e3fa69b5d9acf4696437d1cbdf7f183a0a6a49347",
+          "size": 2690
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/iso/actual.png",
+        "baseline": "baselines/iso.json",
+        "baseline_status": "pass",
+        "camera": "visual/iso/camera.json",
+        "diff_image": "visual/iso/diff.png",
+        "expected_shape_required": true,
+        "expected_shape_status": "pass",
+        "goal_image": "visual/iso/goal.png",
+        "overlay_image": "visual/iso/overlay.png",
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "iso"
+      },
+      "id": "iso",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/topology-face-boundary-xz/scpf/model.sc",
+  "metadata": {
+    "baseline_provenance": {
+      "approval": "approved",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "90b7eba19227032766dc1309ae8d851c4cb09553",
+      "workflow_run": 45873531238
+    },
+    "kind": "solidcraft-visual",
+    "measurements": "measurements.json",
+    "visual_report": "visual.json"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "topology-face-boundary-xz-scpf-visual"
+}

@@ -1,0 +1,178 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "fc61254b96dce41e16235f79237f3a1148ebd06265e32833b9184c25afb0e6f8",
+  "variables": {
+    "$left": 2,
+    "$config_name_2": "Hole1",
+    "$right": 5,
+    "$config_row_5263293fc202": 6,
+    "$config_row_8e588cd18774": 7,
+    "$config_row_ab80540d98d2": 8
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "coupler_width",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "FeatureCoupler",
+        "grounded": true
+      },
+      "bindings": {
+        "$left": 2
+      }
+    },
+    {
+      "index": 2,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "coupler_width",
+        "width": 24.0,
+        "height": 12.0,
+        "corner": [
+          "-coupler_width / 2",
+          -12.0,
+          0
+        ],
+        "body_name": "FeatureCoupler"
+      }
+    },
+    {
+      "index": 3,
+      "command": "solid.hole",
+      "resolved_params": {
+        "position": [
+          0.0,
+          0.0,
+          12.0
+        ],
+        "targets": [
+          "FeatureCoupler"
+        ],
+        "diameter": 5
+      },
+      "bindings": {
+        "$config_name_2": "Hole1"
+      }
+    },
+    {
+      "index": 4,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 5,
+      "command": "occurrence.copy",
+      "resolved_params": {
+        "component": "FeatureCoupler",
+        "translate": [
+          50.0,
+          0.0,
+          0.0
+        ]
+      },
+      "bindings": {
+        "$right": 5
+      }
+    },
+    {
+      "index": 6,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 2,
+        "translate": [
+          -50,
+          0,
+          0
+        ],
+        "move_grounded": true
+      }
+    },
+    {
+      "index": 7,
+      "command": "config.configure",
+      "resolved_params": {
+        "params": [
+          "coupler_width"
+        ],
+        "features": [
+          "Hole1"
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Default",
+        "rename": "Small"
+      },
+      "bindings": {
+        "$config_row_5263293fc202": 6
+      }
+    },
+    {
+      "index": 9,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Small",
+        "values": {
+          "param:coupler_width": "30 mm",
+          "suppress:Hole1": "true"
+        }
+      }
+    },
+    {
+      "index": 10,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Medium",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:Hole1": "true"
+        }
+      },
+      "bindings": {
+        "$config_row_8e588cd18774": 7
+      }
+    },
+    {
+      "index": 11,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Large",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:Hole1": "false"
+        }
+      },
+      "bindings": {
+        "$config_row_ab80540d98d2": 8
+      }
+    },
+    {
+      "index": 12,
+      "command": "config.activate",
+      "resolved_params": {
+        "row": 7
+      }
+    },
+    {
+      "index": 13,
+      "command": "config.table",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 14
+}

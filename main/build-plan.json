@@ -14,6 +14,7 @@
     "circular-feature-pattern",
     "components",
     "cone-boolean",
+    "configuration-child-feature",
     "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
@@ -242,6 +243,17 @@
       ],
       "primary": "scpf",
       "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-child-feature",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
         "verification"
       ]
     },
@@ -825,6 +837,7 @@
     "circular-feature-pattern",
     "components",
     "cone-boolean",
+    "configuration-child-feature",
     "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
@@ -871,5 +884,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "2026afb1303ee5ebe56c87613b6ce53d042f946a"
+  "source_sha": "ba4c655f552fb9c75a7fb9825e52ee5d3b185f45"
 }

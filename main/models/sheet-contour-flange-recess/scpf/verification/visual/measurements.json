@@ -1,0 +1,131 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 31473.589115977426,
+      "bbox": {
+        "max": [
+          12.875,
+          250.0,
+          -0.6249999999999989
+        ],
+        "min": [
+          -12.875000000000002,
+          0.0,
+          -17.375
+        ]
+      },
+      "center_of_mass": [
+        -3.4231778734145633e-15,
+        125.70078957355939,
+        -10.834647524029249
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 62,
+      "face_types": {
+        "cylinder": 9,
+        "plane": 14
+      },
+      "faces": 23,
+      "kernel": {
+        "edges": 82,
+        "faces": 40,
+        "shells": 1,
+        "vertices": 44
+      },
+      "mass_g": 24.707570997832356,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "SheetContourFlangeRecess",
+      "notes": [],
+      "sheet_metal": true,
+      "vertices": 42,
+      "volume_mm3": 19153.155812273144
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "250",
+      "model": false,
+      "name": "length",
+      "unit": "mm",
+      "value": 250.0
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 5,
+      "dof": 12,
+      "id": 1,
+      "name": "C profile",
+      "profiles": 0,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    },
+    {
+      "curves": 1,
+      "dof": 3,
+      "id": 3,
+      "name": "Broad face recess",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 0.266719,
+      "name": "C profile",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 35.563299,
+      "name": "ContourFlange1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ContourFlangeFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 0.10030700000000001,
+      "name": "Broad face recess",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 75.903999,
+      "name": "Broad face recess",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 31473.589115977426,
+    "edges": 62,
+    "faces": 23,
+    "mass_g": 24.707570997832356,
+    "open_bodies_skipped": 0,
+    "vertices": 42,
+    "volume_mm3": 19153.155812273144
+  }
+}

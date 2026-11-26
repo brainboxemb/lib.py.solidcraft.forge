@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "fyzbhpqh1gfam",
+  "id": "2fac8n16fba6p",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "2f4cd8s39vpmj"
+        "source": "bp5yaxv3gvare"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "32wbr5bb2s9rz",
+      "id": "82fva8wmk5s2w",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "02sybkyy3ymtv",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "7ztmksfjcn8zw",
+          "id": "3aasnj6w3223z",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "9wzb024kxpytt",
+          "id": "31bfcewhv9s5z",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "7ztmksfjcn8zw",
+          "parent": "3aasnj6w3223z",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "d1fphp3rmhf07",
+          "id": "dac20ke8v9wrt",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "7ztmksfjcn8zw",
+          "parent": "3aasnj6w3223z",
           "side": "above"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "3hs2m58qz33fr",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "2f4cd8s39vpmj"
+      "id": "bp5yaxv3gvare"
     }
   ],
   "symbols": [],

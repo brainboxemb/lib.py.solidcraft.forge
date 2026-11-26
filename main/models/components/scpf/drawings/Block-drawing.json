@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "2mfm4tjd0nj5p",
+  "id": "8peq3ek2qnzpa",
   "language": "en",
   "line_group": "0.5",
   "name": "Block drawing",
@@ -22,14 +22,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "ajksrpg4mfwgs"
+        "source": "7a2k98svrtw78"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "1ydvfshscr1z5",
+      "id": "1x3ew27yyynax",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -726,15 +726,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "165ch4f7sjw0b",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "ewwqbnb1bmsr7",
+          "id": "30542yvp7wb5v",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -742,29 +734,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "4cmwegbq9nz3b",
+          "id": "016spds8x5f90",
+          "kind": "projected",
+          "label": "Above Front",
+          "notes": [],
+          "parent": "30542yvp7wb5v",
+          "side": "above"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "8eg31z4g4afhs",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "ewwqbnb1bmsr7",
+          "parent": "30542yvp7wb5v",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "67rg1h93xs8zt",
-          "kind": "projected",
-          "label": "Above Front",
-          "notes": [],
-          "parent": "ewwqbnb1bmsr7",
-          "side": "above"
+          "id": "en2svjy4zsy76",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "ajksrpg4mfwgs"
+      "id": "7a2k98svrtw78"
     }
   ],
   "symbols": [],
