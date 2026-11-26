@@ -1,0 +1,26 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>SolidCraft Forge – Mitcad version references</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/docs/reference/mitcad/</link><description>Recent content in Mitcad version references on SolidCraft Forge</description><generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/docs/reference/mitcad/index.xml" rel="self" type="application/rss+xml"/><item><title>Mitcad 0.70.0 reference snapshot</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/docs/reference/mitcad/0.70.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/docs/reference/mitcad/0.70.0/</guid><description>
+&lt;p&gt;This directory pins the exact upstream command reference used by the first
+Forge multi-backend feasibility work.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Mitcad release: &lt;code&gt;v0.70.0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Upstream commit: &lt;code&gt;806a4210126ab977ba678708dd476496ddbd2968&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Upstream command-reference blob: &lt;code&gt;40240776bc6885e228bf2fbd8e2534875aa61b85&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Live MCP command-resource blob: &lt;code&gt;c839084ba223e814370a55c761644da362fabc93&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Runtime machine catalog: not yet checked in&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 data-hextra-search-id="evidence"&gt;Evidence&lt;span class="hx:absolute hx:-mt-20" id="evidence"&gt;&lt;/span&gt;
+&lt;a href="#evidence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;commands.md&lt;/code&gt; is byte-for-byte the upstream
+&lt;code&gt;core/model-api/src/commands.md&lt;/code&gt; Git blob from &lt;code&gt;v0.70.0&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;It is the source included by Mitcad MCP as the basis of
+&lt;code&gt;mitcad://reference/commands&lt;/code&gt;; the server filters entries its vocabulary
+does not permit, so the live resource has a separate pinned identity.&lt;/li&gt;
+&lt;li&gt;The exact v0.70.0 AppImage produced live resource blob
+&lt;code&gt;c839084ba223e814370a55c761644da362fabc93&lt;/code&gt; during #192 qualification.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;modules/mitcad-reference&lt;/code&gt; can additionally capture the live
+&lt;code&gt;model_reference&lt;/code&gt; catalog into &lt;code&gt;commands.json&lt;/code&gt; and require the live
+command-resource text to retain this exact Git-blob identity.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This initial snapshot intentionally does not invent a machine catalog when a
+v0.70.0 &lt;code&gt;mitcad-cli&lt;/code&gt; binary is not available in Forge CI. Add
+&lt;code&gt;commands.json&lt;/code&gt; only by running the capture command against that exact CLI.&lt;/p&gt;</description></item></channel></rss>
