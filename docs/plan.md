@@ -85,6 +85,8 @@ Complete #190 by:
 5. only after the permanent experimental line is accepted, begin Mitcad /
    multi-backend research on that line.
 
+The final acceptance smoke uses a real temporary `feature/* -> exp` PR, full branch qualification, policy-owned `/merge`, automatic branch cleanup, a second permanent `exp` build publication, and regenerated `/exp/` Pages.
+
 ### Queued: #162 / #163 verification evidence cleanup
 
 After the permanent `exp` line is stable:
