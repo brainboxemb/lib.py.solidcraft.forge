@@ -1,0 +1,444 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "105f75e3302583b4a2a0e779104c707a290e37eb0c7090a948d2abae87c60652",
+          "size": 2540
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Screen",
+                "max": [
+                  40.0,
+                  5.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  -5.0,
+                  -25.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  5.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  -5.0,
+                  -25.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FrontPlate",
+                "max": [
+                  40.0,
+                  9.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  7.0,
+                  -25.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  9.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  7.0,
+                  -25.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "plate_y": 8.0,
+            "plate_z": 0.0
+          },
+          "expected": {
+            "plate_y": 8.0,
+            "plate_z": 0.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/below/model.sc",
+          "sha256": "a5776ad9f40ba3efa462712366e8909b4360c88aaeac8ed8b6f90fc76a7c57a6",
+          "size": 6196
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/below/measurements.json",
+          "sha256": "46a34823d75672f2d38636cb0cdaa60b552aec29b799f3eeab29b77cdb3958d4",
+          "size": 2548
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Screen",
+                "max": [
+                  40.0,
+                  5.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  -5.0,
+                  -25.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  5.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  -5.0,
+                  -25.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FrontPlate",
+                "max": [
+                  40.0,
+                  1.0,
+                  -30.0
+                ],
+                "min": [
+                  -40.0,
+                  -1.0,
+                  -80.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  1.0,
+                  -30.0
+                ],
+                "min": [
+                  -40.0,
+                  -1.0,
+                  -80.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "plate_y": 0.0,
+            "plate_z": -55.0
+          },
+          "expected": {
+            "plate_y": 0.0,
+            "plate_z": -55.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_below",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/service/model.sc",
+          "sha256": "e43f87d79e6904063d6118e1e891308697a868687720be894e5201ab1d7689de",
+          "size": 6190
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/service/measurements.json",
+          "sha256": "d618ff1f57154d346c44ca3dc68b231d06adb5cae8f39ef9d1c87964f4e4986e",
+          "size": 2545
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "Screen",
+                "max": [
+                  40.0,
+                  5.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  -5.0,
+                  -25.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  5.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  -5.0,
+                  -25.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FrontPlate",
+                "max": [
+                  40.0,
+                  26.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  24.0,
+                  -25.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  40.0,
+                  26.0,
+                  25.0
+                ],
+                "min": [
+                  -40.0,
+                  24.0,
+                  -25.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "plate_y": 25.0,
+            "plate_z": 0.0
+          },
+          "expected": {
+            "plate_y": 25.0,
+            "plate_z": 0.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_service",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/table/results.json",
+          "sha256": "2e211f68d0b1129d3d89172651a4b96fad5dbe4b2fa9b1b3b88233e23c65d98a",
+          "size": 996
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 3,
+              "expected": 3,
+              "label": "SolidCraft inspection check rows",
+              "pass": true
+            },
+            "id": "rows",
+            "path": [
+              0,
+              "rows"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check columns",
+              "pass": true
+            },
+            "id": "columns",
+            "path": [
+              0,
+              "columns"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Front",
+              "expected": "Front",
+              "label": "SolidCraft inspection check active",
+              "pass": true
+            },
+            "id": "active",
+            "path": [
+              0,
+              "active"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check matches",
+              "pass": true
+            },
+            "id": "matches",
+            "path": [
+              0,
+              "matches"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Front",
+              "expected": "Front",
+              "label": "SolidCraft inspection check front-name",
+              "pass": true
+            },
+            "id": "front-name",
+            "path": [
+              0,
+              "rows",
+              0,
+              "name"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Below",
+              "expected": "Below",
+              "label": "SolidCraft inspection check below-name",
+              "pass": true
+            },
+            "id": "below-name",
+            "path": [
+              0,
+              "rows",
+              1,
+              "name"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Service",
+              "expected": "Service",
+              "label": "SolidCraft inspection check service-name",
+              "pass": true
+            },
+            "id": "service-name",
+            "path": [
+              0,
+              "rows",
+              2,
+              "name"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "-55 mm",
+              "expected": "-55 mm",
+              "label": "SolidCraft inspection check below-z",
+              "pass": true
+            },
+            "id": "below-z",
+            "path": [
+              0,
+              "rows",
+              1,
+              "values",
+              "param:plate_z"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_table",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/configuration-position/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "configuration-position"
+}

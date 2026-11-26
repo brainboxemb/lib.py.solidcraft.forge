@@ -1,0 +1,72 @@
+{
+  "commands": [
+    {
+      "command": "component.create",
+      "params": {
+        "name": "Screen",
+        "grounded": true
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 80,
+        "width": 10,
+        "height": 50,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "Screen"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "FrontPlate",
+        "grounded": false
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 80,
+        "width": 2,
+        "height": 50,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "FrontPlate"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "plate_y",
+        "expression": "8 mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "plate_z",
+        "expression": "0 mm"
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+[
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Screen",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Screen"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Screen"
+    ],
+    "feature": 3,
+    "ms": 2.9025600000000003,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 4,
+    "grounded": false,
+    "name": "FrontPlate",
+    "occurrence": 5,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Screen",
+      "FrontPlate"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "FrontPlate"
+    ],
+    "feature": 6,
+    "ms": 1.5334789999999998,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "display_value": 8.0,
+    "name": "plate_y",
+    "unit": "mm",
+    "value": 8.0
+  },
+  {
+    "display_value": 0.0,
+    "name": "plate_z",
+    "unit": "mm",
+    "value": 0.0
+  }
+]

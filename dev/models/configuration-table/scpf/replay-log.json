@@ -1,0 +1,192 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "16cdcafa37b325068e0ea25a4b002466b0a7adef8e344213dc35fb08fca062f4",
+  "variables": {
+    "$config_name_5": "Hole1",
+    "$config_name_6": "Hole2",
+    "$config_row_5263293fc202": 4,
+    "$config_row_8e588cd18774": 5,
+    "$config_row_ab80540d98d2": 6
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "width",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "depth",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "thickness",
+        "expression": "5",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "diameter",
+        "expression": "5",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 4,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "width",
+        "width": "depth",
+        "height": "thickness",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "body_name": "ConfigurationPlate"
+      }
+    },
+    {
+      "index": 5,
+      "command": "solid.hole",
+      "resolved_params": {
+        "position": [
+          -12.0,
+          0.0,
+          5.0
+        ],
+        "targets": [
+          "ConfigurationPlate"
+        ],
+        "diameter": "diameter"
+      },
+      "bindings": {
+        "$config_name_5": "Hole1"
+      }
+    },
+    {
+      "index": 6,
+      "command": "solid.hole",
+      "resolved_params": {
+        "position": [
+          12.0,
+          0.0,
+          5.0
+        ],
+        "targets": [
+          "ConfigurationPlate"
+        ],
+        "diameter": "diameter"
+      },
+      "bindings": {
+        "$config_name_6": "Hole2"
+      }
+    },
+    {
+      "index": 7,
+      "command": "config.configure",
+      "resolved_params": {
+        "params": [
+          "width",
+          "depth",
+          "thickness",
+          "diameter"
+        ],
+        "features": [
+          "Hole1",
+          "Hole2"
+        ]
+      }
+    },
+    {
+      "index": 8,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Default",
+        "rename": "Small"
+      },
+      "bindings": {
+        "$config_row_5263293fc202": 4
+      }
+    },
+    {
+      "index": 9,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Small",
+        "values": {
+          "param:width": "60 mm",
+          "param:depth": "30 mm",
+          "param:thickness": "4 mm",
+          "param:diameter": "4 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      }
+    },
+    {
+      "index": 10,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Medium",
+        "values": {
+          "param:width": "80 mm",
+          "param:depth": "40 mm",
+          "param:thickness": "5 mm",
+          "param:diameter": "5 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      },
+      "bindings": {
+        "$config_row_8e588cd18774": 5
+      }
+    },
+    {
+      "index": 11,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Large",
+        "values": {
+          "param:width": "100 mm",
+          "param:depth": "50 mm",
+          "param:thickness": "6 mm",
+          "param:diameter": "6 mm",
+          "suppress:Hole1": "false",
+          "suppress:Hole2": "false"
+        }
+      },
+      "bindings": {
+        "$config_row_ab80540d98d2": 6
+      }
+    },
+    {
+      "index": 12,
+      "command": "config.activate",
+      "resolved_params": {
+        "row": 5
+      }
+    },
+    {
+      "index": 13,
+      "command": "config.table",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 14
+}

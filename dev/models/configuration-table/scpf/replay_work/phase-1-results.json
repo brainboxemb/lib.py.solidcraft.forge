@@ -1,0 +1,68 @@
+[
+  {
+    "display_value": 80.0,
+    "name": "width",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "display_value": 40.0,
+    "name": "depth",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "display_value": 5.0,
+    "name": "thickness",
+    "unit": "mm",
+    "value": 5.0
+  },
+  {
+    "display_value": 5.0,
+    "name": "diameter",
+    "unit": "mm",
+    "value": 5.0
+  },
+  {
+    "bodies": [
+      "ConfigurationPlate"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "ConfigurationPlate"
+    ],
+    "feature": 1,
+    "ms": 3.076863,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "ConfigurationPlate"
+    ],
+    "changed_bodies": [
+      "ConfigurationPlate"
+    ],
+    "created_bodies": [],
+    "feature": 2,
+    "ms": 16.001945,
+    "name": "Hole1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "ConfigurationPlate"
+    ],
+    "changed_bodies": [
+      "ConfigurationPlate"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 16.92128,
+    "name": "Hole2",
+    "removed_bodies": [],
+    "warning": null
+  }
+]

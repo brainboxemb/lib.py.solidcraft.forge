@@ -13,6 +13,8 @@
     "circular-feature-pattern",
     "components",
     "cone-boolean",
+    "configuration-position",
+    "configuration-table",
     "corner-anchor",
     "eight-corner-brackets",
     "eight-flightcase-corners",
@@ -54,7 +56,7 @@
     "xz-anchor"
   ],
   "full": false,
-  "library": false,
+  "library": true,
   "models": [
     {
       "id": "anchor-topology-mutation",
@@ -225,6 +227,28 @@
       ],
       "primary": "scpf",
       "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-position",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-table",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
         "verification"
       ]
     },
@@ -728,6 +752,61 @@
   ],
   "release_only": false,
   "schema": 2,
-  "selected": [],
-  "source_sha": "77bce85c6eec1e1443455c7ce810198b9afb4a79"
+  "selected": [
+    "anchor-topology-mutation",
+    "anchored-holes",
+    "appearance-color",
+    "as-built-attach",
+    "assembly-decorator",
+    "assembly-owned-anchor",
+    "attach-angle",
+    "attached-through-all",
+    "bracket",
+    "circle-negative-extrude",
+    "circular-feature-pattern",
+    "components",
+    "cone-boolean",
+    "configuration-position",
+    "configuration-table",
+    "corner-anchor",
+    "eight-corner-brackets",
+    "eight-flightcase-corners",
+    "exploded-views",
+    "four-corner-l",
+    "group-hierarchy",
+    "hole-family",
+    "native-revolve",
+    "parameter-scope",
+    "parametric-anchor",
+    "parametric-attach",
+    "parametric-move",
+    "parametric-offset",
+    "parametric-placement-pair",
+    "parent-derived-child-size",
+    "primitive-csg",
+    "rectangular-pattern",
+    "repeated-parent-attachments",
+    "revolute-joint",
+    "rotated-copy-placement",
+    "rotated-sketch-cutter",
+    "round-top-sketch",
+    "rounded-rectangle-sketch",
+    "sample-plate-drawing",
+    "selective-profile-extrude",
+    "sheet-contour-flange",
+    "sheet-contour-flange-recess",
+    "sheet-edge-flange",
+    "sheet-fold",
+    "sheet-hem",
+    "sheet-path-flange",
+    "sheet-perforate",
+    "simple-box",
+    "sketch-pattern-mirror",
+    "slot-family",
+    "top-sketch-after-chamfer",
+    "topology-face-boundary-box",
+    "topology-face-boundary-xz",
+    "xz-anchor"
+  ],
+  "source_sha": "a3ee8a8973acde9b0b6d3349ae59942622b4d579"
 }
