@@ -68,57 +68,23 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #192 Forge multi-backend feasibility on `exp`
+### Experimental: #212 formalize the native backend adapter boundary
 
-The permanent experimental line is accepted. Begin #192 only on `exp` and keep
-normal product development on `dev`.
+#192 is accepted on `exp`: unchanged Forge sources proved native Mitcad
+Box, Circle Sketch+Extrude and face-boundary Chamfer; the v0.70.0 runtime and
+reference are pinned; native topology remained engine-native; Mitcad STL passed
+the existing owner-local geometry verifier; and all 52 SolidCraft owners
+remained green after the library change.
 
-First spike:
-1. pin Mitcad v0.70.0 reference evidence locally under
-   `docs/reference/mitcad/0.70.0` and provide live MCP capture/verification;
-2. keep the existing public `scpf` model source unchanged;
-3. select a minimal primitive/plate, then sketch+extrude, then one topology
-   modification;
-4. identify the current feature-tree intent that is already backend-neutral;
-5. isolate SolidCraft-specific lowering/replay/topology behind an explicit
-   backend boundary;
-6. add Mitcad only far enough to prove one unchanged Forge source through both
-   native engines and the existing verification architecture;
-7. resolve Forge topology intent through Mitcad's native `faces` / `edges`
-   queries and native topology names before feeding modify features; do not
-   substitute coordinate picks;
-8. fail explicitly for unsupported Mitcad intent rather than weakening the
-   SolidCraft path or inventing lowest-common-denominator behavior.
-
-Current spike evidence:
-- Mitcad v0.70.0 command reference is pinned locally from upstream tag
-  `v0.70.0` / commit `806a4210126ab977ba678708dd476496ddbd2968`;
-- `simple-box` now lowers from the unchanged SCPF source directly to either
-  SolidCraft `solid.box` or Mitcad `add_feature {type: box}`;
-- Mitcad lowering does not translate through SolidCraft command JSON;
-- unsupported Mitcad shape kinds fail explicitly;
-- a Mitcad MCP executor now owns native document creation, command-array
-  application, body inspection, .mitcad save and optional export; transport
-  tests keep this separate from lowering;
-- an opt-in native smoke module pins the official v0.70.0 Linux AppImage by
-  SHA-256 and verifies the live MCP reference before running simple-box,
-  checking native volume/bounds and .mitcad/STL output;
-- the same direct backend now lowers the unchanged
-  `circle-negative-extrude` source as a native Mitcad sketch feature plus
-  negative-distance extrude, with native volume/bounds qualification;
-- `Edges.from_faces(Faces.TOP)` is now qualified through Mitcad-native
-  topology: staged replay binds the returned body UID, queries the one planar
-  face with the requested world-cardinal normal, queries native edge names and
-  binds the face's actual `E{faceA|faceB}` boundary into native Chamfer.
-  Forge predicts neither body nor topology identifiers and uses no XYZ edge
-  picks;
-- the retained Mitcad STL for `simple-box` and
-  `circle-negative-extrude` is fed through the same owner-local
-  `geometry.json` and `cad_verification.geometry` verifier as normal Forge
-  mesh evidence, while native Mitcad volume/bounds remain additional evidence;
-- the concrete backend proposal is recorded in `docs/design.md`: existing
-  Forge feature intent stays shared; lowering, native-result binding, topology
-  resolution, execution and explicit capability refusal are backend-owned.
+#212 now turns that feasibility code into one maintainable internal boundary:
+- backend selection is resolved once through an adapter registry;
+- SolidCraft remains the stable default and retains the existing compiler and
+  assembly lowerers;
+- Mitcad remains experimental and declares only the already-qualified slice;
+- adapters declare executor/document family and capability metadata;
+- assemblies and unsupported Mitcad intent continue to fail explicitly;
+- no new Mitcad CAD features, runtime packaging, `scpf` rename or
+  `exp -> dev` integration are part of this issue.
 
 ### Queued: #162 / #163 verification evidence cleanup
 

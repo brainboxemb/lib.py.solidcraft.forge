@@ -1,5 +1,5 @@
 schema: 1
-branch: feature/192-mitcad-backend-spike
+branch: feature/212-backend-adapter-boundary
 modules: [mitcad-reference, mitcad-native-smoke]
 library: true
 models: [simple-box, circle-negative-extrude, topology-face-boundary-box]
