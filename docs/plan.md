@@ -67,23 +67,22 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### #190 complete the permanent experimental Forge integration line
+### Experimental: #192 Forge multi-backend feasibility on `exp`
 
-The optional `exp` branch/CI/build/Pages infrastructure from
-`template.cad.library#73` is already implemented on `dev` through PR #191.
-It was intentionally not promoted before the v0.19.0 release.
+The permanent experimental line is accepted. Begin #192 only on `exp` and keep
+normal product development on `dev`.
 
-Complete #190 by:
-1. promoting the qualified branch-policy/CI/Pages contract to stable
-   `main` without mixing backend implementation into that promotion;
-2. creating permanent Forge `exp` from the qualified normal development
-   baseline;
-3. qualifying real `build/exp` publication and the `/exp/` Pages projection
-   end-to-end;
-4. keeping releases forbidden from `exp` and rejecting direct
-   `exp -> main` integration;
-5. only after the permanent experimental line is accepted, begin Mitcad /
-   multi-backend research on that line.
+First spike:
+1. keep the existing public `scpf` model source unchanged;
+2. select a minimal primitive/plate, then sketch+extrude, then one topology
+   modification;
+3. identify the current feature-tree intent that is already backend-neutral;
+4. isolate SolidCraft-specific lowering/replay/topology behind an explicit
+   backend boundary;
+5. add Mitcad only far enough to prove one unchanged Forge source through both
+   native engines and the existing verification architecture;
+6. fail explicitly for unsupported Mitcad intent rather than weakening the
+   SolidCraft path or inventing lowest-common-denominator behavior.
 
 ### Queued: #162 / #163 verification evidence cleanup
 
