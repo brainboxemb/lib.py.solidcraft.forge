@@ -1454,6 +1454,21 @@ class Shape:
     def __sub__(self, other):
         return Shape("difference", (self, self._csg_operand(other, "-")))
 
+    def export_feature(self, name):
+        """Export this Forge-authored feature through a reusable component.
+
+        The export name is component-local Forge API identity. It is not a
+        SolidCraft history name and is resolved only after the component
+        definition has been compiled.
+        """
+        if (
+            not isinstance(name, str)
+            or not name.isidentifier()
+            or name.startswith("_")
+        ):
+            raise ValueError("exported feature name must be a public Python identifier")
+        return Shape("exported_feature", (self, name))
+
     def move(self, x=0, y=0, z=0):
         """Translate a CSG shape by millimetres.
 

@@ -81,6 +81,7 @@ def _is_feature_tree(shape):
     ):
         return False
     if shape.kind in (
+        "exported_feature",
         "box",
         "placed_box",
         "tapered_box",
@@ -1519,6 +1520,10 @@ def _applied_feature_prefix(root, source):
     """Return the model-history prefix ending at the exact applied source."""
     if not isinstance(root, Shape):
         return None
+    if root is source:
+        return root
+    if root.kind == "exported_feature":
+        return _applied_feature_prefix(root.data[0], source)
 
     if root.kind in ("rectangular_pattern", "circular_pattern"):
         return _applied_feature_prefix(root.data[0], source)
@@ -1574,6 +1579,8 @@ def _native_feature_name(root, feature, model_name):
 
 
 def _to_commands(shape, name):
+    if shape.kind == "exported_feature":
+        return _to_commands(shape.data[0], name)
     if shape.kind == "sketch_open_chain":
         return compile_open_chain(shape)
 
@@ -1934,6 +1941,8 @@ def _to_commands(shape, name):
         original, added = shape.data
         steps, base = _to_commands(original, name)
         feature_name = None
+        if added.kind == "exported_feature":
+            added, _export_name = added.data
         if added.kind == "labeled":
             added, feature_name = added.data
         if added.kind == "anchored":
@@ -2009,7 +2018,7 @@ def compile_features(shape, name):
     # XY rectangular footprints instead list their plan dimensions first.
     root = shape
     while root.kind in (
-        "fillet", "chamfer", "shell", "union", "difference",
+        "exported_feature", "fillet", "chamfer", "shell", "union", "difference",
         "material_assignment", "appearance_assignment",
     ):
         root = root.data[0]

@@ -25,6 +25,7 @@ EXPECTED_IDS = {
     "circle-negative-extrude",
     "circular-feature-pattern",
     "components",
+    "configuration-child-feature",
     "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
@@ -78,6 +79,7 @@ SCPF_ONLY_IDS = {
     "appearance-color",
     "asymmetric-chamfer",
     "attached-through-all",
+    "configuration-child-feature",
     "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
@@ -122,7 +124,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 59)
+        self.assertEqual(len(self.models), 60)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -132,6 +134,7 @@ class ModelTests(unittest.TestCase):
             "corner-anchor",
             "components",
             "sample-plate-drawing",
+            "configuration-child-feature",
             "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
@@ -148,6 +151,7 @@ class ModelTests(unittest.TestCase):
             "corner-anchor",
             "components",
             "sample-plate-drawing",
+            "configuration-child-feature",
             "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",

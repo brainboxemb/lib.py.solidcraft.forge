@@ -5,7 +5,7 @@ from pathlib import Path
 
 from scpf import (
     Always, Anchor, Box, ConfigRule, Configure, DriveParameter, Hole, Param,
-    Parameter, Suppress, compile_model,
+    Parameter, Suppress, compile_model, component,
 )
 from scpf.compiler import ModelError
 from scpf.replay import resolve_value, validate_replay_document, variables_in
@@ -331,6 +331,76 @@ class ConfigurationTests(unittest.TestCase):
                 "expression": "tube_d",
             },
         )
+
+    def test_parent_configure_suppresses_exported_child_feature_by_definition(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "model.py"
+            path.write_text(
+                "@component(include=('width',))\n"
+                "class Coupler:\n"
+                "    width = 40.0\n"
+                "    def build(self):\n"
+                "        body = Box(self.width, 20, 10, anchor=Anchor.BOTTOM)\n"
+                "        panel_pin = Hole(d=5).at(0, 0, 10).export_feature('panel_pin')\n"
+                "        return body - panel_pin\n"
+                "class Frame:\n"
+                "    coupler_width = 40.0\n"
+                "    def build(self):\n"
+                "        left = Coupler(width=self.coupler_width, name='left')\n"
+                "        right = Coupler(\n"
+                "            width=self.coupler_width, name='right',\n"
+                "            placement=Placement(x=60),\n"
+                "        )\n"
+                "        return Configure(\n"
+                "            left + right, active='Medium',\n"
+                "            columns=(\n"
+                "                Param(self.coupler_width),\n"
+                "                Suppress(right.feature('panel_pin')),\n"
+                "            ),\n"
+                "            rows={\n"
+                "                'Small': ('30 mm', True),\n"
+                "                'Medium': ('40 mm', True),\n"
+                "                'Large': ('50 mm', False),\n"
+                "            },\n"
+                "        )\n"
+                "Frame()\n",
+                encoding="utf-8",
+            )
+            document = run_script(path)
+
+        commands = document["commands"]
+        configure = next(
+            row for row in commands if row["command"] == "config.configure"
+        )
+        self.assertEqual(configure["params"]["params"], ["coupler_width"])
+        self.assertEqual(configure["params"]["features"], ["$config_name_2"])
+
+        holes = [row for row in commands if row["command"] == "solid.hole"]
+        self.assertEqual(len(holes), 1)
+        self.assertEqual(holes[0]["bind"]["$config_name_2"], "name")
+
+        large = next(
+            row for row in commands
+            if row["command"] == "config.row"
+            and row["params"].get("name") == "Large"
+        )
+        self.assertEqual(
+            large["params"]["values"],
+            {
+                "param:coupler_width": "50 mm",
+                "suppress:$config_name_2": "false",
+            },
+        )
+
+    def test_component_feature_reference_requires_explicit_export(self):
+        @component
+        class Coupler:
+            def build(self):
+                return Box(40, 20, 10)
+
+        instance = Coupler()
+        with self.assertRaisesRegex(ValueError, "no exported component feature"):
+            instance.feature("panel_pin")
 
     def test_configure_wraps_parametric_assembly_placement(self):
         with tempfile.TemporaryDirectory() as directory:
