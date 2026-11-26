@@ -450,9 +450,11 @@ Forge semantic ModelIR
 code is evaluated. `ModelIR` is the compiler boundary. Native backends do not
 interpret portable raw `Shape.kind` / `Shape.data` payloads independently.
 
-The first typed IR nodes cover the already-qualified portable slice:
+The typed IR began with the first qualified portable slice:
 `BoxIR`, `CircleExtrudeIR`, `ChamferIR` and semantic
-`FaceBoundaryIR` selection intent. Symbolic Forge `Parameter` /
+`FaceBoundaryIR` selection intent. #246 extends the same boundary with
+`CylinderIR` and the deliberately bounded
+`BooleanSubtractIR(BoxIR, CylinderIR)`. Symbolic Forge `Parameter` /
 `Expression` values remain semantic values until backend lowering.
 
 The stable SolidCraft surface is larger than this first migration slice. A
@@ -507,9 +509,9 @@ SolidCraft declares the stable Forge surface plus assemblies/native
 topology/drawings. Typed portable nodes lower directly in the SolidCraft
 backend; `LegacyShapeIR` delegates only not-yet-migrated stable surface to the
 historical compiler. Mitcad declares only the already-qualified experimental
-slice: `primitive.box`, `sketch.circle`,
-`feature.extrude.distance`, `modify.chamfer.face-boundary` and
-`native-topology`; its assembly compiler is absent, so assembly intent fails
+slice: `primitive.box`, `primitive.cylinder`, `boolean.subtract`,
+`sketch.circle`, `feature.extrude.distance`,
+`modify.chamfer.face-boundary` and `native-topology`; its assembly compiler is absent, so assembly intent fails
 explicitly at the boundary. This registry is intentionally internal: it does
 not rename `scpf`, expose a new public backend API or imply feature parity.
 
@@ -524,6 +526,50 @@ normal Forge owners. The native smoke retains the Mitcad STL and feeds it to
 `cad_verification.geometry` with the owner-local `geometry.json`; native
 Mitcad body properties remain additional engine-specific evidence, not a
 replacement verifier.
+
+### Experimental Cylinder + subtract IR (#246)
+
+The first capability added after the semantic-IR boundary proves that the IR,
+not a backend parser, owns new CAD semantics:
+
+```text
+SCPF: Box(...) - Cylinder(...)
+            ↓
+BooleanSubtractIR(
+  target=BoxIR(...),
+  tool=CylinderIR(...)
+)
+       ├── SolidCraft lowering
+       │     solid.box(operation=new)
+       │     solid.cylinder(operation=cut, targets=[body])
+       └── Mitcad lowering
+             box(operation=new_body)
+             cylinder(operation=cut, participants=[])
+```
+
+`CylinderIR` keeps height, diameter, principal axis, semantic anchor and
+placement point. The first Mitcad qualification accepts origin placement and
+CENTER or the negative axial-end anchor only; the IR itself is not
+Mitcad-specific and SolidCraft retains its existing broader stable behavior.
+
+`BooleanSubtractIR` is intentionally narrower than a general boolean tree:
+#246 qualifies one `BoxIR` target and one `CylinderIR` tool. Other target/tool
+combinations stay `LegacyShapeIR` for SolidCraft and fail closed on Mitcad
+until separately migrated.
+
+Mitcad v0.70.0 gives primitives the same native operation vocabulary as
+Extrude. For the one-target slice Forge emits the Box first, then a Cylinder
+with `operation: "cut"` and empty `participants`. In Mitcad that means the
+existing bodies; Forge uses it only where its IR guarantees exactly one target
+body exists. No feature or body id is predicted, and no replay binding is
+needed for this boolean. SolidCraft is free to lower the same semantic boolean
+to its existing CSG command pair.
+
+The focused `cylinder-subtract` verification owner exists because the
+pre-existing `primitive-csg` owner also requires Sphere, union and
+intersection. Reusing that owner would have expanded the Mitcad capability
+surface merely to prove this slice. Both `scpf` and `scpf-mitcad`
+implementations of the focused owner consume the same SCPF source.
 
 ### Experimental Mitcad builder boundary (#218)
 

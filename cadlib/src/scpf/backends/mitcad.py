@@ -17,9 +17,11 @@ from ..core import (
     command_value,
 )
 from ..ir import (
+    BooleanSubtractIR,
     BoxIR,
     ChamferIR,
     CircleExtrudeIR,
+    CylinderIR,
     LegacyShapeIR,
     ModelIR,
     normalize_shape,
@@ -90,6 +92,52 @@ def _box_command(node: BoxIR, name: str) -> dict:
         "cmd": "add_feature",
         "name": name,
         "def": definition,
+    }
+
+
+_CYLINDER_PLANES = {
+    "X": ("yz", (-1, 0, 0)),
+    "Y": ("xz", (0, -1, 0)),
+    "Z": ("xy", (0, 0, -1)),
+}
+
+
+def _cylinder_command(
+    node: CylinderIR,
+    name: str,
+    *,
+    operation: str = "new_body",
+) -> dict:
+    _require_positive(node.height, "cylinder height")
+    _require_positive(node.diameter, "cylinder diameter")
+    if tuple(node.point) != (0, 0, 0):
+        raise ModelError(
+            "Mitcad Cylinder IR currently requires the origin placement"
+        )
+    try:
+        plane, axial_start = _CYLINDER_PLANES[node.axis]
+    except KeyError as exc:
+        raise ModelError(
+            f"Mitcad Cylinder IR requires a principal axis, got {node.axis!r}"
+        ) from exc
+    if node.anchor not in ((0, 0, 0), axial_start):
+        raise ModelError(
+            "Mitcad Cylinder IR currently supports CENTER or the negative "
+            "axial end anchor only"
+        )
+    return {
+        "cmd": "add_feature",
+        "name": name,
+        "def": {
+            "type": "cylinder",
+            "plane": plane,
+            "center": [0, 0],
+            "diameter": command_value(node.diameter),
+            "height": command_value(node.height),
+            "symmetric": node.anchor == (0, 0, 0),
+            "operation": operation,
+            "participants": [],
+        },
     }
 
 
@@ -244,8 +292,19 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
 
     if isinstance(node, BoxIR):
         geometry_commands = [_box_command(node, name)]
+    elif isinstance(node, CylinderIR):
+        geometry_commands = [_cylinder_command(node, name)]
     elif isinstance(node, CircleExtrudeIR):
         geometry_commands = _circle_extrude_commands(node, name)
+    elif isinstance(node, BooleanSubtractIR):
+        geometry_commands = [
+            _box_command(node.target, f"{name}Base"),
+            _cylinder_command(
+                node.tool,
+                f"{name}Cut",
+                operation="cut",
+            ),
+        ]
     else:
         raise ModelError(
             f"Mitcad backend does not support Forge IR node "

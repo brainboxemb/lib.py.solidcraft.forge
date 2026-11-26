@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "bounds_min": [-30.0, -20.0, 0.0],
+  "bounds_max": [30.0, 20.0, 12.0],
+  "bounds_tolerance_mm": 0.25,
+  "volume_mm3": 27857.52220392306,
+  "volume_tolerance_mm3": 40,
+  "watertight": true,
+  "bounds_sufficient": false,
+  "surface_distance_probes": [
+    {
+      "label": "center of cylindrical through bore",
+      "point": [0.0, 0.0, 6.0],
+      "distance_mm": 5.0,
+      "tolerance_mm": 0.3
+    }
+  ]
+}

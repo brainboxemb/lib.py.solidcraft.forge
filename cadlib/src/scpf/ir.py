@@ -45,6 +45,18 @@ class BoxIR:
 
 
 @dataclass(frozen=True)
+class CylinderIR:
+    """Principal-axis cylinder semantic intent."""
+
+    height: Any
+    diameter: Any
+    axis: str
+    anchor: tuple[int, int, int]
+    point: tuple[Any, Any, Any] = (0, 0, 0)
+    source_kind: str = "cylinder"
+
+
+@dataclass(frozen=True)
 class CircleExtrudeIR:
     """One standalone circular sketch extruded by a signed direction."""
 
@@ -74,6 +86,15 @@ class ChamferIR:
 
 
 @dataclass(frozen=True)
+class BooleanSubtractIR:
+    """Qualified subtractive boolean between typed semantic solids."""
+
+    target: BoxIR
+    tool: CylinderIR
+    source_kind: str = "difference"
+
+
+@dataclass(frozen=True)
 class LegacyShapeIR:
     """Transitional wrapper for stable SolidCraft surface not migrated yet."""
 
@@ -81,7 +102,14 @@ class LegacyShapeIR:
     source_kind: str
 
 
-IRNode = BoxIR | CircleExtrudeIR | ChamferIR | LegacyShapeIR
+IRNode = (
+    BoxIR
+    | CylinderIR
+    | CircleExtrudeIR
+    | ChamferIR
+    | BooleanSubtractIR
+    | LegacyShapeIR
+)
 
 
 @dataclass(frozen=True)
@@ -124,6 +152,18 @@ def _parameter_ir(shape: Shape) -> tuple[ParameterIR, ...]:
     return tuple(
         ParameterIR(name, value)
         for name, value in _collect_parameters(shape).items()
+    )
+
+
+def _portable_cylinder(shape: Shape) -> CylinderIR | None:
+    if shape.kind != "cylinder":
+        return None
+    height, diameter, axis, anchor = shape.data
+    return CylinderIR(
+        height=height,
+        diameter=diameter,
+        axis=axis,
+        anchor=tuple(int(value) for value in anchor.vector),
     )
 
 
@@ -211,6 +251,18 @@ def _normalize_node(shape: Shape) -> IRNode:
             anchor=tuple(int(value) for value in anchor.vector),
         )
 
+    cylinder = _portable_cylinder(shape)
+    if cylinder is not None:
+        return cylinder
+
+    if shape.kind == "difference":
+        target_shape, tool_shape = shape.data
+        target = _normalize_node(target_shape)
+        tool = _normalize_node(tool_shape)
+        if isinstance(target, BoxIR) and isinstance(tool, CylinderIR):
+            return BooleanSubtractIR(target=target, tool=tool)
+        return LegacyShapeIR(shape=shape, source_kind=shape.kind)
+
     circle_extrude = _portable_circle_extrude(shape)
     if circle_extrude is not None:
         return circle_extrude
@@ -238,8 +290,10 @@ def is_portable(model: ModelIR) -> bool:
 
 
 __all__ = [
+    "BooleanSubtractIR",
     "BoxIR",
     "ChamferIR",
+    "CylinderIR",
     "CircleExtrudeIR",
     "FaceBoundaryIR",
     "IRNode",

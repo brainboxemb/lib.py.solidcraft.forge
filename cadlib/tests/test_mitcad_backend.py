@@ -3,7 +3,7 @@
 from pathlib import Path
 import unittest
 
-from scpf import Anchor, Box
+from scpf import Anchor, Box, Sphere
 from scpf.backends.mitcad import compile_model
 from scpf.compiler import ModelError
 from scpf.runner import run_script
@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
 TOPOLOGY_BOX = ROOT / "models/topology-face-boundary-box/scpf/model.py"
+CYLINDER_SUBTRACT = ROOT / "models/cylinder-subtract/scpf/model.py"
 
 
 class MitcadBackendTests(unittest.TestCase):
@@ -119,6 +120,36 @@ class MitcadBackendTests(unittest.TestCase):
             {"type": "equal_distance", "distance": 2},
         )
 
+    def test_cylinder_subtract_uses_native_cylinder_cut_without_body_ids(self):
+        solidcraft = run_script(CYLINDER_SUBTRACT)
+        document = run_script(CYLINDER_SUBTRACT, backend="mitcad")
+
+        self.assertEqual(
+            [
+                row["command"]
+                for row in solidcraft["commands"]
+                if row["command"].startswith("solid.")
+            ],
+            ["solid.box", "solid.cylinder"],
+        )
+        features = [
+            row["def"]
+            for row in document["commands"]
+            if row["cmd"] == "add_feature"
+        ]
+        self.assertEqual(
+            [feature["type"] for feature in features],
+            ["box", "cylinder"],
+        )
+        self.assertEqual(features[0]["operation"], "new_body")
+        self.assertEqual(features[1]["operation"], "cut")
+        self.assertEqual(features[1]["participants"], [])
+        self.assertFalse(any(
+            isinstance(value, str) and value.startswith("F")
+            for feature in features
+            for value in feature.values()
+        ))
+
     def test_centered_box_uses_native_mitcad_symmetric_height(self):
         document = compile_model(
             Box(40, 30, 10, anchor=Anchor.CENTER),
@@ -131,10 +162,9 @@ class MitcadBackendTests(unittest.TestCase):
     def test_unsupported_shape_fails_explicitly(self):
         with self.assertRaisesRegex(
             ModelError,
-            "does not yet support Forge shape kind 'cylinder'",
+            "does not yet support Forge shape kind 'sphere'",
         ):
-            from scpf import Cylinder
-            compile_model(Cylinder(d=10, h=20), "CylinderTest")
+            compile_model(Sphere(10), "SphereTest")
 
     def test_unknown_runner_backend_is_rejected_before_model_execution(self):
         with self.assertRaisesRegex(ValueError, "unknown SCPF backend"):

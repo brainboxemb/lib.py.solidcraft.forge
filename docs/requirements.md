@@ -35,6 +35,9 @@
 14. Portable Forge IR must express CAD semantics and selection intent only. It must not contain SolidCraft command names, Mitcad native ids, engine-owned BRep entities or backend transport details.
 15. Native shape backends consume `ModelIR`. New multi-backend features must be introduced once in Forge IR and then lowered independently by each backend; they must not add parallel raw `Shape.data` interpreters.
 16. `LegacyShapeIR` is a temporary SolidCraft-only compatibility node for stable surface not yet migrated to typed IR. Experimental backends must fail closed when they receive it.
+17. The qualified Cylinder extension is represented once as typed `CylinderIR`; the first qualified subtractive boolean is `BooleanSubtractIR` with a `BoxIR` target and `CylinderIR` tool. Broader boolean combinations remain unsupported until separately qualified.
+18. Native backend lowering may choose different engine instructions for the same boolean IR. SolidCraft may emit its existing CSG primitive cut sequence while Mitcad may emit a Cylinder feature with native `operation: "cut"`; both must preserve the same Forge semantics.
+19. Mitcad subtract lowering must not predict native body ids. The initial one-target slice uses the engine's native empty-participant meaning (“all existing bodies”) only in a document state where Forge has emitted exactly one target body before the tool.
 
 ## SCPF native associativity
 
