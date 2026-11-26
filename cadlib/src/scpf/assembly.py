@@ -1110,6 +1110,7 @@ def _compile_assembly_with_dependencies(value, name):
                 "note_count": len(drawing.notes),
                 "properties": dict(drawing.properties),
                 "title_block": dict(drawing.title_block),
+                "title_block_style": drawing.title_block_style,
                 "view_styles": {
                     f"$drawing_{index}_{view_name}": view.visual_style
                     for view_name, view in drawing.views
