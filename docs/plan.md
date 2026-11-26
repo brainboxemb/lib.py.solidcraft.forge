@@ -150,40 +150,43 @@ already-stable #306 qualification.
 
 ### Experimental lane: #343 recursive primitive CSG IR
 
-#320 is complete on permanent `exp` through PR #342.
+The isolated semantic-IR / Mitcad line is currently at a qualified checkpoint.
 
-Accepted experimental evidence:
-- permanent exp head:
+#297 synchronized the accepted v0.22.1 normal baseline into permanent `exp`
+through reviewed conflict recovery. #320 then qualified the already-public
+two-concentric-circle annular standalone Sketch extrusion through the same
+engine-neutral compiler boundary:
+
+- #320 / PR #342 merged to permanent `exp` as
   `95f70ef93eaaf86fece51b8e560aa895281ac7fe`;
-- permanent exp CI run 45856878722 is green, including durable publication;
-- Pages run 45857511697 is green;
-- the existing `multi-profile-extrude` physical owner now has both `scpf`
-  and `scpf-mitcad` PASS from the same public source;
-- the two-concentric-circle annulus normalizes to one `SketchIR` with two
-  `CircleProfileIR` nodes plus
-  `RegionIR(outer=0, holes=(1,))` and `ExtrudeIR`;
-- SolidCraft retains its accepted one-Sketch / two-circle / one-extrude native
-  contract;
-- Mitcad resolves the backend-derived interior point to its own native region
-  identity and exports a watertight hollow tube matching the shared geometry
-  contract;
-- native coordinate picks and Mitcad region ids remain lowering transport,
-  never Forge IR intent.
+- permanent exp CI run 45856878722 is green and durable `build/exp` names
+  that exact source;
+- one SCPF source now lowers through
+  `SketchIR` / `CircleProfileIR` / `RegionIR` / `ExtrudeIR` to both
+  SolidCraft and Mitcad;
+- the annulus retains only semantic membership
+  `RegionIR(outer=0, holes=(1,))`; backend coordinate picks and Mitcad native
+  region ids remain lowering details rather than IR intent;
+- the existing `multi-profile-extrude` owner retains native
+  `model.mitcad`, `mitcad.json` and STL evidence;
+- its Mitcad geometry verification passes the 10 mm OD / 8 mm ID / 30 mm
+  length contract, including watertight mesh and inner-wall/volume checks;
+- arbitrary profile types, non-concentric/nonnested membership and more than
+  two profiles remain outside the qualified portable slice and fail closed on
+  Mitcad.
 
-Continue the isolated compiler/backend experiment with #343. Replace the
-current special-case `BooleanSubtractIR(BoxIR, CylinderIR)` boundary with
-recursive typed primitive CSG intent and add the bounded `SphereIR` needed by
-the existing `primitive-csg` owner.
+#343 is the separately scoped next compiler/backend expansion. It generalizes
+the current special-case Box-Cylinder subtraction into recursive typed
+primitive CSG intent, adds the bounded `SphereIR` needed by the existing
+`primitive-csg` owner, and qualifies that unchanged public SCPF source through
+native Mitcad Sphere plus join/cut/intersect operations.
 
-The unchanged owner source already exercises Sphere + translated Box join,
-Cylinder cut and final Box intersection. Pinned Mitcad 0.70.0 natively supports
-Sphere primitives and new-body/join/cut/intersect primitive operations, so
-#343 must lower that semantic CSG tree natively rather than importing BRep,
-approximating geometry or adding a second raw-Shape interpreter.
-
-The existing #246 Box-Cylinder subtraction must migrate through the same generic
-boolean IR so the experiment reduces special cases instead of adding another
-parallel representation. Keep unsupported primitive/boolean forms fail-closed.
+The existing #246 `cylinder-subtract` owner must migrate through the same
+generic boolean IR so the experiment reduces special cases rather than adding
+a parallel representation. SolidCraft command behavior remains compatible,
+Mitcad predicts no body ids, and unsupported primitive/boolean forms remain
+fail-closed. Keep #315 independent on the normal lane and do not promote
+`exp -> dev` merely because an experimental checkpoint is green.
 
 ## Later
 
