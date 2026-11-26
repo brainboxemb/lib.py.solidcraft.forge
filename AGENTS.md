@@ -54,6 +54,12 @@ An agent MUST NOT:
 If `/merge` fails, stop the integration and repair the merge-policy path.
 Never bypass the policy.
 
+A genuinely conflicted **direct permanent-branch** PR may use the policy-owned
+reviewed `/merge-resolved` recovery only after a separate same-repository
+`resolve/*` PR has exposed the exact combined tree and passed central CI.
+The resolution PR is review-only and must never be merged normally. Do not use
+this path for temporary, release or main-governance PRs.
+
 Matching work-branch `build.yml` controls explicit library/module/model selection. `dev` and `exp` use incremental selection since the last successful run on their own branch. Product-changing `main` commits and `dev -> main` promotions run full. Validated release-only PRs/pushes run library + release only and preserve the previous full stable CAD evidence.
 
 ## Ownership

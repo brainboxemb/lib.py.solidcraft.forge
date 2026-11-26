@@ -7,6 +7,36 @@ Permanent `workflow_dispatch` runs explicitly qualify the current checked-out pe
 
 Create normal work from `dev`. Long-running experimental work uses permanent `exp`; temporary work branches squash into the integration line they belong to. Synchronize `dev -> exp` and integrate a completed experiment with `exp -> dev` through merge commits. `exp -> main` and releases from `exp` are forbidden. Set the exact temporary branch in `build.yml` and select the smallest useful owners. Promote `dev -> main` only with a full-green promotion run.
 
+## Merge execution and conflicted permanent branches
+
+The merge shape is policy-owned. Use `/merge` for every ordinary
+source-branch integration; never choose squash/merge/rebase manually, enable
+auto-merge or call GitHub's merge API directly.
+
+If an exact direct permanent PR (`dev -> main`, `main -> dev`,
+`dev -> exp` or `exp -> dev`) is genuinely conflicted, keep that permanent
+PR as the integration target. Prepare a separate same-repository
+`resolve/*` branch containing the intended combined tree and open a
+**review-only** PR from it to the same permanent base. The review PR must be
+mergeable and central CI must be green; it is never merged.
+
+After reviewing the exact parent commits, resolution commit and Git tree,
+comment on the original conflicted permanent PR:
+
+```text
+/merge-resolved
+base <reviewed-base-sha>
+head <reviewed-head-sha>
+resolution-pr <review-pr-number>
+resolution resolve/<name> <reviewed-resolution-commit-sha> <reviewed-tree-sha>
+```
+
+The policy creates exactly one verified `[base, head]` merge commit, advances
+the permanent base non-force, dispatches normal permanent CI/cleanup, closes
+both review PRs and removes the unchanged resolution ref. If the original PR
+becomes mergeable, use normal `/merge` instead. This recovery is forbidden
+for temporary, release and governance PRs.
+
 ## Library
 
 The public package is under `cadlib/` and imports as `scpf`. A library-only work branch can use:

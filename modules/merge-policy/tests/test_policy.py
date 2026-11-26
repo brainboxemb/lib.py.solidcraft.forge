@@ -1,16 +1,21 @@
 import unittest
+from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from cad_model_merge_policy.__main__ import (
     dispatch_workflow,
     merge_required,
     pull_request_files,
+    require_conflicted_permanent_pr,
     require_green_ci,
     require_main_governance_paths,
+    run_resolved,
 )
 from cad_model_merge_policy.policy import (
     MergePolicyError,
     is_main_governance,
+    is_permanent_merge,
     merge_method,
 )
 
@@ -47,7 +52,7 @@ class MergePolicyTests(unittest.TestCase):
         self.assertEqual(merge_method(head="issue/10-change", base="dev"), "squash")
 
     def test_experimental_routes(self):
-        self.assertEqual(merge_method(head="feature/190-work", base="exp"), "squash")
+        self.assertEqual(merge_method(head="feature/73-work", base="exp"), "squash")
         self.assertEqual(merge_method(head="dev", base="exp"), "merge")
         self.assertEqual(merge_method(head="exp", base="dev"), "merge")
         for head, base in (("exp", "main"), ("main", "exp"), ("release/v1", "exp"), ("release/v1", "dev")):
@@ -117,6 +122,140 @@ class MergePolicyTests(unittest.TestCase):
     def test_feature_to_main_is_rejected(self):
         with self.assertRaises(MergePolicyError):
             merge_method(head="issue/10-change", base="main")
+
+    def test_reviewed_recovery_is_only_for_direct_permanent_merges(self):
+        for head, base in (
+            ("dev", "main"),
+            ("main", "dev"),
+            ("dev", "exp"),
+            ("exp", "dev"),
+        ):
+            with self.subTest(head=head, base=base):
+                self.assertTrue(is_permanent_merge(head=head, base=base))
+        for head, base in (
+            ("sync/90-resolution", "exp"),
+            ("release/v1.2.3", "main"),
+            ("docs/90-plan", "main"),
+            ("feature/90-work", "dev"),
+        ):
+            with self.subTest(head=head, base=base):
+                self.assertFalse(is_permanent_merge(head=head, base=base))
+
+    @patch("cad_model_merge_policy.__main__.api")
+    def test_resolved_recovery_rejects_temporary_original_pr(self, api):
+        api.return_value = {
+            "state": "open",
+            "merged": False,
+            "draft": False,
+            "mergeable": False,
+            "base": {"ref": "exp", "sha": "a" * 40},
+            "head": {
+                "ref": "sync/90-resolution",
+                "sha": "b" * 40,
+                "repo": {"full_name": "owner/repo"},
+            },
+        }
+        with self.assertRaisesRegex(MergePolicyError, "direct permanent merge"):
+            require_conflicted_permanent_pr(
+                "owner/repo",
+                25,
+                "a" * 40,
+                "b" * 40,
+                "token",
+            )
+
+    def test_resolved_recovery_creates_exact_two_parent_commit(self):
+        command = "\n".join(
+            [
+                "/merge-resolved",
+                "base " + "a" * 40,
+                "head " + "b" * 40,
+                "resolution-pr 26",
+                "resolution resolve/25-dev-exp " + "c" * 40 + " " + "d" * 40,
+            ]
+        )
+        args = SimpleNamespace(
+            command=command,
+            repository="owner/repo",
+            pull_request_number=25,
+            resolution_prefix="resolve/",
+        )
+        pr = {
+            "base": {"ref": "exp", "sha": "a" * 40},
+            "head": {"ref": "dev", "sha": "b" * 40},
+        }
+        review = {"number": 26}
+        created = {
+            "sha": "e" * 40,
+            "tree": {"sha": "d" * 40},
+            "parents": [{"sha": "a" * 40}, {"sha": "b" * 40}],
+        }
+
+        with patch(
+            "cad_model_merge_policy.__main__.require_conflicted_permanent_pr",
+            side_effect=[pr, pr],
+        ), patch(
+            "cad_model_merge_policy.__main__.require_green_ci"
+        ), patch(
+            "cad_model_merge_policy.__main__.require_resolution_review",
+            side_effect=[review, review],
+        ), patch(
+            "cad_model_merge_policy.__main__.require_branch_sha"
+        ) as require_ref, patch(
+            "cad_model_merge_policy.__main__.resolution_commit_tree"
+        ) as require_tree, patch(
+            "cad_model_merge_policy.__main__.api",
+            side_effect=[created, {}],
+        ) as api, patch(
+            "cad_model_merge_policy.__main__.dispatch_workflow"
+        ) as dispatch, patch(
+            "cad_model_merge_policy.__main__.close_pr_if_open"
+        ) as close_pr, patch(
+            "cad_model_merge_policy.__main__.delete_resolution_ref"
+        ) as delete_ref:
+            self.assertEqual(run_resolved(args, "token"), "e" * 40)
+
+        create = api.call_args_list[0]
+        self.assertEqual(create.args[:2], ("owner/repo", "git/commits"))
+        self.assertEqual(create.kwargs["method"], "POST")
+        self.assertEqual(
+            create.kwargs["body"]["parents"],
+            ["a" * 40, "b" * 40],
+        )
+        self.assertEqual(create.kwargs["body"]["tree"], "d" * 40)
+
+        advance = api.call_args_list[1]
+        self.assertEqual(
+            advance.args[:2],
+            ("owner/repo", "git/refs/heads/exp"),
+        )
+        self.assertEqual(advance.kwargs["method"], "PATCH")
+        self.assertEqual(
+            advance.kwargs["body"],
+            {"sha": "e" * 40, "force": False},
+        )
+        self.assertEqual(require_ref.call_count, 6)
+        self.assertEqual(require_tree.call_count, 2)
+        dispatch.assert_any_call("owner/repo", "ci.yml", "exp", "token")
+        dispatch.assert_any_call(
+            "owner/repo", "branch-cleanup.yml", "exp", "token"
+        )
+        self.assertEqual(close_pr.call_count, 2)
+        delete_ref.assert_called_once_with(
+            "owner/repo",
+            "resolve/25-dev-exp",
+            "c" * 40,
+            "token",
+        )
+
+    def test_workflow_forwards_full_owner_command(self):
+        root = Path(__file__).resolve().parents[3]
+        workflow = (root / ".github/workflows/merge-policy.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("MERGE_COMMAND: ${{ github.event.comment.body }}", workflow)
+        self.assertIn('--command "$MERGE_COMMAND"', workflow)
+        self.assertIn('--resolution-prefix "resolve/"', workflow)
 
     @patch("cad_model_merge_policy.__main__.api")
     def test_green_ci_allows_unrelated_pending_merge_check(self, api):

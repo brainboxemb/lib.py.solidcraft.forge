@@ -7,6 +7,8 @@
 3. Keep source ownership explicit: library, physical models, generic modules, documentation and generated evidence are separate roles.
 4. Use `main` as stable, `dev` as normal development integration and optional permanent `exp` as isolated experimental integration. `exp` is not a release source and may not promote directly to `main`.
 5. Generated CAD output is owned by `build`; Pages presentation is owned by `gh-pages`. Permanent `main`, `dev` and optional `exp` outputs must remain isolated by source scope. Pages must not duplicate generated CAD artifacts.
+6. Every source-branch integration remains merge-policy owned. Normal integration uses `/merge`. A genuinely conflicted direct permanent merge (`dev -> main`, `main -> dev`, `dev -> exp` or `exp -> dev`) may use reviewed `/merge-resolved` only with a separate green same-repository `resolve/*` PR that binds the exact combined tree; the resulting permanent commit must have parents exactly `[base, head]` and the base ref must advance non-force.
+7. Temporary, release and main-governance PRs must never use permanent conflict recovery; do not replace a conflicted permanent merge with squash, rebase or direct/manual ref mutation.
 
 ## Models
 
