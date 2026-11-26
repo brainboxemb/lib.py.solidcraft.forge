@@ -1,4 +1,4 @@
-"""Execute a trusted SCPF model and compile it to native SolidCraft commands.
+"""Execute a trusted SCPF model and compile it through Forge semantic IR.
 
 A script may end with an explicit model call such as Plate(). If the file
 instead defines exactly one public class with build(), that class is used as
@@ -22,9 +22,8 @@ from . import core, cadmath
 from .configurations import (
     Configure, Param, Suppress, _ConfiguredDesign, _apply_configuration_document,
 )
-from .compiler import ModelError, _compile_model_with_dependencies
+from .compiler import ModelError
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
-from .assembly import _compile_assembly_with_dependencies
 from .model_objects import (
     Assembly,
     DrawingDimension,
@@ -36,6 +35,8 @@ from .model_objects import (
     Placement,
 )
 from .explicit_sketch import Sketch
+from .backends import get_backend
+from .ir import normalize_shape
 
 
 class ModelParameterWarning(UserWarning):
@@ -65,6 +66,7 @@ def _warn_missing_model_parameters(
     *,
     context="model",
     pv_parameters=(),
+    backend_name="SolidCraft",
 ):
     """Warn from actual emitted dependencies and explicit user pv() reads."""
     native = set(dependencies)
@@ -75,13 +77,13 @@ def _warn_missing_model_parameters(
             if name in native:
                 detail = (
                     "remains a native dependency, but pv() also consumes its "
-                    "current Python value. Changing the SolidCraft parameter "
-                    "may therefore update only part of the model."
+                    f"current Python value. Changing the {backend_name} "
+                    "parameter may therefore update only part of the model."
                 )
             else:
                 detail = (
-                    "has no native SolidCraft dependency and pv() consumes its "
-                    "current Python value."
+                    f"has no native {backend_name} dependency and pv() "
+                    "consumes its current Python value."
                 )
             warnings.warn(
                 f"{context} parameter {name!r} {detail} Preserve the symbolic "
@@ -92,7 +94,7 @@ def _warn_missing_model_parameters(
             )
         elif name not in native:
             warnings.warn(
-                f"{context} parameter {name!r} has no native SolidCraft "
+                f"{context} parameter {name!r} has no native {backend_name} "
                 "dependency; publishing a parameter alone does not make model "
                 "geometry or placement associative. Preserve the symbolic "
                 f"value, or rename it to _{name} if it is intentionally "
@@ -837,11 +839,14 @@ def _model_import_context(path: Path):
         sys.dont_write_bytecode = original_dont_write_bytecode
 
 
-def run_script(path: str | Path) -> dict:
+def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
     """Execute a trusted SCPF model source file and return its command document.
 
     Parameters:
         path: Path to the trusted Python model source file.
+        backend: Native lowering backend. Model evaluation and Forge IR
+            normalization are backend-independent. "solidcraft" is the stable
+            default; "mitcad" is experimental and intentionally incomplete.
 
     Use when:
         Programmatic tooling needs the same model-loading/root-selection and
@@ -855,6 +860,8 @@ def run_script(path: str | Path) -> dict:
     Example:
         document = run_script("models/panel/scpf/model.py")
     """
+    backend_adapter = get_backend(backend)
+
     path = Path(path).resolve()
     syntax = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
@@ -1087,13 +1094,15 @@ def run_script(path: str | Path) -> dict:
             raise TypeError("Configure contains an unsupported design result")
         document = _apply_configuration_document(result, name, document)
     elif isinstance(result, Shape):
-        document, dependencies = _compile_model_with_dependencies(
-            result, name
-        )
+        model_ir = normalize_shape(result)
+        document, dependencies = backend_adapter.compile_ir(model_ir, name)
     elif isinstance(result, (ModelInstance, Assembly)):
-        document, dependencies = _compile_assembly_with_dependencies(
-            result, name
-        )
+        if backend_adapter.compile_assembly is None:
+            raise ModelError(
+                f"{backend_adapter.display_name} backend does not support "
+                "Forge assemblies in its qualified capability set"
+            )
+        document, dependencies = backend_adapter.compile_assembly(result, name)
     else:
         raise TypeError(f"{name}() must produce CAD geometry or an assembly")
 
@@ -1103,5 +1112,6 @@ def run_script(path: str | Path) -> dict:
             dependencies,
             context=name,
             pv_parameters=built.pv_parameters,
+            backend_name=backend_adapter.display_name,
         )
     return document

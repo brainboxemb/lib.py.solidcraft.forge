@@ -6,9 +6,11 @@ A physical directory under `models/<id>/` is selected and published once. Its `c
 
 The template qualification owner is `models/simple-box`. It runs CadQuery, build123d, PythonSCAD, pyBOSL2 and SolidCraft against one shared geometry expectation.
 
-Forge-specific migrated owners add an SCPF implementation whose consumer-owned compiler produces a SolidCraft command document. That document then enters the unchanged generic SolidCraft builder. Generic builder modules never import `scpf`.
+Forge-specific migrated owners normally add an SCPF implementation whose consumer-owned frontend evaluates model source into Forge model objects and normalizes final Shape intent to engine-neutral `ModelIR`. The selected Forge backend lowers that IR to a native command document; SolidCraft output then enters the unchanged generic SolidCraft builder.
 
-Reference implementations run in the shared reference role. SolidCraft command execution runs first in the lightweight SolidCraft role and its STL is then verified in reference.
+The experimental `builder-scpf-mitcad` is intentionally different only at the native backend/output boundary: it calls the same Forge frontend and semantic IR normalization through `run_script(..., backend="mitcad")`, then the Mitcad backend lowers that `ModelIR`, validates and retains the exact pre-execution document as `mitcad.json`, and executes it through the already-qualified headless boundary. It retains `model.mitcad` and `model.stl`; the central runtime writes the normal implementation `build.json`. On `exp`, qualified owners may declare this as a secondary implementation while reusing the same owner-local SCPF source; no sibling Mitcad owner is created. Generic non-SCPF engine builders remain unaware of Forge semantics.
+
+Reference implementations run in the shared reference role. SolidCraft command execution runs first in the lightweight SolidCraft role and its STL is then verified in reference. The experimental Mitcad builder declares runtime role `mitcad`; on `exp` root `ci.yml` pins the immutable released `ghcr.io/brainboxemb/cad-mitcad:v0.3.7` image. Model owners do not gain a Mitcad implementation merely because the runtime role exists; that remains explicit owner metadata.
 
 Durable evidence is grouped by physical owner:
 

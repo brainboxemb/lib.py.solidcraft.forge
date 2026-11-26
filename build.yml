@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/162-sheet-perforate-visual
-modules: [verification, pages]
-library: false
-models: [sheet-perforate]
+branch: sync/297-dev-into-exp
+modules: all
+models: all
+library: true
 tasks: [test]

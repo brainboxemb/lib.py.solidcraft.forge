@@ -160,8 +160,21 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
             positions = [html.find(marker) for marker in order]
             if -1 in positions or positions != sorted(positions):
                 raise RuntimeError(f"{route}: model reading order is incorrect: {order}")
+            featured_source = next(
+                (
+                    implementation.get("source")
+                    for implementation in ci.get("implementations", [])
+                    if implementation["id"] == featured
+                ),
+                None,
+            )
             for implementation in ci.get("implementations", []):
-                expected.append(f'{implementation["id"]} source')
+                shared_source = (
+                    implementation["id"] != featured
+                    and implementation.get("source") == featured_source
+                )
+                label = "result" if shared_source else "source"
+                expected.append(f'{implementation["id"]} {label}')
             evidence = build_scope / "models" / item if build_scope else None
             if evidence and (evidence / "result.json").is_file():
                 result = json.loads((evidence / "result.json").read_text())
@@ -179,13 +192,28 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
                     expected.append(f"/blob/build/{build_scope.name}/models/{item}/model.stl")
                 for impl, state in result.get("implementations", {}).items():
                     impl_root = evidence / impl
-                    if (impl_root / "solidcraft.json").is_file() and any(i["id"] == impl for i in ci.get("implementations", [])):
+                    command_file = next(
+                        (
+                            name
+                            for name in ("solidcraft.json", "mitcad.json")
+                            if (impl_root / name).is_file()
+                        ),
+                        None,
+                    )
+                    if command_file and any(i["id"] == impl for i in ci.get("implementations", [])):
                         expected.append(f"Generated command sequence — {impl}")
+                        expected.append(
+                            f"/blob/build/{build_scope.name}/models/{item}/{impl}/{command_file}"
+                        )
                         if not html.find("primary-source") < html.find("cad-command-section") < html.find("reference-code"):
                             raise RuntimeError(f"{route}: generated commands must follow source and precede references")
                         details = re.findall(r"<details\b[^>]*cad-command-section[^>]*>", html)
                         if not details or any(re.search(r"\sopen(?:[\s=>]|$)", tag) for tag in details):
                             raise RuntimeError(f"{route}: generated commands must be collapsed")
+                    if (impl_root / "model.mitcad").is_file():
+                        expected.append(
+                            f"/blob/build/{build_scope.name}/models/{item}/{impl}/model.mitcad"
+                        )
                     drawings_root = impl_root / "drawings"
                     if drawings_root.is_dir():
                         pdfs = sorted(drawings_root.glob("*.pdf"))
@@ -248,7 +276,15 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
             for marker in expected:
                 if marker not in html:
                     raise RuntimeError(f"{route}: missing rendered content: {marker}")
-            for artifact in ("model.png", "model.stl", "model.sc", "solidcraft.json", "result.json"):
+            for artifact in (
+                "model.png",
+                "model.stl",
+                "model.sc",
+                "model.mitcad",
+                "solidcraft.json",
+                "mitcad.json",
+                "result.json",
+            ):
                 if (site / route / artifact).exists():
                     raise RuntimeError(f"generated CAD artifact copied into Pages: {route}/{artifact}")
             if list((site / route).rglob("*.pdf")):

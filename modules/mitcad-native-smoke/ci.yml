@@ -1,0 +1,7 @@
+schema: 1
+id: mitcad-native-smoke
+kind: python
+watch:
+  - docs/reference/mitcad/**
+  - cadlib/src/scpf/backends/mitcad.py
+  - cadlib/src/scpf/backends/mitcad_headless.py

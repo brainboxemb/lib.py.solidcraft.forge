@@ -683,3 +683,323 @@ Pages and `gh-pages` are not release evidence.
 ## Permanent dispatch source identity
 
 Permanent `workflow_dispatch` qualification explicitly checks out `github.ref_name`, resolves that HEAD once, uses it as `CAD_SOURCE_SHA` for selection, and publishes against the same SHA. This avoids stale event-SHA races immediately after policy merges while keeping publisher freshness validation fail-closed.
+
+
+## Experimental native backend boundary (#192, #253)
+
+The second native backend established the need for an explicit Forge compiler
+boundary. SCPF source is evaluated exactly once into Forge model objects.
+Those objects are then normalized into typed, engine-neutral semantic IR before
+any backend performs native command lowering.
+
+```text
+unchanged scpf model source
+        ↓
+one Forge frontend / model evaluation
+        ↓
+Forge semantic ModelIR
+        ├── SolidCraft backend lowering -> SolidCraft replay/headless
+        └── Mitcad backend lowering     -> Mitcad replay/MCP
+```
+
+`Shape` remains the authoring/frontend representation used while Python model
+code is evaluated. `ModelIR` is the compiler boundary. Native backends do not
+interpret portable raw `Shape.kind` / `Shape.data` payloads independently.
+
+The typed IR began with the first qualified portable slice:
+`BoxIR`, standalone Circle2D Sketch+Extrude intent, `ChamferIR` and semantic
+`FaceBoundaryIR` selection intent. #246 extends the same boundary with
+`CylinderIR` and the deliberately bounded
+`BooleanSubtractIR(BoxIR, CylinderIR)`; #282 then splits the former fused
+Circle+Extrude node into `SketchIR`, `CircleProfileIR`, `RegionIR` and
+`ExtrudeIR`. Symbolic Forge `Parameter` / `Expression` values remain
+semantic values until backend lowering.
+
+The stable SolidCraft surface is larger than this first migration slice. A
+temporary `LegacyShapeIR` therefore wraps not-yet-migrated stable intent so
+the SolidCraft backend can delegate it to the historical lowering without a
+whole-product rewrite. That node is an explicit transition boundary, not a
+second frontend: Mitcad must reject it, and new multi-backend capabilities
+must be introduced as typed IR rather than by adding new raw-shape parsing to
+each backend.
+
+The stable default remains SolidCraft. The Mitcad path is experimental and
+explicitly rejects IR nodes, assemblies and selection modes that have not been
+qualified. Forge must not silently replace unsupported native behavior with
+geometry approximations.
+
+Backend responsibilities are:
+
+1. **lowering** — convert typed Forge IR to one engine's native command
+   document while preserving symbolic parameter dependencies;
+2. **native-result binding** — bind identities returned by that engine instead
+   of predicting topology ids;
+3. **topology resolution** — translate semantic IR selectors such as a
+   top-face boundary into engine-native queries and references;
+4. **execution** — run only that engine's native command/replay protocol and
+   retain its native document/export artifacts;
+5. **capability refusal** — raise a backend-specific `ModelError` before
+   execution when intent is outside the qualified slice.
+
+For SolidCraft, native topology remains replay-bound `model.faces` /
+`model.edges` records. For Mitcad v0.70.0, the equivalent face-boundary path
+queries the runtime's native `faces` list by cardinal planar normal, reads the
+selected face's native names, queries the body's native edge names, and uses
+Mitcad's own `E{faceA|faceB}` adjacency identity as the chamfer input. Forge
+does not substitute XYZ edge picks.
+
+The first qualified portable slice is deliberately small:
+
+- centered/bottom-anchored Box primitive;
+- standalone Circle2D Sketch + positive/negative distance Extrude;
+- Box face-boundary Chamfer through `Edges.from_faces(...)`.
+
+The experiment keeps `run_script(..., backend="solidcraft")` as the stable
+default and permits `backend="mitcad"` only as an explicit experimental
+choice. #212 formalizes this as an internal `BackendAdapter` registry and
+#253 moves its shape boundary from `compile_shape` to `compile_ir`. Each
+adapter declares `id`, display name, `compile_ir`, optional
+`compile_assembly`, document family, executor and a capability set. The
+runner evaluates model source, normalizes final Shape intent to `ModelIR`,
+then hands that same semantic representation to the selected backend.
+
+SolidCraft declares the stable Forge surface plus assemblies/native
+topology/drawings. Typed portable nodes lower directly in the SolidCraft
+backend; `LegacyShapeIR` delegates only not-yet-migrated stable surface to the
+historical compiler. Mitcad declares only the already-qualified experimental
+slice: `primitive.box`, `primitive.cylinder`, `boolean.subtract`,
+`placement.primitive`, `sketch.circle`, `profile.region`,
+`feature.extrude.distance`,
+`modify.chamfer.face-boundary` and `native-topology`; its assembly compiler is absent, so assembly intent fails
+explicitly at the boundary. This registry is intentionally internal: it does
+not rename `scpf`, expose a new public backend API or imply feature parity.
+
+Mitcad command knowledge is versioned evidence under
+`docs/reference/mitcad/<version>/`. Source reference identity, runtime MCP
+reference/catalog capture and native AppImage identity are all pinned
+independently so backend changes can be reviewed against a concrete engine
+version.
+
+Portable geometry is verified with the same generic mesh contract used by
+normal Forge owners. The native smoke retains the Mitcad STL and feeds it to
+`cad_verification.geometry` with the owner-local `geometry.json`; native
+Mitcad body properties remain additional engine-specific evidence, not a
+replacement verifier.
+
+### Experimental Cylinder + subtract IR (#246)
+
+The first capability added after the semantic-IR boundary proves that the IR,
+not a backend parser, owns new CAD semantics:
+
+```text
+SCPF: Box(...) - Cylinder(...)
+            ↓
+BooleanSubtractIR(
+  target=PlacementIR(BoxIR(...)),
+  tool=PlacementIR(CylinderIR(...))
+)
+       ├── SolidCraft lowering
+       │     solid.box(operation=new)
+       │     solid.cylinder(operation=cut, targets=[body])
+       └── Mitcad lowering
+             box(operation=new_body)
+             cylinder(operation=cut, participants=[])
+```
+
+`CylinderIR` keeps only primitive geometry: height, diameter and principal
+axis. #268 moves semantic anchor and world-space point into shared
+`PlacementIR`, so primitive geometry no longer carries backend-facing
+placement state.
+
+`BooleanSubtractIR` is intentionally narrower than a general boolean tree:
+#246 qualifies one `BoxIR` target and one `CylinderIR` tool. Other target/tool
+combinations stay `LegacyShapeIR` for SolidCraft and fail closed on Mitcad
+until separately migrated.
+
+Mitcad v0.70.0 gives primitives the same native operation vocabulary as
+Extrude. For the one-target slice Forge emits the Box first, then a Cylinder
+with `operation: "cut"` and empty `participants`. In Mitcad that means the
+existing bodies; Forge uses it only where its IR guarantees exactly one target
+body exists. No feature or body id is predicted, and no replay binding is
+needed for this boolean. SolidCraft is free to lower the same semantic boolean
+to its existing CSG command pair.
+
+The focused `cylinder-subtract` verification owner exists because the
+pre-existing `primitive-csg` owner also requires Sphere, union and
+intersection. Reusing that owner would have expanded the Mitcad capability
+surface merely to prove this slice. Both `scpf` and `scpf-mitcad`
+implementations of the focused owner consume the same SCPF source.
+
+### Experimental primitive placement IR (#268)
+
+Primitive geometry and absolute placement are separate compiler concepts:
+
+```text
+Box(...) / Cylinder(...)
+        ↓ geometry
+BoxIR / CylinderIR
+        ↓ placement
+PlacementIR(
+  primitive=...,
+  point=(x, y, z),
+  anchor=(ax, ay, az)
+)
+```
+
+Direct primitives use `point=(0, 0, 0)`; `.at(...)` and qualified
+translations change the same `PlacementIR` instead of introducing a second
+backend-specific interpretation path. `BooleanSubtractIR` therefore combines
+placed semantic solids, not raw authoring payloads.
+
+SolidCraft lowers the full qualified world-space point through its established
+native Box corner / Cylinder base calculations and must retain the exact
+pre-#268 command form. Mitcad lowers transverse placement directly into the
+primitive's parametrically editable plane `corner` / `center` values. The
+origin-plane frames are mapped explicitly: XY=(+X,+Y), XZ=(+X,-Z),
+YZ=(-Z,+Y).
+
+The first Mitcad placement qualification deliberately requires the primitive's
+axial placement coordinate to remain on its origin plane. This keeps
+transverse X/Y-style coordinates symbolic without pretending that arbitrary
+axial offsets or general frames are already portable. Unsupported axial
+placement fails before native execution.
+
+The focused `cylinder-subtract` owner moves its bore to X=8, Y=-5. Both
+SolidCraft and Mitcad consume the same SCPF source; the generic mesh contract
+moves its bore probe to that off-centre axis. This proves placement semantics
+survive frontend → IR → two independent native lowerings.
+
+### Experimental Sketch/Profile + Extrude IR (#282)
+
+Standalone sketch geometry, region membership and the consuming feature are
+separate compiler concepts:
+
+```text
+SCPF Sketch + Circle2D + extrude
+        ↓
+SketchIR(
+  profiles=(CircleProfileIR(...),)
+)
+        ↓
+RegionIR(outer=0, holes=())
+        ↓
+ExtrudeIR(sketch=..., regions=..., distance=..., direction=...)
+        ├── SolidCraft lowering
+        │     sketch.create → sketch.circle.center → sketch.finish
+        │     → solid.extrude
+        └── Mitcad lowering
+              native sketch feature → native extrude feature
+```
+
+Profile indexes in `RegionIR` are compiler-local semantic references inside
+one `SketchIR`; they are not native curve ids or engine region ids. The IR
+therefore has a place to express future nested-loop membership without
+embedding either engine's topology vocabulary. A backend may derive an
+engine-native region selector from the semantic profiles during lowering; for
+the current Mitcad circle slice the native `[0, 0]` pick is derived from the
+qualified circle geometry and is not stored as region intent.
+
+#282 deliberately qualifies only the existing single centered Circle2D region
+with no holes and positive/negative distance extrusion. The IR can represent a
+future annulus as two profiles plus `RegionIR(outer=0, holes=(1,))`, but both
+native backends fail closed for that unqualified form here. Public multi-loop
+standalone Sketch authoring remains consumer issue #267 rather than being
+introduced on the experimental branch.
+
+SolidCraft lowering must remain byte-for-byte compatible with the accepted
+legacy command plan for the qualified owner. The existing
+`circle-negative-extrude` physical owner remains unchanged and is the durable
+A/B proof that frontend source → split semantic IR → two independent native
+lowerings preserves geometry and editability.
+
+### Experimental Mitcad builder boundary (#218)
+
+The normal Forge build integration is a thin consumer of that accepted backend
+boundary:
+
+```text
+owner-local SCPF source
+        ↓
+builder-scpf-mitcad
+        ↓ run_script(source, backend="mitcad")
+scpf-mitcad command document
+        ↓ scpf.backends.mitcad_headless.run_document(...)
+model.mitcad + model.stl
+        ↓
+cad_library_ci.runtime writes normal build.json
+```
+
+The builder does not own Mitcad installation, version discovery or downloads.
+Its runtime contract is an already-qualified `mitcad-cli` executable on
+`PATH`; a runtime may provide an explicit executable through
+`CAD_LIBRARY_MITCAD_EXECUTABLE`. The builder validates the command document,
+executes it through the existing native headless boundary and fails closed if
+either the native document or STL is missing.
+
+#218 deliberately qualified the builder before a root `runtimes.mitcad`
+entry. #221 then qualified the runtime independently in
+`brainboxemb/docker.cad.solidcraft`: v0.3.7 publishes an isolated
+`cad-mitcad` image pinned to Mitcad 0.70.0 and exposes `mitcad-cli` on
+`PATH`. Forge `exp` pins that immutable role in root `ci.yml`.
+
+Before the immutable release, temporary evidence PR #230 used the exact
+runtime-candidate manifest through normal CAD-CI and proved both
+`simple-box--scpf-mitcad:geometry` and
+`circle-negative-extrude--scpf-mitcad:geometry` PASS. That PR was closed
+unmerged so candidate-only owner declarations did not enter `exp`.
+#232 owns the secondary owner attachment.
+
+### Experimental Mitcad owner integration (#232)
+
+The first persistent Mitcad implementations do not create a second model tree.
+The existing owners `simple-box`, `circle-negative-extrude` and
+`topology-face-boundary-box` each add one secondary `scpf-mitcad`
+implementation that points to the same owner-local `scpf/model.py` as the
+primary SolidCraft `scpf` implementation.
+
+`simple-box` and `circle-negative-extrude` reuse their existing generic mesh
+geometry contracts. `topology-face-boundary-box` adds a generic geometry
+contract because its previous evidence was SolidCraft-native only: common box
+bounds and watertightness are supplemented by two surface-distance probes at
+the original top boundary edges. A correct 2 mm equal-distance chamfer moves
+those surfaces by `sqrt(2)` mm, so an unchamfered box cannot satisfy the
+contract. The same contract applies to both SolidCraft and Mitcad STL.
+
+SolidCraft remains the primary implementation and owns native/visual checks.
+Mitcad remains a secondary experimental implementation and enters the normal
+reference-runtime mesh verification path.
+
+
+### Experimental Mitcad Pages evidence (#243)
+
+The experimental site is an inspection surface for the accepted multi-backend
+boundary, not merely a status dashboard. A persistent `scpf-mitcad` build
+therefore publishes three distinct durable artifacts:
+
+```text
+scpf/model.py
+     ↓ Forge Mitcad lowering
+mitcad.json          pre-execution Forge → Mitcad command/replay document
+     ↓ cad-mitcad:v0.3.7 / mitcad-cli
+model.mitcad         native document saved by Mitcad
+model.stl            geometry exported by Mitcad
+     ↓ reference preview + verification
+model.png + verification evidence
+```
+
+`builder-scpf-mitcad` writes `mitcad.json` only after the backend document
+passes `validate_document`, before native execution. The document is therefore
+the exact validated intent supplied to the headless layer, including replay
+bindings used for native topology operations. Pages reads the durable file and
+projects both initial commands and replay-stage binding/command rows; it does
+not regenerate the stream from SCPF source.
+
+The normal deterministic mesh preview renders `model.png` from the actual
+Mitcad-exported `model.stl`. The UI labels that image **Mitcad STL result** so
+it cannot be confused with a native Mitcad viewport screenshot. The saved
+`model.mitcad` document remains directly linked as the engine-native result.
+
+When `scpf` and `scpf-mitcad` point to the same owner-local
+`scpf/model.py`, Pages marks the latter as a shared-source alternate backend:
+the primary SCPF source is shown once, while Mitcad keeps its own command,
+preview, native-model, build and verification evidence.

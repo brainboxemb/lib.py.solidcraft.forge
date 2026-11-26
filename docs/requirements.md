@@ -19,11 +19,31 @@
 
 ## CAD execution
 
-1. Reuse only the released `reference` and `solidcraft` runtime roles from `docker.cad.solidcraft v0.3.6` until a separately qualified upgrade exists.
+1. Stable Forge execution continues to use the released `reference` and `solidcraft` roles from `docker.cad.solidcraft v0.3.6`; the experimental `exp` line additionally pins the isolated `mitcad` role from released `docker.cad.solidcraft v0.3.7`. This does not imply `dev` or `main` adoption.
 2. Standard reference builders are PythonSCAD, pyBOSL2, CadQuery and build123d.
 3. SCPF compilation is consumer-owned and feeds the generic SolidCraft command builder; do not teach generic builders Forge semantics.
 4. SolidCraft executes in its lightweight runtime; generic mesh verification executes in the reference runtime.
 5. CI batches compatible implementation work and does not start one Docker container per model implementation.
+6. The experimental `builder-scpf-mitcad` capability lowers the same trusted SCPF source through `run_script(..., backend="mitcad")` and must retain both the native `model.mitcad` document and exported `model.stl`.
+7. The Mitcad builder must not download or install a CAD runtime. Its runtime contract is an already-qualified `mitcad-cli` executable on `PATH`, optionally supplied through `CAD_LIBRARY_MITCAD_EXECUTABLE`.
+8. Root `runtimes.mitcad` must use the immutable released `cad-mitcad:v0.3.7` role. Experimental `scpf-mitcad` implementations stay inside their existing physical owner, reuse the same SCPF source, keep SolidCraft `scpf` primary and must satisfy that owner's applicable verification contract.
+9. The initial owner-integrated Mitcad slice is limited to `simple-box`, `circle-negative-extrude` and `topology-face-boundary-box`; expanding that set requires separately qualified backend capability and owner evidence.
+10. Every published `scpf-mitcad` build must retain the validated pre-execution Forge-to-Mitcad command document as `mitcad.json` alongside `model.mitcad` and `model.stl`. Pages may project that durable command document but must not reconstruct it.
+11. Experimental Pages must present a Mitcad result from the actual exported `model.stl`, label it as an STL-derived Mitcad result rather than a native screenshot, and expose the saved `model.mitcad` document.
+12. When multiple backends consume the same owner-local SCPF source, Pages shows that source once and presents the secondary backend as an alternate result, not as independent reference code.
+13. Trusted SCPF model source is evaluated once into Forge model objects; final Shape intent is normalized into an engine-neutral typed `ModelIR` before native backend lowering.
+14. Portable Forge IR must express CAD semantics and selection intent only. It must not contain SolidCraft command names, Mitcad native ids, engine-owned BRep entities or backend transport details.
+15. Native shape backends consume `ModelIR`. New multi-backend features must be introduced once in Forge IR and then lowered independently by each backend; they must not add parallel raw `Shape.data` interpreters.
+16. `LegacyShapeIR` is a temporary SolidCraft-only compatibility node for stable surface not yet migrated to typed IR. Experimental backends must fail closed when they receive it.
+17. The qualified Cylinder extension is represented once as typed `CylinderIR`; the first qualified subtractive boolean is `BooleanSubtractIR` with a `BoxIR` target and `CylinderIR` tool. Broader boolean combinations remain unsupported until separately qualified.
+18. Native backend lowering may choose different engine instructions for the same boolean IR. SolidCraft may emit its existing CSG primitive cut sequence while Mitcad may emit a Cylinder feature with native `operation: "cut"`; both must preserve the same Forge semantics.
+19. Mitcad subtract lowering must not predict native body ids. The initial one-target slice uses the engine's native empty-participant meaning (“all existing bodies”) only in a document state where Forge has emitted exactly one target body before the tool.
+20. Qualified primitive placement is represented once by typed `PlacementIR`, which owns the world-space point of a semantic anchor independently from `BoxIR` or `CylinderIR` geometry. Native backends must not re-interpret raw `placed_box`, `placed3d` or translation payloads for this migrated slice.
+21. SolidCraft lowering must preserve the existing native command/replay output of migrated Box/Cylinder placement, including symbolic placement expressions.
+22. The initial Mitcad placement slice preserves symbolic coordinates in primitive plane coordinates but requires the primitive's axial placement coordinate to remain on the corresponding origin plane. Unsupported axial offsets must fail closed rather than be numerically baked or approximated.
+23. Qualified standalone sketch extrusion must use separate typed `SketchIR`, profile, `RegionIR` and `ExtrudeIR` semantics rather than a fused shape-specific sketch/extrude node.
+24. `RegionIR` identifies semantic profile membership with compiler-local profile indexes only. It must not contain SolidCraft curve ids, Mitcad region ids, BRep identities or native coordinate-pick transport.
+25. The first split Sketch/Extrude slice qualifies one centered `CircleProfileIR` and one region without holes. Nested-loop region structure may be represented in IR, but backends must fail closed until multi-loop behavior is separately qualified; #282 does not implement consumer issue #267.
 
 ## SCPF native associativity
 

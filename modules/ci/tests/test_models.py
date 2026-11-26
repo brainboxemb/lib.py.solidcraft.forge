@@ -24,6 +24,7 @@ EXPECTED_IDS = {
     "bracket",
     "circle-negative-extrude",
     "circular-feature-pattern",
+    "cylinder-subtract",
     "components",
     "configuration-installed-state",
     "configuration-position",
@@ -96,9 +97,25 @@ SCPF_ONLY_IDS = {
     "sheet-path-flange",
     "sheet-perforate",
     "sample-plate-drawing",
-    "topology-face-boundary-box",
     "topology-face-boundary-xz",
 }
+
+MITCAD_IDS = {
+    "circle-negative-extrude",
+    "cylinder-subtract",
+    "simple-box",
+    "topology-face-boundary-box",
+}
+
+MITCAD_FOCUSED_IDS = {
+    "cylinder-subtract",
+    "topology-face-boundary-box",
+}
+
+STANDARD_MULTI_ENGINE_IDS = (
+    EXPECTED_IDS - SCPF_ONLY_IDS - MITCAD_FOCUSED_IDS
+)
+
 
 class ModelTests(unittest.TestCase):
     def setUp(self):
@@ -112,7 +129,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 59)
+        self.assertEqual(len(self.models), 60)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -149,11 +166,16 @@ class ModelTests(unittest.TestCase):
                 ("verification",),
             )
 
-        for model_id in set(EXPECTED_IDS) - set(SCPF_ONLY_IDS):
+        for model_id in STANDARD_MULTI_ENGINE_IDS:
             model = by_id[model_id]
+            expected_implementations = [
+                "scpf", "cadquery", "build123d", "pythonscad", "pybosl2",
+            ]
+            if model_id in MITCAD_IDS:
+                expected_implementations.insert(1, "scpf-mitcad")
             self.assertEqual(
                 [impl.id for impl in model.implementations],
-                ["scpf", "cadquery", "build123d", "pythonscad", "pybosl2"],
+                expected_implementations,
             )
             expected_stages = ["native", "geometry", "visual"]
             expected_runtimes = ["solidcraft", "reference", "solidcraft"]
@@ -173,6 +195,26 @@ class ModelTests(unittest.TestCase):
                 model.verifications[2].implementations,
                 ("scpf",),
             )
+
+        for model_id in MITCAD_FOCUSED_IDS:
+            model = by_id[model_id]
+            self.assertEqual(
+                [impl.id for impl in model.implementations],
+                ["scpf", "scpf-mitcad"],
+            )
+            self.assertEqual(
+                [stage.id for stage in model.verifications],
+                ["native", "geometry"],
+            )
+            self.assertEqual(
+                [stage.runtime for stage in model.verifications],
+                ["solidcraft", "reference"],
+            )
+            self.assertEqual(
+                model.verifications[0].implementations,
+                ("scpf",),
+            )
+            self.assertIsNone(model.verifications[1].implementations)
 
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
@@ -287,13 +329,24 @@ class ModelTests(unittest.TestCase):
                     Path(tmp),
                 )
 
-        self.assertEqual(invoked.call_count, 2)
+        self.assertEqual(invoked.call_count, 3)
         self.assertEqual(
             [manifest["runtime"] for manifest in manifests],
-            ["solidcraft", "reference"],
+            ["mitcad", "solidcraft", "reference"],
         )
 
-        solidcraft = manifests[0]
+        mitcad = manifests[0]
+        self.assertEqual(
+            {
+                (row["owner"], row["implementation"])
+                for row in mitcad["build_items"]
+            },
+            {(model_id, "scpf-mitcad") for model_id in MITCAD_IDS},
+        )
+        self.assertEqual(mitcad["verify_items"], [])
+        self.assertEqual(mitcad["preview_items"], [])
+
+        solidcraft = manifests[1]
         self.assertEqual(
             [row["implementation"] for row in solidcraft["build_items"]],
             ["scpf"] * len(EXPECTED_IDS),
@@ -320,19 +373,31 @@ class ModelTests(unittest.TestCase):
                         )
                     )
                     if model.id in SCPF_ONLY_IDS
+                    or model.id in MITCAD_FOCUSED_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
                 )
             ],
         )
 
-        reference = manifests[1]
-        multi_engine = len(EXPECTED_IDS - SCPF_ONLY_IDS)
+        reference = manifests[2]
+        multi_engine = len(STANDARD_MULTI_ENGINE_IDS)
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
+        expected_reference_verify_count = sum(
+            len(stage.implementations)
+            if stage.implementations is not None
+            else len(model.implementations)
+            for model in self.models
+            for stage in model.verifications
+            if stage.runtime == "reference"
+        )
         self.assertEqual(
             len(reference["verify_items"]),
-            multi_engine * 5 + 4,
+            expected_reference_verify_count,
         )
-        self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
+        self.assertEqual(
+            len(reference["preview_items"]),
+            multi_engine * 4 + len(MITCAD_IDS),
+        )
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
             (set(EXPECTED_IDS) - set(SCPF_ONLY_IDS))
@@ -349,6 +414,7 @@ class ModelTests(unittest.TestCase):
                 ("build123d", "geometry"),
                 ("pythonscad", "geometry"),
                 ("pybosl2", "geometry"),
+                ("scpf-mitcad", "geometry"),
                 ("scpf", "drawing-sheet"),
                 ("scpf", "compact-drawing-sheet"),
             },
