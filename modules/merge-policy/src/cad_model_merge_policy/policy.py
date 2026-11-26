@@ -10,8 +10,22 @@ def is_main_governance(*, head: str, base: str) -> bool:
     return base == "main" and head.startswith("docs/")
 
 
+_PERMANENT_MERGES = frozenset({
+    ("dev", "main"),
+    ("main", "dev"),
+    ("dev", "exp"),
+    ("exp", "dev"),
+})
+
+
+def is_permanent_merge(*, head: str, base: str) -> bool:
+    """Return whether this exact permanent direction requires a merge commit."""
+
+    return (head, base) in _PERMANENT_MERGES
+
+
 def merge_method(*, head: str, base: str) -> str:
-    if (head, base) in {("dev", "exp"), ("exp", "dev")}:
+    if is_permanent_merge(head=head, base=base):
         return "merge"
     if base in {"dev", "exp"} and head.startswith(
         ("issue/", "fix/", "feature/", "docs/", "chore/")
@@ -21,6 +35,4 @@ def merge_method(*, head: str, base: str) -> str:
         return "squash"
     if base == "main" and head.startswith("release/"):
         return "squash"
-    if (head, base) in {("dev", "main"), ("main", "dev")}:
-        return "merge"
     raise MergePolicyError(f"unsupported branch integration: {head} -> {base}")
