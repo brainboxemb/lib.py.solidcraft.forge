@@ -76,6 +76,12 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
+### Dev: #242 shifted-axis native revolve consumer blocker
+
+CAD #189 still needs one native stepped profile cut revolved around an offset
+axis and retained as one exact suppressible Forge feature. Implement and qualify
+that public custom-axis revolve contract before returning to the older
+verification cleanup backlog.
 
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 

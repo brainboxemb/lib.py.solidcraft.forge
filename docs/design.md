@@ -67,6 +67,33 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Symbolic CAD math boundary
+
+Forge exposes non-linear native expression intent through the `cadmath`
+namespace rather than shadowing Python built-ins or exposing raw SolidCraft
+expression strings:
+
+```python
+mid_g = cadmath.min(self.mid_round, self.mid_wall / 2 - 0.05)
+mid_tip = cadmath.sqrt(
+    (self.mid_outer_r - mid_g) ** 2
+    - (self.mid_outer_r - self.mid_wall + mid_g) ** 2
+)
+lane = cadmath.round(self.mid_z / 2 / self.ref_lane_grid) * self.ref_lane_grid
+angle = -cadmath.atan((self.ref_d - self.ref_tip_d) / (2 * self.ref_tip_h))
+```
+
+`cadmath.min/max/sqrt/abs/round/floor/atan` return ordinary numbers when all
+inputs are numeric and a typed `Expression` when any input is symbolic.
+Expression arithmetic retains every contributing `Parameter`; command lowering
+emits the native SolidCraft expression and the existing dependency audit sees
+the same source parameters. `cadmath.atan` follows SolidCraft CAD semantics and
+evaluates in degrees.
+
+This is expression authoring, not a general Python symbolic algebra system.
+Forge only exposes operations that have a qualified native SolidCraft spelling
+and current-value evaluation.
+
 ## Native configuration-table boundary
 
 Configuration is final design intent rather than a Python model variant. The

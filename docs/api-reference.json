@@ -2270,6 +2270,17 @@
         },
         {
           "kind": "callable",
+          "name": "cadmath",
+          "summary": "Namespace for native symbolic CAD math.",
+          "use_when": "Derived editable dimensions need min/max, roots, quantization or atan while retaining Parameter dependencies.",
+          "limits": "Use cadmath.min/max/sqrt/abs/round/floor/atan. It is native CAD-expression authoring, not a general symbolic algebra package.",
+          "parameters": [],
+          "example": "tip = cadmath.sqrt(cadmath.min(self.size, self.limit) ** 2 - self.offset ** 2)",
+          "signature": "cadmath.min|max|sqrt|abs|round|floor|atan(...)",
+          "reference": "reference/parameters-positioning/#cadmath"
+        },
+        {
+          "kind": "callable",
           "name": "pv",
           "summary": "Return the concrete Python value of a symbolic CAD dimension.",
           "use_when": "Python itself genuinely needs a number for validation or control flow.",
