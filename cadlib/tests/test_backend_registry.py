@@ -40,6 +40,7 @@ class BackendRegistryTests(unittest.TestCase):
                     "boolean.subtract",
                     "placement.primitive",
                     "sketch.circle",
+                    "profile.region",
                     "feature.extrude.distance",
                     "modify.chamfer.face-boundary",
                     "native-topology",

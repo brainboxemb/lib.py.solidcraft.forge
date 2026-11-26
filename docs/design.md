@@ -451,11 +451,13 @@ code is evaluated. `ModelIR` is the compiler boundary. Native backends do not
 interpret portable raw `Shape.kind` / `Shape.data` payloads independently.
 
 The typed IR began with the first qualified portable slice:
-`BoxIR`, `CircleExtrudeIR`, `ChamferIR` and semantic
+`BoxIR`, standalone Circle2D Sketch+Extrude intent, `ChamferIR` and semantic
 `FaceBoundaryIR` selection intent. #246 extends the same boundary with
 `CylinderIR` and the deliberately bounded
-`BooleanSubtractIR(BoxIR, CylinderIR)`. Symbolic Forge `Parameter` /
-`Expression` values remain semantic values until backend lowering.
+`BooleanSubtractIR(BoxIR, CylinderIR)`; #282 then splits the former fused
+Circle+Extrude node into `SketchIR`, `CircleProfileIR`, `RegionIR` and
+`ExtrudeIR`. Symbolic Forge `Parameter` / `Expression` values remain
+semantic values until backend lowering.
 
 The stable SolidCraft surface is larger than this first migration slice. A
 temporary `LegacyShapeIR` therefore wraps not-yet-migrated stable intent so
@@ -510,7 +512,8 @@ topology/drawings. Typed portable nodes lower directly in the SolidCraft
 backend; `LegacyShapeIR` delegates only not-yet-migrated stable surface to the
 historical compiler. Mitcad declares only the already-qualified experimental
 slice: `primitive.box`, `primitive.cylinder`, `boolean.subtract`,
-`placement.primitive`, `sketch.circle`, `feature.extrude.distance`,
+`placement.primitive`, `sketch.circle`, `profile.region`,
+`feature.extrude.distance`,
 `modify.chamfer.face-boundary` and `native-topology`; its assembly compiler is absent, so assembly intent fails
 explicitly at the boundary. This registry is intentionally internal: it does
 not rename `scpf`, expose a new public backend API or imply feature parity.
@@ -609,6 +612,49 @@ The focused `cylinder-subtract` owner moves its bore to X=8, Y=-5. Both
 SolidCraft and Mitcad consume the same SCPF source; the generic mesh contract
 moves its bore probe to that off-centre axis. This proves placement semantics
 survive frontend → IR → two independent native lowerings.
+
+### Experimental Sketch/Profile + Extrude IR (#282)
+
+Standalone sketch geometry, region membership and the consuming feature are
+separate compiler concepts:
+
+```text
+SCPF Sketch + Circle2D + extrude
+        ↓
+SketchIR(
+  profiles=(CircleProfileIR(...),)
+)
+        ↓
+RegionIR(outer=0, holes=())
+        ↓
+ExtrudeIR(sketch=..., regions=..., distance=..., direction=...)
+        ├── SolidCraft lowering
+        │     sketch.create → sketch.circle.center → sketch.finish
+        │     → solid.extrude
+        └── Mitcad lowering
+              native sketch feature → native extrude feature
+```
+
+Profile indexes in `RegionIR` are compiler-local semantic references inside
+one `SketchIR`; they are not native curve ids or engine region ids. The IR
+therefore has a place to express future nested-loop membership without
+embedding either engine's topology vocabulary. A backend may derive an
+engine-native region selector from the semantic profiles during lowering; for
+the current Mitcad circle slice the native `[0, 0]` pick is derived from the
+qualified circle geometry and is not stored as region intent.
+
+#282 deliberately qualifies only the existing single centered Circle2D region
+with no holes and positive/negative distance extrusion. The IR can represent a
+future annulus as two profiles plus `RegionIR(outer=0, holes=(1,))`, but both
+native backends fail closed for that unqualified form here. Public multi-loop
+standalone Sketch authoring remains consumer issue #267 rather than being
+introduced on the experimental branch.
+
+SolidCraft lowering must remain byte-for-byte compatible with the accepted
+legacy command plan for the qualified owner. The existing
+`circle-negative-extrude` physical owner remains unchanged and is the durable
+A/B proof that frontend source → split semantic IR → two independent native
+lowerings preserves geometry and editability.
 
 ### Experimental Mitcad builder boundary (#218)
 

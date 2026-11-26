@@ -29,12 +29,14 @@ from ..ir import (
     BooleanSubtractIR,
     BoxIR,
     ChamferIR,
-    CircleExtrudeIR,
+    CircleProfileIR,
     CylinderIR,
+    ExtrudeIR,
     FaceBoundaryIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
+    RegionIR,
 )
 from ..replay import replay_document
 
@@ -200,19 +202,48 @@ def _cylinder_command(
     return _command("solid.cylinder", **params)
 
 
-def _circle_extrude_commands(node: CircleExtrudeIR, name: str) -> list[dict]:
-    _require_positive(node.diameter, "circle diameter")
+def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
+    """Lower the qualified Sketch/Profile + Extrude IR slice."""
+    sketch = node.sketch
+    if sketch.plane not in ("XY", "XZ", "YZ"):
+        raise ModelError("portable SolidCraft Sketch IR requires XY, XZ or YZ")
+    if len(sketch.profiles) != 1 or len(node.regions) != 1:
+        raise ModelError(
+            "portable SolidCraft Extrude IR currently requires one circle region"
+        )
+
+    profile = sketch.profiles[0]
+    region = node.regions[0]
+    if not isinstance(profile, CircleProfileIR):
+        raise ModelError(
+            "portable SolidCraft Extrude IR currently requires CircleProfileIR"
+        )
+    if not isinstance(region, RegionIR) or region.outer != 0 or region.holes:
+        raise ModelError(
+            "portable SolidCraft Extrude IR currently requires one region "
+            "without holes"
+        )
+    if tuple(profile.center) != (0, 0):
+        raise ModelError(
+            "portable SolidCraft CircleProfileIR currently requires origin center"
+        )
+    if node.direction not in ("positive", "negative"):
+        raise ModelError(
+            "portable SolidCraft Extrude IR requires positive or negative direction"
+        )
+
+    _require_positive(profile.diameter, "circle diameter")
     _require_positive(node.distance, "sketch extrusion distance")
     return [
         _command(
             "sketch.create",
-            name=node.sketch_name,
-            plane=node.plane,
+            name=sketch.name,
+            plane=sketch.plane,
         ),
         _command(
             "sketch.circle.center",
-            center=[0, 0],
-            diameter=command_value(node.diameter),
+            center=[command_value(value) for value in profile.center],
+            diameter=command_value(profile.diameter),
         ),
         _command("sketch.finish"),
         _command(
@@ -280,10 +311,10 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
             f"{type(node.primitive).__name__}"
         )
 
-    if isinstance(node, CircleExtrudeIR):
+    if isinstance(node, ExtrudeIR):
         return [
             *parameters,
-            *_circle_extrude_commands(node, name),
+            *_extrude_commands(node, name),
         ]
 
     if isinstance(node, BooleanSubtractIR):
