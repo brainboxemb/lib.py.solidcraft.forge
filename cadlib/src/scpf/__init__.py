@@ -4,7 +4,7 @@ from .core import (
     Rectangle2D, RoundedRectangle2D, Circle2D, Polygon2D,
     SlotCenterToCenter2D, SlotOverall2D, SlotCenterPoint2D,
     SlotArcThreePoint2D, SlotArcCenter2D,
-    Shape, Parameter, Edges, Faces, Anchor, AnchorFrame, AnchorTopology, Axis, X, Y, Z, CENTER, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK, up, down, left, right, front, back, half, midpoint, pv,
+    Shape, Parameter, Edges, Faces, Anchor, AnchorFrame, AnchorTopology, Axis, AxisLine, X, Y, Z, CENTER, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK, up, down, left, right, front, back, half, midpoint, pv,
 )
 from .compiler import compile_model, ModelError
 from . import cadmath
@@ -24,7 +24,7 @@ __all__ = [
     "Depth", "Rectangle2D", "RoundedRectangle2D", "Circle2D", "Polygon2D",
     "SlotCenterToCenter2D", "SlotOverall2D", "SlotCenterPoint2D",
     "SlotArcThreePoint2D", "SlotArcCenter2D", "Shape", "Parameter",
-    "Edges", "Faces", "Anchor", "AnchorFrame", "AnchorTopology", "Axis", "X", "Y", "Z", "CENTER", "TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK", "up", "down", "left", "right", "front", "back", "half", "midpoint", "pv",
+    "Edges", "Faces", "Anchor", "AnchorFrame", "AnchorTopology", "Axis", "AxisLine", "X", "Y", "Z", "CENTER", "TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK", "up", "down", "left", "right", "front", "back", "half", "midpoint", "pv",
     "Sketch", "Placement", "DrawingView", "DrawingNote", "DrawingRevision",
     "DrawingDimension", "compile_model", "run_script", "component", "assembly",
     "ModelParameterWarning", "ModelError", "Configure", "Param", "Suppress", "cadmath",

@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/241-symbolic-cad-math
+branch: issue/242-shifted-axis-revolve
 modules: [builder-scpf, verification, pages, ci]
 library: true
-models: [configuration-symbolic-math]
+models: [shifted-axis-revolve]
 tasks: [test]

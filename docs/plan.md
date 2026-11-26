@@ -76,13 +76,6 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: #242 shifted-axis native revolve consumer blocker
-
-CAD #189 still needs one native stepped profile cut revolved around an offset
-axis and retained as one exact suppressible Forge feature. Implement and qualify
-that public custom-axis revolve contract before returning to the older
-verification cleanup backlog.
-
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
 The permanent experimental line is accepted. Begin #192 only on `exp` and keep
@@ -100,9 +93,9 @@ First spike:
 6. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
-### Queued: #162 / #163 verification evidence cleanup
+### Dev: #162 / #163 verification evidence cleanup
 
-After the permanent `exp` line is stable:
+With the configuration-driven CAD consumer blockers #241 and #242 qualified:
 - #162 fixes the concrete `sheet-perforate` case where native perforation
   metadata passes but the published model preview does not visibly show the
   perforations, and adds an explicit approved visual expectation;

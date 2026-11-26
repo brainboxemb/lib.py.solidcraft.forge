@@ -58,6 +58,7 @@ EXPECTED_IDS = {
     "sheet-contour-flange-recess",
     "sheet-edge-flange",
     "sheet-fold",
+    "shifted-axis-revolve",
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
@@ -86,6 +87,7 @@ SCPF_ONLY_IDS = {
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
     "sheet-edge-flange",
+    "shifted-axis-revolve",
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
@@ -106,7 +108,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 56)
+        self.assertEqual(len(self.models), 57)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -120,6 +122,7 @@ class ModelTests(unittest.TestCase):
             "configuration-position",
             "configuration-symbolic-math",
             "configuration-table",
+            "shifted-axis-revolve",
         ):
             self.assertEqual(
                 by_id[model_id].purposes,
@@ -135,6 +138,7 @@ class ModelTests(unittest.TestCase):
             "configuration-position",
             "configuration-symbolic-math",
             "configuration-table",
+            "shifted-axis-revolve",
         }:
             self.assertEqual(
                 by_id[model_id].purposes,
