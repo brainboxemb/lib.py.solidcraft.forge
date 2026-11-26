@@ -560,3 +560,38 @@ contract. The same contract applies to both SolidCraft and Mitcad STL.
 SolidCraft remains the primary implementation and owns native/visual checks.
 Mitcad remains a secondary experimental implementation and enters the normal
 reference-runtime mesh verification path.
+
+
+### Experimental Mitcad Pages evidence (#243)
+
+The experimental site is an inspection surface for the accepted multi-backend
+boundary, not merely a status dashboard. A persistent `scpf-mitcad` build
+therefore publishes three distinct durable artifacts:
+
+```text
+scpf/model.py
+     ↓ Forge Mitcad lowering
+mitcad.json          pre-execution Forge → Mitcad command/replay document
+     ↓ cad-mitcad:v0.3.7 / mitcad-cli
+model.mitcad         native document saved by Mitcad
+model.stl            geometry exported by Mitcad
+     ↓ reference preview + verification
+model.png + verification evidence
+```
+
+`builder-scpf-mitcad` writes `mitcad.json` only after the backend document
+passes `validate_document`, before native execution. The document is therefore
+the exact validated intent supplied to the headless layer, including replay
+bindings used for native topology operations. Pages reads the durable file and
+projects both initial commands and replay-stage binding/command rows; it does
+not regenerate the stream from SCPF source.
+
+The normal deterministic mesh preview renders `model.png` from the actual
+Mitcad-exported `model.stl`. The UI labels that image **Mitcad STL result** so
+it cannot be confused with a native Mitcad viewport screenshot. The saved
+`model.mitcad` document remains directly linked as the engine-native result.
+
+When `scpf` and `scpf-mitcad` point to the same owner-local
+`scpf/model.py`, Pages marks the latter as a shared-source alternate backend:
+the primary SCPF source is shown once, while Mitcad keeps its own command,
+preview, native-model, build and verification evidence.

@@ -72,9 +72,25 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### #162 / #163 verification evidence cleanup
+### Experimental: #243 publish Mitcad command/result evidence on Pages
 
-After the permanent `exp` line is stable:
+Make the accepted Mitcad backend inspectable on `/exp/`:
+
+- retain the validated pre-execution backend document as `mitcad.json`;
+- show generated Mitcad commands plus replay bindings in the same collapsible
+  command-sequence pattern used by SolidCraft;
+- expose the native saved `model.mitcad` file;
+- render and clearly label a presentation preview from the actual
+  Mitcad-exported `model.stl`;
+- show shared owner-local SCPF source only once while keeping Mitcad's separate
+  result/build/verification evidence;
+- prove the presentation on `simple-box`, `circle-negative-extrude` and
+  `topology-face-boundary-box` through durable `build/exp` evidence and
+  `/exp/` Pages.
+
+### Queued: #162 / #163 verification evidence cleanup
+
+After the experimental Pages evidence is stable:
 - #162 fixes the concrete `sheet-perforate` case where native perforation
   metadata passes but the published model preview does not visibly show the
   perforations, and adds an explicit approved visual expectation;

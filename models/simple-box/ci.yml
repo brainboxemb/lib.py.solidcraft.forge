@@ -11,7 +11,6 @@ implementations:
   - id: scpf-mitcad
     builder: builder-scpf-mitcad
     source: scpf/model.py
-    preview: false
   - id: cadquery
     builder: builder-cadquery
     source: cadquery/model.py
