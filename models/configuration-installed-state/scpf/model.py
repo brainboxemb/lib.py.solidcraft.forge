@@ -1,24 +1,29 @@
 """Qualification: one size table plus an independent Installed rule."""
 
 
-@component(include=("fit_diameter",))
+@component(include=("tube_d", "fit_diameter"))
 class FlexibleSleeve:
+    tube_d = 20.0
     fit_diameter = 20.4
+    wall = 2.0
     HEIGHT = 20.0
     RELIEF_WIDTH = 2.0
 
     def build(self):
-        sleeve = Cylinder(d=self.fit_diameter, h=self.HEIGHT)
-        relief = Box(12, self.RELIEF_WIDTH, 22).move(x=6)
-        return sleeve - relief
+        outer = Cylinder(d=self.tube_d + 2 * self.wall, h=self.HEIGHT)
+        bore = Cylinder(d=self.fit_diameter, h=self.HEIGHT + 2)
+        relief = Box(12, self.RELIEF_WIDTH, self.HEIGHT + 2).move(x=6)
+        return outer - bore - relief
 
 
 class FlexibleFitState:
     frame_width = 80.0
+    tube_d = 20.0
     fit_diameter = 20.4
 
     def build(self):
         left = FlexibleSleeve(
+            tube_d=self.tube_d,
             fit_diameter=self.fit_diameter,
             name="left_sleeve",
             placement=Placement(x=-self.frame_width / 4),
@@ -46,7 +51,7 @@ class FlexibleFitState:
                     "Installed",
                     enabled=True,
                     condition=Always(),
-                    effect=DriveParameter(self.fit_diameter, 20.0),
+                    effect=DriveParameter(self.fit_diameter, self.tube_d),
                 ),
             ),
         )
