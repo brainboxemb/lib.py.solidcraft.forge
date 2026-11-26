@@ -111,6 +111,23 @@ Release evidence for v0.23.0:
   `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689` and the GitHub Release is
   published.
 
+Qualified normal-lane evidence after v0.23.0:
+- #380 / PR #392 added explicit reusable-child feature exports through
+  `Shape.export_feature(name)` and definition-level
+  `Occurrence.feature(name)` references, allowing parent/root
+  `Suppress(...)` columns without exposing SolidCraft/replay feature ids;
+- the Forge-owned `configuration-child-feature` owner proves two separately
+  constructed occurrences share one parent-driven child parameter while
+  Small/Medium suppress the exported child cut and Large enables the same real
+  native history feature after save/reopen;
+- final PR CI 45908830410 is green, PR #392 merged to permanent `dev` as
+  `d23bc22e7a7af253664fae057d881c8170acd401`, permanent dev
+  qualification/build/publication run 45909235443 is green, and Pages run
+  45909580231 plus deployment 45909680743 are green;
+- this capability is qualified on `dev` but is not part of a published Forge
+  tag yet. Downstream CAD #189 must remain pinned to a released Forge version
+  until the normal-lane release below is published.
+
 Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded `SphereIR` through native Mitcad join/cut/intersect;
 - #351 / PR #355 qualified parameter-independent `PolygonProfileIR -> RegionIR -> symmetric ExtrudeIR -> ChamferIR` composition from unchanged public SCPF source;
@@ -136,10 +153,20 @@ The historical repository remains an archived A/B/provenance reference at
 Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
 
 Normal `dev` lane:
-- #380 is the demonstrated CAD consumer blocker: let a parent/root `Configure(...)` target an exact authored suppressible feature owned by a reusable child component without exposing replay/native feature ids;
-- keep its public authoring/replay qualification independent from experimental Mitcad work;
-- #255 / PR #376 is complete on `dev`: seven audited visible-geometry owners now retain approved `front`, `right` and `iso` regression baselines plus expected-shape evidence while preserving their existing native/history/topology checks; final PR CI 45876080803, permanent dev build/publication 45876667570 and Pages 45877168765 are green;
-- keep later verification-evidence follow-ups #256 and #257 separate from #380.
+- #380 / PR #392 is complete on permanent `dev`; the reusable-child feature
+  reference contract is qualified independently from experimental Mitcad work;
+- the next normal-lane product checkpoint is the **v0.24.0** minor release:
+  stabilize the already-qualified `dev` product to `main` through the
+  reviewed permanent `dev -> main` merge-commit path, then prepare
+  metadata-only release `release/v0.24.0` from qualified stable `main`;
+- do not integrate downstream CAD #189 against an unreleased Forge branch; it
+  may adopt this capability only after the v0.24.0 tag is published;
+- #255 / PR #376 remains complete on `dev`: seven audited visible-geometry
+  owners retain approved `front`, `right` and `iso` regression baselines
+  plus expected-shape evidence while preserving existing
+  native/history/topology checks;
+- keep later verification-evidence follow-ups #256 and #257 behind this
+  demonstrated consumer release checkpoint.
 
 Experimental `exp` lane:
 - #393 is the immediate architecture/control checkpoint before more backend capability code;
