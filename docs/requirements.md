@@ -24,6 +24,9 @@
 3. SCPF compilation is consumer-owned and feeds the generic SolidCraft command builder; do not teach generic builders Forge semantics.
 4. SolidCraft executes in its lightweight runtime; generic mesh verification executes in the reference runtime.
 5. CI batches compatible implementation work and does not start one Docker container per model implementation.
+6. The experimental `builder-scpf-mitcad` capability lowers the same trusted SCPF source through `run_script(..., backend="mitcad")` and must retain both the native `model.mitcad` document and exported `model.stl`.
+7. The Mitcad builder must not download or install a CAD runtime. Its runtime contract is an already-qualified `mitcad-cli` executable on `PATH`, optionally supplied through `CAD_LIBRARY_MITCAD_EXECUTABLE`.
+8. Do not add root `runtimes.mitcad` or owner `scpf-mitcad` implementations until an immutable Mitcad runtime role is separately qualified.
 
 ## SCPF native associativity
 

@@ -82,7 +82,9 @@ Forge build integration, without yet attaching Mitcad to model owners:
   `model.mitcad`, `model.stl` and normal `build.json`;
 - unit-test the builder without downloading a runtime binary;
 - do not add root `runtimes.mitcad` or owner `scpf-mitcad` implementations
-  until an immutable runtime image is available.
+  until an immutable runtime image is available;
+- follow-up #221 owns that immutable `mitcad` runtime role and the
+  `mitcad-cli` executable contract; owner attachment remains a later change.
 
 ### Queued: #162 / #163 verification evidence cleanup
 
