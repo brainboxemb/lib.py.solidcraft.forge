@@ -76,10 +76,6 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: #239 clarify Verification intent and collapse detailed checks
-
-Adopt the generic Pages behavior from `template.cad.library#82`: make Verification pages intent-first, keep detailed check tables collapsed by default, and add explicit owner-local intent for `configuration-position` so Front/Below/Service can be understood without reconstructing the test from Python and measurement tables.
-
 
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
