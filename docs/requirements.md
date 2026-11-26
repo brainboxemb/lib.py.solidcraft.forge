@@ -68,11 +68,15 @@
 5. Parameter columns must remain generic native dependencies: dimensions, assembly occurrence placement and other associative uses all switch through the same Param contract.
 6. A parameter published by a reusable child component must remain addressable by a root `Configure(...)` table around that component occurrence or an Assembly; multiple occurrences sharing the same published parent parameter must not create unrelated native parameters.
 7. Verify all authored cells, active-row state and row switching on a reopened saved design, including parameter, placement and suppression changes. Unsupported configuration intent must fail explicitly rather than be emulated with Python variants.
-8. Flexible-fit physical states use the conventional row names `Free` for uninstalled manufacturing/print geometry and `Installed` for mounted working geometry. These are model configurations, not render/display-state labels.
+8. When flexible-fit state is the table's only configuration axis, use the conventional row names `Free` for uninstalled manufacturing/print geometry and `Installed` for mounted working geometry. When a parent already owns an independent row axis such as Small / Medium / Large, a native Configuration Rule named `Installed` may drive the same configured fit parameter; disabling that rule restores the active row's Free/base expression. Do not create a Cartesian row table merely to combine those axes.
 9. Configuration-driven derived geometry must remain native when it uses public symbolic CAD math. The public API must cover min/max, sqrt, abs, round, floor and atan without exposing raw SolidCraft expression strings or private expression helpers.
 10. Symbolic multiplication, division and numeric powers must preserve all source Parameter dependencies so native configuration changes recompute the resulting feature inputs.
 11. Native Sketch revolve must accept a typed shifted/custom AxisLine whose origin can remain parameter-driven. The resulting revolve must remain one exact Forge feature Shape usable by Suppress(feature).
 12. A shifted revolve axis and its standalone Sketch plane must remain explicitly coplanar; Forge must reject mismatched axis/plane intent instead of silently transforming or baking coordinates.
+13. `Configure(...)` may author ordered native Configuration Rules in addition to rows. The initial typed rule contract is `ConfigRule(..., condition=Always(), effect=DriveParameter(...))`; callers never write raw SolidCraft rule JSON.
+14. A `DriveParameter` target must also be an explicit `Param(...)` column of the same table. Rule enablement uses SolidCraft's native `enabled` checkbox and must not be emulated as a boolean/numeric model parameter.
+15. Rule enablement and row activation are orthogonal native state. Saved-design qualification must prove that disabling a drive restores the active row value and that switching rows does not silently change the rule's enabled state.
+16. A rule may drive a shared parent parameter published into reusable child components, so one Assembly rule can update every occurrence using that same native dependency without duplicating bodies or Python histories.
 
 ## SCPF revolute relationships
 
@@ -202,6 +206,13 @@
    provenance must remain deterministic and mutually consistent.
 5. Forge CI must compare the checked registry with the root-pinned immutable
    SolidCraft runtime whenever the reference module/reference tree is selected.
+6. When a typed native command contract gates Forge API design, retain the exact
+   targeted `engine.describe` result below
+   `docs/reference/solidcraft/<version>/describe/`; do not infer missing
+   condition/effect schemas from the short command-registry description.
+7. Targeted describe evidence must be captured from and compared back to the
+   same root-pinned immutable runtime as the command registry. A checked schema
+   may not be hand-authored from guessed SolidCraft parameter or effect names.
 
 ## Manufacturing visual verification
 
