@@ -24,5 +24,12 @@ verifications:
     artifact: drawings/Sample-Plate-Drawing.png
     implementations: [scpf]
 
+  - id: compact-drawing-sheet
+    module: verification
+    adapter: image-regression
+    definition: verification/compact_drawing_visual.json
+    artifact: drawings/Compact-Sample-Plate-Drawing.png
+    implementations: [scpf]
+
 dependencies: []
 needs: [cadlib]
