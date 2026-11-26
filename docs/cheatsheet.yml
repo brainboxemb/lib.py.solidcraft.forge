@@ -136,9 +136,9 @@ groups:
         snippet: "body.fillet(2, edges=Edges.VERTICAL)"
         example:
       - title: "shape.chamfer(...)"
-        description: "Bevel selected edges using the same edge selectors as fillet."
-        snippet: "body.chamfer(2, edges=Edges.VERTICAL)"
-        example:
+        description: "Bevel selected edges; add distance2 for SolidCraft's native asymmetric two-distance chamfer."
+        snippet: "body.chamfer(0.18, distance2=0.65, edges=Edges.VERTICAL)"
+        example: asymmetric-chamfer
       - title: "shape.shell(...)"
         description: "Create an open-sided shell (supported feature trees only)."
         snippet: "Box(80, 50, 30).shell(2, open=Faces.TOP)"

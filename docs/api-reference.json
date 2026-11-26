@@ -920,23 +920,31 @@
     {
       "kind": "callable",
       "name": "Shape.chamfer",
-      "summary": "Chamfer selected solid edges by one equal distance.",
+      "summary": "Chamfer selected solid edges by one equal distance or two native face distances.",
       "guide": "guide/features/#fillet",
       "reference": "reference/Shape.chamfer/",
-      "use_when": "Bevel one or more edges of a supported feature-based body. Chamfer and fillet use the same edge-selection forms.",
-      "limits": "Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids.",
+      "use_when": "Bevel one or more edges of a supported feature-based body. Supply distance2 for an asymmetric native chamfer; chamfer and fillet use the same edge-selection forms.",
+      "limits": "Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids. flip=True requires distance2. Omitting distance2 preserves the existing equal-distance command contract.",
       "parameters": [
         {
           "name": "distance",
-          "description": "Chamfer distance in mm."
+          "description": "Primary chamfer distance in mm."
+        },
+        {
+          "name": "distance2",
+          "description": "Optional secondary distance along the adjacent face. Omit for an equal-distance chamfer."
+        },
+        {
+          "name": "flip",
+          "description": "Swap the native primary/secondary adjacent-face ordering. Defaults to False and requires distance2 when True."
         },
         {
           "name": "edges",
           "description": "Edge selection. Prefer Edges.from_faces(...) for named face perimeters; Edges.VERTICAL, supported two-direction Box selectors, Edges.from_profile(...), Edges.from_vertices(...) and non-empty XYZ edge-pick sequences remain supported. Defaults to Edges.VERTICAL."
         }
       ],
-      "example": "body = Box(80, 50, 15)\nbevelled = body.chamfer(3, edges=Edges.VERTICAL)",
-      "signature": "Shape.chamfer(self, distance, *, edges=<Edges.VERTICAL: 'vertical'>)"
+      "example": "body = Box(80, 50, 15)\nbevelled = body.chamfer(0.18, distance2=0.65, edges=Edges.VERTICAL)",
+      "signature": "Shape.chamfer(self, distance, *, distance2=None, flip=False, edges=<Edges.VERTICAL: 'vertical'>)"
     },
     {
       "kind": "callable",

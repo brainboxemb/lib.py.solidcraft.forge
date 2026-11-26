@@ -13,6 +13,7 @@ from cad_library_ci.models import discover_models, select_models
 
 EXPECTED_IDS = {
     "anchor-topology-mutation",
+    "asymmetric-chamfer",
     "appearance-color",
     "anchored-holes",
     "as-built-attach",
@@ -75,6 +76,7 @@ EXPECTED_IDS = {
 
 SCPF_ONLY_IDS = {
     "appearance-color",
+    "asymmetric-chamfer",
     "attached-through-all",
     "configuration-installed-state",
     "configuration-position",
@@ -110,7 +112,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 58)
+        self.assertEqual(len(self.models), 59)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -197,6 +199,15 @@ class ModelTests(unittest.TestCase):
                     ["solidcraft", "solidcraft"],
                 )
             elif model_id == "multi-profile-extrude":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "geometry", "visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference", "solidcraft"],
+                )
+            elif model_id == "asymmetric-chamfer":
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
                     ["native", "geometry", "visual"],
@@ -301,7 +312,10 @@ class ModelTests(unittest.TestCase):
                         if model.id == "sheet-perforate"
                         else (
                             [("scpf", "native"), ("scpf", "visual")]
-                            if model.id == "multi-profile-extrude"
+                            if model.id in {
+                                "multi-profile-extrude",
+                                "asymmetric-chamfer",
+                            }
                             else [("scpf", "native")]
                         )
                     )
@@ -316,13 +330,13 @@ class ModelTests(unittest.TestCase):
         self.assertEqual(len(reference["build_items"]), multi_engine * 4)
         self.assertEqual(
             len(reference["verify_items"]),
-            multi_engine * 5 + 3,
+            multi_engine * 5 + 4,
         )
         self.assertEqual(len(reference["preview_items"]), multi_engine * 4)
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
             (set(EXPECTED_IDS) - set(SCPF_ONLY_IDS))
-            | {"sample-plate-drawing", "multi-profile-extrude"},
+            | {"sample-plate-drawing", "multi-profile-extrude", "asymmetric-chamfer"},
         )
         self.assertEqual(
             {
