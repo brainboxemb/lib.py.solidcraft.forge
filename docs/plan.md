@@ -96,7 +96,10 @@ Current spike evidence:
 - unsupported Mitcad shape kinds fail explicitly;
 - a Mitcad MCP executor now owns native document creation, command-array
   application, body inspection, .mitcad save and optional export; transport
-  tests keep this separate from lowering.
+  tests keep this separate from lowering;
+- an opt-in native smoke module pins the official v0.70.0 Linux AppImage by
+  SHA-256 and verifies the live MCP reference before running simple-box,
+  checking native volume/bounds and .mitcad/STL output.
 
 ### Queued: #162 / #163 verification evidence cleanup
 
