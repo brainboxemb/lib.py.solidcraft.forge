@@ -27,42 +27,6 @@
 4. SolidCraft executes in its lightweight runtime; generic mesh verification executes in the reference runtime.
 5. CI batches compatible implementation work and does not start one Docker container per model implementation.
 
-## Forge CAD compiler architecture
-
-1. SCPF is one authoring frontend. Forge must evaluate/normalize that source once
-   into typed engine-neutral semantic IR before backend lowering; SolidCraft and
-   Mitcad must not independently interpret raw `Shape.data`.
-2. Semantic IR describes CAD meaning rather than command syntax. Backend command
-   names, native feature/body/topology ids, replay handles and transport-only
-   helper geometry are forbidden from the IR contract.
-3. Parameters and expressions remain symbolic across normalization. Current
-   numeric values may be used for bounded validation or selector checks, but
-   must not replace authored dependencies in IR.
-4. Authored feature identity and operation intent must survive normalization.
-   New-body, join, cut and intersect semantics may not be rewritten into
-   unrelated helper features merely because one backend happens to require a
-   different transport.
-5. A backend may lower a typed IR node or reject it explicitly. It must not
-   reinterpret source authoring, silently approximate unsupported semantics or
-   introduce a second CAD interpreter.
-6. Backend-only transport remains backend-owned. Examples include a Mitcad
-   construction Sketch line used to express an axis, Mitcad feature/curve ids,
-   SolidCraft command spellings and replay-resolved native topology.
-7. SolidCraft is a reference backend during migration, not the schema owner of
-   Forge IR. A future backend must be able to consume the same semantic nodes
-   without understanding SolidCraft commands.
-8. `LegacyShapeIR` is an explicit temporary migration boundary. Stable
-   SolidCraft compatibility may consume it while migration is incomplete;
-   experimental backends must fail closed rather than learn a parallel legacy
-   interpreter.
-9. Every new experimental semantic capability must be qualified in order:
-   generic semantic contract, backend-independent normalization/IR tests,
-   independent backend lowering, backend contract tests and real native runtime
-   evidence before permanent `exp` integration.
-10. If backend work appears to require a new IR field, first classify it as
-    generic CAD meaning or backend transport. Only generic CAD meaning may
-    extend Forge IR.
-
 ## SCPF native associativity
 
 1. When SolidCraft exposes a durable native reference for editable intent, Forge
