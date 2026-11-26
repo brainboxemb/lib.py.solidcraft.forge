@@ -5,7 +5,15 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from . import capture_snapshot, root_runtime_pin, verify_pinned_reference, verify_snapshot
+from . import (
+    capture_describe_snapshot,
+    capture_snapshot,
+    root_runtime_pin,
+    verify_describe_snapshot,
+    verify_pinned_describe,
+    verify_pinned_reference,
+    verify_snapshot,
+)
 
 
 def main() -> int:
@@ -25,6 +33,19 @@ def main() -> int:
     verify.add_argument("--version")
     verify.add_argument("--snapshot", type=Path)
 
+    capture_describe = subparsers.add_parser("capture-describe")
+    capture_describe.add_argument("--image", required=True)
+    capture_describe.add_argument("--version", required=True)
+    capture_describe.add_argument("--command", required=True)
+    capture_describe.add_argument("--snapshot", type=Path, required=True)
+
+    verify_describe = subparsers.add_parser("verify-describe")
+    verify_describe.add_argument("--repo-root", type=Path, default=Path("."))
+    verify_describe.add_argument("--command", required=True)
+    verify_describe.add_argument("--image")
+    verify_describe.add_argument("--version")
+    verify_describe.add_argument("--snapshot", type=Path)
+
     args = parser.parse_args()
     if args.command == "capture":
         count = capture_snapshot(
@@ -37,6 +58,46 @@ def main() -> int:
         print(
             f"Captured SolidCraft {args.version}: {count} commands "
             f"from {args.image}"
+        )
+        return 0
+
+    if args.command == "capture-describe":
+        capture_describe_snapshot(
+            image=args.image,
+            version=args.version,
+            command=args.command,
+            snapshot=args.snapshot,
+        )
+        print(
+            f"Captured SolidCraft {args.version} describe({args.command}) "
+            f"from {args.image}"
+        )
+        return 0
+
+    if args.command == "verify-describe":
+        explicit = (args.image, args.version, args.snapshot)
+        if any(value is not None for value in explicit):
+            if not all(value is not None for value in explicit):
+                parser.error(
+                    "--image, --version and --snapshot must be supplied together"
+                )
+            verify_describe_snapshot(
+                image=args.image,
+                version=args.version,
+                command=args.command,
+                snapshot=args.snapshot,
+            )
+            print(
+                f"SolidCraft describe({args.command}) matches {args.image}: "
+                f"{args.version}"
+            )
+            return 0
+        repo = args.repo_root.resolve()
+        verify_pinned_describe(repo, args.command)
+        image, version = root_runtime_pin(repo)
+        print(
+            f"SolidCraft describe({args.command}) matches root pin {image}: "
+            f"{version}"
         )
         return 0
 

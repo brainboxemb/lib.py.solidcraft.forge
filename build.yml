@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/351-polygon-symmetric-chamfer-ir
-modules: [builder-scpf-mitcad]
-models: [topology-face-boundary-box, topology-face-boundary-xz]
+branch: resolve/358-dev-into-exp-v2
+modules: all
+models: all
 library: true
 tasks: [test]

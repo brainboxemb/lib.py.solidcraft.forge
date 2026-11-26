@@ -1,4 +1,4 @@
-"""Native Free/Installed physical-state qualification."""
+"""Native size-row plus independent Installed-rule qualification."""
 from pathlib import Path
 
 from cad_verification import (
@@ -16,8 +16,12 @@ HERE = Path(__file__).resolve().parent
 VERIFICATION = SolidCraftVerification(
     verification_id="configuration-installed-state",
     baseline=SolidCraftModelExpectation(
-        body_count=1,
-        parameters={"fit_diameter": 20.4},
+        body_count=2,
+        parameters={
+            "frame_width": 80.0,
+            "tube_d": 20.0,
+            "fit_diameter": 20.0,
+        },
         parameter_match="subset",
     ),
     inspections=(
@@ -25,41 +29,118 @@ VERIFICATION = SolidCraftVerification(
             id="table",
             command_path=HERE / "table.json",
             checks=(
-                SolidCraftInspectionCheck(id="rows", path=(0, "rows"), count=2),
-                SolidCraftInspectionCheck(id="active", path=(0, "active"), expected="Free"),
-                SolidCraftInspectionCheck(id="matches", path=(0, "matches"), expected=True),
+                SolidCraftInspectionCheck(id="rows", path=(0, "rows"), count=3),
+                SolidCraftInspectionCheck(id="rules", path=(0, "rules"), count=1),
                 SolidCraftInspectionCheck(
-                    id="free-diameter",
+                    id="active",
+                    path=(0, "active"),
+                    expected="Medium",
+                ),
+                SolidCraftInspectionCheck(
+                    id="matches",
+                    path=(0, "matches"),
+                    expected=True,
+                ),
+                SolidCraftInspectionCheck(
+                    id="medium-free-cell",
                     path=(
                         0,
                         "rows",
-                        SolidCraftInspectionSelect("name", "Free"),
+                        SolidCraftInspectionSelect("name", "Medium"),
                         "values",
                         "param:fit_diameter",
                     ),
                     expected="20.4 mm",
                 ),
                 SolidCraftInspectionCheck(
-                    id="installed-diameter",
+                    id="installed-enabled",
                     path=(
                         0,
-                        "rows",
-                        SolidCraftInspectionSelect("name", "Installed"),
-                        "values",
-                        "param:fit_diameter",
+                        "rules",
+                        SolidCraftInspectionSelect("id", "installed"),
+                        "enabled",
                     ),
-                    expected="20.0 mm",
+                    expected=True,
+                ),
+                SolidCraftInspectionCheck(
+                    id="installed-name",
+                    path=(
+                        0,
+                        "rules",
+                        SolidCraftInspectionSelect("id", "installed"),
+                        "name",
+                    ),
+                    expected="Installed",
+                ),
+                SolidCraftInspectionCheck(
+                    id="installed-target",
+                    path=(
+                        0,
+                        "rules",
+                        SolidCraftInspectionSelect("id", "installed"),
+                        "effect",
+                        "parameter",
+                    ),
+                    expected="fit_diameter",
+                ),
+                SolidCraftInspectionCheck(
+                    id="installed-expression",
+                    path=(
+                        0,
+                        "rules",
+                        SolidCraftInspectionSelect("id", "installed"),
+                        "effect",
+                        "expression",
+                    ),
+                    expected="tube_d",
                 ),
             ),
         ),
     ),
     saved_designs=(
         SolidCraftSavedDesign(
-            id="installed",
-            command_path=HERE / "installed.json",
+            id="free",
+            command_path=HERE / "free.json",
             expectation=SolidCraftModelExpectation(
-                body_count=1,
-                parameters={"fit_diameter": 20.0},
+                body_count=2,
+                parameters={
+                    "frame_width": 80.0,
+                    "tube_d": 20.0,
+                    "fit_diameter": 20.4,
+                },
+                parameter_match="subset",
+            ),
+            changes=(
+                SolidCraftMeasurementChangeExpectation(
+                    id="physical-geometry",
+                    path=("bodies", 0, "volume_mm3"),
+                    minimum_absolute_delta=1.0,
+                ),
+            ),
+        ),
+        SolidCraftSavedDesign(
+            id="large-installed",
+            command_path=HERE / "large_installed.json",
+            expectation=SolidCraftModelExpectation(
+                body_count=2,
+                parameters={
+                    "frame_width": 100.0,
+                    "tube_d": 20.0,
+                    "fit_diameter": 20.0,
+                },
+                parameter_match="subset",
+            ),
+        ),
+        SolidCraftSavedDesign(
+            id="large-free",
+            command_path=HERE / "large_free.json",
+            expectation=SolidCraftModelExpectation(
+                body_count=2,
+                parameters={
+                    "frame_width": 100.0,
+                    "tube_d": 20.0,
+                    "fit_diameter": 20.4,
+                },
                 parameter_match="subset",
             ),
             changes=(

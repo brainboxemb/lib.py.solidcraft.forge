@@ -221,6 +221,39 @@ reference. SolidCraft persists its own `row_identities` map in the saved
 document. The SolidCraft command API does not accept caller-chosen native row
 ids, so Forge does not patch or predict them.
 
+Configuration Rules are authored on that same final table:
+
+```python
+Configure(
+    assembly,
+    active="Medium",
+    columns=(Param(self.frame_width), Param(self.fit_diameter)),
+    rows={
+        "Small": ("60 mm", "20.4 mm"),
+        "Medium": ("80 mm", "20.4 mm"),
+        "Large": ("100 mm", "20.4 mm"),
+    },
+    rules=(
+        ConfigRule(
+            "installed",
+            "Installed",
+            enabled=True,
+            condition=Always(),
+            effect=DriveParameter(self.fit_diameter, self.tube_d),
+        ),
+    ),
+)
+```
+
+The first public rule slice deliberately exposes only typed `Always()` and
+`DriveParameter(...)` intent. Lowering emits native `config.rule` after row
+authoring and before `config.activate`. The rule's `enabled` field is the
+SolidCraft Configuration Rules checkbox; Forge does not manufacture a boolean
+user parameter. A drive target must already be a `Param(...)` column, so
+disabling the rule lets SolidCraft restore the selected row's stored value.
+Rules therefore remain orthogonal to Small / Medium / Large rather than
+expanding those rows into a Cartesian state table.
+
 `Configure` never rewrites Python model structure for each row. A row may only
 change native configuration columns. Whole-component presence, alternate
 attachment graphs and arbitrary Python branching therefore require a separate
@@ -240,7 +273,7 @@ consumer repositories. The verification catalog has its own
 | --- | --- |
 | `configuration-table` | named rows, active row, multiple parameter columns, two independent feature-suppression columns, saved native table and row switching |
 | `configuration-position` | one configuration table around a complete Assembly, with parameter-driven occurrence positions for Front, Below and Service |
-| `configuration-installed-state` | one reusable flexible-fit child component publishes its fit parameter to the parent; `Free` manufacturing and `Installed` mounted rows switch that same child definition natively after saving |
+| `configuration-installed-state` | two reusable flexible-fit child occurrences share one published fit parameter; Small/Medium/Large remains the row axis while an independent native Installed rule drives or releases that parameter after saving |
 | replay row identity | Forge-generated name-stable row references bind to SolidCraft-returned native row ids; activation uses the bound id |
 | saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
 
@@ -253,7 +286,7 @@ The use-case boundary is intentional:
 | optional authored feature | `Suppress(feature)` |
 | dimensions plus suppression in one row | supported by the same table |
 | parent size table + published reusable-child parameter | supported by the same `Param(...)` contract; shared child occurrences follow one parent native parameter |
-| flexible-fit free/mounted state | `Free` / `Installed` rows using ordinary native parameters; this is a physical configuration, not a display state |
+| flexible-fit free/mounted state | use `Free` / `Installed` rows when fit is the only axis; when size rows already exist, use one independent native `Installed` `ConfigRule` driving the same `Param(...)` target |
 | material or appearance variants | native SolidCraft supports them, but Forge waits for a typed, separately verified column contract |
 | whole component present/absent | not silently mapped to feature suppression |
 | alternate attachment/joint graph | not a configuration cell; requires explicit relationship authoring |
@@ -470,18 +503,25 @@ reference, not a CAD model and not generated Pages content.
 root ci.yml immutable SolidCraft runtime pin
         ↓ modules/solidcraft-reference
 solidcraft-cli --version + commands
+targeted engine.describe for typed contracts that gate Forge API design
         ↓
 docs/reference/solidcraft/<version>/
   commands.json
   commands.md
+  describe/<command-id>.json
   SOURCE.md
 ```
 
 `modules/solidcraft-reference` validates registry completeness, captures and
 normalizes the exact runtime registry, renders the human catalog/provenance, and
-compares the checked snapshot back to the same immutable runtime. Its item watch
-includes `docs/reference/solidcraft/**`, so reference changes select their
-own verifier. Historical version directories remain immutable evidence.
+compares the checked snapshot back to the same immutable runtime. When a typed
+native contract gates Forge API design, the same module may additionally retain
+the exact read-only `engine.describe` result for that command below
+`describe/<command-id>.json`. Those targeted schemas are evidence, not a
+second hand-maintained native API catalog, and are compared byte-semantically
+as JSON against the same root-pinned immutable runtime. Its item watch includes
+`docs/reference/solidcraft/**`, so reference changes select their own verifier.
+Historical version directories remain immutable evidence.
 
 ## Runtime graph
 
@@ -622,6 +662,18 @@ Before moving historical code, classify it as:
 
 Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining graph.
 
+## Central PR CI freshness in merge policy
+
+Forge consumes the generic stable template rule that merge policy validates
+the newest `pull_request` run of `.github/workflows/ci.yml` for the exact
+head SHA and pull request. GitHub can re-associate historical check-runs when
+a replacement PR reuses a permanent-branch head, so old red checks must not
+permanently poison a later successful qualification.
+
+The newest matching run remains fail-closed: pending blocks, failure blocks,
+and no current-PR CI blocks. Permanent `workflow_dispatch` runs are not PR
+qualification. Forge owns no consumer-specific variant of this rule.
+
 ## Reviewed permanent-branch conflict recovery
 
 The branch topology remains authoritative even when GitHub cannot merge a
@@ -661,7 +713,7 @@ non-`resolve/*` head or non-permanent original direction fails closed. If the
 original PR becomes normally mergeable, ordinary `/merge` is required.
 
 Forge adopts this behavior from stable
-`template.cad.library@04ff29b9ba80719b2954e1439db12ef9434b0b97`; it does not
+`template.cad.library@8f05e030151535e46ba4c6a1cf2aec59945542f3`; it does not
 own a second conflict-recovery design.
 
 ## Main-owned governance merge boundary
