@@ -115,6 +115,18 @@ MITCAD_FOCUSED_IDS = {
     "topology-face-boundary-xz",
 }
 
+MITCAD_FILTERED_GEOMETRY_IDS = {
+    "multi-profile-extrude",
+    "topology-face-boundary-xz",
+}
+
+MITCAD_PREVIEW_IDS = {
+    "circle-negative-extrude",
+    "cylinder-subtract",
+    "simple-box",
+    "topology-face-boundary-box",
+}
+
 STANDARD_MULTI_ENGINE_IDS = (
     EXPECTED_IDS - SCPF_ONLY_IDS - MITCAD_FOCUSED_IDS
 )
@@ -217,7 +229,14 @@ class ModelTests(unittest.TestCase):
                 model.verifications[0].implementations,
                 ("scpf",),
             )
-            self.assertIsNone(model.verifications[1].implementations)
+            self.assertEqual(
+                model.verifications[1].implementations,
+                (
+                    ("scpf", "scpf-mitcad")
+                    if model_id in MITCAD_FILTERED_GEOMETRY_IDS
+                    else None
+                ),
+            )
 
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
@@ -399,7 +418,7 @@ class ModelTests(unittest.TestCase):
         )
         self.assertEqual(
             len(reference["preview_items"]),
-            multi_engine * 4 + len(MITCAD_IDS),
+            multi_engine * 4 + len(MITCAD_PREVIEW_IDS),
         )
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
