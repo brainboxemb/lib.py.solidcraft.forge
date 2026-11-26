@@ -276,6 +276,19 @@ groups:
               rows={"Medium": ("80 mm", True),
                     "Large": ("100 mm", False)})
         example: configuration-table
+      - title: "ConfigRule(..., condition=Always(), effect=DriveParameter(...))"
+        description: "Keep an Installed/Free physical state independent from Small/Medium/Large rows."
+        snippet: |
+          Configure(design, active="Medium",
+              columns=(Param(self.width), Param(self.fit_diameter)),
+              rows={"Small": ("60 mm", "20.4 mm"),
+                    "Medium": ("80 mm", "20.4 mm"),
+                    "Large": ("100 mm", "20.4 mm")},
+              rules=(ConfigRule(
+                  "installed", "Installed",
+                  condition=Always(),
+                  effect=DriveParameter(self.fit_diameter, self.tube_d)),))
+        example: configuration-installed-state
 
   - heading: Symbolic CAD math
     items:
