@@ -4,9 +4,15 @@ from unittest.mock import patch
 from cad_model_merge_policy.__main__ import (
     dispatch_workflow,
     merge_required,
+    pull_request_files,
     require_green_ci,
+    require_main_governance_paths,
 )
-from cad_model_merge_policy.policy import MergePolicyError, merge_method
+from cad_model_merge_policy.policy import (
+    MergePolicyError,
+    is_main_governance,
+    merge_method,
+)
 
 
 def check(name, status, conclusion, *prs):
@@ -47,6 +53,54 @@ class MergePolicyTests(unittest.TestCase):
         for head, base in (("exp", "main"), ("main", "exp"), ("release/v1", "exp"), ("release/v1", "dev")):
             with self.subTest(head=head, base=base), self.assertRaises(MergePolicyError):
                 merge_method(head=head, base=base)
+
+    def test_governance_docs_to_main_is_squash(self):
+        self.assertTrue(
+            is_main_governance(head="docs/123-plan", base="main")
+        )
+        self.assertEqual(
+            merge_method(head="docs/123-plan", base="main"),
+            "squash",
+        )
+        self.assertFalse(
+            is_main_governance(head="docs/123-plan", base="dev")
+        )
+
+    @patch("cad_model_merge_policy.__main__.api")
+    def test_main_governance_paths_are_allowlisted(self, api):
+        api.return_value = [
+            {"filename": "AGENTS.md"},
+            {"filename": "docs/plan.md"},
+            {"filename": "docs/handoff.md"},
+        ]
+        require_main_governance_paths("owner/repo", 25, "token")
+
+    @patch("cad_model_merge_policy.__main__.api")
+    def test_main_governance_rejects_non_governance_path(self, api):
+        api.return_value = [
+            {"filename": "docs/plan.md"},
+            {"filename": "cadlib/src/package.py"},
+        ]
+        with self.assertRaisesRegex(MergePolicyError, "forbidden"):
+            require_main_governance_paths("owner/repo", 25, "token")
+
+    @patch("cad_model_merge_policy.__main__.api")
+    def test_pull_request_files_paginates_before_validation(self, api):
+        api.side_effect = [
+            [{"filename": "docs/plan.md"} for _ in range(100)],
+            [{"filename": "README.md"}],
+        ]
+        self.assertEqual(
+            len(pull_request_files("owner/repo", 25, "token")),
+            101,
+        )
+        self.assertEqual(api.call_count, 2)
+        with patch(
+            "cad_model_merge_policy.__main__.pull_request_files",
+            return_value=("docs/plan.md", "README.md"),
+        ):
+            with self.assertRaisesRegex(MergePolicyError, "README.md"):
+                require_main_governance_paths("owner/repo", 25, "token")
 
     def test_release_to_main_is_squash(self):
         self.assertEqual(
