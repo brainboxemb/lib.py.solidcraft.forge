@@ -68,6 +68,16 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
+### Dev: #216 native configuration-table authoring
+
+Keep this product work isolated on dev. Deliver a generic public SCPF
+configuration-table capability and qualify it entirely with Forge-owned cases
+under the dedicated Configurations verification section. Prove Shape dimensions,
+feature suppression, Assembly occurrence positions, all authored rows/cells,
+active state, replay-bound native row identity, saved-design editability and row
+switching. Consumer repositories are not part of the acceptance fixture; they
+adopt the released API afterwards.
+
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
 The permanent experimental line is accepted. Begin #192 only on `exp` and keep

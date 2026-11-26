@@ -2443,6 +2443,66 @@
       ],
       "example": "body = Box(40, 30, 10).with_appearance(\"#FFD21A\")",
       "signature": "Shape.with_appearance(self, color)"
+    },
+    {
+      "kind": "function",
+      "name": "Configure",
+      "summary": "Author a native editable configuration table on the final design.",
+      "guide": "guide/geometry/",
+      "reference": "reference/Configure/",
+      "use_when": "Define editable native configuration rows rather than Python-only variants.",
+      "limits": "Rows modify native configuration columns only; Configure does not branch or rebuild Python model structure per row.",
+      "parameters": [
+        {
+          "name": "design",
+          "description": "Final Shape, component occurrence or Assembly."
+        },
+        {
+          "name": "active",
+          "description": "Name of initially active row."
+        },
+        {
+          "name": "columns",
+          "description": "Ordered Param and Suppress columns."
+        },
+        {
+          "name": "rows",
+          "description": "Ordered mapping of row names to cell sequences."
+        }
+      ],
+      "example": "Configure(design, active='Medium', columns=(Param(self.width),), rows={'Medium': ('80 mm',)})"
+    },
+    {
+      "kind": "function",
+      "name": "Param",
+      "summary": "Select an existing native model parameter for a configuration column.",
+      "guide": "guide/geometry/",
+      "reference": "reference/Param/",
+      "use_when": "Prefer Param(self.parameter) inside build() so configuration intent follows the actual symbolic model parameter; a parameter name string remains accepted when a direct object is unavailable.",
+      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Native parameter name or Parameter object."
+        }
+      ],
+      "example": "Param(self.width)"
+    },
+    {
+      "kind": "function",
+      "name": "Suppress",
+      "summary": "Select one applied Forge feature for native suppression.",
+      "guide": "guide/geometry/",
+      "reference": "reference/Suppress/",
+      "use_when": "Define editable native configuration rows rather than Python-only variants.",
+      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
+      "parameters": [
+        {
+          "name": "feature",
+          "description": "Exact applied feature Shape."
+        }
+      ],
+      "example": "Suppress(hole)"
     }
   ]
 }

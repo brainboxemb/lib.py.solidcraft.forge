@@ -67,6 +67,87 @@ compatibility path and lowers to `sheet.fold.points`. This avoids baking a
 symbolically driven bend line into coordinates that stop following later
 parameter edits.
 
+## Native configuration-table boundary
+
+Configuration is final design intent rather than a Python model variant. The
+public authoring boundary is:
+
+```python
+Configure(design, active=..., columns=(...), rows={...})
+```
+
+The configured `design` may be a single `Shape`, one component occurrence or
+an `Assembly`. `Param(...)` points at an existing native model parameter, so
+the same column type can drive dimensions, occurrence `Placement`, attachment
+offsets and other native associative dependencies. `Suppress(feature)` points
+at the exact Forge-authored feature object; consumer code never names or predicts
+SolidCraft history ids.
+
+Lowering is deliberately two-stage:
+
+```text
+Forge configuration intent
+        ↓
+compile normal Shape / component / Assembly design
+        ↓
+bind replay-returned native feature names and configuration row ids
+        ↓
+config.configure / config.row / config.activate / config.table
+        ↓
+saved SolidCraft .sc owns editable configs + native row identities
+```
+
+Forge assigns a deterministic replay row reference from each authored row name,
+binds it to the actual native row id returned by SolidCraft and activates by
+that bound id. Reordering rows therefore does not change Forge's logical row
+reference. SolidCraft persists its own `row_identities` map in the saved
+document. The SolidCraft command API does not accept caller-chosen native row
+ids, so Forge does not patch or predict them.
+
+`Configure` never rewrites Python model structure for each row. A row may only
+change native configuration columns. Whole-component presence, alternate
+attachment graphs and arbitrary Python branching therefore require a separate
+native contract rather than being hidden behind configuration syntax.
+
+Native material and appearance columns also exist in SolidCraft's configuration
+model. They are intentionally not exposed by #216 until a typed Forge authoring
+contract and verification case exist for them.
+
+## Configuration verification cases
+
+Configuration qualification is Forge-owned and independent of downstream
+consumer repositories. The verification catalog has its own
+**Configurations** section and uses focused cases:
+
+| Case | Contract proved |
+| --- | --- |
+| `configuration-table` | named rows, active row, multiple parameter columns, two independent feature-suppression columns, saved native table and row switching |
+| `configuration-position` | one configuration table around a complete Assembly, with parameter-driven occurrence positions for Front, Below and Service |
+| replay row identity | Forge-generated name-stable row references bind to SolidCraft-returned native row ids; activation uses the bound id |
+| saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
+
+The use-case boundary is intentional:
+
+| Use case | #216 public contract |
+| --- | --- |
+| product sizes / dimensional presets | `Param(...)` |
+| front/below/service assembly positions | `Param(...)` driving associative `Placement` |
+| optional authored feature | `Suppress(feature)` |
+| dimensions plus suppression in one row | supported by the same table |
+| material or appearance variants | native SolidCraft supports them, but Forge waits for a typed, separately verified column contract |
+| whole component present/absent | not silently mapped to feature suppression |
+| alternate attachment/joint graph | not a configuration cell; requires explicit relationship authoring |
+| arbitrary Python branches per row | rejected as a configuration-table substitute |
+
+A suppression reference must be an actual Forge feature handle available to the
+configured design. #216 does not invent string paths into hidden child-component
+implementation details. If cross-component exported feature handles are needed,
+that is a reusable component API capability and must be designed explicitly.
+
+The HUB75 display and frame-coupler models remain downstream consumers. They are
+useful adoption tests after a Forge release, but they do not define or special
+case the public API.
+
 ## Native revolute-relationship boundary
 
 Revolute motion stays inside the existing occurrence-attachment model. A

@@ -128,3 +128,30 @@ shared = body &amp; tool       # intersection, where supported</code></pre>
 history and CSG trees are not interchangeable for every operation.
 For manufacturing features such as holes, prefer the native
 <a href="../features/">feature operations</a>.</p>
+
+<h2 id="configuration-tables">Configuration tables</h2>
+<p>Use <code>Configure</code> on the completed design to author an editable
+native table. The design may be a Shape or an assembly result. <code>Param</code> selects an existing native model parameter;
+<code>Suppress</code> selects an exact applied Forge feature. Each named row
+contains one cell per column. The active row must be declared.</p>
+<pre><code>Configure(plate - hole, active="Medium",
+    columns=(Param(self.width), Suppress(hole)),
+    rows={"Medium": ("80 mm", True),
+          "Large": ("100 mm", False)})</code></pre>
+<p>The native table remains editable in the saved SolidCraft document. Forge's
+own configuration-table model qualifies the public contract; downstream CAD
+models consume the released API rather than serving as its implementation
+fixture.</p>
+
+<h3 id="configuration-position">Assembly positions</h3>
+<p>Configuration rows can drive any associative parameter dependency. For an
+assembly this includes occurrence placement, so useful positions such as
+front, below and service stay in the same native table rather than becoming
+Python variants.</p>
+<pre><code>return Configure(display, active="Front",
+    columns=(Param("plate_y"), Param("plate_z")),
+    rows={
+        "Front": ("8 mm", "0 mm"),
+        "Below": ("0 mm", "-55 mm"),
+        "Service": ("25 mm", "0 mm"),
+    })</code></pre>
