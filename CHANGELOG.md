@@ -8,6 +8,19 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-11-26
+
+### Qualification
+
+- Qualify parent `Configure(...)` tables driving a deliberately published
+  parameter from a reusable child component through ordinary `Param(...)`
+  composition.
+- Prove multiple child occurrences share that one native parameter and that
+  switching configuration rows in the saved SolidCraft design recomputes child
+  geometry without rerunning Forge Python.
+- This patch adds qualification evidence only; it does not change the public
+  Forge API or runtime behavior from v0.22.0.
+
 ## [0.22.0] - 2026-11-26
 
 ### Added
