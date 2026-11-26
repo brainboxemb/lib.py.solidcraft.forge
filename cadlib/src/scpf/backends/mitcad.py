@@ -176,8 +176,8 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
         "type": "extrude",
         "profiles": [
             {
-                "sketch": sketch_name,
-                "region": "r{c2}",
+                "sketch": {"ref": "sk.uid"},
+                "point": [0, 0],
             }
         ],
         "extent": {
@@ -191,6 +191,7 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
     return [
         {
             "cmd": "add_feature",
+            "as": "sk",
             "name": sketch_name,
             "def": sketch_definition,
         },
