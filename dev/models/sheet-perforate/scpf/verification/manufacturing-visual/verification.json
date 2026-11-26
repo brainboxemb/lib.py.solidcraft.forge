@@ -1,0 +1,74 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "actual.dxf",
+          "sha256": "105ad15fecc0c9e6e09c0f97f699f433b07d3ec60c667cc709dd98df85180b21",
+          "size": 7585
+        },
+        {
+          "kind": "file",
+          "path": "actual.svg",
+          "sha256": "ddaa0aaab6ca9ac0d1601e722b4481850d9670ef4c2ad5ed0fdda0c5f87ed1d4",
+          "size": 1195
+        },
+        {
+          "kind": "file",
+          "path": "goal.svg",
+          "sha256": "ddaa0aaab6ca9ac0d1601e722b4481850d9670ef4c2ad5ed0fdda0c5f87ed1d4",
+          "size": 1195
+        },
+        {
+          "kind": "file",
+          "path": "overlay.svg",
+          "sha256": "dcc3d87a2f65a57c386cb9eaa5e3acc769f0125273b692f37fb744ce2e92231e",
+          "size": 2033
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "actual.svg",
+        "baseline_status": "not-applicable",
+        "context": "Native sheet.export_dxf manufacturing output; the ordinary 3D B-rep preview intentionally remains unperforated.",
+        "expected_shape_status": "pass",
+        "geometry_errors": {
+          "actual_count": 15,
+          "expected_count": 15,
+          "maximum_center_error_mm": 0.0,
+          "maximum_diameter_error_mm": 0.0,
+          "tolerance_mm": 0.001
+        },
+        "goal_image": "goal.svg",
+        "overlay_image": "overlay.svg",
+        "perforation_field": {
+          "actual": {
+            "count": 15,
+            "diameter_mm": 5.0
+          },
+          "expected": {
+            "count": 15,
+            "diameter_mm": 5.0
+          },
+          "label": "Native DXF perforation field",
+          "pass": true
+        },
+        "view": "manufacturing-flat-pattern"
+      },
+      "id": "manufacturing-flat-pattern",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sheet-perforate/scpf/model.sc",
+  "metadata": {
+    "approval": "approved",
+    "kind": "solidcraft-sheet-flat-pattern-visual",
+    "source": "sheet.export_dxf"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sheet-perforate-scpf-manufacturing-visual"
+}
