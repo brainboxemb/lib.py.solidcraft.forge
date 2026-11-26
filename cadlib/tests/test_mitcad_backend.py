@@ -70,7 +70,7 @@ class MitcadBackendTests(unittest.TestCase):
                 {
                     "id": "k1",
                     "type": "diameter",
-                    "curve": "c1",
+                    "curve": "c2",
                     "value": "diameter",
                 }
             ],
@@ -81,7 +81,7 @@ class MitcadBackendTests(unittest.TestCase):
         self.assertEqual(extrusion["def"]["type"], "extrude")
         self.assertEqual(
             extrusion["def"]["profiles"],
-            [{"sketch": "Profile", "region": "r{c1}"}],
+            [{"sketch": "Profile", "region": "r{c2}"}],
         )
         distance = str(extrusion["def"]["extent"]["distance"])
         self.assertTrue(distance.startswith("-("))

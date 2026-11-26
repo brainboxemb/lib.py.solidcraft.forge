@@ -156,7 +156,7 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
                 "fixed": True,
             },
             {
-                "id": "c1",
+                "id": "c2",
                 "type": "circle",
                 "center": "p1",
                 "radius": radius,
@@ -167,7 +167,7 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
             {
                 "id": "k1",
                 "type": "diameter",
-                "curve": "c1",
+                "curve": "c2",
                 "value": command_value(diameter),
             }
         ],
@@ -177,7 +177,7 @@ def _sketch_extrusion_commands(shape: Shape, name: str) -> list[dict]:
         "profiles": [
             {
                 "sketch": sketch_name,
-                "region": "r{c1}",
+                "region": "r{c2}",
             }
         ],
         "extent": {
