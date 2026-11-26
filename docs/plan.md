@@ -68,15 +68,6 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: #223 Free / Installed configuration-state qualification
-
-Extend the Forge-owned Configurations verification with a physical-state case
-for flexible-fit parts. Use the existing public `Configure(...)` API without
-consumer-specific branches: `Free` is the manufacturing/print state and
-`Installed` is the mounted working state. Prove native saved-design switching
-and a real geometry change. Keep render/display selection separate from physical
-configuration state.
-
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
 The permanent experimental line is accepted. Begin #192 only on `exp` and keep
