@@ -1,0 +1,334 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "dd9dfe954e687dcdf140076e484d514854aab811355b1f46a7ffd2eb6f0ee01a",
+          "size": 2631
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "MultiProfileExtrude",
+                "max": [
+                  5.0,
+                  5.0,
+                  30.000000000000004
+                ],
+                "min": [
+                  -5.0,
+                  -5.0,
+                  -4.898587196589414e-16
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  5.0,
+                  5.0,
+                  30.0
+                ],
+                "min": [
+                  -5.0,
+                  -5.0,
+                  0.0
+                ]
+              },
+              "max_delta": 3.552713678800501e-15
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 2,
+                "plane": 2
+              },
+              "expected": {
+                "cylinder": 2,
+                "plane": 2
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 848.2300164692444,
+              "delta": 3.410605131648481e-13,
+              "expected": 848.2300164692441,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.02
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "inner_diameter": 8.0,
+            "length": 30.0,
+            "outer_diameter": 10.0
+          },
+          "expected": {
+            "inner_diameter": 8.0,
+            "length": 30.0,
+            "outer_diameter": 10.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 2,
+              "name": "Tube profile",
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 2,
+              "name": "Tube profile",
+              "status": "solved"
+            },
+            "label": "Tube profile sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Tube profile",
+              "type": "Sketch"
+            },
+            {
+              "name": "Extrude1",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Tube profile",
+              "type": "Sketch"
+            },
+            {
+              "name": "Extrude1",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/tube_resized/model.sc",
+          "sha256": "9e599fd4ba723a3279b1bf4e5a5696e6bd3c3ef939f12135bbbbae874cb66d5e",
+          "size": 5908
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/tube_resized/measurements.json",
+          "sha256": "bb6d4ca140c60fcede7e9f9ef7496691e61f2a0786df1ab120011484a09189dc",
+          "size": 2619
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "MultiProfileExtrude",
+                "max": [
+                  6.0,
+                  6.000000000000001,
+                  40.0
+                ],
+                "min": [
+                  -6.0,
+                  -6.0,
+                  -6.123233995736766e-16
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  6.0,
+                  6.0,
+                  40.0
+                ],
+                "min": [
+                  -6.0,
+                  -6.0,
+                  0.0
+                ]
+              },
+              "max_delta": 8.881784197001252e-16
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 534.0707511102637,
+                "baseline": 848.2300164692444,
+                "mutated": 1382.3007675795081
+              },
+              "expected": {
+                "absolute_delta_gt": 100.0
+              },
+              "label": "SolidCraft saved design change tube_volume",
+              "pass": true
+            },
+            "id": "tube_volume",
+            "path": [
+              "bodies",
+              0,
+              "volume_mm3"
+            ]
+          }
+        ],
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 2,
+                "plane": 2
+              },
+              "expected": {
+                "cylinder": 2,
+                "plane": 2
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole",
+            "volume": {
+              "actual": 1382.3007675795081,
+              "delta": 6.821210263296962e-13,
+              "expected": 1382.3007675795088,
+              "kind": "scalar",
+              "label": "sole body volume",
+              "pass": true,
+              "tolerance": 0.03
+            }
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "inner_diameter": 10.0,
+            "length": 40.0,
+            "outer_diameter": 12.0
+          },
+          "expected": {
+            "inner_diameter": 10.0,
+            "length": 40.0,
+            "outer_diameter": 12.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        },
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "curves": 2,
+              "name": "Tube profile",
+              "status": "solved"
+            },
+            "expected": {
+              "curves": 2,
+              "name": "Tube profile",
+              "status": "solved"
+            },
+            "label": "Tube profile sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Tube profile",
+              "type": "Sketch"
+            },
+            {
+              "name": "Extrude1",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Tube profile",
+              "type": "Sketch"
+            },
+            {
+              "name": "Extrude1",
+              "type": "ExtrudeFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
+          "pass": true
+        }
+      },
+      "id": "saved_design_tube_resized",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/multi-profile-extrude/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "multi-profile-extrude"
+}

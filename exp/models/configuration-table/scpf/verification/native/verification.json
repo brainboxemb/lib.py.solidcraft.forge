@@ -1,0 +1,333 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "83c439458f051068d3b90cc82e85449d3dde84c41452c1571aed83735d9d3fb6",
+          "size": 2272
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/large/model.sc",
+          "sha256": "31296da4dc16350e988578dcd5127376a428791b65ac46e2987bb1a31bd220b5",
+          "size": 11356
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/large/measurements.json",
+          "sha256": "fd2e2c14dd4d52332acad7394d153c8b65eedc3d85d78e1c849eb1e1dc5b883b",
+          "size": 2414
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "ConfigurationPlate",
+                "max": [
+                  50.0,
+                  25.0,
+                  6.000000000000001
+                ],
+                "min": [
+                  -50.0,
+                  -25.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  50.0,
+                  25.0,
+                  6.0
+                ],
+                "min": [
+                  -50.0,
+                  -25.0,
+                  0.0
+                ]
+              },
+              "max_delta": 8.881784197001252e-16
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "depth": 50.0,
+            "diameter": 6.0,
+            "thickness": 6.0,
+            "width": 100.0
+          },
+          "expected": {
+            "depth": 50.0,
+            "diameter": 6.0,
+            "thickness": 6.0,
+            "width": 100.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_large",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/table/results.json",
+          "sha256": "81b5e64985e7c3925543f5aac1b8183a1218e91554150cac274a7f61b1c5ac92",
+          "size": 2077
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 3,
+              "expected": 3,
+              "label": "SolidCraft inspection check row-count",
+              "pass": true
+            },
+            "id": "row-count",
+            "path": [
+              0,
+              "rows"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 6,
+              "expected": 6,
+              "label": "SolidCraft inspection check column-count",
+              "pass": true
+            },
+            "id": "column-count",
+            "path": [
+              0,
+              "columns"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Medium",
+              "expected": "Medium",
+              "label": "SolidCraft inspection check active",
+              "pass": true
+            },
+            "id": "active",
+            "path": [
+              0,
+              "active"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check matches",
+              "pass": true
+            },
+            "id": "matches",
+            "path": [
+              0,
+              "matches"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Small",
+              "expected": "Small",
+              "label": "SolidCraft inspection check row-small",
+              "pass": true
+            },
+            "id": "row-small",
+            "path": [
+              0,
+              "rows",
+              0,
+              "name"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Medium",
+              "expected": "Medium",
+              "label": "SolidCraft inspection check row-medium",
+              "pass": true
+            },
+            "id": "row-medium",
+            "path": [
+              0,
+              "rows",
+              1,
+              "name"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Large",
+              "expected": "Large",
+              "label": "SolidCraft inspection check row-large",
+              "pass": true
+            },
+            "id": "row-large",
+            "path": [
+              0,
+              "rows",
+              2,
+              "name"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "true",
+              "expected": "true",
+              "label": "SolidCraft inspection check small-suppress-a",
+              "pass": true
+            },
+            "id": "small-suppress-a",
+            "path": [
+              0,
+              "rows",
+              0,
+              "values",
+              "suppress:Hole1"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "true",
+              "expected": "true",
+              "label": "SolidCraft inspection check medium-suppress-a",
+              "pass": true
+            },
+            "id": "medium-suppress-a",
+            "path": [
+              0,
+              "rows",
+              1,
+              "values",
+              "suppress:Hole1"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "false",
+              "expected": "false",
+              "label": "SolidCraft inspection check large-suppress-a",
+              "pass": true
+            },
+            "id": "large-suppress-a",
+            "path": [
+              0,
+              "rows",
+              2,
+              "values",
+              "suppress:Hole1"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "100 mm",
+              "expected": "100 mm",
+              "label": "SolidCraft inspection check large-width",
+              "pass": true
+            },
+            "id": "large-width",
+            "path": [
+              0,
+              "rows",
+              2,
+              "values",
+              "param:width"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_table",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/switch/results.json",
+          "sha256": "f00678ce333646ea851867c3945ab121290c6f3b93742a1652e0da9d7238af47",
+          "size": 4202
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": "Large",
+              "expected": "Large",
+              "label": "SolidCraft inspection check active",
+              "pass": true
+            },
+            "id": "active",
+            "path": [
+              1,
+              "active"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check matches",
+              "pass": true
+            },
+            "id": "matches",
+            "path": [
+              1,
+              "matches"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_switch",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/configuration-table/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "configuration-table"
+}

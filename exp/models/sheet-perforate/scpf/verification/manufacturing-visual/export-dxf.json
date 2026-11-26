@@ -1,0 +1,12 @@
+{
+  "commands": [
+    {
+      "command": "sheet.export_dxf",
+      "params": {
+        "body": "SheetPerforate",
+        "path": "/output/models/sheet-perforate/scpf/verification/manufacturing-visual/actual.dxf",
+        "curves": "exact"
+      }
+    }
+  ]
+}

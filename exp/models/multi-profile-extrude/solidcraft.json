@@ -1,0 +1,76 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "10",
+        "name": "outer_diameter",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "8",
+        "name": "inner_diameter",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "30",
+        "name": "length",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Tube profile",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": "outer_diameter"
+      }
+    },
+    {
+      "command": "sketch.circle.center",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": "inner_diameter"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "body_name": "MultiProfileExtrude",
+        "direction": "positive",
+        "distance": "length",
+        "exact_regions": true,
+        "profiles": [
+          {
+            "point": [
+              4.5,
+              0.0
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

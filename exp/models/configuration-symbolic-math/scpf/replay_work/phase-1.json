@@ -1,0 +1,124 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "size",
+        "expression": "70",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "limit",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "offset",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "grid",
+        "expression": "7.5",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "pitch",
+        "expression": "12",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "step",
+        "expression": "1",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "wall",
+        "expression": "4",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "bias",
+        "expression": "-3",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "sqrt(((min(size,limit)) ^ 2) - ((offset) ^ 2))",
+        "width": "(round((size) / (grid))) * (grid)",
+        "height": "((floor((size) / (pitch))) * (step)) + (max(wall,abs(bias)))",
+        "corner": [
+          "-(sqrt(((min(size,limit)) ^ 2) - ((offset) ^ 2))) / 2",
+          "-((round((size) / (grid))) * (grid)) / 2",
+          0
+        ],
+        "body_name": "ConfigurationSymbolicMath"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "size"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:size": "100 mm"
+        }
+      }
+    }
+  ]
+}

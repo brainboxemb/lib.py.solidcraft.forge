@@ -1,0 +1,1387 @@
+[
+  {
+    "font": "",
+    "font_fallbacks": [],
+    "font_note": null,
+    "id": "5gwkgc01k77ep",
+    "language": "en",
+    "line_group": "0.5",
+    "name": "Compact Sample Plate Drawing",
+    "parts_lists": [],
+    "projection": "third",
+    "properties": {
+      "organization": "brainboxemb",
+      "part_number": "SCPF-C-001"
+    },
+    "revisions": {
+      "issued": [],
+      "next": "1",
+      "numbering": {
+        "start": 1
+      },
+      "rows": [],
+      "tags": []
+    },
+    "sheets": [
+      {
+        "documents": {
+          "component": 1,
+          "source": "4d9523fm11ah7"
+        },
+        "dpi": 300.0,
+        "excluded": {
+          "count": false,
+          "print": false
+        },
+        "id": "cpeaktzk556w6",
+        "images": [],
+        "line_group": null,
+        "name": "Sheet 1",
+        "notes": [],
+        "orientation": "landscape",
+        "revision_tags": [],
+        "size_mm": [
+          297.0,
+          210.0
+        ],
+        "tables": [],
+        "title_block": {
+          "cell_line_mm": 0.35,
+          "cells": [
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 5.0,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "name",
+                        "source": "component"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 25,
+                    "wide_max_chars": 30,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Title"
+              },
+              "name": "title",
+              "rect_mm": [
+                -180.0,
+                0.0,
+                -68.0,
+                14.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 5.0,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "number",
+                        "source": "drawing"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 16,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Identification number"
+              },
+              "name": "identification_number",
+              "rect_mm": [
+                -68.0,
+                0.0,
+                0.0,
+                14.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "designer",
+                        "source": "revision"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 20,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Created by"
+              },
+              "name": "created_by",
+              "rect_mm": [
+                -180.0,
+                14.0,
+                -121.0,
+                24.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "checker",
+                        "source": "revision"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 20,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Approved by"
+              },
+              "name": "approved_by",
+              "rect_mm": [
+                -121.0,
+                14.0,
+                -62.0,
+                24.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "date",
+                        "source": "revision"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 10,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Date of issue"
+              },
+              "name": "date_of_issue",
+              "rect_mm": [
+                -62.0,
+                14.0,
+                -30.0,
+                24.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "centre",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "number",
+                        "source": "sheet"
+                      }
+                    },
+                    {
+                      "text": "/"
+                    },
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "count",
+                        "source": "sheet"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 9,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Sheet"
+              },
+              "name": "sheet",
+              "rect_mm": [
+                -30.0,
+                14.0,
+                0.0,
+                24.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "material",
+                        "source": "component"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Material"
+              },
+              "name": "material",
+              "rect_mm": [
+                -180.0,
+                24.0,
+                -100.0,
+                34.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "properties.finish",
+                        "source": "component"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Finish"
+              },
+              "name": "finish",
+              "rect_mm": [
+                -100.0,
+                24.0,
+                -30.0,
+                34.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "centre",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "mass",
+                        "source": "component"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Mass"
+              },
+              "name": "mass",
+              "rect_mm": [
+                -30.0,
+                24.0,
+                0.0,
+                34.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "organization",
+                        "source": "drawing"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": true
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Legal owner"
+              },
+              "name": "legal_owner",
+              "rect_mm": [
+                -180.0,
+                34.0,
+                -100.0,
+                49.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 2.5,
+                  "content": [],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": true
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "General tolerances"
+              },
+              "name": "general_tolerances",
+              "rect_mm": [
+                -100.0,
+                34.0,
+                -30.0,
+                49.0
+              ]
+            },
+            {
+              "kind": "projection_symbol",
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Projection"
+              },
+              "name": "projection",
+              "rect_mm": [
+                -30.0,
+                34.0,
+                0.0,
+                49.0
+              ]
+            }
+          ],
+          "outline_line_mm": 0.7,
+          "size_mm": [
+            180.0,
+            49.0
+          ]
+        },
+        "title_block_cells": [
+          {
+            "name": "title",
+            "text": "Sample Plate",
+            "value": "SamplePlate"
+          },
+          {
+            "name": "identification_number",
+            "text": "SCPF-C-001",
+            "value": "SCPF-C-001"
+          },
+          {
+            "name": "created_by",
+            "text": ""
+          },
+          {
+            "name": "approved_by",
+            "text": ""
+          },
+          {
+            "name": "date_of_issue",
+            "text": ""
+          },
+          {
+            "name": "sheet",
+            "text": "1/1"
+          },
+          {
+            "name": "material",
+            "text": "Default"
+          },
+          {
+            "name": "finish",
+            "text": ""
+          },
+          {
+            "name": "mass",
+            "text": "0.04 kg"
+          },
+          {
+            "name": "legal_owner",
+            "text": "brainboxemb"
+          },
+          {
+            "name": "general_tolerances",
+            "text": "Unless stated: linear ±0.2 mm, angles ±0.5°. Break sharp edges 0.2 mm.",
+            "value": ""
+          }
+        ],
+        "title_block_overrides": {
+          "general_tolerances": "Unless stated: linear ±0.2 mm, angles ±0.5°. Break sharp edges 0.2 mm.",
+          "identification_number": "SCPF-C-001",
+          "title": "Sample Plate"
+        },
+        "views": [
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "2mqe2tm75tp0j",
+            "kind": "base",
+            "label": "Front",
+            "notes": []
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "1ep9r5jr4zejn",
+            "kind": "projected",
+            "label": "Right of Front",
+            "notes": [],
+            "parent": "2mqe2tm75tp0j",
+            "side": "right"
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "3rxw02setm0r6",
+            "kind": "projected",
+            "label": "Above Front",
+            "notes": [],
+            "parent": "2mqe2tm75tp0j",
+            "side": "above"
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "dv4rkmy3sre1c",
+            "kind": "base",
+            "label": "Iso front right",
+            "notes": []
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "4d9523fm11ah7"
+      }
+    ],
+    "symbols": [],
+    "units": "follow_model",
+    "updates": "automatic",
+    "view_letters": {
+      "given": 0,
+      "reuse": true
+    }
+  },
+  {
+    "changed": [
+      "source"
+    ],
+    "followers": [
+      "1ep9r5jr4zejn",
+      "3rxw02setm0r6"
+    ],
+    "outside": [
+      {
+        "boundary_mm": {
+          "max": [
+            138.023340597113,
+            80.6327526665666
+          ],
+          "min": [
+            58.02334059711299,
+            58.6327526665666
+          ]
+        },
+        "view": "2mqe2tm75tp0j"
+      },
+      {
+        "boundary_mm": {
+          "max": [
+            202.023340597113,
+            80.6327526665666
+          ],
+          "min": [
+            152.023340597113,
+            58.6327526665666
+          ]
+        },
+        "view": "1ep9r5jr4zejn"
+      }
+    ],
+    "view": "2mqe2tm75tp0j"
+  },
+  {
+    "changed": [
+      "source"
+    ],
+    "followers": [],
+    "view": "dv4rkmy3sre1c"
+  },
+  {
+    "changed": [
+      "place"
+    ],
+    "followers": [],
+    "view": "2mqe2tm75tp0j"
+  },
+  {
+    "changed": [
+      "place",
+      "label"
+    ],
+    "followers": [],
+    "view": "3rxw02setm0r6"
+  },
+  {
+    "changed": [
+      "place",
+      "label"
+    ],
+    "followers": [],
+    "view": "1ep9r5jr4zejn"
+  },
+  {
+    "changed": [
+      "visual_style",
+      "place"
+    ],
+    "followers": [],
+    "view": "dv4rkmy3sre1c"
+  },
+  {
+    "balloons": [],
+    "boundary_mm": {
+      "max": [
+        263.47665940288704,
+        156.3672473334334
+      ],
+      "min": [
+        176.523340597113,
+        99.6327526665666
+      ]
+    },
+    "choices": {
+      "scale": [
+        "50:1",
+        "20:1",
+        "10:1",
+        "5:1",
+        "2:1",
+        "1:1",
+        "1:2",
+        "1:5",
+        "1:10",
+        "1:20",
+        "1:50",
+        "1:100",
+        "1:200",
+        "1:500",
+        "1:1000",
+        "1:2000",
+        "1:5000",
+        "1:10000"
+      ],
+      "visual_style": [
+        "visible",
+        "visible_hidden",
+        "shaded",
+        "shaded_visible",
+        "shaded_visible_hidden"
+      ]
+    },
+    "dimensions": [],
+    "direction": {
+      "direction": [
+        -0.5773502691896257,
+        0.5773502691896257,
+        -0.5773502691896257
+      ],
+      "named": "iso_front_right",
+      "origin": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "x": [
+        0.7071067811865475,
+        0.7071067811865475,
+        0.0
+      ],
+      "y": [
+        -0.408248290463863,
+        0.408248290463863,
+        0.816496580927726
+      ]
+    },
+    "extents": {
+      "error_mm": 0.09687104830649867,
+      "max": [
+        43.476659402887016,
+        31.633233657144302
+      ],
+      "min": [
+        -43.476659402887016,
+        -25.101261009722492
+      ],
+      "provenance": "display_mesh",
+      "status": "approximate"
+    },
+    "kind": "base",
+    "place": {
+      "at": [
+        220.0,
+        128.0
+      ]
+    },
+    "reference_shown_percent": 0.0,
+    "settings": {
+      "configuration": {
+        "drawn": null,
+        "from": "default",
+        "set": null,
+        "value": "active"
+      },
+      "exploded": {
+        "from": "default",
+        "set": null,
+        "value": "assembled"
+      },
+      "hide": {
+        "from": "default",
+        "set": null,
+        "value": null
+      },
+      "line_group": {
+        "from": "drawing",
+        "set": null,
+        "value": "0.5"
+      },
+      "occurrences": {
+        "from": "this",
+        "set": [
+          [
+            2
+          ]
+        ],
+        "value": [
+          [
+            2
+          ]
+        ]
+      },
+      "pose": {
+        "from": "default",
+        "set": null,
+        "value": "designed"
+      },
+      "reference_hides_model": {
+        "from": "default",
+        "set": null,
+        "value": false
+      },
+      "reference_style": {
+        "from": "default",
+        "set": null,
+        "value": "visible"
+      },
+      "scale": {
+        "from": "this",
+        "set": "1:1",
+        "value": "1:1"
+      },
+      "tangent_edges": {
+        "from": "default",
+        "set": null,
+        "value": "hide"
+      },
+      "visual_style": {
+        "from": "this",
+        "set": "shaded",
+        "value": "shaded"
+      }
+    },
+    "sheet": "cpeaktzk556w6",
+    "source": "4d9523fm11ah7",
+    "view": "dv4rkmy3sre1c"
+  },
+  {
+    "font": "",
+    "font_fallbacks": [],
+    "font_note": null,
+    "id": "5gwkgc01k77ep",
+    "language": "en",
+    "line_group": "0.5",
+    "name": "Compact Sample Plate Drawing",
+    "parts_lists": [],
+    "projection": "third",
+    "properties": {
+      "organization": "brainboxemb",
+      "part_number": "SCPF-C-001"
+    },
+    "revisions": {
+      "issued": [],
+      "next": "1",
+      "numbering": {
+        "start": 1
+      },
+      "rows": [],
+      "tags": []
+    },
+    "sheets": [
+      {
+        "documents": {
+          "component": 1,
+          "source": "4d9523fm11ah7"
+        },
+        "dpi": 300.0,
+        "excluded": {
+          "count": false,
+          "print": false
+        },
+        "id": "cpeaktzk556w6",
+        "images": [],
+        "line_group": null,
+        "name": "Sheet 1",
+        "notes": [],
+        "orientation": "landscape",
+        "revision_tags": [],
+        "size_mm": [
+          297.0,
+          210.0
+        ],
+        "tables": [],
+        "title_block": {
+          "cell_line_mm": 0.35,
+          "cells": [
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 5.0,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "name",
+                        "source": "component"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 25,
+                    "wide_max_chars": 30,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Title"
+              },
+              "name": "title",
+              "rect_mm": [
+                -180.0,
+                0.0,
+                -68.0,
+                14.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 5.0,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "number",
+                        "source": "drawing"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 16,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Identification number"
+              },
+              "name": "identification_number",
+              "rect_mm": [
+                -68.0,
+                0.0,
+                0.0,
+                14.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "designer",
+                        "source": "revision"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 20,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Created by"
+              },
+              "name": "created_by",
+              "rect_mm": [
+                -180.0,
+                14.0,
+                -121.0,
+                24.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "checker",
+                        "source": "revision"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 20,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Approved by"
+              },
+              "name": "approved_by",
+              "rect_mm": [
+                -121.0,
+                14.0,
+                -62.0,
+                24.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "date",
+                        "source": "revision"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 10,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Date of issue"
+              },
+              "name": "date_of_issue",
+              "rect_mm": [
+                -62.0,
+                14.0,
+                -30.0,
+                24.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "centre",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "number",
+                        "source": "sheet"
+                      }
+                    },
+                    {
+                      "text": "/"
+                    },
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "count",
+                        "source": "sheet"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": 9,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Sheet"
+              },
+              "name": "sheet",
+              "rect_mm": [
+                -30.0,
+                14.0,
+                0.0,
+                24.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "material",
+                        "source": "component"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Material"
+              },
+              "name": "material",
+              "rect_mm": [
+                -180.0,
+                24.0,
+                -100.0,
+                34.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "properties.finish",
+                        "source": "component"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Finish"
+              },
+              "name": "finish",
+              "rect_mm": [
+                -100.0,
+                24.0,
+                -30.0,
+                34.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "centre",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "mass",
+                        "source": "component"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": false
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Mass"
+              },
+              "name": "mass",
+              "rect_mm": [
+                -30.0,
+                24.0,
+                0.0,
+                34.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 3.5,
+                  "content": [
+                    {
+                      "field": {
+                        "format": {
+                          "decimals": null,
+                          "unit": null
+                        },
+                        "key": "organization",
+                        "source": "drawing"
+                      }
+                    }
+                  ],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": true
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Legal owner"
+              },
+              "name": "legal_owner",
+              "rect_mm": [
+                -180.0,
+                34.0,
+                -100.0,
+                49.0
+              ]
+            },
+            {
+              "kind": {
+                "text": {
+                  "align": "left",
+                  "cap_mm": 2.5,
+                  "content": [],
+                  "fit": {
+                    "max_chars": null,
+                    "wide_max_chars": null,
+                    "wrap": true
+                  }
+                }
+              },
+              "label": {
+                "cap_mm": 2.5,
+                "text": "General tolerances"
+              },
+              "name": "general_tolerances",
+              "rect_mm": [
+                -100.0,
+                34.0,
+                -30.0,
+                49.0
+              ]
+            },
+            {
+              "kind": "projection_symbol",
+              "label": {
+                "cap_mm": 2.5,
+                "text": "Projection"
+              },
+              "name": "projection",
+              "rect_mm": [
+                -30.0,
+                34.0,
+                0.0,
+                49.0
+              ]
+            }
+          ],
+          "outline_line_mm": 0.7,
+          "size_mm": [
+            180.0,
+            49.0
+          ]
+        },
+        "title_block_cells": [
+          {
+            "name": "title",
+            "text": "Sample Plate",
+            "value": "SamplePlate"
+          },
+          {
+            "name": "identification_number",
+            "text": "SCPF-C-001",
+            "value": "SCPF-C-001"
+          },
+          {
+            "name": "created_by",
+            "text": ""
+          },
+          {
+            "name": "approved_by",
+            "text": ""
+          },
+          {
+            "name": "date_of_issue",
+            "text": ""
+          },
+          {
+            "name": "sheet",
+            "text": "1/1"
+          },
+          {
+            "name": "material",
+            "text": "Default"
+          },
+          {
+            "name": "finish",
+            "text": ""
+          },
+          {
+            "name": "mass",
+            "text": "0.04 kg"
+          },
+          {
+            "name": "legal_owner",
+            "text": "brainboxemb"
+          },
+          {
+            "name": "general_tolerances",
+            "text": "Unless stated: linear ±0.2 mm, angles ±0.5°. Break sharp edges 0.2 mm.",
+            "value": ""
+          }
+        ],
+        "title_block_overrides": {
+          "general_tolerances": "Unless stated: linear ±0.2 mm, angles ±0.5°. Break sharp edges 0.2 mm.",
+          "identification_number": "SCPF-C-001",
+          "title": "Sample Plate"
+        },
+        "views": [
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "2mqe2tm75tp0j",
+            "kind": "base",
+            "label": "Front",
+            "notes": []
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "1ep9r5jr4zejn",
+            "kind": "projected",
+            "label": "Right of Front",
+            "notes": [],
+            "parent": "2mqe2tm75tp0j",
+            "side": "right"
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "3rxw02setm0r6",
+            "kind": "projected",
+            "label": "Above Front",
+            "notes": [],
+            "parent": "2mqe2tm75tp0j",
+            "side": "above"
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "dv4rkmy3sre1c",
+            "kind": "base",
+            "label": "Iso front right",
+            "notes": []
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "4d9523fm11ah7"
+      }
+    ],
+    "symbols": [],
+    "units": "follow_model",
+    "updates": "automatic",
+    "view_letters": {
+      "given": 2,
+      "reuse": true
+    }
+  },
+  {
+    "closed": "5gwkgc01k77ep"
+  }
+]

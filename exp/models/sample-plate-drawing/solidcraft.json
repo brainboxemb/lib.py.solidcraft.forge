@@ -41,6 +41,33 @@
         "pdf": "drawings/Sample-Plate-Drawing.pdf",
         "png": "drawings/Sample-Plate-Drawing.png",
         "sheet": "$drawing_1_sheet"
+      },
+      {
+        "drawing": "$drawing_2",
+        "expected": {
+          "dimension_count": 0,
+          "note_count": 0,
+          "orientation": "landscape",
+          "properties": {
+            "organization": "brainboxemb",
+            "part_number": "SCPF-C-001"
+          },
+          "title_block": {
+            "identification_number": "SCPF-C-001",
+            "title": "Sample Plate"
+          },
+          "title_block_style": "compact",
+          "view_count": 4,
+          "view_styles": {
+            "$drawing_2_iso": "shaded"
+          }
+        },
+        "inspect": "drawings/Compact-Sample-Plate-Drawing.json",
+        "name": "Compact Sample Plate Drawing",
+        "orientation": "$drawing_2_orientation",
+        "pdf": "drawings/Compact-Sample-Plate-Drawing.pdf",
+        "png": "drawings/Compact-Sample-Plate-Drawing.png",
+        "sheet": "$drawing_2_sheet"
       }
     ]
   },
@@ -689,6 +716,186 @@
       "command": "drawing.view.inspect",
       "params": {
         "view": "$drawing_1_iso"
+      }
+    },
+    {
+      "command": "drawing.inspect",
+      "params": {}
+    },
+    {
+      "command": "drawing.close",
+      "params": {}
+    },
+    {
+      "bind": {
+        "$drawing_2": "id",
+        "$drawing_2_sheet": {
+          "field": "sheets",
+          "select": "id",
+          "where": {
+            "name": "Sheet 1"
+          }
+        },
+        "$drawing_2_source": {
+          "field": "sources",
+          "select": "id",
+          "where": {
+            "path": null
+          }
+        }
+      },
+      "command": "drawing.create",
+      "params": {
+        "first_sheet_name": "Sheet 1",
+        "name": "Compact Sample Plate Drawing",
+        "template": "iso-a4-part"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "documents": {
+          "component": "$component_1",
+          "source": "$drawing_2_source"
+        },
+        "orientation": "landscape",
+        "sheet": "$drawing_2_sheet",
+        "title_block": "compact",
+        "title_block_overrides": {
+          "identification_number": "SCPF-C-001",
+          "title": "Sample Plate"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$drawing_2_orientation": {
+          "field": "sheets",
+          "select": "orientation",
+          "where": {
+            "name": "Sheet 1"
+          }
+        }
+      },
+      "command": "drawing.inspect",
+      "params": {}
+    },
+    {
+      "command": "drawing.properties.set",
+      "params": {
+        "values": {
+          "organization": "brainboxemb",
+          "part_number": "SCPF-C-001"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$drawing_2_front": "view",
+        "$drawing_2_iso": "iso",
+        "$drawing_2_right": "right",
+        "$drawing_2_top": "top"
+      },
+      "command": "drawing.view.standard",
+      "params": {
+        "gap_mm": 14.0,
+        "iso": true,
+        "scale": "1:1",
+        "sheet": "$drawing_2_sheet"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                "$sampleplate"
+              ]
+            ]
+          }
+        },
+        "view": "$drawing_2_front"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                "$sampleplate"
+              ]
+            ]
+          }
+        },
+        "view": "$drawing_2_iso"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "place": {
+            "at": [
+              62.0,
+              128.0
+            ]
+          }
+        },
+        "view": "$drawing_2_front"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "place": {
+            "at": [
+              62.0,
+              62.0
+            ]
+          }
+        },
+        "view": "$drawing_2_top"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "place": {
+            "at": [
+              137.0,
+              128.0
+            ]
+          }
+        },
+        "view": "$drawing_2_right"
+      }
+    },
+    {
+      "command": "drawing.view.edit",
+      "params": {
+        "set": {
+          "place": {
+            "at": [
+              220.0,
+              128.0
+            ]
+          },
+          "scale": "1:1",
+          "visual_style": "shaded"
+        },
+        "view": "$drawing_2_iso"
+      }
+    },
+    {
+      "command": "drawing.view.inspect",
+      "params": {
+        "view": "$drawing_2_iso"
       }
     },
     {

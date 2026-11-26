@@ -1,0 +1,55 @@
+[
+  {
+    "active": "Front",
+    "columns": [
+      "param:plate_y",
+      "param:plate_z"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Below",
+        "values": {
+          "param:plate_y": "0 mm",
+          "param:plate_z": "-55 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Service",
+        "values": {
+          "param:plate_y": "25 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:plate_y",
+        "label": "param:plate_y",
+        "target": {
+          "param": "plate_y"
+        }
+      },
+      {
+        "key": "param:plate_z",
+        "label": "param:plate_z",
+        "target": {
+          "param": "plate_z"
+        }
+      }
+    ]
+  }
+]

@@ -6,6 +6,7 @@
     "as-built-attach",
     "assembly-decorator",
     "assembly-owned-anchor",
+    "asymmetric-chamfer",
     "attach-angle",
     "attached-through-all",
     "bracket",
@@ -13,6 +14,10 @@
     "circular-feature-pattern",
     "components",
     "cone-boolean",
+    "configuration-installed-state",
+    "configuration-position",
+    "configuration-symbolic-math",
+    "configuration-table",
     "corner-anchor",
     "cylinder-subtract",
     "eight-corner-brackets",
@@ -21,6 +26,7 @@
     "four-corner-l",
     "group-hierarchy",
     "hole-family",
+    "multi-profile-extrude",
     "native-revolve",
     "parameter-scope",
     "parametric-anchor",
@@ -46,6 +52,7 @@
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
+    "shifted-axis-revolve",
     "simple-box",
     "sketch-pattern-mirror",
     "slot-family",
@@ -54,8 +61,8 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "full": false,
-  "library": false,
+  "full": true,
+  "library": true,
   "models": [
     {
       "id": "anchor-topology-mutation",
@@ -132,6 +139,16 @@
         "build123d",
         "pythonscad",
         "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "asymmetric-chamfer",
+      "implementations": [
+        "scpf"
       ],
       "primary": "scpf",
       "purpose": [
@@ -227,6 +244,50 @@
       ],
       "primary": "scpf",
       "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-installed-state",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-position",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-symbolic-math",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-table",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
         "verification"
       ]
     },
@@ -330,6 +391,16 @@
         "build123d",
         "pythonscad",
         "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "multi-profile-extrude",
+      "implementations": [
+        "scpf"
       ],
       "primary": "scpf",
       "purpose": [
@@ -648,6 +719,17 @@
       ]
     },
     {
+      "id": "shifted-axis-revolve",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
       "id": "simple-box",
       "implementations": [
         "scpf",
@@ -743,6 +825,67 @@
   ],
   "release_only": false,
   "schema": 2,
-  "selected": [],
-  "source_sha": "3bb91eb5e05f3cc788c85d90b59b3e5a3d9621ae"
+  "selected": [
+    "anchor-topology-mutation",
+    "anchored-holes",
+    "appearance-color",
+    "as-built-attach",
+    "assembly-decorator",
+    "assembly-owned-anchor",
+    "asymmetric-chamfer",
+    "attach-angle",
+    "attached-through-all",
+    "bracket",
+    "circle-negative-extrude",
+    "circular-feature-pattern",
+    "components",
+    "cone-boolean",
+    "configuration-installed-state",
+    "configuration-position",
+    "configuration-symbolic-math",
+    "configuration-table",
+    "corner-anchor",
+    "cylinder-subtract",
+    "eight-corner-brackets",
+    "eight-flightcase-corners",
+    "exploded-views",
+    "four-corner-l",
+    "group-hierarchy",
+    "hole-family",
+    "multi-profile-extrude",
+    "native-revolve",
+    "parameter-scope",
+    "parametric-anchor",
+    "parametric-attach",
+    "parametric-move",
+    "parametric-offset",
+    "parametric-placement-pair",
+    "parent-derived-child-size",
+    "primitive-csg",
+    "rectangular-pattern",
+    "repeated-parent-attachments",
+    "revolute-joint",
+    "rotated-copy-placement",
+    "rotated-sketch-cutter",
+    "round-top-sketch",
+    "rounded-rectangle-sketch",
+    "sample-plate-drawing",
+    "selective-profile-extrude",
+    "sheet-contour-flange",
+    "sheet-contour-flange-recess",
+    "sheet-edge-flange",
+    "sheet-fold",
+    "sheet-hem",
+    "sheet-path-flange",
+    "sheet-perforate",
+    "shifted-axis-revolve",
+    "simple-box",
+    "sketch-pattern-mirror",
+    "slot-family",
+    "top-sketch-after-chamfer",
+    "topology-face-boundary-box",
+    "topology-face-boundary-xz",
+    "xz-anchor"
+  ],
+  "source_sha": "3a467642cabbb1b2920a6d30fce8e507131ef3a9"
 }

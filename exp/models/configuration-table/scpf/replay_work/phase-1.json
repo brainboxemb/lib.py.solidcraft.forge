@@ -1,0 +1,78 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "width",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "depth",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "thickness",
+        "expression": "5",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "diameter",
+        "expression": "5",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "width",
+        "width": "depth",
+        "height": "thickness",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "body_name": "ConfigurationPlate"
+      }
+    },
+    {
+      "command": "solid.hole",
+      "params": {
+        "position": [
+          -12.0,
+          0.0,
+          5.0
+        ],
+        "targets": [
+          "ConfigurationPlate"
+        ],
+        "diameter": "diameter"
+      }
+    },
+    {
+      "command": "solid.hole",
+      "params": {
+        "position": [
+          12.0,
+          0.0,
+          5.0
+        ],
+        "targets": [
+          "ConfigurationPlate"
+        ],
+        "diameter": "diameter"
+      }
+    }
+  ]
+}

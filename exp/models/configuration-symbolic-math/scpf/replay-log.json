@@ -1,0 +1,168 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "05151b4d9342b1edd115bf054231391402e1e685aef793650241a22fb01b77b6",
+  "variables": {
+    "$config_row_5263293fc202": 2,
+    "$config_row_8e588cd18774": 3,
+    "$config_row_ab80540d98d2": 4
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "size",
+        "expression": "70",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "limit",
+        "expression": "80",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 2,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "offset",
+        "expression": "20",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 3,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "grid",
+        "expression": "7.5",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 4,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "pitch",
+        "expression": "12",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 5,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "step",
+        "expression": "1",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 6,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "wall",
+        "expression": "4",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 7,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "bias",
+        "expression": "-3",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 8,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": "sqrt(((min(size,limit)) ^ 2) - ((offset) ^ 2))",
+        "width": "(round((size) / (grid))) * (grid)",
+        "height": "((floor((size) / (pitch))) * (step)) + (max(wall,abs(bias)))",
+        "corner": [
+          "-(sqrt(((min(size,limit)) ^ 2) - ((offset) ^ 2))) / 2",
+          "-((round((size) / (grid))) * (grid)) / 2",
+          0
+        ],
+        "body_name": "ConfigurationSymbolicMath"
+      }
+    },
+    {
+      "index": 9,
+      "command": "config.configure",
+      "resolved_params": {
+        "params": [
+          "size"
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Default",
+        "rename": "Small"
+      },
+      "bindings": {
+        "$config_row_5263293fc202": 2
+      }
+    },
+    {
+      "index": 11,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Small",
+        "values": {
+          "param:size": "60 mm"
+        }
+      }
+    },
+    {
+      "index": 12,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Medium",
+        "values": {
+          "param:size": "70 mm"
+        }
+      },
+      "bindings": {
+        "$config_row_8e588cd18774": 3
+      }
+    },
+    {
+      "index": 13,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Large",
+        "values": {
+          "param:size": "100 mm"
+        }
+      },
+      "bindings": {
+        "$config_row_ab80540d98d2": 4
+      }
+    },
+    {
+      "index": 14,
+      "command": "config.activate",
+      "resolved_params": {
+        "row": 3
+      }
+    },
+    {
+      "index": 15,
+      "command": "config.table",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 16
+}

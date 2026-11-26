@@ -1,0 +1,187 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "80",
+        "name": "width",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5",
+        "name": "thickness",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "5",
+        "name": "diameter",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "ConfigurationPlate",
+        "corner": [
+          "-width / 2",
+          "-depth / 2",
+          0
+        ],
+        "height": "thickness",
+        "length": "width",
+        "width": "depth"
+      }
+    },
+    {
+      "bind": {
+        "$config_name_5": "name"
+      },
+      "command": "solid.hole",
+      "params": {
+        "diameter": "diameter",
+        "position": [
+          -12.0,
+          0.0,
+          5.0
+        ],
+        "targets": [
+          "ConfigurationPlate"
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$config_name_6": "name"
+      },
+      "command": "solid.hole",
+      "params": {
+        "diameter": "diameter",
+        "position": [
+          12.0,
+          0.0,
+          5.0
+        ],
+        "targets": [
+          "ConfigurationPlate"
+        ]
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "$config_name_5",
+          "$config_name_6"
+        ],
+        "params": [
+          "width",
+          "depth",
+          "thickness",
+          "diameter"
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$config_row_5263293fc202": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Small"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:depth": "30 mm",
+          "param:diameter": "4 mm",
+          "param:thickness": "4 mm",
+          "param:width": "60 mm",
+          "suppress:$config_name_5": "true",
+          "suppress:$config_name_6": "true"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_8e588cd18774": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Medium"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Medium",
+        "values": {
+          "param:depth": "40 mm",
+          "param:diameter": "5 mm",
+          "param:thickness": "5 mm",
+          "param:width": "80 mm",
+          "suppress:$config_name_5": "true",
+          "suppress:$config_name_6": "true"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_ab80540d98d2": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Large"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:depth": "50 mm",
+          "param:diameter": "6 mm",
+          "param:thickness": "6 mm",
+          "param:width": "100 mm",
+          "suppress:$config_name_5": "false",
+          "suppress:$config_name_6": "false"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "$config_row_8e588cd18774"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

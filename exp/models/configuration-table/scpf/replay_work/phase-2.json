@@ -1,0 +1,68 @@
+{
+  "commands": [
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "width",
+          "depth",
+          "thickness",
+          "diameter"
+        ],
+        "features": [
+          "Hole1",
+          "Hole2"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:width": "60 mm",
+          "param:depth": "30 mm",
+          "param:thickness": "4 mm",
+          "param:diameter": "4 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Medium",
+        "values": {
+          "param:width": "80 mm",
+          "param:depth": "40 mm",
+          "param:thickness": "5 mm",
+          "param:diameter": "5 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:width": "100 mm",
+          "param:depth": "50 mm",
+          "param:thickness": "6 mm",
+          "param:diameter": "6 mm",
+          "suppress:Hole1": "false",
+          "suppress:Hole2": "false"
+        }
+      }
+    }
+  ]
+}

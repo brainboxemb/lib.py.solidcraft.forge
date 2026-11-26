@@ -1,0 +1,48 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "5gwkgc01k77ep"
+      }
+    },
+    {
+      "command": "drawing.sheet.set",
+      "params": {
+        "sheet": "cpeaktzk556w6",
+        "orientation": "landscape",
+        "documents": {
+          "source": "4d9523fm11ah7",
+          "component": 1
+        },
+        "title_block": "compact",
+        "title_block_overrides": {
+          "title": "Sample Plate",
+          "identification_number": "SCPF-C-001"
+        }
+      }
+    },
+    {
+      "command": "drawing.inspect",
+      "params": {}
+    },
+    {
+      "command": "drawing.properties.set",
+      "params": {
+        "values": {
+          "part_number": "SCPF-C-001",
+          "organization": "brainboxemb"
+        }
+      }
+    },
+    {
+      "command": "drawing.view.standard",
+      "params": {
+        "sheet": "cpeaktzk556w6",
+        "iso": true,
+        "gap_mm": 14.0,
+        "scale": "1:1"
+      }
+    }
+  ]
+}

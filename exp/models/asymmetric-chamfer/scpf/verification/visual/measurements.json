@@ -1,0 +1,145 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 2787.323019932535,
+      "bbox": {
+        "max": [
+          20.0,
+          10.0,
+          10.0
+        ],
+        "min": [
+          -20.0,
+          -10.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        9.471871907718159e-32,
+        1.953498837844763e-17,
+        4.997108408418925
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 18,
+      "face_types": {
+        "plane": 8
+      },
+      "faces": 8,
+      "kernel": {
+        "edges": 18,
+        "faces": 8,
+        "shells": 1,
+        "vertices": 12
+      },
+      "mass_g": 10.313962799999999,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "AsymmetricChamfer",
+      "notes": [],
+      "vertices": 12,
+      "volume_mm3": 7995.319999999999
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "20",
+      "model": false,
+      "name": "depth",
+      "unit": "mm",
+      "value": 20.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "40",
+      "model": false,
+      "name": "width",
+      "unit": "mm",
+      "value": 40.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "10",
+      "model": false,
+      "name": "height",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "0.18",
+      "model": false,
+      "name": "primary_distance",
+      "unit": "mm",
+      "value": 0.18
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "0.65",
+      "model": false,
+      "name": "secondary_distance",
+      "unit": "mm",
+      "value": 0.65
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 4,
+      "dof": 0,
+      "id": 1,
+      "name": "Chamfer profile",
+      "profiles": 1,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 0.20830100000000001,
+      "name": "Chamfer profile",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 4.239235,
+      "name": "Extrude1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 12.444602000000001,
+      "name": "Chamfer1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ChamferFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 2787.323019932535,
+    "edges": 18,
+    "faces": 8,
+    "mass_g": 10.313962799999999,
+    "open_bodies_skipped": 0,
+    "vertices": 12,
+    "volume_mm3": 7995.319999999999
+  }
+}

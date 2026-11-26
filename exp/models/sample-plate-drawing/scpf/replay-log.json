@@ -1,7 +1,7 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "d904c4516774a995d31734573f8854dee979ed308663763ce6cb8e326d7ef50b",
+  "replay_sha256": "59abe803bc0dccc2bc1c089c069757c089d3479720b2bf54b8504730ccfb8134",
   "variables": {
     "$sampleplate": 2,
     "$component_1": 1,
@@ -11,21 +11,29 @@
       8.0
     ],
     "$d1_SamplePlate_face_index_1": 3,
-    "$drawing_1": "719z3zzvqg06h",
-    "$drawing_1_source": "dpy9fyw6z4g1z",
-    "$drawing_1_sheet": "4z5awjf05pxf5",
+    "$drawing_1": "68wyd68pppgs3",
+    "$drawing_1_source": "9yayc6gh9x0fs",
+    "$drawing_1_sheet": "7aydx67atw1f0",
     "$drawing_1_orientation": "landscape",
-    "$drawing_1_front": "818px54yd10ev",
-    "$drawing_1_top": "b0xhk9g9h6vr1",
-    "$drawing_1_right": "caaj2j2fp9a53",
-    "$drawing_1_iso": "b2w6j9hggf7j2",
-    "$drawing_1_dimension_1": "7adcsnzq282g0",
-    "$drawing_1_dimension_2": "6bn87h55xfj9c",
-    "$drawing_1_dimension_3": "ccpbbhfr49q12",
-    "$drawing_1_dimension_4": "dys3fd89ggns1",
-    "$drawing_1_dimension_5": "8gwyvwbd14h3d",
-    "$drawing_1_dimension_6": "ap7zv2ab3rp71",
-    "$drawing_1_note_1": "4y4xe0470fcj6"
+    "$drawing_1_front": "4qgrc582tb6c0",
+    "$drawing_1_top": "1sn21p04pddtk",
+    "$drawing_1_right": "8zw36c38wxacd",
+    "$drawing_1_iso": "37drmh578pqsc",
+    "$drawing_1_dimension_1": "7pk25cx81tfrn",
+    "$drawing_1_dimension_2": "41tp2vebasd7c",
+    "$drawing_1_dimension_3": "39akc2pn82am3",
+    "$drawing_1_dimension_4": "f9p2cxbwhw1w9",
+    "$drawing_1_dimension_5": "d05h2n1waw2km",
+    "$drawing_1_dimension_6": "9068yv86kqce5",
+    "$drawing_1_note_1": "d8zgabj0k05z0",
+    "$drawing_2": "5gwkgc01k77ep",
+    "$drawing_2_source": "4d9523fm11ah7",
+    "$drawing_2_sheet": "cpeaktzk556w6",
+    "$drawing_2_orientation": "landscape",
+    "$drawing_2_front": "2mqe2tm75tp0j",
+    "$drawing_2_top": "3rxw02setm0r6",
+    "$drawing_2_right": "1ep9r5jr4zejn",
+    "$drawing_2_iso": "dv4rkmy3sre1c"
   },
   "commands": [
     {
@@ -275,19 +283,19 @@
         "first_sheet_name": "Sheet 1"
       },
       "bindings": {
-        "$drawing_1": "719z3zzvqg06h",
-        "$drawing_1_source": "dpy9fyw6z4g1z",
-        "$drawing_1_sheet": "4z5awjf05pxf5"
+        "$drawing_1": "68wyd68pppgs3",
+        "$drawing_1_source": "9yayc6gh9x0fs",
+        "$drawing_1_sheet": "7aydx67atw1f0"
       }
     },
     {
       "index": 19,
       "command": "drawing.sheet.set",
       "resolved_params": {
-        "sheet": "4z5awjf05pxf5",
+        "sheet": "7aydx67atw1f0",
         "orientation": "landscape",
         "documents": {
-          "source": "dpy9fyw6z4g1z",
+          "source": "9yayc6gh9x0fs",
           "component": 1
         },
         "title_block_overrides": {
@@ -339,23 +347,23 @@
       "index": 23,
       "command": "drawing.view.standard",
       "resolved_params": {
-        "sheet": "4z5awjf05pxf5",
+        "sheet": "7aydx67atw1f0",
         "iso": true,
         "gap_mm": 14.0,
         "scale": "1:1"
       },
       "bindings": {
-        "$drawing_1_front": "818px54yd10ev",
-        "$drawing_1_top": "b0xhk9g9h6vr1",
-        "$drawing_1_right": "caaj2j2fp9a53",
-        "$drawing_1_iso": "b2w6j9hggf7j2"
+        "$drawing_1_front": "4qgrc582tb6c0",
+        "$drawing_1_top": "1sn21p04pddtk",
+        "$drawing_1_right": "8zw36c38wxacd",
+        "$drawing_1_iso": "37drmh578pqsc"
       }
     },
     {
       "index": 24,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "818px54yd10ev",
+        "view": "4qgrc582tb6c0",
         "set": {
           "source": {
             "occurrences": [
@@ -371,7 +379,7 @@
       "index": 25,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "b2w6j9hggf7j2",
+        "view": "37drmh578pqsc",
         "set": {
           "source": {
             "occurrences": [
@@ -387,7 +395,7 @@
       "index": 26,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "818px54yd10ev",
+        "view": "4qgrc582tb6c0",
         "set": {
           "place": {
             "at": [
@@ -402,7 +410,7 @@
       "index": 27,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "b0xhk9g9h6vr1",
+        "view": "1sn21p04pddtk",
         "set": {
           "place": {
             "at": [
@@ -417,7 +425,7 @@
       "index": 28,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "caaj2j2fp9a53",
+        "view": "8zw36c38wxacd",
         "set": {
           "place": {
             "at": [
@@ -432,7 +440,7 @@
       "index": 29,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "b2w6j9hggf7j2",
+        "view": "37drmh578pqsc",
         "set": {
           "place": {
             "at": [
@@ -449,7 +457,7 @@
       "index": 30,
       "command": "drawing.dimension.add",
       "resolved_params": {
-        "view": "818px54yd10ev",
+        "view": "4qgrc582tb6c0",
         "kind": {
           "faces": {
             "a": {
@@ -479,14 +487,14 @@
         "offset_mm": 12.0
       },
       "bindings": {
-        "$drawing_1_dimension_1": "7adcsnzq282g0"
+        "$drawing_1_dimension_1": "7pk25cx81tfrn"
       }
     },
     {
       "index": 31,
       "command": "drawing.dimension.add",
       "resolved_params": {
-        "view": "818px54yd10ev",
+        "view": "4qgrc582tb6c0",
         "kind": {
           "faces": {
             "a": {
@@ -516,14 +524,14 @@
         "offset_mm": 10.0
       },
       "bindings": {
-        "$drawing_1_dimension_2": "6bn87h55xfj9c"
+        "$drawing_1_dimension_2": "41tp2vebasd7c"
       }
     },
     {
       "index": 32,
       "command": "drawing.dimension.add",
       "resolved_params": {
-        "view": "b0xhk9g9h6vr1",
+        "view": "1sn21p04pddtk",
         "kind": {
           "faces": {
             "a": {
@@ -553,14 +561,14 @@
         "offset_mm": 12.0
       },
       "bindings": {
-        "$drawing_1_dimension_3": "ccpbbhfr49q12"
+        "$drawing_1_dimension_3": "39akc2pn82am3"
       }
     },
     {
       "index": 33,
       "command": "drawing.dimension.add",
       "resolved_params": {
-        "view": "b0xhk9g9h6vr1",
+        "view": "1sn21p04pddtk",
         "kind": {
           "faces": {
             "a": {
@@ -590,14 +598,14 @@
         "offset_mm": 10.0
       },
       "bindings": {
-        "$drawing_1_dimension_4": "dys3fd89ggns1"
+        "$drawing_1_dimension_4": "f9p2cxbwhw1w9"
       }
     },
     {
       "index": 34,
       "command": "drawing.dimension.add",
       "resolved_params": {
-        "view": "b0xhk9g9h6vr1",
+        "view": "1sn21p04pddtk",
         "kind": {
           "radial": {
             "edge": {
@@ -621,14 +629,14 @@
         "override_text": "2\u00d7 {value} THRU"
       },
       "bindings": {
-        "$drawing_1_dimension_5": "8gwyvwbd14h3d"
+        "$drawing_1_dimension_5": "d05h2n1waw2km"
       }
     },
     {
       "index": 35,
       "command": "drawing.dimension.add",
       "resolved_params": {
-        "view": "b0xhk9g9h6vr1",
+        "view": "1sn21p04pddtk",
         "kind": {
           "radial": {
             "edge": {
@@ -651,7 +659,7 @@
         ]
       },
       "bindings": {
-        "$drawing_1_dimension_6": "ap7zv2ab3rp71"
+        "$drawing_1_dimension_6": "9068yv86kqce5"
       }
     },
     {
@@ -659,7 +667,7 @@
       "command": "drawing.note.add",
       "resolved_params": {
         "anchor": {
-          "sheet": "4z5awjf05pxf5"
+          "sheet": "7aydx67atw1f0"
         },
         "at": [
           156.0,
@@ -670,14 +678,14 @@
         "align": "left"
       },
       "bindings": {
-        "$drawing_1_note_1": "4y4xe0470fcj6"
+        "$drawing_1_note_1": "d8zgabj0k05z0"
       }
     },
     {
       "index": 37,
       "command": "drawing.view.inspect",
       "resolved_params": {
-        "view": "b2w6j9hggf7j2"
+        "view": "37drmh578pqsc"
       }
     },
     {
@@ -689,7 +697,183 @@
       "index": 39,
       "command": "drawing.close",
       "resolved_params": {}
+    },
+    {
+      "index": 40,
+      "command": "drawing.create",
+      "resolved_params": {
+        "name": "Compact Sample Plate Drawing",
+        "template": "iso-a4-part",
+        "first_sheet_name": "Sheet 1"
+      },
+      "bindings": {
+        "$drawing_2": "5gwkgc01k77ep",
+        "$drawing_2_source": "4d9523fm11ah7",
+        "$drawing_2_sheet": "cpeaktzk556w6"
+      }
+    },
+    {
+      "index": 41,
+      "command": "drawing.sheet.set",
+      "resolved_params": {
+        "sheet": "cpeaktzk556w6",
+        "orientation": "landscape",
+        "documents": {
+          "source": "4d9523fm11ah7",
+          "component": 1
+        },
+        "title_block": "compact",
+        "title_block_overrides": {
+          "title": "Sample Plate",
+          "identification_number": "SCPF-C-001"
+        }
+      }
+    },
+    {
+      "index": 42,
+      "command": "drawing.inspect",
+      "resolved_params": {},
+      "bindings": {
+        "$drawing_2_orientation": "landscape"
+      }
+    },
+    {
+      "index": 43,
+      "command": "drawing.properties.set",
+      "resolved_params": {
+        "values": {
+          "part_number": "SCPF-C-001",
+          "organization": "brainboxemb"
+        }
+      }
+    },
+    {
+      "index": 44,
+      "command": "drawing.view.standard",
+      "resolved_params": {
+        "sheet": "cpeaktzk556w6",
+        "iso": true,
+        "gap_mm": 14.0,
+        "scale": "1:1"
+      },
+      "bindings": {
+        "$drawing_2_front": "2mqe2tm75tp0j",
+        "$drawing_2_top": "3rxw02setm0r6",
+        "$drawing_2_right": "1ep9r5jr4zejn",
+        "$drawing_2_iso": "dv4rkmy3sre1c"
+      }
+    },
+    {
+      "index": 45,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "2mqe2tm75tp0j",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 46,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "dv4rkmy3sre1c",
+        "set": {
+          "source": {
+            "occurrences": [
+              [
+                2
+              ]
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 47,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "2mqe2tm75tp0j",
+        "set": {
+          "place": {
+            "at": [
+              62.0,
+              128.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 48,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "3rxw02setm0r6",
+        "set": {
+          "place": {
+            "at": [
+              62.0,
+              62.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 49,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "1ep9r5jr4zejn",
+        "set": {
+          "place": {
+            "at": [
+              137.0,
+              128.0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 50,
+      "command": "drawing.view.edit",
+      "resolved_params": {
+        "view": "dv4rkmy3sre1c",
+        "set": {
+          "place": {
+            "at": [
+              220.0,
+              128.0
+            ]
+          },
+          "scale": "1:1",
+          "visual_style": "shaded"
+        }
+      }
+    },
+    {
+      "index": 51,
+      "command": "drawing.view.inspect",
+      "resolved_params": {
+        "view": "dv4rkmy3sre1c"
+      }
+    },
+    {
+      "index": 52,
+      "command": "drawing.inspect",
+      "resolved_params": {}
+    },
+    {
+      "index": 53,
+      "command": "drawing.close",
+      "resolved_params": {}
     }
   ],
-  "completed": 40
+  "completed": 54
 }

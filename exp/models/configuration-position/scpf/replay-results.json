@@ -1,0 +1,411 @@
+[
+  {
+    "component": 1,
+    "grounded": true,
+    "name": "Screen",
+    "occurrence": 2,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Screen"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "Screen"
+    ],
+    "feature": 3,
+    "ms": 3.509734,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 4,
+    "grounded": false,
+    "name": "FrontPlate",
+    "occurrence": 5,
+    "parent": 0
+  },
+  {
+    "bodies": [
+      "Screen",
+      "FrontPlate"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "FrontPlate"
+    ],
+    "feature": 6,
+    "ms": 2.01369,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": 0
+  },
+  {
+    "display_value": 8.0,
+    "name": "plate_y",
+    "unit": "mm",
+    "value": 8.0
+  },
+  {
+    "display_value": 0.0,
+    "name": "plate_z",
+    "unit": "mm",
+    "value": 0.0
+  },
+  {
+    "occurrence": 5,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        8.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "active": "Default",
+    "columns": [
+      "param:plate_y",
+      "param:plate_z"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Default",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:plate_y",
+        "label": "param:plate_y",
+        "target": {
+          "param": "plate_y"
+        }
+      },
+      {
+        "key": "param:plate_z",
+        "label": "param:plate_z",
+        "target": {
+          "param": "plate_z"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Front",
+    "columns": [
+      "param:plate_y",
+      "param:plate_z"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:plate_y",
+        "label": "param:plate_y",
+        "target": {
+          "param": "plate_y"
+        }
+      },
+      {
+        "key": "param:plate_z",
+        "label": "param:plate_z",
+        "target": {
+          "param": "plate_z"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Front",
+    "columns": [
+      "param:plate_y",
+      "param:plate_z"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:plate_y",
+        "label": "param:plate_y",
+        "target": {
+          "param": "plate_y"
+        }
+      },
+      {
+        "key": "param:plate_z",
+        "label": "param:plate_z",
+        "target": {
+          "param": "plate_z"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Front",
+    "columns": [
+      "param:plate_y",
+      "param:plate_z"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Below",
+        "values": {
+          "param:plate_y": "0 mm",
+          "param:plate_z": "-55 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:plate_y",
+        "label": "param:plate_y",
+        "target": {
+          "param": "plate_y"
+        }
+      },
+      {
+        "key": "param:plate_z",
+        "label": "param:plate_z",
+        "target": {
+          "param": "plate_z"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Front",
+    "columns": [
+      "param:plate_y",
+      "param:plate_z"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Below",
+        "values": {
+          "param:plate_y": "0 mm",
+          "param:plate_z": "-55 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Service",
+        "values": {
+          "param:plate_y": "25 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:plate_y",
+        "label": "param:plate_y",
+        "target": {
+          "param": "plate_y"
+        }
+      },
+      {
+        "key": "param:plate_z",
+        "label": "param:plate_z",
+        "target": {
+          "param": "plate_z"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Front",
+    "columns": [
+      "param:plate_y",
+      "param:plate_z"
+    ],
+    "errors": [],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Below",
+        "values": {
+          "param:plate_y": "0 mm",
+          "param:plate_z": "-55 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Service",
+        "values": {
+          "param:plate_y": "25 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "styles": [],
+    "targets": [
+      {
+        "key": "param:plate_y",
+        "label": "param:plate_y",
+        "target": {
+          "param": "plate_y"
+        }
+      },
+      {
+        "key": "param:plate_z",
+        "label": "param:plate_z",
+        "target": {
+          "param": "plate_z"
+        }
+      }
+    ],
+    "trace": []
+  },
+  {
+    "active": "Front",
+    "columns": [
+      "param:plate_y",
+      "param:plate_z"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Below",
+        "values": {
+          "param:plate_y": "0 mm",
+          "param:plate_z": "-55 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Service",
+        "values": {
+          "param:plate_y": "25 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:plate_y",
+        "label": "param:plate_y",
+        "target": {
+          "param": "plate_y"
+        }
+      },
+      {
+        "key": "param:plate_z",
+        "label": "param:plate_z",
+        "target": {
+          "param": "plate_z"
+        }
+      }
+    ]
+  }
+]

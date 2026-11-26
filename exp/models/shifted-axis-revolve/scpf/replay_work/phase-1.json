@@ -1,0 +1,135 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "axis_z",
+        "expression": "3",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "axis_x",
+        "expression": "8",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "relief_d",
+        "expression": "4.5",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "core_d",
+        "expression": "3.7",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 40,
+        "width": 24,
+        "height": 20,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "ShiftedAxisRevolve"
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "Stepped pass through",
+        "offset": "axis_z"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "points": [
+          [
+            "axis_x",
+            -12
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            -12
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            -9
+          ],
+          [
+            "axis_x + (core_d / 2)",
+            -9
+          ],
+          [
+            "axis_x + (core_d / 2)",
+            9
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            9
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            12
+          ],
+          [
+            "axis_x",
+            12
+          ]
+        ],
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "h"
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.revolve",
+      "params": {
+        "sketch": "Stepped pass through",
+        "axis": {
+          "origin": [
+            "axis_x",
+            0,
+            "axis_z"
+          ],
+          "dir": [
+            0.0,
+            1.0,
+            0.0
+          ]
+        },
+        "angle": 360,
+        "operation": "cut",
+        "targets": [
+          "ShiftedAxisRevolve"
+        ]
+      }
+    }
+  ]
+}

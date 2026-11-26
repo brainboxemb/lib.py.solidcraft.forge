@@ -1,0 +1,277 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "39bf16df7803fd130164c29f8020c8e80cf31060e2bb0d31bfb5238f81c5cb98",
+          "size": 2652
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "ConfigurationSymbolicMath",
+                "max": [
+                  33.54101966249684,
+                  33.75,
+                  9.0
+                ],
+                "min": [
+                  -33.54101966249684,
+                  -33.75,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  33.5410196625,
+                  33.75,
+                  9.0
+                ],
+                "min": [
+                  -33.5410196625,
+                  -33.75,
+                  0.0
+                ]
+              },
+              "max_delta": 3.154809746774845e-12
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.002,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "size": 70.0
+          },
+          "expected": {
+            "size": 70.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/small/model.sc",
+          "sha256": "42d1affbd0692adbebd9f7435cfd7442b363fc2e6a8982ab9076c8c1ee99dca8",
+          "size": 4483
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/small/measurements.json",
+          "sha256": "73f6f578af45c7352a6c489f1503d7d67514c779699c1b277fb18b29bdfbc32f",
+          "size": 2652
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "ConfigurationSymbolicMath",
+                "max": [
+                  28.284271247461902,
+                  30.0,
+                  9.0
+                ],
+                "min": [
+                  -28.284271247461902,
+                  -30.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  28.2842712475,
+                  30.0,
+                  9.0
+                ],
+                "min": [
+                  -28.2842712475,
+                  -30.0,
+                  0.0
+                ]
+              },
+              "max_delta": 3.809930149145657e-11
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.002,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "size": 60.0
+          },
+          "expected": {
+            "size": 60.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_small",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/large/model.sc",
+          "sha256": "330535e09f457ec83aa190a0c7a0a8776a43a83e17be48103c5cbe20ea489652",
+          "size": 4520
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/large/measurements.json",
+          "sha256": "8f84a8837e93524eb8c2f9e447b3d35170c98f2b048bfdbdfb76f6a4fd8c6dc2",
+          "size": 2651
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "ConfigurationSymbolicMath",
+                "max": [
+                  38.72983346207417,
+                  48.75,
+                  12.0
+                ],
+                "min": [
+                  -38.72983346207417,
+                  -48.75,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  38.7298334621,
+                  48.75,
+                  12.0
+                ],
+                "min": [
+                  -38.7298334621,
+                  -48.75,
+                  0.0
+                ]
+              },
+              "max_delta": 2.5828228444879642e-11
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.002,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "size": 100.0
+          },
+          "expected": {
+            "size": 100.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_large",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/table/results.json",
+          "sha256": "27bd0d3d333f8cec44be581b818e9cfed254ef21fac706df5bac5540cdefb0ad",
+          "size": 706
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 3,
+              "expected": 3,
+              "label": "SolidCraft inspection check rows",
+              "pass": true
+            },
+            "id": "rows",
+            "path": [
+              0,
+              "rows"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Medium",
+              "expected": "Medium",
+              "label": "SolidCraft inspection check active",
+              "pass": true
+            },
+            "id": "active",
+            "path": [
+              0,
+              "active"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check matches",
+              "pass": true
+            },
+            "id": "matches",
+            "path": [
+              0,
+              "matches"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_table",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/configuration-symbolic-math/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "configuration-symbolic-math"
+}

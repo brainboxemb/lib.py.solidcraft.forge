@@ -1,0 +1,141 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 8886.458864299486,
+      "bbox": {
+        "max": [
+          28.284271247461902,
+          30.0,
+          9.0
+        ],
+        "min": [
+          -28.284271247461902,
+          -30.0,
+          0.0
+        ]
+      },
+      "center_of_mass": [
+        1.318855004021358e-16,
+        -1.4376604333923945e-16,
+        4.5
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 12,
+      "face_types": {
+        "plane": 6
+      },
+      "faces": 6,
+      "kernel": {
+        "edges": 12,
+        "faces": 6,
+        "shells": 1,
+        "vertices": 8
+      },
+      "mass_g": 39.405646701963924,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "ConfigurationSymbolicMath",
+      "notes": [],
+      "vertices": 8,
+      "volume_mm3": 30547.012947258852
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "60 mm",
+      "model": false,
+      "name": "size",
+      "unit": "mm",
+      "value": 60.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "80",
+      "model": false,
+      "name": "limit",
+      "unit": "mm",
+      "value": 80.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "20",
+      "model": false,
+      "name": "offset",
+      "unit": "mm",
+      "value": 20.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "7.5",
+      "model": false,
+      "name": "grid",
+      "unit": "mm",
+      "value": 7.5
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "12",
+      "model": false,
+      "name": "pitch",
+      "unit": "mm",
+      "value": 12.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "1",
+      "model": false,
+      "name": "step",
+      "unit": "mm",
+      "value": 1.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "4",
+      "model": false,
+      "name": "wall",
+      "unit": "mm",
+      "value": 4.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "-3",
+      "model": false,
+      "name": "bias",
+      "unit": "mm",
+      "value": -3.0
+    }
+  ],
+  "sketches": [],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 4.117061,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 8886.458864299486,
+    "edges": 12,
+    "faces": 6,
+    "mass_g": 39.405646701963924,
+    "open_bodies_skipped": 0,
+    "vertices": 8,
+    "volume_mm3": 30547.012947258852
+  }
+}

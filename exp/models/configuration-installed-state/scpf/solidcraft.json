@@ -1,0 +1,123 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "20.4",
+        "name": "fit_diameter",
+        "unit": "mm"
+      }
+    },
+    {
+      "bind": {
+        "$flexible_sleeve": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "FlexibleSleeve"
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          -10.0
+        ],
+        "body_name": "FlexibleSleeve",
+        "diameter": "fit_diameter",
+        "height": 20.0,
+        "operation": "new"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          6.0,
+          0.0,
+          0.0
+        ],
+        "height": 22,
+        "length": 12,
+        "operation": "cut",
+        "targets": [
+          "FlexibleSleeve"
+        ],
+        "width": 2.0
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "fit_diameter"
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$config_row_f411a1fb6275": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Free"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Free"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Free",
+        "values": {
+          "param:fit_diameter": "20.4 mm"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_f8b32f4e92bd": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Installed"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Installed",
+        "values": {
+          "param:fit_diameter": "20.0 mm"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "$config_row_f411a1fb6275"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

@@ -1,0 +1,129 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "0d39b03ac1cbd930156b14382f51db9c274ec3eab3483008276db7b3e2139b7b",
+  "variables": {
+    "$flexible_sleeve": 2,
+    "$config_row_f411a1fb6275": 5,
+    "$config_row_f8b32f4e92bd": 6
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "fit_diameter",
+        "expression": "20.4",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "FlexibleSleeve",
+        "grounded": true
+      },
+      "bindings": {
+        "$flexible_sleeve": 2
+      }
+    },
+    {
+      "index": 2,
+      "command": "solid.cylinder",
+      "resolved_params": {
+        "height": 20.0,
+        "diameter": "fit_diameter",
+        "base": [
+          0,
+          0,
+          -10.0
+        ],
+        "axis": "Z",
+        "operation": "new",
+        "body_name": "FlexibleSleeve"
+      }
+    },
+    {
+      "index": 3,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 12,
+        "width": 2.0,
+        "height": 22,
+        "operation": "cut",
+        "center": [
+          6.0,
+          0.0,
+          0.0
+        ],
+        "targets": [
+          "FlexibleSleeve"
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 5,
+      "command": "config.configure",
+      "resolved_params": {
+        "params": [
+          "fit_diameter"
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Default",
+        "rename": "Free"
+      },
+      "bindings": {
+        "$config_row_f411a1fb6275": 5
+      }
+    },
+    {
+      "index": 7,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Free",
+        "values": {
+          "param:fit_diameter": "20.4 mm"
+        }
+      }
+    },
+    {
+      "index": 8,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Installed",
+        "values": {
+          "param:fit_diameter": "20.0 mm"
+        }
+      },
+      "bindings": {
+        "$config_row_f8b32f4e92bd": 6
+      }
+    },
+    {
+      "index": 9,
+      "command": "config.activate",
+      "resolved_params": {
+        "row": 5
+      }
+    },
+    {
+      "index": 10,
+      "command": "config.table",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 11
+}
