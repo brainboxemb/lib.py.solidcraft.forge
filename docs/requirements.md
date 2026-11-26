@@ -77,6 +77,9 @@
 14. A `DriveParameter` target must also be an explicit `Param(...)` column of the same table. Rule enablement uses SolidCraft's native `enabled` checkbox and must not be emulated as a boolean/numeric model parameter.
 15. Rule enablement and row activation are orthogonal native state. Saved-design qualification must prove that disabling a drive restores the active row value and that switching rows does not silently change the rule's enabled state.
 16. A rule may drive a shared parent parameter published into reusable child components, so one Assembly rule can update every occurrence using that same native dependency without duplicating bodies or Python histories.
+17. A reusable component may explicitly publish one already-authored suppressible feature with `Shape.export_feature(name)`; the export name is component-local Forge identity and must never be treated as a SolidCraft history id.
+18. `ModelInstance.feature(name)` returns a definition-level Forge reference. A parent/root `Suppress(...)` must resolve that reference against the canonical compiled reusable definition, so separately constructed or copied occurrences of the same definition share one suppression target deterministically.
+19. Component feature references must fail explicitly when the export is missing or the referenced definition is not part of the configured design. Saved-design qualification must prove Small/Medium suppression and Large presence after reopen while ordinary parent-driven child parameters continue to recompute natively.
 
 ## SCPF revolute relationships
 

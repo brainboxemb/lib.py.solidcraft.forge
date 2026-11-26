@@ -292,10 +292,26 @@ The use-case boundary is intentional:
 | alternate attachment/joint graph | not a configuration cell; requires explicit relationship authoring |
 | arbitrary Python branches per row | rejected as a configuration-table substitute |
 
-A suppression reference must be an actual Forge feature handle available to the
-configured design. #216 does not invent string paths into hidden child-component
-implementation details. If cross-component exported feature handles are needed,
-that is a reusable component API capability and must be designed explicitly.
+A suppression reference must be an actual Forge-authored feature identity
+available to the configured design. Direct Shape-owned configuration keeps the
+existing exact-object `Suppress(feature)` contract.
+
+Reusable child definitions add one explicit interface layer rather than exposing
+SolidCraft history names. Inside the child, the author marks the exact applied
+Shape with `feature.export_feature("panel_pin")`. The final component definition
+retains that export as Forge metadata. Parent code asks an occurrence for
+`child.feature("panel_pin")`; the returned typed reference contains the reusable
+definition identity plus the component-local export name, not an occurrence id
+and not a native feature id.
+
+During Assembly configuration lowering, Forge resolves that reference against
+the canonical compiled component definition, obtains the exact exported Shape
+from that definition, compiles the history prefix and binds the replay-returned
+native feature name in the same way as an ordinary `Suppress(feature)` column.
+Because the reference is definition-level, two separately constructed
+occurrences and `.copy()` occurrences of the same reusable definition all point
+at the same native child history. Missing exports, missing definitions and
+ambiguous/duplicate native targets fail explicitly.
 
 For flexible parts, `Free` and `Installed` name physical/model states:
 `Free` is the uninstalled shape used for manufacturing or print output;

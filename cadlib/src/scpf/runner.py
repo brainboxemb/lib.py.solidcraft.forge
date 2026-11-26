@@ -554,6 +554,30 @@ def _design_object(cls, *args, **kwargs):
     )
 
 
+def _component_feature_exports(shape):
+    """Collect explicitly exported Forge features from one component Shape tree."""
+    exports = {}
+
+    def visit(node):
+        if isinstance(node, Shape):
+            if node.kind == "exported_feature":
+                _source, name = node.data
+                previous = exports.get(name)
+                if previous is not None and previous is not node:
+                    raise ValueError(
+                        f"duplicate exported component feature {name!r}"
+                    )
+                exports[name] = node
+            visit(node.data)
+            return
+        if isinstance(node, (tuple, list)):
+            for item in node:
+                visit(item)
+
+    visit(shape)
+    return tuple(exports.items())
+
+
 def _reusable_model_object(
     cls,
     *args,
@@ -599,6 +623,7 @@ def _reusable_model_object(
             external_parameters=external,
             input_bindings=bindings,
             anchors=anchors,
+            features=_component_feature_exports(result),
         ),
         placement=placement,
         name=object_name,

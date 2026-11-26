@@ -46,6 +46,7 @@ class ModelDefinition:
     external_parameters: tuple[tuple[str, float], ...] = ()
     input_bindings: tuple[tuple[str, str], ...] = ()
     anchors: tuple[tuple[str, AnchorFrame | AnchorTopology], ...] = ()
+    features: tuple[tuple[str, Shape], ...] = ()
 
     @property
     def key(self):
@@ -56,7 +57,16 @@ class ModelDefinition:
             self.external_parameters,
             self.input_bindings,
             self.anchors,
+            tuple(name for name, _ in self.features),
         )
+
+
+@dataclass(frozen=True)
+class _ComponentFeatureReference:
+    """Definition-level reference to one explicitly exported Forge feature."""
+
+    definition_key: tuple
+    name: str
 
 
 @dataclass(frozen=True)
@@ -475,6 +485,25 @@ class ModelInstance:
     def occurrence_id(self):
         """Internal Forge id for this physical occurrence."""
         return self._occurrence_id
+
+    def feature(self, name):
+        """Reference one feature explicitly exported by this component definition.
+
+        The returned value identifies Forge-authored definition history, not one
+        physical occurrence and not a SolidCraft feature id. All occurrences
+        that reuse this definition therefore resolve the same native feature.
+        """
+        if (
+            not isinstance(name, str)
+            or not name.isidentifier()
+            or name.startswith("_")
+        ):
+            raise ValueError("component feature name must be a public Python identifier")
+        if name not in {feature_name for feature_name, _ in self.definition.features}:
+            raise ValueError(
+                f"{self.definition.class_name} has no exported component feature {name!r}"
+            )
+        return _ComponentFeatureReference(self.definition.key, name)
 
     def group(self, name):
         """Place this occurrence in a named native subassembly component.
