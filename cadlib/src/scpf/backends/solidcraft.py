@@ -25,8 +25,10 @@ from ..core import (
     _pv as pv,
     command_value,
     number_text,
+    parameters_in,
 )
 from ..ir import (
+    AxisLineIR,
     BooleanIR,
     BoxIR,
     ChamferIR,
@@ -379,19 +381,42 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
     return commands
 
 
+def _solidcraft_axis(axis: AxisLineIR):
+    """Lower semantic axis intent without losing symbolic origin dependencies."""
+    if (
+        all(not parameters_in(value) and abs(pv(value)) <= 1e-12
+            for value in axis.origin)
+    ):
+        return axis.direction
+
+    direction = {
+        "X": [1.0, 0.0, 0.0],
+        "Y": [0.0, 1.0, 0.0],
+        "Z": [0.0, 0.0, 1.0],
+    }[axis.direction]
+    return {
+        "origin": [command_value(value) for value in axis.origin],
+        "dir": direction,
+    }
+
+
 def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
     """Lower semantic Sketch/Profile + Revolve IR without raw Shape parsing."""
     sketch = node.sketch
-    if sketch.plane != "XZ":
-        raise ModelError("portable SolidCraft RevolveIR currently requires XZ")
+    if sketch.plane not in ("XY", "XZ", "YZ"):
+        raise ModelError(
+            "portable SolidCraft RevolveIR requires XY, XZ or YZ"
+        )
     if (
         len(sketch.profiles) != 1
         or not isinstance(sketch.profiles[0], PolygonProfileIR)
         or node.region != RegionIR(outer=0)
     ):
         raise ModelError("portable SolidCraft RevolveIR requires one polygon region")
-    if node.axis != "X" or node.direction is not None:
-        raise ModelError("portable SolidCraft RevolveIR currently requires world X")
+    if not isinstance(node.axis, AxisLineIR) or node.direction is not None:
+        raise ModelError(
+            "portable SolidCraft RevolveIR requires one non-symmetric AxisLineIR"
+        )
 
     try:
         _region_interior_point(sketch, node.region)
@@ -410,6 +435,30 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
         if profile.segment_ids is not None
         else [chr(ord("a") + index) for index in range(len(profile.points))]
     )
+    revolve = {
+        "sketch": sketch.name,
+        "axis": _solidcraft_axis(node.axis),
+        "angle": command_value(node.angle),
+    }
+    if node.operation == "new_body":
+        if node.target is not None:
+            raise ModelError("new-body RevolveIR must not have a target")
+        revolve["body_name"] = name
+    elif node.operation == "cut":
+        if (
+            not isinstance(node.target, PlacementIR)
+            or not isinstance(node.target.primitive, BoxIR)
+        ):
+            raise ModelError(
+                "portable SolidCraft Revolve cut currently requires a Box target"
+            )
+        revolve["operation"] = "cut"
+        revolve["targets"] = [name]
+    else:
+        raise ModelError(
+            f"unsupported portable SolidCraft Revolve operation {node.operation!r}"
+        )
+
     return [
         _command("sketch.create", name=sketch.name, plane=sketch.plane),
         _command(
@@ -422,14 +471,9 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
             ids=ids,
         ),
         _command("sketch.finish"),
-        _command(
-            "solid.revolve",
-            sketch=sketch.name,
-            axis=node.axis,
-            angle=command_value(node.angle),
-            body_name=name,
-        ),
+        _command("solid.revolve", **revolve),
     ]
+
 
 
 def _face_boundary_commands(
@@ -511,8 +555,19 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
         ]
 
     if isinstance(node, RevolveIR):
+        base_commands = []
+        if node.operation == "cut":
+            if (
+                not isinstance(node.target, PlacementIR)
+                or not isinstance(node.target.primitive, BoxIR)
+            ):
+                raise ModelError(
+                    "portable SolidCraft Revolve cut currently requires a Box target"
+                )
+            base_commands = [_box_command(node.target, name)]
         return [
             *parameters,
+            *base_commands,
             *_revolve_commands(node, name),
         ]
 
