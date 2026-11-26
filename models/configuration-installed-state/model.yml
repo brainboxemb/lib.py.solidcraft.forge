@@ -2,16 +2,17 @@ schema: 1
 purpose: [example, verification]
 section: configurations
 priority: 30
-title: Free / Installed state
-tagline: One reusable flexible-fit component keeps manufacturing and mounted geometry as native configuration rows
+title: Independent Installed state
+tagline: Small / Medium / Large stays independent from the native Installed rule
 description: >
-  A reusable split flexible sleeve publishes its fit diameter to the parent
-  design. The parent configuration keeps Free manufacturing geometry active
-  by default and can switch the same child definition to Installed geometry
-  without rebuilding Python.
-parameters: Free diameter 20.4 mm; Installed diameter 20.0 mm
+  A reusable split flexible sleeve keeps Small / Medium / Large as the ordinary
+  configuration-row axis. Native SolidCraft rule evidence proves an independent
+  Installed state can drive the shared fit parameter without replacing those
+  rows; disabling the rule restores the active row's Free expression.
+parameters: Tube 20.0 mm; Free interference 0.2 mm; sizes 20/30/40 mm
 stages:
   - Build one reusable split flexible-fit child component
-  - Publish its fit diameter as the shared native parent parameter
-  - Author Free and Installed rows around that component occurrence
-  - Reopen the saved design and switch the same child definition to Installed
+  - Keep Small / Medium / Large as ordinary configuration rows
+  - Enable Installed as a native rule that drives the shared fit parameter
+  - Switch to Large while Installed remains active
+  - Disable Installed and prove Large remains active while Free fit returns

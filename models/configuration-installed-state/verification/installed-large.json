@@ -1,0 +1,28 @@
+{
+  "commands": [
+    {
+      "command": "config.rule",
+      "params": {
+        "rule": {
+          "id": "installed",
+          "name": "Installed",
+          "enabled": true,
+          "condition": {
+            "type": "always"
+          },
+          "effect": {
+            "type": "drive_parameter",
+            "parameter": "fit_diameter",
+            "expression": "tube_d"
+          }
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Large"
+      }
+    }
+  ]
+}
