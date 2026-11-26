@@ -21,7 +21,10 @@ sys.path.insert(0, str(ROOT / "modules/mitcad-reference/src"))
 sys.path.insert(0, str(ROOT / "modules/verification/src"))
 
 from cad_library_mitcad_reference import capture_runtime, git_blob_sha
+from scpf import Axis, AxisLine, Box, Parameter, Polygon2D, Sketch
+from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.mitcad_headless import run_document
+from scpf.ir import normalize_shape
 from scpf.runner import run_script
 from cad_verification.geometry import (
     load_geometry_contract,
@@ -245,6 +248,79 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            axis_x = Parameter("axis_x", 8)
+            panel = Box(80, 46, 10)
+            with Sketch(name="PassThrough", plane="XY") as profile:
+                Polygon2D(
+                    [
+                        (12, -5),
+                        (16, -5),
+                        (16, 5),
+                        (12, 5),
+                    ],
+                    plane="XY",
+                )
+            shifted_cut_shape = panel - profile.revolve(
+                axis=AxisLine(
+                    Axis.Y,
+                    origin=(axis_x, 0, 0),
+                ),
+            )
+            shifted_cut_document = compile_mitcad_ir(
+                normalize_shape(shifted_cut_shape),
+                "ShiftedRevolveCut",
+            )
+
+            # The native axis transport is parameter-driven in the compiled
+            # document; the current value is not baked into the construction
+            # line as the semantic source of truth.
+            replay_sketch = shifted_cut_document["replay"][0]["commands"][0]["def"]
+            construction = [
+                entity
+                for entity in replay_sketch["entities"]
+                if entity.get("construction") is True
+            ]
+            self.assertEqual(len(construction), 1)
+            self.assertIn(
+                "axis_x",
+                [
+                    dimension["value"]
+                    for dimension in replay_sketch["dimensions"]
+                ],
+            )
+
+            shifted_cut = run_document(
+                shifted_cut_document,
+                save=root / "out/shifted-revolve-cut.mitcad",
+                export=root / "out/shifted-revolve-cut.stl",
+                executable=str(executable),
+                work_dir=root / "shifted-revolve-cut-workspace",
+            )
+            self.assertEqual(shifted_cut["completed"], 4)
+            self.assertEqual(len(shifted_cut["bodies"]), 1)
+            shifted_body = shifted_cut["bodies"][0]
+            self.assertEqual(shifted_body["kind"], "solid")
+            self.assertAlmostEqual(
+                shifted_body["volume"],
+                36800.0 - 240.0 * 3.141592653589793,
+                places=3,
+            )
+            for actual, expected in zip(
+                shifted_body["bbox"]["min"],
+                [-40.0, -23.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                shifted_body["bbox"]["max"],
+                [40.0, 23.0, 10.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
+            shifted_stl = root / "out/shifted-revolve-cut.stl"
+            retained_shifted_stl = evidence / "shifted-revolve-cut.stl"
+            shutil.copy2(shifted_stl, retained_shifted_stl)
+            self.assertGreater(retained_shifted_stl.stat().st_size, 0)
+
             for filename in (
                 "simple-box.mitcad",
                 "simple-box.stl",
@@ -252,6 +328,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "circle-negative-extrude.stl",
                 "topology-face-boundary-box.mitcad",
                 "topology-face-boundary-box.stl",
+                "shifted-revolve-cut.mitcad",
+                "shifted-revolve-cut.stl",
             ):
                 output = root / "out" / filename
                 self.assertTrue(output.is_file(), filename)
@@ -273,6 +351,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"topology_volume={topology_body['volume']}",
                         f"topology_bbox={topology_body['bbox']}",
                         f"topology_bindings={topology['bindings']}",
+                        f"shifted_revolve_cut_volume={shifted_body['volume']}",
+                        f"shifted_revolve_cut_bbox={shifted_body['bbox']}",
+                        f"shifted_revolve_cut_bindings={shifted_cut['bindings']}",
                     ]
                 )
                 + "\n",
