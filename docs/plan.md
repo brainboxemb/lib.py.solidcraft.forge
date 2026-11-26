@@ -45,7 +45,9 @@ The accepted baseline now includes:
 - Forge-owned release metadata validation and explicit owner-issued
   `/release` publication through released `tool.py.lib.ci`;
 - stable Pages quality and the canonical Pages deployment;
-- policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks.
+- policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks;
+- the experimental `exp` line has a proven second native CAD backend boundary: Mitcad v0.70.0 reference/runtime identity is pinned, unchanged SCPF sources qualify native Box, Circle Sketch+Extrude and face-boundary Chamfer, native Mitcad topology remains engine-owned, retained Mitcad STL passes the existing geometry verifier, and the internal `BackendAdapter` centralizes backend selection while SolidCraft remains the stable default;
+- the adapter-boundary regression found by the permanent 52-owner gate is fixed: SolidCraft compiler/assembly imports occur during package initialization so public `scpf.assembly` remains the callable decorator; permanent `build/exp` at `4e2a6a7feb0de7f750efe1d073852208f1a25b5a` passed with library=true and 52/52 owners, followed by successful `/exp/` Pages publication.
 
 Release evidence for v0.19.0:
 - promoted full product baseline:
@@ -68,27 +70,19 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental blocker: #214 isolate revolute-joint native failure
+### Experimental: #218 add the SCPF-to-Mitcad builder capability
 
-The first permanent `exp` build after #212 reported only `revolute-joint--scpf:native` as an error while the same owner passed on the immediately preceding #192 baseline. Isolation reproduced it and retained evidence showed the build failed with `TypeError: 'module' object is not callable`. Root cause: lazy SolidCraft adapter lookup imported the `scpf.assembly` submodule after package initialization, overwriting the public `scpf.assembly` decorator attribute. Keep the adapter boundary, but restore the SolidCraft compiler/assembly imports to the safe package-initialization phase and qualify the actual assembly model before #212 is accepted.
+The backend semantics are accepted on `exp`. The next boundary is ordinary
+Forge build integration, without yet attaching Mitcad to model owners:
 
-### Experimental: #212 formalize the native backend adapter boundary
-
-#192 is accepted on `exp`: unchanged Forge sources proved native Mitcad
-Box, Circle Sketch+Extrude and face-boundary Chamfer; the v0.70.0 runtime and
-reference are pinned; native topology remained engine-native; Mitcad STL passed
-the existing owner-local geometry verifier; and all 52 SolidCraft owners
-remained green after the library change.
-
-#212 now turns that feasibility code into one maintainable internal boundary:
-- backend selection is resolved once through an adapter registry;
-- SolidCraft remains the stable default and retains the existing compiler and
-  assembly lowerers;
-- Mitcad remains experimental and declares only the already-qualified slice;
-- adapters declare executor/document family and capability metadata;
-- assemblies and unsupported Mitcad intent continue to fail explicitly;
-- no new Mitcad CAD features, runtime packaging, `scpf` rename or
-  `exp -> dev` integration are part of this issue.
+- add `builder-scpf-mitcad` with runtime role `mitcad`;
+- feed the same owner-local SCPF source through
+  `run_script(..., backend="mitcad")`;
+- execute through the qualified Mitcad headless boundary and emit
+  `model.mitcad`, `model.stl` and normal `build.json`;
+- unit-test the builder without downloading a runtime binary;
+- do not add root `runtimes.mitcad` or owner `scpf-mitcad` implementations
+  until an immutable runtime image is available.
 
 ### Queued: #162 / #163 verification evidence cleanup
 
