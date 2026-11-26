@@ -10,7 +10,7 @@ Forge-specific migrated owners normally add an SCPF implementation whose consume
 
 The experimental `builder-scpf-mitcad` is intentionally different: it is a Forge-owned SCPF backend adapter builder and therefore calls `run_script(..., backend="mitcad")` directly, then executes the resulting native Mitcad document through the already-qualified headless boundary. It retains `model.mitcad` and `model.stl`; the central runtime writes the normal implementation `build.json`. This capability is not attached to owners until an immutable `mitcad` runtime exists. Generic non-SCPF engine builders remain unaware of Forge semantics.
 
-Reference implementations run in the shared reference role. SolidCraft command execution runs first in the lightweight SolidCraft role and its STL is then verified in reference. The experimental Mitcad builder declares runtime role `mitcad`, but that role is intentionally absent from root `ci.yml` until #221 provides an immutable image.
+Reference implementations run in the shared reference role. SolidCraft command execution runs first in the lightweight SolidCraft role and its STL is then verified in reference. The experimental Mitcad builder declares runtime role `mitcad`; on `exp` root `ci.yml` pins the immutable released `ghcr.io/brainboxemb/cad-mitcad:v0.3.7` image. Model owners do not gain a Mitcad implementation merely because the runtime role exists; that remains explicit owner metadata.
 
 Durable evidence is grouped by physical owner:
 

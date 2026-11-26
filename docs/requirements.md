@@ -19,14 +19,14 @@
 
 ## CAD execution
 
-1. Reuse only the released `reference` and `solidcraft` runtime roles from `docker.cad.solidcraft v0.3.6` until a separately qualified upgrade exists.
+1. Stable Forge execution continues to use the released `reference` and `solidcraft` roles from `docker.cad.solidcraft v0.3.6`; the experimental `exp` line additionally pins the isolated `mitcad` role from released `docker.cad.solidcraft v0.3.7`. This does not imply `dev` or `main` adoption.
 2. Standard reference builders are PythonSCAD, pyBOSL2, CadQuery and build123d.
 3. SCPF compilation is consumer-owned and feeds the generic SolidCraft command builder; do not teach generic builders Forge semantics.
 4. SolidCraft executes in its lightweight runtime; generic mesh verification executes in the reference runtime.
 5. CI batches compatible implementation work and does not start one Docker container per model implementation.
 6. The experimental `builder-scpf-mitcad` capability lowers the same trusted SCPF source through `run_script(..., backend="mitcad")` and must retain both the native `model.mitcad` document and exported `model.stl`.
 7. The Mitcad builder must not download or install a CAD runtime. Its runtime contract is an already-qualified `mitcad-cli` executable on `PATH`, optionally supplied through `CAD_LIBRARY_MITCAD_EXECUTABLE`.
-8. Do not add root `runtimes.mitcad` or owner `scpf-mitcad` implementations until an immutable Mitcad runtime role is separately qualified.
+8. Root `runtimes.mitcad` must use the immutable released `cad-mitcad:v0.3.7` role. Owner `scpf-mitcad` implementations remain a separate experimental change and must preserve each physical owner's verification contract.
 
 ## SCPF native associativity
 
