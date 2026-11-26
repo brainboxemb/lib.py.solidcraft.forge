@@ -7,6 +7,7 @@ from .core import (
     Shape, Parameter, Edges, Faces, Anchor, AnchorFrame, AnchorTopology, Axis, X, Y, Z, CENTER, TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK, up, down, left, right, front, back, half, midpoint, pv,
 )
 from .compiler import compile_model, ModelError
+from .configurations import Configure, Param, Suppress
 from .explicit_sketch import Sketch
 from .runner import run_script, component, assembly, ModelParameterWarning
 from .model_objects import (
@@ -25,5 +26,5 @@ __all__ = [
     "Edges", "Faces", "Anchor", "AnchorFrame", "AnchorTopology", "Axis", "X", "Y", "Z", "CENTER", "TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK", "up", "down", "left", "right", "front", "back", "half", "midpoint", "pv",
     "Sketch", "Placement", "DrawingView", "DrawingNote", "DrawingRevision",
     "DrawingDimension", "compile_model", "run_script", "component", "assembly",
-    "ModelParameterWarning", "ModelError",
+    "ModelParameterWarning", "ModelError", "Configure", "Param", "Suppress",
 ]

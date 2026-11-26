@@ -1,0 +1,15 @@
+schema: 1
+purpose: [example, verification]
+section: configurations
+priority: 10
+title: Configuration Table
+tagline: One editable native design with three parameter and suppression rows
+description: >
+  Three named rows drive four native parameters and two independent optional
+  hole features. The Medium row is the initially active design.
+parameters: Small, Medium and Large
+stages:
+  - Build a symbolic plate and two independent hole features
+  - Author one native configuration table
+  - Activate Medium and inspect the saved design
+  - Activate Large to check the native parameter and feature changes
