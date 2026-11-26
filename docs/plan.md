@@ -93,7 +93,10 @@ Current spike evidence:
 - `simple-box` now lowers from the unchanged SCPF source directly to either
   SolidCraft `solid.box` or Mitcad `add_feature {type: box}`;
 - Mitcad lowering does not translate through SolidCraft command JSON;
-- unsupported Mitcad shape kinds fail explicitly.
+- unsupported Mitcad shape kinds fail explicitly;
+- a Mitcad MCP executor now owns native document creation, command-array
+  application, body inspection, .mitcad save and optional export; transport
+  tests keep this separate from lowering.
 
 ### Queued: #162 / #163 verification evidence cleanup
 
