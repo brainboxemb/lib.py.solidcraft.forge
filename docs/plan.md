@@ -142,15 +142,34 @@ publish a **v0.22.1 qualification-only patch**:
 
 The patch must not add a new public API.
 
-### Conditional future configuration research: #315
+### Next consumer capability: #315 independent Free / Installed state
 
-Only if a demonstrated consumer requires Free / Installed to remain an
-independent state axis inside the same Assembly while Small / Medium / Large
-remains separate, investigate the native SolidCraft `config.rule` contract
-through #315 before designing Forge API.
+After v0.22.1, #315 is the next normal Forge consumer capability.
 
-#315 is **not** a v0.22.1 prerequisite. Do not emulate a boolean with numeric
-0/1 and do not force Cartesian configuration rows.
+The HUB75 contract requires two independent axes in one Assembly:
+
+- Small / Medium / Large remains the ordinary configuration row axis;
+- Free / Installed is an independent physical-state checkbox, with Installed
+  enabled by default for the assembled frame while standalone clamp output can
+  remain Free for manufacturing/STL.
+
+#306 proves reusable child parameters compose with a parent configuration
+table, but it does not provide that independent state axis.
+
+Before designing public Forge syntax, retain the exact SolidCraft 0.49
+`config.rule` typed condition/effect schema in the repository. The current
+command snapshot proves only the generic
+`{id,name,enabled,condition,effect}` envelope and does not document a
+`drive_parameter` effect. Forge must not guess the native schema or emulate
+the state with numeric 0/1 parameters or Cartesian size/state rows.
+
+If the pinned native contract supports the required rule semantics, #315 should
+expose them through typed Forge intent and qualify save/reopen independence of
+row selection and Installed state. A new public authoring API makes that a
+minor-release capability.
+
+#315 is not a v0.22.1 prerequisite because that patch only publishes the
+already-stable #306 qualification.
 
 ### Experimental lane
 
