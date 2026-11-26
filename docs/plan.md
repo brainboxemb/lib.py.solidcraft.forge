@@ -74,15 +74,17 @@ The permanent experimental line is accepted. Begin #192 only on `exp` and keep
 normal product development on `dev`.
 
 First spike:
-1. keep the existing public `scpf` model source unchanged;
-2. select a minimal primitive/plate, then sketch+extrude, then one topology
+1. pin Mitcad v0.70.0 reference evidence locally under
+   `docs/reference/mitcad/0.70.0` and provide live MCP capture/verification;
+2. keep the existing public `scpf` model source unchanged;
+3. select a minimal primitive/plate, then sketch+extrude, then one topology
    modification;
-3. identify the current feature-tree intent that is already backend-neutral;
-4. isolate SolidCraft-specific lowering/replay/topology behind an explicit
+4. identify the current feature-tree intent that is already backend-neutral;
+5. isolate SolidCraft-specific lowering/replay/topology behind an explicit
    backend boundary;
-5. add Mitcad only far enough to prove one unchanged Forge source through both
+6. add Mitcad only far enough to prove one unchanged Forge source through both
    native engines and the existing verification architecture;
-6. fail explicitly for unsupported Mitcad intent rather than weakening the
+7. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
 ### Queued: #162 / #163 verification evidence cleanup
