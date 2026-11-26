@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "d25mm93vdct2c",
+  "id": "2dnb2v5t0jvth",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "bvf7c5esmknpx"
+        "source": "14qrd9mev83xx"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "bprm0zkg6yqtt",
+      "id": "c27pjwk6jvvx7",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,15 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "0rz15ncpkw6j4",
+          "id": "1zs7grnxcc24d",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "3g2h7ch46jxax",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,37 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "68k8c0fnty0fm",
+          "id": "712amz62hyftk",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "0rz15ncpkw6j4",
+          "parent": "3g2h7ch46jxax",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "7ysd78haj5ssw",
+          "id": "exxfxrtkf0eg0",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "0rz15ncpkw6j4",
+          "parent": "3g2h7ch46jxax",
           "side": "above"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "2eh2g7nb831rs",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "bvf7c5esmknpx"
+      "id": "14qrd9mev83xx"
     }
   ],
   "symbols": [],
