@@ -477,11 +477,20 @@ The first qualified portable slice is deliberately small:
 
 The experiment keeps `run_script(..., backend="solidcraft")` as the stable
 default and permits `backend="mitcad"` only as an explicit experimental
-choice. A future production refactor should move backend lookup into one
-registry/adapter boundary with `compile_shape`, optional
-`compile_assembly`, executor metadata and declared capabilities. It should
-not spread `if backend == ...` throughout authoring objects, and it should
-not rename `scpf` until a broader consumer migration justifies that change.
+choice. #212 formalizes this as an internal `BackendAdapter` registry. Each adapter
+declares `id`, display name, `compile_shape`, optional
+`compile_assembly`, document family, executor and a capability set. The
+runner resolves that adapter once before executing model source and thereafter
+calls the adapter without engine-specific compile branches.
+
+SolidCraft declares the stable Forge surface plus assemblies/native
+topology/drawings and continues to call the existing compiler and assembly
+lowerers unchanged. Mitcad declares only the already-qualified experimental
+slice: `primitive.box`, `sketch.circle`,
+`feature.extrude.distance`, `modify.chamfer.face-boundary` and
+`native-topology`; its assembly compiler is absent, so assembly intent fails
+explicitly at the boundary. This registry is intentionally internal: it does
+not rename `scpf`, expose a new public backend API or imply feature parity.
 
 Mitcad command knowledge is versioned evidence under
 `docs/reference/mitcad/<version>/`. Source reference identity, runtime MCP

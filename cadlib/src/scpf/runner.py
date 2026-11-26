@@ -19,9 +19,8 @@ import sys
 import warnings
 
 from . import core
-from .compiler import ModelError, _compile_model_with_dependencies
+from .compiler import ModelError
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
-from .assembly import _compile_assembly_with_dependencies
 from .model_objects import (
     Assembly,
     DrawingDimension,
@@ -33,6 +32,7 @@ from .model_objects import (
     Placement,
 )
 from .explicit_sketch import Sketch
+from .backends import get_backend
 
 
 class ModelParameterWarning(UserWarning):
@@ -855,8 +855,7 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
     Example:
         document = run_script("models/panel/scpf/model.py")
     """
-    if backend not in {"solidcraft", "mitcad"}:
-        raise ValueError(f"unknown SCPF backend: {backend!r}")
+    backend_adapter = get_backend(backend)
 
     path = Path(path).resolve()
     syntax = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
@@ -1072,24 +1071,14 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
             )
 
     if isinstance(result, Shape):
-        if backend == "solidcraft":
-            document, dependencies = _compile_model_with_dependencies(
-                result, name
-            )
-        else:
-            from .backends.mitcad import compile_model_with_dependencies
-            document, dependencies = compile_model_with_dependencies(
-                result, name
-            )
+        document, dependencies = backend_adapter.compile_shape(result, name)
     elif isinstance(result, (ModelInstance, Assembly)):
-        if backend != "solidcraft":
+        if backend_adapter.compile_assembly is None:
             raise ModelError(
-                "Mitcad backend does not yet support Forge assemblies; "
-                "the first #192 spike is shape-only"
+                f"{backend_adapter.display_name} backend does not support "
+                "Forge assemblies in its qualified capability set"
             )
-        document, dependencies = _compile_assembly_with_dependencies(
-            result, name
-        )
+        document, dependencies = backend_adapter.compile_assembly(result, name)
     else:
         raise TypeError(f"{name}() must produce CAD geometry or an assembly")
 
@@ -1099,6 +1088,6 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
             dependencies,
             context=name,
             pv_parameters=built.pv_parameters,
-            backend_name=("SolidCraft" if backend == "solidcraft" else "Mitcad"),
+            backend_name=backend_adapter.display_name,
         )
     return document
