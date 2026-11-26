@@ -179,6 +179,7 @@
       "id": "circle-negative-extrude",
       "implementations": [
         "scpf",
+        "scpf-mitcad",
         "cadquery",
         "build123d",
         "pythonscad",
@@ -638,6 +639,7 @@
       "id": "simple-box",
       "implementations": [
         "scpf",
+        "scpf-mitcad",
         "cadquery",
         "build123d",
         "pythonscad",
@@ -694,7 +696,8 @@
     {
       "id": "topology-face-boundary-box",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -782,5 +785,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "d490b6fa73818839724aebbf05b6d7e88e9e1f18"
+  "source_sha": "175aaa05113401566dbf4ef3e93fc660cde2bc02"
 }
