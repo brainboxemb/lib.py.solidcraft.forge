@@ -1,0 +1,181 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "ed292d8c5fe36f0bc1e2c6098a43497008b7abb0b24b971854be54c1215f71ab",
+  "variables": {
+    "$screen": 2,
+    "$front_plate": 5,
+    "$config_row_a61759020289": 7,
+    "$config_row_a53dffffb7e5": 8,
+    "$config_row_d677190e0a99": 9
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "Screen",
+        "grounded": true
+      },
+      "bindings": {
+        "$screen": 2
+      }
+    },
+    {
+      "index": 1,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 80,
+        "width": 10,
+        "height": 50,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "Screen"
+      }
+    },
+    {
+      "index": 2,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 3,
+      "command": "component.create",
+      "resolved_params": {
+        "name": "FrontPlate",
+        "grounded": false
+      },
+      "bindings": {
+        "$front_plate": 5
+      }
+    },
+    {
+      "index": 4,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 80,
+        "width": 2,
+        "height": 50,
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "body_name": "FrontPlate"
+      }
+    },
+    {
+      "index": 5,
+      "command": "component.activate",
+      "resolved_params": {
+        "component": "root"
+      }
+    },
+    {
+      "index": 6,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "plate_y",
+        "expression": "8 mm"
+      }
+    },
+    {
+      "index": 7,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "plate_z",
+        "expression": "0 mm"
+      }
+    },
+    {
+      "index": 8,
+      "command": "occurrence.move",
+      "resolved_params": {
+        "occurrence": 5,
+        "translate": [
+          0,
+          "plate_y",
+          "plate_z"
+        ]
+      }
+    },
+    {
+      "index": 9,
+      "command": "config.configure",
+      "resolved_params": {
+        "params": [
+          "plate_y",
+          "plate_z"
+        ]
+      }
+    },
+    {
+      "index": 10,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Default",
+        "rename": "Front"
+      },
+      "bindings": {
+        "$config_row_a61759020289": 7
+      }
+    },
+    {
+      "index": 11,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    },
+    {
+      "index": 12,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Below",
+        "values": {
+          "param:plate_y": "0 mm",
+          "param:plate_z": "-55 mm"
+        }
+      },
+      "bindings": {
+        "$config_row_a53dffffb7e5": 8
+      }
+    },
+    {
+      "index": 13,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Service",
+        "values": {
+          "param:plate_y": "25 mm",
+          "param:plate_z": "0 mm"
+        }
+      },
+      "bindings": {
+        "$config_row_d677190e0a99": 9
+      }
+    },
+    {
+      "index": 14,
+      "command": "config.activate",
+      "resolved_params": {
+        "row": 7
+      }
+    },
+    {
+      "index": 15,
+      "command": "config.table",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 16
+}

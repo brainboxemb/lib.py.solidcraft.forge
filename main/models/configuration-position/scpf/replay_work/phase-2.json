@@ -1,0 +1,61 @@
+{
+  "commands": [
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": 5,
+        "translate": [
+          0,
+          "plate_y",
+          "plate_z"
+        ]
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "plate_y",
+          "plate_z"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Front"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Below",
+        "values": {
+          "param:plate_y": "0 mm",
+          "param:plate_z": "-55 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Service",
+        "values": {
+          "param:plate_y": "25 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    }
+  ]
+}

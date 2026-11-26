@@ -1,0 +1,174 @@
+{
+  "commands": [
+    {
+      "bind": {
+        "$screen": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "Screen"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "Screen",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 50,
+        "length": 80,
+        "width": 10
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$front_plate": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": false,
+        "name": "FrontPlate"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "FrontPlate",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 50,
+        "length": 80,
+        "width": 2
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "8 mm",
+        "name": "plate_y"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "0 mm",
+        "name": "plate_z"
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "occurrence": "$front_plate",
+        "translate": [
+          0,
+          "plate_y",
+          "plate_z"
+        ]
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "plate_y",
+          "plate_z"
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$config_row_a61759020289": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Front"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Front"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Front",
+        "values": {
+          "param:plate_y": "8 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_a53dffffb7e5": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Below"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Below",
+        "values": {
+          "param:plate_y": "0 mm",
+          "param:plate_z": "-55 mm"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_d677190e0a99": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Service"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Service",
+        "values": {
+          "param:plate_y": "25 mm",
+          "param:plate_z": "0 mm"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "$config_row_a61759020289"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

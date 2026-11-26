@@ -13,6 +13,9 @@
     "circular-feature-pattern",
     "components",
     "cone-boolean",
+    "configuration-installed-state",
+    "configuration-position",
+    "configuration-table",
     "corner-anchor",
     "eight-corner-brackets",
     "eight-flightcase-corners",
@@ -225,6 +228,39 @@
       ],
       "primary": "scpf",
       "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-installed-state",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-position",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-table",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
         "verification"
       ]
     },
@@ -742,6 +778,9 @@
     "circular-feature-pattern",
     "components",
     "cone-boolean",
+    "configuration-installed-state",
+    "configuration-position",
+    "configuration-table",
     "corner-anchor",
     "eight-corner-brackets",
     "eight-flightcase-corners",
@@ -782,5 +821,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "f9bdd7ad01b95e8eea4552d0b751d5da5c9c71dd"
+  "source_sha": "186ce9663e35222f487fa267353931c8daa3c89e"
 }

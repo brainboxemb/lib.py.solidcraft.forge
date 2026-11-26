@@ -1,0 +1,666 @@
+[
+  {
+    "display_value": 80.0,
+    "name": "width",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "display_value": 40.0,
+    "name": "depth",
+    "unit": "mm",
+    "value": 40.0
+  },
+  {
+    "display_value": 5.0,
+    "name": "thickness",
+    "unit": "mm",
+    "value": 5.0
+  },
+  {
+    "display_value": 5.0,
+    "name": "diameter",
+    "unit": "mm",
+    "value": 5.0
+  },
+  {
+    "bodies": [
+      "ConfigurationPlate"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "ConfigurationPlate"
+    ],
+    "feature": 1,
+    "ms": 3.03902,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "ConfigurationPlate"
+    ],
+    "changed_bodies": [
+      "ConfigurationPlate"
+    ],
+    "created_bodies": [],
+    "feature": 2,
+    "ms": 18.978094000000002,
+    "name": "Hole1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "ConfigurationPlate"
+    ],
+    "changed_bodies": [
+      "ConfigurationPlate"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 20.23303,
+    "name": "Hole2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": "Default",
+    "columns": [
+      "param:width",
+      "param:depth",
+      "param:thickness",
+      "param:diameter",
+      "suppress:Hole1",
+      "suppress:Hole2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Default",
+        "values": {
+          "param:depth": "40",
+          "param:diameter": "5",
+          "param:thickness": "5",
+          "param:width": "80",
+          "suppress:Hole1": "false",
+          "suppress:Hole2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:width",
+        "label": "param:width",
+        "target": {
+          "param": "width"
+        }
+      },
+      {
+        "key": "param:depth",
+        "label": "param:depth",
+        "target": {
+          "param": "depth"
+        }
+      },
+      {
+        "key": "param:thickness",
+        "label": "param:thickness",
+        "target": {
+          "param": "thickness"
+        }
+      },
+      {
+        "key": "param:diameter",
+        "label": "param:diameter",
+        "target": {
+          "param": "diameter"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 2
+        }
+      },
+      {
+        "key": "suppress:Hole2",
+        "label": "suppress:Hole2",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:width",
+      "param:depth",
+      "param:thickness",
+      "param:diameter",
+      "suppress:Hole1",
+      "suppress:Hole2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Small",
+        "values": {
+          "param:depth": "40",
+          "param:diameter": "5",
+          "param:thickness": "5",
+          "param:width": "80",
+          "suppress:Hole1": "false",
+          "suppress:Hole2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:width",
+        "label": "param:width",
+        "target": {
+          "param": "width"
+        }
+      },
+      {
+        "key": "param:depth",
+        "label": "param:depth",
+        "target": {
+          "param": "depth"
+        }
+      },
+      {
+        "key": "param:thickness",
+        "label": "param:thickness",
+        "target": {
+          "param": "thickness"
+        }
+      },
+      {
+        "key": "param:diameter",
+        "label": "param:diameter",
+        "target": {
+          "param": "diameter"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 2
+        }
+      },
+      {
+        "key": "suppress:Hole2",
+        "label": "suppress:Hole2",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:width",
+      "param:depth",
+      "param:thickness",
+      "param:diameter",
+      "suppress:Hole1",
+      "suppress:Hole2"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Small",
+        "values": {
+          "param:depth": "30 mm",
+          "param:diameter": "4 mm",
+          "param:thickness": "4 mm",
+          "param:width": "60 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:width",
+        "label": "param:width",
+        "target": {
+          "param": "width"
+        }
+      },
+      {
+        "key": "param:depth",
+        "label": "param:depth",
+        "target": {
+          "param": "depth"
+        }
+      },
+      {
+        "key": "param:thickness",
+        "label": "param:thickness",
+        "target": {
+          "param": "thickness"
+        }
+      },
+      {
+        "key": "param:diameter",
+        "label": "param:diameter",
+        "target": {
+          "param": "diameter"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 2
+        }
+      },
+      {
+        "key": "suppress:Hole2",
+        "label": "suppress:Hole2",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:width",
+      "param:depth",
+      "param:thickness",
+      "param:diameter",
+      "suppress:Hole1",
+      "suppress:Hole2"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Small",
+        "values": {
+          "param:depth": "30 mm",
+          "param:diameter": "4 mm",
+          "param:thickness": "4 mm",
+          "param:width": "60 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Medium",
+        "values": {
+          "param:depth": "40 mm",
+          "param:diameter": "5 mm",
+          "param:thickness": "5 mm",
+          "param:width": "80 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:width",
+        "label": "param:width",
+        "target": {
+          "param": "width"
+        }
+      },
+      {
+        "key": "param:depth",
+        "label": "param:depth",
+        "target": {
+          "param": "depth"
+        }
+      },
+      {
+        "key": "param:thickness",
+        "label": "param:thickness",
+        "target": {
+          "param": "thickness"
+        }
+      },
+      {
+        "key": "param:diameter",
+        "label": "param:diameter",
+        "target": {
+          "param": "diameter"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 2
+        }
+      },
+      {
+        "key": "suppress:Hole2",
+        "label": "suppress:Hole2",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:width",
+      "param:depth",
+      "param:thickness",
+      "param:diameter",
+      "suppress:Hole1",
+      "suppress:Hole2"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Small",
+        "values": {
+          "param:depth": "30 mm",
+          "param:diameter": "4 mm",
+          "param:thickness": "4 mm",
+          "param:width": "60 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Medium",
+        "values": {
+          "param:depth": "40 mm",
+          "param:diameter": "5 mm",
+          "param:thickness": "5 mm",
+          "param:width": "80 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Large",
+        "values": {
+          "param:depth": "50 mm",
+          "param:diameter": "6 mm",
+          "param:thickness": "6 mm",
+          "param:width": "100 mm",
+          "suppress:Hole1": "false",
+          "suppress:Hole2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:width",
+        "label": "param:width",
+        "target": {
+          "param": "width"
+        }
+      },
+      {
+        "key": "param:depth",
+        "label": "param:depth",
+        "target": {
+          "param": "depth"
+        }
+      },
+      {
+        "key": "param:thickness",
+        "label": "param:thickness",
+        "target": {
+          "param": "thickness"
+        }
+      },
+      {
+        "key": "param:diameter",
+        "label": "param:diameter",
+        "target": {
+          "param": "diameter"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 2
+        }
+      },
+      {
+        "key": "suppress:Hole2",
+        "label": "suppress:Hole2",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  },
+  {
+    "active": "Medium",
+    "columns": [
+      "param:width",
+      "param:depth",
+      "param:thickness",
+      "param:diameter",
+      "suppress:Hole1",
+      "suppress:Hole2"
+    ],
+    "errors": [],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Small",
+        "values": {
+          "param:depth": "30 mm",
+          "param:diameter": "4 mm",
+          "param:thickness": "4 mm",
+          "param:width": "60 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Medium",
+        "values": {
+          "param:depth": "40 mm",
+          "param:diameter": "5 mm",
+          "param:thickness": "5 mm",
+          "param:width": "80 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Large",
+        "values": {
+          "param:depth": "50 mm",
+          "param:diameter": "6 mm",
+          "param:thickness": "6 mm",
+          "param:width": "100 mm",
+          "suppress:Hole1": "false",
+          "suppress:Hole2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "styles": [],
+    "targets": [
+      {
+        "key": "param:width",
+        "label": "param:width",
+        "target": {
+          "param": "width"
+        }
+      },
+      {
+        "key": "param:depth",
+        "label": "param:depth",
+        "target": {
+          "param": "depth"
+        }
+      },
+      {
+        "key": "param:thickness",
+        "label": "param:thickness",
+        "target": {
+          "param": "thickness"
+        }
+      },
+      {
+        "key": "param:diameter",
+        "label": "param:diameter",
+        "target": {
+          "param": "diameter"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 2
+        }
+      },
+      {
+        "key": "suppress:Hole2",
+        "label": "suppress:Hole2",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ],
+    "trace": []
+  },
+  {
+    "active": "Medium",
+    "columns": [
+      "param:width",
+      "param:depth",
+      "param:thickness",
+      "param:diameter",
+      "suppress:Hole1",
+      "suppress:Hole2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Small",
+        "values": {
+          "param:depth": "30 mm",
+          "param:diameter": "4 mm",
+          "param:thickness": "4 mm",
+          "param:width": "60 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Medium",
+        "values": {
+          "param:depth": "40 mm",
+          "param:diameter": "5 mm",
+          "param:thickness": "5 mm",
+          "param:width": "80 mm",
+          "suppress:Hole1": "true",
+          "suppress:Hole2": "true"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Large",
+        "values": {
+          "param:depth": "50 mm",
+          "param:diameter": "6 mm",
+          "param:thickness": "6 mm",
+          "param:width": "100 mm",
+          "suppress:Hole1": "false",
+          "suppress:Hole2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:width",
+        "label": "param:width",
+        "target": {
+          "param": "width"
+        }
+      },
+      {
+        "key": "param:depth",
+        "label": "param:depth",
+        "target": {
+          "param": "depth"
+        }
+      },
+      {
+        "key": "param:thickness",
+        "label": "param:thickness",
+        "target": {
+          "param": "thickness"
+        }
+      },
+      {
+        "key": "param:diameter",
+        "label": "param:diameter",
+        "target": {
+          "param": "diameter"
+        }
+      },
+      {
+        "key": "suppress:Hole1",
+        "label": "suppress:Hole1",
+        "target": {
+          "suppress": 2
+        }
+      },
+      {
+        "key": "suppress:Hole2",
+        "label": "suppress:Hole2",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  }
+]
