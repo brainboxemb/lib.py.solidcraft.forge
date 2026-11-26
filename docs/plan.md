@@ -148,31 +148,42 @@ minor-release capability.
 #315 is not a v0.22.1 prerequisite because that patch only publishes the
 already-stable #306 qualification.
 
-### Experimental lane: #320 annular RegionIR on Mitcad
+### Experimental lane: #343 recursive primitive CSG IR
 
-#297 is complete. Current accepted normal `dev` was synchronized into
-permanent `exp` through the reviewed conflict-recovery path:
+#320 is complete on permanent `exp` through PR #342.
 
-- direct permanent `dev -> exp` PR #337 remained genuinely conflicted;
-- review-only resolution PR #338 qualified the exact combined tree;
-- permanent merge commit
-  `3a467642cabbb1b2920a6d30fce8e507131ef3a9` has parents exactly
-  `[3bb91eb5e05f3cc788c85d90b59b3e5a3d9621ae, abeb6d10479802e4866783b9d67431c53786d0dd]`
-  = `[exp, dev]`;
-- permanent exp CI run 45854046610 is green;
-- durable `build/exp/build-plan.json` records that exact source with
-  `full=true`, `library=true` and all 60 active owners.
+Accepted experimental evidence:
+- permanent exp head:
+  `95f70ef93eaaf86fece51b8e560aa895281ac7fe`;
+- permanent exp CI run 45856878722 is green, including durable publication;
+- Pages run 45857511697 is green;
+- the existing `multi-profile-extrude` physical owner now has both `scpf`
+  and `scpf-mitcad` PASS from the same public source;
+- the two-concentric-circle annulus normalizes to one `SketchIR` with two
+  `CircleProfileIR` nodes plus
+  `RegionIR(outer=0, holes=(1,))` and `ExtrudeIR`;
+- SolidCraft retains its accepted one-Sketch / two-circle / one-extrude native
+  contract;
+- Mitcad resolves the backend-derived interior point to its own native region
+  identity and exports a watertight hollow tube matching the shared geometry
+  contract;
+- native coordinate picks and Mitcad region ids remain lowering transport,
+  never Forge IR intent.
 
-Continue the isolated compiler/backend experiment with #320. Qualify the
-already-public two-concentric-circle / annular standalone
-`Sketch.extrude(..., exact_regions=True)` semantics through the existing
-engine-neutral `SketchIR` / `RegionIR` / `ExtrudeIR` boundary for
-SolidCraft and Mitcad.
+Continue the isolated compiler/backend experiment with #343. Replace the
+current special-case `BooleanSubtractIR(BoxIR, CylinderIR)` boundary with
+recursive typed primitive CSG intent and add the bounded `SphereIR` needed by
+the existing `primitive-csg` owner.
 
-Keep the public SCPF authoring unchanged. `RegionIR` owns semantic profile
-membership; backend-native coordinate picks or Mitcad region ids are lowering
-details and must not become IR intent. Unsupported arbitrary multi-profile
-forms remain fail-closed.
+The unchanged owner source already exercises Sphere + translated Box join,
+Cylinder cut and final Box intersection. Pinned Mitcad 0.70.0 natively supports
+Sphere primitives and new-body/join/cut/intersect primitive operations, so
+#343 must lower that semantic CSG tree natively rather than importing BRep,
+approximating geometry or adding a second raw-Shape interpreter.
+
+The existing #246 Box-Cylinder subtraction must migrate through the same generic
+boolean IR so the experiment reduces special cases instead of adding another
+parallel representation. Keep unsupported primitive/boolean forms fail-closed.
 
 ## Later
 
