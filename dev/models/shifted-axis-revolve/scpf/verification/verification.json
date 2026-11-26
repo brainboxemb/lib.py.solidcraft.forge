@@ -1,0 +1,278 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "fa60eb01013752e7844f9ab3b0dd4c95a415e9aeb8358b2375c90f12a22243da",
+          "size": 2660
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "parameters": {
+          "actual": {
+            "axis_x": 8.0,
+            "axis_z": 3.0
+          },
+          "expected": {
+            "axis_x": 8.0,
+            "axis_z": 3.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/suppressed/model.sc",
+          "sha256": "6828faf849ce744dca458c4558c36d73f40b181965669fe2794f77806d3d835c",
+          "size": 5474
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/suppressed/measurements.json",
+          "sha256": "f9eb65c020864d95727c38eaf0738196c73a2dcb905fa6da3aef35ea57741452",
+          "size": 2573
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 288.96369227718606,
+                "baseline": 18911.036307722818,
+                "mutated": 19200.000000000004
+              },
+              "expected": {
+                "absolute_delta_gt": 10.0
+              },
+              "label": "SolidCraft saved design change whole-revolve-cut",
+              "pass": true
+            },
+            "id": "whole-revolve-cut",
+            "path": [
+              "bodies",
+              0,
+              "volume_mm3"
+            ]
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "axis_x": 8.0,
+            "axis_z": 3.0
+          },
+          "expected": {
+            "axis_x": 8.0,
+            "axis_z": 3.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_suppressed",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/table/results.json",
+          "sha256": "bb157b080081f9d6453c494968dc89494e58fd6495d83d93fa012a35831ec52d",
+          "size": 615
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check rows",
+              "pass": true
+            },
+            "id": "rows",
+            "path": [
+              0,
+              "rows"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 1,
+              "expected": 1,
+              "label": "SolidCraft inspection check columns",
+              "pass": true
+            },
+            "id": "columns",
+            "path": [
+              0,
+              "columns"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Cut",
+              "expected": "Cut",
+              "label": "SolidCraft inspection check active",
+              "pass": true
+            },
+            "id": "active",
+            "path": [
+              0,
+              "active"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check matches",
+              "pass": true
+            },
+            "id": "matches",
+            "path": [
+              0,
+              "matches"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_table",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/revolve-axis/results.json",
+          "sha256": "6bb1eb7f57015b5bc7045189e0961129fc050e5dee5e519a85febf26aaa0dbaf",
+          "size": 798
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": "axis_x",
+              "expected": "axis_x",
+              "label": "SolidCraft inspection check axis-x",
+              "pass": true
+            },
+            "id": "axis-x",
+            "path": [
+              0,
+              "definition",
+              "axis",
+              "origin",
+              0
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "axis_z",
+              "expected": "axis_z",
+              "label": "SolidCraft inspection check axis-z",
+              "pass": true
+            },
+            "id": "axis-z",
+            "path": [
+              0,
+              "definition",
+              "axis",
+              "origin",
+              2
+            ]
+          },
+          {
+            "comparison": {
+              "actual": [
+                0.0,
+                1.0,
+                0.0
+              ],
+              "expected": [
+                0.0,
+                1.0,
+                0.0
+              ],
+              "label": "SolidCraft inspection check axis-dir",
+              "pass": true
+            },
+            "id": "axis-dir",
+            "path": [
+              0,
+              "definition",
+              "axis",
+              "dir"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "line",
+              "expected": "line",
+              "label": "SolidCraft inspection check axis-type",
+              "pass": true
+            },
+            "id": "axis-type",
+            "path": [
+              0,
+              "definition",
+              "axis",
+              "type"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "cut",
+              "expected": "cut",
+              "label": "SolidCraft inspection check operation",
+              "pass": true
+            },
+            "id": "operation",
+            "path": [
+              0,
+              "definition",
+              "operation"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_revolve-axis",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/shifted-axis-revolve/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "shifted-axis-revolve"
+}

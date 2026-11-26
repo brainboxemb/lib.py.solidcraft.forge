@@ -1,0 +1,37 @@
+[
+  {
+    "active": "Cut",
+    "columns": [
+      "suppress:Revolve1"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 4,
+        "name": "Cut",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      },
+      {
+        "id": 5,
+        "name": "Suppressed",
+        "values": {
+          "suppress:Revolve1": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Revolve1",
+        "label": "suppress:Revolve1",
+        "target": {
+          "suppress": 3
+        }
+      }
+    ]
+  }
+]

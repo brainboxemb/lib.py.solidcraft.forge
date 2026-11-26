@@ -1,0 +1,201 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "3",
+        "name": "axis_z",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "8",
+        "name": "axis_x",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "4.5",
+        "name": "relief_d",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "3.7",
+        "name": "core_d",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "ShiftedAxisRevolve",
+        "center": [
+          0,
+          0,
+          0
+        ],
+        "height": 20,
+        "length": 40,
+        "width": 24
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "name": "Stepped pass through",
+        "offset": "axis_z",
+        "plane": "XY"
+      }
+    },
+    {
+      "command": "sketch.line",
+      "params": {
+        "closed": true,
+        "ids": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f",
+          "g",
+          "h"
+        ],
+        "points": [
+          [
+            "axis_x",
+            -12
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            -12
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            -9
+          ],
+          [
+            "axis_x + (core_d / 2)",
+            -9
+          ],
+          [
+            "axis_x + (core_d / 2)",
+            9
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            9
+          ],
+          [
+            "axis_x + (relief_d / 2)",
+            12
+          ],
+          [
+            "axis_x",
+            12
+          ]
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "bind": {
+        "$config_name_1": "name"
+      },
+      "command": "solid.revolve",
+      "params": {
+        "angle": 360,
+        "axis": {
+          "dir": [
+            0.0,
+            1.0,
+            0.0
+          ],
+          "origin": [
+            "axis_x",
+            0,
+            "axis_z"
+          ]
+        },
+        "operation": "cut",
+        "sketch": "Stepped pass through",
+        "targets": [
+          "ShiftedAxisRevolve"
+        ]
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "$config_name_1"
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$config_row_1f45f02561f4": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Cut"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Cut"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Cut",
+        "values": {
+          "suppress:$config_name_1": "false"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_435c78310f60": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Suppressed"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Suppressed",
+        "values": {
+          "suppress:$config_name_1": "true"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "$config_row_1f45f02561f4"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

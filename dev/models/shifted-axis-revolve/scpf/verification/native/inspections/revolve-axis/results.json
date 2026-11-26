@@ -1,0 +1,46 @@
+[
+  {
+    "definition": {
+      "angle": "360",
+      "axis": {
+        "dir": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "origin": [
+          "axis_x",
+          0.0,
+          "axis_z"
+        ],
+        "type": "line"
+      },
+      "convention": "sketch_normal",
+      "operation": "cut",
+      "profiles": {
+        "type": "all"
+      },
+      "sketch": 2,
+      "targets": [
+        "ShiftedAxisRevolve"
+      ]
+    },
+    "error": null,
+    "id": 3,
+    "inputs": [
+      {
+        "expression": "360",
+        "label": "Angle",
+        "param": "d5",
+        "unit": "deg"
+      }
+    ],
+    "name": "Revolve1",
+    "omitted": [],
+    "rolled_back": false,
+    "suppressed": false,
+    "type": "revolve",
+    "type_name": "RevolveFeature",
+    "warning": null
+  }
+]

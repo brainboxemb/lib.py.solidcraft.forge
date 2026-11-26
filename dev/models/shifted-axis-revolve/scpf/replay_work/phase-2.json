@@ -1,0 +1,37 @@
+{
+  "commands": [
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "Revolve1"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Cut"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Cut",
+        "values": {
+          "suppress:Revolve1": "false"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Suppressed",
+        "values": {
+          "suppress:Revolve1": "true"
+        }
+      }
+    }
+  ]
+}

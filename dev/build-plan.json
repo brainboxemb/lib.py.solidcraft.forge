@@ -49,6 +49,7 @@
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
+    "shifted-axis-revolve",
     "simple-box",
     "sketch-pattern-mirror",
     "slot-family",
@@ -683,6 +684,17 @@
       ]
     },
     {
+      "id": "shifted-axis-revolve",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
+        "verification"
+      ]
+    },
+    {
       "id": "simple-box",
       "implementations": [
         "scpf",
@@ -826,6 +838,7 @@
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
+    "shifted-axis-revolve",
     "simple-box",
     "sketch-pattern-mirror",
     "slot-family",
@@ -834,5 +847,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "9175f3502e5f383fb9be54195f88620ae34cb446"
+  "source_sha": "21f48ae184dd2bbb7801495df5372fdd3218bbf2"
 }
