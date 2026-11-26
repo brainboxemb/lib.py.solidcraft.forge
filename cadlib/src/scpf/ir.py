@@ -90,7 +90,42 @@ class CircleProfileIR:
     source_kind: str = "circle"
 
 
-ProfileIR = CircleProfileIR
+@dataclass(frozen=True)
+class PolygonProfileIR:
+    """One closed straight-segment profile in Sketch-local coordinates."""
+
+    points: tuple[tuple[Any, Any], ...]
+    segment_ids: tuple[str, ...] | None = None
+    source_kind: str = "polygon"
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.points, tuple)
+            or len(self.points) < 3
+            or any(
+                not isinstance(point, tuple) or len(point) != 2
+                for point in self.points
+            )
+        ):
+            raise ValueError(
+                "PolygonProfileIR points must be at least three 2D tuples"
+            )
+        if self.segment_ids is not None:
+            if (
+                not isinstance(self.segment_ids, tuple)
+                or len(self.segment_ids) != len(self.points)
+                or any(
+                    not isinstance(value, str) or not value
+                    for value in self.segment_ids
+                )
+                or len(set(self.segment_ids)) != len(self.segment_ids)
+            ):
+                raise ValueError(
+                    "PolygonProfileIR segment_ids must uniquely name every edge"
+                )
+
+
+ProfileIR = CircleProfileIR | PolygonProfileIR
 
 
 @dataclass(frozen=True)
@@ -180,6 +215,83 @@ def _circle_region_interior_point(
     return ((outer_diameter + inner_diameter) / 4.0, 0.0)
 
 
+def _polygon_region_interior_point(
+    sketch: SketchIR,
+    region: RegionIR,
+) -> tuple[float, float]:
+    """Return a deterministic interior point for one qualified convex polygon."""
+
+    if (
+        len(sketch.profiles) != 1
+        or region.outer != 0
+        or region.holes
+        or not isinstance(sketch.profiles[0], PolygonProfileIR)
+    ):
+        raise ValueError(
+            "qualified polygon region requires one outer PolygonProfileIR"
+        )
+
+    profile = sketch.profiles[0]
+    if parameters_in(profile.points):
+        raise ValueError(
+            "qualified polygon region currently requires fixed coordinates"
+        )
+
+    points = tuple(
+        tuple(float(pv(value)) for value in point)
+        for point in profile.points
+    )
+    if any(not isfinite(value) for point in points for value in point):
+        raise ValueError("qualified polygon region coordinates must be finite")
+    if len(set(points)) != len(points):
+        raise ValueError("qualified polygon region has duplicate vertices")
+
+    crosses = []
+    count = len(points)
+    for index in range(count):
+        a = points[index]
+        b = points[(index + 1) % count]
+        c = points[(index + 2) % count]
+        ab = (b[0] - a[0], b[1] - a[1])
+        bc = (c[0] - b[0], c[1] - b[1])
+        if hypot(*ab) <= 1e-12:
+            raise ValueError("qualified polygon region has a zero-length edge")
+        cross = ab[0] * bc[1] - ab[1] * bc[0]
+        if abs(cross) <= 1e-12:
+            raise ValueError(
+                "qualified polygon region currently requires strict convexity"
+            )
+        crosses.append(cross)
+
+    if not (
+        all(value > 0 for value in crosses)
+        or all(value < 0 for value in crosses)
+    ):
+        raise ValueError(
+            "qualified polygon region currently requires a convex polygon"
+        )
+
+    # The arithmetic vertex centroid is strictly inside a convex polygon.
+    return (
+        sum(point[0] for point in points) / count,
+        sum(point[1] for point in points) / count,
+    )
+
+
+def _region_interior_point(
+    sketch: SketchIR,
+    region: RegionIR,
+) -> tuple[float, float]:
+    """Derive backend transport from semantic profile/region geometry."""
+
+    if (
+        0 <= region.outer < len(sketch.profiles)
+        and isinstance(sketch.profiles[region.outer], PolygonProfileIR)
+    ):
+        return _polygon_region_interior_point(sketch, region)
+    return _circle_region_interior_point(sketch, region)
+
+
 @dataclass(frozen=True)
 class ExtrudeIR:
     """Distance extrusion over semantic Sketch regions."""
@@ -200,9 +312,9 @@ class FaceBoundaryIR:
 
 @dataclass(frozen=True)
 class ChamferIR:
-    """Equal-distance chamfer over semantic edge-selection intent."""
+    """Equal-distance chamfer over one qualified typed body result."""
 
-    base: PlacementIR
+    base: "PlacementIR | ExtrudeIR"
     distance: Any
     edges: FaceBoundaryIR
     source_kind: str = "chamfer"
@@ -377,7 +489,7 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
 
 
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
-    """Normalize the qualified standalone circle Sketch + Extrude slices."""
+    """Normalize the qualified standalone Sketch + Extrude slices."""
     if shape.kind != "sketch_base_extrusion":
         return None
 
@@ -401,6 +513,45 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
         return None
     if operations:
         return None
+    if direction not in ("positive", "negative", "symmetric"):
+        return None
+
+    # Bounded straight-segment feature-composition slice (#351).
+    if len(profiles) == 1 and profiles[0][0].kind == "polygon":
+        if direction != "symmetric":
+            return None
+        if profile_picks is not None or exact_regions:
+            return None
+
+        profile, profile_anchor, offset = profiles[0]
+        if profile_anchor is not None or tuple(offset) != (0, 0):
+            return None
+        points, profile_plane, ids = profile.data
+        if profile_plane != plane or parameters_in(points):
+            return None
+
+        polygon = PolygonProfileIR(
+            points=tuple(tuple(point) for point in points),
+            segment_ids=tuple(ids) if ids is not None else None,
+        )
+        sketch = SketchIR(
+            name=sketch_name,
+            plane=plane,
+            profiles=(polygon,),
+        )
+        region = RegionIR(outer=0)
+        try:
+            _polygon_region_interior_point(sketch, region)
+        except ValueError:
+            return None
+        return ExtrudeIR(
+            sketch=sketch,
+            regions=(region,),
+            distance=distance,
+            direction=direction,
+        )
+
+    # Circle and annular slices qualified by #282/#320.
     if direction not in ("positive", "negative"):
         return None
     if len(profiles) not in (1, 2):
@@ -476,27 +627,39 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
         return None
 
     # #271 extends stable SolidCraft authoring with two-distance chamfer.
-    # That surface is not yet a qualified portable IR capability: keep it
-    # behind LegacyShapeIR so SolidCraft retains the native product behavior
-    # while Mitcad fails closed instead of guessing asymmetric semantics.
+    # That surface is not yet a qualified portable IR capability.
     if distance2 is not None or flip:
         return None
-
-    base_ir = _portable_placement(base)
-    if (
-        base_ir is None
-        or not isinstance(base_ir.primitive, BoxIR)
-        or not isinstance(edges, _FaceBoundarySelection)
-        or len(edges.faces) != 1
-    ):
+    if not isinstance(edges, _FaceBoundarySelection) or not edges.faces:
         return None
+
+    semantic_faces = tuple(Faces(face).value for face in edges.faces)
+
+    placement = _portable_placement(base)
+    if placement is not None:
+        if (
+            not isinstance(placement.primitive, BoxIR)
+            or len(semantic_faces) != 1
+        ):
+            return None
+        base_ir: PlacementIR | ExtrudeIR = placement
+    else:
+        extrude = _portable_extrude(base)
+        if (
+            extrude is None
+            or extrude.direction != "symmetric"
+            or extrude.sketch.plane != "XZ"
+            or len(extrude.sketch.profiles) != 1
+            or not isinstance(extrude.sketch.profiles[0], PolygonProfileIR)
+            or semantic_faces != ("front", "back")
+        ):
+            return None
+        base_ir = extrude
 
     return ChamferIR(
         base=base_ir,
         distance=distance,
-        edges=FaceBoundaryIR(
-            tuple(Faces(face).value for face in edges.faces)
-        ),
+        edges=FaceBoundaryIR(semantic_faces),
     )
 
 
@@ -565,11 +728,14 @@ __all__ = [
     "ModelIR",
     "ParameterIR",
     "PlacementIR",
+    "PolygonProfileIR",
     "PrimitiveIR",
     "ProfileIR",
     "RegionIR",
     "SketchIR",
     "SphereIR",
+    "_polygon_region_interior_point",
+    "_region_interior_point",
     "is_portable",
     "normalize_shape",
 ]
