@@ -69,7 +69,7 @@
       "expression": "thickness + 20 mm",
       "unit": "mm",
       "value": 32.0,
-      "comment": "CylinderSubtractCut height",
+      "comment": "CylinderSubtractCut1 height",
       "owner": "F2"
     }
   ],
@@ -106,7 +106,7 @@
     },
     {
       "uid": "F2",
-      "name": "CylinderSubtractCut",
+      "name": "CylinderSubtractCut1",
       "component": "C1",
       "type": "cylinder",
       "plane": "xy",

@@ -520,6 +520,7 @@
       "id": "primitive-csg",
       "implementations": [
         "scpf",
+        "scpf-mitcad",
         "cadquery",
         "build123d",
         "pythonscad",
@@ -888,5 +889,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "95f70ef93eaaf86fece51b8e560aa895281ac7fe"
+  "source_sha": "6826ea2c6ca0dfefb054dd4791d4e0303489f413"
 }

@@ -1,0 +1,75 @@
+{
+  "backend": "mitcad",
+  "commands": [
+    {
+      "cmd": "add_feature",
+      "def": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 40,
+        "operation": "new_body",
+        "participants": [],
+        "plane": "xy",
+        "type": "sphere"
+      },
+      "name": "PrimitiveCsgBase"
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "corner": [
+          3.0,
+          -15.0
+        ],
+        "height": 20,
+        "length": 30,
+        "operation": "join",
+        "participants": [],
+        "plane": "xy",
+        "symmetric": false,
+        "type": "box",
+        "width": 30
+      },
+      "name": "PrimitiveCsgJoin1"
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 8,
+        "height": 60,
+        "operation": "cut",
+        "participants": [],
+        "plane": "yz",
+        "symmetric": true,
+        "type": "cylinder"
+      },
+      "name": "PrimitiveCsgCut2"
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "corner": [
+          -25.0,
+          -25.0
+        ],
+        "height": 30,
+        "length": 50,
+        "operation": "intersect",
+        "participants": [],
+        "plane": "xy",
+        "symmetric": false,
+        "type": "box",
+        "width": 50
+      },
+      "name": "PrimitiveCsgIntersect3"
+    }
+  ],
+  "format": "scpf-mitcad",
+  "version": 1
+}
