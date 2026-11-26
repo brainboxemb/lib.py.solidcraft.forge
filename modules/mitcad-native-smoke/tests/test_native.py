@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import stat
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -17,10 +18,15 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "cadlib/src"))
 sys.path.insert(0, str(ROOT / "modules/mitcad-reference/src"))
+sys.path.insert(0, str(ROOT / "modules/verification/src"))
 
 from cad_library_mitcad_reference import capture_runtime, git_blob_sha
 from scpf.backends.mitcad_headless import run_document
 from scpf.runner import run_script
+from cad_verification.geometry import (
+    load_geometry_contract,
+    run_mesh_geometry_verification,
+)
 
 
 VERSION = "0.70.0"
@@ -198,6 +204,20 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            for model_id in ("simple-box", "circle-negative-extrude"):
+                source_stl = root / "out" / f"{model_id}.stl"
+                retained_stl = evidence / f"{model_id}.stl"
+                shutil.copy2(source_stl, retained_stl)
+                report = run_mesh_geometry_verification(
+                    retained_stl,
+                    evidence / "verification" / model_id,
+                    load_geometry_contract(
+                        ROOT / "models" / model_id / "verification/geometry.json"
+                    ),
+                    verification_id=f"mitcad-{model_id}-geometry",
+                )
+                self.assertEqual(report["status"], "pass", report)
+
             topology = run_document(
                 run_script(TOPOLOGY_BOX, backend="mitcad"),
                 save=root / "out/topology-face-boundary-box.mitcad",
@@ -248,6 +268,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"simple_box_bbox={box_body['bbox']}",
                         f"negative_circle_volume={circle_body['volume']}",
                         f"negative_circle_bbox={circle_body['bbox']}",
+                        "simple_box_generic_verification=pass",
+                        "negative_circle_generic_verification=pass",
                         f"topology_volume={topology_body['volume']}",
                         f"topology_bbox={topology_body['bbox']}",
                         f"topology_bindings={topology['bindings']}",

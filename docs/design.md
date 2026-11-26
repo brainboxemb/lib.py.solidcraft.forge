@@ -427,3 +427,70 @@ Pages and `gh-pages` are not release evidence.
 ## Permanent dispatch source identity
 
 Permanent `workflow_dispatch` qualification explicitly checks out `github.ref_name`, resolves that HEAD once, uses it as `CAD_SOURCE_SHA` for selection, and publishes against the same SHA. This avoids stale event-SHA races immediately after policy merges while keeping publisher freshness validation fail-closed.
+
+
+## Experimental native backend boundary (#192)
+
+The multi-backend feasibility spike does not introduce a universal CAD IR.
+Forge's existing `Shape` / feature-tree objects are already the semantic
+authoring intent for the qualified slice. Backend selection happens once after
+the trusted model source has been evaluated.
+
+```text
+unchanged scpf model source
+        ↓
+Forge Shape / feature intent
+        ├── SolidCraft lowering -> SolidCraft replay/headless
+        └── Mitcad lowering     -> Mitcad replay/MCP
+```
+
+The stable default remains SolidCraft. The Mitcad path is experimental and
+explicitly rejects shape kinds, assemblies and selection modes that have not
+been qualified. Forge must not silently replace unsupported native behavior
+with geometry approximations.
+
+Backend responsibilities are:
+
+1. **lowering** — convert the existing Forge semantic objects to one engine's
+   native command document while preserving symbolic parameter dependencies;
+2. **native-result binding** — bind identities returned by that engine instead
+   of predicting topology ids;
+3. **topology resolution** — translate Forge selectors such as
+   `Edges.from_faces(Faces.TOP)` into engine-native queries and references;
+4. **execution** — run only that engine's native command/replay protocol and
+   retain its native document/export artifacts;
+5. **capability refusal** — raise a backend-specific `ModelError` before
+   execution when intent is outside the qualified slice.
+
+For SolidCraft, native topology remains replay-bound `model.faces` /
+`model.edges` records. For Mitcad v0.70.0, the equivalent face-boundary path
+queries the runtime's native `faces` list by cardinal planar normal, reads the
+selected face's native names, queries the body's native edge names, and uses
+Mitcad's own `E{faceA|faceB}` adjacency identity as the chamfer input. Forge
+does not substitute XYZ edge picks.
+
+The first qualified portable slice is deliberately small:
+
+- centered/bottom-anchored Box primitive;
+- standalone Circle2D Sketch + positive/negative distance Extrude;
+- Box face-boundary Chamfer through `Edges.from_faces(...)`.
+
+The experiment keeps `run_script(..., backend="solidcraft")` as the stable
+default and permits `backend="mitcad"` only as an explicit experimental
+choice. A future production refactor should move backend lookup into one
+registry/adapter boundary with `compile_shape`, optional
+`compile_assembly`, executor metadata and declared capabilities. It should
+not spread `if backend == ...` throughout authoring objects, and it should
+not rename `scpf` until a broader consumer migration justifies that change.
+
+Mitcad command knowledge is versioned evidence under
+`docs/reference/mitcad/<version>/`. Source reference identity, runtime MCP
+reference/catalog capture and native AppImage identity are all pinned
+independently so backend changes can be reviewed against a concrete engine
+version.
+
+Portable geometry is verified with the same generic mesh contract used by
+normal Forge owners. The native smoke retains the Mitcad STL and feeds it to
+`cad_verification.geometry` with the owner-local `geometry.json`; native
+Mitcad body properties remain additional engine-specific evidence, not a
+replacement verifier.

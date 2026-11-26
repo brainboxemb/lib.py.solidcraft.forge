@@ -106,10 +106,19 @@ Current spike evidence:
 - the same direct backend now lowers the unchanged
   `circle-negative-extrude` source as a native Mitcad sketch feature plus
   negative-distance extrude, with native volume/bounds qualification;
-- `Edges.from_faces(Faces.TOP)` lowers to a Mitcad-native planar-face filter.
-  A backend-specific staged replay binds the actual body UID returned by
-  Mitcad before applying the chamfer; Forge never predicts `F<n>.b<n>`
-  topology identifiers.
+- `Edges.from_faces(Faces.TOP)` is now qualified through Mitcad-native
+  topology: staged replay binds the returned body UID, queries the one planar
+  face with the requested world-cardinal normal, queries native edge names and
+  binds the face's actual `E{faceA|faceB}` boundary into native Chamfer.
+  Forge predicts neither body nor topology identifiers and uses no XYZ edge
+  picks;
+- the retained Mitcad STL for `simple-box` and
+  `circle-negative-extrude` is fed through the same owner-local
+  `geometry.json` and `cad_verification.geometry` verifier as normal Forge
+  mesh evidence, while native Mitcad volume/bounds remain additional evidence;
+- the concrete backend proposal is recorded in `docs/design.md`: existing
+  Forge feature intent stays shared; lowering, native-result binding, topology
+  resolution, execution and explicit capability refusal are backend-owned.
 
 ### Queued: #162 / #163 verification evidence cleanup
 
