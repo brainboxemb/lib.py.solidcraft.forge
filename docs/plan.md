@@ -76,16 +76,12 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: #241 / #242 configuration-driven consumer blockers
+### Dev: #242 shifted-axis native revolve consumer blocker
 
-Prioritize the two concrete CAD #189 blockers ahead of the older verification
-cleanup backlog because they are required to consume the released v0.20
-configuration API without Python branching or private/raw SolidCraft intent.
-
-1. #241 — add public typed symbolic CAD math and qualify configuration-driven
-   derived expressions natively.
-2. #242 — add shifted/custom-axis native revolve while preserving one exact
-   suppressible Forge feature.
+CAD #189 still needs one native stepped profile cut revolved around an offset
+axis and retained as one exact suppressible Forge feature. Implement and qualify
+that public custom-axis revolve contract before returning to the older
+verification cleanup backlog.
 
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
