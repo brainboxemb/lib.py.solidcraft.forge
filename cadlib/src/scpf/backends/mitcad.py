@@ -535,6 +535,10 @@ def _parameterized_rectangle_sketch(profile: PolygonProfileIR):
 def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
     """Lower the qualified semantic RevolveIR to native Mitcad Revolve."""
     sketch = node.sketch
+    if node.operation != "new_body" or node.target is not None:
+        raise ModelError(
+            "Mitcad RevolveIR cut lowering is not qualified yet"
+        )
     if sketch.plane != "XZ":
         raise ModelError("Mitcad RevolveIR currently requires an XZ Sketch")
     if (
@@ -546,10 +550,6 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
     if not isinstance(node.axis, AxisLineIR) or node.direction is not None:
         raise ModelError(
             "Mitcad RevolveIR requires one non-symmetric AxisLineIR"
-        )
-    if node.operation != "new_body" or node.target is not None:
-        raise ModelError(
-            "Mitcad RevolveIR cut lowering is not qualified yet"
         )
     if (
         node.axis.direction != "X"
