@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/190-exp-development-line
-modules: [ci, build, pages, merge-policy, branch-cleanup]
+branch: docs/200-reconcile-exp-plan
+modules: [ci]
 library: false
 models: []
 tasks: [test]
