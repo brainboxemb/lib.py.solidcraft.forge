@@ -152,7 +152,7 @@ class CoreSemantics(unittest.TestCase):
         self.assertIn("min(", command_value(mid_g))
         self.assertIn("sqrt(", command_value(mid_tip))
         self.assertIn("^ 2", command_value(mid_tip))
-        self.assertEqual(command_value(lane), "(round(((mid_size / 2) / (lane_grid)))) * (lane_grid)")
+        self.assertEqual(command_value(lane), "(round((mid_size / 2) / (lane_grid))) * (lane_grid)")
         self.assertIn("floor(", command_value(inset))
         self.assertIn("atan(", command_value(tip_angle))
         self.assertIn("max(", command_value(bounded))
