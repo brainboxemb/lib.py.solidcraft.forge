@@ -42,6 +42,14 @@ def _release_plan(branch):
     return BuildSelection(branch, ("release",), (), library=True)
 
 
+def _source_target():
+    return (
+        os.environ.get("CAD_SOURCE_SHA", "").strip()
+        or os.environ.get("GITHUB_SHA", "").strip()
+        or "HEAD"
+    )
+
+
 def _validated_release_paths(paths):
     if not paths:
         raise ConfigError("release branch has no release metadata changes")
@@ -76,7 +84,7 @@ def selection(repo, project, branch, modules):
 
     if branch == project.stable_branch:
         if event in {"push", "workflow_dispatch"}:
-            target = os.environ.get("GITHUB_SHA", "").strip() or "HEAD"
+            target = _source_target()
             paths = changed_paths_from_parent(repo, target)
             if paths and set(paths) <= RELEASE_METADATA_PATHS:
                 return _release_plan(branch), None, False, True
@@ -86,10 +94,11 @@ def selection(repo, project, branch, modules):
         if event not in {"push", "workflow_dispatch"}:
             plan = full_selection(branch)
             return plan, None, True, False
-        token, repository, target, run_id = (
+        token, repository, run_id = (
             os.environ.get(key, "")
-            for key in ("GH_TOKEN", "GITHUB_REPOSITORY", "GITHUB_SHA", "GITHUB_RUN_ID")
+            for key in ("GH_TOKEN", "GITHUB_REPOSITORY", "GITHUB_RUN_ID")
         )
+        target = _source_target()
         if not (token and repository and target and run_id.isdigit()):
             plan = full_selection(branch)
             return plan, None, True, False

@@ -422,3 +422,8 @@ the same target mapping so cleanup cannot legitimize an invalid branch
 integration.
 
 Pages and `gh-pages` are not release evidence.
+
+
+## Permanent dispatch source identity
+
+Permanent `workflow_dispatch` qualification explicitly checks out `github.ref_name`, resolves that HEAD once, uses it as `CAD_SOURCE_SHA` for selection, and publishes against the same SHA. This avoids stale event-SHA races immediately after policy merges while keeping publisher freshness validation fail-closed.
