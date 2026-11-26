@@ -11,6 +11,7 @@ from scpf import (
     Edges,
     Faces,
     Parameter,
+    Polygon2D,
     Sketch,
     Sphere,
 )
@@ -30,6 +31,7 @@ from scpf.ir import (
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
+    PolygonProfileIR,
     RegionIR,
     SketchIR,
     SphereIR,
@@ -438,6 +440,115 @@ class SemanticIRTests(unittest.TestCase):
         ):
             with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
                 RegionIR(**kwargs)
+
+    def test_polygon_symmetric_extrude_chamfer_composes_typed_ir(self):
+        with Sketch(name="Hook profile", plane="XZ") as sketch:
+            Polygon2D(
+                [(-20, 0), (20, 0), (20, 30), (-20, 30)],
+                plane="XZ",
+                world=True,
+            )
+        shape = sketch.extrude(15, sym=True).chamfer(
+            1.5,
+            edges=Edges.from_faces(Faces.FRONT, Faces.BACK),
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "TopologyFaceBoundaryXz",
+        )
+        self.assertIsInstance(model.root, ChamferIR)
+        self.assertIsInstance(model.root.base, ExtrudeIR)
+        extrusion = model.root.base
+        self.assertEqual(extrusion.direction, "symmetric")
+        self.assertEqual(extrusion.distance, 15)
+        self.assertEqual(extrusion.sketch.plane, "XZ")
+        self.assertEqual(len(extrusion.sketch.profiles), 1)
+        profile = extrusion.sketch.profiles[0]
+        self.assertIsInstance(profile, PolygonProfileIR)
+        self.assertEqual(
+            profile.points,
+            ((-20, 0), (20, 0), (20, -30), (-20, -30)),
+        )
+        self.assertEqual(extrusion.regions, (RegionIR(outer=0),))
+        self.assertEqual(model.root.edges.faces, ("front", "back"))
+
+        mitcad = compile_mitcad_ir(model, "TopologyFaceBoundaryXz")
+        sketch_def = mitcad["commands"][-2]["def"]
+        extrude_def = mitcad["commands"][-1]["def"]
+        self.assertEqual(sketch_def["type"], "sketch")
+        self.assertEqual(
+            [entity["type"] for entity in sketch_def["entities"]],
+            ["point", "point", "point", "point",
+             "line", "line", "line", "line"],
+        )
+        self.assertEqual(
+            [
+                (entity["start"], entity["end"])
+                for entity in sketch_def["entities"][4:]
+            ],
+            [
+                ("p1", "p2"),
+                ("p2", "p3"),
+                ("p3", "p4"),
+                ("p4", "p1"),
+            ],
+        )
+        self.assertEqual(
+            extrude_def["profiles"],
+            [{"sketch": {"ref": "sk.uid"}, "point": [0.0, -15.0]}],
+        )
+        self.assertEqual(
+            extrude_def["extent"],
+            {"type": "symmetric", "distance": 15, "full_length": True},
+        )
+        stage = mitcad["replay"][0]
+        self.assertEqual(
+            [
+                face["normal"]
+                for face in stage["bind_face_boundary_edges"]["faces"]
+            ],
+            [[0, -1, 0], [0, 1, 0]],
+        )
+        self.assertEqual(len(stage["commands"]), 1)
+        self.assertEqual(stage["commands"][0]["def"]["type"], "chamfer")
+        self.assertEqual(
+            stage["commands"][0]["def"]["size"],
+            {"type": "equal_distance", "distance": 1.5},
+        )
+
+    def test_unqualified_polygon_extrude_forms_stay_legacy(self):
+        with Sketch(name="Concave", plane="XY") as sketch:
+            Polygon2D(
+                [(0, 0), (20, 0), (5, 10), (20, 30), (0, 30)],
+                plane="XY",
+            )
+        concave = sketch.extrude(10, sym=True)
+
+        width = Parameter("polygon_width", 20)
+        with Sketch(name="Parameterized", plane="XY") as sketch:
+            Polygon2D(
+                [(0, 0), (width, 0), (width, 30), (0, 30)],
+                plane="XY",
+            )
+        parameterized = sketch.extrude(10, sym=True)
+
+        for shape in (concave, parameterized):
+            model = normalize_shape(shape)
+            self.assertIsInstance(model.root, LegacyShapeIR)
+            self.assertEqual(
+                compile_solidcraft_ir(model, "LegacyPolygon"),
+                _compile_shape_legacy_with_dependencies(
+                    shape,
+                    "LegacyPolygon",
+                )[0],
+            )
+            with self.assertRaisesRegex(
+                ModelError,
+                "does not yet support Forge shape kind "
+                "'sketch_base_extrusion'",
+            ):
+                compile_mitcad_ir(model, "LegacyPolygon")
 
     def test_face_boundary_chamfer_keeps_semantic_selector_and_placement(self):
         shape = Box(

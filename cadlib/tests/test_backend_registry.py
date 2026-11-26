@@ -43,8 +43,10 @@ class BackendRegistryTests(unittest.TestCase):
                     "boolean.intersect",
                     "placement.primitive",
                     "sketch.circle",
+                    "sketch.polygon",
                     "profile.region",
                     "feature.extrude.distance",
+                    "feature.extrude.symmetric",
                     "modify.chamfer.face-boundary",
                     "native-topology",
                 }

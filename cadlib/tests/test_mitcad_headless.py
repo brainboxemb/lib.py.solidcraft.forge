@@ -81,6 +81,14 @@ class FakeSession:
                     ],
                 }
             if query["query"] == "faces":
+                normal = tuple(query.get("normal", ()))
+                face_name = {
+                    (0, 0, 1): "F1:top",
+                    (0, -1, 0): "F1:side0",
+                    (0, 1, 0): "F1:side2",
+                }.get(normal)
+                if face_name is None:
+                    raise AssertionError(query)
                 return {
                     "document": "D1",
                     "result": {
@@ -89,7 +97,7 @@ class FakeSession:
                         "faces": [
                             {
                                 "index": 1,
-                                "names": ["F1:top"],
+                                "names": [face_name],
                                 "surface": "plane",
                                 "area": 1200,
                             }
@@ -101,10 +109,17 @@ class FakeSession:
                     "document": "D1",
                     "result": [
                         {"name": "E{F1:bottom|F1:side0}", "curve": "line", "length": 40},
+                        {"name": "E{F1:bottom|F1:side1}", "curve": "line", "length": 30},
+                        {"name": "E{F1:bottom|F1:side2}", "curve": "line", "length": 40},
+                        {"name": "E{F1:bottom|F1:side3}", "curve": "line", "length": 30},
                         {"name": "E{F1:side0|F1:top}", "curve": "line", "length": 40},
                         {"name": "E{F1:side1|F1:top}", "curve": "line", "length": 30},
                         {"name": "E{F1:side2|F1:top}", "curve": "line", "length": 40},
                         {"name": "E{F1:side3|F1:top}", "curve": "line", "length": 30},
+                        {"name": "E{F1:side0|F1:side1}", "curve": "line", "length": 10},
+                        {"name": "E{F1:side1|F1:side2}", "curve": "line", "length": 10},
+                        {"name": "E{F1:side2|F1:side3}", "curve": "line", "length": 10},
+                        {"name": "E{F1:side3|F1:side0}", "curve": "line", "length": 10},
                     ],
                 }
             raise AssertionError(query)
@@ -164,6 +179,46 @@ def replay_document():
                         "size": {
                             "type": "equal_distance",
                             "distance": 2,
+                        },
+                    },
+                }
+            ],
+        }
+    ]
+    return value
+
+
+def multi_face_replay_document():
+    value = document()
+    value["replay"] = [
+        {
+            "bind_single_body": "body",
+            "bind_face_boundary_edges": {
+                "name": "edges",
+                "body": "body",
+                "faces": [
+                    {
+                        "surface": "plane",
+                        "normal": [0, -1, 0],
+                        "normal_tolerance": 1e-6,
+                    },
+                    {
+                        "surface": "plane",
+                        "normal": [0, 1, 0],
+                        "normal_tolerance": 1e-6,
+                    },
+                ],
+            },
+            "commands": [
+                {
+                    "cmd": "add_feature",
+                    "def": {
+                        "type": "chamfer",
+                        "body": {"$mitcad_bind": "body"},
+                        "edges": {"$mitcad_bind": "edges"},
+                        "size": {
+                            "type": "equal_distance",
+                            "distance": 1.5,
                         },
                     },
                 }
@@ -286,6 +341,48 @@ class MitcadHeadlessTests(unittest.TestCase):
                 commands[1][0]["def"]["edges"],
                 result["bindings"]["edges"],
             )
+
+    @patch("scpf.backends.mitcad_headless._Session", FakeSession)
+    def test_replay_combines_multiple_face_boundaries_for_one_feature(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = run_document(
+                multi_face_replay_document(),
+                save=root / "out.mitcad",
+                work_dir=root / "workspace",
+            )
+
+            self.assertEqual(
+                result["bindings"]["edges"],
+                [
+                    "E{F1:bottom|F1:side0}",
+                    "E{F1:side0|F1:top}",
+                    "E{F1:side0|F1:side1}",
+                    "E{F1:side3|F1:side0}",
+                    "E{F1:bottom|F1:side2}",
+                    "E{F1:side2|F1:top}",
+                    "E{F1:side1|F1:side2}",
+                    "E{F1:side2|F1:side3}",
+                ],
+            )
+            session = FakeSession.instances[-1]
+            commands = [
+                args["command"]
+                for name, args in session.calls
+                if name == "model_command"
+            ]
+            self.assertEqual(len(commands), 2)
+            self.assertEqual(
+                commands[1][0]["def"]["edges"],
+                result["bindings"]["edges"],
+            )
+            face_queries = [
+                args["query"]["normal"]
+                for name, args in session.calls
+                if name == "model_query"
+                and args["query"]["query"] == "faces"
+            ]
+            self.assertEqual(face_queries, [[0, -1, 0], [0, 1, 0]])
 
     @patch("scpf.backends.mitcad_headless._Session", FakeSession)
     def test_unsupported_export_suffix_fails_before_export_call(self):
