@@ -8,6 +8,28 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-11-27
+
+### Added
+
+- Add explicit reusable-component feature exports through
+  `Shape.export_feature(name)` and definition-level
+  `Occurrence.feature(name)` references.
+- Allow a parent/root `Configure(...)` table to use
+  `Suppress(child.feature(name))` for one authored feature inside a reusable
+  child definition without exposing SolidCraft or replay feature ids.
+
+### Qualification
+
+- Add the Forge-owned `configuration-child-feature` case proving two
+  separately constructed child occurrences share one parent-driven parameter,
+  Small/Medium suppress the exported child cut and Large enables the same real
+  native history after save/reopen without rerunning Forge Python.
+- Add approved front/right/isometric visual regression baselines and
+  expected-shape evidence for the seven visible-geometry owners identified by
+  the verification audit while retaining their existing native/history/topology
+  checks.
+
 ## [0.23.0] - 2026-11-26
 
 ### Added
