@@ -217,13 +217,22 @@ class ModelTests(unittest.TestCase):
                 [impl.id for impl in model.implementations],
                 ["scpf", "scpf-mitcad"],
             )
+            has_visual = model_id == "multi-profile-extrude"
             self.assertEqual(
                 [stage.id for stage in model.verifications],
-                ["native", "geometry"],
+                (
+                    ["native", "geometry", "visual"]
+                    if has_visual
+                    else ["native", "geometry"]
+                ),
             )
             self.assertEqual(
                 [stage.runtime for stage in model.verifications],
-                ["solidcraft", "reference"],
+                (
+                    ["solidcraft", "reference", "solidcraft"]
+                    if has_visual
+                    else ["solidcraft", "reference"]
+                ),
             )
             self.assertEqual(
                 model.verifications[0].implementations,
@@ -237,6 +246,11 @@ class ModelTests(unittest.TestCase):
                     else None
                 ),
             )
+            if has_visual:
+                self.assertEqual(
+                    model.verifications[2].implementations,
+                    ("scpf",),
+                )
 
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
