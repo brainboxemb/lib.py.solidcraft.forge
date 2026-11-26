@@ -90,7 +90,9 @@ The accepted baseline now includes:
 - Forge-owned release metadata validation and explicit owner-issued
   `/release` publication through released `tool.py.lib.ci`;
 - stable Pages quality and the canonical Pages deployment;
-- policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks.
+- policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks;
+- merge policy validates the newest PR-specific central CI run for an exact head SHA, so historical failed checks from superseded PRs cannot poison a later qualified replacement while a newest pending/failed run still blocks;
+- the isolated `exp` compiler line evaluates SCPF once into typed engine-neutral semantic IR and lowers that same IR independently to SolidCraft and Mitcad, with accepted `PlacementIR`, Sketch/profile/Region/Extrude, recursive Boolean, Sphere and face-boundary Chamfer slices rather than backend interpretation of raw `Shape.data`.
 
 Release evidence for v0.23.0:
 - #315 completed through native-contract PR #336 and public typed API PR #348,
@@ -109,6 +111,13 @@ Release evidence for v0.23.0:
   `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689` and the GitHub Release is
   published.
 
+Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
+- #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded `SphereIR` through native Mitcad join/cut/intersect;
+- #351 / PR #355 qualified parameter-independent `PolygonProfileIR -> RegionIR -> symmetric ExtrudeIR -> ChamferIR` composition from unchanged public SCPF source;
+- #358 / PR #373 synchronized the finalized normal v0.23 baseline into permanent `exp` through reviewed conflict recovery as `e0180edf02b0ff50f1fda8732aa4da5262730599`, with exact parent order prior exp + finalized dev and reviewed tree `1c601d2b30741c4d48e76b5edab71840e40d3b63`;
+- permanent exp CI/build run 45875143593, Pages run 45875575429 and deployment 45875703312 are green;
+- accepted experimental compiler/backend work remains isolated from `dev` until a separately qualified `exp -> dev` integration is explicitly selected.
+
 The pinned SolidCraft 0.49 registry still has no native centre-mark or
 centre-line drawing-authoring command; Forge deliberately does not emulate
 those graphics.
@@ -118,54 +127,26 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Post-release permanent-lane synchronization
+### Independent normal and experimental lanes
 
-The v0.23.0 product release and the current isolated compiler experiment are
-both at qualified checkpoints. No new product or experimental capability is
-selected until the accepted baseline has been synchronized across the
-permanent lanes.
+Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
 
-Normal/stable checkpoint:
-- v0.23.0 is published at
-  `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689`;
-- #315's Small / Medium / Large row axis plus independent Installed rule is
-  released public Forge behavior;
-- the release-only stable path is green and did not replace the retained full
-  stable CAD evidence.
+Normal `dev` lane:
+- #380 is the demonstrated CAD consumer blocker: let a parent/root `Configure(...)` target an exact authored suppressible feature owned by a reusable child component without exposing replay/native feature ids;
+- keep its public authoring/replay qualification independent from experimental Mitcad work;
+- verification-evidence follow-ups such as #255 may continue on their own already-open branches, but must not be folded into #380.
 
-Experimental checkpoint:
-- #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded
-  `SphereIR` through native Mitcad primitive join/cut/intersect while keeping
-  SolidCraft behavior compatible; permanent exp
-  `6826ea2c6ca0dfefb054dd4791d4e0303489f413`, CI 45859528081 and Pages
-  45860055299 are green;
-- #351 / PR #355 then qualified typed
-  `PolygonProfileIR -> RegionIR -> symmetric ExtrudeIR -> ChamferIR`
-  composition from the unchanged public SCPF source; current permanent exp
-  `d9bb05d71e58a3b2069dfbf802f40a09a5ca32df`, CI 45862418767 and Pages
-  45862908963 are green;
-- neither checkpoint changes the public SCPF API and neither is promoted
-  `exp -> dev`.
-
-Complete the cross-lane checkpoint in this order:
-
-1. synchronize accepted stable `main` governance and v0.23.0 release metadata
-   into permanent `dev` through a direct `main -> dev` PR and `/merge`;
-2. require permanent `dev` qualification/publication green on that exact
-   post-release synchronization head;
-3. execute already-open #358 as the final synchronization of this experimental
-   trajectory: direct `dev -> exp`, preserving all accepted experimental
-   compiler/backend work and all finalized normal v0.23.0 history;
-4. if that direct permanent merge conflicts, use only the qualified reviewed
-   `/merge-resolved` flow; then require permanent `exp` CI, durable
-   `build/exp` publication and Pages green.
-
-Do not start a new experimental compiler capability before #358 is complete.
+Experimental `exp` lane:
+- #381 is the active compiler checkpoint after completed #358;
+- reuse the existing `native-revolve` owner and unchanged public `Sketch.revolve(...)` source;
+- normalize parameterized Polygon sketch/profile/region intent plus principal-axis sweep into typed `RevolveIR` and lower that same IR independently to SolidCraft and native Mitcad Revolve;
+- preserve `length`, `radius` and angle-valued `sweep` dependencies rather than baking geometry or substituting a cylinder;
+- keep custom `AxisLine`, subtractive revolve composition and configuration suppression outside this first bounded checkpoint;
+- work from a short-lived branch based on current permanent `exp`, integrate only through `/merge`, and do not perform `exp -> dev` as part of #381.
 
 ## Later
 
-1. After the post-release permanent-lane synchronization checkpoint, execute
-   verification-evidence follow-ups #255, #256 and #257 in the order justified
+1. Continue verification-evidence follow-ups #255, #256 and #257 in the order justified
    by the completed #163 audit unless a newer demonstrated consumer blocker
    takes priority.
 2. Continue the migrated Forge product/research backlog (#59-#72) according to
