@@ -272,6 +272,26 @@ Profile pick points are fixed numeric authoring picks, not editable Forge
 Parameters. SolidCraft 0.42's point-selection command field accepts numeric
 Sketch coordinates rather than parameter expressions.
 
+Standalone Sketches may contain multiple closed profiles. Nested loops stay in
+one native Sketch; use an exact region pick when the intended material is only
+one of the resulting regions. For example, a hollow tube is one two-loop
+Sketch plus one extrusion:
+
+```python
+with Sketch(name="Tube profile", plane="XY") as profile:
+    Circle2D(d=10)
+    Circle2D(d=8)
+
+tube = profile.extrude(
+    30,
+    profiles=[(4.5, 0)],
+    exact_regions=True,
+)
+```
+
+This does not change the separate `Sketch.revolve()` contract, which still
+requires exactly one closed profile.
+
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
 
