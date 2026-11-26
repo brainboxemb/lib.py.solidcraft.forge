@@ -92,7 +92,7 @@ The accepted baseline now includes:
 - stable Pages quality and the canonical Pages deployment;
 - policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks;
 - merge policy validates the newest PR-specific central CI run for an exact head SHA, so historical failed checks from superseded PRs cannot poison a later qualified replacement while a newest pending/failed run still blocks;
-- the isolated `exp` compiler line evaluates SCPF once into typed engine-neutral semantic IR and lowers that same IR independently to SolidCraft and Mitcad, with accepted `PlacementIR`, Sketch/profile/Region/Extrude, recursive Boolean, Sphere and face-boundary Chamfer slices rather than backend interpretation of raw `Shape.data`.
+- the isolated `exp` compiler line evaluates SCPF once into typed engine-neutral semantic IR and lowers that same IR independently to SolidCraft and Mitcad, with accepted `PlacementIR`, Sketch/profile/Region/Extrude, recursive Boolean, Sphere, face-boundary Chamfer and parameterized `RevolveIR` slices rather than backend interpretation of raw `Shape.data`.
 
 Release evidence for v0.23.0:
 - #315 completed through native-contract PR #336 and public typed API PR #348,
@@ -116,6 +116,10 @@ Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #351 / PR #355 qualified parameter-independent `PolygonProfileIR -> RegionIR -> symmetric ExtrudeIR -> ChamferIR` composition from unchanged public SCPF source;
 - #358 / PR #373 synchronized the finalized normal v0.23 baseline into permanent `exp` through reviewed conflict recovery as `e0180edf02b0ff50f1fda8732aa4da5262730599`, with exact parent order prior exp + finalized dev and reviewed tree `1c601d2b30741c4d48e76b5edab71840e40d3b63`;
 - permanent exp CI/build run 45875143593, Pages run 45875575429 and deployment 45875703312 are green;
+- #381 / PR #386 then qualified parameterized `PolygonProfileIR -> RegionIR -> RevolveIR` from the unchanged public `native-revolve` source, preserving `radius`, `length` and angle-valued `sweep` while lowering the same IR to native SolidCraft Revolve and native Mitcad Revolve;
+- Mitcad's native angular-value contract is handled only at lowering: degree-valued `ParameterIR` becomes a unit-bearing expression such as `360 deg`, so engine storage units do not leak into semantic IR;
+- #387 / PR #388 repaired the focused-owner CI inventory expectation exposed by the first full post-merge run without changing SCPF, IR, backend or model behavior;
+- current permanent exp `a5470e171e1455b54905a51390a25531af93bd47` has full CI/build/publication run 45879270985 green, Pages run 45879685758 green and deployment 45879775624 green;
 - accepted experimental compiler/backend work remains isolated from `dev` until a separately qualified `exp -> dev` integration is explicitly selected.
 
 The pinned SolidCraft 0.49 registry still has no native centre-mark or
@@ -138,12 +142,13 @@ Normal `dev` lane:
 - keep later verification-evidence follow-ups #256 and #257 separate from #380.
 
 Experimental `exp` lane:
-- #381 is the active compiler checkpoint after completed #358;
-- reuse the existing `native-revolve` owner and unchanged public `Sketch.revolve(...)` source;
-- normalize parameterized Polygon sketch/profile/region intent plus principal-axis sweep into typed `RevolveIR` and lower that same IR independently to SolidCraft and native Mitcad Revolve;
-- preserve `length`, `radius` and angle-valued `sweep` dependencies rather than baking geometry or substituting a cylinder;
-- keep custom `AxisLine`, subtractive revolve composition and configuration suppression outside this first bounded checkpoint;
-- work from a short-lived branch based on current permanent `exp`, integrate only through `/merge`, and do not perform `exp -> dev` as part of #381.
+- #389 is the active compiler checkpoint after completed #381/#387;
+- refactor accepted principal-axis Revolve through one typed engine-neutral `AxisLineIR` that also preserves a parameter-driven shifted origin;
+- qualify one subtractive Sketch Revolve as the authored cut feature itself, retaining the target body, profile/region, axis and `axis_x` dependency rather than lowering new-body Revolve plus an unrelated Boolean;
+- lower Mitcad custom-axis transport through a native parameter-following Sketch construction line referenced as the Revolve axis; never bake the current axis coordinate into a fixed native axis;
+- prove the compiled document against the exact pinned Mitcad v0.70.0 AppImage through `modules/mitcad-native-smoke` without creating a duplicate physical model owner;
+- keep parameter-driven Sketch-plane placement and portable `ConfigureIR` / exact `Suppress(feature)` semantics outside #389; those remain the explicit blockers before the existing `shifted-axis-revolve` owner can become a full two-backend consumer;
+- work from a short-lived branch based on current permanent `exp`, integrate only through `/merge`, and do not perform `exp -> dev` as part of #389.
 
 ## Later
 
