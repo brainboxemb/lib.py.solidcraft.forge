@@ -2,16 +2,18 @@ schema: 1
 purpose: [example, verification]
 section: configurations
 priority: 30
-title: Free / Installed state
-tagline: One reusable flexible-fit component keeps manufacturing and mounted geometry as native configuration rows
+title: Size rows + Installed rule
+tagline: Small/Medium/Large remains one row axis while Installed is an independent native checkbox
 description: >
-  A reusable split flexible sleeve publishes its fit diameter to the parent
-  design. The parent configuration keeps Free manufacturing geometry active
-  by default and can switch the same child definition to Installed geometry
-  without rebuilding Python.
-parameters: Free diameter 20.4 mm; Installed diameter 20.0 mm
+  Two reusable flexible-fit child occurrences share one published fit diameter.
+  Small, Medium and Large control the parent span while an enabled Installed
+  configuration rule independently drives the shared child fit. Disabling the
+  rule restores the active row's Free manufacturing value without rerunning
+  Forge Python.
+parameters: Small/Medium/Large span 60/80/100 mm; Free fit 20.4 mm; Installed fit 20.0 mm
 stages:
-  - Build one reusable split flexible-fit child component
-  - Publish its fit diameter as the shared native parent parameter
-  - Author Free and Installed rows around that component occurrence
-  - Reopen the saved design and switch the same child definition to Installed
+  - Build one reusable flexible-fit child and copy it as two occurrences
+  - Publish one shared fit diameter to the parent Assembly
+  - Author Small, Medium and Large rows with the Free fit value
+  - Add one independent Installed rule that drives the same configured parameter
+  - Reopen the saved design and verify row switching with Installed enabled or disabled

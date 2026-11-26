@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import hashlib
 from math import isfinite
 
-from .core import Parameter, Shape, number_text
+from .core import Expression, Parameter, Shape, command_value, number_text, parameters_in
 
 
 @dataclass(frozen=True)
@@ -18,11 +18,32 @@ class _SuppressionColumn:
 
 
 @dataclass(frozen=True)
+class _AlwaysCondition:
+    pass
+
+
+@dataclass(frozen=True)
+class _DriveParameterEffect:
+    parameter: _ParameterColumn
+    expression: object
+
+
+@dataclass(frozen=True)
+class _ConfigurationRule:
+    id: str
+    name: str
+    enabled: bool
+    condition: object
+    effect: object
+
+
+@dataclass(frozen=True)
 class _ConfiguredDesign:
     design: object
     active: str
     columns: tuple
     rows: tuple
+    rules: tuple = ()
 
 
 def Param(name):
@@ -41,11 +62,76 @@ def Suppress(feature):
     return _SuppressionColumn(feature)
 
 
-def Configure(design, *, active, columns, rows):
+def Always():
+    """Match every configuration activation for one native configuration rule."""
+    return _AlwaysCondition()
+
+
+def _configuration_expression(value):
+    """Normalize one native configuration parameter expression."""
+    if isinstance(value, (Parameter, Expression)):
+        return str(command_value(value))
+    if isinstance(value, str) and value.strip():
+        return value
+    if (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and isfinite(value)
+    ):
+        return number_text(value)
+    raise TypeError(
+        "configuration parameter expressions require a finite number, "
+        "non-empty expression string, Parameter or Expression"
+    )
+
+
+def DriveParameter(parameter, expression):
+    """Drive one configured parameter while a configuration rule matches."""
+    if not isinstance(parameter, _ParameterColumn):
+        parameter = Param(parameter)
+    _configuration_expression(expression)
+    return _DriveParameterEffect(parameter, expression)
+
+
+def ConfigRule(rule_id, name, *, enabled=True, condition, effect):
+    """Author one typed native SolidCraft Configuration Rule.
+
+    The initial public rule slice supports Always() plus DriveParameter(...).
+    Rule enablement is the native independent checkbox state; it is not a
+    boolean model parameter and does not create another configuration row axis.
+    """
+    if (
+        not isinstance(rule_id, str)
+        or not rule_id.strip()
+        or rule_id != rule_id.strip()
+        or len(rule_id) > 64
+    ):
+        raise ValueError("configuration rule id must be 1..64 non-space characters")
+    if (
+        not isinstance(name, str)
+        or not name.strip()
+        or name != name.strip()
+        or len(name) > 128
+    ):
+        raise ValueError("configuration rule name must be 1..128 non-space characters")
+    if not isinstance(enabled, bool):
+        raise TypeError("configuration rule enabled must be bool")
+    if not isinstance(condition, _AlwaysCondition):
+        raise TypeError("configuration rule condition must use Always()")
+    if not isinstance(effect, _DriveParameterEffect):
+        raise TypeError("configuration rule effect must use DriveParameter()")
+    return _ConfigurationRule(rule_id, name, enabled, condition, effect)
+
+
+def Configure(design, *, active, columns, rows, rules=()):
     """Return one final design with an editable native configuration table.
 
     Each row contains one parameter expression or suppression boolean per
     column, in column order. The active name must be one of the declared rows.
+
+    Optional ConfigRule entries remain orthogonal to the row axis. A native
+    enabled rule may drive a configured parameter after row activation; turning
+    that rule off restores the row's stored expression.
     """
     from .model_objects import Assembly, ModelInstance
     if not isinstance(design, (Shape, ModelInstance, Assembly)):
@@ -84,7 +170,33 @@ def Configure(design, *, active, columns, rows):
         normalized.append((name, tuple(converted)))
     if active not in rows:
         raise ValueError("active configuration must name a declared row")
-    return _ConfiguredDesign(design, active, columns, tuple(normalized))
+
+    try:
+        rules = tuple(rules)
+    except TypeError as exc:
+        raise TypeError("Configure rules must contain ConfigRule entries") from exc
+    if not all(isinstance(rule, _ConfigurationRule) for rule in rules):
+        raise TypeError("Configure rules must contain ConfigRule entries")
+    if len({rule.id for rule in rules}) != len(rules):
+        raise ValueError("duplicate configuration rule id")
+    configured_parameters = {
+        column.name for column in columns
+        if isinstance(column, _ParameterColumn)
+    }
+    for rule in rules:
+        target = rule.effect.parameter.name
+        if target not in configured_parameters:
+            raise ValueError(
+                "DriveParameter target must also be a Param configuration column"
+            )
+
+    return _ConfiguredDesign(
+        design,
+        active,
+        columns,
+        tuple(normalized),
+        rules,
+    )
 
 
 def _feature_prefix(root, source):
@@ -289,6 +401,49 @@ def _configuration_commands(configured, name, commands):
             update["bind"] = row_binding(variable, row)
             row_refs[row] = variable
         commands.append(update)
+
+    configured_parameter_names = {
+        column.name for column in configured.columns
+        if isinstance(column, _ParameterColumn)
+    }
+    for rule in configured.rules:
+        target = rule.effect.parameter.name
+        if target not in parameter_names:
+            raise ModelError(
+                f"unknown native configuration rule parameter: {target}"
+            )
+        if target not in configured_parameter_names:
+            raise ModelError(
+                f"configuration rule target is not a configured parameter: {target}"
+            )
+        missing_dependencies = [
+            parameter.name
+            for parameter in parameters_in(rule.effect.expression)
+            if parameter.name not in parameter_names
+        ]
+        if missing_dependencies:
+            raise ModelError(
+                "unknown native configuration rule expression parameter: "
+                + ", ".join(sorted(set(missing_dependencies)))
+            )
+        commands.append(
+            command(
+                "config.rule",
+                rule={
+                    "id": rule.id,
+                    "name": rule.name,
+                    "enabled": rule.enabled,
+                    "condition": {"type": "always"},
+                    "effect": {
+                        "type": "drive_parameter",
+                        "parameter": target,
+                        "expression": _configuration_expression(
+                            rule.effect.expression
+                        ),
+                    },
+                },
+            )
+        )
 
     commands.append(
         command("config.activate", row=row_refs[configured.active])

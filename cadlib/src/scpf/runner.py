@@ -20,7 +20,14 @@ import warnings
 
 from . import core, cadmath
 from .configurations import (
-    Configure, Param, Suppress, _ConfiguredDesign, _apply_configuration_document,
+    Always,
+    ConfigRule,
+    Configure,
+    DriveParameter,
+    Param,
+    Suppress,
+    _ConfiguredDesign,
+    _apply_configuration_document,
 )
 from .compiler import ModelError, _compile_model_with_dependencies
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
@@ -953,6 +960,9 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
         "Configure": Configure,
         "Param": Param,
         "Suppress": Suppress,
+        "ConfigRule": ConfigRule,
+        "Always": Always,
+        "DriveParameter": DriveParameter,
         "CENTER": core.CENTER,
         "TOP": core.TOP,
         "BOTTOM": core.BOTTOM,

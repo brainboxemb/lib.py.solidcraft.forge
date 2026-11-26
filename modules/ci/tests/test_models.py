@@ -86,7 +86,6 @@ SCPF_ONLY_IDS = {
     "cone-boolean",
     "exploded-views",
     "native-revolve",
-    "multi-profile-extrude",
     "revolute-joint",
     "rotated-sketch-cutter",
     "sheet-contour-flange",
@@ -97,19 +96,23 @@ SCPF_ONLY_IDS = {
     "sheet-path-flange",
     "sheet-perforate",
     "sample-plate-drawing",
-    "topology-face-boundary-xz",
 }
 
 MITCAD_IDS = {
     "circle-negative-extrude",
     "cylinder-subtract",
+    "multi-profile-extrude",
+    "primitive-csg",
     "simple-box",
     "topology-face-boundary-box",
+    "topology-face-boundary-xz",
 }
 
 MITCAD_FOCUSED_IDS = {
     "cylinder-subtract",
+    "multi-profile-extrude",
     "topology-face-boundary-box",
+    "topology-face-boundary-xz",
 }
 
 STANDARD_MULTI_ENGINE_IDS = (
