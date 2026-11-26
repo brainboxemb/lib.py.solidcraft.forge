@@ -116,11 +116,6 @@ MITCAD_FOCUSED_IDS = {
     "topology-face-boundary-xz",
 }
 
-MITCAD_PREVIEW_IDS = MITCAD_IDS - {
-    "primitive-csg",
-    "topology-face-boundary-xz",
-}
-
 STANDARD_MULTI_ENGINE_IDS = (
     EXPECTED_IDS - SCPF_ONLY_IDS - MITCAD_FOCUSED_IDS
 )
@@ -427,9 +422,14 @@ class ModelTests(unittest.TestCase):
             len(reference["verify_items"]),
             expected_reference_verify_count,
         )
+        expected_reference_preview_count = sum(
+            impl.preview_runtime == "reference"
+            for model in self.models
+            for impl in model.implementations
+        )
         self.assertEqual(
             len(reference["preview_items"]),
-            multi_engine * 4 + len(MITCAD_PREVIEW_IDS),
+            expected_reference_preview_count,
         )
         self.assertEqual(
             {row["owner"] for row in reference["verify_items"]},
