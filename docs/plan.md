@@ -49,7 +49,8 @@ The accepted baseline now includes:
 - the experimental `exp` line has a proven second native CAD backend boundary: Mitcad v0.70.0 reference/runtime identity is pinned, unchanged SCPF sources qualify native Box, Circle Sketch+Extrude and face-boundary Chamfer, native Mitcad topology remains engine-owned, retained Mitcad STL passes the existing geometry verifier, and the internal `BackendAdapter` centralizes backend selection while SolidCraft remains the stable default;
 - the adapter-boundary regression found by the permanent 52-owner gate is fixed: SolidCraft compiler/assembly imports occur during package initialization so public `scpf.assembly` remains the callable decorator; permanent `build/exp` at `4e2a6a7feb0de7f750efe1d073852208f1a25b5a` passed with library=true and 52/52 owners, followed by successful `/exp/` Pages publication;
 - the experimental builder/runtime boundary is complete: `builder-scpf-mitcad` compiles unchanged SCPF sources through the Mitcad adapter and retains `model.mitcad` + `model.stl`; `docker.cad.solidcraft v0.3.7` publishes the isolated immutable `cad-mitcad` role pinned to Mitcad 0.70.0; temporary Forge evidence PR #230 qualified the exact release candidate through normal CAD-CI with `simple-box` and `circle-negative-extrude` Mitcad geometry PASS and was closed unmerged;
-- the first owner-integrated Mitcad slice stays inside the existing physical owners: `simple-box`, `circle-negative-extrude` and `topology-face-boundary-box` declare secondary `scpf-mitcad` implementations over the same SCPF source while SolidCraft remains primary; all three enter generic reference-runtime mesh verification, including an explicit two-edge chamfer geometry contract for the topology owner.
+- the first owner-integrated Mitcad slice stays inside the existing physical owners: `simple-box`, `circle-negative-extrude` and `topology-face-boundary-box` declare secondary `scpf-mitcad` implementations over the same SCPF source while SolidCraft remains primary; all three enter generic reference-runtime mesh verification, including an explicit two-edge chamfer geometry contract for the topology owner;
+- experimental Pages now makes that second backend inspectable instead of merely green: `builder-scpf-mitcad` retains validated `mitcad.json`, durable output includes native `model.mitcad` plus Mitcad-exported `model.stl`/preview, shared SCPF source is shown once, and the published `/exp/` pages expose generated Mitcad commands and replay bindings alongside result/verification evidence; permanent exp build `45817979939` and Pages run `45818223238` passed after #243.
 
 Release evidence for v0.19.0:
 - promoted full product baseline:
@@ -72,25 +73,25 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Experimental: #243 publish Mitcad command/result evidence on Pages
+### Experimental: #246 qualify native Cylinder and subtractive boolean on Mitcad
 
-Make the accepted Mitcad backend inspectable on `/exp/`:
+Extend the accepted second-backend slice into the first constructive solid
+operation:
 
-- retain the validated pre-execution backend document as `mitcad.json`;
-- show generated Mitcad commands plus replay bindings in the same collapsible
-  command-sequence pattern used by SolidCraft;
-- expose the native saved `model.mitcad` file;
-- render and clearly label a presentation preview from the actual
-  Mitcad-exported `model.stl`;
-- show shared owner-local SCPF source only once while keeping Mitcad's separate
-  result/build/verification evidence;
-- prove the presentation on `simple-box`, `circle-negative-extrude` and
-  `topology-face-boundary-box` through durable `build/exp` evidence and
-  `/exp/` Pages.
+- lower SCPF `Cylinder` to native Mitcad intent without changing the public
+  SCPF source;
+- qualify a native subtractive body boolean/cut;
+- preserve symbolic parameter intent and bind engine-owned body results rather
+  than predicting native IDs;
+- keep unsupported boolean cases explicit and fail closed;
+- prove the slice in focused backend/headless tests and one existing physical
+  owner with the same durable command/native/result/verification evidence now
+  visible on `/exp/`;
+- do not integrate `exp -> dev`.
 
 ### Queued: #162 / #163 verification evidence cleanup
 
-After the experimental Pages evidence is stable:
+After the Mitcad experiment checkpoint:
 - #162 fixes the concrete `sheet-perforate` case where native perforation
   metadata passes but the published model preview does not visibly show the
   perforations, and adds an explicit approved visual expectation;
