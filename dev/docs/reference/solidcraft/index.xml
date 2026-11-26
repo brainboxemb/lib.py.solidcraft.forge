@@ -84,6 +84,8 @@ immutable SolidCraft runtime. It is not a hand-authored Forge migration note.&lt
 &lt;li&gt;&lt;code&gt;commands.json&lt;/code&gt; is the exact normalized JSON registry captured from
 &lt;code&gt;solidcraft-cli commands&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;commands.md&lt;/code&gt; is generated from &lt;code&gt;commands.json&lt;/code&gt; for human review.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;describe/*.json&lt;/code&gt;, when present, are exact targeted read-only
+&lt;code&gt;engine.describe&lt;/code&gt; results captured from the same immutable runtime.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Forge compatibility conclusions must be traceable to this captured registry,
 the exact runtime behavior, or separately recorded upstream source evidence.
