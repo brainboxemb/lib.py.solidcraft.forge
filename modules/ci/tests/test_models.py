@@ -199,11 +199,11 @@ class ModelTests(unittest.TestCase):
             elif model_id == "multi-profile-extrude":
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
-                    ["native", "geometry"],
+                    ["native", "geometry", "visual"],
                 )
                 self.assertEqual(
                     [stage.runtime for stage in model.verifications],
-                    ["solidcraft", "reference"],
+                    ["solidcraft", "reference", "solidcraft"],
                 )
             else:
                 self.assertEqual(
@@ -299,7 +299,11 @@ class ModelTests(unittest.TestCase):
                     (
                         [("scpf", "native"), ("scpf", "manufacturing-visual")]
                         if model.id == "sheet-perforate"
-                        else [("scpf", "native")]
+                        else (
+                            [("scpf", "native"), ("scpf", "visual")]
+                            if model.id == "multi-profile-extrude"
+                            else [("scpf", "native")]
+                        )
                     )
                     if model.id in SCPF_ONLY_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
