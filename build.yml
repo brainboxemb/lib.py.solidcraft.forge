@@ -1,6 +1,6 @@
 schema: 1
-branch: feature/190-exp-development-line
-modules: [ci, build, pages, merge-policy, branch-cleanup]
-library: false
-models: []
+branch: feature/190-exp-smoke
+modules: all
+library: true
+models: all
 tasks: [test]
