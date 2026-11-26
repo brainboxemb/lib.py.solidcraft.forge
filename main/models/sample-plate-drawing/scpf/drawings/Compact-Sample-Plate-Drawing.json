@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "5nv86wgam9brv",
+  "id": "0rz8nnk9sg34v",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "dgxxxnb0v8cjb"
+        "source": "bk797pr5wmyyb"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "a8yqz8j2nyhbq",
+      "id": "273cfcmnwfves",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "01rjyrn1ecpsp",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "fmhrn4y8kahwn",
+          "id": "cvzcyvxmqryav",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "75wb7s1ke4mjb",
+          "id": "b0ymcek12b8r4",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "fmhrn4y8kahwn",
+          "parent": "cvzcyvxmqryav",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "aqhrtg3jscbf2",
+          "id": "e844p7v09ksxz",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "fmhrn4y8kahwn",
+          "parent": "cvzcyvxmqryav",
           "side": "above"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "dpgym38tr1cp6",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "dgxxxnb0v8cjb"
+      "id": "bk797pr5wmyyb"
     }
   ],
   "symbols": [],
