@@ -2294,6 +2294,26 @@
           "example": "if pv(clearance) < 0:\nraise ValueError(\"clearance must not be negative\")",
           "signature": "pv(dim) -> float",
           "reference": "reference/parameters-positioning/#pv"
+        },
+        {
+          "kind": "callable",
+          "name": "AxisLine",
+          "summary": "Describe a native axis through an explicit XYZ point.",
+          "use_when": "A revolve, circular pattern or other qualified native feature needs an axis shifted from the world origin while retaining parameter-driven origin coordinates.",
+          "limits": "Direction is fixed Axis.X/Y/Z or a fixed non-zero XYZ vector. Each consuming feature still validates its own geometric restrictions.",
+          "parameters": [
+            {
+              "name": "direction",
+              "description": "Axis.X/Y/Z or fixed non-zero XYZ direction."
+            },
+            {
+              "name": "origin",
+              "description": "XYZ point on the axis; coordinates may be numeric, Parameter or Expression."
+            }
+          ],
+          "example": "axis = AxisLine(Axis.Y, origin=(self.pin_x, 0, self.pin_z))",
+          "signature": "AxisLine(direction, origin=(0, 0, 0))",
+          "reference": "reference/parameters-positioning/#AxisLine"
         }
       ]
     },

@@ -1254,6 +1254,45 @@ def _pattern_direction(value, label):
     return vector
 
 
+@dataclass(frozen=True)
+class AxisLine:
+    """Describe one fixed-direction native axis through an explicit XYZ origin.
+
+    Parameters:
+        direction: Axis.X/Y/Z or one non-zero fixed XYZ direction.
+        origin: XYZ point on the axis. Coordinates may be Parameter/Expression.
+
+    Use when:
+        A native feature needs a shifted/custom axis while retaining editable
+        model-parameter dependencies, for example an offset revolve or circular
+        pattern.
+
+    Limits:
+        Direction is fixed authored orientation; symbolic direction vectors are
+        not supported. Feature-specific APIs still validate whether the line is
+        geometrically valid for their sketch/profile.
+
+    Example:
+        axis = AxisLine(Axis.Y, origin=(pin_x, 0, pin_z))
+    """
+
+    direction: object
+    origin: tuple[object, object, object] = (0, 0, 0)
+
+    def __post_init__(self):
+        direction = _pattern_direction(self.direction, "AxisLine direction")
+        if not isinstance(self.origin, (tuple, list)) or len(self.origin) != 3:
+            raise ValueError("AxisLine origin must be an XYZ point")
+        origin = tuple(self.origin)
+        for coordinate in origin:
+            if isinstance(coordinate, bool) or not isfinite(_pv(coordinate)):
+                raise ValueError(
+                    "AxisLine origin must contain finite numeric CAD dimensions"
+                )
+        object.__setattr__(self, "direction", direction)
+        object.__setattr__(self, "origin", origin)
+
+
 def _pattern_count(value, label):
     """Validate a native pattern count and keep direct parameters unitless."""
     if isinstance(value, Parameter):
@@ -1293,6 +1332,13 @@ def _pattern_angle(value, label):
 
 def _circular_pattern_axis(axis, origin):
     """Validate one fixed circular-pattern axis."""
+    if isinstance(axis, AxisLine):
+        if origin is not None:
+            raise ValueError(
+                "circular_pattern origin must be omitted when axis is AxisLine"
+            )
+        return (axis.origin, axis.direction)
+
     try:
         principal = Axis(axis)
     except (TypeError, ValueError):
@@ -2212,9 +2258,9 @@ class Shape:
         Parameters:
             feature: Existing applied feature Shape, or a non-empty sequence of applied feature Shapes. Forge resolves each source to its native history feature.
             count: Total number of instances including the original. Use a positive integer or direct Parameter.
-            axis: Rotation axis as Axis.X/Y/Z or a non-zero fixed XYZ direction. Defaults to Axis.Z.
+            axis: Rotation axis as Axis.X/Y/Z, AxisLine, or a non-zero fixed XYZ direction. Defaults to Axis.Z.
             angle: Optional total pattern angle in degrees, as a fixed number or direct Parameter. Omit it for SolidCraft's native 360-degree default.
-            origin: Optional XYZ point for a shifted fixed axis. With an Axis value and no origin, Forge emits the native principal-axis name directly.
+            origin: Optional legacy XYZ point for a shifted fixed axis. Prefer AxisLine when the axis is shared or parameter-driven. Omit origin when axis is AxisLine.
             alignment: Native alignment: "left", "center" or "right". Defaults to "right".
             reversed: Reverse the native pattern direction. Defaults to False.
 

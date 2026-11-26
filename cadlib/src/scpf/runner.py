@@ -939,6 +939,7 @@ def run_script(path: str | Path) -> dict:
         "AnchorFrame": core.AnchorFrame,
         "AnchorTopology": core.AnchorTopology,
         "Axis": core.Axis,
+        "AxisLine": core.AxisLine,
         "Shape": core.Shape,
         "Parameter": core.Parameter,
         "cadmath": cadmath,

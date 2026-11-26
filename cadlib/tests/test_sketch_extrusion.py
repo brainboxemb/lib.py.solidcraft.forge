@@ -209,6 +209,74 @@ class SketchExtrusionTests(unittest.TestCase):
                 self.assertEqual(revolve["params"]["direction"], "symmetric")
                 self.assertNotIn("body_name", revolve["params"])
 
+    def test_shifted_axis_revolve_keeps_symbolic_native_axis_and_one_cut(self):
+        from scpf import AxisLine
+        from scpf.core import Parameter
+
+        pin_x = Parameter("pin_x", 8)
+        pin_z = Parameter("pin_z", 3)
+        relief_d = Parameter("relief_d", 4.5)
+        core_d = Parameter("core_d", 3.7)
+
+        with Sketch(name="Pass through", plane="XY", offset=pin_z) as sketch:
+            Polygon2D(
+                [
+                    (pin_x, -12),
+                    (pin_x + relief_d / 2, -12),
+                    (pin_x + relief_d / 2, -9),
+                    (pin_x + core_d / 2, -9),
+                    (pin_x + core_d / 2, 9),
+                    (pin_x + relief_d / 2, 9),
+                    (pin_x + relief_d / 2, 12),
+                    (pin_x, 12),
+                ],
+                plane="XY",
+            )
+        cut = sketch.revolve(
+            axis=AxisLine(Axis.Y, origin=(pin_x, 0, pin_z))
+        )
+
+        commands = compile_model(
+            Box(40, 24, 20) - cut,
+            "Panel",
+        )["commands"]
+        revolve = next(
+            row for row in commands
+            if row["command"] == "solid.revolve"
+        )
+        self.assertEqual(
+            revolve["params"]["axis"],
+            {
+                "origin": ["pin_x", 0, "pin_z"],
+                "dir": [0.0, 1.0, 0.0],
+            },
+        )
+        self.assertEqual(revolve["params"]["operation"], "cut")
+        self.assertEqual(revolve["params"]["targets"], ["Panel"])
+        self.assertEqual(
+            sum(row["command"] == "solid.revolve" for row in commands),
+            1,
+        )
+
+    def test_shifted_axis_revolve_requires_axis_coplanar_with_sketch(self):
+        from scpf import AxisLine
+        from scpf.core import Parameter
+
+        plane_z = Parameter("plane_z", 3)
+        with Sketch(name="Profile", plane="XY", offset=plane_z) as sketch:
+            Polygon2D([(0, -2), (2, -2), (2, 2), (0, 2)], plane="XY")
+
+        with self.assertRaisesRegex(ValueError, "direction must lie"):
+            sketch.revolve(
+                axis=AxisLine(Axis.Z, origin=(0, 0, plane_z))
+            )
+        with self.assertRaisesRegex(ValueError, "origin must lie"):
+            sketch.revolve(
+                axis=AxisLine(Axis.Y, origin=(0, 0, 4))
+            )
+        with self.assertRaisesRegex(ValueError, "requires AxisLine"):
+            sketch.revolve(axis=Axis.Y)
+
     def test_sketch_revolve_validates_world_axis_plane_and_sweep(self):
         with Sketch(name="Profile", plane="XZ") as sketch:
             Polygon2D(

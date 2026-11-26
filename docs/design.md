@@ -94,6 +94,29 @@ This is expression authoring, not a general Python symbolic algebra system.
 Forge only exposes operations that have a qualified native SolidCraft spelling
 and current-value evaluation.
 
+## Native axis-line and shifted revolve boundary
+
+`AxisLine(direction, origin=...)` is the public typed line contract for native
+features that need a fixed direction through an explicit, optionally symbolic
+XYZ point. Principal `Axis.X/Y/Z` remains the concise world-origin form.
+
+For Sketch revolve, the first shifted-axis contract is deliberately bounded:
+- one standalone unrotated XY/XZ/YZ Sketch;
+- optional symbolic standalone plane offset;
+- one closed profile;
+- `AxisLine` direction lies in that plane;
+- the axis origin's normal coordinate matches the Sketch plane offset;
+- lowering emits SolidCraft `solid.revolve.axis = {origin, dir}` directly.
+
+The Shape returned by `Sketch.revolve(...)` remains the authored feature
+identity. When used as `body - revolve`, lowering emits one native
+`solid.revolve(operation="cut")`; `Suppress(revolve)` therefore binds that
+one history feature rather than an approximation made from multiple primitives.
+
+`AxisLine` is also accepted by circular-pattern axis authoring so shifted axis
+intent has one public vocabulary. Topology-selected/construction axes and
+rotated Sketch frames remain separate future contracts.
+
 ## Native configuration-table boundary
 
 Configuration is final design intent rather than a Python model variant. The

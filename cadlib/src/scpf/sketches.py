@@ -560,9 +560,20 @@ def compile_base(shape, name, *, operation="new"):
             operations,
             rotation,
         )
+        if isinstance(axis, str):
+            native_axis = axis
+        else:
+            axis_origin, axis_direction = axis
+            native_axis = {
+                "origin": [
+                    command_value(coordinate)
+                    for coordinate in axis_origin
+                ],
+                "dir": list(axis_direction),
+            }
         revolve = {
             "sketch": sketch_name,
-            "axis": axis,
+            "axis": native_axis,
             "angle": command_value(angle),
         }
         if direction is not None:

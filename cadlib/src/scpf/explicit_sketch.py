@@ -6,7 +6,7 @@ so authoring a sketch remains distinct from extruding/cutting it.
 from contextvars import ContextVar
 from math import isclose, isfinite
 
-from .core import Anchor, Axis, Depth, Shape, command_value, _pv as pv
+from .core import Anchor, Axis, AxisLine, Depth, Shape, command_value, _pv as pv
 
 _ACTIVE_SKETCH = ContextVar("scpf_active_sketch", default=None)
 
@@ -974,11 +974,12 @@ class Sketch:
         angle=360,
         sym=False,
     ):
-        """Revolve one completed closed Sketch profile around a world axis.
+        """Revolve one completed closed Sketch profile around a native axis.
 
         Parameters:
-            axis: World Axis.X, Axis.Y or Axis.Z. The axis must lie in the
-                authored Sketch plane.
+            axis: World Axis.X/Y/Z or AxisLine. The complete axis line must lie
+                in the authored Sketch plane. AxisLine origins may retain
+                Parameter/Expression coordinates.
             angle: Positive sweep angle in degrees, up to 360. May be a
                 Parameter so the saved SolidCraft design remains editable.
                 Defaults to 360.
@@ -990,10 +991,11 @@ class Sketch:
             such as a rivet, roller, pulley or turned spacer.
 
         Limits:
-            The first qualified form requires one standalone, unshifted,
-            unrotated world-plane Sketch with exactly one closed profile.
-            Attached/support-face Sketches and sketch-line/custom axes are
-            intentionally deferred until they have a concrete consumer.
+            Requires one standalone, unrotated world-plane Sketch with exactly
+            one closed profile. A standalone plane offset is supported when a
+            coplanar AxisLine is supplied. Explicit Sketch origin/rotation,
+            attached/support-face Sketches and topology-selected axes remain
+            outside this qualified contract.
 
         Example:
             with Sketch(name="Rivet profile", plane="XZ") as profile:
@@ -1002,27 +1004,65 @@ class Sketch:
                     plane="XZ",
                 )
             rivet = profile.revolve(axis=Axis.X)
+
+            shifted = profile.revolve(
+                axis=AxisLine(Axis.Y, origin=(pin_x, 0, pin_z))
+            )
         """
         if not self._closed:
             raise ValueError("leave the Sketch scope before revolving it")
         if self.on is not None:
             raise ValueError("revolve() currently requires a standalone Sketch")
-        if self.origin is not None or self.offset is not None or self.rotation is not None:
+        if self.origin is not None or self.rotation is not None:
             raise ValueError(
-                "revolve() currently requires an unshifted, unrotated world-plane Sketch"
+                "revolve() currently requires an unrotated world-plane Sketch; "
+                "use Sketch offset plus AxisLine for a shifted plane"
             )
         if len(self._profiles) != 1:
             raise ValueError("revolve() currently requires exactly one closed profile")
-        if not isinstance(axis, Axis) or axis not in (Axis.X, Axis.Y, Axis.Z):
-            raise ValueError("revolve axis must be Axis.X, Axis.Y or Axis.Z")
 
-        plane_axes = {
-            "XY": (Axis.X, Axis.Y),
-            "XZ": (Axis.X, Axis.Z),
-            "YZ": (Axis.Y, Axis.Z),
-        }
-        if self.plane not in plane_axes or axis not in plane_axes[self.plane]:
-            raise ValueError("revolve axis must lie in the Sketch plane")
+        plane_normals = {"XY": 2, "XZ": 1, "YZ": 0}
+        if self.plane not in plane_normals:
+            raise ValueError("revolve requires an XY, XZ or YZ Sketch plane")
+        normal = plane_normals[self.plane]
+        plane_coordinate = self.offset if self.offset is not None else 0
+
+        if isinstance(axis, AxisLine):
+            axis_origin = axis.origin
+            axis_direction = axis.direction
+            if abs(axis_direction[normal]) > 1e-12:
+                raise ValueError("revolve AxisLine direction must lie in the Sketch plane")
+            authored_plane = command_value(plane_coordinate)
+            authored_axis = command_value(axis_origin[normal])
+            if (
+                str(authored_plane) != str(authored_axis)
+                and not isclose(
+                    pv(plane_coordinate),
+                    pv(axis_origin[normal]),
+                    rel_tol=0.0,
+                    abs_tol=1e-9,
+                )
+            ):
+                raise ValueError("revolve AxisLine origin must lie in the Sketch plane")
+            axis_spec = (axis_origin, axis_direction)
+        else:
+            if not isinstance(axis, Axis) or axis not in (Axis.X, Axis.Y, Axis.Z):
+                raise ValueError(
+                    "revolve axis must be Axis.X/Y/Z or AxisLine"
+                )
+            plane_axes = {
+                "XY": (Axis.X, Axis.Y),
+                "XZ": (Axis.X, Axis.Z),
+                "YZ": (Axis.Y, Axis.Z),
+            }
+            if axis not in plane_axes[self.plane]:
+                raise ValueError("revolve axis must lie in the Sketch plane")
+            if self.offset is not None:
+                raise ValueError(
+                    "shifted Sketch revolve requires AxisLine so the native "
+                    "axis and plane remain explicitly coplanar"
+                )
+            axis_spec = axis.value
         if not isinstance(sym, bool):
             raise TypeError("Sketch revolve sym must be True or False")
 
@@ -1039,7 +1079,7 @@ class Sketch:
                 self.offset,
                 tuple(self._profiles),
                 angle,
-                axis.value,
+                axis_spec,
                 "symmetric" if sym else None,
                 tuple(self._operations),
                 self.rotation,
