@@ -268,10 +268,10 @@ groups:
 
   - heading: Configuration tables
     items:
-      - title: "Configure(geometry, active=..., columns=..., rows=...)"
+      - title: "Configure(design, active=..., columns=..., rows=...)"
         description: "Author one editable native SolidCraft configuration table."
         snippet: |
-          Configure(plate, active="Medium",
+          Configure(design, active="Medium",
               columns=(Param("width"), Suppress(hole)),
               rows={"Medium": ("80 mm", True),
                     "Large": ("100 mm", False)})

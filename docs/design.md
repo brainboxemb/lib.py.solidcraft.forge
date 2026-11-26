@@ -70,7 +70,7 @@ parameter edits.
 ## Native configuration-table boundary
 
 Configuration is final design intent rather than a Python model variant. The
-initial authoring shape is `Configure(geometry, active=..., columns=..., rows=...)`,
+public authoring boundary is `Configure(design, active=..., columns=..., rows=...)`,
 with `Param(...)` and `Suppress(feature)` columns. Suppression references an
 exact Forge-authored applied feature. Lowering binds the native feature name from that feature command's replay
 result; SolidCraft resolves that name to the native feature-id reference stored

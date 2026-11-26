@@ -18,7 +18,7 @@ class _SuppressionColumn:
 
 @dataclass(frozen=True)
 class _ConfiguredDesign:
-    geometry: object
+    design: object
     active: str
     columns: tuple
     rows: tuple
@@ -40,14 +40,17 @@ def Suppress(feature):
     return _SuppressionColumn(feature)
 
 
-def Configure(geometry, *, active, columns, rows):
+def Configure(design, *, active, columns, rows):
     """Return one final design with an editable native configuration table.
 
     Each row contains one parameter expression or suppression boolean per
     column, in column order. The active name must be one of the declared rows.
     """
-    if not isinstance(geometry, Shape):
-        raise TypeError("configuration authoring currently requires a final Shape")
+    from .model_objects import Assembly, ModelInstance
+    if not isinstance(design, (Shape, ModelInstance, Assembly)):
+        raise TypeError(
+            "Configure requires a final Shape, component occurrence or Assembly"
+        )
     columns = tuple(columns)
     if not columns or not all(isinstance(c, (_ParameterColumn, _SuppressionColumn))
                               for c in columns):
@@ -80,7 +83,7 @@ def Configure(geometry, *, active, columns, rows):
         normalized.append((name, tuple(converted)))
     if active not in rows:
         raise ValueError("active configuration must name a declared row")
-    return _ConfiguredDesign(geometry, active, columns, tuple(normalized))
+    return _ConfiguredDesign(design, active, columns, tuple(normalized))
 
 
 def _feature_prefix(root, source):
@@ -103,15 +106,110 @@ def _feature_prefix(root, source):
     return None
 
 
-def _configuration_commands(configured, name, commands):
-    """Bind actual native feature IDs and append native table authoring."""
+def _same_native_command(left, right):
+    return (
+        left.get("command") == right.get("command")
+        and left.get("params", {}) == right.get("params", {})
+    )
+
+
+def _suppression_command_index(configured, name, commands, feature):
+    """Find the exact compiled history command for one authored feature."""
     from .compiler import ModelError, _compile_model_commands
+
+    if isinstance(configured.design, Shape):
+        prefix = _feature_prefix(configured.design, feature)
+        if prefix is None:
+            raise ModelError(
+                "suppression source must be an already-applied feature of this design"
+            )
+        prefix_commands = [
+            c for c in _compile_model_commands(prefix, name)
+            if c["command"] != "parameters.add"
+        ]
+        geometry_indexes = [
+            i for i, c in enumerate(commands)
+            if c["command"] != "parameters.add"
+        ]
+        if not prefix_commands or len(prefix_commands) > len(geometry_indexes):
+            raise ModelError("suppression source has no native history feature")
+        index = geometry_indexes[len(prefix_commands) - 1]
+        actual = [commands[i] for i in geometry_indexes[:len(prefix_commands)]]
+        if any(
+            not _same_native_command(a, b)
+            for a, b in zip(actual, prefix_commands)
+        ):
+            raise ModelError(
+                "suppression source does not resolve to an exact history prefix"
+            )
+        return index
+
+    from .assembly import (
+        _as_assembly,
+        _component_slug,
+        _definition_names,
+        _namespace_commands,
+    )
+    from .core import _shape_contains
+
+    assembly = _as_assembly(configured.design)
+    names = _definition_names(assembly)
+    by_definition = {}
+    for instance in assembly.instances:
+        by_definition.setdefault(instance.definition.key, []).append(instance)
+
+    matches = []
+    for definition_number, (key, instances) in enumerate(
+        by_definition.items(),
+        start=1,
+    ):
+        definition = instances[0].definition
+        if not _shape_contains(definition.shape, feature):
+            continue
+        prefix = _feature_prefix(definition.shape, feature)
+        if prefix is None:
+            continue
+        external_names = {
+            parameter_name
+            for parameter_name, _ in definition.external_parameters
+        }
+        prefix_commands = _namespace_commands(
+            _compile_model_commands(prefix, _component_slug(names[key])),
+            names[key],
+            definition_number=definition_number,
+            external_names=external_names,
+        )
+        prefix_geometry = [
+            c for c in prefix_commands
+            if c["command"] != "parameters.add"
+        ]
+        if not prefix_geometry:
+            continue
+        target = prefix_geometry[-1]
+        matches.extend(
+            index for index, command in enumerate(commands)
+            if _same_native_command(command, target)
+        )
+
+    matches = sorted(set(matches))
+    if not matches:
+        raise ModelError(
+            "suppression source must be an already-applied feature of this design"
+        )
+    if len(matches) != 1:
+        raise ModelError(
+            "suppression source resolves ambiguously in the compiled assembly"
+        )
+    return matches[0]
+
+
+def _configuration_commands(configured, name, commands):
+    """Bind native configuration targets and append table authoring."""
+    from .compiler import ModelError
 
     commands = [dict(command) for command in commands]
     parameter_names = {c["params"]["name"] for c in commands
                        if c["command"] == "parameters.add"}
-    geometry_indexes = [i for i, c in enumerate(commands)
-                        if c["command"] != "parameters.add"]
     params = []
     features = []
     keys = []
@@ -127,18 +225,12 @@ def _configuration_commands(configured, name, commands):
             params.append(column.name)
             keys.append(f"param:{column.name}")
             continue
-        prefix = _feature_prefix(configured.geometry, column.feature)
-        if prefix is None:
-            raise ModelError("suppression source must be an already-applied feature of this design")
-        prefix_commands = [c for c in _compile_model_commands(prefix, name)
-                           if c["command"] != "parameters.add"]
-        if not prefix_commands or len(prefix_commands) > len(geometry_indexes):
-            raise ModelError("suppression source has no native history feature")
-        index = geometry_indexes[len(prefix_commands) - 1]
-        actual = [commands[i] for i in geometry_indexes[:len(prefix_commands)]]
-        if any(a["command"] != b["command"] or a["params"] != b["params"]
-               for a, b in zip(actual, prefix_commands)):
-            raise ModelError("suppression source does not resolve to an exact history prefix")
+        index = _suppression_command_index(
+            configured,
+            name,
+            commands,
+            column.feature,
+        )
         if not commands[index]["command"].startswith(("solid.", "sheet.")):
             raise ModelError("suppression source must end in one native solid or sheet feature")
         if index in bound_indexes:
@@ -168,3 +260,27 @@ def _configuration_commands(configured, name, commands):
     commands.append(command("config.activate", row=configured.active))
     commands.append(command("config.table"))
     return commands
+
+def _apply_configuration_document(configured, name, document):
+    """Append generic configuration intent to an already compiled design."""
+    from .replay import is_replay_document, replay_document
+
+    commands = _configuration_commands(
+        configured,
+        name,
+        document["commands"],
+    )
+    if is_replay_document(document):
+        result = dict(document)
+        result["commands"] = commands
+        return result
+
+    extras = {
+        key: value for key, value in document.items()
+        if key != "commands"
+    }
+    if any("bind" in command for command in commands):
+        result = replay_document(commands)
+        result.update(extras)
+        return result
+    return {"commands": commands, **extras}

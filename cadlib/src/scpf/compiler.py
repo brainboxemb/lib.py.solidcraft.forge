@@ -85,7 +85,9 @@ def _compile_model_with_dependencies(shape: Shape, name: str):
     """Compile one Shape and retain actual native parameter dependencies."""
     from .configurations import _ConfiguredDesign, _configuration_commands
     if isinstance(shape, _ConfiguredDesign):
-        commands = _compile_model_commands(shape.geometry, name)
+        if not isinstance(shape.design, Shape):
+            raise TypeError("compile_model Configure design must contain one Shape")
+        commands = _compile_model_commands(shape.design, name)
         commands = _configuration_commands(shape, name, commands)
     else:
         commands = _compile_model_commands(shape, name)

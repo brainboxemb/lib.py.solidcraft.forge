@@ -2451,11 +2451,11 @@
       "guide": "guide/geometry/",
       "reference": "reference/Configure/",
       "use_when": "Define editable native configuration rows rather than Python-only variants.",
-      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
+      "limits": "Rows modify native configuration columns only; Configure does not branch or rebuild Python model structure per row.",
       "parameters": [
         {
-          "name": "geometry",
-          "description": "Final Shape."
+          "name": "design",
+          "description": "Final Shape, component occurrence or Assembly."
         },
         {
           "name": "active",
@@ -2470,7 +2470,7 @@
           "description": "Ordered mapping of row names to cell sequences."
         }
       ],
-      "example": "Configure(plate, active='Medium', columns=(Param('width'),), rows={'Medium': ('80 mm',)})"
+      "example": "Configure(design, active='Medium', columns=(Param('width'),), rows={'Medium': ('80 mm',)})"
     },
     {
       "kind": "function",

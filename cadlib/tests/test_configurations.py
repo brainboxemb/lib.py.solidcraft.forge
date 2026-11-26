@@ -1,9 +1,12 @@
 """Configuration-table authoring and replay identity tests."""
+import tempfile
 import unittest
+from pathlib import Path
 
 from scpf import Anchor, Box, Configure, Hole, Param, Parameter, Suppress, compile_model
 from scpf.compiler import ModelError
 from scpf.replay import resolve_value, validate_replay_document, variables_in
+from scpf.runner import run_script
 
 
 class ConfigurationTests(unittest.TestCase):
@@ -56,6 +59,52 @@ class ConfigurationTests(unittest.TestCase):
             Configure(body, active="A", columns=(Param("width"),), rows={"A": ()})
         with self.assertRaisesRegex(TypeError, "suppression cells"):
             Configure(body, active="A", columns=(Suppress(body),), rows={"A": (1,)})
+
+    def test_configure_wraps_parametric_assembly_placement(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "model.py"
+            path.write_text(
+                "class Screen:\n"
+                "    def build(self):\n"
+                "        return Box(80, 10, 50)\n"
+                "class FrontPlate:\n"
+                "    def build(self):\n"
+                "        return Box(80, 2, 50)\n"
+                "class Display:\n"
+                "    plate_y = 8.0\n"
+                "    plate_z = 0.0\n"
+                "    def build(self):\n"
+                "        screen = Screen(name='screen')\n"
+                "        plate = FrontPlate(name='front_plate', "
+                "placement=Placement(y=self.plate_y, z=self.plate_z))\n"
+                "        return Configure(\n"
+                "            screen + plate, active='Front',\n"
+                "            columns=(Param('plate_y'), Param('plate_z')),\n"
+                "            rows={\n"
+                "                'Front': ('8 mm', '0 mm'),\n"
+                "                'Below': ('0 mm', '-55 mm'),\n"
+                "                'Service': ('25 mm', '0 mm'),\n"
+                "            },\n"
+                "        )\n"
+                "Display()\n",
+                encoding="utf-8",
+            )
+            document = run_script(path)
+
+        commands = document["commands"]
+        move = next(row for row in commands if row["command"] == "occurrence.move")
+        self.assertEqual(move["params"]["translate"][1:], ["plate_y", "plate_z"])
+        configure = next(
+            row for row in commands if row["command"] == "config.configure"
+        )
+        self.assertEqual(
+            configure["params"],
+            {"params": ["plate_y", "plate_z"]},
+        )
+        self.assertEqual(
+            next(row for row in commands if row["command"] == "config.activate")["params"],
+            {"row": "Front"},
+        )
 
 
 if __name__ == "__main__":

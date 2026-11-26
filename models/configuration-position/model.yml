@@ -1,0 +1,16 @@
+schema: 1
+purpose: [example, verification]
+section: configurations
+priority: 20
+title: Configuration Position
+tagline: Native rows drive an assembly occurrence to front, below and service positions
+description: >
+  A screen stays fixed while a separate front plate follows two native model
+  parameters. Configuration rows select three useful assembly positions without
+  rebuilding or branching the assembly in Python.
+parameters: Front, Below and Service positions
+stages:
+  - Build screen and front-plate component occurrences
+  - Keep front-plate Y and Z placement associative to model parameters
+  - Author one native configuration table around the complete assembly
+  - Switch to Below and Service in the saved SolidCraft design
