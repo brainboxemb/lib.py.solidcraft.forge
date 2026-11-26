@@ -3,7 +3,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scpf import Anchor, Box, Configure, Hole, Param, Parameter, Suppress, compile_model
+from scpf import (
+    Always, Anchor, Box, ConfigRule, Configure, DriveParameter, Hole, Param,
+    Parameter, Suppress, compile_model,
+)
 from scpf.compiler import ModelError
 from scpf.replay import resolve_value, validate_replay_document, variables_in
 from scpf.configurations import _row_variable
@@ -34,6 +37,116 @@ class ConfigurationTests(unittest.TestCase):
             commands[-4]["bind"][_row_variable("Medium")],
             {"field": "rows", "where": {"name": "Medium"}, "select": "id"},
         )
+
+    def test_enabled_rule_drives_configured_parameter_after_rows(self):
+        size = Parameter("size", 80)
+        tube_d = Parameter("tube_d", 20)
+        fit_diameter = Parameter("fit_diameter", 20.4)
+        shape = Box(size, tube_d, fit_diameter)
+        design = Configure(
+            shape,
+            active="Medium",
+            columns=(Param(size), Param(fit_diameter)),
+            rows={
+                "Small": ("60 mm", "20.4 mm"),
+                "Medium": ("80 mm", "20.4 mm"),
+                "Large": ("100 mm", "20.4 mm"),
+            },
+            rules=(
+                ConfigRule(
+                    "installed",
+                    "Installed",
+                    enabled=True,
+                    condition=Always(),
+                    effect=DriveParameter(fit_diameter, tube_d),
+                ),
+            ),
+        )
+
+        commands = compile_model(design, "RulePlate")["commands"]
+        rule = next(row for row in commands if row["command"] == "config.rule")
+        self.assertEqual(
+            rule["params"],
+            {
+                "rule": {
+                    "id": "installed",
+                    "name": "Installed",
+                    "enabled": True,
+                    "condition": {"type": "always"},
+                    "effect": {
+                        "type": "drive_parameter",
+                        "parameter": "fit_diameter",
+                        "expression": "tube_d",
+                    },
+                },
+            },
+        )
+        rule_index = commands.index(rule)
+        activate_index = next(
+            i for i, row in enumerate(commands)
+            if row["command"] == "config.activate"
+        )
+        self.assertLess(rule_index, activate_index)
+
+    def test_rule_can_be_authored_disabled(self):
+        fit = Parameter("fit", 20.4)
+        shape = Box(40, 30, fit)
+        design = Configure(
+            shape,
+            active="Medium",
+            columns=(Param(fit),),
+            rows={"Medium": ("20.4 mm",)},
+            rules=(
+                ConfigRule(
+                    "installed",
+                    "Installed",
+                    enabled=False,
+                    condition=Always(),
+                    effect=DriveParameter(fit, 20.0),
+                ),
+            ),
+        )
+        command = next(
+            row for row in compile_model(design, "Fit")["commands"]
+            if row["command"] == "config.rule"
+        )
+        self.assertFalse(command["params"]["rule"]["enabled"])
+
+    def test_rule_requires_configured_parameter_target(self):
+        fit = Parameter("fit", 20.4)
+        other = Parameter("other", 20.0)
+        shape = Box(40, fit, other)
+        with self.assertRaisesRegex(ValueError, "also be a Param"):
+            Configure(
+                shape,
+                active="Medium",
+                columns=(Param(fit),),
+                rows={"Medium": ("20.4 mm",)},
+                rules=(
+                    ConfigRule(
+                        "installed",
+                        "Installed",
+                        condition=Always(),
+                        effect=DriveParameter(other, 20.0),
+                    ),
+                ),
+            )
+
+    def test_rule_rejects_untyped_condition_and_effect(self):
+        with self.assertRaisesRegex(TypeError, "condition must use Always"):
+            ConfigRule(
+                "installed",
+                "Installed",
+                condition="always",
+                effect=DriveParameter("fit", 20.0),
+            )
+        with self.assertRaisesRegex(TypeError, "effect must use DriveParameter"):
+            ConfigRule(
+                "installed",
+                "Installed",
+                condition=Always(),
+                effect="fit",
+            )
 
     def test_feature_binding(self):
         plate = Box(Parameter("width", 80), 30, 5, anchor=Anchor.BOTTOM)

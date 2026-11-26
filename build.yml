@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/162-sheet-perforate-visual
+branch: issue/315-configuration-rules
 modules: [verification, pages]
-library: false
-models: [sheet-perforate]
+library: true
+models: [configuration-installed-state]
 tasks: [test]
