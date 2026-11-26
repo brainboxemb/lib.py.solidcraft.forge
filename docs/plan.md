@@ -44,7 +44,8 @@ The accepted baseline now includes:
   product baseline instead of rebuilding/replacing it;
 - Forge-owned release metadata validation and explicit owner-issued
   `/release` publication through released `tool.py.lib.ci`;
-- stable Pages quality and the canonical Pages deployment.
+- stable Pages quality and the canonical Pages deployment;
+- policy-dispatched permanent `dev` / `main` / `exp` qualification resolves the current checked-out branch HEAD and uses that same SHA for history selection and durable publication, preventing stale `workflow_dispatch` event-SHA races while retaining fail-closed publisher freshness checks.
 
 Release evidence for v0.19.0:
 - promoted full product baseline:
@@ -66,11 +67,6 @@ The historical repository remains an archived A/B/provenance reference at
 `brainboxemb/lib.py.solidcraft.forge.OLD`.
 
 ## Now
-
-### #202 consume current-head workflow dispatch qualification
-
-Consume the qualified `template.cad.library#77` fix so policy-dispatched permanent runs qualify the current checked-out branch head rather than a potentially stale workflow event SHA. This is required before treating #200's failed publication as resolved; no CAD/API behavior changes.
-
 
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
