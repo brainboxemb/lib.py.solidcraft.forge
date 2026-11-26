@@ -93,12 +93,17 @@ First spike:
 6. fail explicitly for unsupported Mitcad intent rather than weakening the
    SolidCraft path or inventing lowest-common-denominator behavior.
 
-### Dev: #163 verification evidence audit
+### Dev: consumer release blockers
 
-With #162 now qualifying native sheet perforation from authoritative
-manufacturing DXF/flat-pattern output, audit every remaining Verification owner
-against the current evidence contract so visually meaningful geometry cannot
-remain green on metadata/native checks alone.
+Prioritize current Forge consumer blockers before the broad verification audit:
+
+1. #250 expose SolidCraft's native compact title block for small-part drawings;
+2. #210 reconcile stale public pattern authoring examples used by MCP consumers;
+3. resume #163 verification evidence audit after the consumer-facing release
+   blockers are merged.
+
+The compact drawing path must stay native and backwards compatible with the
+existing `iso-a4-part` / `iso-a3-part` behavior.
 
 ## Later
 
