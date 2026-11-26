@@ -146,6 +146,23 @@ def _validate_drawing_inspection(
                 f"SCPF drawing property {key!r} mismatch: {name}"
             )
 
+    title_block_style = expected.get("title_block_style")
+    if title_block_style == "compact":
+        title_block = sheet.get("title_block", {})
+        size_mm = (
+            title_block.get("size_mm")
+            if isinstance(title_block, dict)
+            else None
+        )
+        if (
+            not isinstance(size_mm, list)
+            or len(size_mm) != 2
+            or float(size_mm[1]) != 49.0
+        ):
+            raise RuntimeError(
+                f"SCPF drawing compact title-block mismatch: {name}"
+            )
+
     overrides = sheet.get("title_block_overrides", {})
     for key, value in expected.get("title_block", {}).items():
         if overrides.get(key) != value:
