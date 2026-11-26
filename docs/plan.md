@@ -90,27 +90,20 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: consumer capability blockers
+### Dev: consumer capability blocker #271
 
-Consumer-driven Forge capability stays ahead of the broad verification audit.
+Implement native two-distance / asymmetric chamfer for CAD catalog #200:
 
-1. **#267 — multiple closed profiles in standalone Sketch extrusion**
-   - required by CAD catalog #198 for the reusable hollow Ø10/Ø8 tube;
-   - preserve one native Sketch with nested closed loops and one native
-     extrusion of the explicitly selected annular region;
-   - keep current single-profile extrusion and one-profile revolve behavior
-     backwards compatible.
+- expose SolidCraft's primary/secondary chamfer-distance intent directly;
+- preserve the existing semantic edge-selection forms;
+- lower to one native `solid.chamfer` history feature;
+- keep equal-distance `Shape.chamfer(distance, ...)` source-compatible;
+- qualify both stored distances, deterministic edge selection and visibly
+  asymmetric geometry.
 
-2. **#271 — native two-distance / asymmetric chamfer**
-   - required by CAD catalog #200 for the HUB75 Edge/Corner coupler taper;
-   - expose native primary/secondary chamfer-distance intent directly;
-   - preserve semantic edge selection and one native chamfer history feature;
-   - keep existing equal-distance `chamfer(distance)` source-compatible.
-
-3. **#163 — verification evidence audit**
-   - resume the repository-wide audit after #267 and #271;
-   - keep concrete evidence gaps in focused follow-ups #255, #256 and #257
-     rather than mixing them into consumer capability work.
+After #271, resume **#163** as the normal dev task. Keep its concrete evidence
+gaps in focused follow-ups #255, #256 and #257 rather than mixing them into
+consumer capability work.
 
 ### Experimental lane
 
