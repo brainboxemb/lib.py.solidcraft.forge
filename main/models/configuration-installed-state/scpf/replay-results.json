@@ -1,5 +1,11 @@
 [
   {
+    "display_value": 20.0,
+    "name": "tube_d",
+    "unit": "mm",
+    "value": 20.0
+  },
+  {
     "display_value": 20.4,
     "name": "fit_diameter",
     "unit": "mm",
@@ -7,7 +13,7 @@
   },
   {
     "component": 1,
-    "grounded": true,
+    "grounded": false,
     "name": "FlexibleSleeve",
     "occurrence": 2,
     "parent": 0
@@ -21,7 +27,7 @@
       "FlexibleSleeve"
     ],
     "feature": 3,
-    "ms": 4.943109000000001,
+    "ms": 4.318414,
     "name": "Cylinder1",
     "removed_bodies": [],
     "warning": null
@@ -35,7 +41,21 @@
     ],
     "created_bodies": [],
     "feature": 4,
-    "ms": 16.000806,
+    "ms": 15.534291,
+    "name": "Cylinder2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "FlexibleSleeve"
+    ],
+    "changed_bodies": [
+      "FlexibleSleeve"
+    ],
+    "created_bodies": [],
+    "feature": 5,
+    "ms": 22.621167,
     "name": "Box1",
     "removed_bodies": [],
     "warning": null
@@ -44,17 +64,89 @@
     "active": 0
   },
   {
+    "component": 1,
+    "occurrence": 6
+  },
+  {
+    "display_value": 80.0,
+    "name": "frame_width",
+    "unit": "mm",
+    "value": 80.0
+  },
+  {
+    "occurrence": 2,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        -20.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  {
+    "occurrence": 6,
+    "pending": false,
+    "transform": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        20.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  {
     "active": "Default",
     "columns": [
+      "param:frame_width",
       "param:fit_diameter"
     ],
     "matches": true,
     "rows": [
       {
-        "id": 5,
+        "id": 7,
         "name": "Default",
         "values": {
-          "param:fit_diameter": "20.4"
+          "param:fit_diameter": "20.4",
+          "param:frame_width": "80 mm"
         }
       }
     ],
@@ -63,89 +155,35 @@
     "style_status": [],
     "targets": [
       {
-        "key": "param:fit_diameter",
-        "label": "param:fit_diameter",
+        "key": "param:frame_width",
+        "label": "param:frame_width",
         "target": {
-          "param": "fit_diameter"
-        }
-      }
-    ]
-  },
-  {
-    "active": "Free",
-    "columns": [
-      "param:fit_diameter"
-    ],
-    "matches": true,
-    "rows": [
-      {
-        "id": 5,
-        "name": "Free",
-        "values": {
-          "param:fit_diameter": "20.4"
-        }
-      }
-    ],
-    "rules": [],
-    "style_error": null,
-    "style_status": [],
-    "targets": [
-      {
-        "key": "param:fit_diameter",
-        "label": "param:fit_diameter",
-        "target": {
-          "param": "fit_diameter"
-        }
-      }
-    ]
-  },
-  {
-    "active": "Free",
-    "columns": [
-      "param:fit_diameter"
-    ],
-    "matches": false,
-    "rows": [
-      {
-        "id": 5,
-        "name": "Free",
-        "values": {
-          "param:fit_diameter": "20.4 mm"
-        }
-      }
-    ],
-    "rules": [],
-    "style_error": null,
-    "style_status": [],
-    "targets": [
-      {
-        "key": "param:fit_diameter",
-        "label": "param:fit_diameter",
-        "target": {
-          "param": "fit_diameter"
-        }
-      }
-    ]
-  },
-  {
-    "active": "Free",
-    "columns": [
-      "param:fit_diameter"
-    ],
-    "matches": false,
-    "rows": [
-      {
-        "id": 5,
-        "name": "Free",
-        "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param": "frame_width"
         }
       },
       {
-        "id": 6,
-        "name": "Installed",
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "20.4",
+          "param:frame_width": "80 mm"
         }
       }
     ],
@@ -153,6 +191,13 @@
     "style_error": null,
     "style_status": [],
     "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
@@ -163,33 +208,269 @@
     ]
   },
   {
-    "active": "Free",
+    "active": "Small",
     "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Medium",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Medium",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "100 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Small",
+    "columns": [
+      "param:frame_width",
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 7,
+        "name": "Small",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
+        }
+      },
+      {
+        "id": 8,
+        "name": "Medium",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "100 mm"
+        }
+      }
+    ],
+    "rules": [
+      {
+        "condition": {
+          "type": "always"
+        },
+        "effect": {
+          "expression": "tube_d",
+          "parameter": "fit_diameter",
+          "type": "drive_parameter"
+        },
+        "enabled": true,
+        "id": "installed",
+        "length_unit": "mm",
+        "name": "Installed"
+      }
+    ],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Medium",
+    "columns": [
+      "param:frame_width",
       "param:fit_diameter"
     ],
     "errors": [],
     "matches": true,
     "rows": [
       {
-        "id": 5,
-        "name": "Free",
+        "id": 7,
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
         }
       },
       {
-        "id": 6,
-        "name": "Installed",
+        "id": 8,
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "100 mm"
         }
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "condition": {
+          "type": "always"
+        },
+        "effect": {
+          "expression": "tube_d",
+          "parameter": "fit_diameter",
+          "type": "drive_parameter"
+        },
+        "enabled": true,
+        "id": "installed",
+        "length_unit": "mm",
+        "name": "Installed"
+      }
+    ],
     "style_error": null,
     "style_status": [],
     "styles": [],
     "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
@@ -198,34 +479,78 @@
         }
       }
     ],
-    "trace": []
+    "trace": [
+      {
+        "effect": {
+          "expression": "tube_d",
+          "parameter": "fit_diameter",
+          "type": "drive_parameter"
+        },
+        "id": "installed",
+        "matched": true,
+        "name": "Installed"
+      }
+    ]
   },
   {
-    "active": "Free",
+    "active": "Medium",
     "columns": [
+      "param:frame_width",
       "param:fit_diameter"
     ],
     "matches": true,
     "rows": [
       {
-        "id": 5,
-        "name": "Free",
+        "id": 7,
+        "name": "Small",
         "values": {
-          "param:fit_diameter": "20.4 mm"
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "60 mm"
         }
       },
       {
-        "id": 6,
-        "name": "Installed",
+        "id": 8,
+        "name": "Medium",
         "values": {
-          "param:fit_diameter": "20.0 mm"
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "80 mm"
+        }
+      },
+      {
+        "id": 9,
+        "name": "Large",
+        "values": {
+          "param:fit_diameter": "20.4 mm",
+          "param:frame_width": "100 mm"
         }
       }
     ],
-    "rules": [],
+    "rules": [
+      {
+        "condition": {
+          "type": "always"
+        },
+        "effect": {
+          "expression": "tube_d",
+          "parameter": "fit_diameter",
+          "type": "drive_parameter"
+        },
+        "enabled": true,
+        "id": "installed",
+        "length_unit": "mm",
+        "name": "Installed"
+      }
+    ],
     "style_error": null,
     "style_status": [],
     "targets": [
+      {
+        "key": "param:frame_width",
+        "label": "param:frame_width",
+        "target": {
+          "param": "frame_width"
+        }
+      },
       {
         "key": "param:fit_diameter",
         "label": "param:fit_diameter",
