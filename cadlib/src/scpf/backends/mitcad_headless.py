@@ -66,10 +66,25 @@ def _validate_replay(value: Any) -> list[dict[str, Any]]:
                     "has no body binding"
                 )
             face = boundary.get("face")
-            if not isinstance(face, dict) or not face:
+            faces = boundary.get("faces")
+            if (face is None) == (faces is None):
                 raise MitcadHeadlessError(
                     f"Mitcad replay stage {index} face-boundary binding "
-                    "has no face query"
+                    "requires exactly one of face or faces"
+                )
+            if face is not None and (not isinstance(face, dict) or not face):
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} face-boundary binding "
+                    "has invalid face query"
+                )
+            if faces is not None and (
+                not isinstance(faces, list)
+                or not faces
+                or any(not isinstance(item, dict) or not item for item in faces)
+            ):
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} face-boundary binding "
+                    "has invalid faces queries"
                 )
         _validate_commands(
             stage.get("commands"),
@@ -517,12 +532,28 @@ def run_document(
                             "Mitcad face-boundary binding refers to unknown "
                             f"body binding: {source_binding!r}"
                         )
-                    bindings[boundary["name"]] = _bind_face_boundary_edges(
-                        session,
-                        handle,
-                        body_uid=source_body,
-                        face_query=boundary["face"],
+                    face_queries = (
+                        [boundary["face"]]
+                        if "face" in boundary
+                        else boundary["faces"]
                     )
+                    combined_edges = []
+                    seen_edges = set()
+                    for face_query in face_queries:
+                        for edge in _bind_face_boundary_edges(
+                            session,
+                            handle,
+                            body_uid=source_body,
+                            face_query=face_query,
+                        ):
+                            if edge not in seen_edges:
+                                seen_edges.add(edge)
+                                combined_edges.append(edge)
+                    if not combined_edges:
+                        raise MitcadHeadlessError(
+                            "Mitcad face-boundary binding resolved no edges"
+                        )
+                    bindings[boundary["name"]] = combined_edges
 
                 stage_commands = _bind_values(
                     stage["commands"],
