@@ -33,9 +33,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PYTHONPATH: modules/merge-policy/src
-        run: >-
-          python -m cad_model_merge_policy
-          --repository "${{ github.repository }}"
-          --pull-request-number "${{ github.event.issue.number }}"
-          --actor "${{ github.actor }}"
-          --repository-owner "${{ github.repository_owner }}"
+          MERGE_COMMAND: ${{ github.event.comment.body }}
+        run: |
+          python -m cad_model_merge_policy \
+            --command "$MERGE_COMMAND" \
+            --repository "${{ github.repository }}" \
+            --pull-request-number "${{ github.event.issue.number }}" \
+            --actor "${{ github.actor }}" \
+            --repository-owner "${{ github.repository_owner }}" \
+            --resolution-prefix "resolve/"
