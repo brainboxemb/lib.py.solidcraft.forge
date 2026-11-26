@@ -404,6 +404,17 @@ Permanent experimental builds keep durable evidence under `build/exp/`. Pages as
 
 ## Pages projection
 
+Verification detail pages identify their role with **What this verifies** and
+collapse detailed measured checks by default using the same
+`cad-collapsible` interaction as generated command sequences. Owner-local
+`page.md` remains **Engineering explanation** and is shown directly after the
+primary Forge/source code, before generated commands and detailed evidence.
+
+These behaviors are owned generically by `template.cad.library#82` and
+`template.cad.library#84`; Forge adopts them and only owns case-specific
+explanation such as `models/configuration-position/page.md`.
+
+
 `models/<id>/` remains the single physical owner. Pages creates views from that owner according to `model.yml.purpose`:
 
 - `example` → `/examples/<id>/`;

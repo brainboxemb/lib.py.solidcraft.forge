@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/236-reconcile-v0.20-plan
-modules: [ci]
+branch: issue/239-clarify-verification-intent
+modules: [pages]
 library: false
-models: []
+models: [configuration-position]
 tasks: [test]
