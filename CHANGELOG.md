@@ -8,6 +8,28 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-11-26
+
+### Added
+
+- Add typed native Configuration Rules to final-design configuration authoring
+  through `Configure(..., rules=...)`, `ConfigRule(...)`, `Always()` and
+  `DriveParameter(...)`.
+- Allow one independently enabled native rule to drive an existing
+  `Param(...)` target from a Forge Parameter/Expression without requiring
+  consumer-authored SolidCraft rule JSON or native ids.
+
+### Changed
+
+- Keep physical Installed state orthogonal to ordinary Small / Medium / Large
+  configuration rows: disabling the rule restores the active row's stored
+  Free/base expression instead of expanding size and state into Cartesian rows.
+- Qualify Configuration Rules through saved-design switching after reopen,
+  including reusable child occurrences sharing one parent-owned parameter and
+  independent persistence of row activation and rule enabled state.
+- Retain the pinned SolidCraft 0.49 typed `config.rule` contract as Forge-owned
+  evidence before exposing the new public authoring surface.
+
 ## [0.22.1] - 2026-11-26
 
 ### Qualification
