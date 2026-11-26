@@ -622,6 +622,48 @@ Before moving historical code, classify it as:
 
 Expand migration only after accepted A/B evidence: 1 → 5 → 10 → remaining graph.
 
+## Reviewed permanent-branch conflict recovery
+
+The branch topology remains authoritative even when GitHub cannot merge a
+direct permanent PR automatically. A conflict must not turn a permanent merge
+into a temporary squash.
+
+For the exact merge-commit directions `dev -> main`, `main -> dev`,
+`dev -> exp` and `exp -> dev`, Forge uses the generic template-owned
+reviewed recovery boundary:
+
+```text
+conflicted permanent PR: base=A, head=B
+        |
+        +-- resolve/<name>
+        |      -> separate PR to same base A
+        |      -> mergeable + green central CI
+        |      -> exact commit R / tree T
+        |
+        +-- /merge-resolved
+               base A
+               head B
+               resolution-pr N
+               resolution resolve/<name> R T
+                    |
+                    -> revalidate both PRs and A/B/R/T
+                    -> create tree=T, parents=[A,B]
+                    -> read back exact merge object
+                    -> revalidate refs again
+                    -> non-force advance permanent base
+                    -> normal permanent CI + cleanup dispatch
+```
+
+The resolution PR is review evidence only and is never integrated. The
+temporary resolution commit is therefore not a third parent of permanent
+history. A moved parent/ref/tree, fork review, non-green review,
+non-`resolve/*` head or non-permanent original direction fails closed. If the
+original PR becomes normally mergeable, ordinary `/merge` is required.
+
+Forge adopts this behavior from stable
+`template.cad.library@04ff29b9ba80719b2954e1439db12ef9434b0b97`; it does not
+own a second conflict-recovery design.
+
 ## Main-owned governance merge boundary
 
 Normal product work still integrates through `dev` or `exp`. A repository
