@@ -11,6 +11,7 @@ from scpf.runner import run_script
 
 ROOT = Path(__file__).resolve().parents[2]
 SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
+NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
 
 
 class MitcadBackendTests(unittest.TestCase):
@@ -45,6 +46,39 @@ class MitcadBackendTests(unittest.TestCase):
                 "participants": [],
             },
         )
+
+    def test_negative_circle_extrude_is_native_sketch_plus_extrude(self):
+        document = run_script(NEGATIVE_CIRCLE, backend="mitcad")
+        self.assertEqual(
+            [row["cmd"] for row in document["commands"]],
+            [
+                "add_parameter",
+                "add_parameter",
+                "add_feature",
+                "add_feature",
+            ],
+        )
+        sketch = document["commands"][-2]
+        self.assertEqual(sketch["name"], "Profile")
+        self.assertEqual(sketch["def"]["type"], "sketch")
+        self.assertEqual(sketch["def"]["plane"], "xy")
+        self.assertEqual(sketch["def"]["entities"][1]["type"], "circle")
+        self.assertIn(
+            "diameter",
+            str(sketch["def"]["entities"][1]["radius"]),
+        )
+
+        extrusion = document["commands"][-1]
+        self.assertEqual(extrusion["name"], "NegativeCircleExtrude")
+        self.assertEqual(extrusion["def"]["type"], "extrude")
+        self.assertEqual(
+            extrusion["def"]["profiles"],
+            [{"sketch": "Profile", "region": "r{c1}"}],
+        )
+        distance = str(extrusion["def"]["extent"]["distance"])
+        self.assertTrue(distance.startswith("-("))
+        self.assertIn("height", distance)
+        self.assertEqual(extrusion["def"]["operation"], "new_body")
 
     def test_centered_box_uses_native_mitcad_symmetric_height(self):
         document = compile_model(

@@ -99,7 +99,10 @@ Current spike evidence:
   tests keep this separate from lowering;
 - an opt-in native smoke module pins the official v0.70.0 Linux AppImage by
   SHA-256 and verifies the live MCP reference before running simple-box,
-  checking native volume/bounds and .mitcad/STL output.
+  checking native volume/bounds and .mitcad/STL output;
+- the same direct backend now lowers the unchanged
+  `circle-negative-extrude` source as a native Mitcad sketch feature plus
+  negative-distance extrude, with native volume/bounds qualification.
 
 ### Queued: #162 / #163 verification evidence cleanup
 

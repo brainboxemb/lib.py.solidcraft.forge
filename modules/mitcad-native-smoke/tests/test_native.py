@@ -33,7 +33,8 @@ ASSET_SHA256 = (
 )
 SOURCE_REFERENCE_BLOB = "40240776bc6885e228bf2fbd8e2534875aa61b85"
 RUNTIME_REFERENCE_BLOB = "c839084ba223e814370a55c761644da362fabc93"
-MODEL = ROOT / "models/simple-box/scpf/model.py"
+SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
+NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
 
 
 def ensure_appimage_runtime() -> None:
@@ -145,37 +146,66 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            command_document = run_script(MODEL, backend="mitcad")
-            result = run_document(
-                command_document,
+            simple_box = run_document(
+                run_script(SIMPLE_BOX, backend="mitcad"),
                 save=root / "out/simple-box.mitcad",
                 export=root / "out/simple-box.stl",
                 executable=str(executable),
-                work_dir=root / "model-workspace",
+                work_dir=root / "simple-box-workspace",
             )
 
-            self.assertEqual(result["completed"], 4)
-            self.assertEqual(len(result["bodies"]), 1)
-            body = result["bodies"][0]
-            self.assertEqual(body["kind"], "solid")
-            self.assertAlmostEqual(body["volume"], 12000.0, places=5)
+            self.assertEqual(simple_box["completed"], 4)
+            self.assertEqual(len(simple_box["bodies"]), 1)
+            box_body = simple_box["bodies"][0]
+            self.assertEqual(box_body["kind"], "solid")
+            self.assertAlmostEqual(box_body["volume"], 12000.0, places=5)
             for actual, expected in zip(
-                body["bbox"]["min"],
+                box_body["bbox"]["min"],
                 [-20.0, -15.0, 0.0],
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
             for actual, expected in zip(
-                body["bbox"]["max"],
+                box_body["bbox"]["max"],
                 [20.0, 15.0, 10.0],
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
-            native = root / "out/simple-box.mitcad"
-            stl = root / "out/simple-box.stl"
-            self.assertTrue(native.is_file())
-            self.assertGreater(native.stat().st_size, 0)
-            self.assertTrue(stl.is_file())
-            self.assertGreater(stl.stat().st_size, 0)
+            circle = run_document(
+                run_script(NEGATIVE_CIRCLE, backend="mitcad"),
+                save=root / "out/circle-negative-extrude.mitcad",
+                export=root / "out/circle-negative-extrude.stl",
+                executable=str(executable),
+                work_dir=root / "circle-workspace",
+            )
+            self.assertEqual(circle["completed"], 4)
+            self.assertEqual(len(circle["bodies"]), 1)
+            circle_body = circle["bodies"][0]
+            self.assertEqual(circle_body["kind"], "solid")
+            self.assertAlmostEqual(
+                circle_body["volume"],
+                3000.0 * 3.141592653589793,
+                places=4,
+            )
+            for actual, expected in zip(
+                circle_body["bbox"]["min"],
+                [-10.0, -10.0, -30.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                circle_body["bbox"]["max"],
+                [10.0, 10.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
+            for filename in (
+                "simple-box.mitcad",
+                "simple-box.stl",
+                "circle-negative-extrude.mitcad",
+                "circle-negative-extrude.stl",
+            ):
+                output = root / "out" / filename
+                self.assertTrue(output.is_file(), filename)
+                self.assertGreater(output.stat().st_size, 0, filename)
 
             (evidence / "native-smoke.txt").write_text(
                 "\n".join(
@@ -184,8 +214,10 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"appimage_sha256={ASSET_SHA256}",
                         f"source_reference_blob={SOURCE_REFERENCE_BLOB}",
                         f"runtime_reference_blob={RUNTIME_REFERENCE_BLOB}",
-                        f"volume={body['volume']}",
-                        f"bbox={body['bbox']}",
+                        f"simple_box_volume={box_body['volume']}",
+                        f"simple_box_bbox={box_body['bbox']}",
+                        f"negative_circle_volume={circle_body['volume']}",
+                        f"negative_circle_bbox={circle_body['bbox']}",
                     ]
                 )
                 + "\n",
