@@ -626,6 +626,10 @@
           "description": "Native title-block cell overrides supported by the selected SolidCraft template."
         },
         {
+          "name": "title_block_style",
+          "description": "Optional native title-block presentation: built-in or compact. Compact selects SolidCraft's native compact 49 mm block."
+        },
+        {
           "name": "revision",
           "description": "Optional DrawingRevision row."
         },
@@ -638,8 +642,8 @@
           "description": "Iterable of DrawingDimension objects."
         }
       ],
-      "example": "part.with_drawing(name=\"Bracket drawing\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
-      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
+      "example": "part.with_drawing(name=\"Bracket drawing\", title_block_style=\"compact\", views={\"front\": DrawingView(at=(62,128))}, notes=(DrawingNote(\"NOTES\", at=(156,88)),))",
+      "signature": "Occurrence.with_drawing(self, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, title_block_style=None, revision=None, notes=(), dimensions=())"
     },
     {
       "kind": "callable",
@@ -716,6 +720,10 @@
           "description": "Native title-block cell overrides supported by the selected SolidCraft template."
         },
         {
+          "name": "title_block_style",
+          "description": "Optional native title-block presentation: built-in or compact. Compact selects SolidCraft's native compact 49 mm block."
+        },
+        {
           "name": "revision",
           "description": "Optional DrawingRevision row."
         },
@@ -729,7 +737,7 @@
         }
       ],
       "example": "assembly.with_drawing(left, name=\"Left bracket\", views={\"front\": DrawingView(at=(62,128))}, dimensions=(DrawingDimension.faces(\"front\", (-20,0,5), (20,0,5)),))",
-      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, revision=None, notes=(), dimensions=())"
+      "signature": "Assembly.with_drawing(self, target, *, name=None, template=\"iso-a4-part\", sheet_name=\"Sheet 1\", scale=None, gap_mm=20, views=None, properties=None, title_block=None, title_block_style=None, revision=None, notes=(), dimensions=())"
     },
     {
       "kind": "callable",
@@ -912,23 +920,31 @@
     {
       "kind": "callable",
       "name": "Shape.chamfer",
-      "summary": "Chamfer selected solid edges by one equal distance.",
+      "summary": "Chamfer selected solid edges by one equal distance or two native face distances.",
       "guide": "guide/features/#fillet",
       "reference": "reference/Shape.chamfer/",
-      "use_when": "Bevel one or more edges of a supported feature-based body. Chamfer and fillet use the same edge-selection forms.",
-      "limits": "Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids.",
+      "use_when": "Bevel one or more edges of a supported feature-based body. Supply distance2 for an asymmetric native chamfer; chamfer and fillet use the same edge-selection forms.",
+      "limits": "Edges.from_faces() resolves native SolidCraft face-boundary topology. Existing Edges.VERTICAL and cardinal Box selectors require a supported rectangular body; named profile/vertex selectors require matching Polygon2D ids. flip=True requires distance2. Omitting distance2 preserves the existing equal-distance command contract.",
       "parameters": [
         {
           "name": "distance",
-          "description": "Chamfer distance in mm."
+          "description": "Primary chamfer distance in mm."
+        },
+        {
+          "name": "distance2",
+          "description": "Optional secondary distance along the adjacent face. Omit for an equal-distance chamfer."
+        },
+        {
+          "name": "flip",
+          "description": "Swap the native primary/secondary adjacent-face ordering. Defaults to False and requires distance2 when True."
         },
         {
           "name": "edges",
           "description": "Edge selection. Prefer Edges.from_faces(...) for named face perimeters; Edges.VERTICAL, supported two-direction Box selectors, Edges.from_profile(...), Edges.from_vertices(...) and non-empty XYZ edge-pick sequences remain supported. Defaults to Edges.VERTICAL."
         }
       ],
-      "example": "body = Box(80, 50, 15)\nbevelled = body.chamfer(3, edges=Edges.VERTICAL)",
-      "signature": "Shape.chamfer(self, distance, *, edges=<Edges.VERTICAL: 'vertical'>)"
+      "example": "body = Box(80, 50, 15)\nbevelled = body.chamfer(0.18, distance2=0.65, edges=Edges.VERTICAL)",
+      "signature": "Shape.chamfer(self, distance, *, distance2=None, flip=False, edges=<Edges.VERTICAL: 'vertical'>)"
     },
     {
       "kind": "callable",
@@ -1415,7 +1431,7 @@
       "guide": "guide/geometry/#profile-selection",
       "reference": "reference/Sketch.extrude/",
       "use_when": "Leave the Sketch context and create or cut material normal to the sketch plane. Use profiles= when the Sketch contains more closed regions than the extrusion should use.",
-      "limits": "A standalone Sketch requires a finite non-zero distance. Depth.THROUGH_ALL is only meaningful for a Sketch attached to an existing Shape and cannot be combined with sym=True. Profile pick points must be fixed finite numbers; Parameters and expressions are not accepted because SolidCraft 0.42 profile points are numeric.",
+      "limits": "A standalone Sketch requires a finite non-zero distance and may contain multiple supported closed profiles. Nested/ambiguous regions should be selected with profiles= plus exact_regions=True. Depth.THROUGH_ALL is only meaningful for a Sketch attached to an existing Shape and cannot be combined with sym=True. Profile pick points must be fixed finite numbers; Parameters and expressions are not accepted because SolidCraft profile points are numeric. Multi-profile support does not expand Sketch.revolve(), which still requires exactly one closed profile.",
       "parameters": [
         {
           "name": "distance",
@@ -1434,7 +1450,7 @@
           "description": "When True, each profile point selects exactly the SolidCraft region containing that point. Only valid together with profiles=. Defaults to False."
         }
       ],
-      "example": "cut = sketch.extrude(\nDepth.THROUGH_ALL,\nprofiles=[(-30, 0), (-10, 0), (30, 0)],\nexact_regions=True,\n)",
+      "example": "with Sketch(name=\"Tube profile\", plane=\"XY\") as profile:\n    Circle2D(d=10)\n    Circle2D(d=8)\ntube = profile.extrude(30, profiles=[(4.5, 0)], exact_regions=True)",
       "signature": "Sketch.extrude(self, distance, *, sym=False, profiles=None, exact_regions=False)"
     },
     {
@@ -2270,6 +2286,17 @@
         },
         {
           "kind": "callable",
+          "name": "cadmath",
+          "summary": "Namespace for native symbolic CAD math.",
+          "use_when": "Derived editable dimensions need min/max, roots, quantization or atan while retaining Parameter dependencies.",
+          "limits": "Use cadmath.min/max/sqrt/abs/round/floor/atan. It is native CAD-expression authoring, not a general symbolic algebra package.",
+          "parameters": [],
+          "example": "tip = cadmath.sqrt(cadmath.min(self.size, self.limit) ** 2 - self.offset ** 2)",
+          "signature": "cadmath.min|max|sqrt|abs|round|floor|atan(...)",
+          "reference": "reference/parameters-positioning/#cadmath"
+        },
+        {
+          "kind": "callable",
           "name": "pv",
           "summary": "Return the concrete Python value of a symbolic CAD dimension.",
           "use_when": "Python itself genuinely needs a number for validation or control flow.",
@@ -2283,6 +2310,26 @@
           "example": "if pv(clearance) < 0:\nraise ValueError(\"clearance must not be negative\")",
           "signature": "pv(dim) -> float",
           "reference": "reference/parameters-positioning/#pv"
+        },
+        {
+          "kind": "callable",
+          "name": "AxisLine",
+          "summary": "Describe a native axis through an explicit XYZ point.",
+          "use_when": "A revolve, circular pattern or other qualified native feature needs an axis shifted from the world origin while retaining parameter-driven origin coordinates.",
+          "limits": "Direction is fixed Axis.X/Y/Z or a fixed non-zero XYZ vector. Each consuming feature still validates its own geometric restrictions.",
+          "parameters": [
+            {
+              "name": "direction",
+              "description": "Axis.X/Y/Z or fixed non-zero XYZ direction."
+            },
+            {
+              "name": "origin",
+              "description": "XYZ point on the axis; coordinates may be numeric, Parameter or Expression."
+            }
+          ],
+          "example": "axis = AxisLine(Axis.Y, origin=(self.pin_x, 0, self.pin_z))",
+          "signature": "AxisLine(direction, origin=(0, 0, 0))",
+          "reference": "reference/parameters-positioning/#AxisLine"
         }
       ]
     },
@@ -2443,6 +2490,66 @@
       ],
       "example": "body = Box(40, 30, 10).with_appearance(\"#FFD21A\")",
       "signature": "Shape.with_appearance(self, color)"
+    },
+    {
+      "kind": "function",
+      "name": "Configure",
+      "summary": "Author a native editable configuration table on the final design.",
+      "guide": "guide/geometry/",
+      "reference": "reference/Configure/",
+      "use_when": "Define editable native configuration rows rather than Python-only variants.",
+      "limits": "Rows modify native configuration columns only; Configure does not branch or rebuild Python model structure per row.",
+      "parameters": [
+        {
+          "name": "design",
+          "description": "Final Shape, component occurrence or Assembly."
+        },
+        {
+          "name": "active",
+          "description": "Name of initially active row."
+        },
+        {
+          "name": "columns",
+          "description": "Ordered Param and Suppress columns."
+        },
+        {
+          "name": "rows",
+          "description": "Ordered mapping of row names to cell sequences."
+        }
+      ],
+      "example": "Configure(design, active='Medium', columns=(Param(self.width),), rows={'Medium': ('80 mm',)})"
+    },
+    {
+      "kind": "function",
+      "name": "Param",
+      "summary": "Select an existing native model parameter for a configuration column.",
+      "guide": "guide/geometry/",
+      "reference": "reference/Param/",
+      "use_when": "Prefer Param(self.parameter) inside build() so configuration intent follows the actual symbolic model parameter; a parameter name string remains accepted when a direct object is unavailable.",
+      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Native parameter name or Parameter object."
+        }
+      ],
+      "example": "Param(self.width)"
+    },
+    {
+      "kind": "function",
+      "name": "Suppress",
+      "summary": "Select one applied Forge feature for native suppression.",
+      "guide": "guide/geometry/",
+      "reference": "reference/Suppress/",
+      "use_when": "Define editable native configuration rows rather than Python-only variants.",
+      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
+      "parameters": [
+        {
+          "name": "feature",
+          "description": "Exact applied feature Shape."
+        }
+      ],
+      "example": "Suppress(hole)"
     }
   ]
 }
