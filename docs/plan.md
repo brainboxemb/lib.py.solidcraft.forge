@@ -68,6 +68,10 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
+### Experimental blocker: #214 isolate revolute-joint native failure
+
+The first permanent `exp` build after #212 reported only `revolute-joint--scpf:native` as an error while the same owner passed on the immediately preceding #192 baseline. Isolation reproduced it and retained evidence showed the build failed with `TypeError: 'module' object is not callable`. Root cause: lazy SolidCraft adapter lookup imported the `scpf.assembly` submodule after package initialization, overwriting the public `scpf.assembly` decorator attribute. Keep the adapter boundary, but restore the SolidCraft compiler/assembly imports to the safe package-initialization phase and qualify the actual assembly model before #212 is accepted.
+
 ### Experimental: #212 formalize the native backend adapter boundary
 
 #192 is accepted on `exp`: unchanged Forge sources proved native Mitcad
