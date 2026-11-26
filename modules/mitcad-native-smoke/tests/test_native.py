@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from math import asin, pi, sqrt
 import os
 from pathlib import Path
 import stat
@@ -300,19 +301,29 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             self.assertEqual(len(shifted_cut["bodies"]), 1)
             shifted_body = shifted_cut["bodies"][0]
             self.assertEqual(shifted_body["kind"], "solid")
+            # Box defaults to Anchor.CENTER, so its Z range clips the
+            # radius-8 outer revolve at +/-5 while the radius-4 inner hole
+            # remains fully inside that strip.
+            outer_strip_area = 2.0 * (
+                5.0 * sqrt(39.0)
+                + 64.0 * asin(5.0 / 8.0)
+            )
+            expected_volume = 36800.0 - (
+                outer_strip_area - 16.0 * pi
+            ) * 10.0
             self.assertAlmostEqual(
                 shifted_body["volume"],
-                36800.0 - 240.0 * 3.141592653589793,
+                expected_volume,
                 places=3,
             )
             for actual, expected in zip(
                 shifted_body["bbox"]["min"],
-                [-40.0, -23.0, 0.0],
+                [-40.0, -23.0, -5.0],
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
             for actual, expected in zip(
                 shifted_body["bbox"]["max"],
-                [40.0, 23.0, 10.0],
+                [40.0, 23.0, 5.0],
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
