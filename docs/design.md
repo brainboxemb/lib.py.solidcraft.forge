@@ -962,18 +962,39 @@ engine-native region selector from the semantic profiles during lowering; for
 the current Mitcad circle slice the native `[0, 0]` pick is derived from the
 qualified circle geometry and is not stored as region intent.
 
-#282 deliberately qualifies only the existing single centered Circle2D region
-with no holes and positive/negative distance extrusion. The IR can represent a
-future annulus as two profiles plus `RegionIR(outer=0, holes=(1,))`, but both
-native backends fail closed for that unqualified form here. Public multi-loop
-standalone Sketch authoring remains consumer issue #267 rather than being
-introduced on the experimental branch.
+#282 initially qualified only the existing single centered Circle2D region
+with no holes and positive/negative distance extrusion. #320 extends that same
+boundary to the already-public #267 two-concentric-circle exact-region annulus:
 
-SolidCraft lowering must remain byte-for-byte compatible with the accepted
-legacy command plan for the qualified owner. The existing
-`circle-negative-extrude` physical owner remains unchanged and is the durable
-A/B proof that frontend source → split semantic IR → two independent native
-lowerings preserves geometry and editability.
+```text
+SketchIR(
+  profiles=(outer_circle, inner_circle)
+)
+RegionIR(outer=0, holes=(1,))
+        ├── SolidCraft: one Sketch + two circles + one exact-region Extrude
+        └── Mitcad: one native sketch + two circles + one region-bound Extrude
+```
+
+The public fixed profile pick is frontend selection evidence, not IR data.
+Normalization proves that the selected point lies between the two concentric
+radii, then discards it. A shared semantic helper derives a deterministic
+interior point midway between the inner and outer radii only when a backend
+needs a coordinate transport selector. SolidCraft emits that point through its
+existing `profiles=[{point: ...}], exact_regions=true` contract; Mitcad sends
+the point to its MCP, which resolves and stores the engine-owned native region
+reference. Forge never predicts or retains a Mitcad region id.
+
+Both symbolic diameters and extrusion distance remain semantic values through
+IR. The qualified slice is deliberately bounded to one circle or one
+two-concentric-circle annulus. Arbitrary profile types, non-concentric/nonnested
+membership and more than two profiles remain LegacyShapeIR for the stable
+SolidCraft surface and fail closed on Mitcad rather than gaining a second
+backend parser.
+
+SolidCraft lowering remains byte-for-byte compatible with the accepted legacy
+command plan for both qualified owners. `circle-negative-extrude` retains the
+single-region A/B proof; `multi-profile-extrude` adds the annular proof and
+uses the same physical owner/source for SolidCraft and Mitcad.
 
 ### Experimental Mitcad builder boundary (#218)
 
