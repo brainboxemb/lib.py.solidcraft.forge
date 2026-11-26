@@ -13,6 +13,7 @@
     "circular-feature-pattern",
     "components",
     "cone-boolean",
+    "configuration-installed-state",
     "configuration-position",
     "configuration-table",
     "corner-anchor",
@@ -56,7 +57,7 @@
     "xz-anchor"
   ],
   "full": false,
-  "library": true,
+  "library": false,
   "models": [
     {
       "id": "anchor-topology-mutation",
@@ -227,6 +228,17 @@
       ],
       "primary": "scpf",
       "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "configuration-installed-state",
+      "implementations": [
+        "scpf"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "example",
         "verification"
       ]
     },
@@ -753,60 +765,7 @@
   "release_only": false,
   "schema": 2,
   "selected": [
-    "anchor-topology-mutation",
-    "anchored-holes",
-    "appearance-color",
-    "as-built-attach",
-    "assembly-decorator",
-    "assembly-owned-anchor",
-    "attach-angle",
-    "attached-through-all",
-    "bracket",
-    "circle-negative-extrude",
-    "circular-feature-pattern",
-    "components",
-    "cone-boolean",
-    "configuration-position",
-    "configuration-table",
-    "corner-anchor",
-    "eight-corner-brackets",
-    "eight-flightcase-corners",
-    "exploded-views",
-    "four-corner-l",
-    "group-hierarchy",
-    "hole-family",
-    "native-revolve",
-    "parameter-scope",
-    "parametric-anchor",
-    "parametric-attach",
-    "parametric-move",
-    "parametric-offset",
-    "parametric-placement-pair",
-    "parent-derived-child-size",
-    "primitive-csg",
-    "rectangular-pattern",
-    "repeated-parent-attachments",
-    "revolute-joint",
-    "rotated-copy-placement",
-    "rotated-sketch-cutter",
-    "round-top-sketch",
-    "rounded-rectangle-sketch",
-    "sample-plate-drawing",
-    "selective-profile-extrude",
-    "sheet-contour-flange",
-    "sheet-contour-flange-recess",
-    "sheet-edge-flange",
-    "sheet-fold",
-    "sheet-hem",
-    "sheet-path-flange",
-    "sheet-perforate",
-    "simple-box",
-    "sketch-pattern-mirror",
-    "slot-family",
-    "top-sketch-after-chamfer",
-    "topology-face-boundary-box",
-    "topology-face-boundary-xz",
-    "xz-anchor"
+    "configuration-installed-state"
   ],
-  "source_sha": "a3ee8a8973acde9b0b6d3349ae59942622b4d579"
+  "source_sha": "d4da64b869e92d2a14bb766b9006dfe7ba7c7bc9"
 }

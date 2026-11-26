@@ -1,0 +1,37 @@
+[
+  {
+    "active": "Free",
+    "columns": [
+      "param:fit_diameter"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 3,
+        "name": "Free",
+        "values": {
+          "param:fit_diameter": "20.4 mm"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Installed",
+        "values": {
+          "param:fit_diameter": "20.0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  }
+]

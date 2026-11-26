@@ -1,0 +1,77 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "fit_diameter",
+        "expression": "20.4",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "height": 20.0,
+        "diameter": "fit_diameter",
+        "base": [
+          0,
+          0,
+          -10.0
+        ],
+        "axis": "Z",
+        "operation": "new",
+        "body_name": "FlexibleFitState"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": 12,
+        "width": 2.0,
+        "height": 22,
+        "operation": "cut",
+        "center": [
+          6.0,
+          0.0,
+          0.0
+        ],
+        "targets": [
+          "FlexibleFitState"
+        ]
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "fit_diameter"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Free"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Free",
+        "values": {
+          "param:fit_diameter": "20.4 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Installed",
+        "values": {
+          "param:fit_diameter": "20.0 mm"
+        }
+      }
+    }
+  ]
+}

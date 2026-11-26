@@ -1,0 +1,201 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "41c90d1ecd3ed347b7621cd64ac0c821e5338e7f47476ea4ace26e69917e41ad",
+          "size": 1792
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "parameters": {
+          "actual": {
+            "fit_diameter": 20.4
+          },
+          "expected": {
+            "fit_diameter": 20.4
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/installed/model.sc",
+          "sha256": "5548694d26f3201d6a89652db83e2c9e27108eee72aa4bfacb2473bf34deda6b",
+          "size": 7963
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/installed/measurements.json",
+          "sha256": "3fcc84eb12de69fd11eb353ca97cb2aa73a7c7515c66533dd1b0205119feb0cf",
+          "size": 1755
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 245.82755649802493,
+                "baseline": 6129.680533933166,
+                "mutated": 5883.852977435141
+              },
+              "expected": {
+                "absolute_delta_gt": 1.0
+              },
+              "label": "SolidCraft saved design change physical-geometry",
+              "pass": true
+            },
+            "id": "physical-geometry",
+            "path": [
+              "bodies",
+              0,
+              "volume_mm3"
+            ]
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "fit_diameter": 20.0
+          },
+          "expected": {
+            "fit_diameter": 20.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_installed",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/table/results.json",
+          "sha256": "645d970fcb19b99f78606d581e17002666fde8a634c7280c59657c770f885a84",
+          "size": 636
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check rows",
+              "pass": true
+            },
+            "id": "rows",
+            "path": [
+              0,
+              "rows"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Free",
+              "expected": "Free",
+              "label": "SolidCraft inspection check active",
+              "pass": true
+            },
+            "id": "active",
+            "path": [
+              0,
+              "active"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check matches",
+              "pass": true
+            },
+            "id": "matches",
+            "path": [
+              0,
+              "matches"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "20.4 mm",
+              "expected": "20.4 mm",
+              "label": "SolidCraft inspection check free-diameter",
+              "pass": true
+            },
+            "id": "free-diameter",
+            "path": [
+              0,
+              "rows",
+              {
+                "select": {
+                  "field": "name",
+                  "value": "Free"
+                }
+              },
+              "values",
+              "param:fit_diameter"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "20.0 mm",
+              "expected": "20.0 mm",
+              "label": "SolidCraft inspection check installed-diameter",
+              "pass": true
+            },
+            "id": "installed-diameter",
+            "path": [
+              0,
+              "rows",
+              {
+                "select": {
+                  "field": "name",
+                  "value": "Installed"
+                }
+              },
+              "values",
+              "param:fit_diameter"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_table",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/configuration-installed-state/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "configuration-installed-state"
+}

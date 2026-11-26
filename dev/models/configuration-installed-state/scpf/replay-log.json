@@ -1,0 +1,110 @@
+{
+  "format": "scpf-replay-log",
+  "version": 1,
+  "replay_sha256": "9c1060d53caf57ddd5fadb3035da70d6e5aa61b290ed44e04cb6c79f6d04c1bd",
+  "variables": {
+    "$config_row_f411a1fb6275": 3,
+    "$config_row_f8b32f4e92bd": 4
+  },
+  "commands": [
+    {
+      "index": 0,
+      "command": "parameters.add",
+      "resolved_params": {
+        "name": "fit_diameter",
+        "expression": "20.4",
+        "unit": "mm"
+      }
+    },
+    {
+      "index": 1,
+      "command": "solid.cylinder",
+      "resolved_params": {
+        "height": 20.0,
+        "diameter": "fit_diameter",
+        "base": [
+          0,
+          0,
+          -10.0
+        ],
+        "axis": "Z",
+        "operation": "new",
+        "body_name": "FlexibleFitState"
+      }
+    },
+    {
+      "index": 2,
+      "command": "solid.box",
+      "resolved_params": {
+        "length": 12,
+        "width": 2.0,
+        "height": 22,
+        "operation": "cut",
+        "center": [
+          6.0,
+          0.0,
+          0.0
+        ],
+        "targets": [
+          "FlexibleFitState"
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "command": "config.configure",
+      "resolved_params": {
+        "params": [
+          "fit_diameter"
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Default",
+        "rename": "Free"
+      },
+      "bindings": {
+        "$config_row_f411a1fb6275": 3
+      }
+    },
+    {
+      "index": 5,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Free",
+        "values": {
+          "param:fit_diameter": "20.4 mm"
+        }
+      }
+    },
+    {
+      "index": 6,
+      "command": "config.row",
+      "resolved_params": {
+        "name": "Installed",
+        "values": {
+          "param:fit_diameter": "20.0 mm"
+        }
+      },
+      "bindings": {
+        "$config_row_f8b32f4e92bd": 4
+      }
+    },
+    {
+      "index": 7,
+      "command": "config.activate",
+      "resolved_params": {
+        "row": 3
+      }
+    },
+    {
+      "index": 8,
+      "command": "config.table",
+      "resolved_params": {}
+    }
+  ],
+  "completed": 9
+}

@@ -1,0 +1,155 @@
+[
+  {
+    "display_value": 20.4,
+    "name": "fit_diameter",
+    "unit": "mm",
+    "value": 20.4
+  },
+  {
+    "bodies": [
+      "FlexibleFitState"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "FlexibleFitState"
+    ],
+    "feature": 1,
+    "ms": 4.384075999999999,
+    "name": "Cylinder1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "FlexibleFitState"
+    ],
+    "changed_bodies": [
+      "FlexibleFitState"
+    ],
+    "created_bodies": [],
+    "feature": 2,
+    "ms": 12.914304999999999,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": "Default",
+    "columns": [
+      "param:fit_diameter"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 3,
+        "name": "Default",
+        "values": {
+          "param:fit_diameter": "20.4"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Free",
+    "columns": [
+      "param:fit_diameter"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 3,
+        "name": "Free",
+        "values": {
+          "param:fit_diameter": "20.4"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Free",
+    "columns": [
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 3,
+        "name": "Free",
+        "values": {
+          "param:fit_diameter": "20.4 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  },
+  {
+    "active": "Free",
+    "columns": [
+      "param:fit_diameter"
+    ],
+    "matches": false,
+    "rows": [
+      {
+        "id": 3,
+        "name": "Free",
+        "values": {
+          "param:fit_diameter": "20.4 mm"
+        }
+      },
+      {
+        "id": 4,
+        "name": "Installed",
+        "values": {
+          "param:fit_diameter": "20.0 mm"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "param:fit_diameter",
+        "label": "param:fit_diameter",
+        "target": {
+          "param": "fit_diameter"
+        }
+      }
+    ]
+  }
+]
