@@ -193,6 +193,29 @@ class ComponentDrawingTests(unittest.TestCase):
         )
         self.assertEqual(sheet["params"]["orientation"], "landscape")
 
+    def test_compact_native_title_block_can_be_requested(self):
+        panel = DrawingPanel()
+        document = compile_assembly(
+            panel.with_drawing(
+                name="Compact drawing",
+                title_block_style="compact",
+            ),
+            "Panel",
+        )
+        sheet = next(
+            row for row in document["commands"]
+            if row["command"] == "drawing.sheet.set"
+        )
+        self.assertEqual(sheet["params"]["title_block"], "compact")
+
+    def test_title_block_style_rejects_unknown_native_style(self):
+        panel = DrawingPanel()
+        with self.assertRaisesRegex(
+            ValueError,
+            "title_block_style must be 'built-in' or 'compact'",
+        ):
+            panel.with_drawing(title_block_style="tiny")
+
     def test_consumer_can_author_layout_metadata_notes_and_dimensions(self):
         panel = DrawingPanel()
         document = compile_assembly(
