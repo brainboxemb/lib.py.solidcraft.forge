@@ -24,11 +24,15 @@ sections:
     priority: 60
     label: 6 · Associative relationships
     description: Editable distances and local offsets that must keep their meaning after parameter changes.
-  sheet-metal:
+  configurations:
     priority: 70
-    label: 7 · Sheet metal
+    label: 7 · Configurations
+    description: Native configuration tables, row switching, feature suppression, assembly positions and Free/Installed physical design states.
+  sheet-metal:
+    priority: 80
+    label: 8 · Sheet metal
     description: Native sheet rules, folds, flanges, hems, paths and recoverable flat patterns.
   drawings:
-    priority: 80
-    label: 8 · Drawings
+    priority: 90
+    label: 9 · Drawings
     description: Native technical drawing creation, sheet templates, standard views and published vector PDF evidence.

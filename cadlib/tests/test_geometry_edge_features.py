@@ -28,6 +28,85 @@ class GeometryEdgeFeatureTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 method(2, edges=[(0, 0)])
 
+    def test_equal_distance_chamfer_command_stays_backwards_compatible(self):
+        from scpf.core import Box, Edges
+        from scpf.features import compile_features
+
+        shape = Box(80, 50, 8).chamfer(2, edges=Edges.VERTICAL)
+        self.assertIs(shape.data[2], Edges.VERTICAL)
+
+        command = next(
+            row for row in compile_features(shape, "Body")
+            if row["command"] == "solid.chamfer"
+        )
+        self.assertEqual(
+            command["params"],
+            {
+                "edges": [
+                    [-40.0, -25.0, 0.0],
+                    [40.0, -25.0, 0.0],
+                    [40.0, 25.0, 0.0],
+                    [-40.0, 25.0, 0.0],
+                ],
+                "distance": 2,
+                "body": "Body",
+            },
+        )
+
+    def test_asymmetric_chamfer_lowers_second_distance_and_flip(self):
+        from scpf import Parameter
+        from scpf.core import Edges, Polygon2D
+        from scpf.features import compile_features
+
+        primary = Parameter("primary", 0.18)
+        secondary = Parameter("secondary", 0.65)
+        with Sketch(plane="XZ") as sketch:
+            Polygon2D(
+                [(-20, 0), (20, 0), (20, 10), (-20, 10)],
+                plane="XZ",
+                world=True,
+                ids=["bottom", "right", "top", "left"],
+            )
+        body = sketch.extrude(20, sym=True)
+        shape = body.chamfer(
+            primary,
+            distance2=secondary,
+            flip=True,
+            edges=Edges.from_profile("top"),
+        )
+
+        command = next(
+            row for row in compile_features(shape, "Taper")
+            if row["command"] == "solid.chamfer"
+        )
+        self.assertEqual(command["params"]["distance"], "primary")
+        self.assertEqual(command["params"]["distance2"], "secondary")
+        self.assertTrue(command["params"]["flip"])
+        self.assertEqual(
+            command["params"]["edges"],
+            [[0, -10.0, 10.0], [0, 10.0, 10.0]],
+        )
+
+    def test_asymmetric_chamfer_validates_secondary_distance_and_flip(self):
+        from scpf.core import Box
+        from scpf.features import compile_features
+        from scpf.compiler import ModelError
+
+        with self.assertRaisesRegex(TypeError, "flip must be True or False"):
+            Box(20, 20, 10).chamfer(1, distance2=2, flip="yes")
+        with self.assertRaisesRegex(ValueError, "flip requires distance2"):
+            Box(20, 20, 10).chamfer(1, flip=True)
+
+        for invalid in (0, -1):
+            with self.subTest(distance2=invalid), self.assertRaisesRegex(
+                ModelError,
+                "chamfer distance2",
+            ):
+                compile_features(
+                    Box(20, 20, 10).chamfer(1, distance2=invalid),
+                    "Body",
+                )
+
     def test_fillet_and_chamfer_lower_box_edge_selectors_the_same(self):
         from scpf import FRONT, LEFT
         from scpf.core import Box, Edges

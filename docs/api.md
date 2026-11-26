@@ -39,8 +39,16 @@ Inside one component, geometry remains a lightweight feature/expression model:
 class Board:
     def build(self):
         body = Box(self.width, self.depth, self.height)
-        holes = Hole(d=5, depth=Depth.THROUGH_ALL).repeat_linear(...)
-        return body - holes
+        source_hole = Hole(d=5, depth=Depth.THROUGH_ALL).on(
+            body, face=Faces.TOP
+        )
+        body = body - source_hole
+        return body.rectangular_pattern(
+            source_hole,
+            count=2,
+            spacing=self.width - 24,
+            direction=Axis.X,
+        )
 ```
 
 Do not turn every primitive or feature into an assembly object. Conversely, do
@@ -171,6 +179,13 @@ body = body.chamfer(
     1.5,
     edges=Edges.from_faces(Faces.FRONT, Faces.BACK),
 )
+
+# The same selectors work with a native two-distance chamfer.
+body = body.chamfer(
+    0.18,
+    distance2=0.65,
+    edges=Edges.from_faces(Faces.FRONT),
+)
 ```
 
 Forge resolves these faces and their boundary edges from SolidCraft during
@@ -183,11 +198,16 @@ edge selectors remain supported for their established use cases.
 `on()` selects a target surface for a within-component feature.
 
 ```python
-holes = Hole(d=8, depth=Depth.THROUGH_ALL).repeat_linear(
+source_hole = Hole(d=8, depth=Depth.THROUGH_ALL).on(
+    plate, face=Faces.TOP
+)
+plate = plate - source_hole
+plate = plate.rectangular_pattern(
+    source_hole,
     count=2,
     spacing=self.width - 24,
-    axis=Axis.X,
-).on(plate, face=Faces.TOP)
+    direction=Axis.X,
+)
 
 boss = Cylinder(d=24, h=14).on(plate, face=Faces.TOP)
 ```
@@ -258,6 +278,26 @@ selected profile can be found again when the saved design recomputes.
 Profile pick points are fixed numeric authoring picks, not editable Forge
 Parameters. SolidCraft 0.42's point-selection command field accepts numeric
 Sketch coordinates rather than parameter expressions.
+
+Standalone Sketches may contain multiple closed profiles. Nested loops stay in
+one native Sketch; use an exact region pick when the intended material is only
+one of the resulting regions. For example, a hollow tube is one two-loop
+Sketch plus one extrusion:
+
+```python
+with Sketch(name="Tube profile", plane="XY") as profile:
+    Circle2D(d=10)
+    Circle2D(d=8)
+
+tube = profile.extrude(
+    30,
+    profiles=[(4.5, 0)],
+    exact_regions=True,
+)
+```
+
+This does not change the separate `Sketch.revolve()` contract, which still
+requires exactly one closed profile.
 
 A direct 3D primitive such as `Box` remains a native primitive; Forge must not
 synthesize an unnecessary Sketch merely to construct it.
@@ -489,6 +529,8 @@ landscape and preserves an explicitly selected `iso-a3-part` template.
 
 The public drawing authoring controls are:
 
+- `title_block_style="compact"` selects SolidCraft's native compact 49 mm title block; omit it for the normal template block;
+
 ```python
 DrawingView(at=(x_mm, y_mm), scale="1:1", visual_style="shaded")
 
@@ -596,6 +638,28 @@ Supported drawing properties are `project`, `part_number`, `revision`,
 `author`, `organization`, `description` and `license`. Title-block
 override keys are passed to the native SolidCraft sheet template and therefore
 must name cells supported by that template.
+
+For small-part A4 sheets, request SolidCraft's native compact 49 mm block
+explicitly and use only cells that block contains:
+
+```python
+part.with_drawing(
+    name="Wall Hook Drawing",
+    title_block_style="compact",
+    properties={
+        "part_number": "WH-001",
+        "organization": "Example Engineering",
+    },
+    title_block={
+        "title": "Wall Hook",
+        "identification_number": "WH-001",
+    },
+)
+```
+
+The compact block intentionally omits scale, document type/status, language,
+revision and department cells. Omit `title_block_style` when those richer
+built-in title-block fields are required.
 
 A normal SCPF build publishes three sibling drawing artifacts below
 `drawings/`:
@@ -849,6 +913,10 @@ See [change 0016](background/changes/0016-parameter-dependency-diagnostics.md).
 - `shell()`, `fillet()` and `chamfer()` are modifiers of supported feature trees.
 - `rectangular_pattern()` and `circular_pattern()` repeat already-applied native history features. Both keep one native SolidCraft pattern feature instead of expanding independent Python copies. Circular patterns support principal or fixed XYZ axes plus an optional fixed axis origin; native construction/edge/face axis selectors are separate future extensions.
 - `fillet(..., edges=...)` and `chamfer(..., edges=...)` use the same edge-selection vocabulary. Prefer `Edges.from_faces(...)` when intent is a named face perimeter; existing `Edges.VERTICAL`, supported two-direction Box selectors, `Edges.from_profile(...)`, `Edges.from_vertices(...)` and explicit XYZ picks remain supported.
+- `chamfer(distance, distance2=..., flip=...)` maps directly to SolidCraft's
+  native two-distance chamfer when the two adjacent faces need different taper
+  distances. Omit `distance2` for the existing equal-distance behavior; use
+  `flip=True` only to swap which adjacent face receives the primary distance.
 - `Lip`, `SnapFit`, `Boss` and `Rest` are object-level feature intents;
   the compiler chooses the appropriate native SolidCraft representation.
 - `Anchor.INNER_BOTTOM` refers to the inner floor of a shelled body.
@@ -902,7 +970,7 @@ See [change 0037](background/changes/0037-explicit-native-hole-family.md).
 
 ### Native history patterns
 
-`rectangular_pattern()` and `circular_pattern()` operate on already-applied
+There is no public `repeat_linear()` feature-pattern alias. Use the explicit native-history pattern methods below.\n\n`rectangular_pattern()` and `circular_pattern()` operate on already-applied
 native history features rather than expanding independent Python copies. The
 source argument is the Forge `Shape` that was applied to the body; callers do
 not pass SolidCraft timeline-name strings. Forge resolves that exact source to

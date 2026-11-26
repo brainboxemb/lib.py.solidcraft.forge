@@ -571,15 +571,51 @@ class Parameter:
             "or other Python-only logic."
         )
 
-    def __truediv__(self, other: float):
-        if not isinstance(other, (float, int)) or other == 0:
-            return NotImplemented
-        return Expression(self.value / other, f"{self.name} / {number_text(other)}", (self,))
+    def __truediv__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            if other == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                self.value / other,
+                f"{self.name} / {number_text(other)}",
+                (self,),
+            )
+        if isinstance(other, (Parameter, Expression)):
+            divisor = _pv(other)
+            if divisor == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                self.value / divisor,
+                f"({self.name}) / ({command_value(other)})",
+                parameters_in(self, other),
+            )
+        return NotImplemented
 
-    def __mul__(self, other: float):
-        if not isinstance(other, (float, int)):
-            return NotImplemented
-        return Expression(self.value * other, f"{self.name} * {number_text(other)}", (self,))
+    def __rtruediv__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            if self.value == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                other / self.value,
+                f"{number_text(other)} / ({self.name})",
+                (self,),
+            )
+        return NotImplemented
+
+    def __mul__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            return Expression(
+                self.value * other,
+                f"{self.name} * {number_text(other)}",
+                (self,),
+            )
+        if isinstance(other, (Parameter, Expression)):
+            return Expression(
+                self.value * _pv(other),
+                f"({self.name}) * ({command_value(other)})",
+                parameters_in(self, other),
+            )
+        return NotImplemented
 
     __rmul__ = __mul__
 
@@ -598,9 +634,12 @@ class Parameter:
     __radd__ = __add__
 
     def __sub__(self, other):
-        if isinstance(other, (int, float)):
-            return Expression(self.value - other,
-                              f"{self.name} - {number_text(other)} mm", (self,))
+        if isinstance(other, (int, float)) and not isinstance(other, bool):
+            return Expression(
+                self.value - other,
+                f"{self.name} - {number_text(other)} mm",
+                (self,),
+            )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value - _pv(other),
@@ -608,6 +647,28 @@ class Parameter:
                 parameters_in(self, other),
             )
         return NotImplemented
+
+    def __rsub__(self, other):
+        if isinstance(other, (int, float)) and not isinstance(other, bool):
+            return Expression(
+                other - self.value,
+                f"{number_text(other)} mm - ({self.name})",
+                (self,),
+            )
+        return NotImplemented
+
+    def __pow__(self, exponent):
+        if (
+            not isinstance(exponent, (int, float))
+            or isinstance(exponent, bool)
+            or not isfinite(exponent)
+        ):
+            return NotImplemented
+        return Expression(
+            self.value ** exponent,
+            f"({self.name}) ^ {number_text(exponent)}",
+            (self,),
+        )
 
     def __neg__(self):
         return Expression(-self.value, f"-({self.name})", (self,))
@@ -620,17 +681,52 @@ class Expression:
     parameters: tuple[Parameter, ...]
 
     def __mul__(self, other):
-        if not isinstance(other, (float, int)):
-            return NotImplemented
-        return Expression(self.value * other,
-                          f"({self.expression}) * {number_text(other)}", self.parameters)
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            return Expression(
+                self.value * other,
+                f"({self.expression}) * {number_text(other)}",
+                self.parameters,
+            )
+        if isinstance(other, (Parameter, Expression)):
+            return Expression(
+                self.value * _pv(other),
+                f"({self.expression}) * ({command_value(other)})",
+                parameters_in(self, other),
+            )
+        return NotImplemented
 
     __rmul__ = __mul__
 
-    def __truediv__(self, other: float):
-        if not isinstance(other, (float, int)) or other == 0:
-            return NotImplemented
-        return Expression(self.value / other, f"({self.expression}) / {number_text(other)}", self.parameters)
+    def __truediv__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            if other == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                self.value / other,
+                f"({self.expression}) / {number_text(other)}",
+                self.parameters,
+            )
+        if isinstance(other, (Parameter, Expression)):
+            divisor = _pv(other)
+            if divisor == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                self.value / divisor,
+                f"({self.expression}) / ({command_value(other)})",
+                parameters_in(self, other),
+            )
+        return NotImplemented
+
+    def __rtruediv__(self, other):
+        if isinstance(other, (float, int)) and not isinstance(other, bool):
+            if self.value == 0:
+                raise ZeroDivisionError("division by zero")
+            return Expression(
+                other / self.value,
+                f"{number_text(other)} / ({self.expression})",
+                self.parameters,
+            )
+        return NotImplemented
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
@@ -648,9 +744,12 @@ class Expression:
     __radd__ = __add__
 
     def __sub__(self, other):
-        if isinstance(other, (int, float)):
-            return Expression(self.value - other,
-                              f"({self.expression}) - {number_text(other)} mm", self.parameters)
+        if isinstance(other, (int, float)) and not isinstance(other, bool):
+            return Expression(
+                self.value - other,
+                f"({self.expression}) - {number_text(other)} mm",
+                self.parameters,
+            )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value - _pv(other),
@@ -658,6 +757,28 @@ class Expression:
                 parameters_in(self, other),
             )
         return NotImplemented
+
+    def __rsub__(self, other):
+        if isinstance(other, (int, float)) and not isinstance(other, bool):
+            return Expression(
+                other - self.value,
+                f"{number_text(other)} mm - ({self.expression})",
+                self.parameters,
+            )
+        return NotImplemented
+
+    def __pow__(self, exponent):
+        if (
+            not isinstance(exponent, (int, float))
+            or isinstance(exponent, bool)
+            or not isfinite(exponent)
+        ):
+            return NotImplemented
+        return Expression(
+            self.value ** exponent,
+            f"({self.expression}) ^ {number_text(exponent)}",
+            self.parameters,
+        )
 
     def __neg__(self):
         # Unary minus is used by signed dimensions such as Sketch.extrude(-h).
@@ -1134,6 +1255,45 @@ def _pattern_direction(value, label):
     return vector
 
 
+@dataclass(frozen=True)
+class AxisLine:
+    """Describe one fixed-direction native axis through an explicit XYZ origin.
+
+    Parameters:
+        direction: Axis.X/Y/Z or one non-zero fixed XYZ direction.
+        origin: XYZ point on the axis. Coordinates may be Parameter/Expression.
+
+    Use when:
+        A native feature needs a shifted/custom axis while retaining editable
+        model-parameter dependencies, for example an offset revolve or circular
+        pattern.
+
+    Limits:
+        Direction is fixed authored orientation; symbolic direction vectors are
+        not supported. Feature-specific APIs still validate whether the line is
+        geometrically valid for their sketch/profile.
+
+    Example:
+        axis = AxisLine(Axis.Y, origin=(pin_x, 0, pin_z))
+    """
+
+    direction: object
+    origin: tuple[object, object, object] = (0, 0, 0)
+
+    def __post_init__(self):
+        direction = _pattern_direction(self.direction, "AxisLine direction")
+        if not isinstance(self.origin, (tuple, list)) or len(self.origin) != 3:
+            raise ValueError("AxisLine origin must be an XYZ point")
+        origin = tuple(self.origin)
+        for coordinate in origin:
+            if isinstance(coordinate, bool) or not isfinite(_pv(coordinate)):
+                raise ValueError(
+                    "AxisLine origin must contain finite numeric CAD dimensions"
+                )
+        object.__setattr__(self, "direction", direction)
+        object.__setattr__(self, "origin", origin)
+
+
 def _pattern_count(value, label):
     """Validate a native pattern count and keep direct parameters unitless."""
     if isinstance(value, Parameter):
@@ -1173,6 +1333,13 @@ def _pattern_angle(value, label):
 
 def _circular_pattern_axis(axis, origin):
     """Validate one fixed circular-pattern axis."""
+    if isinstance(axis, AxisLine):
+        if origin is not None:
+            raise ValueError(
+                "circular_pattern origin must be omitted when axis is AxisLine"
+            )
+        return (axis.origin, axis.direction)
+
     try:
         principal = Axis(axis)
     except (TypeError, ValueError):
@@ -1810,15 +1977,25 @@ class Shape:
             (self, radius, _feature_edge_selection(edges, operation="fillet")),
         )
 
-    def chamfer(self, distance, *, edges=Edges.VERTICAL):
-        """Chamfer selected solid edges by one equal distance.
+    def chamfer(
+        self,
+        distance,
+        *,
+        distance2=None,
+        flip=False,
+        edges=Edges.VERTICAL,
+    ):
+        """Chamfer selected solid edges by equal or two native distances.
 
         Parameters:
-            distance: Chamfer distance in mm.
+            distance: Primary chamfer distance in mm.
+            distance2: Optional secondary distance along the adjacent face. Omit for the existing equal-distance chamfer.
+            flip: Swap which adjacent face receives the primary/secondary distance. Only meaningful with distance2. Defaults to False.
             edges: Edge selection. Use Edges.from_faces(...) for native face-boundary topology, Edges.VERTICAL, a supported two-direction Box edge selector such as FRONT + LEFT, Edges.from_profile(...), Edges.from_vertices(...) or a non-empty sequence of XYZ edge pick points. Defaults to Edges.VERTICAL.
 
         Use when:
-            Bevel one or more edges of a supported feature-based body. Chamfer
+            Bevel one or more edges of a supported feature-based body. Supply
+            distance2 for an asymmetric native two-distance chamfer. Chamfer
             and fillet use the same edge-selection forms.
 
         Limits:
@@ -1826,15 +2003,33 @@ class Shape:
             cardinal faces. Edges.VERTICAL and cardinal Box edge selectors
             require a supported rectangular body. Named profile/vertex
             selectors require matching Polygon2D ids in a supported extrusion.
+            flip=True requires distance2 because equal-distance chamfers have
+            no meaningful primary/secondary face ordering.
 
         Example:
             body = Box(80, 50, 15)
-            bevelled = body.chamfer(3, edges=Edges.VERTICAL)
+            bevelled = body.chamfer(
+                0.18,
+                distance2=0.65,
+                edges=Edges.VERTICAL,
+            )
         """
         _pv(distance)
+        if distance2 is not None:
+            _pv(distance2)
+        if not isinstance(flip, bool):
+            raise TypeError("chamfer flip must be True or False")
+        if flip and distance2 is None:
+            raise ValueError("chamfer flip requires distance2")
         return Shape(
             "chamfer",
-            (self, distance, _feature_edge_selection(edges, operation="chamfer")),
+            (
+                self,
+                distance,
+                _feature_edge_selection(edges, operation="chamfer"),
+                distance2,
+                flip,
+            ),
         )
 
     def shell(self, thickness, *, open=Faces.TOP):
@@ -2094,9 +2289,9 @@ class Shape:
         Parameters:
             feature: Existing applied feature Shape, or a non-empty sequence of applied feature Shapes. Forge resolves each source to its native history feature.
             count: Total number of instances including the original. Use a positive integer or direct Parameter.
-            axis: Rotation axis as Axis.X/Y/Z or a non-zero fixed XYZ direction. Defaults to Axis.Z.
+            axis: Rotation axis as Axis.X/Y/Z, AxisLine, or a non-zero fixed XYZ direction. Defaults to Axis.Z.
             angle: Optional total pattern angle in degrees, as a fixed number or direct Parameter. Omit it for SolidCraft's native 360-degree default.
-            origin: Optional XYZ point for a shifted fixed axis. With an Axis value and no origin, Forge emits the native principal-axis name directly.
+            origin: Optional legacy XYZ point for a shifted fixed axis. Prefer AxisLine when the axis is shared or parameter-driven. Omit origin when axis is AxisLine.
             alignment: Native alignment: "left", "center" or "right". Defaults to "right".
             reversed: Reverse the native pattern direction. Defaults to False.
 

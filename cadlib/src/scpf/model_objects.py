@@ -713,6 +713,7 @@ class ModelInstance:
         views=None,
         properties=None,
         title_block=None,
+        title_block_style=None,
         revision=None,
         notes=(),
         dimensions=(),
@@ -733,6 +734,7 @@ class ModelInstance:
             views=views,
             properties=properties,
             title_block=title_block,
+            title_block_style=title_block_style,
             revision=revision,
             notes=notes,
             dimensions=dimensions,
@@ -1047,6 +1049,7 @@ class ComponentDrawing:
     views: tuple[tuple[str, DrawingView], ...] = ()
     properties: tuple[tuple[str, str], ...] = ()
     title_block: tuple[tuple[str, str | None], ...] = ()
+    title_block_style: str | None = None
     revision: DrawingRevision | None = None
     notes: tuple[DrawingNote, ...] = ()
     dimensions: tuple[DrawingDimension, ...] = ()
@@ -1148,6 +1151,7 @@ class Assembly:
         views=None,
         properties=None,
         title_block=None,
+        title_block_style=None,
         revision=None,
         notes=(),
         dimensions=(),
@@ -1259,6 +1263,12 @@ class Assembly:
                 )
             title_rows = tuple(normalized)
 
+        if title_block_style is not None:
+            if title_block_style not in {"built-in", "compact"}:
+                raise ValueError(
+                    "drawing title_block_style must be 'built-in' or 'compact'"
+                )
+
         if revision is not None and not isinstance(revision, DrawingRevision):
             raise TypeError("drawing revision must be a DrawingRevision")
         note_rows = tuple(notes)
@@ -1286,6 +1296,7 @@ class Assembly:
                     views=view_rows,
                     properties=property_rows,
                     title_block=title_rows,
+                    title_block_style=title_block_style,
                     revision=revision,
                     notes=note_rows,
                     dimensions=dimension_rows,

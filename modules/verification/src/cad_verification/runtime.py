@@ -38,6 +38,16 @@ def run(
             definition,
             verification_id=verification_id,
         )
+    if adapter == "solidcraft-sheet-flat-pattern-visual":
+        from .adapters.sheet_flat_pattern_visual import (
+            run_sheet_flat_pattern_visual_verification_file,
+        )
+        return run_sheet_flat_pattern_visual_verification_file(
+            artifact,
+            output,
+            definition,
+            verification_id=verification_id,
+        )
     if adapter == "image-regression":
         from .adapters.image_regression import (
             run_image_regression_verification_file,

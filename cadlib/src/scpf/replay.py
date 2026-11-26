@@ -13,6 +13,8 @@ import re
 REPLAY_FORMAT = "scpf-replay"
 REPLAY_VERSION = 2
 _VARIABLE = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
+# Native configuration suppression keys may contain a replay-bound feature name.
+_SUPPRESSION_KEY = re.compile(r"^suppress:(\$[A-Za-z_][A-Za-z0-9_]*)$")
 
 
 def replay_document(commands):
@@ -48,7 +50,10 @@ def variables_in(value):
             if _VARIABLE.fullmatch(item):
                 found.add(item)
         elif isinstance(item, dict):
-            for child in item.values():
+            for key, child in item.items():
+                match = _SUPPRESSION_KEY.fullmatch(key) if isinstance(key, str) else None
+                if match:
+                    found.add(match.group(1))
                 visit(child)
         elif isinstance(item, (list, tuple)):
             for child in item:
@@ -65,7 +70,25 @@ def resolve_value(value, variables):
             raise ValueError(f"replay variable {value} has not been bound yet")
         return variables[value]
     if isinstance(value, dict):
-        return {key: resolve_value(item, variables) for key, item in value.items()}
+        resolved = {}
+        for key, item in value.items():
+            match = _SUPPRESSION_KEY.fullmatch(key) if isinstance(key, str) else None
+            if match:
+                feature = resolve_value(match.group(1), variables)
+                if (
+                    not isinstance(feature, (str, int))
+                    or isinstance(feature, bool)
+                    or (isinstance(feature, str) and not feature)
+                    or (isinstance(feature, int) and feature <= 0)
+                ):
+                    raise ValueError(
+                        "configuration suppression needs a native feature reference"
+                    )
+                key = f"suppress:{feature}"
+            if key in resolved:
+                raise ValueError(f"duplicate resolved replay key {key!r}")
+            resolved[key] = resolve_value(item, variables)
+        return resolved
     if isinstance(value, list):
         return [resolve_value(item, variables) for item in value]
     if isinstance(value, tuple):

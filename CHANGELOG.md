@@ -8,6 +8,100 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-11-26
+
+### Qualification
+
+- Qualify parent `Configure(...)` tables driving a deliberately published
+  parameter from a reusable child component through ordinary `Param(...)`
+  composition.
+- Prove multiple child occurrences share that one native parameter and that
+  switching configuration rows in the saved SolidCraft design recomputes child
+  geometry without rerunning Forge Python.
+- This patch adds qualification evidence only; it does not change the public
+  Forge API or runtime behavior from v0.22.0.
+
+## [0.22.0] - 2026-11-26
+
+### Added
+
+- Add multiple closed profiles to standalone `Sketch.extrude(...)`, preserving
+  one native Sketch and one native ExtrudeFeature for nested-loop regions such
+  as annular Ø10/Ø8 hollow-tube profiles while keeping single-profile
+  authoring source-compatible.
+- Add native two-distance chamfer authoring through
+  `Shape.chamfer(distance, distance2=..., flip=..., edges=...)`, reusing the
+  existing semantic edge-selection vocabulary and preserving the exact
+  equal-distance command shape when asymmetric options are omitted.
+
+### Changed
+
+- Apply the completed verification-evidence contract to newly added visible
+  geometry: both multi-profile extrusion and asymmetric chamfer retain native
+  saved-design checks, mesh geometry checks and approved SolidCraft visual
+  baselines.
+- Grow the normal Forge catalogue from 57 to 59 physical model owners with the
+  focused multi-profile extrusion and asymmetric-chamfer qualification owners.
+
+
+## [0.21.0] - 2026-11-26
+
+### Added
+
+- Add public symbolic CAD math through `scpf.cadmath.min()`,
+  `max()`, `sqrt()`, `abs()`, `round()`, `floor()` and `atan()`,
+  preserving parameter dependencies in SolidCraft expressions for
+  configuration-driven geometry.
+- Add typed `AxisLine(...)` support for shifted/custom
+  `Sketch.revolve(...)` axes, including parameter-driven origins, while
+  keeping the resulting revolve one feature that can be used by
+  `Suppress(feature)`.
+- Add `title_block_style="compact"` to component and Assembly drawing
+  authoring, selecting SolidCraft's compact 49 mm title block while preserving
+  the existing built-in title block as the default.
+
+### Changed
+
+- Qualify sheet perforation from SolidCraft flat-pattern/DXF manufacturing
+  output with deterministic review evidence instead of fabricating perforations
+  in display geometry.
+- Qualify compact technical-drawing presentation with replayed 49 mm title-block
+  geometry and a separate approved sheet-image baseline while retaining the
+  existing full Sample Plate drawing qualification.
+- Clarify configuration-position verification intent and place the
+  owner-authored engineering explanation before generated command/evidence
+  details on verification pages.
+
+### Fixed
+
+- Replace stale public `repeat_linear(...)` documentation with the released
+  `rectangular_pattern(...)` feature-history pattern contract.
+
+## [0.20.0] - 2026-11-26
+
+### Added
+
+- Add public native SolidCraft configuration-table authoring through
+  `Configure(design, active=..., columns=..., rows=...)`, with
+  `Param(...)` parameter columns and `Suppress(feature)` feature-suppression
+  columns.
+- Allow configuration intent around a final Shape, component occurrence or
+  Assembly, including associative occurrence Placement driven by ordinary model
+  parameters.
+
+### Changed
+
+- Keep generated configuration tables editable in saved SolidCraft `.sc`
+  designs, bind suppression to replay-returned native feature identity and bind
+  deterministic name-stable Forge row references to SolidCraft-owned native row
+  ids.
+- Qualify configuration behavior with Forge-owned cases for dimensional and
+  suppression variants, complete Assembly Front/Below/Service positions, and
+  flexible-fit `Free` / `Installed` physical states.
+- Define `Free` as the uninstalled manufacturing/print state and `Installed`
+  as the mounted working state while keeping render/display presentation
+  separate from physical configuration state.
+
 ## [0.19.0] - 2026-11-25
 
 ### Added

@@ -86,6 +86,21 @@ when the saved design recomputes. <code>exact_regions=True</code> asks
 SolidCraft to use exactly the region containing each point. Profile points must
 be fixed finite numbers; Forge Parameters and expressions are not accepted in
 this field.</p>
+<p>A standalone Sketch may contain several closed loops. Nested loops remain
+one native Sketch; select the intended exact region when the loops create more
+than one region. A hollow tube can therefore be authored as one concentric
+two-circle Sketch and one extrusion:</p>
+<pre class="code-block"><code>with Sketch(name=&quot;Tube profile&quot;, plane=&quot;XY&quot;) as profile:
+    Circle2D(d=10)
+    Circle2D(d=8)
+
+tube = profile.extrude(
+    30,
+    profiles=[(4.5, 0)],
+    exact_regions=True,
+)</code></pre>
+<p>This capability is specific to extrusion. <code>Sketch.revolve()</code>
+still requires exactly one closed profile.</p>
 <h2 id="pattern-mirror">Repeat and mirror profiles inside one Sketch</h2>
 <p><code>Sketch.rectangular_pattern()</code> makes a native SolidCraft sketch pattern from a profile that already belongs to the Sketch. <code>Sketch.mirror()</code> mirrors a profile, a pattern result or an earlier mirror result. Both methods return a Sketch result that can be passed to another supported Sketch operation.</p>
 <pre class="code-block"><code>from scpf import Anchor, Axis, Box, Circle2D, Depth, Sketch
@@ -128,3 +143,64 @@ shared = body &amp; tool       # intersection, where supported</code></pre>
 history and CSG trees are not interchangeable for every operation.
 For manufacturing features such as holes, prefer the native
 <a href="../features/">feature operations</a>.</p>
+
+<h2 id="configuration-tables">Configuration tables</h2>
+<p>Use <code>Configure</code> on the completed design to author an editable
+native table. The design may be a Shape or an assembly result. <code>Param</code> selects an existing native model parameter;
+<code>Suppress</code> selects an exact applied Forge feature. Each named row
+contains one cell per column. The active row must be declared.</p>
+<pre><code>Configure(plate - hole, active="Medium",
+    columns=(Param(self.width), Suppress(hole)),
+    rows={"Medium": ("80 mm", True),
+          "Large": ("100 mm", False)})</code></pre>
+<p>The native table remains editable in the saved SolidCraft document. Forge's
+own configuration-table model qualifies the public contract; downstream CAD
+models consume the released API rather than serving as its implementation
+fixture.</p>
+
+<h3 id="configuration-position">Assembly positions</h3>
+<p>Configuration rows can drive any associative parameter dependency. For an
+assembly this includes occurrence placement, so useful positions such as
+front, below and service stay in the same native table rather than becoming
+Python variants.</p>
+<pre><code>return Configure(display, active="Front",
+    columns=(Param("plate_y"), Param("plate_z")),
+    rows={
+        "Front": ("8 mm", "0 mm"),
+        "Below": ("0 mm", "-55 mm"),
+        "Service": ("25 mm", "0 mm"),
+    })</code></pre>
+
+<h3 id="configuration-free-installed">Free and Installed states</h3>
+<p>For a flexible-fit part, use <code>Free</code> for the uninstalled
+manufacturing or print geometry and <code>Installed</code> for the mounted
+working geometry. These are physical configuration states, not render or
+display-state names.</p>
+<pre><code>return Configure(part, active="Free",
+    columns=(Param(self.fit_diameter),),
+    rows={
+        "Free": ("20.4 mm",),
+        "Installed": ("20.0 mm",),
+    })</code></pre>
+<p>Keeping <code>Free</code> active makes the normal built artifact the
+manufacturing state. A presentation may later choose <code>Installed</code>,
+but that selection belongs to presentation tooling rather than the model API.</p>
+
+<h2 id="shifted-revolve-axis">Shifted revolve axes</h2>
+<p>Use <code>AxisLine</code> when a native revolve must run around a line that
+does not pass through the world origin. Its origin coordinates may remain model
+parameters or expressions.</p>
+<pre><code>with Sketch(plane="XY", offset=self.pin_z) as profile:
+    Polygon2D([...], plane="XY")
+
+cut = profile.revolve(
+    axis=AxisLine(
+        Axis.Y,
+        origin=(self.pin_x, 0, self.pin_z),
+    ),
+)
+body = panel - cut</code></pre>
+<p>The axis line must be coplanar with the standalone Sketch. A parameter-driven
+Sketch offset and the matching AxisLine origin remain native SolidCraft
+expressions. The returned revolve is one feature and can therefore be passed to
+<code>Suppress(cut)</code>.</p>

@@ -31,6 +31,32 @@ the design needs more sheet area; the chosen native paper size is preserved and
 the sheet remains landscape. Forge does not silently switch an A3 request back
 to A4.</p>
 
+<h2 id="compact-title-block">Use the native compact title block for small parts</h2>
+
+<pre class="code-block"><code>part.with_drawing(
+    name="Wall Hook Drawing",
+    title_block_style="compact",
+    properties={
+        "part_number": "WH-001",
+        "organization": "Example Engineering",
+    },
+    title_block={
+        "title": "Wall Hook",
+        "identification_number": "WH-001",
+    },
+)</code></pre>
+
+<p><code>title_block_style="compact"</code> keeps the normal native SolidCraft
+sheet and selects SolidCraft's compact 49 mm title block. Forge does not redraw
+or emulate the block. The normal template title block remains the default when
+the option is omitted.</p>
+
+<p>The compact SolidCraft block intentionally has fewer cells than the full
+built-in block: it omits scale, document type, document status, language,
+revision and department cells. Use only title-block fields present in the
+compact block; keep richer revision/status presentation on the normal built-in
+title block when those cells are required.</p>
+
 <h2 id="assembly-target">Document one component from an assembly</h2>
 
 <pre class="code-block"><code>assembly = left + right

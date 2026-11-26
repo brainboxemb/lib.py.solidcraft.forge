@@ -14,7 +14,7 @@
     {{ with $m.parameters }}<span class="cad-status">{{ . }}</span>{{ end }}
   </div>
   <section class="cad-panel" id="expected-setup">
-    <h2 class="cad-section-title">What this model makes</h2>
+    <h2 class="cad-section-title">{{ if .Params.verificationsection }}What this verifies{{ else }}What this model makes{{ end }}</h2>
     {{ with $m.description }}<p class="cad-model-description">{{ . }}</p>{{ end }}
     <div class="cad-model-overview">
       <div class="cad-preview-panel" id="featured-result">
@@ -42,6 +42,12 @@
     {{ partial "cad/codeblock.html" (dict "lang" .lang "content" .content "label" .path) }}
   </section>
   {{ end }}{{ end }}
+  {{ with .Params.background }}
+  <section class="cad-panel cad-background" id="engineering-explanation">
+    <h2 class="cad-section-title">Engineering explanation</h2>
+    <div class="cad-rich-text content">{{ $.RenderString . }}</div>
+  </section>
+  {{ end }}
   {{ range .Params.sources }}{{ if .commands }}
   <details class="cad-code-section cad-command-section cad-collapsible" data-implementation="{{ .id }}">
     <summary><span class="cad-section-title cad-collapsible-title">Generated command sequence — {{ .id }} ({{ len .commands }})</span></summary>
@@ -117,25 +123,27 @@
     </div>
     <p class="cad-section-help">Only images present in the published build are displayed. Presentation previews are not visual verification results.</p>
   </section>
-  <section class="cad-panel" id="check-overview">
-    <h2 class="cad-section-title">Verification checks</h2>
-    {{ range .Params.sources }}
-    <h3 class="cad-section-subtitle">{{ .id }} — {{ .status | default "unavailable" }}</h3>
-    {{ range .checks }}
-    <div class="cad-check">
-      <div class="cad-check-heading"><strong>{{ .stage }} / {{ .id }}</strong><span class="cad-status {{ if eq .status "pass" }}cad-status-ok{{ else }}cad-status-pending{{ end }}">{{ .status }}</span></div>
-      {{ with .comparisons }}
-      <div class="cad-check-table-scroll"><table class="cad-check-table">
-        <thead><tr><th scope="col">Measurement</th><th scope="col">Expected</th><th scope="col">Measured</th><th scope="col">Check</th></tr></thead>
-        <tbody>{{ range . }}<tr><th scope="row">{{ .label }}</th><td>{{ .expected }}</td><td>{{ .actual }}</td><td>{{ .status }}</td></tr>{{ end }}</tbody>
-      </table></div>
+  <details class="cad-panel cad-collapsible" id="check-overview">
+    <summary><span class="cad-section-title cad-collapsible-title">Verification checks</span></summary>
+    <div class="cad-collapsible-body">
+      {{ range .Params.sources }}
+      <h3 class="cad-section-subtitle">{{ .id }} — {{ .status | default "unavailable" }}</h3>
+      {{ range .checks }}
+      <div class="cad-check">
+        <div class="cad-check-heading"><strong>{{ .stage }} / {{ .id }}</strong><span class="cad-status {{ if eq .status "pass" }}cad-status-ok{{ else }}cad-status-pending{{ end }}">{{ .status }}</span></div>
+        {{ with .comparisons }}
+        <div class="cad-check-table-scroll"><table class="cad-check-table">
+          <thead><tr><th scope="col">Measurement</th><th scope="col">Expected</th><th scope="col">Measured</th><th scope="col">Check</th></tr></thead>
+          <tbody>{{ range . }}<tr><th scope="row">{{ .label }}</th><td>{{ .expected }}</td><td>{{ .actual }}</td><td>{{ .status }}</td></tr>{{ end }}</tbody>
+        </table></div>
+        {{ end }}
+      </div>
+      {{ else }}<p class="cad-muted">No published check results.</p>{{ end }}
       {{ end }}
     </div>
-    {{ else }}<p class="cad-muted">No published check results.</p>{{ end }}
-    {{ end }}
-  </section>
+  </details>
   {{ with $m.stages }}<section class="cad-panel" id="model-stages"><h2 class="cad-section-title">Model stages</h2><ol class="cad-stages">{{ range . }}<li>{{ . }}</li>{{ end }}</ol></section>{{ end }}
-  {{ with .Params.background }}<section class="cad-panel cad-background" id="engineering-explanation"><h2 class="cad-section-title">Engineering explanation</h2><div class="cad-rich-text content">{{ $.RenderString . }}</div></section>{{ end }}
+
   <section class="cad-panel cad-verification-panel" id="build-verification">
     <h2 class="cad-section-title">Build and verification</h2>
     <div class="content">{{ .Content }}</div>
