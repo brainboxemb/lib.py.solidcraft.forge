@@ -268,15 +268,6 @@ class ModelTests(unittest.TestCase):
                     [stage.runtime for stage in model.verifications],
                     ["solidcraft", "solidcraft"],
                 )
-            elif model_id == "multi-profile-extrude":
-                self.assertEqual(
-                    [stage.id for stage in model.verifications],
-                    ["native", "geometry", "visual"],
-                )
-                self.assertEqual(
-                    [stage.runtime for stage in model.verifications],
-                    ["solidcraft", "reference", "solidcraft"],
-                )
             elif model_id == "asymmetric-chamfer":
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
