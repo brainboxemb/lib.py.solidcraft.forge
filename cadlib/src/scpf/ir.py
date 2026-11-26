@@ -11,6 +11,7 @@ surface is migrated node-by-node into explicit semantic IR.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import hypot, isfinite
 from typing import Any
 
 from .core import (
@@ -19,6 +20,7 @@ from .core import (
     Shape,
     _FaceBoundarySelection,
     _dim_add,
+    _pv as pv,
     parameters_in,
 )
 
@@ -114,6 +116,60 @@ class RegionIR:
             raise ValueError("RegionIR outer profile cannot also be a hole")
         if len(set(self.holes)) != len(self.holes):
             raise ValueError("RegionIR hole profile indexes must be unique")
+
+
+def _circle_region_interior_point(
+    sketch: SketchIR,
+    region: RegionIR,
+) -> tuple[float, float]:
+    """Return one deterministic interior point for the qualified circle region.
+
+    The point is derived from semantic profile geometry and is never retained
+    as RegionIR intent. Native backends may use it only as a transport selector
+    when their command API requires one.
+    """
+    indexes = (region.outer,) + region.holes
+    if any(index >= len(sketch.profiles) for index in indexes):
+        raise ValueError("circle region references a missing sketch profile")
+
+    outer = sketch.profiles[region.outer]
+    if not isinstance(outer, CircleProfileIR):
+        raise ValueError("qualified circle region requires CircleProfileIR profiles")
+    if tuple(outer.center) != (0, 0):
+        raise ValueError("qualified circle region currently requires origin centers")
+
+    outer_diameter = pv(outer.diameter)
+    if not isfinite(outer_diameter) or outer_diameter <= 0:
+        raise ValueError("qualified circle region outer diameter must be positive")
+
+    if not region.holes:
+        if len(sketch.profiles) != 1:
+            raise ValueError(
+                "qualified circle region without holes requires one sketch profile"
+            )
+        return (0.0, 0.0)
+
+    if len(region.holes) != 1 or len(sketch.profiles) != 2:
+        raise ValueError(
+            "qualified annular circle region requires exactly two profiles"
+        )
+
+    inner = sketch.profiles[region.holes[0]]
+    if not isinstance(inner, CircleProfileIR):
+        raise ValueError("qualified circle region requires CircleProfileIR profiles")
+    if tuple(inner.center) != tuple(outer.center):
+        raise ValueError("qualified annular circle region requires concentric profiles")
+
+    inner_diameter = pv(inner.diameter)
+    if not isfinite(inner_diameter) or inner_diameter <= 0:
+        raise ValueError("qualified circle region inner diameter must be positive")
+    if outer_diameter <= inner_diameter:
+        raise ValueError(
+            "qualified annular circle region requires outer diameter above inner"
+        )
+
+    # Midway between the two radii is strictly inside the annular region.
+    return ((outer_diameter + inner_diameter) / 4.0, 0.0)
 
 
 @dataclass(frozen=True)
@@ -290,7 +346,7 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
 
 
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
-    """Normalize the first qualified standalone Sketch + Extrude slice."""
+    """Normalize the qualified standalone circle Sketch + Extrude slices."""
     if shape.kind != "sketch_base_extrusion":
         return None
 
@@ -314,34 +370,65 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
         return None
     if operations:
         return None
-    if profile_picks is not None or exact_regions:
-        return None
-    if len(profiles) != 1:
-        return None
     if direction not in ("positive", "negative"):
         return None
-
-    profile, profile_anchor, offset = profiles[0]
-    if profile.kind != "circle":
-        return None
-    if profile_anchor is not Anchor.CENTER:
-        return None
-    if tuple(offset) != (0, 0):
+    if len(profiles) not in (1, 2):
         return None
 
-    (diameter,) = profile.data
+    semantic_profiles = []
+    for profile, profile_anchor, offset in profiles:
+        if profile.kind != "circle":
+            return None
+        if profile_anchor is not Anchor.CENTER:
+            return None
+        if tuple(offset) != (0, 0):
+            return None
+        (diameter,) = profile.data
+        semantic_profiles.append(CircleProfileIR(diameter=diameter))
+
     sketch = SketchIR(
         name=sketch_name,
         plane=plane,
-        profiles=(CircleProfileIR(diameter=diameter),),
+        profiles=tuple(semantic_profiles),
     )
+
+    if len(semantic_profiles) == 1:
+        if profile_picks is not None or exact_regions:
+            return None
+        regions = (RegionIR(outer=0),)
+    else:
+        if not exact_regions or profile_picks is None or len(profile_picks) != 1:
+            return None
+
+        diameters = tuple(pv(profile.diameter) for profile in semantic_profiles)
+        if (
+            any(not isfinite(value) or value <= 0 for value in diameters)
+            or diameters[0] == diameters[1]
+        ):
+            return None
+
+        outer_index = 0 if diameters[0] > diameters[1] else 1
+        inner_index = 1 - outer_index
+        region = RegionIR(outer=outer_index, holes=(inner_index,))
+
+        try:
+            _circle_region_interior_point(sketch, region)
+        except ValueError:
+            return None
+
+        pick_radius = hypot(*profile_picks[0])
+        inner_radius = diameters[inner_index] / 2.0
+        outer_radius = diameters[outer_index] / 2.0
+        if not inner_radius < pick_radius < outer_radius:
+            return None
+        regions = (region,)
+
     return ExtrudeIR(
         sketch=sketch,
-        regions=(RegionIR(outer=0),),
+        regions=regions,
         distance=distance,
         direction=direction,
     )
-
 
 def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     if shape.kind != "chamfer":

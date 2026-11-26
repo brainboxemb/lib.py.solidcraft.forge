@@ -45,7 +45,8 @@
 22. The initial Mitcad placement slice preserves symbolic coordinates in primitive plane coordinates but requires the primitive's axial placement coordinate to remain on the corresponding origin plane. Unsupported axial offsets must fail closed rather than be numerically baked or approximated.
 23. Qualified standalone sketch extrusion must use separate typed `SketchIR`, profile, `RegionIR` and `ExtrudeIR` semantics rather than a fused shape-specific sketch/extrude node.
 24. `RegionIR` identifies semantic profile membership with compiler-local profile indexes only. It must not contain SolidCraft curve ids, Mitcad region ids, BRep identities or native coordinate-pick transport.
-25. The first split Sketch/Extrude slice qualifies one centered `CircleProfileIR` and one region without holes. Nested-loop region structure may be represented in IR, but backends must fail closed until multi-loop behavior is separately qualified; #282 does not implement consumer issue #267.
+25. The split Sketch/Extrude boundary qualifies both one centered `CircleProfileIR` without holes and the #320 two-concentric-circle annulus from the existing public exact-region authoring contract. The annulus must normalize to two `CircleProfileIR` nodes plus one `RegionIR` whose hole membership uses compiler-local profile indexes only.
+26. A backend coordinate used to bind a native region must be derived from semantic circle geometry at lowering time and must not be stored in `RegionIR`. Arbitrary profile types, non-concentric/nonnested circle membership and more than two profiles remain outside the qualified portable slice and must fail closed on Mitcad.
 
 ## SCPF native associativity
 

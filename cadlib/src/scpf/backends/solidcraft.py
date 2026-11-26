@@ -37,6 +37,7 @@ from ..ir import (
     ModelIR,
     PlacementIR,
     RegionIR,
+    _circle_region_interior_point,
 )
 from ..replay import replay_document
 
@@ -207,53 +208,60 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
     sketch = node.sketch
     if sketch.plane not in ("XY", "XZ", "YZ"):
         raise ModelError("portable SolidCraft Sketch IR requires XY, XZ or YZ")
-    if len(sketch.profiles) != 1 or len(node.regions) != 1:
-        raise ModelError(
-            "portable SolidCraft Extrude IR currently requires one circle region"
-        )
+    if len(node.regions) != 1:
+        raise ModelError("portable SolidCraft Extrude IR requires one region")
 
-    profile = sketch.profiles[0]
     region = node.regions[0]
-    if not isinstance(profile, CircleProfileIR):
-        raise ModelError(
-            "portable SolidCraft Extrude IR currently requires CircleProfileIR"
-        )
-    if not isinstance(region, RegionIR) or region.outer != 0 or region.holes:
-        raise ModelError(
-            "portable SolidCraft Extrude IR currently requires one region "
-            "without holes"
-        )
-    if tuple(profile.center) != (0, 0):
-        raise ModelError(
-            "portable SolidCraft CircleProfileIR currently requires origin center"
-        )
+    if not isinstance(region, RegionIR):
+        raise ModelError("portable SolidCraft Extrude IR requires RegionIR")
     if node.direction not in ("positive", "negative"):
         raise ModelError(
             "portable SolidCraft Extrude IR requires positive or negative direction"
         )
 
-    _require_positive(profile.diameter, "circle diameter")
-    _require_positive(node.distance, "sketch extrusion distance")
-    return [
+    try:
+        pick = _circle_region_interior_point(sketch, region)
+    except ValueError as exc:
+        raise ModelError(str(exc)) from exc
+
+    commands = [
         _command(
             "sketch.create",
             name=sketch.name,
             plane=sketch.plane,
-        ),
-        _command(
-            "sketch.circle.center",
-            center=[command_value(value) for value in profile.center],
-            diameter=command_value(profile.diameter),
-        ),
-        _command("sketch.finish"),
-        _command(
-            "solid.extrude",
-            body_name=name,
-            direction=node.direction,
-            distance=command_value(node.distance),
-        ),
+        )
     ]
+    for profile in sketch.profiles:
+        if not isinstance(profile, CircleProfileIR):
+            raise ModelError(
+                "portable SolidCraft Extrude IR currently requires CircleProfileIR"
+            )
+        if tuple(profile.center) != (0, 0):
+            raise ModelError(
+                "portable SolidCraft CircleProfileIR currently requires origin center"
+            )
+        _require_positive(profile.diameter, "circle diameter")
+        commands.append(
+            _command(
+                "sketch.circle.center",
+                center=[command_value(value) for value in profile.center],
+                diameter=command_value(profile.diameter),
+            )
+        )
 
+    _require_positive(node.distance, "sketch extrusion distance")
+    commands.append(_command("sketch.finish"))
+
+    extrude = {
+        "body_name": name,
+        "direction": node.direction,
+        "distance": command_value(node.distance),
+    }
+    if region.holes:
+        extrude["profiles"] = [{"point": [pick[0], pick[1]]}]
+        extrude["exact_regions"] = True
+    commands.append(_command("solid.extrude", **extrude))
+    return commands
 
 def _face_boundary_commands(
     selection: FaceBoundaryIR,
