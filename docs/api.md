@@ -565,7 +565,6 @@ return part.with_drawing(
         "organization": "Example Engineering",
         "description": "Wall bracket",
     },
-    title_block_style="compact",
     title_block={
         "title": "Wall bracket",
         "identification_number": "BRK-001",
@@ -599,6 +598,28 @@ Supported drawing properties are `project`, `part_number`, `revision`,
 `author`, `organization`, `description` and `license`. Title-block
 override keys are passed to the native SolidCraft sheet template and therefore
 must name cells supported by that template.
+
+For small-part A4 sheets, request SolidCraft's native compact 49 mm block
+explicitly and use only cells that block contains:
+
+```python
+part.with_drawing(
+    name="Wall Hook Drawing",
+    title_block_style="compact",
+    properties={
+        "part_number": "WH-001",
+        "organization": "Example Engineering",
+    },
+    title_block={
+        "title": "Wall Hook",
+        "identification_number": "WH-001",
+    },
+)
+```
+
+The compact block intentionally omits scale, document type/status, language,
+revision and department cells. Omit `title_block_style` when those richer
+built-in title-block fields are required.
 
 A normal SCPF build publishes three sibling drawing artifacts below
 `drawings/`:
