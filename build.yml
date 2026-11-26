@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/320-annular-region-ir
+branch: issue/343-recursive-primitive-csg-ir
 modules: [builder-scpf-mitcad]
-models: [multi-profile-extrude]
+models: [cylinder-subtract, primitive-csg]
 library: true
 tasks: [test]
