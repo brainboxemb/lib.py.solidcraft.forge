@@ -9,6 +9,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, Any
 
+# These imports intentionally happen while scpf.runner itself is being imported.
+# Importing scpf.assembly lazily after package initialization would overwrite the
+# public scpf.assembly decorator with Python's submodule attribute.
+from ..assembly import _compile_assembly_with_dependencies as _solidcraft_compile_assembly
+from ..compiler import _compile_model_with_dependencies as _solidcraft_compile_shape
+
 
 Compile = Callable[[Any, str], tuple[dict, frozenset[str]]]
 
@@ -32,14 +38,11 @@ class BackendAdapter:
 
 
 def _solidcraft_adapter() -> BackendAdapter:
-    from ..assembly import _compile_assembly_with_dependencies
-    from ..compiler import _compile_model_with_dependencies
-
     return BackendAdapter(
         id="solidcraft",
         display_name="SolidCraft",
-        compile_shape=_compile_model_with_dependencies,
-        compile_assembly=_compile_assembly_with_dependencies,
+        compile_shape=_solidcraft_compile_shape,
+        compile_assembly=_solidcraft_compile_assembly,
         document_family="solidcraft-command-or-scpf-replay",
         executor="solidcraft-cli",
         capabilities=frozenset(
@@ -83,7 +86,7 @@ _FACTORIES = {
 
 
 def get_backend(name: str) -> BackendAdapter:
-    """Return one registered backend without importing unused engines."""
+    """Return one registered backend without importing unused experimental engines."""
     try:
         factory = _FACTORIES[name]
     except (KeyError, TypeError) as exc:
