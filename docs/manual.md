@@ -2,6 +2,9 @@
 
 ## Working branches
 
+Permanent `workflow_dispatch` runs explicitly qualify the current checked-out permanent branch head instead of trusting an event SHA that can lag immediately after a policy merge. Durable publication remains fail-closed if the branch moves again during the run.
+
+
 Create normal work from `dev`. Long-running experimental work uses permanent `exp`; temporary work branches squash into the integration line they belong to. Synchronize `dev -> exp` and integrate a completed experiment with `exp -> dev` through merge commits. `exp -> main` and releases from `exp` are forbidden. Set the exact temporary branch in `build.yml` and select the smallest useful owners. Promote `dev -> main` only with a full-green promotion run.
 
 ## Library

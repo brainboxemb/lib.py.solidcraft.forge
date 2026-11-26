@@ -67,6 +67,11 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
+### #202 consume current-head workflow dispatch qualification
+
+Consume the qualified `template.cad.library#77` fix so policy-dispatched permanent runs qualify the current checked-out branch head rather than a potentially stale workflow event SHA. This is required before treating #200's failed publication as resolved; no CAD/API behavior changes.
+
+
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
 The permanent experimental line is accepted. Begin #192 only on `exp` and keep
