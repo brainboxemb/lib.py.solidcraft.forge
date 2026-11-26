@@ -155,3 +155,18 @@ Python variants.</p>
         "Below": ("0 mm", "-55 mm"),
         "Service": ("25 mm", "0 mm"),
     })</code></pre>
+
+<h3 id="configuration-free-installed">Free and Installed states</h3>
+<p>For a flexible-fit part, use <code>Free</code> for the uninstalled
+manufacturing or print geometry and <code>Installed</code> for the mounted
+working geometry. These are physical configuration states, not render or
+display-state names.</p>
+<pre><code>return Configure(part, active="Free",
+    columns=(Param(self.fit_diameter),),
+    rows={
+        "Free": ("20.4 mm",),
+        "Installed": ("20.0 mm",),
+    })</code></pre>
+<p>Keeping <code>Free</code> active makes the normal built artifact the
+manufacturing state. A presentation may later choose <code>Installed</code>,
+but that selection belongs to presentation tooling rather than the model API.</p>

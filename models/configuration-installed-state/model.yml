@@ -1,0 +1,16 @@
+schema: 1
+purpose: [example, verification]
+section: configurations
+priority: 30
+title: Free / Installed state
+tagline: One flexible-fit component keeps manufacturing and mounted geometry as native configuration rows
+description: >
+  A split flexible sleeve is slightly oversized in its Free manufacturing
+  state and compressed to its Installed working diameter after mounting.
+  Both are rows of one native SolidCraft configuration table.
+parameters: Free diameter 20.4 mm; Installed diameter 20.0 mm
+stages:
+  - Build one split flexible-fit sleeve
+  - Keep its fit diameter as one native model parameter
+  - Author Free and Installed rows on the same physical component
+  - Reopen the saved design and switch to Installed

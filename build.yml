@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/216-configuration-tables
+branch: issue/223-free-installed-configuration
 modules: [builder-scpf, verification, pages]
-library: true
-models: [configuration-table, configuration-position]
+library: false
+models: [configuration-installed-state]
 tasks: [test]

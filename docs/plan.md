@@ -68,15 +68,14 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### Dev: #216 native configuration-table authoring
+### Dev: #223 Free / Installed configuration-state qualification
 
-Keep this product work isolated on dev. Deliver a generic public SCPF
-configuration-table capability and qualify it entirely with Forge-owned cases
-under the dedicated Configurations verification section. Prove Shape dimensions,
-feature suppression, Assembly occurrence positions, all authored rows/cells,
-active state, replay-bound native row identity, saved-design editability and row
-switching. Consumer repositories are not part of the acceptance fixture; they
-adopt the released API afterwards.
+Extend the Forge-owned Configurations verification with a physical-state case
+for flexible-fit parts. Use the existing public `Configure(...)` API without
+consumer-specific branches: `Free` is the manufacturing/print state and
+`Installed` is the mounted working state. Prove native saved-design switching
+and a real geometry change. Keep render/display selection separate from physical
+configuration state.
 
 ### Experimental: #192 Forge multi-backend feasibility on `exp`
 
