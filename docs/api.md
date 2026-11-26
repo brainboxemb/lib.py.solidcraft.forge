@@ -489,6 +489,8 @@ landscape and preserves an explicitly selected `iso-a3-part` template.
 
 The public drawing authoring controls are:
 
+- `title_block_style="compact"` selects SolidCraft's native compact 49 mm title block; omit it for the normal template block;
+
 ```python
 DrawingView(at=(x_mm, y_mm), scale="1:1", visual_style="shaded")
 
@@ -563,6 +565,7 @@ return part.with_drawing(
         "organization": "Example Engineering",
         "description": "Wall bracket",
     },
+    title_block_style="compact",
     title_block={
         "title": "Wall bracket",
         "identification_number": "BRK-001",
