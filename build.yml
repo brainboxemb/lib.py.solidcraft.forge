@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/162-sheet-perforate-visual
-modules: [verification, pages]
+branch: issue/331-reviewed-merge-recovery
+modules: [merge-policy]
 library: false
-models: [sheet-perforate]
+models: []
 tasks: [test]
