@@ -1,0 +1,71 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            5.0,
+            5.0,
+            30.0
+          ],
+          "actual_min": [
+            -5.0,
+            -5.0,
+            -4.898587410340671e-16
+          ],
+          "expected_max": [
+            5.0,
+            5.0,
+            30.0
+          ],
+          "expected_min": [
+            -5.0,
+            -5.0,
+            0.0
+          ],
+          "max_delta_mm": 4.898587410340671e-16,
+          "pass": true,
+          "tolerance_mm": 0.3
+        },
+        "surface_distance_probes": [
+          {
+            "actual_mm": 3.9985000850721333,
+            "delta_mm": 0.001499914927866719,
+            "expected_mm": 4.0,
+            "label": "\u00d88 inner wall from tube axis",
+            "pass": true,
+            "point": [
+              0.0,
+              0.0,
+              15.0
+            ],
+            "tolerance_mm": 0.2
+          }
+        ],
+        "volume": {
+          "actual_mm3": 848.1111064910828,
+          "delta_mm3": 0.11890997816135496,
+          "expected_mm3": 848.2300164692441,
+          "pass": true,
+          "tolerance_mm3": 8.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/multi-profile-extrude/scpf/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "multi-profile-extrude-scpf-geometry"
+}

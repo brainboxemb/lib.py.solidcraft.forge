@@ -1,0 +1,136 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 2833.716573537994,
+      "bbox": {
+        "max": [
+          6.0,
+          6.000000000000001,
+          40.0
+        ],
+        "min": [
+          -6.0,
+          -6.0,
+          -6.123233995736766e-16
+        ]
+      },
+      "center_of_mass": [
+        3.705405703292701e-16,
+        -4.7639406255481445e-15,
+        20.0
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 6,
+      "face_types": {
+        "cylinder": 2,
+        "plane": 2
+      },
+      "faces": 4,
+      "kernel": {
+        "edges": 6,
+        "faces": 4,
+        "shells": 1,
+        "vertices": 4
+      },
+      "mass_g": 1.7831679901775657,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "MultiProfileExtrude",
+      "notes": [],
+      "vertices": 4,
+      "volume_mm3": 1382.3007675795081
+    }
+  ],
+  "body_count": 1,
+  "params": [
+    {
+      "comment": "",
+      "error": null,
+      "expression": "12 mm",
+      "model": false,
+      "name": "outer_diameter",
+      "unit": "mm",
+      "value": 12.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "10 mm",
+      "model": false,
+      "name": "inner_diameter",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "40 mm",
+      "model": false,
+      "name": "length",
+      "unit": "mm",
+      "value": 40.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "outer_diameter",
+      "model": true,
+      "name": "d1",
+      "unit": "mm",
+      "value": 12.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "inner_diameter",
+      "model": true,
+      "name": "d2",
+      "unit": "mm",
+      "value": 10.0
+    }
+  ],
+  "sketches": [
+    {
+      "curves": 2,
+      "dof": 0,
+      "id": 1,
+      "name": "Tube profile",
+      "profiles": 2,
+      "status": "solved",
+      "visible": false,
+      "wires_ok": true
+    }
+  ],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 0.144359,
+      "name": "Tube profile",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "Sketch",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 6.704689,
+      "name": "Extrude1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "ExtrudeFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 2833.716573537994,
+    "edges": 6,
+    "faces": 4,
+    "mass_g": 1.7831679901775657,
+    "open_bodies_skipped": 0,
+    "vertices": 4,
+    "volume_mm3": 1382.3007675795081
+  }
+}

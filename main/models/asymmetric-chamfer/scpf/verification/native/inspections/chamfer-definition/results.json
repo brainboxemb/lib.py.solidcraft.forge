@@ -1,0 +1,45 @@
+[
+  {
+    "definition": {
+      "body": "AsymmetricChamfer",
+      "distance": "primary_distance",
+      "distance2": "secondary_distance",
+      "edges": [
+        [
+          0.0,
+          -10.0,
+          10.0
+        ],
+        [
+          0.0,
+          10.0,
+          10.0
+        ]
+      ],
+      "flip": true
+    },
+    "error": null,
+    "id": 3,
+    "inputs": [
+      {
+        "expression": "primary_distance",
+        "label": "Distance",
+        "param": "d2",
+        "unit": "mm"
+      },
+      {
+        "expression": "secondary_distance",
+        "label": "Distance 2",
+        "param": "d3",
+        "unit": "mm"
+      }
+    ],
+    "name": "Chamfer1",
+    "omitted": [],
+    "rolled_back": false,
+    "suppressed": false,
+    "type": "chamfer",
+    "type_name": "ChamferFeature",
+    "warning": null
+  }
+]

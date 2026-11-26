@@ -6,6 +6,7 @@
     "as-built-attach",
     "assembly-decorator",
     "assembly-owned-anchor",
+    "asymmetric-chamfer",
     "attach-angle",
     "attached-through-all",
     "bracket",
@@ -24,6 +25,7 @@
     "four-corner-l",
     "group-hierarchy",
     "hole-family",
+    "multi-profile-extrude",
     "native-revolve",
     "parameter-scope",
     "parametric-anchor",
@@ -136,6 +138,16 @@
         "build123d",
         "pythonscad",
         "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "asymmetric-chamfer",
+      "implementations": [
+        "scpf"
       ],
       "primary": "scpf",
       "purpose": [
@@ -366,6 +378,16 @@
         "build123d",
         "pythonscad",
         "pybosl2"
+      ],
+      "primary": "scpf",
+      "purpose": [
+        "verification"
+      ]
+    },
+    {
+      "id": "multi-profile-extrude",
+      "implementations": [
+        "scpf"
       ],
       "primary": "scpf",
       "purpose": [
@@ -795,6 +817,7 @@
     "as-built-attach",
     "assembly-decorator",
     "assembly-owned-anchor",
+    "asymmetric-chamfer",
     "attach-angle",
     "attached-through-all",
     "bracket",
@@ -813,6 +836,7 @@
     "four-corner-l",
     "group-hierarchy",
     "hole-family",
+    "multi-profile-extrude",
     "native-revolve",
     "parameter-scope",
     "parametric-anchor",
@@ -847,5 +871,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "fe1c6fd699e7df872e962fdee31ea002747b88f5"
+  "source_sha": "8fd34556bb85527e085dc59ae0b07cc0539080cc"
 }
