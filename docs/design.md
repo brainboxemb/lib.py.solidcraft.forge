@@ -123,6 +123,7 @@ consumer repositories. The verification catalog has its own
 | --- | --- |
 | `configuration-table` | named rows, active row, multiple parameter columns, two independent feature-suppression columns, saved native table and row switching |
 | `configuration-position` | one configuration table around a complete Assembly, with parameter-driven occurrence positions for Front, Below and Service |
+| `configuration-installed-state` | one physical flexible-fit component with `Free` manufacturing geometry and `Installed` mounted geometry, switched natively after saving |
 | replay row identity | Forge-generated name-stable row references bind to SolidCraft-returned native row ids; activation uses the bound id |
 | saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
 
@@ -134,6 +135,7 @@ The use-case boundary is intentional:
 | front/below/service assembly positions | `Param(...)` driving associative `Placement` |
 | optional authored feature | `Suppress(feature)` |
 | dimensions plus suppression in one row | supported by the same table |
+| flexible-fit free/mounted state | `Free` / `Installed` rows using ordinary native parameters; this is a physical configuration, not a display state |
 | material or appearance variants | native SolidCraft supports them, but Forge waits for a typed, separately verified column contract |
 | whole component present/absent | not silently mapped to feature suppression |
 | alternate attachment/joint graph | not a configuration cell; requires explicit relationship authoring |
@@ -143,6 +145,14 @@ A suppression reference must be an actual Forge feature handle available to the
 configured design. #216 does not invent string paths into hidden child-component
 implementation details. If cross-component exported feature handles are needed,
 that is a reusable component API capability and must be designed explicitly.
+
+For flexible parts, `Free` and `Installed` name physical/model states:
+`Free` is the uninstalled shape used for manufacturing or print output;
+`Installed` is the mounted working shape. A render may choose to show
+`Installed`, but rendering is presentation policy and does not redefine the
+configuration. The current generic preview consumes the built artifact, so an
+owner whose active row is `Free` publishes a Free-state manufacturing preview
+unless a future presentation feature explicitly selects another saved row.
 
 The HUB75 display and frame-coupler models remain downstream consumers. They are
 useful adoption tests after a Forge release, but they do not define or special
