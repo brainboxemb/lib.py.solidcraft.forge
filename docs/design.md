@@ -70,18 +70,64 @@ parameter edits.
 ## Native configuration-table boundary
 
 Configuration is final design intent rather than a Python model variant. The
-public authoring boundary is `Configure(design, active=..., columns=..., rows=...)`,
-with `Param(...)` and `Suppress(feature)` columns. Suppression references an
-exact Forge-authored applied feature. Lowering binds the native feature name from that feature command's replay
-result; SolidCraft resolves that name to the native feature-id reference stored
-in the saved configuration table. The caller never supplies or predicts an id. Native `config.configure`, `config.row`,
-`config.activate` and `config.table` author the editable table.
+public authoring boundary is:
 
-The qualification model is Forge-owned and intentionally independent of any
-consumer repository. It proves the generic authoring contract against native
-SolidCraft: rows, active state, parameter cells, suppression cells, saved-design
-editability and row switching. Downstream models such as HUB75 are consumers
-after release, not acceptance fixtures for this API.
+```python
+Configure(design, active=..., columns=(...), rows={...})
+```
+
+The configured `design` may be a single `Shape`, one component occurrence or
+an `Assembly`. `Param(...)` points at an existing native model parameter, so
+the same column type can drive dimensions, occurrence `Placement`, attachment
+offsets and other native associative dependencies. `Suppress(feature)` points
+at the exact Forge-authored feature object; consumer code never names or predicts
+SolidCraft history ids.
+
+Lowering is deliberately two-stage:
+
+```text
+Forge configuration intent
+        ↓
+compile normal Shape / component / Assembly design
+        ↓
+bind replay-returned native feature names and configuration row ids
+        ↓
+config.configure / config.row / config.activate / config.table
+        ↓
+saved SolidCraft .sc owns editable configs + native row identities
+```
+
+Forge assigns deterministic replay row references (`$config_row_1`,
+`$config_row_2`, ...), binds each to the actual native row id returned by
+SolidCraft and activates by that id. SolidCraft persists its own
+`row_identities` map in the saved document. This avoids guessed numeric ids
+while retaining stable native row identity after replay.
+
+`Configure` never rewrites Python model structure for each row. A row may only
+change native configuration columns. Whole-component presence, alternate
+attachment graphs and arbitrary Python branching therefore require a separate
+native contract rather than being hidden behind configuration syntax.
+
+Native material and appearance columns also exist in SolidCraft's configuration
+model. They are intentionally not exposed by #216 until a typed Forge authoring
+contract and verification case exist for them.
+
+## Configuration verification cases
+
+Configuration qualification is Forge-owned and independent of downstream
+consumer repositories. The verification catalog has its own
+**Configurations** section and uses focused cases:
+
+| Case | Contract proved |
+| --- | --- |
+| `configuration-table` | named rows, active row, multiple parameter columns, two independent feature-suppression columns, saved native table and row switching |
+| `configuration-position` | one configuration table around a complete Assembly, with parameter-driven occurrence positions for Front, Below and Service |
+| replay row identity | Forge-generated deterministic row references bind to SolidCraft-returned native row ids; activation uses the bound id |
+| saved-design switching | rows are switched after reopening the generated `.sc`, proving configurations are native document state rather than Python presets |
+
+The HUB75 display and frame-coupler models remain downstream consumers. They are
+useful adoption tests after a Forge release, but they do not define or special
+case the public API.
 
 ## Native revolute-relationship boundary
 

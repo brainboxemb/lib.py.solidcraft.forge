@@ -20,8 +20,19 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(commands[-7]["params"], {"params": ["width"]})
         self.assertEqual(commands[-6]["params"], {"name": "Default", "rename": "Small"})
         self.assertEqual(commands[-3]["params"], {"name": "Large", "values": {"param:width": "100 mm"}})
-        self.assertEqual(commands[-2], {"command": "config.activate", "params": {"row": "Medium"}})
+        self.assertEqual(
+            commands[-2],
+            {"command": "config.activate", "params": {"row": "$config_row_2"}},
+        )
         self.assertEqual(commands[-1]["command"], "config.table")
+        self.assertEqual(
+            commands[-6]["bind"]["$config_row_1"],
+            {"field": "rows", "where": {"name": "Small"}, "select": "id"},
+        )
+        self.assertEqual(
+            commands[-4]["bind"]["$config_row_2"],
+            {"field": "rows", "where": {"name": "Medium"}, "select": "id"},
+        )
 
     def test_feature_binding(self):
         plate = Box(Parameter("width", 80), 30, 5, anchor=Anchor.BOTTOM)
@@ -103,7 +114,7 @@ class ConfigurationTests(unittest.TestCase):
         )
         self.assertEqual(
             next(row for row in commands if row["command"] == "config.activate")["params"],
-            {"row": "Front"},
+            {"row": "$config_row_1"},
         )
 
 

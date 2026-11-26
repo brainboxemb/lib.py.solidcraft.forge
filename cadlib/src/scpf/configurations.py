@@ -252,12 +252,40 @@ def _configuration_commands(configured, name, commands):
     if features:
         options["features"] = features
     commands.append(command("config.configure", **options))
+
+    def row_binding(variable, row_name):
+        return {
+            variable: {
+                "field": "rows",
+                "where": {"name": row_name},
+                "select": "id",
+            }
+        }
+
+    row_refs = {}
     first = configured.rows[0][0]
     if first != "Default":
-        commands.append(command("config.row", name="Default", rename=first))
-    for row, cells in configured.rows:
-        commands.append(command("config.row", name=row, values=dict(zip(keys, cells))))
-    commands.append(command("config.activate", row=configured.active))
+        rename = command("config.row", name="Default", rename=first)
+        variable = "$config_row_1"
+        rename["bind"] = row_binding(variable, first)
+        row_refs[first] = variable
+        commands.append(rename)
+
+    for row_number, (row, cells) in enumerate(configured.rows, start=1):
+        update = command(
+            "config.row",
+            name=row,
+            values=dict(zip(keys, cells)),
+        )
+        if row not in row_refs:
+            variable = f"$config_row_{row_number}"
+            update["bind"] = row_binding(variable, row)
+            row_refs[row] = variable
+        commands.append(update)
+
+    commands.append(
+        command("config.activate", row=row_refs[configured.active])
+    )
     commands.append(command("config.table"))
     return commands
 
