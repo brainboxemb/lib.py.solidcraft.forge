@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/343-recursive-primitive-csg-ir
+branch: issue/351-polygon-symmetric-chamfer-ir
 modules: [builder-scpf-mitcad]
-models: [cylinder-subtract, primitive-csg]
+models: [topology-face-boundary-box, topology-face-boundary-xz]
 library: true
 tasks: [test]
