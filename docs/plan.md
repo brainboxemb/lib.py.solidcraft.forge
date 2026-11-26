@@ -134,7 +134,8 @@ Normal consumer work and isolated compiler research may proceed independently; n
 Normal `dev` lane:
 - #380 is the demonstrated CAD consumer blocker: let a parent/root `Configure(...)` target an exact authored suppressible feature owned by a reusable child component without exposing replay/native feature ids;
 - keep its public authoring/replay qualification independent from experimental Mitcad work;
-- verification-evidence follow-ups such as #255 may continue on their own already-open branches, but must not be folded into #380.
+- #255 / PR #376 is complete on `dev`: seven audited visible-geometry owners now retain approved `front`, `right` and `iso` regression baselines plus expected-shape evidence while preserving their existing native/history/topology checks; final PR CI 45876080803, permanent dev build/publication 45876667570 and Pages 45877168765 are green;
+- keep later verification-evidence follow-ups #256 and #257 separate from #380.
 
 Experimental `exp` lane:
 - #381 is the active compiler checkpoint after completed #358;
@@ -146,7 +147,7 @@ Experimental `exp` lane:
 
 ## Later
 
-1. Continue verification-evidence follow-ups #255, #256 and #257 in the order justified
+1. Continue verification-evidence follow-ups #256 and #257 after completed #255, in the order justified
    by the completed #163 audit unless a newer demonstrated consumer blocker
    takes priority.
 2. Continue the migrated Forge product/research backlog (#59-#72) according to
