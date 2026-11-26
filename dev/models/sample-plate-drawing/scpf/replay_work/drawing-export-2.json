@@ -1,0 +1,30 @@
+{
+  "commands": [
+    {
+      "command": "drawing.open",
+      "params": {
+        "drawing": "9zdq8gvzg3nbm"
+      }
+    },
+    {
+      "command": "drawing.export",
+      "params": {
+        "format": "pdf",
+        "path": "/output/models/sample-plate-drawing/scpf/drawings/Compact-Sample-Plate-Drawing.pdf"
+      }
+    },
+    {
+      "command": "drawing.export",
+      "params": {
+        "sheet": "6b93gynxd6hr6",
+        "format": "png",
+        "path": "/output/models/sample-plate-drawing/scpf/drawings/Compact-Sample-Plate-Drawing.png",
+        "dpi": 144
+      }
+    },
+    {
+      "command": "drawing.close",
+      "params": {}
+    }
+  ]
+}

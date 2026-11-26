@@ -1,0 +1,62 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "actual.png",
+          "sha256": "6e8f1ede5c297c2edf5198cb999a41019793d13a6cbba3f4110cdc2cedfb0c98",
+          "size": 39032
+        },
+        {
+          "kind": "file",
+          "path": "approved-baseline.png",
+          "sha256": "4ec2dccc69a0bd62444cdc7acb4878c8b7d821ae2f51970da8504e25fa4ed12c",
+          "size": 2196
+        },
+        {
+          "kind": "file",
+          "path": "diff.png",
+          "sha256": "ea5bc441ec933844aa3374c1bdcf6feb680fa7a11a841f0c528d54e9be8a3f92",
+          "size": 4581
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "actual.png",
+        "baseline_status": "pass",
+        "diff_image": "diff.png",
+        "expected_shape_status": "missing",
+        "goal_image": null,
+        "overlay_image": null,
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.02,
+          "max_mean_difference": 1.5,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        }
+      },
+      "id": "image-regression",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/sample-plate-drawing/scpf/drawings/Compact-Sample-Plate-Drawing.png",
+  "metadata": {
+    "baseline_payload": "baselines/compact-drawing-sheet.json",
+    "baseline_provenance": {
+      "approval": "approved",
+      "purpose": "native compact 49 mm engineering-drawing title block",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "907cde3c8245b06f7e4d5806e2991bc4c6d00fa4",
+      "workflow_run": 45828245215
+    },
+    "kind": "image-regression"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "sample-plate-drawing-scpf-compact-drawing-sheet"
+}

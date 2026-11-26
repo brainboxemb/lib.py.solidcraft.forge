@@ -1,0 +1,10 @@
+{
+  "adapter": "image-regression",
+  "id": "sample-plate-drawing--scpf",
+  "implementation": "scpf",
+  "owner": "sample-plate-drawing",
+  "schema": 1,
+  "stage_id": "compact-drawing-sheet",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6"
+}

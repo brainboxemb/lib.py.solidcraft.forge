@@ -9,6 +9,11 @@
   "schema": 2,
   "status": "pass",
   "verification_stages": {
+    "compact-drawing-sheet": {
+      "adapter": "image-regression",
+      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+      "status": "pass"
+    },
     "drawing-sheet": {
       "adapter": "image-regression",
       "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
