@@ -1544,6 +1544,45 @@ Mitcad remains fail-closed for unsupported ShellIR/HoleIR histories. #532 does
 not widen vertical Fillet, Chamfer, Revolve or Boolean normalization merely
 because their result classes participate in BodyIR.
 
+#533 migrates the two public native-history pattern methods as one semantic
+feature family. `RectangularPatternIR` and `CircularPatternIR` are BodyIR
+history nodes whose `base` is the body before repetition and whose
+`sources` are engine-neutral `FeatureRefIR` paths into that typed history.
+Native feature names such as `Hole1` are deliberately absent from IR.
+
+Pattern source identity is resolved while authored Shape identity still exists.
+For an applied Hole or Boolean tool, the reference points to the semantic
+history node representing that applied feature; earlier history is followed
+through `target` / `base` roles. The generic `resolve_feature_ref` now
+understands those body-history roles instead of being Boolean-only.
+
+The public pattern count is a real symbolic but unitless CAD use-site, so
+`ParameterIR` gains the canonical `count` role alongside length and angle.
+SolidCraft stores a count-only parameter with no unit. If one source parameter
+has several semantic roles, role-aware expression spelling remains responsible
+for adding length/angle units at those use sites instead of assigning the
+parameter itself a misleading global unit.
+
+Circular pattern axis intent reuses `AxisLineIR`, widened at the generic
+reference-geometry level from principal strings to either a principal string or
+one fixed finite non-zero XYZ direction tuple plus symbolic origin. Revolve
+normalization remains principal/in-plane bounded; vector-capable AxisLineIR does
+not silently widen Revolve.
+
+SolidCraft first lowers the typed pattern base, then resolves each semantic
+feature reference to a typed history prefix and privately derives the stable
+native feature identity from that prefix before emitting the existing
+`solid.pattern.rectangular` or `solid.pattern.circular` command. PatternIR
+therefore never stores native feature ordinals. Mitcad remains fail-closed.
+
+The Pattern family itself covers all current public rectangular/circular
+feature-pattern controls: one/two rectangular directions, direct integer/count
+parameters, spacing, alignment/reversal, principal/fixed/shifted circular axes
+and optional angle. A model whose source feature is still legacy remains a
+legacy whole-model boundary because its dependency is not typed; that is not
+missing Pattern semantics. Sketch-level pattern/mirror remains separate Sketch
+IR work.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are

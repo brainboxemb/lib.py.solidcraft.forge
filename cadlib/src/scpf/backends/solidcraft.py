@@ -35,6 +35,7 @@ from ..ir import (
     BoxIR,
     ChamferIR,
     CircleProfileIR,
+    CircularPatternIR,
     ConfigurationIR,
     ConeIR,
     CylinderIR,
@@ -51,6 +52,7 @@ from ..ir import (
     ParallelEdgeSetIR,
     PolygonProfileIR,
     RegionIR,
+    RectangularPatternIR,
     RevolveIR,
     SketchRelationsIR,
     ShellIR,
@@ -111,12 +113,20 @@ def _role_scalar_expression_text(
     scalar_literal: bool = False,
 ) -> str:
     """Render bounded semantic scalar IR for one typed SolidCraft use site."""
-    unit = "mm" if role == "length" else "deg"
+    unit = {
+        "length": "mm",
+        "angle": "deg",
+        "count": "",
+    }.get(role)
+    if unit is None:
+        raise ModelError(f"unsupported Forge parameter role {role!r}")
     parameters = {parameter.name: parameter for parameter in model.parameters}
 
     if isinstance(node, ScalarLiteralIR):
         text = number_text(node.value)
-        return text if scalar_literal else f"{text} {unit}"
+        if scalar_literal or not unit:
+            return text
+        return f"{text} {unit}"
 
     if isinstance(node, ScalarParameterRefIR):
         parameter = parameters.get(node.name)
@@ -129,7 +139,11 @@ def _role_scalar_expression_text(
                 f"parameter {node.name!r} has no semantic {role} role"
             )
         if len(parameter.roles) > 1:
-            return f"{node.name} * 1 {unit}"
+            return (
+                f"{node.name} * 1 {unit}"
+                if unit
+                else f"{node.name} * 1"
+            )
         return node.name
 
     if isinstance(node, ScalarUnaryIR):
@@ -181,7 +195,7 @@ def _role_scalar_expression_text(
 
 def _role_command_value(model: ModelIR, value, role: str):
     """Spell one typed use of a mixed-role source parameter or expression."""
-    if role not in {"length", "angle"}:
+    if role not in {"length", "angle", "count"}:
         raise ModelError(f"unsupported Forge parameter role {role!r}")
 
     mixed_names = {
@@ -831,16 +845,23 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
 def _solidcraft_axis(axis: AxisLineIR):
     """Lower semantic axis intent without losing symbolic origin dependencies."""
     if (
-        all(not parameters_in(value) and abs(pv(value)) <= 1e-12
-            for value in axis.origin)
+        isinstance(axis.direction, str)
+        and all(
+            not parameters_in(value) and abs(pv(value)) <= 1e-12
+            for value in axis.origin
+        )
     ):
         return axis.direction
 
-    direction = {
-        "X": [1.0, 0.0, 0.0],
-        "Y": [0.0, 1.0, 0.0],
-        "Z": [0.0, 0.0, 1.0],
-    }[axis.direction]
+    direction = (
+        {
+            "X": [1.0, 0.0, 0.0],
+            "Y": [0.0, 1.0, 0.0],
+            "Z": [0.0, 0.0, 1.0],
+        }[axis.direction]
+        if isinstance(axis.direction, str)
+        else list(axis.direction)
+    )
     return {
         "origin": [command_value(value) for value in axis.origin],
         "dir": direction,
@@ -1092,6 +1113,107 @@ def _shell_commands(model: ModelIR, node: ShellIR, name: str) -> list[dict]:
     ]
 
 
+_AUTO_TYPED_HISTORY_FEATURE_NAMES = {
+    "solid.box": "Box",
+    "solid.sphere": "Sphere",
+    "solid.cylinder": "Cylinder",
+    "solid.cone": "Cone",
+    "solid.revolve": "Revolve",
+    "solid.hole": "Hole",
+}
+
+
+def _typed_feature_name(
+    model: ModelIR,
+    root: BodyIR,
+    reference: FeatureRefIR,
+    name: str,
+) -> str:
+    """Resolve semantic feature identity to private SolidCraft history naming."""
+    feature = resolve_feature_ref(root, reference)
+    if not isinstance(feature, BodyIR):
+        raise ModelError(
+            "portable SolidCraft pattern source must resolve to BodyIR history"
+        )
+    prefix = _body_commands(model, feature, name)
+    if not prefix:
+        raise ModelError("typed pattern source produced no SolidCraft history")
+    last = prefix[-1]
+    params = last.get("params", {})
+    explicit = params.get("name")
+    if isinstance(explicit, str) and explicit:
+        return explicit
+    command = last.get("command")
+    base_name = _AUTO_TYPED_HISTORY_FEATURE_NAMES.get(command)
+    if base_name is None:
+        raise ModelError(
+            "typed pattern source has no qualified stable SolidCraft feature identity"
+        )
+    ordinal = sum(row.get("command") == command for row in prefix)
+    if ordinal < 1:
+        raise ModelError("typed pattern source feature ordinal is missing")
+    return f"{base_name}{ordinal}"
+
+
+def _rectangular_pattern_commands(
+    model: ModelIR,
+    node: RectangularPatternIR,
+    name: str,
+) -> list[dict]:
+    base = _body_commands(model, node.base, name)
+    params = {
+        "features": [
+            _typed_feature_name(model, node.base, ref, name)
+            for ref in node.sources
+        ],
+        "dir1": list(node.direction1),
+        "count1": _role_command_value(model, node.count1, "count"),
+        "spacing1": _role_command_value(model, node.spacing1, "length"),
+        "alignment": node.alignment1,
+        "reversed": node.reversed1,
+    }
+    if node.direction2 is not None:
+        params.update(
+            dir2=list(node.direction2),
+            count2=_role_command_value(model, node.count2, "count"),
+            spacing2=_role_command_value(model, node.spacing2, "length"),
+            alignment2=node.alignment2,
+            reversed2=node.reversed2,
+        )
+    return [
+        *base,
+        _command("solid.pattern.rectangular", **params),
+    ]
+
+
+def _circular_pattern_commands(
+    model: ModelIR,
+    node: CircularPatternIR,
+    name: str,
+) -> list[dict]:
+    base = _body_commands(model, node.base, name)
+    params = {
+        "features": [
+            _typed_feature_name(model, node.base, ref, name)
+            for ref in node.sources
+        ],
+        "axis": _solidcraft_axis(node.axis),
+        "count": _role_command_value(model, node.count, "count"),
+        "alignment": node.alignment,
+        "reversed": node.reversed,
+    }
+    if node.angle is not None:
+        params["angle"] = (
+            _role_command_value(model, node.angle, "angle")
+            if isinstance(node.angle, Parameter)
+            else f"{number_text(node.angle)} deg"
+        )
+    return [
+        *base,
+        _command("solid.pattern.circular", **params),
+    ]
+
+
 def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
     """Lower one typed semantic body history without re-reading Shape.data."""
     if isinstance(node, PlacementIR):
@@ -1141,6 +1263,12 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
 
     if isinstance(node, ShellIR):
         return _shell_commands(model, node, name)
+
+    if isinstance(node, RectangularPatternIR):
+        return _rectangular_pattern_commands(model, node, name)
+
+    if isinstance(node, CircularPatternIR):
+        return _circular_pattern_commands(model, node, name)
 
     raise TypeError(f"not a portable Forge BodyIR node: {type(node).__name__}")
 
