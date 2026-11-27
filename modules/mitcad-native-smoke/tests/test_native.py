@@ -327,6 +327,92 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            axis_z = Parameter("axis_z", 3)
+            shifted_plane_panel = Box(80, 46, 30)
+            with Sketch(
+                name="ShiftedPlanePassThrough",
+                plane="XY",
+                offset=axis_z,
+            ) as shifted_plane_profile:
+                Polygon2D(
+                    [
+                        (12, -5),
+                        (16, -5),
+                        (16, 5),
+                        (12, 5),
+                    ],
+                    plane="XY",
+                )
+            shifted_plane_shape = shifted_plane_panel - shifted_plane_profile.revolve(
+                axis=AxisLine(
+                    Axis.Y,
+                    origin=(axis_x, 0, axis_z),
+                ),
+            )
+            shifted_plane_document = compile_mitcad_ir(
+                normalize_shape(shifted_plane_shape),
+                "ShiftedPlaneRevolveCut",
+            )
+
+            shifted_plane_replay = shifted_plane_document["replay"][0]["commands"]
+            self.assertEqual(
+                [row["def"]["type"] for row in shifted_plane_replay],
+                ["construction_plane", "sketch", "revolve"],
+            )
+            self.assertEqual(
+                shifted_plane_replay[0]["def"]["definition"],
+                {
+                    "type": "offset",
+                    "plane": "xy",
+                    "distance": "axis_z",
+                },
+            )
+            self.assertEqual(
+                shifted_plane_replay[1]["def"]["plane"],
+                {"ref": "plane.uid"},
+            )
+            self.assertIn(
+                "axis_x",
+                [
+                    dimension["value"]
+                    for dimension in shifted_plane_replay[1]["def"]["dimensions"]
+                ],
+            )
+
+            shifted_plane = run_document(
+                shifted_plane_document,
+                save=root / "out/shifted-plane-revolve-cut.mitcad",
+                export=root / "out/shifted-plane-revolve-cut.stl",
+                executable=str(executable),
+                work_dir=root / "shifted-plane-revolve-cut-workspace",
+            )
+            self.assertEqual(shifted_plane["completed"], 6)
+            self.assertEqual(len(shifted_plane["bodies"]), 1)
+            shifted_plane_body = shifted_plane["bodies"][0]
+            self.assertEqual(shifted_plane_body["kind"], "solid")
+            self.assertAlmostEqual(
+                shifted_plane_body["volume"],
+                80.0 * 46.0 * 30.0 - pi * (8.0 ** 2 - 4.0 ** 2) * 10.0,
+                places=3,
+            )
+            for actual, expected in zip(
+                shifted_plane_body["bbox"]["min"],
+                [-40.0, -23.0, -15.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                shifted_plane_body["bbox"]["max"],
+                [40.0, 23.0, 15.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
+            shifted_plane_stl = root / "out/shifted-plane-revolve-cut.stl"
+            retained_shifted_plane_stl = (
+                evidence / "shifted-plane-revolve-cut.stl"
+            )
+            shutil.copy2(shifted_plane_stl, retained_shifted_plane_stl)
+            self.assertGreater(retained_shifted_plane_stl.stat().st_size, 0)
+
             shifted_stl = root / "out/shifted-revolve-cut.stl"
             retained_shifted_stl = evidence / "shifted-revolve-cut.stl"
             shutil.copy2(shifted_stl, retained_shifted_stl)
@@ -341,6 +427,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "topology-face-boundary-box.stl",
                 "shifted-revolve-cut.mitcad",
                 "shifted-revolve-cut.stl",
+                "shifted-plane-revolve-cut.mitcad",
+                "shifted-plane-revolve-cut.stl",
             ):
                 output = root / "out" / filename
                 self.assertTrue(output.is_file(), filename)
@@ -364,6 +452,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"topology_bindings={topology['bindings']}",
                         f"shifted_revolve_cut_volume={shifted_body['volume']}",
                         f"shifted_revolve_cut_bbox={shifted_body['bbox']}",
+                        f"shifted_plane_revolve_cut_volume={shifted_plane_body['volume']}",
+                        f"shifted_plane_revolve_cut_bbox={shifted_plane_body['bbox']}",
                         f"shifted_revolve_cut_bindings={shifted_cut['bindings']}",
                     ]
                 )

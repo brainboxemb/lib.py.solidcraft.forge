@@ -1,6 +1,6 @@
 schema: 1
-branch: resolve/408-v024-dev-into-exp
-modules: all
+branch: issue/417-plane-ir
+modules: [builder-scpf-mitcad, mitcad-native-smoke]
+models: [native-revolve]
 library: true
-models: all
 tasks: [test]
