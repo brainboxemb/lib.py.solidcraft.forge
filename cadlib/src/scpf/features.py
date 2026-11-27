@@ -1312,6 +1312,14 @@ def _non_count_parameter_names(node, found=None):
             _non_count_parameter_names(original, found)
             _non_count_parameter_names((axis, alignment, reversed), found)
             return found
+        if node.kind == "body_move":
+            original, translate, origin, axis, _angle = node.data
+            _non_count_parameter_names(original, found)
+            _non_count_parameter_names(
+                (translate, origin, axis),
+                found,
+            )
+            return found
         if node.kind == "sketch_base_revolve":
             (
                 sketch_name,
@@ -1482,6 +1490,12 @@ def _pattern_angle_parameter_names(node, found=None):
                 _alignment, _reversed,
             ) = node.data
             found.update(param.name for param in parameters_in(angle))
+            _pattern_angle_parameter_names(original, found)
+            return found
+        if node.kind == "body_move":
+            original, _translate, _origin, _axis, angle = node.data
+            if angle is not None:
+                found.update(param.name for param in parameters_in(angle))
             _pattern_angle_parameter_names(original, found)
             return found
         _pattern_angle_parameter_names(node.data, found)
