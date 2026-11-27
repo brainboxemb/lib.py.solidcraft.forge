@@ -199,19 +199,22 @@ Normal `dev` lane:
 - keep normal verification work independent from experimental Mitcad/IR work.
 
 Experimental `exp` lane:
-- #393 is complete and remains the compiler control gate: SCPF is one frontend, typed engine-neutral Forge CAD IR is the compiler contract, and SolidCraft/Mitcad are independent lowerings rather than separate source interpreters;
-- #389 / PR #395 is complete: accepted reference geometry now includes typed `AxisLineIR` with symbolic shifted origins, and a subtractive Sketch Revolve remains one `RevolveIR(operation="cut", target=...)` feature rather than degrading into new-body Revolve plus unrelated Boolean;
-- #408 / PR #409 is complete: released v0.24 normal `dev` and the accepted experimental compiler line are synchronized on permanent `exp` as `f6d6e3b8b0bd7aed6e8c9a3f9171f8d7a3d7e6f8`, with full permanent CI/build 45965551244, Pages 45966053728 and deployment 45966182862 green;
-- the combined exp baseline contains 61 physical model owners and preserves both the v0.24 reusable-child/configuration product work and all accepted Mitcad/IR compiler work;
-- current typed/accepted core: `ParameterIR`; Box/Cylinder/Sphere + `PlacementIR`; `AxisLineIR`; `SketchIR` with Circle/Polygon profiles and `RegionIR`; bounded `ExtrudeIR`, recursive `BooleanIR`, face-boundary `ChamferIR`, and `RevolveIR` with principal/shifted axis plus new-body/cut operation intent;
-- **#417 is the active compiler checkpoint**: replace standalone `SketchIR.plane` string intent with typed engine-neutral plane/reference geometry and qualify a symbolic principal-plane offset without baking `axis_z`;
-- refactor existing world-origin Sketch/Extrude/Revolve IR through that same typed plane node rather than maintaining a parallel old plane-string representation;
-- backend implementation remains secondary: SolidCraft preserves native sketch-plane/offset semantics; Mitcad may create a construction-plane feature for a symbolic offset, but that helper uid/feature is backend transport and never semantic IR;
-- #417 must follow the fixed compiler order: generic PlaneIR contract -> pure normalization/IR tests -> independent backend lowering -> backend contract tests -> exact native runtime qualification -> permanent `exp` merge;
-- keep arbitrary rotated planes, complete Sketch constraints/dimensions, portable configuration/suppression, topology graph generalization and assembly/occurrence IR as later generic gaps;
-- the existing `shifted-axis-revolve` owner remains a later full two-backend consumer: #417 removes its plane-placement blocker, but portable Configure/Suppress semantics remain separately required;
+- #393 remains the compiler control gate: SCPF is one frontend, typed engine-neutral Forge CAD IR is the compiler contract, and SolidCraft/Mitcad are independent lowerings rather than source interpreters;
+- #389 / PR #395 is complete: accepted reference geometry includes typed `AxisLineIR` with symbolic shifted origins, and a subtractive Sketch Revolve remains one `RevolveIR(operation="cut", target=...)` feature;
+- #408 / PR #409 synchronized released v0.24 normal `dev` with the experimental compiler line; the combined baseline retains 61 physical model owners;
+- #417 / PR #423 is complete: standalone Sketch support now uses typed engine-neutral `PlaneIR(orientation, origin)` for both world-origin and symbolic principal-plane offsets; SolidCraft lowers native plane/offset intent while Mitcad's construction-plane feature/uid remains backend-only transport;
+- permanent `exp` at `45b1b3f8e3376538c952c9f7e19e94e3332182dd` has CI/build 45968683124, branch cleanup 45968686193, Pages 45969214748 and deployment 45969337404 green;
+- current typed/accepted core: `ParameterIR`; Box/Cylinder/Sphere + `PlacementIR`; `AxisLineIR` and `PlaneIR`; `SketchIR` with Circle/Polygon profiles and `RegionIR`; bounded `ExtrudeIR`, recursive `BooleanIR`, face-boundary `ChamferIR`, and `RevolveIR` with principal/shifted axis plus new-body/cut operation intent;
+- **#424 is the active compiler checkpoint**: add engine-neutral semantic feature references plus one suppression-only configuration slice so `Configure(..., Suppress(pass_through))` becomes typed IR rather than a SolidCraft-only post-compiler path;
+- the first #424 feature-reference slice is deliberately bounded to the exact authored Revolve feature that is already the final/root `RevolveIR` cut; design the reference representation so nested/history references can extend it later without exposing backend ids;
+- the first ConfigurationIR slice carries only active row, named rows, one suppression column and boolean cells; parameter columns, rules, child-component feature references, assemblies and visibility/material configuration remain later gaps;
+- SolidCraft must lower that semantic configuration compatibly with the existing native saved-design contract; Mitcad may use a backend-private suppression driver because its rows drive parameters, but that helper parameter/uid is lowering transport and must never enter IR;
+- #424 must prove saved native state switching on the exact pinned Mitcad runtime: build/save Cut, reopen the same design, apply Suppressed without rerunning Forge, prove the exact Revolve feature is suppressed and geometry becomes the uncut panel, then restore Cut;
+- use the existing `shifted-axis-revolve` physical owner as the intended full two-backend consumer; do not add a duplicate model owner;
+- follow the fixed compiler order: generic feature/configuration semantics -> pure normalization/IR tests -> independent backend lowering -> backend contract tests -> exact native saved-design qualification -> permanent `exp` merge;
+- keep complete Sketch constraints/dimensions, generalized nested feature/history references, topology graph generalization, reusable-child configuration and assembly/occurrence IR as later generic layers;
 - `LegacyShapeIR` remains a visible migration boundary for stable SolidCraft compatibility, never a second interpreter; experimental backends continue to fail closed on unmigrated semantics;
-- do not perform `exp -> dev` as part of #417.
+- do not perform `exp -> dev` as part of #424.
 
 ## Later
 
