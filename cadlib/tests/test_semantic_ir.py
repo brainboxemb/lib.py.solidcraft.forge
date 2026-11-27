@@ -1808,6 +1808,30 @@ class SemanticIRTests(unittest.TestCase):
         self.assertIsInstance(model.root.blank, SketchChainIR)
         self.assertTrue(model.root.blank.closed)
 
+    def test_sheet_ir_rejects_invalid_semantic_contracts(self):
+        with self.assertRaises(ValueError):
+            SheetRuleIR("Bad", 2, 2, 1.0)
+        with self.assertRaises(ValueError):
+            SheetEdgeFlangeIR(
+                base=PlacementIR(
+                    primitive=BoxIR(10, 10, 2),
+                    point=(0, 0, 0),
+                    anchor=(0, 0, 0),
+                ),
+                edges=((0, 0, 0),),
+                height=0,
+            )
+        with self.assertRaises(ValueError):
+            SheetHemIR(
+                base=PlacementIR(
+                    primitive=BoxIR(10, 10, 2),
+                    point=(0, 0, 0),
+                    anchor=(0, 0, 0),
+                ),
+                edges=(),
+                length=10,
+            )
+
     def test_vertical_box_fillet_is_semantic_parallel_edge_ir(self):
         radius = Parameter("fillet_radius", 2)
         shape = Box(
