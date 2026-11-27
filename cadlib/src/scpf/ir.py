@@ -5532,6 +5532,16 @@ def _configuration_feature_ref(
             "suppression feature is not a member of the typed Boolean history"
         )
 
+    if isinstance(root, BodyIR):
+        reference = _pattern_authored_feature_ref(
+            design,
+            root,
+            feature,
+        )
+        if reference is not None:
+            resolve_feature_ref(root, reference)
+            return reference
+
     raise ValueError(
         "portable suppression requires a qualified semantic feature history"
     )
@@ -5561,6 +5571,7 @@ def _normalize_configuration(configured, feature_resolver) -> ConfigurationIR:
     """Normalize complete current-public table/rule semantics."""
     from .configurations import (
         _AlwaysCondition,
+        _ConfigurationRule,
         _DriveParameterEffect,
         _ParameterColumn,
         _SuppressionColumn,
@@ -5605,6 +5616,10 @@ def _normalize_configuration(configured, feature_resolver) -> ConfigurationIR:
 
     rules = []
     for rule in configured.rules:
+        if not isinstance(rule, _ConfigurationRule):
+            raise ValueError(
+                "configuration rule is outside current public grammar"
+            )
         if not isinstance(rule.condition, _AlwaysCondition):
             raise ValueError(
                 "configuration rule condition is outside public grammar"
