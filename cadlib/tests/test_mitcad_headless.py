@@ -8,6 +8,7 @@ from unittest.mock import patch
 from scpf.backends.mitcad_headless import (
     MitcadHeadlessError,
     run_document,
+    run_saved_configuration,
     validate_document,
 )
 
@@ -56,6 +57,11 @@ class FakeSession:
         self.calls.append((name, arguments))
         if name == "document_create":
             return {"document": "D1", "applied": True}
+        if name == "document_open":
+            path = self.workspace / arguments["path"]
+            if not path.is_file():
+                raise AssertionError(f"missing saved design: {path}")
+            return {"document": "D1"}
         if name == "model_command":
             return {
                 "document": "D1",
@@ -279,6 +285,51 @@ class MitcadHeadlessTests(unittest.TestCase):
             self.assertEqual(
                 query,
                 {"query": "bodies", "properties": True},
+            )
+
+    @patch("scpf.backends.mitcad_headless._Session", FakeSession)
+    def test_reopens_saved_design_and_applies_configuration_without_forge(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            saved = root / "configured.mitcad"
+            saved.write_text("original native design", encoding="utf-8")
+            export = root / "suppressed.stl"
+            workspace = root / "reopen-workspace"
+
+            result = run_saved_configuration(
+                saved,
+                "Suppressed",
+                save=saved,
+                export=export,
+                executable="/opt/mitcad/mitcad-cli",
+                work_dir=workspace,
+            )
+
+            self.assertEqual(result["completed"], 1)
+            self.assertEqual(result["configuration"], "Suppressed")
+            self.assertEqual(result["bodies"][0]["volume"], 12000)
+            self.assertEqual(saved.read_text(), "native mitcad")
+            self.assertEqual(export.read_bytes(), b"solid stl")
+
+            session = FakeSession.instances[-1]
+            self.assertEqual(
+                [name for name, _ in session.calls],
+                [
+                    "document_open",
+                    "model_command",
+                    "model_query",
+                    "document_save",
+                    "model_export",
+                    "document_close",
+                ],
+            )
+            self.assertEqual(
+                session.calls[1][1]["command"],
+                [{"cmd": "apply_configuration", "name": "Suppressed"}],
+            )
+            self.assertEqual(
+                session.calls[1][1]["timeline"],
+                "none",
             )
 
     @patch("scpf.backends.mitcad_headless._Session", FakeSession)
