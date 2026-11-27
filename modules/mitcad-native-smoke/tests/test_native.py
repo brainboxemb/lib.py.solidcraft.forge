@@ -622,6 +622,75 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            offset_cone_csg_document = compile_mitcad_ir(
+                normalize_shape(
+                    Box(30, 30, 30, anchor=Anchor.BOTTOM)
+                    - Cone(
+                        d=10,
+                        top_d=0,
+                        h=20,
+                        anchor=Anchor.BOTTOM,
+                    ).at(
+                        0,
+                        0,
+                        5,
+                        anchor=Anchor.BOTTOM,
+                    )
+                ),
+                "OffsetConeCsg",
+            )
+            offset_cone_csg_features = [
+                row
+                for row in offset_cone_csg_document["commands"]
+                if row["cmd"] == "add_feature"
+            ]
+            self.assertEqual(
+                [row["def"]["type"] for row in offset_cone_csg_features],
+                ["box", "construction_plane", "cone"],
+            )
+            self.assertEqual(
+                offset_cone_csg_features[1]["as"],
+                "csg_plane_root_tool",
+            )
+            self.assertEqual(
+                offset_cone_csg_features[1]["def"]["definition"]["distance"],
+                5,
+            )
+            self.assertEqual(
+                offset_cone_csg_features[2]["def"]["plane"],
+                {"ref": "csg_plane_root_tool.uid"},
+            )
+            self.assertEqual(
+                offset_cone_csg_features[2]["def"]["operation"],
+                "cut",
+            )
+
+            offset_cone_csg_native = run_document(
+                offset_cone_csg_document,
+                save=root / "out/offset-cone-csg.mitcad",
+                export=root / "out/offset-cone-csg.stl",
+                executable=str(executable),
+                work_dir=root / "offset-cone-csg-workspace",
+            )
+            self.assertEqual(len(offset_cone_csg_native["bodies"]), 1)
+            offset_cone_csg_body = offset_cone_csg_native["bodies"][0]
+            self.assertEqual(offset_cone_csg_body["kind"], "solid")
+            self.assertAlmostEqual(
+                offset_cone_csg_body["volume"],
+                27000.0 - 500.0 * pi / 3.0,
+                places=3,
+            )
+            for actual, expected in zip(
+                offset_cone_csg_body["bbox"]["min"],
+                [-15.0, -15.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                offset_cone_csg_body["bbox"]["max"],
+                [15.0, 15.0, 30.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
             sphere_radius = Parameter("sphere_radius", 10)
             sphere_top_z = Parameter("sphere_top_z", 25)
             placed_sphere_document = compile_mitcad_ir(
@@ -1180,6 +1249,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "placed-frustum.stl",
                 "shifted-sphere-csg.mitcad",
                 "shifted-sphere-csg.stl",
+                "offset-cone-csg.mitcad",
+                "offset-cone-csg.stl",
                 "placed-sphere.mitcad",
                 "placed-sphere.stl",
                 "three-circle-exact-region.mitcad",
@@ -1230,6 +1301,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"shifted_sphere_csg_volume={shifted_sphere_csg_body['volume']}",
                         f"shifted_sphere_csg_bbox={shifted_sphere_csg_body['bbox']}",
                         "shifted_sphere_csg_helper_mapping=pass",
+                        f"offset_cone_csg_volume={offset_cone_csg_body['volume']}",
+                        f"offset_cone_csg_bbox={offset_cone_csg_body['bbox']}",
+                        "offset_cone_csg_helper_mapping=pass",
                         f"placed_sphere_volume={placed_sphere_body['volume']}",
                         f"placed_sphere_bbox={placed_sphere_body['bbox']}",
                         "placed_sphere_parameterized_anchor=pass",
