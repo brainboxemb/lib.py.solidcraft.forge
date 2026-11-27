@@ -903,8 +903,13 @@ class SemanticIRTests(unittest.TestCase):
         values = [dimension["value"] for dimension in sketch_def["dimensions"]]
         self.assertIn("height", values)
         self.assertIn("width", values)
-        self.assertTrue(any("width" in value and "2" in value for value in values))
-        self.assertTrue(any("height" in value and "1" in value for value in values))
+        rendered_values = [str(value) for value in values]
+        self.assertTrue(
+            any("width" in value and "2" in value for value in rendered_values)
+        )
+        self.assertTrue(
+            any("height" in value and "1" in value for value in rendered_values)
+        )
 
     def test_shifted_axis_revolve_cut_is_one_semantic_feature(self):
         axis_x = Parameter("axis_x", 8)
