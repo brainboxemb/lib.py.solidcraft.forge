@@ -23,7 +23,9 @@ from .core import (
     Parameter,
     Shape,
     _BoundOffset,
+    _DirectionSelector,
     _FaceBoundarySelection,
+    _ProfileEdgeSelection,
     _dim_add,
     _hole_spec,
     _pv as pv,
@@ -1280,6 +1282,19 @@ class FaceBoundaryIR:
 
     faces: tuple[str, ...]
 
+    def __post_init__(self):
+        if (
+            not isinstance(self.faces, tuple)
+            or not self.faces
+            or any(
+                face not in {"top", "bottom", "left", "right", "front", "back"}
+                for face in self.faces
+            )
+        ):
+            raise ValueError(
+                "FaceBoundaryIR requires one or more cardinal face names"
+            )
+
 
 @dataclass(frozen=True)
 class ParallelEdgeSetIR:
@@ -1293,30 +1308,109 @@ class ParallelEdgeSetIR:
 
 
 @dataclass(frozen=True)
-class FilletIR(BodyIR):
-    """Constant-radius fillet over one qualified typed body result."""
+class DirectionPairEdgeSetIR:
+    """One or more rectangular-solid edges selected by two cardinal directions."""
 
-    base: PlacementIR
+    vectors: tuple[tuple[int, int, int], ...]
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.vectors, tuple)
+            or not self.vectors
+            or any(
+                not isinstance(vector, tuple)
+                or len(vector) != 3
+                or any(component not in {-1, 0, 1} for component in vector)
+                or sum(component != 0 for component in vector) != 2
+                for vector in self.vectors
+            )
+        ):
+            raise ValueError(
+                "DirectionPairEdgeSetIR requires rank-two cardinal direction vectors"
+            )
+
+
+@dataclass(frozen=True)
+class ProfileEdgeSetIR:
+    """Named polygon-profile segment or vertex edge intent."""
+
+    patterns: tuple[str, ...]
+    kind: str
+    sides: str
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.patterns, tuple)
+            or not self.patterns
+            or any(not isinstance(pattern, str) or not pattern for pattern in self.patterns)
+        ):
+            raise ValueError("ProfileEdgeSetIR requires non-empty name patterns")
+        if self.kind not in {"segments", "vertices"}:
+            raise ValueError("ProfileEdgeSetIR kind must be segments or vertices")
+        expected_sides = "both" if self.kind == "segments" else "axis"
+        if self.sides != expected_sides:
+            raise ValueError(
+                f"ProfileEdgeSetIR {self.kind} requires sides={expected_sides!r}"
+            )
+
+
+@dataclass(frozen=True)
+class ExplicitEdgePicksIR:
+    """Authored fixed XYZ points used to select native edges."""
+
+    points: tuple[tuple[Any, Any, Any], ...]
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.points, tuple)
+            or not self.points
+            or any(
+                not isinstance(point, tuple)
+                or len(point) != 3
+                or any(
+                    isinstance(value, bool) or not isfinite(pv(value))
+                    for value in point
+                )
+                for point in self.points
+            )
+        ):
+            raise ValueError(
+                "ExplicitEdgePicksIR requires one or more finite XYZ points"
+            )
+
+
+EdgeSelectionIR = (
+    FaceBoundaryIR
+    | ParallelEdgeSetIR
+    | DirectionPairEdgeSetIR
+    | ProfileEdgeSetIR
+    | ExplicitEdgePicksIR
+)
+
+
+@dataclass(frozen=True)
+class FilletIR(BodyIR):
+    """Constant-radius fillet over one typed body and semantic edge selection."""
+
+    base: BodyIR
     radius: Any
-    edges: "ParallelEdgeSetIR | FaceBoundaryIR"
+    edges: EdgeSelectionIR
     source_kind: str = "fillet"
 
     def __post_init__(self):
-        if not isinstance(self.base, PlacementIR):
-            raise ValueError("FilletIR base must be PlacementIR")
-        if not isinstance(self.base.primitive, BoxIR):
-            raise ValueError("FilletIR first qualified base must be BoxIR")
-        if not isinstance(self.edges, (ParallelEdgeSetIR, FaceBoundaryIR)):
-            raise ValueError(
-                "FilletIR edges must be ParallelEdgeSetIR or FaceBoundaryIR"
-            )
-        if (
-            isinstance(self.edges, FaceBoundaryIR)
-            and self.edges.faces != ("top",)
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("FilletIR base must be BodyIR")
+        if not isinstance(
+            self.edges,
+            (
+                FaceBoundaryIR,
+                ParallelEdgeSetIR,
+                DirectionPairEdgeSetIR,
+                ProfileEdgeSetIR,
+                ExplicitEdgePicksIR,
+            ),
         ):
-            raise ValueError(
-                "FilletIR face-boundary edges currently require exactly TOP"
-            )
+            raise ValueError("FilletIR edges must be semantic EdgeSelectionIR")
         if (
             isinstance(self.radius, bool)
             or not isfinite(pv(self.radius))
@@ -1327,16 +1421,29 @@ class FilletIR(BodyIR):
 
 @dataclass(frozen=True)
 class ChamferIR(BodyIR):
-    """One semantic chamfer over a qualified typed body result."""
+    """One semantic chamfer over a typed body and semantic edge selection."""
 
-    base: "PlacementIR | ExtrudeIR"
+    base: BodyIR
     distance: Any
-    edges: FaceBoundaryIR
+    edges: EdgeSelectionIR
     distance2: Any | None = None
     flip: bool = False
     source_kind: str = "chamfer"
 
     def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("ChamferIR base must be BodyIR")
+        if not isinstance(
+            self.edges,
+            (
+                FaceBoundaryIR,
+                ParallelEdgeSetIR,
+                DirectionPairEdgeSetIR,
+                ProfileEdgeSetIR,
+                ExplicitEdgePicksIR,
+            ),
+        ):
+            raise ValueError("ChamferIR edges must be semantic EdgeSelectionIR")
         if not isinstance(self.flip, bool):
             raise ValueError("ChamferIR flip must be bool")
         if self.flip and self.distance2 is None:
@@ -3887,102 +3994,122 @@ def _portable_revolve(
 
 
 
+def _edge_selection_ir(edges) -> EdgeSelectionIR | None:
+    """Normalize the public shared fillet/chamfer selector vocabulary."""
+    if edges is Edges.VERTICAL:
+        return ParallelEdgeSetIR("Z")
+
+    if isinstance(edges, _FaceBoundarySelection):
+        try:
+            return FaceBoundaryIR(
+                tuple(Faces(face).value for face in edges.faces)
+            )
+        except (TypeError, ValueError):
+            return None
+
+    if isinstance(edges, _ProfileEdgeSelection):
+        try:
+            return ProfileEdgeSetIR(
+                patterns=tuple(edges.patterns),
+                kind=edges.kind,
+                sides=edges.sides,
+            )
+        except (TypeError, ValueError):
+            return None
+
+    if (
+        isinstance(edges, (tuple, list))
+        and edges
+        and all(isinstance(edge, (Anchor, _DirectionSelector)) for edge in edges)
+    ):
+        vectors = []
+        for edge in edges:
+            try:
+                vector = (
+                    tuple(int(value) for value in edge.vector)
+                    if isinstance(edge, Anchor)
+                    else tuple(edge.vector)
+                )
+            except (TypeError, ValueError):
+                return None
+            vectors.append(vector)
+        try:
+            return DirectionPairEdgeSetIR(tuple(vectors))
+        except ValueError:
+            return None
+
+    if isinstance(edges, (tuple, list)) and edges:
+        try:
+            return ExplicitEdgePicksIR(
+                tuple(tuple(point) for point in edges)
+            )
+        except (TypeError, ValueError):
+            return None
+
+    return None
+
+
 def _portable_fillet(shape: Shape) -> FilletIR | None:
-    """Normalize the first semantic constant-radius principal-edge Fillet."""
+    """Normalize public constant-radius Fillet with shared selector semantics."""
     if shape.kind != "fillet" or len(shape.data) != 3:
         return None
 
-    base, radius, edges = shape.data
-    if edges is Edges.VERTICAL:
-        semantic_edges: ParallelEdgeSetIR | FaceBoundaryIR = (
-            ParallelEdgeSetIR("Z")
-        )
-    elif isinstance(edges, _FaceBoundarySelection) and edges.faces:
-        semantic_faces = tuple(Faces(face).value for face in edges.faces)
-        if semantic_faces != ("top",):
-            return None
-        semantic_edges = FaceBoundaryIR(semantic_faces)
-    else:
+    base_shape, radius, edges = shape.data
+    semantic_edges = _edge_selection_ir(edges)
+    if semantic_edges is None:
         return None
-
     if (
         isinstance(radius, bool)
-        or not isinstance(radius, (int, float, Parameter))
+        or not isinstance(radius, (int, float, Parameter, Expression))
         or not isfinite(pv(radius))
         or pv(radius) <= 0
     ):
         return None
 
-    placement = _portable_placement(base)
-    if placement is None or not isinstance(placement.primitive, BoxIR):
+    base = _normalize_node(base_shape)
+    if not isinstance(base, BodyIR):
         return None
 
-    return FilletIR(
-        base=placement,
-        radius=radius,
-        edges=semantic_edges,
-    )
+    try:
+        return FilletIR(base=base, radius=radius, edges=semantic_edges)
+    except ValueError:
+        return None
 
 
 def _portable_chamfer(shape: Shape) -> ChamferIR | None:
+    """Normalize public Chamfer with the shared semantic edge vocabulary."""
     if shape.kind != "chamfer":
         return None
 
     if len(shape.data) == 3:
-        # Compatibility with the pre-#271 equal-distance frontend payload.
-        base, distance, edges = shape.data
+        base_shape, distance, edges = shape.data
         distance2 = None
         flip = False
     elif len(shape.data) == 5:
-        base, distance, edges, distance2, flip = shape.data
+        base_shape, distance, edges, distance2, flip = shape.data
     else:
         return None
 
-    if not isinstance(flip, bool):
+    if not isinstance(flip, bool) or (flip and distance2 is None):
         return None
-    if flip and distance2 is None:
-        return None
-    if not isinstance(edges, _FaceBoundarySelection) or not edges.faces:
+    semantic_edges = _edge_selection_ir(edges)
+    if semantic_edges is None:
         return None
 
-    semantic_faces = tuple(Faces(face).value for face in edges.faces)
-    asymmetric = distance2 is not None
+    base = _normalize_node(base_shape)
+    if not isinstance(base, BodyIR):
+        return None
 
-    placement = _portable_placement(base)
-    if placement is not None:
-        if (
-            not isinstance(placement.primitive, BoxIR)
-            or len(semantic_faces) != 1
-        ):
-            return None
-        if asymmetric and semantic_faces != ("top",):
-            # #485 proves the unambiguous SolidCraft "up-most first face"
-            # orientation only for one semantic TOP boundary.
-            return None
-        base_ir: PlacementIR | ExtrudeIR = placement
-    else:
-        extrude = _portable_extrude(base)
-        if (
-            extrude is None
-            or asymmetric
-            or flip
-            or extrude.direction != "symmetric"
-            or extrude.sketch.plane.orientation != "XZ"
-            or extrude.sketch.plane.origin != (0, 0, 0)
-            or len(extrude.sketch.profiles) != 1
-            or not isinstance(extrude.sketch.profiles[0], PolygonProfileIR)
-            or semantic_faces != ("front", "back")
-        ):
-            return None
-        base_ir = extrude
-
-    return ChamferIR(
-        base=base_ir,
-        distance=distance,
-        edges=FaceBoundaryIR(semantic_faces),
-        distance2=distance2,
-        flip=flip,
-    )
+    try:
+        return ChamferIR(
+            base=base,
+            distance=distance,
+            edges=semantic_edges,
+            distance2=distance2,
+            flip=flip,
+        )
+    except ValueError:
+        return None
 
 
 def _semantic_feature_offset(value):
@@ -5257,6 +5384,10 @@ __all__ = [
     "ModelIR",
     "ParameterIR",
     "ParallelEdgeSetIR",
+    "DirectionPairEdgeSetIR",
+    "ProfileEdgeSetIR",
+    "ExplicitEdgePicksIR",
+    "EdgeSelectionIR",
     "PlacementIR",
     "PlasticFeatureIR",
     "PlasticFeatureSpecIR",
