@@ -169,7 +169,38 @@ Therefore:
 - Forge must not claim per-row Toggle support through one global rule;
 - unsupported row-owned boolean semantics fail explicitly.
 
-## 5. Consequence for the tube-clamp use case
+## 5. Named suppressible feature result
+
+Forge-owned API probes now establish a more direct route for the Tube Clamp
+case.
+
+The SCPF probe exports one component feature as `installed` and configures it
+through `Suppress(clamp.feature("installed"))`. SolidCraft 0.49 accepts the
+configuration and stores:
+
+~~~text
+Free      -> suppress native feature = true
+Installed -> suppress native feature = false
+~~~
+
+Current Forge does not propagate the exported feature name to the native
+SolidCraft history name. The retained replay evidence therefore shows the
+native feature as `Cylinder3` and the configuration target as
+`suppress:Cylinder3`.
+
+A separate native SolidCraft probe performs:
+
+~~~text
+timeline.rename Cylinder3 -> Installed
+config.configure feature Installed
+~~~
+
+and succeeds with row cells addressed as `suppress:Installed`.
+
+This proves that SolidCraft already supports the required human-readable native
+feature name. The remaining limitation is Forge's feature-name lowering.
+
+## 6. Consequence for the tube-clamp use case
 
 The standalone Tube Clamp needs two physical states:
 
@@ -202,7 +233,7 @@ SolidCraft design preserves the same semantics.
 For a higher-level parent where Installed differs per named row, the same native
 rule is insufficient because its enabled state is not row-owned.
 
-## 6. Configuration-only parameter dependencies
+## 7. Configuration-only parameter dependencies
 
 The executable probe exposed another SolidCraft/Forge boundary.
 
@@ -227,7 +258,7 @@ That workaround must **not** become public API policy. A parameter referenced by
 configuration is a real semantic dependency and Forge IR/compiler state must
 retain it even when ordinary geometry does not otherwise read it.
 
-## 7. Backend qualification questions
+## 8. Backend qualification questions
 
 For each proposed Forge configuration capability, qualify these questions
 against the saved SolidCraft design:
