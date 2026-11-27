@@ -42,23 +42,6 @@
         ],
         "diameter": 5
       }
-    },
-    {
-      "command": "component.activate",
-      "params": {
-        "component": "root"
-      }
-    },
-    {
-      "command": "occurrence.copy",
-      "params": {
-        "component": "FeatureCoupler",
-        "translate": [
-          50.0,
-          0.0,
-          0.0
-        ]
-      }
     }
   ]
 }

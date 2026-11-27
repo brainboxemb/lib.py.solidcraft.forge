@@ -1,9 +1,10 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "fc61254b96dce41e16235f79237f3a1148ebd06265e32833b9184c25afb0e6f8",
+  "replay_sha256": "e4687fe86e13f5f037e6bbde0f09c4e8a40eb39acfff0f63eebeb607f78bbdc7",
   "variables": {
     "$left": 2,
+    "$d1_FeatureCoupler_feature_panel_pin_name": "Hole1",
     "$config_name_2": "Hole1",
     "$right": 5,
     "$config_row_5263293fc202": 6,
@@ -61,18 +62,29 @@
         "diameter": 5
       },
       "bindings": {
+        "$d1_FeatureCoupler_feature_panel_pin_name": "Hole1",
         "$config_name_2": "Hole1"
       }
     },
     {
       "index": 4,
+      "command": "timeline.suppress",
+      "resolved_params": {
+        "features": [
+          "Hole1"
+        ],
+        "suppressed": true
+      }
+    },
+    {
+      "index": 5,
       "command": "component.activate",
       "resolved_params": {
         "component": "root"
       }
     },
     {
-      "index": 5,
+      "index": 6,
       "command": "occurrence.copy",
       "resolved_params": {
         "component": "FeatureCoupler",
@@ -87,7 +99,7 @@
       }
     },
     {
-      "index": 6,
+      "index": 7,
       "command": "occurrence.move",
       "resolved_params": {
         "occurrence": 2,
@@ -100,7 +112,7 @@
       }
     },
     {
-      "index": 7,
+      "index": 8,
       "command": "config.configure",
       "resolved_params": {
         "params": [
@@ -112,7 +124,7 @@
       }
     },
     {
-      "index": 8,
+      "index": 9,
       "command": "config.row",
       "resolved_params": {
         "name": "Default",
@@ -123,7 +135,7 @@
       }
     },
     {
-      "index": 9,
+      "index": 10,
       "command": "config.row",
       "resolved_params": {
         "name": "Small",
@@ -134,7 +146,7 @@
       }
     },
     {
-      "index": 10,
+      "index": 11,
       "command": "config.row",
       "resolved_params": {
         "name": "Medium",
@@ -148,7 +160,7 @@
       }
     },
     {
-      "index": 11,
+      "index": 12,
       "command": "config.row",
       "resolved_params": {
         "name": "Large",
@@ -162,17 +174,17 @@
       }
     },
     {
-      "index": 12,
+      "index": 13,
       "command": "config.activate",
       "resolved_params": {
         "row": 7
       }
     },
     {
-      "index": 13,
+      "index": 14,
       "command": "config.table",
       "resolved_params": {}
     }
   ],
-  "completed": 14
+  "completed": 15
 }

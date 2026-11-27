@@ -1,6 +1,38 @@
 {
   "commands": [
     {
+      "command": "component.activate",
+      "params": {
+        "component": "FeatureCoupler"
+      }
+    },
+    {
+      "command": "timeline.suppress",
+      "params": {
+        "features": [
+          "Hole1"
+        ],
+        "suppressed": true
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "FeatureCoupler",
+        "translate": [
+          50.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
       "command": "occurrence.move",
       "params": {
         "occurrence": 2,
