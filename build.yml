@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/514-face-boundary-fillet
-modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
+branch: issue/525-ir-first-coverage
+modules: [ci]
 models: []
 library: true
 tasks: [test]
