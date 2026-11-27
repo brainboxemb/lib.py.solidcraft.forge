@@ -168,6 +168,8 @@ class ConfigurationTests(unittest.TestCase):
             "width/2",
             "width - 0.4 mm",
             "tube_d-clamp_interference",
+            "10 mm-width",
+            "10 mm/width",
         ):
             body = Box(width, 30, 5)
             with self.assertRaisesRegex(
