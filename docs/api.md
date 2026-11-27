@@ -861,6 +861,28 @@ Bracket = component(
 `include="*"` explicitly publishes all public child defaults. A mapping may
 publish one selected child default under a chosen shared model name.
 
+A published component-local parameter is addressable from the occurrence with
+`occurrence.parameter("name")`. The returned handle identifies the reusable
+component definition parameter, not one occurrence-local value and not a
+SolidCraft parameter name. It may be used directly as a final-model
+configuration column:
+
+```python
+clamp = Clamp()
+clamp.configure(
+    active="Free",
+    columns=(clamp.parameter("clamp_bore"),),
+    rows={
+        "Free": ("tube_d-clamp_interference",),
+        "Installed": ("tube_d",),
+    },
+)
+```
+
+Only parameters explicitly published with `component(..., include=...)` are
+addressable this way. Parent-owned/inherited parameters continue to use their
+ordinary parent `Parameter` handle directly.
+
 When several parts must share one parent parameter, pass the parent Parameter
 or Expression directly:
 
