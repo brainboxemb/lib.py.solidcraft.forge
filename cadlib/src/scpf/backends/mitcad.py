@@ -1713,7 +1713,6 @@ def _qualified_configuration_slice(configuration: ConfigurationIR) -> bool:
         isinstance(configuration, ConfigurationIR)
         and len(configuration.columns) == 1
         and isinstance(configuration.columns[0], SuppressionColumnIR)
-        and not configuration.rules
     )
 
 
