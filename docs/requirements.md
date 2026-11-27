@@ -45,9 +45,11 @@ docstrings and executable tests.
 5. Saved-design/native qualification is required where a backend contract
    claims editability, state switching, history identity, topology identity or
    other native persistence.
-6. `docs/ir-coverage.md` is the canonical compiler migration ledger and must
-   distinguish complete, partial, legacy and out-of-scope semantic families
-   from backend lowering/native-qualification status.
+6. `main:docs/ir-coverage.md` is the canonical compiler migration ledger and
+   must distinguish complete, partial, legacy and out-of-scope semantic
+   families from backend lowering/native-qualification status. Reconcile it
+   after an experimental IR batch rather than maintaining a competing
+   lane-local ledger.
 
 ## Verification
 
