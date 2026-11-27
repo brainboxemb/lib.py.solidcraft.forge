@@ -457,12 +457,16 @@ class ModelTests(unittest.TestCase):
                             if model.id in {
                                 "multi-profile-extrude",
                                 "asymmetric-chamfer",
+                                "topology-face-boundary-xz",
                             }
+                            | VISUAL_SCPF_ONLY_IDS
+                            | MITCAD_FOCUSED_VISUAL_IDS
                             else [("scpf", "native")]
                         )
                     )
                     if model.id in SCPF_ONLY_IDS
                     or model.id in MITCAD_FOCUSED_IDS
+                    or model.id in MITCAD_FOCUSED_VISUAL_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
                 )
             ],
