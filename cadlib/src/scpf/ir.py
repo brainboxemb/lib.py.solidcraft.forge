@@ -2576,54 +2576,206 @@ class FeatureRefIR:
 
 
 @dataclass(frozen=True)
-class SuppressionColumnIR:
-    """One configuration column that suppresses an exact semantic feature."""
+class DefinitionFeatureRefIR:
+    """Semantic feature path inside one reusable component definition."""
 
+    definition: str
     feature: FeatureRefIR
 
     def __post_init__(self):
+        if not isinstance(self.definition, str) or not self.definition.startswith(
+            "definition_"
+        ):
+            raise ValueError(
+                "DefinitionFeatureRefIR definition must be semantic id"
+            )
         if not isinstance(self.feature, FeatureRefIR):
-            raise ValueError("SuppressionColumnIR feature must be FeatureRefIR")
+            raise ValueError(
+                "DefinitionFeatureRefIR feature must be FeatureRefIR"
+            )
+
+
+@dataclass(frozen=True)
+class ParameterColumnIR:
+    """One configured public parameter column."""
+
+    name: str
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.name, str)
+            or not self.name.isidentifier()
+        ):
+            raise ValueError(
+                "ParameterColumnIR name must be a parameter identifier"
+            )
+
+
+@dataclass(frozen=True)
+class SuppressionColumnIR:
+    """One configuration column that suppresses exact semantic feature identity."""
+
+    feature: Any
+
+    def __post_init__(self):
+        from .assembly_ir import ComponentFeatureRefIR
+
+        if not isinstance(
+            self.feature,
+            (
+                FeatureRefIR,
+                DefinitionFeatureRefIR,
+                ComponentFeatureRefIR,
+            ),
+        ):
+            raise ValueError(
+                "SuppressionColumnIR feature must be semantic feature reference"
+            )
+
+
+@dataclass(frozen=True)
+class ParameterCellIR:
+    """One authored configuration-row expression/value for a parameter column."""
+
+    expression: str
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.expression, str)
+            or not self.expression.strip()
+        ):
+            raise ValueError(
+                "ParameterCellIR expression must be non-empty authored text"
+            )
+
+
+@dataclass(frozen=True)
+class ConfigurationExpressionIR:
+    """Rule expression preserving authored text plus typed scalar semantics."""
+
+    text: str
+    scalar_ir: ScalarExpressionIR | None = None
+    parameters: tuple[str, ...] = ()
+
+    def __post_init__(self):
+        if not isinstance(self.text, str) or not self.text.strip():
+            raise ValueError(
+                "ConfigurationExpressionIR text must be non-empty"
+            )
+        if (
+            not isinstance(self.parameters, tuple)
+            or any(
+                not isinstance(name, str) or not name.isidentifier()
+                for name in self.parameters
+            )
+            or len(set(self.parameters)) != len(self.parameters)
+        ):
+            raise ValueError(
+                "ConfigurationExpressionIR parameters must be unique identifiers"
+            )
+
+
+@dataclass(frozen=True)
+class AlwaysConditionIR:
+    """Current public unconditional configuration-rule condition."""
+
+
+@dataclass(frozen=True)
+class DriveParameterEffectIR:
+    """Current public rule effect driving one configured parameter."""
+
+    parameter: str
+    expression: ConfigurationExpressionIR
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.parameter, str)
+            or not self.parameter.isidentifier()
+        ):
+            raise ValueError(
+                "DriveParameterEffectIR parameter must be identifier"
+            )
+        if not isinstance(self.expression, ConfigurationExpressionIR):
+            raise ValueError(
+                "DriveParameterEffectIR expression must be semantic configuration expression"
+            )
+
+
+@dataclass(frozen=True)
+class ConfigurationRuleIR:
+    """One authored current-public configuration rule."""
+
+    id: str
+    name: str
+    enabled: bool
+    condition: AlwaysConditionIR
+    effect: DriveParameterEffectIR
+
+    def __post_init__(self):
+        if not isinstance(self.id, str) or not self.id.strip():
+            raise ValueError("ConfigurationRuleIR id must be non-empty")
+        if not isinstance(self.name, str) or not self.name.strip():
+            raise ValueError("ConfigurationRuleIR name must be non-empty")
+        if not isinstance(self.enabled, bool):
+            raise ValueError("ConfigurationRuleIR enabled must be bool")
+        if not isinstance(self.condition, AlwaysConditionIR):
+            raise ValueError(
+                "ConfigurationRuleIR condition must be AlwaysConditionIR"
+            )
+        if not isinstance(self.effect, DriveParameterEffectIR):
+            raise ValueError(
+                "ConfigurationRuleIR effect must be DriveParameterEffectIR"
+            )
+
+
+ConfigurationColumnIR = ParameterColumnIR | SuppressionColumnIR
+ConfigurationCellIR = ParameterCellIR | bool
 
 
 @dataclass(frozen=True)
 class ConfigurationRowIR:
-    """One named row of typed configuration cells."""
+    """One named row of heterogeneous typed configuration cells."""
 
     name: str
-    cells: tuple[bool, ...]
+    cells: tuple[ConfigurationCellIR, ...]
 
     def __post_init__(self):
         if not isinstance(self.name, str) or not self.name.strip():
             raise ValueError("ConfigurationRowIR name must be non-empty text")
-        if (
-            not isinstance(self.cells, tuple)
-            or any(not isinstance(cell, bool) for cell in self.cells)
+        if not isinstance(self.cells, tuple):
+            raise ValueError("ConfigurationRowIR cells must be tuple")
+        if any(
+            not isinstance(cell, (ParameterCellIR, bool))
+            for cell in self.cells
         ):
             raise ValueError(
-                "suppression-only ConfigurationRowIR cells must be bool"
+                "ConfigurationRowIR cells must be parameter expressions or bool"
             )
 
 
 @dataclass(frozen=True)
 class ConfigurationIR:
-    """Bounded engine-neutral configuration table for semantic suppression."""
+    """Complete current-public configuration table and rule semantics."""
 
     active: str
-    columns: tuple[SuppressionColumnIR, ...]
+    columns: tuple[ConfigurationColumnIR, ...]
     rows: tuple[ConfigurationRowIR, ...]
+    rules: tuple[ConfigurationRuleIR, ...] = ()
 
     def __post_init__(self):
         if (
             not isinstance(self.columns, tuple)
             or not self.columns
             or any(
-                not isinstance(column, SuppressionColumnIR)
+                not isinstance(
+                    column,
+                    (ParameterColumnIR, SuppressionColumnIR),
+                )
                 for column in self.columns
             )
         ):
             raise ValueError(
-                "suppression-only ConfigurationIR requires suppression columns"
+                "ConfigurationIR requires parameter or suppression columns"
             )
         if (
             not isinstance(self.rows, tuple)
@@ -2641,6 +2793,48 @@ class ConfigurationIR:
             raise ValueError(
                 "ConfigurationIR row cell count must match column count"
             )
+        for row in self.rows:
+            for column, cell in zip(self.columns, row.cells):
+                if (
+                    isinstance(column, ParameterColumnIR)
+                    and not isinstance(cell, ParameterCellIR)
+                ):
+                    raise ValueError(
+                        "parameter configuration columns require ParameterCellIR"
+                    )
+                if (
+                    isinstance(column, SuppressionColumnIR)
+                    and not isinstance(cell, bool)
+                ):
+                    raise ValueError(
+                        "suppression configuration columns require bool cells"
+                    )
+        if (
+            not isinstance(self.rules, tuple)
+            or any(
+                not isinstance(rule, ConfigurationRuleIR)
+                for rule in self.rules
+            )
+        ):
+            raise ValueError(
+                "ConfigurationIR rules must be ConfigurationRuleIR"
+            )
+        if len({rule.id for rule in self.rules}) != len(self.rules):
+            raise ValueError("ConfigurationIR rule ids must be unique")
+        configured_parameters = {
+            column.name
+            for column in self.columns
+            if isinstance(column, ParameterColumnIR)
+        }
+        if any(
+            rule.effect.parameter not in configured_parameters
+            for rule in self.rules
+        ):
+            raise ValueError(
+                "configuration rule target must be a parameter column"
+            )
+
+
 
 
 @dataclass(frozen=True)
@@ -2658,6 +2852,26 @@ class ModelIR:
         ):
             raise ValueError(
                 "ModelIR configuration must be ConfigurationIR or None"
+            )
+
+
+@dataclass(frozen=True)
+class ConfiguredDesignIR:
+    """Configuration intent around one semantic Shape model or Assembly."""
+
+    design: Any
+    configuration: ConfigurationIR
+
+    def __post_init__(self):
+        from .assembly_ir import AssemblyIR
+
+        if not isinstance(self.design, (ModelIR, AssemblyIR)):
+            raise ValueError(
+                "ConfiguredDesignIR design must be ModelIR or AssemblyIR"
+            )
+        if not isinstance(self.configuration, ConfigurationIR):
+            raise ValueError(
+                "ConfiguredDesignIR configuration must be ConfigurationIR"
             )
 
 
