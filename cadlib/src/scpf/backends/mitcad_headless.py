@@ -457,6 +457,133 @@ def _export_format(path: Path) -> str:
         ) from exc
 
 
+def run_saved_configuration(
+    source: str | Path,
+    configuration: str,
+    *,
+    save: str | Path | None = None,
+    export: str | Path | None = None,
+    executable: str = "mitcad-cli",
+    work_dir: str | Path | None = None,
+) -> dict[str, Any]:
+    """Reopen one saved Mitcad design and apply a native configuration row.
+
+    This is qualification infrastructure: Forge Python/model authoring is not
+    re-evaluated. The source design is copied into the MCP workspace, opened
+    natively, changed through apply_configuration, saved again and optionally
+    exported for independent geometry evidence.
+    """
+    source_path = Path(source).resolve()
+    if not source_path.is_file():
+        raise MitcadHeadlessError(
+            f"saved Mitcad design does not exist: {source_path}"
+        )
+    if not isinstance(configuration, str) or not configuration.strip():
+        raise MitcadHeadlessError(
+            "saved Mitcad configuration name must be non-empty text"
+        )
+
+    save_path = Path(save).resolve() if save is not None else source_path
+    save_path.parent.mkdir(parents=True, exist_ok=True)
+    export_path = Path(export).resolve() if export is not None else None
+    if export_path is not None:
+        export_path.parent.mkdir(parents=True, exist_ok=True)
+
+    owned = None
+    if work_dir is None:
+        owned = tempfile.TemporaryDirectory(prefix="scpf-mitcad-reopen-")
+        workspace = Path(owned.name).resolve()
+    else:
+        workspace = Path(work_dir).resolve()
+        workspace.mkdir(parents=True, exist_ok=True)
+
+    native_input_name = "forge-input.mitcad"
+    native_output_name = "forge-output.mitcad"
+    native_input = workspace / native_input_name
+    native_output = workspace / native_output_name
+    shutil.copy2(source_path, native_input)
+
+    native_export_name = None
+    native_export = None
+    if export_path is not None:
+        native_export_name = "forge-output" + export_path.suffix.lower()
+        native_export = workspace / native_export_name
+
+    try:
+        with _Session(executable, workspace) as session:
+            opened = session.tool(
+                "document_open",
+                {"path": native_input_name},
+            )
+            handle = opened.get("document")
+            if not isinstance(handle, str) or not handle:
+                raise MitcadHeadlessError(
+                    "Mitcad document_open returned no document handle"
+                )
+
+            command_result = _apply_commands(
+                session,
+                handle,
+                [{"cmd": "apply_configuration", "name": configuration}],
+            )
+            bodies = _body_query(session, handle)
+
+            session.tool(
+                "document_save",
+                {
+                    "document": handle,
+                    "path": native_output_name,
+                    "overwrite": True,
+                },
+            )
+
+            export_reply = None
+            if export_path is not None:
+                assert native_export_name is not None
+                export_reply = session.tool(
+                    "model_export",
+                    {
+                        "document": handle,
+                        "path": native_export_name,
+                        "format": _export_format(export_path),
+                        "overwrite": True,
+                    },
+                )
+
+            session.tool(
+                "document_close",
+                {
+                    "document": handle,
+                    "discard": False,
+                },
+            )
+
+        if not native_output.is_file():
+            raise MitcadHeadlessError(
+                "Mitcad reported save success after configuration but wrote no .mitcad file"
+            )
+        shutil.copy2(native_output, save_path)
+
+        if export_path is not None:
+            assert native_export is not None
+            if not native_export.is_file():
+                raise MitcadHeadlessError(
+                    "Mitcad reported configuration export success but wrote no export file"
+                )
+            shutil.copy2(native_export, export_path)
+
+        return {
+            "completed": 1,
+            "configuration": configuration,
+            "bodies": bodies,
+            "command_result": command_result,
+            "export_result": export_reply,
+        }
+    finally:
+        if owned is not None:
+            owned.cleanup()
+
+
 def run_document(
     document: dict[str, Any],
     *,
@@ -627,5 +754,6 @@ __all__ = [
     "MitcadHeadlessError",
     "PROTOCOL",
     "run_document",
+    "run_saved_configuration",
     "validate_document",
 ]
