@@ -29,8 +29,8 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **19 / 20 (95%)**
-- partial: **1 / 20 (5%)**
+- complete: **20 / 20 (100%)**
+- partial: **0 / 20 (0%)**
 - legacy: **0 / 20 (0%)**
 - families with at least some typed IR: **20 / 20 (100%)**
 - physical SCPF owners on permanent `exp`: **61**
@@ -112,5 +112,8 @@ non-exposed native datum/topology selectors are not counted as missing IR.
 #598 then completes the current working Placement/transforms surface with
 TranslationIR over typed primitive Boolean bodies while retaining PlacementIR,
 FeaturePlacementIR and assembly occurrence pose as distinct semantic layers.
-The migration therefore continues entirely as partial -> complete closure while
-backend catch-up remains independent.
+#605 completes configuration/feature identity with one heterogeneous
+ConfigurationIR shared by Shape and Assembly targets, semantic component
+feature identity and the current ConfigRule/DriveParameter grammar.
+All 20/20 tracked CAD-semantic families are therefore complete at the IR layer;
+backend catch-up remains independent and may still fail closed.
