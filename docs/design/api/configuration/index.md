@@ -271,6 +271,84 @@ switchable from the size row. A real `ServicePosition` feature is still the
 right authored CAD effect, but the independent control that activates it is a
 separate semantic state rather than a row-owned suppression cell.
 
+### Generic compiler boundary
+
+Configuration follows the same compiler architecture as geometry:
+
+~~~text
+SCPF authoring
+    |
+    v
+engine-neutral Forge semantic IR
+    |
+    +--> SolidCraft lowering
+    |
+    +--> Mitcad lowering
+~~~
+
+SolidCraft is the current qualification backend for much of the configuration
+surface, but its command vocabulary does not define the Forge semantic model.
+
+The experimental compiler line already has a bounded portable
+`ConfigurationIR` with `FeatureRefIR`, suppression columns, rows and an active
+row. That is evidence for the architecture, not a reason to copy its current
+bounded shape into the complete API.
+
+An independent global state is a later generic IR capability. Conceptually it
+must preserve:
+
+- semantic state identity and display name;
+- default boolean value;
+- independence from the active named row;
+- references/bindings to authored model behavior;
+- shared use by several component occurrences.
+
+It must **not** preserve:
+
+- SolidCraft `config.rule` ids;
+- `always` conditions introduced only by lowering;
+- `drive_parameter` effects;
+- private driver parameters such as `installed_offset`;
+- Mitcad uids or equivalent backend handles.
+
+A backend may synthesize those objects after semantic normalization.
+
+A useful target shape for the HUB75 case is therefore conceptually:
+
+~~~python
+installed = State("Installed", default=False)
+
+left = Coupler(
+    size=self.coupler_size,
+    installed=installed,
+)
+
+right = Coupler(
+    size=self.coupler_size,
+    installed=installed,
+)
+
+Configure(
+    design,
+    active="Small",
+    columns=(Param(self.coupler_size),),
+    rows={
+        "Small": ("40 mm",),
+        "Large": ("60 mm",),
+    },
+    states=(installed,),
+)
+~~~
+
+The exact `State` and `states=` spelling is still proposal-level. The
+important semantic property is that the **same state object** is passed to both
+reusable components. That gives the compiler one shared state identity before
+either backend is selected.
+
+Inside a reusable component the state must control semantic authored behavior,
+not inspect which backend will eventually run. The exact feature/state authoring
+syntax remains to be qualified.
+
 ## 4. Public authoring direction
 
 Configuration belongs to the final design result.
