@@ -308,6 +308,69 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            mixed_shared = Parameter("mixed_shared", 4)
+            with Sketch(name="MixedRoleRevolve", plane="XZ") as mixed_profile:
+                Polygon2D(
+                    [
+                        (0, 0),
+                        (0, mixed_shared),
+                        (10, mixed_shared),
+                        (10, 0),
+                    ],
+                    plane="XZ",
+                )
+            mixed_document = compile_mitcad_ir(
+                normalize_shape(
+                    mixed_profile.revolve(
+                        axis=Axis.X,
+                        angle=mixed_shared,
+                    )
+                ),
+                "MixedRoleRevolve",
+            )
+            self.assertEqual(
+                mixed_document["commands"][0],
+                {
+                    "cmd": "add_parameter",
+                    "name": "mixed_shared",
+                    "unit": "",
+                    "expression": "4",
+                },
+            )
+            mixed_sketch = mixed_document["commands"][-2]["def"]
+            self.assertIn(
+                "mixed_shared * 1 mm",
+                [
+                    dimension["value"]
+                    for dimension in mixed_sketch["dimensions"]
+                ],
+            )
+            self.assertEqual(
+                mixed_document["commands"][-1]["def"]["extent"],
+                {
+                    "type": "angle",
+                    "angle": "mixed_shared * 1 deg",
+                },
+            )
+
+            mixed_native = run_document(
+                mixed_document,
+                save=root / "out/mixed-role-revolve.mitcad",
+                export=root / "out/mixed-role-revolve.stl",
+                executable=str(executable),
+                work_dir=root / "mixed-role-revolve-workspace",
+            )
+            self.assertEqual(len(mixed_native["bodies"]), 1)
+            mixed_body = mixed_native["bodies"][0]
+            self.assertEqual(mixed_body["kind"], "solid")
+            self.assertAlmostEqual(
+                mixed_body["volume"],
+                16.0 * pi / 9.0,
+                places=3,
+            )
+            self.assertAlmostEqual(mixed_body["bbox"]["min"][0], 0.0, places=5)
+            self.assertAlmostEqual(mixed_body["bbox"]["max"][0], 10.0, places=5)
+
             sphere_radius = Parameter("sphere_radius", 10)
             sphere_top_z = Parameter("sphere_top_z", 25)
             placed_sphere_document = compile_mitcad_ir(
@@ -856,6 +919,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "topology-face-boundary-box.stl",
                 "parameterized-polygon-revolve.mitcad",
                 "parameterized-polygon-revolve.stl",
+                "mixed-role-revolve.mitcad",
+                "mixed-role-revolve.stl",
                 "placed-sphere.mitcad",
                 "placed-sphere.stl",
                 "three-circle-exact-region.mitcad",
@@ -890,6 +955,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"parameterized_polygon_revolve_volume={polygon_body['volume']}",
                         f"parameterized_polygon_revolve_bbox={polygon_body['bbox']}",
                         "parameterized_polygon_coordinate_relations=pass",
+                        f"mixed_role_revolve_volume={mixed_body['volume']}",
+                        f"mixed_role_revolve_bbox={mixed_body['bbox']}",
+                        "mixed_role_parameter_units=pass",
                         f"placed_sphere_volume={placed_sphere_body['volume']}",
                         f"placed_sphere_bbox={placed_sphere_body['bbox']}",
                         "placed_sphere_parameterized_anchor=pass",
