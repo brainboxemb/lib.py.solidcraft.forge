@@ -153,17 +153,153 @@ class PlaneIR:
 
 
 @dataclass(frozen=True)
+class SketchPointIR:
+    """One Sketch-local semantic point with authored symbolic coordinates."""
+
+    position: tuple[Any, Any]
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.position, tuple)
+            or len(self.position) != 2
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.position
+            )
+        ):
+            raise ValueError(
+                "SketchPointIR position must contain two finite CAD dimensions"
+            )
+
+
+@dataclass(frozen=True)
+class SketchLineIR:
+    """Straight Sketch entity referencing semantic point tuple positions."""
+
+    start: int
+    end: int
+
+    def __post_init__(self):
+        if (
+            type(self.start) is not int
+            or type(self.end) is not int
+            or self.start < 0
+            or self.end < 0
+            or self.start == self.end
+        ):
+            raise ValueError(
+                "SketchLineIR endpoints must be distinct non-negative point indexes"
+            )
+
+
+@dataclass(frozen=True)
+class SketchOrientationConstraintIR:
+    """Horizontal/vertical semantic relation on one Sketch-local line."""
+
+    line: int
+    orientation: str
+
+    def __post_init__(self):
+        if type(self.line) is not int or self.line < 0:
+            raise ValueError(
+                "SketchOrientationConstraintIR line must be a non-negative index"
+            )
+        if self.orientation not in {"horizontal", "vertical"}:
+            raise ValueError(
+                "SketchOrientationConstraintIR orientation must be horizontal or vertical"
+            )
+
+
+@dataclass(frozen=True)
+class SketchLengthDimensionIR:
+    """One symbolic driving length attached to a Sketch-local line."""
+
+    line: int
+    value: Any
+
+    def __post_init__(self):
+        if type(self.line) is not int or self.line < 0:
+            raise ValueError(
+                "SketchLengthDimensionIR line must be a non-negative index"
+            )
+        if isinstance(self.value, bool) or not isfinite(pv(self.value)):
+            raise ValueError(
+                "SketchLengthDimensionIR value must be one finite CAD dimension"
+            )
+        if pv(self.value) <= 0:
+            raise ValueError(
+                "SketchLengthDimensionIR value must be positive"
+            )
+
+
+@dataclass(frozen=True)
+class SketchRelationsIR:
+    """Explicit Sketch entity/constraint/dimension graph.
+
+    Integer references are positions inside these semantic tuples. They are
+    never native ids, replay names or backend command indexes.
+    """
+
+    points: tuple[SketchPointIR, ...]
+    lines: tuple[SketchLineIR, ...]
+    constraints: tuple[SketchOrientationConstraintIR, ...] = ()
+    dimensions: tuple[SketchLengthDimensionIR, ...] = ()
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.points, tuple)
+            or not self.points
+            or any(not isinstance(point, SketchPointIR) for point in self.points)
+        ):
+            raise ValueError("SketchRelationsIR requires semantic points")
+        if (
+            not isinstance(self.lines, tuple)
+            or not self.lines
+            or any(not isinstance(line, SketchLineIR) for line in self.lines)
+        ):
+            raise ValueError("SketchRelationsIR requires semantic lines")
+        point_count = len(self.points)
+        if any(
+            line.start >= point_count or line.end >= point_count
+            for line in self.lines
+        ):
+            raise ValueError(
+                "SketchRelationsIR line references a missing semantic point"
+            )
+        line_count = len(self.lines)
+        if any(
+            constraint.line >= line_count
+            for constraint in self.constraints
+        ):
+            raise ValueError(
+                "SketchRelationsIR constraint references a missing semantic line"
+            )
+        if any(
+            dimension.line >= line_count
+            for dimension in self.dimensions
+        ):
+            raise ValueError(
+                "SketchRelationsIR dimension references a missing semantic line"
+            )
+
+
+@dataclass(frozen=True)
 class SketchIR:
     """Standalone 2D sketch geometry independent of downstream features."""
 
     name: str
     plane: PlaneIR
     profiles: tuple[ProfileIR, ...]
+    relations: SketchRelationsIR | None = None
     source_kind: str = "sketch"
 
     def __post_init__(self):
         if not isinstance(self.plane, PlaneIR):
             raise ValueError("SketchIR plane must be PlaneIR")
+        if self.relations is not None and not isinstance(
+            self.relations, SketchRelationsIR
+        ):
+            raise ValueError("SketchIR relations must be SketchRelationsIR")
 
 
 @dataclass(frozen=True)
@@ -825,6 +961,70 @@ def _same_semantic_dimension(left, right) -> bool:
     return left_key == right_key
 
 
+def _parameterized_rectangle_relations(
+    profile: PolygonProfileIR,
+) -> SketchRelationsIR | None:
+    """Normalize the bounded #440 rectangle relation graph before lowering."""
+    if (
+        not isinstance(profile, PolygonProfileIR)
+        or len(profile.points) != 4
+        or not any(
+            parameters_in(value)
+            for point in profile.points
+            for value in point
+        )
+    ):
+        return None
+
+    p1, p2, p3, p4 = profile.points
+    values = tuple(
+        tuple(float(pv(value)) for value in point)
+        for point in profile.points
+    )
+    if any(not isfinite(value) for point in values for value in point):
+        return None
+
+    # This first slice is deliberately the already-qualified origin-based
+    # axis-aligned rectangle from native-revolve. Compare symbolic equality
+    # without baking current values into semantic identity.
+    if any(parameters_in(value) for value in (p1[0], p1[1], p2[0], p4[1])):
+        return None
+    if (
+        abs(values[0][0]) > 1e-12
+        or abs(values[0][1]) > 1e-12
+        or abs(values[1][0]) > 1e-12
+        or abs(values[3][1]) > 1e-12
+        or not _same_semantic_dimension(p2[1], p3[1])
+        or not _same_semantic_dimension(p3[0], p4[0])
+        or values[1][1] <= 0
+        or values[2][0] <= 0
+    ):
+        return None
+
+    return SketchRelationsIR(
+        points=tuple(
+            SketchPointIR(position=tuple(point))
+            for point in profile.points
+        ),
+        lines=(
+            SketchLineIR(0, 1),
+            SketchLineIR(1, 2),
+            SketchLineIR(2, 3),
+            SketchLineIR(3, 0),
+        ),
+        constraints=(
+            SketchOrientationConstraintIR(0, "vertical"),
+            SketchOrientationConstraintIR(1, "horizontal"),
+            SketchOrientationConstraintIR(2, "vertical"),
+            SketchOrientationConstraintIR(3, "horizontal"),
+        ),
+        dimensions=(
+            SketchLengthDimensionIR(0, p2[1]),
+            SketchLengthDimensionIR(1, p3[0]),
+        ),
+    )
+
+
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     """Normalize the qualified standalone Sketch + Extrude slices."""
     if shape.kind != "sketch_base_extrusion":
@@ -1102,6 +1302,7 @@ def _portable_revolve(
         name=sketch_name,
         plane=plane_ir,
         profiles=(polygon,),
+        relations=_parameterized_rectangle_relations(polygon),
     )
     region = RegionIR(outer=0)
     try:
@@ -1455,6 +1656,11 @@ __all__ = [
     "RegionIR",
     "RevolveIR",
     "SketchIR",
+    "SketchLengthDimensionIR",
+    "SketchLineIR",
+    "SketchOrientationConstraintIR",
+    "SketchPointIR",
+    "SketchRelationsIR",
     "SphereIR",
     "_polygon_region_interior_point",
     "_region_interior_point",

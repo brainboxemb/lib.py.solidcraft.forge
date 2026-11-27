@@ -124,8 +124,23 @@ class MitcadBackendTests(unittest.TestCase):
         revolve = document["commands"][-1]["def"]
         self.assertEqual(sketch["type"], "sketch")
         self.assertEqual(
+            [row["type"] for row in sketch["entities"]],
+            [
+                "point", "point", "point", "point",
+                "line", "line", "line", "line",
+            ],
+        )
+        self.assertEqual(
+            [row["type"] for row in sketch["constraints"]],
+            ["vertical", "horizontal", "vertical", "horizontal"],
+        )
+        self.assertEqual(
             [row["value"] for row in sketch["dimensions"]],
             ["radius", "length"],
+        )
+        self.assertEqual(
+            [(row["type"], row["line"]) for row in sketch["dimensions"]],
+            [("length", "c5"), ("length", "c6")],
         )
         self.assertEqual(revolve["type"], "revolve")
         self.assertEqual(revolve["axis"], "x")

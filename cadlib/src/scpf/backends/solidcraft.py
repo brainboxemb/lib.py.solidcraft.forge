@@ -45,6 +45,7 @@ from ..ir import (
     PolygonProfileIR,
     RegionIR,
     RevolveIR,
+    SketchRelationsIR,
     SphereIR,
     SuppressionColumnIR,
     _region_interior_point,
@@ -319,6 +320,59 @@ def _solidcraft_sketch_create(sketch) -> dict:
     return _command("sketch.create", **params)
 
 
+def _solidcraft_relation_polygon_points(sketch) -> tuple[tuple, ...] | None:
+    """Coalesce explicit semantic relations into SolidCraft's symbolic polyline.
+
+    SolidCraft can retain authored point expressions directly in sketch.line,
+    so emitting duplicate solver constraints/dimensions would be unnecessary.
+    The relation graph is nevertheless the source of the geometry in this
+    qualified slice; this lowering only chooses a more compact native spelling.
+    """
+    relations = sketch.relations
+    if relations is None:
+        return None
+    if not isinstance(relations, SketchRelationsIR):
+        raise ModelError("portable SolidCraft Sketch relations require SketchRelationsIR")
+
+    count = len(relations.points)
+    expected_lines = tuple(
+        (index, (index + 1) % count)
+        for index in range(count)
+    )
+    actual_lines = tuple(
+        (line.start, line.end)
+        for line in relations.lines
+    )
+    if count != 4 or actual_lines != expected_lines:
+        raise ModelError(
+            "portable SolidCraft #440 relations require one closed four-line loop"
+        )
+
+    expected_orientations = (
+        "vertical",
+        "horizontal",
+        "vertical",
+        "horizontal",
+    )
+    actual_orientations = [None] * count
+    for constraint in relations.constraints:
+        if actual_orientations[constraint.line] is not None:
+            raise ModelError(
+                "portable SolidCraft #440 relations require one orientation per line"
+            )
+        actual_orientations[constraint.line] = constraint.orientation
+    if tuple(actual_orientations) != expected_orientations:
+        raise ModelError(
+            "portable SolidCraft #440 relations require V/H/V/H rectangle constraints"
+        )
+    if tuple(dimension.line for dimension in relations.dimensions) != (0, 1):
+        raise ModelError(
+            "portable SolidCraft #440 relations require the two driving edge dimensions"
+        )
+
+    return tuple(point.position for point in relations.points)
+
+
 def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
     """Lower qualified Sketch/Profile + Extrude IR without backend parsing."""
     sketch = node.sketch
@@ -463,10 +517,16 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
         )
 
     profile = sketch.profiles[0]
+    relation_points = _solidcraft_relation_polygon_points(sketch)
+    authored_points = (
+        relation_points
+        if relation_points is not None
+        else profile.points
+    )
     ids = (
         list(profile.segment_ids)
         if profile.segment_ids is not None
-        else [chr(ord("a") + index) for index in range(len(profile.points))]
+        else [chr(ord("a") + index) for index in range(len(authored_points))]
     )
     revolve = {
         "sketch": sketch.name,
@@ -498,7 +558,7 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
             "sketch.line",
             points=[
                 [command_value(value) for value in point]
-                for point in profile.points
+                for point in authored_points
             ],
             closed=True,
             ids=ids,

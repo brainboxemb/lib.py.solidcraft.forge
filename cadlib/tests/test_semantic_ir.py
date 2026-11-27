@@ -45,6 +45,11 @@ from scpf.ir import (
     RegionIR,
     RevolveIR,
     SketchIR,
+    SketchLengthDimensionIR,
+    SketchLineIR,
+    SketchOrientationConstraintIR,
+    SketchPointIR,
+    SketchRelationsIR,
     SphereIR,
     normalize_model,
     normalize_shape,
@@ -727,6 +732,42 @@ class SemanticIRTests(unittest.TestCase):
             ],
         )
 
+        relations = model.root.sketch.relations
+        self.assertEqual(
+            relations,
+            SketchRelationsIR(
+                points=(
+                    SketchPointIR((0, 0)),
+                    SketchPointIR((0, radius)),
+                    SketchPointIR((length, radius)),
+                    SketchPointIR((length, 0)),
+                ),
+                lines=(
+                    SketchLineIR(0, 1),
+                    SketchLineIR(1, 2),
+                    SketchLineIR(2, 3),
+                    SketchLineIR(3, 0),
+                ),
+                constraints=(
+                    SketchOrientationConstraintIR(0, "vertical"),
+                    SketchOrientationConstraintIR(1, "horizontal"),
+                    SketchOrientationConstraintIR(2, "vertical"),
+                    SketchOrientationConstraintIR(3, "horizontal"),
+                ),
+                dimensions=(
+                    SketchLengthDimensionIR(0, radius),
+                    SketchLengthDimensionIR(1, length),
+                ),
+            ),
+        )
+        self.assertIs(relations.points[1].position[1], radius)
+        self.assertIs(relations.points[2].position[0], length)
+        self.assertIs(relations.dimensions[0].value, radius)
+        self.assertIs(relations.dimensions[1].value, length)
+        rendered = repr(relations).lower()
+        for backend_identity in ("uid", "replay", "command", "p1", "c5", "k9"):
+            self.assertNotIn(backend_identity, rendered)
+
         mitcad = compile_mitcad_ir(model, "NativeRevolve")
         sketch_def = mitcad["commands"][-2]["def"]
         revolve_def = mitcad["commands"][-1]["def"]
@@ -758,6 +799,41 @@ class SemanticIRTests(unittest.TestCase):
             {"type": "angle", "angle": "sweep"},
         )
         self.assertEqual(revolve_def["operation"], "new_body")
+
+    def test_sketch_relation_graph_rejects_missing_semantic_references(self):
+        with self.assertRaisesRegex(ValueError, "missing semantic point"):
+            SketchRelationsIR(
+                points=(SketchPointIR((0, 0)),),
+                lines=(SketchLineIR(0, 1),),
+            )
+        with self.assertRaisesRegex(ValueError, "missing semantic line"):
+            SketchRelationsIR(
+                points=(
+                    SketchPointIR((0, 0)),
+                    SketchPointIR((1, 0)),
+                ),
+                lines=(SketchLineIR(0, 1),),
+                constraints=(
+                    SketchOrientationConstraintIR(1, "horizontal"),
+                ),
+            )
+
+    def test_non_rectangular_parameterized_revolve_does_not_fake_rectangle_relations(self):
+        width = Parameter("width", 10)
+        height = Parameter("height", 4)
+        with Sketch(name="NonRectangle", plane="XZ") as sketch:
+            Polygon2D(
+                [
+                    (0, 0),
+                    (0, height),
+                    (width / 2, height + 1),
+                    (width, 0),
+                ],
+                plane="XZ",
+            )
+        model = normalize_shape(sketch.revolve(axis=Axis.X))
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertIsNone(model.root.sketch.relations)
 
     def test_shifted_axis_revolve_cut_is_one_semantic_feature(self):
         axis_x = Parameter("axis_x", 8)
