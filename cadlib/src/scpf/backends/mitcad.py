@@ -10,6 +10,7 @@ from math import isfinite
 
 from ..compiler import ModelError, _require_positive
 from ..core import (
+    Expression,
     Parameter,
     Shape,
     _DirectionSelector,
