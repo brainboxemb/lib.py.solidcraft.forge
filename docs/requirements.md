@@ -135,6 +135,14 @@
 110. The #481 portable arithmetic subset is affine: add/subtract, unary negation, multiplication by a numeric literal and division by a non-zero numeric literal. Parameter×parameter, parameter÷parameter, numeric÷parameter, powers, text-only expressions and general derived-unit algebra remain fail-closed.
 111. The #481 mixed-role Revolve proof must normalize `shared + 1` as a typed Sketch length while direct `shared` remains the Revolve angle; SolidCraft and Mitcad must lower the same semantic scalar tree independently through their central role-aware value boundary.
 112. Exact pinned Mitcad v0.70.0 runtime qualification must execute that expression-bearing mixed-role Revolve with `shared=4`, radial height 5, X span 0..10 and angle 4 degrees, proving volume `25π/9` and X bounds [0, 10].
+113. Public two-distance Chamfer must remain one semantic `ChamferIR`; Forge must not introduce a separate asymmetric feature node for the same authored operation.
+114. `ChamferIR` may carry optional `distance2` and `flip`; `flip` is valid only when a second distance exists, while equal-distance Chamfer retains its existing IR and native spelling.
+115. The first portable asymmetric slice is bounded to `PlacementIR(BoxIR)` plus exactly `FaceBoundaryIR(("top",))`. Other asymmetric face orientations and Extrude-based asymmetric Chamfer remain fail-closed until separately qualified.
+116. SolidCraft typed asymmetric lowering must reproduce the accepted stable `solid.chamfer` command spelling with `distance`, optional `distance2` and authored `flip` while retaining the same semantic topology selection.
+117. Mitcad v0.70.0 two-distance lowering must use native `ChamferSetDef` transport with `size.type=two_distances`, two independent distances, the selected native TOP face as private `reference_face`, and authored `flip`.
+118. The native reference-face identity is backend replay transport derived from `FaceBoundaryIR`; it must never enter semantic Forge IR. Equal-distance replay must not require this additional binding.
+119. Parameterized primary and secondary chamfer distances must remain separate editable length dependencies in both native backends.
+120. Exact pinned Mitcad v0.70.0 runtime qualification must execute a 60×40×12 BOTTOM Box with TOP-boundary distances 0.18/0.65, prove unchanged bounds and volume 28788.32808 mm³, and retain saved native design/STL evidence.
 
 ## SCPF native associativity
 
