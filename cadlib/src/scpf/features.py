@@ -1579,18 +1579,55 @@ def _native_feature_name(root, feature, model_name):
     return f"{base_name}{ordinal}"
 
 
+def _named_feature_parent(shape):
+    """Return the history state immediately before one scoped feature."""
+    if not isinstance(shape, Shape):
+        return None
+    if shape.kind in (
+        "translated",
+        "placed3d",
+        "anchored",
+        "labeled",
+        "material_assignment",
+        "appearance_assignment",
+        "exported_feature",
+    ):
+        return _named_feature_parent(shape.data[0])
+    if shape.kind in (
+        "union",
+        "difference",
+        "intersection",
+        "fillet",
+        "chamfer",
+        "shell",
+        "rectangular_pattern",
+        "circular_pattern",
+        "sheet_fold",
+        "sheet_edge_flange",
+        "sheet_hem",
+        "sheet_path_flange",
+        "sheet_perforate",
+    ):
+        return shape.data[0]
+    return None
+
+
 def _named_feature_commands(steps, feature_name, suppressed, *, start=0):
-    """Bind one native history result and apply its explicit initial state."""
+    """Validate one native history result and apply its explicit initial state."""
     candidates = [
         index
         for index in range(start, len(steps))
         if steps[index]["command"].startswith(("solid.", "sheet."))
     ]
-    if not candidates:
+    if len(candidates) != 1:
         raise ModelError(
-            f"feature {feature_name!r} produced no suppressible solid/sheet history"
+            f"feature {feature_name!r} must lower to exactly one native "
+            "solid/sheet history feature"
         )
-    target = candidates[-1]
+    if not suppressed:
+        return steps
+
+    target = candidates[0]
     variable = f"$feature_{feature_name}_name"
     if any(variable in command.get("bind", {}) for command in steps):
         raise ModelError(f"duplicate named feature {feature_name!r}")
@@ -1603,7 +1640,7 @@ def _named_feature_commands(steps, feature_name, suppressed, *, start=0):
         _command(
             "timeline.suppress",
             features=[variable],
-            suppressed=suppressed,
+            suppressed=True,
         )
     )
     return steps
@@ -1613,10 +1650,16 @@ def _to_commands(shape, name):
     if shape.kind == "named_feature":
         source, feature_name, suppressed = shape.data
         steps, base = _to_commands(source, name)
+        parent = _named_feature_parent(source)
+        start = 0
+        if parent is not None:
+            parent_steps, _ = _to_commands(parent, name)
+            start = len(parent_steps)
         return _named_feature_commands(
             steps,
             feature_name,
             suppressed,
+            start=start,
         ), base
     if shape.kind == "exported_feature":
         return _to_commands(shape.data[0], name)
