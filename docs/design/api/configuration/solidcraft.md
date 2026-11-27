@@ -322,7 +322,44 @@ mechanism.
 The private driver parameter is likewise not public model intent and must not
 appear in engine-neutral configuration IR.
 
-## 9. Timeline-folder suppression result
+## 9. Single-feature multi-object result
+
+The `configuration-installed-single-feature` probe tests the simplest native
+representation of a global Installed transition: one real history feature acts
+on several bodies.
+
+The probe creates two separate coupler bodies and one `solid.move` feature
+named `Installed` whose `bodies` input contains both couplers.
+
+SolidCraft 0.49 accepts that one feature as:
+
+- one configuration suppression target;
+- suppressed in the Small/Large rows;
+- the target of one independently enabled Configuration Rule that drives the
+  feature unsuppressed.
+
+The corrected runtime probe passed on CI run **46017873210** (run 959).
+
+Therefore SolidCraft can represent:
+
+~~~text
+one Installed control
+        |
+        v
+one real Installed history feature
+        |
+        +--> body A
+        +--> body B
+~~~
+
+This is the preferred direct lowering when the authored Installed transition is
+truthfully one native multi-object CAD operation.
+
+It does not solve cases where Installed genuinely requires several different
+native history features. The timeline-folder experiment below defines that
+remaining boundary.
+
+## 10. Timeline-folder suppression result
 
 The `configuration-installed-group` probe tests the most direct mapping for
 the desired model-level Installed behavior:
@@ -376,7 +413,7 @@ The previously qualified shared-driver fan-out remains a working SolidCraft
 backend pattern for one independent Installed control affecting several
 operations. That transport must not dictate the Forge authoring API.
 
-## 10. Configuration-only parameter dependencies
+## 11. Configuration-only parameter dependencies
 
 The executable probe exposed another SolidCraft/Forge boundary.
 
@@ -401,7 +438,7 @@ That workaround must **not** become public API policy. A parameter referenced by
 configuration is a real semantic dependency and Forge IR/compiler state must
 retain it even when ordinary geometry does not otherwise read it.
 
-## 11. Backend qualification questions
+## 12. Backend qualification questions
 
 For each proposed Forge configuration capability, qualify these questions
 against the saved SolidCraft design:
