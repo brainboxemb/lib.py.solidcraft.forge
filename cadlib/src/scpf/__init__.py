@@ -8,7 +8,6 @@ from .core import (
 )
 from .compiler import compile_model, ModelError
 from . import cadmath
-from .configurations import Always, ConfigRule, Configure, DriveParameter, Param, Suppress
 from .explicit_sketch import Sketch
 from .runner import run_script, component, assembly, ModelParameterWarning
 from .model_objects import (
@@ -27,5 +26,5 @@ __all__ = [
     "Edges", "Faces", "Anchor", "AnchorFrame", "AnchorTopology", "Axis", "AxisLine", "X", "Y", "Z", "CENTER", "TOP", "BOTTOM", "LEFT", "RIGHT", "FRONT", "BACK", "up", "down", "left", "right", "front", "back", "half", "midpoint", "pv",
     "Sketch", "Placement", "DrawingView", "DrawingNote", "DrawingRevision",
     "DrawingDimension", "compile_model", "run_script", "component", "assembly",
-    "ModelParameterWarning", "ModelError", "Configure", "Param", "Suppress", "ConfigRule", "Always", "DriveParameter", "cadmath",
+    "ModelParameterWarning", "ModelError", "cadmath",
 ]
