@@ -283,7 +283,45 @@ independent child-owned Installed features, a composition/binding mechanism is
 still required. The current probes do not yet prove that one native SolidCraft
 control can fan out to several separate child feature suppressions.
 
-## 8. Configuration-only parameter dependencies
+## 8. Global state fan-out result
+
+The `configuration-installed-fanout` probe qualifies one important native
+SolidCraft transport pattern for the HUB75-style use case.
+
+The saved design contains:
+
+~~~text
+rows:
+    Small
+    Large
+
+one independent native rule:
+    Installed [off/on]
+
+private transport:
+    installed_offset
+
+consumers:
+    LeftInstalledMotion  <- installed_offset
+    RightInstalledMotion <- installed_offset
+~~~
+
+When the native Installed rule is enabled it drives only the shared
+`installed_offset` parameter. Both authored move features already depend on
+that parameter, so one UI control changes both participants.
+
+This proves that SolidCraft can preserve one global state independently from
+the active Small/Large row while several model operations react to it.
+
+It does **not** make `ConfigRule`, `Always` or `DriveParameter` semantic
+Forge concepts. They describe this backend's transport. A generic Forge state
+may lower to this pattern on SolidCraft while another backend uses a different
+mechanism.
+
+The private driver parameter is likewise not public model intent and must not
+appear in engine-neutral configuration IR.
+
+## 9. Configuration-only parameter dependencies
 
 The executable probe exposed another SolidCraft/Forge boundary.
 
@@ -308,7 +346,7 @@ That workaround must **not** become public API policy. A parameter referenced by
 configuration is a real semantic dependency and Forge IR/compiler state must
 retain it even when ordinary geometry does not otherwise read it.
 
-## 9. Backend qualification questions
+## 10. Backend qualification questions
 
 For each proposed Forge configuration capability, qualify these questions
 against the saved SolidCraft design:
