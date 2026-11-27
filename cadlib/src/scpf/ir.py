@@ -3268,8 +3268,218 @@ def _profile_ir_from_shape(
     return None
 
 
+def _sketch_graph_from_payload(
+    sketch_name,
+    plane,
+    profiles,
+    operations,
+) -> SketchEntityGraphIR | None:
+    """Normalize stored Sketch entities/operations without requiring Sketch object state."""
+    class _PayloadSketch:
+        pass
+
+    sketch = _PayloadSketch()
+    sketch.name = sketch_name
+    sketch.plane = plane
+
+    entities = []
+    references = {}
+    for index, (profile, profile_anchor, offset) in enumerate(profiles):
+        semantic = _sketch_graph_profile_ir(
+            sketch,
+            profile,
+            profile_anchor,
+            offset,
+        )
+        if semantic is None:
+            return None
+        entities.append(semantic)
+        references[id(profile)] = SketchEntityRefIR("entity", index)
+
+    semantic_operations = []
+    for index, operation in enumerate(operations):
+        source = operation.data[0]
+        source_ref = references.get(id(source))
+        if source_ref is None:
+            return None
+        try:
+            if operation.kind == "sketch_pattern_rectangular":
+                (
+                    _source,
+                    count,
+                    spacing,
+                    direction,
+                    count2,
+                    spacing2,
+                    direction2,
+                    alignment,
+                    alignment2,
+                    reversed1,
+                    reversed2,
+                ) = operation.data
+                semantic = SketchRectangularPatternIR(
+                    source=source_ref,
+                    count=count,
+                    spacing=spacing,
+                    direction=tuple(direction),
+                    count2=count2,
+                    spacing2=spacing2,
+                    direction2=(
+                        tuple(direction2)
+                        if direction2 is not None
+                        else None
+                    ),
+                    alignment=alignment,
+                    alignment2=alignment2,
+                    reversed=reversed1,
+                    reversed2=reversed2,
+                )
+            elif operation.kind == "sketch_mirror":
+                _source, axis = operation.data
+                semantic = SketchMirrorIR(
+                    source=source_ref,
+                    axis=axis,
+                )
+            else:
+                return None
+        except (TypeError, ValueError):
+            return None
+        semantic_operations.append(semantic)
+        references[id(operation)] = SketchEntityRefIR(
+            "operation",
+            index,
+        )
+
+    try:
+        return SketchEntityGraphIR(
+            entities=tuple(entities),
+            operations=tuple(semantic_operations),
+        )
+    except ValueError:
+        return None
+
+
+def _sketch_ir_from_payload(
+    sketch_name,
+    plane,
+    origin,
+    plane_offset,
+    profiles,
+    operations,
+    rotation,
+    *,
+    support: SketchSupportIR | None = None,
+) -> SketchIR | None:
+    if plane not in ("XY", "XZ", "YZ"):
+        return None
+    if origin is not None and plane_offset is not None:
+        return None
+    if origin is not None:
+        try:
+            plane_ir = PlaneIR(
+                orientation=plane,
+                origin=tuple(origin),
+            )
+        except (TypeError, ValueError):
+            return None
+    else:
+        plane_ir = _plane_ir(plane, plane_offset)
+    if plane_ir is None:
+        return None
+
+    graph = _sketch_graph_from_payload(
+        sketch_name,
+        plane,
+        profiles,
+        operations,
+    )
+    if graph is None:
+        return None
+
+    semantic_profiles = tuple(
+        entity
+        for entity in graph.entities
+        if isinstance(
+            entity,
+            (
+                CircleProfileIR,
+                RectangleProfileIR,
+                RoundedRectangleProfileIR,
+                SlotProfileIR,
+                PolygonProfileIR,
+            ),
+        )
+    )
+    relations = None
+    if (
+        len(semantic_profiles) == 1
+        and isinstance(semantic_profiles[0], PolygonProfileIR)
+    ):
+        polygon = semantic_profiles[0]
+        relations = (
+            _parameterized_rectangle_relations(polygon)
+            or _parameterized_polygon_coordinate_relations(polygon)
+        )
+
+    try:
+        return SketchIR(
+            name=sketch_name,
+            plane=plane_ir,
+            profiles=semantic_profiles,
+            relations=relations,
+            support=support,
+            rotation=(
+                None
+                if rotation is None
+                else tuple(float(value) for value in rotation)
+            ),
+            graph=graph,
+        )
+    except (TypeError, ValueError):
+        return None
+
+
+def _extrude_regions(
+    sketch: SketchIR,
+    profile_picks,
+    exact_regions,
+) -> tuple[RegionIR, ...] | None:
+    """Normalize public all-region or point-selected region intent."""
+    if profile_picks is not None:
+        try:
+            return tuple(
+                RegionIR(
+                    selector=tuple(float(value) for value in point),
+                    exact=exact_regions,
+                )
+                for point in profile_picks
+            )
+        except (TypeError, ValueError):
+            return None
+
+    if exact_regions:
+        return None
+
+    # Preserve the older inspectable one-profile membership form where it is
+    # unambiguous. Empty means the public "all closed regions" contract.
+    if (
+        sketch.graph is not None
+        and not sketch.graph.operations
+        and len(sketch.profiles) == 1
+        and len(sketch.graph.entities) == 1
+        and not isinstance(sketch.graph.entities[0], TextEntityIR)
+    ):
+        try:
+            region = RegionIR(outer=0)
+            _region_interior_point(sketch, region)
+            return (region,)
+        except ValueError:
+            pass
+    return ()
+
+
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
-    """Normalize standalone Sketch + closed-profile Extrude semantics."""
+    """Normalize standalone Sketch + Extrude semantics."""
     if shape.kind != "sketch_base_extrusion":
         return None
 
@@ -3287,83 +3497,129 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
         rotation,
     ) = shape.data
 
-    if plane not in ("XY", "XZ", "YZ"):
+    sketch = _sketch_ir_from_payload(
+        sketch_name,
+        plane,
+        origin,
+        plane_offset,
+        profiles,
+        operations,
+        rotation,
+    )
+    if sketch is None or direction not in {
+        "positive", "negative", "symmetric"
+    }:
         return None
-    if origin is not None or plane_offset is not None or rotation is not None:
+    regions = _extrude_regions(
+        sketch,
+        profile_picks,
+        exact_regions,
+    )
+    if regions is None:
         return None
-    plane_ir = _plane_ir(plane)
-    if plane_ir is None or operations or not profiles:
-        return None
-    if direction not in ("positive", "negative", "symmetric"):
+    if distance is Depth.THROUGH_ALL:
         return None
 
-    semantic_profiles = []
-    for profile, profile_anchor, offset in profiles:
-        semantic = _profile_ir_from_shape(
-            profile,
-            profile_anchor,
-            offset,
-            plane,
+    try:
+        return ExtrudeIR(
+            sketch=sketch,
+            regions=regions,
+            distance=distance,
+            direction=direction,
         )
-        if semantic is None:
-            return None
-        semantic_profiles.append(semantic)
+    except ValueError:
+        return None
 
-    relations = None
+
+def _portable_attached_extrude(
+    target: IRNode,
+    target_shape: Shape,
+    tool_shape: Shape,
+    operation: str,
+) -> ExtrudeIR | None:
+    """Normalize Sketch(on=...) extrusion over one already-typed target."""
     if (
-        len(semantic_profiles) == 1
-        and isinstance(semantic_profiles[0], PolygonProfileIR)
+        not isinstance(target, BodyIR)
+        or tool_shape.kind != "explicit_sketch_extrusion"
+        or operation not in {"join", "cut"}
     ):
-        polygon = semantic_profiles[0]
-        relations = (
-            _parameterized_rectangle_relations(polygon)
-            or _parameterized_polygon_coordinate_relations(polygon)
+        return None
+
+    (
+        sketch_name,
+        authored_target,
+        parent_anchor,
+        plane_info,
+        profiles,
+        distance,
+        direction,
+        operations,
+        profile_picks,
+        exact_regions,
+    ) = tool_shape.data
+    if authored_target is not target_shape:
+        return None
+    plane_name, sketch_origin, sketch_rotation = plane_info
+
+    # A default supported Sketch uses the public anchor surface. An explicit
+    # plane remains a world frame while target still owns the body operation.
+    if plane_name is None:
+        try:
+            parent = Anchor(parent_anchor).value
+        except (TypeError, ValueError):
+            return None
+        plane_name = "XY"
+        support = SketchSupportIR(
+            target=target,
+            parent=parent,
         )
-
-    sketch = SketchIR(
-        name=sketch_name,
-        plane=plane_ir,
-        profiles=tuple(semantic_profiles),
-        relations=relations,
-    )
-
-    if len(semantic_profiles) == 1:
-        if profile_picks is not None or exact_regions:
-            return None
-        region = RegionIR(outer=0)
-        try:
-            _region_interior_point(sketch, region)
-        except ValueError:
-            return None
-        regions = (region,)
+        semantic_origin = None
     else:
-        # Keep the already-qualified exact-region multi-profile contract
-        # deliberately narrow to concentric circles.
-        if direction not in ("positive", "negative"):
-            return None
-        if any(
-            not isinstance(profile, CircleProfileIR)
-            for profile in semantic_profiles
-        ):
-            return None
-        if not exact_regions or profile_picks is None or len(profile_picks) != 1:
-            return None
-        try:
-            region = _concentric_circle_region_from_pick(
-                sketch,
-                profile_picks[0],
-            )
-            _circle_region_interior_point(sketch, region)
-        except ValueError:
-            return None
-        regions = (region,)
+        support = SketchSupportIR(
+            target=target,
+            parent=None,
+        )
+        semantic_origin = sketch_origin
 
-    return ExtrudeIR(
-        sketch=sketch,
-        regions=regions,
-        distance=distance,
-        direction=direction,
+    sketch = _sketch_ir_from_payload(
+        sketch_name,
+        plane_name,
+        semantic_origin,
+        None,
+        profiles,
+        operations,
+        sketch_rotation,
+        support=support,
     )
+    if sketch is None or direction not in {
+        "positive", "negative", "symmetric"
+    }:
+        return None
+    regions = _extrude_regions(
+        sketch,
+        profile_picks,
+        exact_regions,
+    )
+    if regions is None:
+        return None
+
+    through_all = distance is Depth.THROUGH_ALL
+    if through_all and operation != "cut":
+        return None
+
+    try:
+        return ExtrudeIR(
+            sketch=sketch,
+            regions=regions,
+            distance=None if through_all else distance,
+            direction=direction,
+            operation=operation,
+            target=target,
+            through_all=through_all,
+            source_kind="explicit_sketch_extrusion",
+        )
+    except ValueError:
+        return None
 
 
 def _axis_line_ir(axis) -> AxisLineIR | None:
@@ -4531,6 +4787,14 @@ def _normalize_node(shape: Shape) -> IRNode:
 
         target = _normalize_node(target_shape)
         if shape.kind in {"union", "difference"}:
+            attached_extrude = _portable_attached_extrude(
+                target,
+                target_shape,
+                tool_shape,
+                "join" if shape.kind == "union" else "cut",
+            )
+            if attached_extrude is not None:
+                return attached_extrude
             hole = _portable_hole(target, target_shape, tool_shape)
             if hole is not None:
                 return hole
