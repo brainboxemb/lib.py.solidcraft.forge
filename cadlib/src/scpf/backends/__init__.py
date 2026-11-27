@@ -12,7 +12,9 @@ from typing import Callable, Any
 # These imports intentionally happen while scpf.runner itself is being imported.
 # Importing scpf.assembly lazily after package initialization would overwrite the
 # public scpf.assembly decorator with Python's submodule attribute.
-from ..assembly import _compile_assembly_with_dependencies as _solidcraft_compile_assembly
+from ..assembly import (
+    compile_assembly_ir_with_dependencies as _solidcraft_compile_assembly,
+)
 from .solidcraft import compile_ir_with_dependencies as _solidcraft_compile_ir
 
 

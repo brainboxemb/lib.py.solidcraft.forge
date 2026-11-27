@@ -44,6 +44,7 @@ from .model_objects import (
 from .explicit_sketch import Sketch
 from .backends import get_backend
 from .ir import normalize_model, normalize_shape
+from .assembly_ir import normalize_assembly
 
 
 class ModelParameterWarning(UserWarning):
@@ -871,6 +872,39 @@ def _model_import_context(path: Path):
         sys.dont_write_bytecode = original_dont_write_bytecode
 
 
+def _compile_assembly_result(value, name, backend_adapter):
+    """Normalize core assembly semantics before backend selection/lowering."""
+    assembly = Assembly((value,)) if isinstance(value, ModelInstance) else value
+    if not isinstance(assembly, Assembly):
+        raise TypeError("assembly result must contain reusable model instances")
+
+    model = normalize_assembly(assembly)
+    if backend_adapter.compile_assembly is None:
+        raise ModelError(
+            f"{backend_adapter.display_name} backend does not support "
+            "Forge AssemblyIR in its qualified capability set"
+        )
+
+    has_presentation = bool(
+        assembly.drawings
+        or assembly.exploded_views
+        or assembly.exploded_display_set
+    )
+    if has_presentation:
+        if backend_adapter.id != "solidcraft":
+            raise ModelError(
+                f"{backend_adapter.display_name} backend does not support "
+                "Forge assembly presentation state"
+            )
+        # Drawings/exploded views are output presentation, explicitly outside
+        # the core CAD-IR denominator. The SolidCraft compatibility layer
+        # appends that presentation after validating the same AssemblyIR core.
+        from .assembly import _compile_assembly_with_dependencies
+        return _compile_assembly_with_dependencies(assembly, name)
+
+    return backend_adapter.compile_assembly(model, name)
+
+
 def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
     """Execute a trusted SCPF model source file and return its command document.
 
@@ -1140,19 +1174,16 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
                     name,
                 )
         elif isinstance(design, (ModelInstance, Assembly)):
+            document, dependencies = _compile_assembly_result(
+                design,
+                name,
+                backend_adapter,
+            )
             if backend_adapter.id != "solidcraft":
                 raise ModelError(
                     f"{backend_adapter.display_name} backend does not support "
-                    "Forge configured assemblies in its qualified capability set"
+                    "Forge configured AssemblyIR in its qualified capability set"
                 )
-            if backend_adapter.compile_assembly is None:
-                raise ModelError(
-                    f"{backend_adapter.display_name} backend does not support "
-                    "Forge assemblies in its qualified capability set"
-                )
-            document, dependencies = backend_adapter.compile_assembly(
-                design, name
-            )
             document = _apply_configuration_document(
                 result, name, document
             )
@@ -1162,12 +1193,11 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
         model_ir = normalize_shape(result)
         document, dependencies = backend_adapter.compile_ir(model_ir, name)
     elif isinstance(result, (ModelInstance, Assembly)):
-        if backend_adapter.compile_assembly is None:
-            raise ModelError(
-                f"{backend_adapter.display_name} backend does not support "
-                "Forge assemblies in its qualified capability set"
-            )
-        document, dependencies = backend_adapter.compile_assembly(result, name)
+        document, dependencies = _compile_assembly_result(
+            result,
+            name,
+            backend_adapter,
+        )
     else:
         raise TypeError(f"{name}() must produce CAD geometry or an assembly")
 

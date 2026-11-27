@@ -235,6 +235,20 @@
 210. SolidCraft typed sheet lowering must reproduce the existing stable native command/history documents for current public sheet base, contour flange, fold, edge flange, hem, path flange and perforation source.
 211. Mitcad may remain unsupported for the sheet-metal family after #554 and must fail closed on typed sheet nodes. Mitcad support is not an IR-ready merge gate.
 212. The Sheet metal family is complete when the current public sheet rule/body/features above normalize to typed IR; unsupported backend execution does not make the semantic family partial.
+213. Public reusable-component and assembly CAD meaning must normalize through engine-neutral `AssemblyIR` before backend assembly lowering; a backend may not independently interpret `ModelInstance` / `Assembly` core semantics.
+214. `ComponentDefinitionIR` and `OccurrenceIR` use deterministic compiler-local semantic ids. Python process-local occurrence ids, SolidCraft component/occurrence ids, replay variables and browser ids are forbidden in AssemblyIR.
+215. One component definition retains its typed `ModelIR`, published/fixed/external parameter metadata, input bindings, semantic custom anchors, exported feature names and symbolic local bounds required by assembly datum lowering.
+216. `OccurrencePlacementIR` retains symbolic XYZ position plus optional fixed rotation axis/angle. Backends may choose native copy/move spelling but must not bake symbolic occurrence placement.
+217. `RelationshipIR` represents rigid, planar, revolute and as-built relationships using semantic child/parent occurrence ids. Offset, gap, angle, revolute value/limits, flip and authored name remain semantic fields rather than command transport.
+218. `AnchorReferenceIR` distinguishes standard Anchor values, definition-owned named anchors, explicit `AnchorFrameIR` and `AnchorTopologyIR`. Native world picks and occurrence references are derived only during backend lowering.
+219. Assembly grouping is semantic occurrence hierarchy metadata; SolidCraft may create ungrounded browser components for groups, but no browser/native group id enters IR.
+220. `ComponentFeatureRefIR(definition, name)` is the definition-level semantic identity behind `Occurrence.feature(name)`. Copies of the same reusable definition resolve the same exported feature reference; missing exports fail before native configuration lowering.
+221. SolidCraft component geometry inside AssemblyIR must reuse the same ModelIR-to-command lowering boundary as standalone designs. Assembly lowering must not introduce a second raw Shape compiler for reusable definitions.
+222. SolidCraft AssemblyIR lowering must remain document-compatible with the stable compiler for grouped/copy occurrences, symbolic Placement, rigid/planar/revolute/as-built relationships and semantic anchor forms already supported by the public API.
+223. Drawings and exploded views are presentation state outside the core CAD-IR denominator. A SolidCraft presentation compatibility layer may append them after validating/lowering the same AssemblyIR core; presentation state must not redefine definition/occurrence/relationship semantics.
+224. Configured assemblies may retain the existing configuration-table output layer while configuration semantics remain partial, but their underlying reusable-component/occurrence/relationship design must normalize to AssemblyIR first and definition-level child feature references remain engine-neutral.
+225. Mitcad may remain unsupported for AssemblyIR after #555 and must fail closed after frontend normalization. Mitcad assembly support is a backend catch-up milestone, not an IR-ready merge gate.
+226. The Assemblies/occurrences/relationships family is complete when the current public reusable definition, occurrence placement/grouping, assembly anchor and rigid/planar/revolute/as-built relationship meaning above is represented by AssemblyIR; unsupported backend/presentation/configuration layers do not make that core family legacy.
 
 ## SCPF native associativity
 
