@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/504-fillet-ir
-modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
-models: []
+branch: issue/510-cone-boolean-mitcad-owner
+modules: [builder-scpf-mitcad, ci]
 library: true
+models: [cone-boolean]
 tasks: [test]
