@@ -3128,6 +3128,7 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
             point=_shift_point(placement.point, delta),
             anchor=placement.anchor,
             explicit=True,
+            source_kind="translated",
         )
 
     return None
