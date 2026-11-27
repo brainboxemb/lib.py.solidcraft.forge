@@ -24,7 +24,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
                 encoding='utf-8',
             )
 
-            docs = root / 'docs/verification'
+            docs = root / 'site/source/verification'
             docs.mkdir(parents=True)
             (docs / 'api-coverage.py').write_text(
                 'EXPORT_COVERAGE = {"Box": ("Visual", "Visual", ["example"], "Baseline.")}\n'
@@ -97,7 +97,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
 
     def test_repository_joint_anatomy_has_no_cadcraft_sources(self):
         root = Path(__file__).resolve().parents[3]
-        joint = root / 'docs/verification/joint-anatomy'
+        joint = root / 'site/source/verification/joint-anatomy'
         self.assertFalse(list(joint.glob('*.cadcraft.json')))
         body = (joint / 'body.html').read_text(encoding='utf-8')
         self.assertNotIn('CadCraft source', body)
@@ -106,7 +106,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
     def test_coverage_rejects_unknown_owner(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
-            docs = root / 'docs/verification'
+            docs = root / 'site/source/verification'
             docs.mkdir(parents=True)
             (docs / 'api-coverage.py').write_text(
                 'EXPORT_COVERAGE = {"Box": ("Visual", "Visual", ["missing"], "Baseline.")}\n'

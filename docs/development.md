@@ -1,32 +1,46 @@
-# Development
+# Forge development
 
-## Branches
+## Normal work
 
-Work from `dev` on a short-lived issue/fix/feature/docs/chore branch for normal product development. Long-running research uses permanent `exp`; temporary work targeting that line uses the same prefixes and targets `exp`. Keep `build.yml.branch` exact and select the smallest library/modules/models required.
+Start normal product work from `dev` on a short-lived issue/fix/feature/docs
+or chore branch. Experimental work may target permanent `exp`; `exp` is
+never a release source.
 
-After green checks, use the repository merge policy to squash temporary work into `dev` or `exp`. Synchronization `dev -> exp` and completed-experiment integration `exp -> dev` use merge commits and full PR qualification. `exp -> main` is forbidden. Promotion from `dev` to `main` remains the only product stabilization path and uses a merge commit.
+Use `build.yml` only as a temporary branch-local selection override. Permanent
+repository branch/runtime/root configuration belongs in `ci.yml`.
 
-Release preparation is separate. Create `release/vX.Y.Z` from stable `main`,
-change only `CHANGELOG.md` plus `cadlib/pyproject.toml:project.version`, and
-open that branch directly against `main`. The release lane runs the library
-and release capability only, preserves the prior full stable CAD evidence, and
-publishes from exact current `main`. After publication synchronize
-`main -> dev` through `/merge`; do not rebase `dev`.
+Integrate through the repository merge policy. The exact mandatory `/merge`
+and conflict-recovery rules live in `AGENTS.md`.
 
-## Tests
+## Tests and evidence
 
-`cadlib/tests` contains package-owner tests only. Tests that require a physical model fixture belong with that model migration; see `docs/migration-tests.md`.
+- `cadlib/tests/` contains package-owner tests.
+- module tests stay with their module.
+- model-specific tests/evidence stay with the physical model owner.
+- real SolidCraft behavior is qualified in the configured immutable runtime.
+- do not resurrect historical fixture coupling merely because an old migration
+  test once used it.
 
-Generic module tests execute from module-local source. Real CAD work is qualified in the two immutable runtime roles.
+## API design probes
 
-## Model migration
+Use `api-probes/<id>/probe.yml` for small executable API/backend experiments.
 
-For each migrated physical model:
-1. identify historical SCPF source and expectations;
-2. classify package vs model vs generic capability ownership;
-3. place reference implementations inside the same model owner where required;
-4. migrate the smallest coherent slice;
-5. compare OLD and NEW command/geometry/native/verification evidence;
-6. only expand after acceptance.
+During development a branch may select probes through
+`build.yml.api_probes`. Existing `main`, `dev` or `exp` can be tested
+without source changes through the **API Probe** workflow.
 
-Do not copy historical Forge scripts/CI/site code unless behavior remains Forge-specific after comparison with the corrected template capability.
+Probe publication updates only selected probe owners and preserves physical
+model output. A probe that becomes a permanent regression requirement should
+graduate to the appropriate package/module/model test rather than remain an
+always-on probe.
+
+## Documentation changes
+
+Read `docs/README.md` before adding documentation.
+
+Do not add new material to `docs/legacy/`. Do not extend
+`site/source/guide/*.html`; the HTML -> Markdown/Hugo conversion is separate
+parked work.
+
+When changing public API semantics, update the relevant active API/design
+document and executable tests/probes in the same logical change.

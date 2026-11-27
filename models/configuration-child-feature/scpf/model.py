@@ -1,4 +1,5 @@
-"""Parent configuration controls one feature exported by a reusable child."""
+"""Parent configuration controls one named feature inside a reusable child."""
+
 
 @component(include=("width",))
 class FeatureCoupler:
@@ -13,12 +14,9 @@ class FeatureCoupler:
             self.HEIGHT,
             anchor=Anchor.BOTTOM,
         )
-        panel_pin = (
-            Hole(d=5)
-            .at(0, 0, self.HEIGHT)
-            .export_feature("panel_pin")
-        )
-        return body - panel_pin
+        with feature("panel_pin", suppressed=True):
+            body = body - Hole(d=5).at(0, 0, self.HEIGHT)
+        return body
 
 
 class ConfigurationChildFeature:
@@ -36,12 +34,12 @@ class ConfigurationChildFeature:
             placement=Placement(x=50),
         )
 
-        return Configure(
-            left + right,
+        model = left + right
+        model.configure(
             active="Medium",
             columns=(
-                Param(self.coupler_width),
-                Suppress(right.feature("panel_pin")),
+                self.coupler_width,
+                right.feature("panel_pin"),
             ),
             rows={
                 "Small": ("30 mm", True),
@@ -49,6 +47,7 @@ class ConfigurationChildFeature:
                 "Large": ("40 mm", False),
             },
         )
+        return model
 
 
 ConfigurationChildFeature()

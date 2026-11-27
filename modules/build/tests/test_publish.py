@@ -53,6 +53,38 @@ class PublishTests(unittest.TestCase):
                 "new",
             )
 
+    def test_model_publication_preserves_unselected_api_probe_evidence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            target = root / "target"
+            existing = target / "api-probes" / "configuration-installed-current"
+            existing.mkdir(parents=True)
+            (existing / "result.json").write_text('{"status": "pass"}')
+
+            update_scope(
+                target,
+                root / "candidate",
+                {
+                    "active": [],
+                    "selected": [],
+                    "full": False,
+                    "source_sha": "new",
+                    "api_probes": {
+                        "available": ["configuration-installed-current"],
+                        "selected": [],
+                    },
+                },
+            )
+
+            self.assertTrue(
+                (
+                    target
+                    / "api-probes"
+                    / "configuration-installed-current"
+                    / "result.json"
+                ).is_file()
+            )
+
     def test_release_only_stable_candidate_preserves_full_baseline(self):
         plan = {
             "release_only": True,

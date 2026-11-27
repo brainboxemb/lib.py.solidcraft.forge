@@ -1,10 +1,10 @@
-"""Document-level native SolidCraft configuration-table intent and lowering."""
+"""Final-model configuration intent and SolidCraft lowering."""
 
 from dataclasses import dataclass
 import hashlib
 from math import isfinite
 
-from .core import Expression, Parameter, Shape, command_value, number_text, parameters_in
+from .core import Parameter, Shape, _FeatureHandle, number_text
 
 
 @dataclass(frozen=True)
@@ -18,188 +18,102 @@ class _SuppressionColumn:
 
 
 @dataclass(frozen=True)
-class _AlwaysCondition:
-    pass
-
-
-@dataclass(frozen=True)
-class _DriveParameterEffect:
-    parameter: _ParameterColumn
-    expression: object
-
-
-@dataclass(frozen=True)
-class _ConfigurationRule:
-    id: str
-    name: str
-    enabled: bool
-    condition: object
-    effect: object
-
-
-@dataclass(frozen=True)
-class _ConfiguredDesign:
-    design: object
+class _Configuration:
     active: str
     columns: tuple
     rows: tuple
-    rules: tuple = ()
 
 
-def Param(name):
-    """Select an existing native model parameter as a configuration column."""
-    if isinstance(name, Parameter):
-        name = name.name
-    if not isinstance(name, str) or not name.isidentifier():
-        raise ValueError("Param requires a native parameter name")
-    return _ParameterColumn(name)
+def _configuration_column(value):
+    """Normalize one public configuration target to private typed metadata."""
+    if isinstance(value, Parameter):
+        return _ParameterColumn(value.name)
 
-
-def Suppress(feature):
-    """Select one exact Forge-authored feature as a suppression column."""
     from .model_objects import _ComponentFeatureReference
-    if not isinstance(feature, (Shape, _ComponentFeatureReference)):
-        raise TypeError(
-            "Suppress requires an authored feature Shape or component feature reference"
-        )
-    return _SuppressionColumn(feature)
+    if isinstance(value, _FeatureHandle):
+        return _SuppressionColumn(value.shape)
+    if isinstance(value, (Shape, _ComponentFeatureReference)):
+        return _SuppressionColumn(value)
 
-
-def Always():
-    """Match every configuration activation for one native configuration rule."""
-    return _AlwaysCondition()
-
-
-def _configuration_expression(value):
-    """Normalize one native configuration parameter expression."""
-    if isinstance(value, (Parameter, Expression)):
-        return str(command_value(value))
-    if isinstance(value, str) and value.strip():
-        return value
-    if (
-        isinstance(value, (int, float))
-        and not isinstance(value, bool)
-        and isfinite(value)
-    ):
-        return number_text(value)
     raise TypeError(
-        "configuration parameter expressions require a finite number, "
-        "non-empty expression string, Parameter or Expression"
+        "configuration columns must contain Parameter or authored feature handles"
     )
 
 
-def DriveParameter(parameter, expression):
-    """Drive one configured parameter while a configuration rule matches."""
-    if not isinstance(parameter, _ParameterColumn):
-        parameter = Param(parameter)
-    _configuration_expression(expression)
-    return _DriveParameterEffect(parameter, expression)
-
-
-def ConfigRule(rule_id, name, *, enabled=True, condition, effect):
-    """Author one typed native SolidCraft Configuration Rule.
-
-    The initial public rule slice supports Always() plus DriveParameter(...).
-    Rule enablement is the native independent checkbox state; it is not a
-    boolean model parameter and does not create another configuration row axis.
-    """
-    if (
-        not isinstance(rule_id, str)
-        or not rule_id.strip()
-        or rule_id != rule_id.strip()
-        or len(rule_id) > 64
-    ):
-        raise ValueError("configuration rule id must be 1..64 non-space characters")
-    if (
-        not isinstance(name, str)
-        or not name.strip()
-        or name != name.strip()
-        or len(name) > 128
-    ):
-        raise ValueError("configuration rule name must be 1..128 non-space characters")
-    if not isinstance(enabled, bool):
-        raise TypeError("configuration rule enabled must be bool")
-    if not isinstance(condition, _AlwaysCondition):
-        raise TypeError("configuration rule condition must use Always()")
-    if not isinstance(effect, _DriveParameterEffect):
-        raise TypeError("configuration rule effect must use DriveParameter()")
-    return _ConfigurationRule(rule_id, name, enabled, condition, effect)
-
-
-def Configure(design, *, active, columns, rows, rules=()):
-    """Return one final design with an editable native configuration table.
-
-    Each row contains one parameter expression or suppression boolean per
-    column, in column order. The active name must be one of the declared rows.
-
-    Optional ConfigRule entries remain orthogonal to the row axis. A native
-    enabled rule may drive a configured parameter after row activation; turning
-    that rule off restores the row's stored expression.
-    """
+def _configure_model(design, *, active, columns, rows):
+    """Attach one configuration definition to an already-built final model."""
     from .model_objects import Assembly, ModelInstance
+
     if not isinstance(design, (Shape, ModelInstance, Assembly)):
         raise TypeError(
-            "Configure requires a final Shape, component occurrence or Assembly"
+            "configure() requires a final Shape, component occurrence or Assembly"
         )
-    columns = tuple(columns)
-    if not columns or not all(isinstance(c, (_ParameterColumn, _SuppressionColumn))
-                              for c in columns):
-        raise TypeError("Configure columns must contain Param or Suppress")
-    keys = [("param", c.name) if isinstance(c, _ParameterColumn)
-            else ("feature", id(c.feature)) for c in columns]
+    if getattr(design, "_configuration", None) is not None:
+        raise ValueError("final model already has a configuration")
+
+    try:
+        columns = tuple(columns)
+    except TypeError as exc:
+        raise TypeError("configuration columns must be iterable") from exc
+    if not columns:
+        raise ValueError("configure() requires at least one column")
+
+    normalized_columns = tuple(_configuration_column(value) for value in columns)
+    keys = [
+        ("param", column.name)
+        if isinstance(column, _ParameterColumn)
+        else ("feature", id(column.feature))
+        for column in normalized_columns
+    ]
     if len(set(keys)) != len(keys):
         raise ValueError("duplicate configuration column")
+
     if not isinstance(rows, dict) or not rows:
-        raise ValueError("Configure requires an ordered mapping of named rows")
-    normalized = []
+        raise ValueError("configure() requires an ordered mapping of named rows")
+
+    normalized_rows = []
     for name, cells in rows.items():
         if not isinstance(name, str) or not name.strip() or name != name.strip():
             raise ValueError("configuration row names must be non-empty text")
-        cells = tuple(cells)
-        if len(cells) != len(columns):
+        try:
+            cells = tuple(cells)
+        except TypeError as exc:
+            raise TypeError(
+                f"configuration {name!r} cells must be iterable"
+            ) from exc
+        if len(cells) != len(normalized_columns):
             raise ValueError(f"configuration {name!r} has the wrong cell count")
+
         converted = []
-        for column, cell in zip(columns, cells):
+        for column, cell in zip(normalized_columns, cells):
             if isinstance(column, _SuppressionColumn):
                 if not isinstance(cell, bool):
                     raise TypeError("suppression cells must be bool")
                 converted.append("true" if cell else "false")
             elif isinstance(cell, str) and cell.strip():
                 converted.append(cell)
-            elif isinstance(cell, (int, float)) and not isinstance(cell, bool) and isfinite(cell):
+            elif (
+                isinstance(cell, (int, float))
+                and not isinstance(cell, bool)
+                and isfinite(cell)
+            ):
                 converted.append(number_text(cell))
             else:
-                raise TypeError("parameter cells require a finite number or expression")
-        normalized.append((name, tuple(converted)))
+                raise TypeError(
+                    "parameter cells require a finite number or expression"
+                )
+        normalized_rows.append((name, tuple(converted)))
+
     if active not in rows:
         raise ValueError("active configuration must name a declared row")
 
-    try:
-        rules = tuple(rules)
-    except TypeError as exc:
-        raise TypeError("Configure rules must contain ConfigRule entries") from exc
-    if not all(isinstance(rule, _ConfigurationRule) for rule in rules):
-        raise TypeError("Configure rules must contain ConfigRule entries")
-    if len({rule.id for rule in rules}) != len(rules):
-        raise ValueError("duplicate configuration rule id")
-    configured_parameters = {
-        column.name for column in columns
-        if isinstance(column, _ParameterColumn)
-    }
-    for rule in rules:
-        target = rule.effect.parameter.name
-        if target not in configured_parameters:
-            raise ValueError(
-                "DriveParameter target must also be a Param configuration column"
-            )
-
-    return _ConfiguredDesign(
-        design,
-        active,
-        columns,
-        tuple(normalized),
-        rules,
+    configuration = _Configuration(
+        active=active,
+        columns=normalized_columns,
+        rows=tuple(normalized_rows),
     )
+    object.__setattr__(design, "_configuration", configuration)
+    return design
 
 
 def _feature_prefix(root, source):
@@ -210,13 +124,28 @@ def _feature_prefix(root, source):
         return None
     if root.kind in ("union", "difference", "intersection"):
         original, added = root.data
-        if added is source or (added.kind == "labeled" and added.data[0] is source):
+        if added is source or (
+            isinstance(added, Shape)
+            and added.kind == "labeled"
+            and added.data[0] is source
+        ):
             return root
         return _feature_prefix(original, source)
     if root.kind in (
-        "fillet", "chamfer", "shell", "material_assignment", "appearance_assignment",
-        "rectangular_pattern", "circular_pattern", "sheet_fold", "sheet_edge_flange",
-        "sheet_hem", "sheet_path_flange", "sheet_perforate",
+        "exported_feature",
+        "named_feature",
+        "fillet",
+        "chamfer",
+        "shell",
+        "material_assignment",
+        "appearance_assignment",
+        "rectangular_pattern",
+        "circular_pattern",
+        "sheet_fold",
+        "sheet_edge_flange",
+        "sheet_hem",
+        "sheet_path_flange",
+        "sheet_perforate",
     ):
         return _feature_prefix(root.data[0], source)
     return None
@@ -235,36 +164,47 @@ def _same_native_command(left, right):
     )
 
 
-def _suppression_command_index(configured, name, commands, feature):
+def _suppression_command_index(design, name, commands, feature):
     """Find the exact compiled history command for one authored feature."""
     from .compiler import ModelError, _compile_model_commands
 
-    if isinstance(configured.design, Shape):
-        prefix = _feature_prefix(configured.design, feature)
+    if isinstance(design, Shape):
+        prefix = _feature_prefix(design, feature)
         if prefix is None:
             raise ModelError(
                 "suppression source must be an already-applied feature of this design"
             )
         prefix_commands = [
-            c for c in _compile_model_commands(prefix, name)
-            if c["command"] != "parameters.add"
+            command
+            for command in _compile_model_commands(prefix, name)
+            if command["command"] != "parameters.add"
         ]
         geometry_indexes = [
-            i for i, c in enumerate(commands)
-            if c["command"] != "parameters.add"
+            index
+            for index, command in enumerate(commands)
+            if command["command"] != "parameters.add"
         ]
         if not prefix_commands or len(prefix_commands) > len(geometry_indexes):
             raise ModelError("suppression source has no native history feature")
-        index = geometry_indexes[len(prefix_commands) - 1]
-        actual = [commands[i] for i in geometry_indexes[:len(prefix_commands)]]
+        actual = [
+            commands[item]
+            for item in geometry_indexes[:len(prefix_commands)]
+        ]
         if any(
-            not _same_native_command(a, b)
-            for a, b in zip(actual, prefix_commands)
+            not _same_native_command(actual_command, prefix_command)
+            for actual_command, prefix_command in zip(actual, prefix_commands)
         ):
             raise ModelError(
                 "suppression source does not resolve to an exact history prefix"
             )
-        return index
+        target_offsets = [
+            offset
+            for offset, command in enumerate(prefix_commands)
+            if command["command"].startswith(("solid.", "sheet."))
+        ]
+        if not target_offsets:
+            raise ModelError("suppression source has no native history feature")
+        return geometry_indexes[target_offsets[-1]]
 
     from .assembly import (
         _as_assembly,
@@ -273,10 +213,9 @@ def _suppression_command_index(configured, name, commands, feature):
         _namespace_commands,
     )
     from .core import _shape_contains
-
     from .model_objects import _ComponentFeatureReference
 
-    assembly = _as_assembly(configured.design)
+    assembly = _as_assembly(design)
     names = _definition_names(assembly)
     by_definition = {}
     for instance in assembly.instances:
@@ -317,14 +256,21 @@ def _suppression_command_index(configured, name, commands, feature):
             external_names=external_names,
         )
         prefix_geometry = [
-            c for c in prefix_commands
-            if c["command"] != "parameters.add"
+            command
+            for command in prefix_commands
+            if command["command"] != "parameters.add"
         ]
-        if not prefix_geometry:
+        targets = [
+            command
+            for command in prefix_geometry
+            if command["command"].startswith(("solid.", "sheet."))
+        ]
+        if not targets:
             continue
-        target = prefix_geometry[-1]
+        target = targets[-1]
         matches.extend(
-            index for index, command in enumerate(commands)
+            index
+            for index, command in enumerate(commands)
             if _same_native_command(command, target)
         )
 
@@ -345,13 +291,16 @@ def _suppression_command_index(configured, name, commands, feature):
     return matches[0]
 
 
-def _configuration_commands(configured, name, commands):
-    """Bind native configuration targets and append table authoring."""
+def _configuration_commands(design, configuration, name, commands):
+    """Bind configuration targets and append native table authoring."""
     from .compiler import ModelError
 
     commands = [dict(command) for command in commands]
-    parameter_names = {c["params"]["name"] for c in commands
-                       if c["command"] == "parameters.add"}
+    parameter_names = {
+        command["params"]["name"]
+        for command in commands
+        if command["command"] == "parameters.add"
+    }
     params = []
     features = []
     keys = []
@@ -360,27 +309,30 @@ def _configuration_commands(configured, name, commands):
     def command(kind, **values):
         return {"command": kind, "params": values}
 
-    for number, column in enumerate(configured.columns, start=1):
+    for number, column in enumerate(configuration.columns, start=1):
         if isinstance(column, _ParameterColumn):
             if column.name not in parameter_names:
-                raise ModelError(f"unknown native configuration parameter: {column.name}")
+                raise ModelError(
+                    f"unknown native configuration parameter: {column.name}"
+                )
             params.append(column.name)
             keys.append(f"param:{column.name}")
             continue
+
         index = _suppression_command_index(
-            configured,
+            design,
             name,
             commands,
             column.feature,
         )
         if not commands[index]["command"].startswith(("solid.", "sheet.")):
-            raise ModelError("suppression source must end in one native solid or sheet feature")
+            raise ModelError(
+                "suppression source must end in one native solid or sheet feature"
+            )
         if index in bound_indexes:
             raise ModelError("duplicate native suppression feature")
         bound_indexes.add(index)
-        # The command API addresses configuration feature columns by the
-        # replay-returned native feature name. SolidCraft stores the resolved
-        # feature id in the saved configuration table; callers never supply it.
+
         feature_name = f"$config_name_{number}"
         bindings = dict(commands[index].get("bind", {}))
         bindings[feature_name] = "name"
@@ -405,7 +357,7 @@ def _configuration_commands(configured, name, commands):
         }
 
     row_refs = {}
-    first = configured.rows[0][0]
+    first = configuration.rows[0][0]
     if first != "Default":
         rename = command("config.row", name="Default", rename=first)
         variable = _row_variable(first)
@@ -413,7 +365,7 @@ def _configuration_commands(configured, name, commands):
         row_refs[first] = variable
         commands.append(rename)
 
-    for row_number, (row, cells) in enumerate(configured.rows, start=1):
+    for row, cells in configuration.rows:
         update = command(
             "config.row",
             name=row,
@@ -425,75 +377,8 @@ def _configuration_commands(configured, name, commands):
             row_refs[row] = variable
         commands.append(update)
 
-    configured_parameter_names = {
-        column.name for column in configured.columns
-        if isinstance(column, _ParameterColumn)
-    }
-    for rule in configured.rules:
-        target = rule.effect.parameter.name
-        if target not in parameter_names:
-            raise ModelError(
-                f"unknown native configuration rule parameter: {target}"
-            )
-        if target not in configured_parameter_names:
-            raise ModelError(
-                f"configuration rule target is not a configured parameter: {target}"
-            )
-        missing_dependencies = [
-            parameter.name
-            for parameter in parameters_in(rule.effect.expression)
-            if parameter.name not in parameter_names
-        ]
-        if missing_dependencies:
-            raise ModelError(
-                "unknown native configuration rule expression parameter: "
-                + ", ".join(sorted(set(missing_dependencies)))
-            )
-        commands.append(
-            command(
-                "config.rule",
-                rule={
-                    "id": rule.id,
-                    "name": rule.name,
-                    "enabled": rule.enabled,
-                    "condition": {"type": "always"},
-                    "effect": {
-                        "type": "drive_parameter",
-                        "parameter": target,
-                        "expression": _configuration_expression(
-                            rule.effect.expression
-                        ),
-                    },
-                },
-            )
-        )
-
     commands.append(
-        command("config.activate", row=row_refs[configured.active])
+        command("config.activate", row=row_refs[configuration.active])
     )
     commands.append(command("config.table"))
     return commands
-
-def _apply_configuration_document(configured, name, document):
-    """Append generic configuration intent to an already compiled design."""
-    from .replay import is_replay_document, replay_document
-
-    commands = _configuration_commands(
-        configured,
-        name,
-        document["commands"],
-    )
-    if is_replay_document(document):
-        result = dict(document)
-        result["commands"] = commands
-        return result
-
-    extras = {
-        key: value for key, value in document.items()
-        if key != "commands"
-    }
-    if any("bind" in command for command in commands):
-        result = replay_document(commands)
-        result.update(extras)
-        return result
-    return {"commands": commands, **extras}

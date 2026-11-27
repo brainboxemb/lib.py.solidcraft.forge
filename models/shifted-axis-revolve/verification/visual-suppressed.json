@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "state": {
+    "id": "suppressed",
+    "command": "suppressed.json"
+  },
+  "views": {
+    "front": {
+      "baseline_payload": "baselines/visual-suppressed-front.json"
+    }
+  },
+  "expected_views": [],
+  "render": {
+    "width": 720,
+    "height": 540
+  },
+  "regression": {
+    "width": 96,
+    "height": 72,
+    "changed_pixel_threshold": 12,
+    "max_mean_difference": 6,
+    "max_changed_fraction": 0.08
+  },
+  "baseline_provenance": {
+    "approval": "approved",
+    "source_commit": "83e2274e4fa530309352f81653d42c41088c3267",
+    "workflow_run": 45916016779,
+    "solidcraft_version": "0.49.0",
+    "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+  },
+  "expected_boxes": [],
+  "expected_features": []
+}

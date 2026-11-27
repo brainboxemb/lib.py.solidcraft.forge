@@ -41,8 +41,8 @@ implementations required for its qualification.
 - historical Forge source baseline:
   `brainboxemb/lib.py.solidcraft.forge.OLD@8ddcf7e6f58e8da12750d63a5d3604101c9c2824`;
 - public Python package/import: `scpf`;
-- CAD runtime: `docker.cad.solidcraft v0.3.6`;
-- tested SolidCraft: `0.49.0`.
+- CAD runtime: `docker.cad.solidcraft v0.3.8`;
+- tested SolidCraft: `0.50.0`.
 
 The OLD→NEW migration is complete. New product/API work belongs here; the
 archived historical repository is no longer an integration target.

@@ -120,9 +120,9 @@ class SolidCraftReferenceTests(unittest.TestCase):
         image, version = root_runtime_pin(ROOT)
         self.assertEqual(
             image,
-            "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+            "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
         )
-        self.assertEqual(version, "0.49.0")
+        self.assertEqual(version, "0.50.0")
         self.assertTrue(
             (
                 ROOT

@@ -3,14 +3,15 @@ purpose: [example, verification]
 section: configurations
 priority: 50
 title: Shifted-axis Revolve
-tagline: One stepped offset revolve cut remains one native suppressible feature
+tagline: One stepped offset revolve cut is one named native suppressible feature
 description: >
   A stepped radial profile is revolved 360 degrees around a Y-axis shifted to
-  a parameter-driven X/Z location, then applied as one cut to a panel. A native
-  configuration row suppresses that exact revolve feature as one unit.
+  a parameter-driven X/Z location and applied as one cut to a panel. The cut is
+  authored inside feature("panel_pin_pass_through") and the final native
+  configuration suppresses or restores that exact history feature.
 parameters: axis x=8 mm; axis z=3 mm; relief Ø4.5 mm; core Ø3.7 mm
 stages:
   - Author a parameter-driven XY profile on the axis Z plane
-  - Revolve around one typed AxisLine parallel to world Y
-  - Apply the complete stepped pass-through as one native cut feature
+  - Apply one shifted-axis revolve cut inside a named feature scope
+  - Keep Sketch/profile helpers outside the scoped history identity
   - Switch the saved configuration to suppress and restore that exact feature

@@ -1,4 +1,4 @@
-"""One shifted native revolve cut is one suppressible configuration feature."""
+"""One shifted native revolve cut is one named configuration feature."""
 
 
 class ShiftedAxisRevolve:
@@ -29,23 +29,23 @@ class ShiftedAxisRevolve:
                 plane="XY",
             )
 
-        pass_through = profile.revolve(
-            axis=AxisLine(
-                Axis.Y,
-                origin=(self.axis_x, 0, self.axis_z),
-            ),
-        )
-        body = panel - pass_through
+        with feature("panel_pin_pass_through") as pass_through:
+            model = panel - profile.revolve(
+                axis=AxisLine(
+                    Axis.Y,
+                    origin=(self.axis_x, 0, self.axis_z),
+                ),
+            )
 
-        return Configure(
-            body,
+        model.configure(
             active="Cut",
-            columns=(Suppress(pass_through),),
+            columns=(pass_through,),
             rows={
                 "Cut": (False,),
                 "Suppressed": (True,),
             },
         )
+        return model
 
 
 ShiftedAxisRevolve()

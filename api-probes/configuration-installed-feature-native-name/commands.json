@@ -1,0 +1,151 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "10",
+        "name": "tube_d",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "9.6",
+        "name": "free_bore",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "FlexibleClamp"
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          -8
+        ],
+        "body_name": "FlexibleClamp",
+        "diameter": "tube_d + 4 mm",
+        "height": 16,
+        "operation": "new"
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          -9
+        ],
+        "diameter": "free_bore",
+        "height": 18,
+        "operation": "cut",
+        "targets": [
+          "FlexibleClamp"
+        ]
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          4,
+          0,
+          0
+        ],
+        "height": 18,
+        "length": 8,
+        "operation": "cut",
+        "targets": [
+          "FlexibleClamp"
+        ],
+        "width": 1.5
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          -9
+        ],
+        "diameter": "tube_d",
+        "height": 18,
+        "operation": "cut",
+        "targets": [
+          "FlexibleClamp"
+        ]
+      }
+    },
+    {
+      "command": "timeline.rename",
+      "params": {
+        "feature": "Cylinder3",
+        "name": "Installed"
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "Installed"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Free"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Free",
+        "values": {
+          "suppress:Installed": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Installed",
+        "values": {
+          "suppress:Installed": "false"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Free"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ]
+}

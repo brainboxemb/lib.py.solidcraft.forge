@@ -1,0 +1,154 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "10",
+        "name": "tube_d",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "0.4",
+        "name": "clamp_interference",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "16",
+        "name": "height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "2",
+        "name": "wall",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          -8
+        ],
+        "body_name": "Clamp",
+        "diameter": "tube_d + 2 * wall",
+        "height": "height",
+        "operation": "new"
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          -9
+        ],
+        "diameter": "tube_d - clamp_interference",
+        "height": "height + 2 mm",
+        "operation": "cut",
+        "targets": [
+          "Clamp"
+        ]
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          4.5,
+          0,
+          0
+        ],
+        "height": "height + 2 mm",
+        "length": 9,
+        "operation": "cut",
+        "targets": [
+          "Clamp"
+        ],
+        "width": 1.5
+      }
+    },
+    {
+      "command": "solid.cylinder",
+      "params": {
+        "axis": "Z",
+        "base": [
+          0,
+          0,
+          -9
+        ],
+        "diameter": "tube_d",
+        "height": "height + 2 mm",
+        "operation": "cut",
+        "targets": [
+          "Clamp"
+        ]
+      }
+    },
+    {
+      "command": "timeline.rename",
+      "params": {
+        "feature": "Cylinder3",
+        "name": "Installed"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "Installed"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Free"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Free",
+        "values": {
+          "suppress:Installed": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Installed",
+        "values": {
+          "suppress:Installed": "false"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Free"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ]
+}
