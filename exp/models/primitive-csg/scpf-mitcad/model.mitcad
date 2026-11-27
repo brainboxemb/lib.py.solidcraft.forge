@@ -77,6 +77,13 @@
       "value": 30.0,
       "comment": "PrimitiveCsgIntersect3 height",
       "owner": "F4"
+    },
+    {
+      "name": "__forge_suppress_root",
+      "expression": "0",
+      "unit": "",
+      "value": 0.0,
+      "comment": ""
     }
   ],
   "components": [
@@ -141,6 +148,7 @@
     {
       "uid": "F4",
       "name": "PrimitiveCsgIntersect3",
+      "suppressed_when": "__forge_suppress_root > 0",
       "component": "C1",
       "type": "box",
       "plane": "xy",
@@ -159,5 +167,26 @@
       "uid": "F1.b0",
       "name": "Body1"
     }
-  ]
+  ],
+  "configurations": {
+    "closed": true,
+    "parameters": [
+      "__forge_suppress_root"
+    ],
+    "default": "Clipped",
+    "rows": [
+      {
+        "name": "Clipped",
+        "values": {
+          "__forge_suppress_root": "0"
+        }
+      },
+      {
+        "name": "Unclipped",
+        "values": {
+          "__forge_suppress_root": "1"
+        }
+      }
+    ]
+  }
 }
