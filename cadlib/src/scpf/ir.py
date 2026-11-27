@@ -5399,6 +5399,8 @@ def _pattern_authored_feature_ref(
         and design.kind in {"union", "difference", "intersection"}
     ):
         target_shape, tool_shape = design.data
+        while tool_shape.kind == "exported_feature":
+            tool_shape, _name = tool_shape.data
         if feature is tool_shape:
             return FeatureRefIR(path=path)
         target = root.target
