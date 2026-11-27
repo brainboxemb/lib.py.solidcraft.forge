@@ -537,9 +537,30 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(feature.definition, "definition_1")
         self.assertEqual(feature.name, "panel_pin")
 
+    def test_exported_shape_wrapper_uses_component_feature_identity(self):
+        block = ConfigurationIRBlock(name="panel")
+        exported = dict(block.definition.features)["panel_pin"]
+        configured = Configure(
+            block,
+            active="Installed",
+            columns=(Suppress(exported),),
+            rows={
+                "Installed": (False,),
+                "Removed": (True,),
+            },
+        )
+
+        model = normalize_model(configured)
+
+        feature = model.configuration.columns[0].feature
+        self.assertIsInstance(feature, ComponentFeatureRefIR)
+        self.assertEqual(feature.definition, "definition_1")
+        self.assertEqual(feature.name, "panel_pin")
+
     def test_raw_component_shape_suppression_uses_definition_feature_path(self):
         block = ConfigurationIRBlock(name="panel")
-        pin = dict(block.definition.features)["panel_pin"]
+        exported = dict(block.definition.features)["panel_pin"]
+        pin = exported.data[0]
         configured = Configure(
             block,
             active="Installed",
