@@ -5,5 +5,5 @@ library: true
 models: []
 api_probes:
   - configuration-installed-feature
-  - configuration-installed-feature-native-name
+  - configuration-installed-clamp
 tasks: [test]
