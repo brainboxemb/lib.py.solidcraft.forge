@@ -129,13 +129,41 @@ ProfileIR = CircleProfileIR | PolygonProfileIR
 
 
 @dataclass(frozen=True)
+class PlaneIR:
+    """Principal-orientation reference plane at a semantic XYZ origin."""
+
+    orientation: str
+    origin: tuple[Any, Any, Any] = (0, 0, 0)
+    source_kind: str = "plane"
+
+    def __post_init__(self):
+        if self.orientation not in {"XY", "XZ", "YZ"}:
+            raise ValueError("PlaneIR orientation must be XY, XZ or YZ")
+        if (
+            not isinstance(self.origin, tuple)
+            or len(self.origin) != 3
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.origin
+            )
+        ):
+            raise ValueError(
+                "PlaneIR origin must contain three finite CAD dimensions"
+            )
+
+
+@dataclass(frozen=True)
 class SketchIR:
     """Standalone 2D sketch geometry independent of downstream features."""
 
     name: str
-    plane: str
+    plane: PlaneIR
     profiles: tuple[ProfileIR, ...]
     source_kind: str = "sketch"
+
+    def __post_init__(self):
+        if not isinstance(self.plane, PlaneIR):
+            raise ValueError("SketchIR plane must be PlaneIR")
 
 
 @dataclass(frozen=True)
@@ -578,6 +606,55 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
     return None
 
 
+_PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
+_PLANE_AXES = {
+    "XY": {"X", "Y"},
+    "XZ": {"X", "Z"},
+    "YZ": {"Y", "Z"},
+}
+
+
+def _plane_ir(orientation: str, offset=None) -> PlaneIR | None:
+    """Normalize one principal standalone Sketch plane without native ids."""
+    if orientation not in _PLANE_NORMAL_INDEX:
+        return None
+    distance = 0 if offset is None else offset
+    origin = [0, 0, 0]
+    origin[_PLANE_NORMAL_INDEX[orientation]] = distance
+    try:
+        return PlaneIR(orientation=orientation, origin=tuple(origin))
+    except ValueError:
+        return None
+
+
+def _semantic_dimension_key(value):
+    """Identity key for authored CAD dimensions without evaluating symbols."""
+    parameters = parameters_in(value)
+    if not parameters:
+        return ("number", float(pv(value)))
+    expression = getattr(value, "expression", None)
+    if not isinstance(expression, str) or not expression:
+        return None
+    return (
+        "expression",
+        expression,
+        tuple(parameter.name for parameter in parameters),
+    )
+
+
+def _same_semantic_dimension(left, right) -> bool:
+    """Compare authored dimension intent, using values only when non-symbolic."""
+    if left is right:
+        return True
+    left_key = _semantic_dimension_key(left)
+    right_key = _semantic_dimension_key(right)
+    if left_key is None or right_key is None:
+        return False
+    if left_key[0] == right_key[0] == "number":
+        return abs(left_key[1] - right_key[1]) <= 1e-12
+    return left_key == right_key
+
+
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     """Normalize the qualified standalone Sketch + Extrude slices."""
     if shape.kind != "sketch_base_extrusion":
@@ -600,6 +677,9 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     if plane not in ("XY", "XZ", "YZ"):
         return None
     if origin is not None or plane_offset is not None or rotation is not None:
+        return None
+    plane_ir = _plane_ir(plane)
+    if plane_ir is None:
         return None
     if operations:
         return None
@@ -630,7 +710,7 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
         )
         sketch = SketchIR(
             name=sketch_name,
-            plane=plane,
+            plane=plane_ir,
             profiles=(polygon,),
         )
         region = RegionIR(outer=0)
@@ -664,7 +744,7 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
 
     sketch = SketchIR(
         name=sketch_name,
-        plane=plane,
+        plane=plane_ir,
         profiles=tuple(semantic_profiles),
     )
 
@@ -757,18 +837,18 @@ def _axis_line_ir(axis) -> AxisLineIR | None:
         return None
 
 
-def _axis_line_in_sketch_plane(axis: AxisLineIR, plane: str) -> bool:
-    axes = {
-        "XY": {"X", "Y"},
-        "XZ": {"X", "Z"},
-        "YZ": {"Y", "Z"},
-    }
-    normal_index = {"XY": 2, "XZ": 1, "YZ": 0}
-    if plane not in axes or axis.direction not in axes[plane]:
+def _axis_line_in_sketch_plane(axis: AxisLineIR, plane: PlaneIR) -> bool:
+    """Check semantic coplanarity for the bounded principal-plane slice."""
+    if (
+        not isinstance(plane, PlaneIR)
+        or axis.direction not in _PLANE_AXES[plane.orientation]
+    ):
         return False
-
-    normal = axis.origin[normal_index[plane]]
-    return not parameters_in(normal) and abs(pv(normal)) <= 1e-12
+    normal_index = _PLANE_NORMAL_INDEX[plane.orientation]
+    return _same_semantic_dimension(
+        axis.origin[normal_index],
+        plane.origin[normal_index],
+    )
 
 
 def _portable_revolve(
@@ -796,7 +876,10 @@ def _portable_revolve(
 
     if plane not in ("XY", "XZ", "YZ"):
         return None
-    if origin is not None or plane_offset is not None or rotation is not None:
+    if origin is not None or rotation is not None:
+        return None
+    plane_ir = _plane_ir(plane, plane_offset)
+    if plane_ir is None:
         return None
     if operations or direction is not None:
         return None
@@ -810,7 +893,7 @@ def _portable_revolve(
         return None
 
     axis_ir = _axis_line_ir(axis)
-    if axis_ir is None or not _axis_line_in_sketch_plane(axis_ir, plane):
+    if axis_ir is None or not _axis_line_in_sketch_plane(axis_ir, plane_ir):
         return None
 
     profile, profile_anchor, offset = profiles[0]
@@ -847,7 +930,7 @@ def _portable_revolve(
     )
     sketch = SketchIR(
         name=sketch_name,
-        plane=plane,
+        plane=plane_ir,
         profiles=(polygon,),
     )
     region = RegionIR(outer=0)
@@ -904,7 +987,8 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
         if (
             extrude is None
             or extrude.direction != "symmetric"
-            or extrude.sketch.plane != "XZ"
+            or extrude.sketch.plane.orientation != "XZ"
+            or extrude.sketch.plane.origin != (0, 0, 0)
             or len(extrude.sketch.profiles) != 1
             or not isinstance(extrude.sketch.profiles[0], PolygonProfileIR)
             or semantic_faces != ("front", "back")
