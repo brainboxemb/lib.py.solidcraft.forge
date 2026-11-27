@@ -204,16 +204,26 @@ Normal `dev` lane:
 - **#256 remains open but blocked only on #415** for deterministic headless
   capture of transient `exploded-views` presentation; do not implement a
   Forge-local timing/polling or substitute-geometry workaround;
-- **#73 is the active normal-lane investigation while #415 is blocked**:
-  reproduce the existing contour-flange recess document unchanged against
-  SolidCraft 0.49.0 / runtime v0.3.6 in both headless and live replay before
-  changing Forge behavior;
-- if #73 no longer reproduces on the current SolidCraft baseline, close it with
-  current evidence instead of preserving obsolete replay changes; if it still
-  reproduces, isolate replay chunk/checkpoint semantics, in-memory sheet-metal
-  state and face binding before choosing a fix;
-- do not move the downstream physical hole or introduce a model-local
-  workaround for #73;
+- **#73 investigation is complete on the Forge side**: PR #436 retained one
+  owner-local A/B diagnostic on permanent `dev` as
+  `72f19f177a89d2468de6f7058c17dffede172798`; exact-head PR CI
+  45977349093 is green;
+- #73 reproduces identically on SolidCraft 0.49.0 and 0.50.0: phased headless
+  replay passes, while fully resolved single-process CLI replay and live GUI
+  replay both reject the same broad-face cut as reaching bend `F2/l3`;
+- boundary minimization proves that save/reopen before the contour flange does
+  not help, while save/reopen immediately after `sheet.flange` makes the
+  unchanged cut succeed; `model.faces`, replay-variable binding and live
+  `edit.checkpoint` are therefore not the cause;
+- keep #73 open only as tracking for this external SolidCraft in-memory
+  sheet-state divergence; do not add a Forge save/reopen, `plane.fixed`,
+  physical-hole or other model-local workaround;
+- SolidCraft 0.50 adoption is separate runtime-baseline work: 0.50 does not fix
+  #73, but #73 by itself is not a reason to block an otherwise qualified 0.50
+  baseline;
+- with #73 isolated and #256 blocked on #415, do not invent another verification
+  issue merely to keep the normal lane busy; select further normal work from
+  existing consumer demand and the migrated backlog;
 - return to the remaining #256 exploded visual acceptance when #415 has a
   supported deterministic SolidCraft capture route;
 - keep normal verification work independent from experimental Mitcad/IR work.
