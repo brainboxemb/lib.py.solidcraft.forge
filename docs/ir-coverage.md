@@ -29,8 +29,8 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **8 / 20 (40%)**
-- partial: **12 / 20 (60%)**
+- complete: **9 / 20 (45%)**
+- partial: **11 / 20 (55%)**
 - legacy: **0 / 20 (0%)**
 - families with at least some typed IR: **20 / 20 (100%)**
 - physical SCPF owners on permanent `exp`: **61**
@@ -43,11 +43,11 @@ not effort or backend parity.
 
 | Semantic family | IR | SolidCraft typed | Mitcad | Native Mitcad | Main remaining gap |
 | --- | --- | --- | --- | --- | --- |
-| Values, parameters, scalar expressions | partial | partial | partial | qualified slices | Length/angle, #533 unitless count and #554 continuous ratio roles are typed; broader symbolic/cadmath dimensional expression semantics remain. |
+| Values, parameters, scalar expressions | partial | partial | partial | qualified slices | Length/angle, unitless count and #554 continuous ratio roles are typed; #560 applies count-vs-length roles to Sketch patterns; broader symbolic/cadmath dimensional expression semantics remain. |
 | Primitive solids: Box, Cylinder, Cone, Sphere | complete | yes | yes | qualified | Current public primitive meaning is typed. |
 | Placement and transforms | partial | partial | partial | qualified slices | #544 types within-component absolute/anchored FeaturePlacementIR and #555 types symbolic occurrence Placement plus fixed occurrence rotation; arbitrary primitive/body transform composition remains. |
 | Reference geometry: planes and axes | partial | partial | partial | qualified slices | PlaneIR plus principal/vector AxisLineIR are typed; broader datum/reference semantics remain. |
-| Sketch entities, constraints, dimensions | partial | partial | partial | qualified slices | #554 adds connected line/arc SketchChainIR for sheet paths/blanks; broader public Sketch operations/constraints still remain. |
+| Sketch entities, constraints, dimensions | complete | partial | partial | qualified slices | #560 completes current public Sketch entity/operation semantics by reusing #554 SketchChainIR and adding Text plus Sketch-local rectangular-pattern/mirror source identity; support/consumer composition is tracked separately. |
 | 2D profiles | complete | yes | partial | qualified slices | #534 covers public Circle/Polygon/Rectangle/RoundedRectangle/Slot closed-profile constructors; text/open connected geometry remains in the broader Sketch-entity family. |
 | Regions/profile membership | partial | partial | partial | qualified slices | General region composition. |
 | Extrude | partial | partial | partial | qualified slices | Attached/rotated/broader profile and operation forms. |
@@ -93,5 +93,7 @@ completes current public Sheet metal semantics through SheetRuleIR,
 SketchChainIR and typed sheet history. #555 then introduces AssemblyIR for
 reusable definitions, occurrences, placement/grouping, anchors and relationships.
 All 20 tracked semantic families now have typed IR and no family is fully
-legacy; the migration therefore switches entirely to partial -> complete
-closure while backend catch-up remains independent.
+legacy. #560 then completes the support-independent public Sketch entity and
+operation graph while reusing the same SketchChainIR. The migration therefore
+continues entirely as partial -> complete closure while backend catch-up remains
+independent.
