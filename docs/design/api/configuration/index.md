@@ -9,7 +9,7 @@ Backend-specific SolidCraft behavior is recorded in
 [SolidCraft configuration model](solidcraft.md). The current released public
 surface is reviewed in [Configuration API audit](audit.md). The concrete
 model-level Installed use case is recorded in
-[Global Installed configuration contract](state.md).
+[Global Installed configuration contract](installed.md).
 
 ## 1. Design principles
 
