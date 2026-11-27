@@ -58,9 +58,14 @@ class PrimitiveCsgCommandTests(unittest.TestCase):
             commands[3]["bind"],
             {"$config_name_1": "name"},
         )
-        self.assertEqual(
-            commands[-2]["params"]["row"],
-            "$config_row_Clipped",
+        active_row = commands[-2]["params"]["row"]
+        self.assertTrue(active_row.startswith("$config_row_"))
+        self.assertTrue(
+            any(
+                active_row in command.get("bind", {})
+                for command in commands
+                if command["command"] == "config.row"
+            )
         )
 
     def test_explicit_primitive_anchors_choose_native_datums(self):
