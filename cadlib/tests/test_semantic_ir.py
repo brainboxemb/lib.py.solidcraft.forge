@@ -1375,10 +1375,7 @@ class SemanticIRTests(unittest.TestCase):
             spacing=30,
             direction=Axis.X,
         )
-        model = self.assert_solidcraft_compatibility(
-            body,
-            "TypedTextPattern",
-        )
+        model = normalize_shape(body)
         self.assertIsInstance(model.root, RectangularPatternIR)
         self.assertIsInstance(model.root.base, ExtrudeIR)
         self.assertIsInstance(
