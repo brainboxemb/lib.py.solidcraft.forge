@@ -387,6 +387,19 @@ class ModelTests(unittest.TestCase):
                     model.verifications[2].implementations,
                     ("scpf",),
                 )
+            elif model_id in STATE_VISUAL_STAGES:
+                expected_stages = [
+                    "native",
+                    *STATE_VISUAL_STAGES[model_id],
+                ]
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    expected_stages,
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft"] * len(expected_stages),
+                )
             elif model_id in VISUAL_SCPF_ONLY_IDS:
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
