@@ -1,8 +1,7 @@
 schema: 1
-branch: docs/444-configuration-api-structure
-modules: []
+branch: issue/458-docs-architecture
+modules: [pages, release]
 library: true
 models: []
-api_probes:
-  - configuration-position-suppression
+api_probes: []
 tasks: [test]
