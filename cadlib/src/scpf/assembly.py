@@ -33,7 +33,6 @@ from .assembly_ir import (
     RelationshipIR,
     normalize_assembly,
 )
-from .backends.solidcraft import compile_ir_commands_with_dependencies
 from .replay import replay_document
 
 
@@ -654,6 +653,7 @@ def _semantic_corner_normal(anchor: Anchor):
 
 def _compile_assembly_ir_core_with_dependencies(model: AssemblyIR, name: str):
     """Lower core AssemblyIR without reading authoring ModelInstance state."""
+    from .backends.solidcraft import compile_ir_commands_with_dependencies
     if not isinstance(model, AssemblyIR):
         raise TypeError("SolidCraft assembly backend requires AssemblyIR")
     _validate_semantic_relationships(model)
