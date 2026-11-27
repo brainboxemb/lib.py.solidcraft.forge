@@ -33,9 +33,11 @@ from ..ir import (
     BoxIR,
     ChamferIR,
     CircleProfileIR,
+    ConfigurationIR,
     CylinderIR,
     ExtrudeIR,
     FaceBoundaryIR,
+    FeatureRefIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
@@ -44,6 +46,7 @@ from ..ir import (
     RegionIR,
     RevolveIR,
     SphereIR,
+    SuppressionColumnIR,
     _region_interior_point,
 )
 from ..replay import replay_document
@@ -630,6 +633,104 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
     raise TypeError(f"not a portable Forge IR node: {type(node).__name__}")
 
 
+def _configured_root_command_index(
+    configuration: ConfigurationIR,
+    commands: list[dict],
+) -> int:
+    """Resolve one semantic root feature to its native SolidCraft command."""
+    if (
+        len(configuration.columns) != 1
+        or not isinstance(configuration.columns[0], SuppressionColumnIR)
+        or configuration.columns[0].feature != FeatureRefIR(("root",))
+    ):
+        raise ModelError(
+            "portable SolidCraft configuration requires one root feature reference"
+        )
+
+    indexes = [
+        index
+        for index, command in enumerate(commands)
+        if command.get("command") == "solid.revolve"
+    ]
+    if len(indexes) != 1:
+        raise ModelError(
+            "portable SolidCraft configuration root must resolve to one Revolve feature"
+        )
+    return indexes[0]
+
+
+def _portable_configuration_commands(
+    configuration: ConfigurationIR,
+    commands: list[dict],
+) -> list[dict]:
+    """Lower semantic suppression rows without source-object/native-id lookup."""
+    from ..configurations import _row_variable
+
+    commands = [dict(command) for command in commands]
+    index = _configured_root_command_index(configuration, commands)
+
+    feature_name = "$config_name_1"
+    target = dict(commands[index])
+    bindings = dict(target.get("bind", {}))
+    bindings[feature_name] = "name"
+    target["bind"] = bindings
+    commands[index] = target
+
+    commands.append(
+        _command(
+            "config.configure",
+            features=[feature_name],
+        )
+    )
+
+    def row_binding(variable, row_name):
+        return {
+            variable: {
+                "field": "rows",
+                "where": {"name": row_name},
+                "select": "id",
+            }
+        }
+
+    row_refs = {}
+    first = configuration.rows[0].name
+    if first != "Default":
+        rename = _command(
+            "config.row",
+            name="Default",
+            rename=first,
+        )
+        variable = _row_variable(first)
+        rename["bind"] = row_binding(variable, first)
+        row_refs[first] = variable
+        commands.append(rename)
+
+    for row in configuration.rows:
+        update = _command(
+            "config.row",
+            name=row.name,
+            values={
+                f"suppress:{feature_name}": (
+                    "true" if row.cells[0] else "false"
+                ),
+            },
+        )
+        if row.name not in row_refs:
+            variable = _row_variable(row.name)
+            update["bind"] = row_binding(variable, row.name)
+            row_refs[row.name] = variable
+        commands.append(update)
+
+    commands.append(
+        _command(
+            "config.activate",
+            row=row_refs[configuration.active],
+        )
+    )
+    commands.append(_command("config.table"))
+    return commands
+
+
 def compile_ir_with_dependencies(model: ModelIR, name: str):
     """Lower one normalized Forge model to SolidCraft native intent."""
     if not isinstance(model, ModelIR):
@@ -644,6 +745,11 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
         )
 
     commands = _portable_commands(model, name)
+    if model.configuration is not None:
+        commands = _portable_configuration_commands(
+            model.configuration,
+            commands,
+        )
     plain = _plain_command_value(commands)
     document = (
         replay_document(plain)
