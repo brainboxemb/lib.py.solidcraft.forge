@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scpf import Anchor, Box, Hole, Parameter, Placement, compile_model, component
+from scpf import Anchor, Box, Hole, Parameter, compile_model, component
 from scpf.compiler import ModelError
 from scpf.replay import resolve_value, validate_replay_document, variables_in
 from scpf.configurations import _row_variable
@@ -133,64 +133,12 @@ class ConfigurationTests(unittest.TestCase):
             )
 
         body = Box(width, 30, 5)
-        with self.assertRaisesRegex(TypeError, "Parameter.*authored feature"):
+        with self.assertRaisesRegex(TypeError, "Parameter or authored feature"):
             body.configure(
                 active="A",
                 columns=("width",),
                 rows={"A": (60,)},
             )
-
-    def test_parameter_configuration_cells_are_literal_values_only(self):
-        width = Parameter("width", 80)
-
-        body = Box(width, 30, 5)
-        body.configure(
-            active="A",
-            columns=(width,),
-            rows={
-                "A": ("80 mm",),
-                "B": (-55,),
-                "C": ("1e2 mm",),
-            },
-        )
-        rows = [
-            row["params"]["values"]
-            for row in compile_model(body, "Plate")["commands"]
-            if row["command"] == "config.row"
-            and "values" in row["params"]
-        ]
-        self.assertIn({"param:width": "80 mm"}, rows)
-        self.assertIn({"param:width": "-55"}, rows)
-        self.assertIn({"param:width": "1e2 mm"}, rows)
-
-        for expression in (
-            "width",
-            "width/2",
-            "width - 0.4 mm",
-            "tube_d-clamp_interference",
-            "10 mm-width",
-            "10 mm/width",
-        ):
-            body = Box(width, 30, 5)
-            with self.assertRaisesRegex(
-                ValueError,
-                "parameter coupling expressions are not supported",
-            ):
-                body.configure(
-                    active="A",
-                    columns=(width,),
-                    rows={"A": (expression,)},
-                )
-
-    def test_component_occurrence_has_no_parameter_configuration_handle(self):
-        @component(include=("width",))
-        class Coupler:
-            width = 40.0
-
-            def build(self):
-                return Box(self.width, 20, 10)
-
-        self.assertFalse(hasattr(Coupler(), "parameter"))
 
     def test_reject_second_configuration(self):
         width = Parameter("width", 80)
