@@ -1431,6 +1431,34 @@ qualified non-symmetric Polygon slice and fails closed for newly typed forms. CS
 #581 `BooleanIR` composes standalone Revolve bodies; the historical typed cut
 path remains only where existing suppression/history qualification requires it.
 
+#593 audits the current public reference-geometry surface and finds no
+remaining semantic IR gap. Forge does not expose a generic native datum system.
+The public reference vocabulary is deliberately smaller:
+
+- Sketch reference planes are principal `XY`, `XZ` and `YZ` frames with
+  semantic world origin/offset coordinates where the consuming Sketch feature
+  permits them; `PlaneIR(orientation, origin)` owns that meaning.
+- Axis references are principal `Axis.X/Y/Z`, a fixed non-zero XYZ direction,
+  an optional shifted XYZ origin, or the reusable
+  `AxisLine(direction, origin)`; `AxisLineIR` owns that meaning.
+- Circular patterns accept the complete fixed-direction public axis vocabulary,
+  including arbitrary fixed XYZ vectors and symbolic shifted origins.
+- Revolve applies its own geometric validity rule: the principal or AxisLine
+  axis must lie in the authored Sketch plane. Coplanarity is consumer semantics,
+  not a second reference-geometry type.
+
+Native construction-axis, edge-axis, face-axis and topology-selected axis
+objects are explicitly not part of the current SCPF surface. Likewise, a fixed
+Sketch rotation is frame/transform intent rather than a new persistent datum
+identity. Those possible future APIs therefore do not keep Reference geometry
+partial today.
+
+Backend transport remains local. A backend may materialize a construction plane
+or other helper when lowering `PlaneIR`/`AxisLineIR`; the helper name or
+native id never becomes semantic IR. #593 consequently closes the family by
+reconciling the inventory and adding boundary evidence, not by introducing
+speculative DatumPlaneIR/ConstructionAxisIR nodes.
+
 #485 widens the existing `ChamferIR` rather than adding a second feature
 kind. `distance` remains the primary chamfer distance; optional `distance2`
 and `flip` carry the already-public two-distance semantics. Equal-distance
