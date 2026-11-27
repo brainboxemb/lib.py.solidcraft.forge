@@ -1731,9 +1731,14 @@ def _compile_assembly_with_dependencies(value, name):
     return _compile_assembly_ir_core_with_dependencies(model, name)
 
 
+def compile_assembly_ir_with_dependencies(model: AssemblyIR, name: str):
+    """Compile already-normalized core AssemblyIR through SolidCraft."""
+    return _compile_assembly_ir_core_with_dependencies(model, name)
+
+
 def compile_assembly_ir(model: AssemblyIR, name: str):
     """Compile already-normalized core AssemblyIR through SolidCraft."""
-    return _compile_assembly_ir_core_with_dependencies(model, name)[0]
+    return compile_assembly_ir_with_dependencies(model, name)[0]
 
 
 def compile_assembly(value, name):
