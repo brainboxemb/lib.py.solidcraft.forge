@@ -880,6 +880,76 @@ def _revolve_commands(
     ]
 
 
+def _private_suppression_parameter(model: ModelIR) -> str:
+    """Choose one backend-private driver outside semantic model parameters."""
+    taken = {parameter.name for parameter in model.parameters}
+    stem = "__forge_suppress_root"
+    if stem not in taken:
+        return stem
+    index = 2
+    while f"{stem}_{index}" in taken:
+        index += 1
+    return f"{stem}_{index}"
+
+
+def _mitcad_configuration_commands(
+    model: ModelIR,
+    configuration: ConfigurationIR,
+    *,
+    feature_binding: str,
+) -> list[dict]:
+    """Lower suppression-only semantic configuration to native Mitcad state."""
+    if (
+        len(configuration.columns) != 1
+        or not isinstance(configuration.columns[0], SuppressionColumnIR)
+        or configuration.columns[0].feature != FeatureRefIR(("root",))
+    ):
+        raise ModelError(
+            "Mitcad ConfigurationIR currently requires one root suppression column"
+        )
+    if any(len(row.cells) != 1 for row in configuration.rows):
+        raise ModelError(
+            "Mitcad ConfigurationIR currently requires one suppression cell per row"
+        )
+
+    driver = _private_suppression_parameter(model)
+    return [
+        {
+            "cmd": "add_parameter",
+            "name": driver,
+            "unit": "",
+            "expression": "0",
+        },
+        {
+            "cmd": "set_configurations",
+            "configurations": {
+                "options": [],
+                "closed": True,
+                "parameters": [driver],
+                "default": configuration.active,
+                "rows": [
+                    {
+                        "name": row.name,
+                        "values": {
+                            driver: "1" if row.cells[0] else "0",
+                        },
+                    }
+                    for row in configuration.rows
+                ],
+            },
+        },
+        {
+            "cmd": "suppress_feature",
+            "uid": {"ref": f"{feature_binding}.uid"},
+            "expression": f"{driver} > 0",
+        },
+        {
+            "cmd": "apply_configuration",
+            "name": configuration.active,
+        },
+    ]
+
+
 def _revolve_cut_document(
     model: ModelIR,
     node: RevolveIR,
@@ -899,14 +969,29 @@ def _revolve_cut_document(
         *_parameter_commands(model),
         _box_command(node.target, f"{name}Base"),
     ]
+    feature_binding = (
+        "configured_feature"
+        if model.configuration is not None
+        else None
+    )
+    replay_commands = _revolve_commands(
+        node,
+        name,
+        participant={"$mitcad_bind": "body"},
+        feature_binding=feature_binding,
+    )
+    if model.configuration is not None:
+        replay_commands.extend(
+            _mitcad_configuration_commands(
+                model,
+                model.configuration,
+                feature_binding=feature_binding,
+            )
+        )
     replay = [
         {
             "bind_single_body": "body",
-            "commands": _revolve_commands(
-                node,
-                name,
-                participant={"$mitcad_bind": "body"},
-            ),
+            "commands": replay_commands,
         }
     ]
     dependencies = _native_dependencies((commands, replay))
