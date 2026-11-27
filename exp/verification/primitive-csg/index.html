@@ -79,10 +79,9 @@ PASS results are not a support guarantee or production-readiness claim.</div><he
 </span></span><span class=line><span class=cl>        <span class=n>clip</span> <span class=o>=</span> <span class=n>Box</span><span class=p>(</span><span class=mi>50</span><span class=p>,</span> <span class=mi>50</span><span class=p>,</span> <span class=mi>30</span><span class=p>)</span><span class=o>.</span><span class=n>move</span><span class=p>(</span><span class=n>z</span><span class=o>=</span><span class=mi>15</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>        <span class=n>clipped</span> <span class=o>=</span> <span class=n>body</span> <span class=o>&amp;</span> <span class=n>clip</span>
 </span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>Configure</span><span class=p>(</span>
-</span></span><span class=line><span class=cl>            <span class=n>clipped</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>clipped</span><span class=o>.</span><span class=n>configure</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>            <span class=n>active</span><span class=o>=</span><span class=s2>&#34;Clipped&#34;</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>            <span class=n>columns</span><span class=o>=</span><span class=p>(</span><span class=n>Suppress</span><span class=p>(</span><span class=n>clip</span><span class=p>),),</span>
+</span></span><span class=line><span class=cl>            <span class=n>columns</span><span class=o>=</span><span class=p>(</span><span class=n>clip</span><span class=p>,),</span>
 </span></span><span class=line><span class=cl>            <span class=n>rows</span><span class=o>=</span><span class=p>{</span>
 </span></span><span class=line><span class=cl>                <span class=s2>&#34;Clipped&#34;</span><span class=p>:</span> <span class=p>(</span><span class=kc>False</span><span class=p>,),</span>
 </span></span><span class=line><span class=cl>                <span class=s2>&#34;Unclipped&#34;</span><span class=p>:</span> <span class=p>(</span><span class=kc>True</span><span class=p>,),</span>

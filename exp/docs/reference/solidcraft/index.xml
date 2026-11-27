@@ -89,4 +89,25 @@ immutable SolidCraft runtime. It is not a hand-authored Forge migration note.&lt
 &lt;/ul&gt;
 &lt;p&gt;Forge compatibility conclusions must be traceable to this captured registry,
 the exact runtime behavior, or separately recorded upstream source evidence.
+Do not replace this directory with a manually selected command subset.&lt;/p&gt;</description></item><item><title>SolidCraft 0.50.0 canonical reference snapshot</title><link>https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/docs/reference/solidcraft/0.50.0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://brainboxemb.github.io/lib.py.solidcraft.forge/exp/docs/reference/solidcraft/0.50.0/</guid><description>
+&lt;p&gt;This directory is generated from the command registry emitted by the qualified
+immutable SolidCraft runtime. It is not a hand-authored Forge migration note.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SolidCraft release: &lt;code&gt;v0.50.0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Upstream commit: &lt;code&gt;eeb366c2ff276987a15c043d63b9072b58274703&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Qualified runtime release: &lt;code&gt;v0.3.8&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Qualified runtime image: &lt;code&gt;ghcr.io/brainboxemb/cad-solidcraft:v0.3.8&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Captured CLI version: &lt;code&gt;solidcraft-cli 0.50.0&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Registered commands: &lt;code&gt;930&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 data-hextra-search-id="canonical-evidence"&gt;Canonical evidence&lt;span class="hx:absolute hx:-mt-20" id="canonical-evidence"&gt;&lt;/span&gt;
+&lt;a href="#canonical-evidence" class="subheading-anchor" aria-label="Permalink for this section"&gt;&lt;/a&gt;&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;commands.json&lt;/code&gt; is the exact normalized JSON registry captured from
+&lt;code&gt;solidcraft-cli commands&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;commands.md&lt;/code&gt; is generated from &lt;code&gt;commands.json&lt;/code&gt; for human review.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;describe/*.json&lt;/code&gt;, when present, are exact targeted read-only
+&lt;code&gt;engine.describe&lt;/code&gt; results captured from the same immutable runtime.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Forge compatibility conclusions must be traceable to this captured registry,
+the exact runtime behavior, or separately recorded upstream source evidence.
 Do not replace this directory with a manually selected command subset.&lt;/p&gt;</description></item></channel></rss>

@@ -58,22 +58,22 @@ PASS results are not a support guarantee or production-readiness claim.</div><he
 </span></span><span class=line><span class=cl>            <span class=n>cadmath</span><span class=o>.</span><span class=n>floor</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>size</span> <span class=o>/</span> <span class=bp>self</span><span class=o>.</span><span class=n>pitch</span><span class=p>)</span> <span class=o>*</span> <span class=bp>self</span><span class=o>.</span><span class=n>step</span>
 </span></span><span class=line><span class=cl>            <span class=o>+</span> <span class=n>cadmath</span><span class=o>.</span><span class=n>max</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>wall</span><span class=p>,</span> <span class=n>cadmath</span><span class=o>.</span><span class=n>abs</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>bias</span><span class=p>))</span>
 </span></span><span class=line><span class=cl>        <span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=n>body</span> <span class=o>=</span> <span class=n>Box</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=n>model</span> <span class=o>=</span> <span class=n>Box</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>            <span class=n>span</span><span class=p>,</span>
 </span></span><span class=line><span class=cl>            <span class=n>grid_span</span><span class=p>,</span>
 </span></span><span class=line><span class=cl>            <span class=n>height</span><span class=p>,</span>
 </span></span><span class=line><span class=cl>            <span class=n>anchor</span><span class=o>=</span><span class=n>Anchor</span><span class=o>.</span><span class=n>BOTTOM</span><span class=p>,</span>
 </span></span><span class=line><span class=cl>        <span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>Configure</span><span class=p>(</span>
-</span></span><span class=line><span class=cl>            <span class=n>body</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>model</span><span class=o>.</span><span class=n>configure</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>            <span class=n>active</span><span class=o>=</span><span class=s2>&#34;Medium&#34;</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>            <span class=n>columns</span><span class=o>=</span><span class=p>(</span><span class=n>Param</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>size</span><span class=p>),),</span>
+</span></span><span class=line><span class=cl>            <span class=n>columns</span><span class=o>=</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>size</span><span class=p>,),</span>
 </span></span><span class=line><span class=cl>            <span class=n>rows</span><span class=o>=</span><span class=p>{</span>
 </span></span><span class=line><span class=cl>                <span class=s2>&#34;Small&#34;</span><span class=p>:</span> <span class=p>(</span><span class=s2>&#34;60 mm&#34;</span><span class=p>,),</span>
 </span></span><span class=line><span class=cl>                <span class=s2>&#34;Medium&#34;</span><span class=p>:</span> <span class=p>(</span><span class=s2>&#34;70 mm&#34;</span><span class=p>,),</span>
 </span></span><span class=line><span class=cl>                <span class=s2>&#34;Large&#34;</span><span class=p>:</span> <span class=p>(</span><span class=s2>&#34;100 mm&#34;</span><span class=p>,),</span>
 </span></span><span class=line><span class=cl>            <span class=p>},</span>
 </span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>model</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=n>ConfigurationSymbolicMath</span><span class=p>()</span>

@@ -215,6 +215,26 @@
     },
     {
       "kind": "callable",
+      "name": "feature",
+      "summary": "Author and name exactly one suppressible CAD history feature.",
+      "reference": "reference/feature/",
+      "use_when": "One real CAD history operation needs stable Forge identity, optional initial suppression, or direct configuration targeting without exposing a backend history id.",
+      "limits": "The scope must produce exactly one terminal Shape and exactly one CAD history operation. Helper Sketch/profile construction belongs outside the scope; feature scopes cannot nest.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Public Forge feature identity. In a reusable component this becomes definition-level identity for occurrence.feature(name)."
+        },
+        {
+          "name": "suppressed",
+          "description": "Initial history state. True suppresses the authored native feature; False leaves it active."
+        }
+      ],
+      "example": "with feature(\"panel_pin\", suppressed=True):\\n    body = body - Hole(d=5).at(0, 0, 12)",
+      "signature": "feature(name, *, suppressed=False)"
+    },
+    {
+      "kind": "callable",
       "name": "component",
       "summary": "Declare one reusable physical component definition.",
       "guide": "guide/assembly-basics/#simple-component",
@@ -275,18 +295,18 @@
     {
       "kind": "callable",
       "name": "Occurrence.feature",
-      "summary": "Reference one feature explicitly exported by the reusable component definition.",
+      "summary": "Reference one named feature exported by the reusable component definition.",
       "guide": "guide/geometry/#configuration-tables",
       "reference": "reference/Occurrence.feature/",
-      "use_when": "Pass a child-owned authored feature to parent/root Suppress(...) while keeping native history identity internal.",
-      "limits": "The reference is definition-level, not occurrence-level. Every occurrence reusing the same component definition resolves the same exported feature; missing exports fail explicitly.",
+      "use_when": "Use one child-owned feature as a final model.configure(...) suppression column while keeping native history identity internal.",
+      "limits": "The reference is definition-level, not occurrence-level. Every occurrence reusing the same component definition resolves the same named feature; missing names fail explicitly.",
       "parameters": [
         {
           "name": "name",
-          "description": "Component-local Forge export name declared with Shape.export_feature(...)."
+          "description": "Component-local Forge feature identity declared with feature(...) or the lower-level Shape.export_feature(...)."
         }
       ],
-      "example": "Suppress(coupler.feature(\"panel_pin\"))",
+      "example": "coupler.feature(\"panel_pin\")",
       "signature": "Occurrence.feature(self, name)"
     },
     {
@@ -1250,11 +1270,11 @@
     {
       "kind": "callable",
       "name": "Shape.export_feature",
-      "summary": "Export one exact Forge-authored feature through a reusable component definition.",
+      "summary": "Export one already-authored Forge feature through a reusable component definition.",
       "guide": "guide/geometry/#configuration-tables",
       "reference": "reference/Shape.export_feature/",
-      "use_when": "A parent configuration must suppress a feature authored inside a reusable child without exposing SolidCraft history ids.",
-      "limits": "The name is component-local Forge identity. Export an already-authored suppressible feature that is part of the final child Shape; this does not make whole-component presence a feature-suppression operation.",
+      "use_when": "Compatibility/lower-level path for an existing feature Shape that must be addressable by a parent configuration.",
+      "limits": "The name is component-local Forge identity. Prefer feature(name, suppressed=...) when authoring a new named history operation or an explicit initial suppression state.",
       "parameters": [
         {
           "name": "name",
@@ -2524,133 +2544,6 @@
       ],
       "example": "body = Box(40, 30, 10).with_appearance(\"#FFD21A\")",
       "signature": "Shape.with_appearance(self, color)"
-    },
-    {
-      "kind": "function",
-      "name": "Configure",
-      "summary": "Author a native editable configuration table on the final design.",
-      "guide": "guide/geometry/",
-      "reference": "reference/Configure/",
-      "use_when": "Define editable native configuration rows rather than Python-only variants.",
-      "limits": "Rows modify native configuration columns only; Configure does not branch or rebuild Python model structure per row.",
-      "parameters": [
-        {
-          "name": "design",
-          "description": "Final Shape, component occurrence or Assembly."
-        },
-        {
-          "name": "active",
-          "description": "Name of initially active row."
-        },
-        {
-          "name": "columns",
-          "description": "Ordered Param and Suppress columns."
-        },
-        {
-          "name": "rows",
-          "description": "Ordered mapping of row names to cell sequences."
-        },
-        {
-          "name": "rules",
-          "description": "Optional ordered ConfigRule entries, independent from row activation."
-        }
-      ],
-      "example": "Configure(design, active='Medium', columns=(Param(self.width),), rows={'Medium': ('80 mm',)}, rules=(ConfigRule('installed', 'Installed', condition=Always(), effect=DriveParameter(self.fit, self.tube_d)),))"
-    },
-    {
-      "kind": "function",
-      "name": "ConfigRule",
-      "summary": "Author one typed native configuration rule with independent enabled state.",
-      "guide": "guide/geometry/",
-      "reference": "reference/ConfigRule/",
-      "use_when": "A physical state such as Installed must remain independent from an existing size-row axis.",
-      "limits": "The initial Forge rule slice accepts Always() with DriveParameter(...). Rule enabled state is native SolidCraft state, not a model boolean.",
-      "parameters": [
-        {
-          "name": "rule_id",
-          "description": "Stable rule id, 1..64 non-space characters."
-        },
-        {
-          "name": "name",
-          "description": "Display name for the native rule."
-        },
-        {
-          "name": "enabled",
-          "description": "Initial native rule checkbox state."
-        },
-        {
-          "name": "condition",
-          "description": "Typed condition; initially Always()."
-        },
-        {
-          "name": "effect",
-          "description": "Typed effect; initially DriveParameter(...)."
-        }
-      ],
-      "example": "ConfigRule('installed', 'Installed', enabled=True, condition=Always(), effect=DriveParameter(self.fit, self.tube_d))"
-    },
-    {
-      "kind": "function",
-      "name": "Always",
-      "summary": "Match every configuration activation for a native configuration rule.",
-      "guide": "guide/geometry/",
-      "reference": "reference/Always/",
-      "use_when": "An independently enabled rule should apply regardless of the active configuration row.",
-      "limits": "This is the initial qualified condition form for ConfigRule.",
-      "parameters": [],
-      "example": "Always()"
-    },
-    {
-      "kind": "function",
-      "name": "DriveParameter",
-      "summary": "Drive one configured parameter from a native expression while a rule is enabled.",
-      "guide": "guide/geometry/",
-      "reference": "reference/DriveParameter/",
-      "use_when": "An independent rule must override a Param column while preserving the row's stored base expression.",
-      "limits": "The target must also be an explicit Param(...) column of the same Configure table.",
-      "parameters": [
-        {
-          "name": "parameter",
-          "description": "Configured Parameter, Param column, or native parameter name."
-        },
-        {
-          "name": "expression",
-          "description": "Finite number, expression string, Parameter or Expression."
-        }
-      ],
-      "example": "DriveParameter(self.fit_diameter, self.tube_d)"
-    },
-    {
-      "kind": "function",
-      "name": "Param",
-      "summary": "Select an existing native model parameter for a configuration column.",
-      "guide": "guide/geometry/",
-      "reference": "reference/Param/",
-      "use_when": "Prefer Param(self.parameter) inside build() so configuration intent follows the actual symbolic model parameter; a parameter name string remains accepted when a direct object is unavailable.",
-      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
-      "parameters": [
-        {
-          "name": "name",
-          "description": "Native parameter name or Parameter object."
-        }
-      ],
-      "example": "Param(self.width)"
-    },
-    {
-      "kind": "function",
-      "name": "Suppress",
-      "summary": "Select one exact Forge-authored feature for native suppression.",
-      "guide": "guide/geometry/",
-      "reference": "reference/Suppress/",
-      "use_when": "Define editable native configuration rows for a directly applied Shape or for an explicitly exported feature inside a reusable child definition.",
-      "limits": "Direct features use their exact Forge Shape object. Reusable-child features must first be exported with Shape.export_feature(name) and referenced through Occurrence.feature(name). Callers never supply SolidCraft history ids.",
-      "parameters": [
-        {
-          "name": "feature",
-          "description": "Exact applied feature Shape or definition-level component feature reference."
-        }
-      ],
-      "example": "Suppress(hole)  # or Suppress(coupler.feature(\"panel_pin\"))"
     }
   ]
 }

@@ -58,16 +58,17 @@ PASS results are not a support guarantee or production-readiness claim.</div><he
 </span></span><span class=line><span class=cl>            <span class=n>name</span><span class=o>=</span><span class=s2>&#34;front_plate&#34;</span><span class=p>,</span>
 </span></span><span class=line><span class=cl>            <span class=n>placement</span><span class=o>=</span><span class=n>Placement</span><span class=p>(</span><span class=n>y</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>plate_y</span><span class=p>,</span> <span class=n>z</span><span class=o>=</span><span class=bp>self</span><span class=o>.</span><span class=n>plate_z</span><span class=p>),</span>
 </span></span><span class=line><span class=cl>        <span class=p>)</span>
-</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>Configure</span><span class=p>(</span>
-</span></span><span class=line><span class=cl>            <span class=n>screen</span> <span class=o>+</span> <span class=n>front_plate</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=n>model</span> <span class=o>=</span> <span class=n>screen</span> <span class=o>+</span> <span class=n>front_plate</span>
+</span></span><span class=line><span class=cl>        <span class=n>model</span><span class=o>.</span><span class=n>configure</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>            <span class=n>active</span><span class=o>=</span><span class=s2>&#34;Front&#34;</span><span class=p>,</span>
-</span></span><span class=line><span class=cl>            <span class=n>columns</span><span class=o>=</span><span class=p>(</span><span class=n>Param</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>plate_y</span><span class=p>),</span> <span class=n>Param</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>plate_z</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>            <span class=n>columns</span><span class=o>=</span><span class=p>(</span><span class=bp>self</span><span class=o>.</span><span class=n>plate_y</span><span class=p>,</span> <span class=bp>self</span><span class=o>.</span><span class=n>plate_z</span><span class=p>),</span>
 </span></span><span class=line><span class=cl>            <span class=n>rows</span><span class=o>=</span><span class=p>{</span>
 </span></span><span class=line><span class=cl>                <span class=s2>&#34;Front&#34;</span><span class=p>:</span> <span class=p>(</span><span class=s2>&#34;8 mm&#34;</span><span class=p>,</span> <span class=s2>&#34;0 mm&#34;</span><span class=p>),</span>
 </span></span><span class=line><span class=cl>                <span class=s2>&#34;Below&#34;</span><span class=p>:</span> <span class=p>(</span><span class=s2>&#34;0 mm&#34;</span><span class=p>,</span> <span class=s2>&#34;-55 mm&#34;</span><span class=p>),</span>
 </span></span><span class=line><span class=cl>                <span class=s2>&#34;Service&#34;</span><span class=p>:</span> <span class=p>(</span><span class=s2>&#34;25 mm&#34;</span><span class=p>,</span> <span class=s2>&#34;0 mm&#34;</span><span class=p>),</span>
 </span></span><span class=line><span class=cl>            <span class=p>},</span>
 </span></span><span class=line><span class=cl>        <span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>model</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=n>ConfigurationPosition</span><span class=p>()</span>
