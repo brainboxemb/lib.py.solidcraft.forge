@@ -10,10 +10,12 @@ from math import isfinite
 
 from ..compiler import ModelError, _require_positive
 from ..core import (
+    Parameter,
     Shape,
     _DirectionSelector,
     _box_corner_from_anchor,
     _native_dependencies,
+    _native_expression,
     _plain_command_value,
     _pv as pv,
     _sphere_center_from_anchor,
@@ -70,7 +72,11 @@ def _parameter_commands(model: ModelIR) -> list[dict]:
             "name": parameter.name,
             "unit": parameter.unit,
         }
-        if parameter.unit == "deg":
+        if len(parameter.roles) > 1:
+            # One Forge source parameter may feed multiple physical roles.
+            # Keep one editable native Number and add units at typed use sites.
+            command["expression"] = number_text(parameter.value)
+        elif parameter.unit == "deg":
             # Mitcad JSON numbers in angular slots are radians even when the
             # display unit is degrees. A unit-bearing expression preserves
             # Forge's authored degree value and remains a native parameter.
@@ -81,6 +87,43 @@ def _parameter_commands(model: ModelIR) -> list[dict]:
             command["value"] = parameter.value
         commands.append(command)
     return commands
+
+
+def _role_command_value(model: ModelIR | None, value, role: str):
+    """Spell one typed use of a mixed-role source parameter."""
+    if role not in {"length", "angle"}:
+        raise ModelError(f"unsupported Forge parameter role {role!r}")
+    if model is None:
+        return command_value(value)
+
+    mixed_names = {
+        parameter.name
+        for parameter in model.parameters
+        if len(parameter.roles) > 1
+    }
+    used_mixed = [
+        parameter
+        for parameter in parameters_in(value)
+        if parameter.name in mixed_names
+    ]
+    if not used_mixed:
+        return command_value(value)
+
+    if (
+        len(used_mixed) == 1
+        and isinstance(value, Parameter)
+        and value.name == used_mixed[0].name
+    ):
+        unit = "mm" if role == "length" else "deg"
+        return _native_expression(
+            f"{value.name} * 1 {unit}",
+            (value.name,),
+        )
+
+    raise ModelError(
+        "mixed-role Forge parameters inside symbolic expressions are "
+        "outside the qualified IR slice"
+    )
 
 
 def _require_origin_plane(value, *, label):
@@ -653,7 +696,10 @@ def _same_semantic_value(left, right) -> bool:
     return str(command_value(left)) == str(command_value(right))
 
 
-def _sketch_relations_transport(relations: SketchRelationsIR):
+def _sketch_relations_transport(
+    relations: SketchRelationsIR,
+    model: ModelIR | None = None,
+):
     """Lower explicit semantic Sketch relations to Mitcad-native solver data."""
     if not isinstance(relations, SketchRelationsIR):
         raise ModelError("Mitcad Sketch relations require SketchRelationsIR")
@@ -729,7 +775,7 @@ def _sketch_relations_transport(relations: SketchRelationsIR):
             "id": f"k{first_dimension + offset}",
             "type": "length",
             "line": curve_ids[dimension.line],
-            "value": command_value(dimension.value),
+            "value": _role_command_value(model, dimension.value, "length"),
         }
         for offset, dimension in enumerate(relations.dimensions)
     ]
@@ -747,7 +793,7 @@ def _sketch_relations_transport(relations: SketchRelationsIR):
                 "a": "p1",
                 "b": point_ids[dimension.point],
                 "signed": True,
-                "value": command_value(dimension.value),
+                "value": _role_command_value(model, dimension.value, "length"),
             }
         )
 
@@ -926,6 +972,7 @@ def _mitcad_revolve_axis(
 
 
 def _revolve_commands(
+    model: ModelIR,
     node: RevolveIR,
     name: str,
     *,
@@ -981,7 +1028,8 @@ def _revolve_commands(
     )
     if sketch.relations is not None:
         entities, constraints, dimensions = _sketch_relations_transport(
-            sketch.relations
+            sketch.relations,
+            model=model,
         )
     elif parameterized:
         raise ModelError(
@@ -1019,7 +1067,10 @@ def _revolve_commands(
     )
 
     if parameters_in(node.angle):
-        extent = {"type": "angle", "angle": command_value(node.angle)}
+        extent = {
+            "type": "angle",
+            "angle": _role_command_value(model, node.angle, "angle"),
+        }
     elif abs(sweep - 360.0) <= 1e-12:
         extent = {"type": "full"}
     else:
@@ -1156,6 +1207,7 @@ def _revolve_cut_document(
         else None
     )
     replay_commands = _revolve_commands(
+        model,
         node,
         name,
         participant={"$mitcad_bind": "body"},
@@ -1300,7 +1352,7 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
     elif isinstance(node, ExtrudeIR):
         geometry_commands = _extrude_commands(node, name)
     elif isinstance(node, RevolveIR):
-        geometry_commands = _revolve_commands(node, name)
+        geometry_commands = _revolve_commands(model, node, name)
     elif isinstance(node, BooleanIR):
         geometry_commands = _boolean_commands(node, name)
         if model.configuration is not None:

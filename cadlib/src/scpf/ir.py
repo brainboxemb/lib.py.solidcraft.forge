@@ -17,6 +17,7 @@ from typing import Any
 from .core import (
     Anchor,
     Faces,
+    Parameter,
     Shape,
     _FaceBoundarySelection,
     _dim_add,
@@ -27,11 +28,34 @@ from .core import (
 
 @dataclass(frozen=True)
 class ParameterIR:
-    """One named editable Forge CAD parameter."""
+    """One named editable Forge parameter with semantic use roles."""
 
     name: str
     value: float
-    unit: str = "mm"
+    roles: tuple[str, ...] = ("length",)
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.roles, tuple)
+            or not self.roles
+            or any(role not in {"length", "angle"} for role in self.roles)
+            or len(set(self.roles)) != len(self.roles)
+            or self.roles != tuple(
+                role for role in ("length", "angle") if role in self.roles
+            )
+        ):
+            raise ValueError(
+                "ParameterIR roles must be canonical length/angle roles"
+            )
+
+    @property
+    def unit(self) -> str:
+        """Compatibility view for native single-role parameter spelling."""
+        if self.roles == ("length",):
+            return "mm"
+        if self.roles == ("angle",):
+            return "deg"
+        return ""
 
 
 @dataclass(frozen=True)
@@ -919,15 +943,55 @@ def _angle_parameter_names(value, found=None):
     return found
 
 
+def _length_parameter_names(value, found=None):
+    """Collect parameters used in the currently-qualified length-valued slots."""
+    if found is None:
+        found = set()
+
+    if isinstance(value, Shape):
+        if value.kind == "sketch_base_revolve":
+            # The Revolve sweep is the only currently-qualified angle-valued
+            # Shape payload. Every other symbolic value in this payload retains
+            # the pre-existing CAD-length interpretation.
+            for index, item in enumerate(value.data):
+                if index != 5:
+                    _length_parameter_names(item, found)
+            return found
+        _length_parameter_names(value.data, found)
+        return found
+
+    if isinstance(value, dict):
+        for item in value.values():
+            _length_parameter_names(item, found)
+        return found
+
+    if isinstance(value, (tuple, list)):
+        for item in value:
+            _length_parameter_names(item, found)
+        return found
+
+    found.update(parameter.name for parameter in parameters_in(value))
+    return found
+
+
 def _parameter_ir(shape: Shape) -> tuple[ParameterIR, ...]:
+    values = _collect_parameters(shape)
+    length_parameters = _length_parameter_names(shape)
     angle_parameters = _angle_parameter_names(shape)
     return tuple(
         ParameterIR(
             name,
             value,
-            unit="deg" if name in angle_parameters else "mm",
+            roles=tuple(
+                role
+                for role, names in (
+                    ("length", length_parameters),
+                    ("angle", angle_parameters),
+                )
+                if name in names
+            ),
         )
-        for name, value in _collect_parameters(shape).items()
+        for name, value in values.items()
     )
 
 
@@ -1442,8 +1506,30 @@ def _portable_revolve(
         for value in point
         for parameter in parameters_in(value)
     }
-    if angle_parameters & coordinate_parameters:
-        return None
+    mixed_parameters = angle_parameters & coordinate_parameters
+    if mixed_parameters:
+        # #469 deliberately qualifies only one direct source Parameter reused
+        # across typed length and angle slots. Expression-tree dimensional
+        # typing remains a later compiler checkpoint.
+        if len(mixed_parameters) != 1:
+            return None
+        mixed_name = next(iter(mixed_parameters))
+        if not isinstance(angle, Parameter) or angle.name != mixed_name:
+            return None
+        mixed_coordinate_uses = [
+            value
+            for point in points
+            for value in point
+            if any(
+                parameter.name == mixed_name
+                for parameter in parameters_in(value)
+            )
+        ]
+        if any(
+            not isinstance(value, Parameter) or value.name != mixed_name
+            for value in mixed_coordinate_uses
+        ):
+            return None
 
     polygon = PolygonProfileIR(
         points=tuple(tuple(point) for point in points),

@@ -39,6 +39,7 @@ from scpf.ir import (
     SuppressionColumnIR,
     LegacyShapeIR,
     ModelIR,
+    ParameterIR,
     PlacementIR,
     PlaneIR,
     PolygonProfileIR,
@@ -910,11 +911,14 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(model.root.region, RegionIR(outer=0))
         self.assertIsInstance(model.root.sketch.profiles[0], PolygonProfileIR)
         self.assertEqual(
-            [(parameter.name, parameter.unit) for parameter in model.parameters],
             [
-                ("radius", "mm"),
-                ("length", "mm"),
-                ("sweep", "deg"),
+                (parameter.name, parameter.roles, parameter.unit)
+                for parameter in model.parameters
+            ],
+            [
+                ("radius", ("length",), "mm"),
+                ("length", ("length",), "mm"),
+                ("sweep", ("angle",), "deg"),
             ],
         )
 
@@ -1558,7 +1562,7 @@ class SemanticIRTests(unittest.TestCase):
             "revolve",
         )
 
-    def test_mixed_role_revolve_parameter_remains_legacy(self):
+    def test_mixed_role_revolve_parameter_is_typed_by_use_site(self):
         shared = Parameter("shared", 4)
         with Sketch(name="MixedRole", plane="XZ") as sketch:
             Polygon2D(
@@ -1566,9 +1570,89 @@ class SemanticIRTests(unittest.TestCase):
                 plane="XZ",
             )
         model = normalize_shape(sketch.revolve(axis=Axis.X, angle=shared))
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR(
+                    "shared",
+                    4,
+                    roles=("length", "angle"),
+                ),
+            ),
+        )
+        self.assertEqual(model.parameters[0].unit, "")
+
+        solidcraft = compile_solidcraft_ir(model, "MixedRoleRevolve")
+        parameter = solidcraft["commands"][0]["params"]
+        self.assertEqual(
+            parameter,
+            {
+                "name": "shared",
+                "expression": "4",
+                "unit": "",
+            },
+        )
+        line = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "sketch.line"
+        )
+        self.assertEqual(
+            line["params"]["points"],
+            [
+                [0, 0],
+                [0, "shared * 1 mm"],
+                [10, "shared * 1 mm"],
+                [10, 0],
+            ],
+        )
+        revolve = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "solid.revolve"
+        )
+        self.assertEqual(revolve["params"]["angle"], "shared * 1 deg")
+
+        mitcad = compile_mitcad_ir(model, "MixedRoleRevolve")
+        self.assertEqual(
+            mitcad["commands"][0],
+            {
+                "cmd": "add_parameter",
+                "name": "shared",
+                "unit": "",
+                "expression": "4",
+            },
+        )
+        sketch_def = mitcad["commands"][-2]["def"]
+        self.assertIn(
+            "shared * 1 mm",
+            [dimension["value"] for dimension in sketch_def["dimensions"]],
+        )
+        self.assertEqual(
+            mitcad["commands"][-1]["def"]["extent"],
+            {
+                "type": "angle",
+                "angle": "shared * 1 deg",
+            },
+        )
+
+    def test_mixed_role_parameter_inside_expression_remains_legacy(self):
+        shared = Parameter("shared_expression", 4)
+        with Sketch(name="MixedRoleExpression", plane="XZ") as sketch:
+            Polygon2D(
+                [
+                    (0, 0),
+                    (0, shared + 1),
+                    (10, shared + 1),
+                    (10, 0),
+                ],
+                plane="XZ",
+            )
+        model = normalize_shape(sketch.revolve(axis=Axis.X, angle=shared))
         self.assertIsInstance(model.root, LegacyShapeIR)
         with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "UnsupportedRevolve")
+            compile_mitcad_ir(model, "UnsupportedMixedExpression")
 
     def test_unmigrated_surface_is_explicit_legacy_ir_only_for_solidcraft(self):
         shape = Cone(d=10, h=20)

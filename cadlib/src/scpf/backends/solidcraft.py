@@ -87,6 +87,41 @@ def _parameter_commands(model: ModelIR) -> list[dict]:
     ]
 
 
+def _role_command_value(model: ModelIR, value, role: str):
+    """Spell one typed use of a mixed-role source parameter."""
+    if role not in {"length", "angle"}:
+        raise ModelError(f"unsupported Forge parameter role {role!r}")
+
+    mixed_names = {
+        parameter.name
+        for parameter in model.parameters
+        if len(parameter.roles) > 1
+    }
+    used_mixed = [
+        parameter
+        for parameter in parameters_in(value)
+        if parameter.name in mixed_names
+    ]
+    if not used_mixed:
+        return command_value(value)
+
+    if (
+        len(used_mixed) == 1
+        and isinstance(value, Parameter)
+        and value.name == used_mixed[0].name
+    ):
+        unit = "mm" if role == "length" else "deg"
+        return _native_expression(
+            f"{value.name} * 1 {unit}",
+            (value.name,),
+        )
+
+    raise ModelError(
+        "mixed-role Forge parameters inside symbolic expressions are "
+        "outside the qualified IR slice"
+    )
+
+
 def _negative_half(value):
     """Match the accepted SolidCraft symbolic half-expression spelling."""
     if isinstance(value, Parameter):
@@ -517,7 +552,7 @@ def _solidcraft_axis(axis: AxisLineIR):
     }
 
 
-def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
+def _revolve_commands(model: ModelIR, node: RevolveIR, name: str) -> list[dict]:
     """Lower semantic Sketch/Profile + Revolve IR without raw Shape parsing."""
     sketch = node.sketch
     _principal_plane_offset(
@@ -561,7 +596,7 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
     revolve = {
         "sketch": sketch.name,
         "axis": _solidcraft_axis(node.axis),
-        "angle": command_value(node.angle),
+        "angle": _role_command_value(model, node.angle, "angle"),
     }
     if node.operation == "new_body":
         if node.target is not None:
@@ -587,7 +622,10 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
         _command(
             "sketch.line",
             points=[
-                [command_value(value) for value in point]
+                [
+                    _role_command_value(model, value, "length")
+                    for value in point
+                ]
                 for point in authored_points
             ],
             closed=True,
@@ -691,7 +729,7 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
         return [
             *parameters,
             *base_commands,
-            *_revolve_commands(node, name),
+            *_revolve_commands(model, node, name),
         ]
 
     if isinstance(node, ChamferIR):
