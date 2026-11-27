@@ -275,6 +275,13 @@
 249. Mitcad retains its already-qualified face-boundary/principal-edge slices. Newly typed selector forms outside its backend contract must raise ModelError before reading selector-specific attributes or raw Shape payload.
 250. #562 completes the current public Topology/reference selector semantic family and also completes the current public Fillet and Chamfer semantic families: Fillet is radius plus EdgeSelectionIR, while Chamfer is distance/distance2/flip plus EdgeSelectionIR over typed BodyIR. Backend/body lowering limits are backend coverage, not missing modifier IR.
 
+251. The public scalar-expression semantic grammar consists of finite literals, Parameter references, unary negation, add/subtract/multiply/divide, fixed finite numeric power and the existing cadmath min/max/sqrt/abs/round/floor/atan functions; each authored operation must have an inspectable backend-neutral IR form.
+252. `ScalarPowerIR` represents one scalar expression raised to a fixed finite numeric exponent. `ScalarFunctionIR` represents the existing public cadmath function name plus typed scalar arguments; min/max require at least two arguments and sqrt/abs/round/floor/atan require exactly one.
+253. Scalar IR preserves deterministic first-use Parameter dependency order through nested arithmetic, power and function nodes. Forge must not reconstruct those dependencies or operations by parsing compatibility expression text.
+254. Scalar-expression IR remains physically unit-neutral. Length, angle, count and ratio meaning belongs to the typed consuming use site, and no public unit syntax, backend storage unit or native expression string may enter the scalar tree.
+255. Existing text-only three-argument `Expression(value, expression, parameters)` construction remains source compatible but does not acquire invented semantic IR. Wrapping a text-only Expression in cadmath must likewise remain semantically unknown rather than parse its text.
+256. #577 completes the current public Values/parameters/scalar-expressions IR family independently from backend coverage. Existing affine SolidCraft/Mitcad lowering remains qualified; newly typed power/function or derived-unit forms may fail closed in a backend until separately qualified.
+
 ## SCPF native associativity
 
 1. When SolidCraft exposes a durable native reference for editable intent, Forge

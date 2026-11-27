@@ -54,6 +54,57 @@ class ScalarUnaryIR:
 
 
 @dataclass(frozen=True)
+class ScalarPowerIR:
+    """One scalar value raised to a fixed finite numeric exponent."""
+
+    base: "ScalarExpressionIR"
+    exponent: float
+
+    def __post_init__(self):
+        if not _is_scalar_expression(self.base):
+            raise ValueError("ScalarPowerIR base must be scalar expression IR")
+        if (
+            isinstance(self.exponent, bool)
+            or not isinstance(self.exponent, (int, float))
+            or not isfinite(self.exponent)
+        ):
+            raise ValueError("ScalarPowerIR exponent must be finite numeric")
+
+
+@dataclass(frozen=True)
+class ScalarFunctionIR:
+    """One public symbolic CAD-math function over scalar expression IR."""
+
+    name: str
+    arguments: tuple["ScalarExpressionIR", ...]
+
+    def __post_init__(self):
+        arity = {
+            "sqrt": 1,
+            "abs": 1,
+            "round": 1,
+            "floor": 1,
+            "atan": 1,
+        }
+        if self.name in {"min", "max"}:
+            if len(self.arguments) < 2:
+                raise ValueError(
+                    f"ScalarFunctionIR {self.name} requires at least two arguments"
+                )
+        elif self.name in arity:
+            if len(self.arguments) != arity[self.name]:
+                raise ValueError(
+                    f"ScalarFunctionIR {self.name} requires one argument"
+                )
+        else:
+            raise ValueError("ScalarFunctionIR function is unsupported")
+        if any(not _is_scalar_expression(value) for value in self.arguments):
+            raise ValueError(
+                "ScalarFunctionIR arguments must be scalar expression IR"
+            )
+
+
+@dataclass(frozen=True)
 class ScalarBinaryIR:
     """One binary scalar arithmetic operation."""
 
@@ -86,6 +137,8 @@ ScalarExpressionIR = (
     | ScalarParameterRefIR
     | ScalarUnaryIR
     | ScalarBinaryIR
+    | ScalarPowerIR
+    | ScalarFunctionIR
 )
 
 
@@ -97,6 +150,8 @@ def _is_scalar_expression(value) -> bool:
             ScalarParameterRefIR,
             ScalarUnaryIR,
             ScalarBinaryIR,
+            ScalarPowerIR,
+            ScalarFunctionIR,
         ),
     )
 
@@ -111,6 +166,16 @@ def scalar_parameter_names(
         return ()
     if isinstance(value, ScalarUnaryIR):
         return scalar_parameter_names(value.operand)
+    if isinstance(value, ScalarPowerIR):
+        return scalar_parameter_names(value.base)
+    if isinstance(value, ScalarFunctionIR):
+        return tuple(
+            dict.fromkeys(
+                name
+                for argument in value.arguments
+                for name in scalar_parameter_names(argument)
+            )
+        )
     if isinstance(value, ScalarBinaryIR):
         return tuple(
             dict.fromkeys(
@@ -132,6 +197,8 @@ def is_affine_scalar_expression(value: ScalarExpressionIR) -> bool:
     """
     if isinstance(value, (ScalarLiteralIR, ScalarParameterRefIR)):
         return True
+    if isinstance(value, (ScalarPowerIR, ScalarFunctionIR)):
+        return False
     if isinstance(value, ScalarUnaryIR):
         return (
             value.operation == "negate"
@@ -168,8 +235,10 @@ def is_affine_scalar_expression(value: ScalarExpressionIR) -> bool:
 __all__ = [
     "ScalarBinaryIR",
     "ScalarExpressionIR",
+    "ScalarFunctionIR",
     "ScalarLiteralIR",
     "ScalarParameterRefIR",
+    "ScalarPowerIR",
     "ScalarUnaryIR",
     "is_affine_scalar_expression",
     "scalar_parameter_names",
