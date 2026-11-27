@@ -3,7 +3,7 @@
 from pathlib import Path
 import unittest
 
-from scpf import Anchor, Axis, Box, Cone, Configure, Cylinder, Sphere, Suppress
+from scpf import Anchor, Axis, Box, Cone, Cylinder, Sphere
 from scpf.backends.mitcad import compile_ir, compile_model
 from scpf.compiler import ModelError
 from scpf.ir import normalize_model
@@ -333,10 +333,9 @@ class MitcadBackendTests(unittest.TestCase):
         clip = Box(50, 50, 30).move(z=15)
         design = cut & clip
 
-        configured = Configure(
-            design,
+        configured = design.configure(
             active="Clipped",
-            columns=(Suppress(clip),),
+            columns=(clip,),
             rows={"Clipped": (False,), "Unclipped": (True,)},
         )
         document = compile_ir(
@@ -368,10 +367,10 @@ class MitcadBackendTests(unittest.TestCase):
             "name": "Clipped",
         })
 
-        bore_configured = Configure(
-            design,
+        bore_design = type(design)(design.kind, design.data)
+        bore_configured = bore_design.configure(
             active="Bored",
-            columns=(Suppress(bore),),
+            columns=(bore,),
             rows={"Bored": (False,), "Solid": (True,)},
         )
         bore_document = compile_ir(
