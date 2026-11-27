@@ -528,11 +528,97 @@ class ConfigurationIR:
 
 
 @dataclass(frozen=True)
+class FeatureRefIR:
+    """Engine-neutral reference to one semantic feature in the normalized model."""
+
+    path: tuple[str, ...]
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.path, tuple)
+            or not self.path
+            or any(
+                not isinstance(part, str)
+                or not part
+                or not part.replace("_", "").isalnum()
+                for part in self.path
+            )
+        ):
+            raise ValueError(
+                "FeatureRefIR path must contain non-empty semantic path parts"
+            )
+
+
+@dataclass(frozen=True)
+class SuppressionColumnIR:
+    """One configuration column that controls exact semantic feature suppression."""
+
+    feature: FeatureRefIR
+
+    def __post_init__(self):
+        if not isinstance(self.feature, FeatureRefIR):
+            raise ValueError("SuppressionColumnIR feature must be FeatureRefIR")
+
+
+@dataclass(frozen=True)
+class ConfigurationRowIR:
+    """One named row of engine-neutral configuration cell values."""
+
+    name: str
+    cells: tuple[bool, ...]
+
+    def __post_init__(self):
+        if not isinstance(self.name, str) or not self.name.strip():
+            raise ValueError("ConfigurationRowIR name must be non-empty text")
+        if (
+            not isinstance(self.cells, tuple)
+            or any(not isinstance(value, bool) for value in self.cells)
+        ):
+            raise ValueError(
+                "first ConfigurationRowIR slice requires boolean suppression cells"
+            )
+
+
+@dataclass(frozen=True)
+class ConfigurationIR:
+    """Final-design configuration intent independent of native table schemas."""
+
+    active: str
+    columns: tuple[SuppressionColumnIR, ...]
+    rows: tuple[ConfigurationRowIR, ...]
+
+    def __post_init__(self):
+        if not self.columns:
+            raise ValueError("ConfigurationIR requires at least one column")
+        if not self.rows:
+            raise ValueError("ConfigurationIR requires at least one row")
+        if len({row.name for row in self.rows}) != len(self.rows):
+            raise ValueError("ConfigurationIR row names must be unique")
+        if self.active not in {row.name for row in self.rows}:
+            raise ValueError("ConfigurationIR active must name one row")
+        width = len(self.columns)
+        if any(len(row.cells) != width for row in self.rows):
+            raise ValueError(
+                "ConfigurationIR rows must match the configuration column count"
+            )
+
+
+@dataclass(frozen=True)
 class ModelIR:
     """One normalized Forge model independent of a native CAD backend."""
 
     root: IRNode
     parameters: tuple[ParameterIR, ...]
+    configuration: ConfigurationIR | None = None
+
+    def __post_init__(self):
+        if (
+            self.configuration is not None
+            and not isinstance(self.configuration, ConfigurationIR)
+        ):
+            raise ValueError(
+                "ModelIR configuration must be ConfigurationIR or None"
+            )
     configuration: ConfigurationIR | None = None
 
 
@@ -1255,6 +1341,91 @@ def normalize_model(value) -> ModelIR:
     )
 
 
+def _configured_root_feature_ref(design: Shape, source: Shape) -> FeatureRefIR:
+    """Resolve the bounded authored source that normalizes to the root feature."""
+    if design is source:
+        return FeatureRefIR(("root",))
+
+    if design.kind == "difference" and isinstance(design.data, tuple):
+        _target, tool = design.data
+        if tool is source:
+            return FeatureRefIR(("root",))
+        if (
+            isinstance(tool, Shape)
+            and tool.kind == "labeled"
+            and isinstance(tool.data, tuple)
+            and tool.data
+            and tool.data[0] is source
+        ):
+            return FeatureRefIR(("root",))
+
+    raise ValueError(
+        "portable suppression source must be the exact authored root feature"
+    )
+
+
+def normalize_configured_design(configured) -> ModelIR | None:
+    """Normalize the first portable Configure/Suppress slice.
+
+    None means the configuration surface is outside the qualified semantic
+    subset and may still use the stable SolidCraft compatibility compiler.
+    Invalid feature identity inside the bounded subset raises ValueError.
+    """
+    from .configurations import (
+        _ConfiguredDesign,
+        _SuppressionColumn,
+    )
+
+    if not isinstance(configured, _ConfiguredDesign):
+        raise TypeError(
+            "configured Forge IR normalization requires _ConfiguredDesign"
+        )
+    if not isinstance(configured.design, Shape):
+        return None
+    if configured.rules or len(configured.columns) != 1:
+        return None
+
+    column = configured.columns[0]
+    if not isinstance(column, _SuppressionColumn):
+        return None
+    if not isinstance(column.feature, Shape):
+        return None
+
+    root = _normalize_node(configured.design)
+    if (
+        not isinstance(root, RevolveIR)
+        or root.operation != "cut"
+        or not isinstance(root.target, PlacementIR)
+        or not isinstance(root.target.primitive, BoxIR)
+    ):
+        return None
+
+    feature = _configured_root_feature_ref(
+        configured.design,
+        column.feature,
+    )
+    rows = []
+    for name, cells in configured.rows:
+        if len(cells) != 1 or cells[0] not in {"true", "false"}:
+            return None
+        rows.append(
+            ConfigurationRowIR(
+                name=name,
+                cells=(cells[0] == "true",),
+            )
+        )
+
+    return ModelIR(
+        root=root,
+        parameters=_parameter_ir(configured.design),
+        configuration=ConfigurationIR(
+            active=configured.active,
+            columns=(SuppressionColumnIR(feature),),
+            rows=tuple(rows),
+        ),
+    )
+
+
 def normalize_shape(shape: Shape) -> ModelIR:
     """Normalize one Forge Shape into backend-independent semantic IR."""
     if not isinstance(shape, Shape):
@@ -1269,6 +1440,9 @@ def is_portable(model: ModelIR) -> bool:
 
 __all__ = [
     "AxisLineIR",
+    "ConfigurationIR",
+    "ConfigurationRowIR",
+    "FeatureRefIR",
     "BooleanIR",
     "BoxIR",
     "ChamferIR",
