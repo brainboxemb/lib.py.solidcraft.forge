@@ -80,7 +80,6 @@ SCPF_ONLY_IDS = {
     "asymmetric-chamfer",
     "attached-through-all",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -114,6 +113,9 @@ MITCAD_IDS = {
 
 MITCAD_FOCUSED_IDS = {
     "cylinder-subtract",
+}
+
+MITCAD_STATE_VISUAL_IDS = {
     "shifted-axis-revolve",
 }
 
@@ -134,6 +136,7 @@ STANDARD_MULTI_ENGINE_IDS = (
     - SCPF_ONLY_IDS
     - MITCAD_FOCUSED_IDS
     - MITCAD_FOCUSED_VISUAL_IDS
+    - MITCAD_STATE_VISUAL_IDS
 )
 
 
@@ -149,7 +152,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 61)
+        self.assertEqual(len(self.models), len(EXPECTED_IDS))
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -242,6 +245,26 @@ class ModelTests(unittest.TestCase):
             self.assertEqual(
                 model.verifications[1].implementations,
                 expected_geometry_implementations,
+            )
+
+
+        for model_id in MITCAD_STATE_VISUAL_IDS:
+            model = by_id[model_id]
+            self.assertEqual(
+                [impl.id for impl in model.implementations],
+                ["scpf", "scpf-mitcad"],
+            )
+            self.assertEqual(
+                [stage.id for stage in model.verifications],
+                ["native", "visual-cut", "visual-suppressed", "geometry"],
+            )
+            self.assertEqual(
+                [stage.runtime for stage in model.verifications],
+                ["solidcraft", "solidcraft", "solidcraft", "reference"],
+            )
+            self.assertEqual(
+                model.verifications[0].implementations,
+                ("scpf",),
             )
 
 
