@@ -1058,6 +1058,34 @@ typing. The unchanged single-role parameter tests protect existing native
 command spelling and the Mitcad v0.70.0 runtime smoke proves the mixed-role
 source remains one editable native dependency.
 
+#481 adds that expression-level semantic ownership without parsing or replacing
+the existing compatibility string. `Expression` now carries optional immutable
+scalar-tree metadata produced at authoring-operator time: literal,
+parameter-reference, unary negation and binary arithmetic nodes. Existing
+three-argument `Expression(value, expression, parameters)` construction
+continues to produce a valid text-only expression with no semantic tree.
+
+Portable mixed-role normalization validates the tree structurally. Addition and
+subtraction preserve one dimensional role on both sides; unary negation
+preserves the role; multiplication accepts exactly one numeric literal as a
+unitless scale factor; division accepts only a non-zero numeric literal
+divisor. Parameter×parameter, parameter division, powers and text-only mixed
+expressions remain fail-closed rather than being inferred from strings.
+
+The scalar tree itself is unit-agnostic. `SketchRelationsIR` /
+profile-coordinate use supplies `length`, while `RevolveIR.angle` supplies
+`angle`. Each backend renders the same tree independently behind its existing
+role-aware value boundary. A mixed-role parameter leaf becomes
+`shared * 1 mm` in a length context or `shared * 1 deg` in an angle context;
+a literal added to a length becomes e.g. `1 mm`, while a multiplication factor
+stays unitless. Single-role expressions that do not need mixed-role coercion
+continue to use their existing compatibility text unchanged.
+
+The exact runtime proof keeps one unitless source parameter at value 4. The
+Sketch radial height is `shared + 1` = 5 mm and the Revolve extent is direct
+`shared` = 4 degrees. Mitcad v0.70.0 must therefore produce one deterministic
+sector solid with volume `25π/9` and X bounds [0, 10].
+
 The stable SolidCraft surface is larger than this first migration slice. A
 temporary `LegacyShapeIR` therefore wraps not-yet-migrated stable intent so
 the SolidCraft backend can delegate it to the historical lowering without a
