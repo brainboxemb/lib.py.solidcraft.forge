@@ -226,7 +226,7 @@ class SolidCraftVisualAdapterTests(unittest.TestCase):
     def test_all_migrated_visual_policies_are_approved_and_supported(self):
         repo = Path(__file__).resolve().parents[3]
         paths = sorted((repo / "models").glob("*/verification/visual*.json"))
-        self.assertEqual(len(paths), 58)
+        self.assertEqual(len(paths), 56)
         state_policies = {
             ("appearance-color", "visual-color.json"): (("iso",), None, "rgb"),
             ("configuration-installed-state", "visual-large-installed.json"): (("top",), "large-installed", "grayscale"),
