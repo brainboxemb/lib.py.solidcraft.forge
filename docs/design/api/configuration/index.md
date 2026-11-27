@@ -197,13 +197,37 @@ The HUB75 requirement explicitly avoids that Cartesian expansion.
 
 ## 6. SolidCraft 0.49 evidence
 
-The current probes establish four separate facts.
+The current probes establish five separate facts.
 
 ### One feature can be configured through suppression
 
 A real named history feature can be a SolidCraft configuration feature target.
 This is proven for normal geometry features and for a named `solid.move`
 history feature.
+
+### One real feature may operate on several bodies
+
+The `configuration-installed-single-feature` probe uses one native
+`solid.move` feature named `Installed` with two bodies as participants.
+
+SolidCraft accepts that one history feature as the configured suppression target
+and one independent Installed rule can switch it without changing the
+Small/Large row. The corrected probe passed on run **959**.
+
+So when the mechanical Installed transition is truthfully one native operation,
+the preferred backend shape is simply:
+
+~~~text
+one Installed control
+        |
+        v
+one Installed history feature
+        |
+        +--> body A
+        +--> body B
+~~~
+
+No grouping or shared driver is needed for that case.
 
 ### A timeline folder can contain several Installed features
 
@@ -239,10 +263,10 @@ target is not a configured feature.
 Therefore Forge must **not** assume that a scoped/nested Installed feature group
 can lower directly to one SolidCraft configuration checkbox.
 
-### One independent control can still fan out through a shared dependency
+### Several genuinely different native features need another backend mechanism
 
-The `configuration-installed-fanout` probe proves a working SolidCraft 0.49
-transport:
+The `configuration-installed-fanout` probe proves one working SolidCraft 0.49
+fallback:
 
 ~~~text
 Installed native rule
@@ -250,8 +274,8 @@ Installed native rule
         v
 private shared driver
         |
-        +--> left Installed behavior
-        +--> right Installed behavior
+        +--> Installed behavior A
+        +--> Installed behavior B
 ~~~
 
 Small/Large remain normal rows.
