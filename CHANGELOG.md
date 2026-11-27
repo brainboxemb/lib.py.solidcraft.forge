@@ -8,25 +8,6 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
-## [0.27.0] - 2026-11-27
-
-### Added
-
-- Add `Shape.move_history(...)` for native SolidCraft Move/Copy history,
-  including translation and explicit origin/axis/angle rotation.
-- Allow that native move to be authored inside the existing
-  `feature(name, suppressed=...)` scope and targeted by final-model
-  configuration.
-- Support moved right-hand union operands by authoring a temporary body,
-  applying the native Move/Copy feature and joining it downstream.
-
-### Fixed
-
-- Resolve scoped named configuration targets through their semantic feature
-  binding so a later combine does not steal the configured feature identity.
-- Preserve degree units for direct Move/Copy angle Parameters while keeping
-  ordinary length dependencies in derived angle expressions in their native
-  units.
 ## [0.26.0] - 2026-11-27
 
 ### Added
