@@ -148,30 +148,35 @@ Therefore a Forge `with feature("Installed", ...)` scope must not be assumed
 to lower directly to one SolidCraft configuration target when it contains
 several native history features.
 
-## 5. Preferred SolidCraft lowering when possible
+## 5. One real multi-object Installed feature
 
-The `configuration-installed-single-feature` probe proves a simpler native
-route when Installed can truthfully be authored as one multi-object history
-operation:
+The `configuration-installed-single-feature` probe proves the preferred
+**history** shape when Installed can truthfully be authored as one multi-object
+CAD operation:
 
 ~~~text
-one Installed control
-        |
-        v
 one real Installed feature
         |
         +--> left body
         +--> right body
 ~~~
 
-The corrected probe passed on CI run **46017873210** (run 959).
+SolidCraft can configure that one feature directly.
 
-For example, one native `solid.move` feature can move several bodies in the
-same history step. SolidCraft can configure and suppress that one feature
-directly.
+Two different configuration semantics were tested:
 
-This should be preferred over invented driver parameters when the actual CAD
-operation is genuinely one feature.
+- run **971** proves the rule-free direct suppression column; its value is
+  row-owned;
+- runs **959** and **966** prove the same single feature can also be controlled
+  independently from the active Small/Large row through a native SolidCraft
+  Configuration Rule.
+
+So the CAD history does not need to change between those cases. Only the
+SolidCraft configuration lowering differs.
+
+The native rule is backend transport. Forge should not expose `ConfigRule`,
+`Always` or `drive_suppression` merely because SolidCraft needs them for an
+independent control.
 
 ## 6. Fallback when several native features are genuinely required
 
