@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/461-sphere-placement-ir
-modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
-models: [native-revolve]
-library: true
+branch: issue/465-ci-qualification-reuse
+modules: [ci]
+models: []
+library: false
 tasks: [test]
