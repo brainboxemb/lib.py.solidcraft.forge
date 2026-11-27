@@ -1726,17 +1726,22 @@ def _compile_assembly_legacy_with_dependencies(value, name):
 def _compile_assembly_with_dependencies(value, name):
     """Normalize core assembly semantics before SolidCraft lowering.
 
-    Drawings and exploded views are presentation state outside the core CAD-IR
-    denominator. Until their output layer is split from the historical compiler
-    they retain the stable presentation path, but normalization still runs first
-    so invalid core assembly semantics cannot bypass AssemblyIR.
+    Drawings, exploded views and the broad v0.26 final-model configuration
+    table still use the stable compatibility lowering. Core assembly semantics
+    are normalized first so those compatibility paths cannot bypass AssemblyIR.
     """
     assembly = _as_assembly(value)
     model = normalize_assembly(assembly)
+    configuration = getattr(value, "_configuration", None)
 
-    if assembly.drawings or assembly.exploded_views or assembly.exploded_display_set:
+    if (
+        configuration is not None
+        or assembly.drawings
+        or assembly.exploded_views
+        or assembly.exploded_display_set
+    ):
         _validate_semantic_relationships(model)
-        return _compile_assembly_legacy_with_dependencies(assembly, name)
+        return _compile_assembly_legacy_with_dependencies(value, name)
 
     return _compile_assembly_ir_core_with_dependencies(model, name)
 
