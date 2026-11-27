@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "4vrbxpzt1qn1h",
+  "id": "29tdq1b1r30y8",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "19zvgmh78w2cb"
+        "source": "bmjktpr3bc88y"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "5mwe6a2n6sxpv",
+      "id": "acgak985004zf",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "3xmspwy6vb67s",
+          "id": "46b23er6n7d2e",
           "kind": "base",
           "label": "Iso front right",
           "notes": []
@@ -532,7 +532,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "7wdt7pc0wfbz6",
+          "id": "fa9d95zx6v3w7",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "0ky0cbm15dct5",
+          "id": "2xmnha42nnqzr",
           "kind": "projected",
-          "label": "Right of Front",
+          "label": "Above Front",
           "notes": [],
-          "parent": "7wdt7pc0wfbz6",
-          "side": "right"
+          "parent": "fa9d95zx6v3w7",
+          "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "0x057591dv7ws",
+          "id": "f5d7s2vt54b7g",
           "kind": "projected",
-          "label": "Above Front",
+          "label": "Right of Front",
           "notes": [],
-          "parent": "7wdt7pc0wfbz6",
-          "side": "above"
+          "parent": "fa9d95zx6v3w7",
+          "side": "right"
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "19zvgmh78w2cb"
+      "id": "bmjktpr3bc88y"
     }
   ],
   "symbols": [],
