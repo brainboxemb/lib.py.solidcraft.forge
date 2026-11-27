@@ -147,18 +147,44 @@ def _write_png(image: Image.Image, output_path: Path) -> Path:
     return output_path
 
 
-def normalize_image(path: Path, width: int, height: int) -> Image.Image:
-    """Load, grayscale and deterministically resize one image."""
+def _comparison_mode(value: Any) -> str:
+    """Return one supported visual-regression comparison mode."""
+
+    if value not in ("grayscale", "rgb"):
+        raise VerificationConfigError(
+            "visual comparison mode must be grayscale or rgb"
+        )
+    return value
+
+
+def _comparison_image(image: Image.Image, mode: str) -> Image.Image:
+    """Return one detached image in the requested regression mode."""
+
+    if not isinstance(image, Image.Image):
+        raise VerificationConfigError("image must be a Pillow Image")
+    mode = _comparison_mode(mode)
+    return image.convert("L" if mode == "grayscale" else "RGB").copy()
+
+
+def normalize_image(
+    path: Path,
+    width: int,
+    height: int,
+    *,
+    mode: str = "grayscale",
+) -> Image.Image:
+    """Load and deterministically resize one image for visual comparison."""
 
     width = _positive_int(width, "width")
     height = _positive_int(height, "height")
+    mode = _comparison_mode(mode)
     path = Path(path)
     if not path.is_file():
         raise VisualEvidenceError(f"image file does not exist: {path}")
     try:
         with Image.open(path) as source:
             source.load()
-            return source.convert("RGB").convert("L").resize(
+            return _comparison_image(source, mode).resize(
                 (width, height),
                 _RESAMPLE,
             )
@@ -173,46 +199,55 @@ def normalize_image(path: Path, width: int, height: int) -> Image.Image:
 def _grayscale(image: Image.Image) -> Image.Image:
     """Return a detached grayscale image."""
 
-    if not isinstance(image, Image.Image):
-        raise VerificationConfigError("image must be a Pillow Image")
-    return image.convert("L").copy()
+    return _comparison_image(image, "grayscale")
 
 
 def encode_baseline(
     image: Image.Image,
     *,
     encoding: str = "raw",
+    mode: str = "grayscale",
 ) -> dict[str, Any]:
-    """Encode one grayscale baseline into a JSON-compatible payload."""
+    """Encode one visual baseline into a JSON-compatible payload."""
 
-    gray = _grayscale(image)
-    width, height = gray.size
-    raw = gray.tobytes()
+    mode = _comparison_mode(mode)
+    normalized = _comparison_image(image, mode)
+    width, height = normalized.size
+    raw = normalized.tobytes()
     if encoding == "raw":
         data = raw
     elif encoding == "zlib":
         data = zlib.compress(raw, level=9)
     elif encoding == "png":
         buffer = BytesIO()
-        gray.save(buffer, format="PNG", optimize=False, compress_level=9)
+        normalized.save(buffer, format="PNG", optimize=False, compress_level=9)
         data = buffer.getvalue()
     else:
         raise VerificationConfigError(
             "baseline encoding must be raw, zlib or png"
         )
-    return {
+    result = {
         "encoding": encoding,
         "width": width,
         "height": height,
         "data": b64encode(data).decode("ascii"),
     }
+    if mode != "grayscale":
+        result["mode"] = mode
+    return result
 
 
 def decode_baseline(payload: dict[str, Any]) -> Image.Image:
-    """Decode and validate one baseline payload."""
+    """Decode and validate one visual baseline payload."""
 
     if not isinstance(payload, dict):
         raise VisualEvidenceError("baseline payload must be an object")
+    try:
+        mode = _comparison_mode(payload.get("mode", "grayscale"))
+    except VerificationConfigError as exc:
+        raise VisualEvidenceError(str(exc)) from exc
+    image_mode = "L" if mode == "grayscale" else "RGB"
+    channels = 1 if mode == "grayscale" else 3
     encoding = payload.get("encoding")
     width = _positive_int(payload.get("width"), "width")
     height = _positive_int(payload.get("height"), "height")
@@ -228,12 +263,12 @@ def decode_baseline(payload: dict[str, Any]) -> Image.Image:
         elif encoding == "png":
             with Image.open(BytesIO(data)) as image:
                 image.load()
-                gray = image.convert("L")
-                if gray.size != (width, height):
+                normalized = image.convert(image_mode)
+                if normalized.size != (width, height):
                     raise VisualEvidenceError(
                         "baseline PNG dimensions do not match payload"
                     )
-                return gray.copy()
+                return normalized.copy()
         else:
             raise VisualEvidenceError(
                 "baseline encoding must be raw, zlib or png"
@@ -245,13 +280,12 @@ def decode_baseline(payload: dict[str, Any]) -> Image.Image:
             f"could not decode baseline payload: {exc}"
         ) from exc
 
-    expected_bytes = width * height
+    expected_bytes = width * height * channels
     if len(raw) != expected_bytes:
         raise VisualEvidenceError(
             "decoded baseline byte count does not match dimensions"
         )
-    return Image.frombytes("L", (width, height), raw)
-
+    return Image.frombytes(image_mode, (width, height), raw)
 
 def compare_images(
     current: Image.Image,
@@ -260,12 +294,14 @@ def compare_images(
     changed_pixel_threshold: int,
     max_mean_difference: float,
     max_changed_fraction: float,
+    mode: str = "grayscale",
 ) -> dict[str, Any]:
-    """Compare equal-size grayscale images and return stable evidence."""
+    """Compare equal-size images and return stable visual evidence."""
 
-    current_gray = _grayscale(current)
-    reference_gray = _grayscale(reference)
-    if current_gray.size != reference_gray.size:
+    mode = _comparison_mode(mode)
+    current_image = _comparison_image(current, mode)
+    reference_image = _comparison_image(reference, mode)
+    if current_image.size != reference_image.size:
         raise VerificationConfigError(
             "current and reference images must have equal size"
         )
@@ -291,19 +327,21 @@ def compare_images(
             "max_changed_fraction must be between 0 and 1"
         )
 
-    current_bytes = current_gray.tobytes()
-    reference_bytes = reference_gray.tobytes()
     deltas = [
         abs(current_value - reference_value)
         for current_value, reference_value in zip(
-            current_bytes,
-            reference_bytes,
+            current_image.tobytes(),
+            reference_image.tobytes(),
         )
     ]
-    count = len(deltas)
-    mean_difference = round(sum(deltas) / count, 6)
+    channels = 1 if mode == "grayscale" else 3
+    pixel_deltas = [
+        max(deltas[index:index + channels])
+        for index in range(0, len(deltas), channels)
+    ]
+    mean_difference = round(sum(deltas) / len(deltas), 6)
     changed_fraction = round(
-        sum(delta >= threshold for delta in deltas) / count,
+        sum(delta >= threshold for delta in pixel_deltas) / len(pixel_deltas),
         6,
     )
     passed = (
@@ -318,6 +356,8 @@ def compare_images(
         "max_changed_fraction": fraction_limit,
         "pass": bool(passed),
     }
+    if mode != "grayscale":
+        evidence["comparison_mode"] = mode
     if not passed:
         raise VerificationFailure(
             "visual regression exceeds configured limits",
@@ -325,31 +365,37 @@ def compare_images(
         )
     return evidence
 
-
 def write_diff_image(
     current: Image.Image,
     reference: Image.Image,
     output_path: Path,
+    *,
+    mode: str = "grayscale",
 ) -> Path:
     """Write a deterministic current/difference comparison image."""
 
-    current_gray = _grayscale(current)
-    reference_gray = _grayscale(reference)
-    if current_gray.size != reference_gray.size:
+    mode = _comparison_mode(mode)
+    current_image = _comparison_image(current, mode)
+    reference_image = _comparison_image(reference, mode)
+    if current_image.size != reference_image.size:
         raise VerificationConfigError(
             "current and reference images must have equal size"
         )
-    width, height = current_gray.size
+    width, height = current_image.size
     deltas = bytes(
         abs(current_value - reference_value)
         for current_value, reference_value in zip(
-            current_gray.tobytes(),
-            reference_gray.tobytes(),
+            current_image.tobytes(),
+            reference_image.tobytes(),
         )
     )
-    difference = Image.frombytes("L", (width, height), deltas)
+    difference = Image.frombytes(
+        "L" if mode == "grayscale" else "RGB",
+        (width, height),
+        deltas,
+    )
     result = Image.new("RGB", (width * 2, height))
-    result.paste(current_gray.convert("RGB"), (0, 0))
+    result.paste(current_image.convert("RGB"), (0, 0))
     result.paste(difference.convert("RGB"), (width, 0))
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -997,6 +1043,7 @@ def verify_visual_view(
     goal_reference: str | None = None,
     overlay_path: Path | None = None,
     overlay_reference: str | None = None,
+    comparison_mode: str = "grayscale",
 ) -> VisualViewEvidence:
     """Verify one already-rendered consumer visual view.
 
@@ -1022,6 +1069,7 @@ def verify_visual_view(
         "overlay_reference",
     )
     width, height = _normalized_size(normalized_size)
+    comparison_mode = _comparison_mode(comparison_mode)
 
     configured_boxes = tuple(boxes)
     configured_features = tuple(features)
@@ -1052,7 +1100,12 @@ def verify_visual_view(
                 "goal_path and overlay_path are required with a camera"
             )
 
-    current = normalize_image(actual_path, width, height)
+    current = normalize_image(
+        actual_path,
+        width,
+        height,
+        mode=comparison_mode,
+    )
     baseline_status = "missing"
     regression: dict[str, Any] | None = None
     produced_diff_reference: str | None = None
@@ -1064,8 +1117,18 @@ def verify_visual_view(
             raise VerificationConfigError(
                 "diff_path is required when comparing a baseline"
             )
-        reference = normalize_image(baseline, width, height)
-        write_diff_image(current, reference, diff_path)
+        reference = normalize_image(
+            baseline,
+            width,
+            height,
+            mode=comparison_mode,
+        )
+        write_diff_image(
+            current,
+            reference,
+            diff_path,
+            mode=comparison_mode,
+        )
         produced_diff_reference = diff_reference
         try:
             regression = compare_images(
@@ -1074,6 +1137,7 @@ def verify_visual_view(
                 changed_pixel_threshold=changed_pixel_threshold,
                 max_mean_difference=max_mean_difference,
                 max_changed_fraction=max_changed_fraction,
+                mode=comparison_mode,
             )
             baseline_status = "pass"
         except VerificationFailure as exc:

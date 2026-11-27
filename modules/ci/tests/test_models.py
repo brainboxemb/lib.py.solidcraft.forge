@@ -26,7 +26,6 @@ EXPECTED_IDS = {
     "circular-feature-pattern",
     "components",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -80,7 +79,6 @@ SCPF_ONLY_IDS = {
     "asymmetric-chamfer",
     "attached-through-all",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -103,6 +101,10 @@ SCPF_ONLY_IDS = {
 }
 
 VISUAL_SCPF_ONLY_IDS = {
+    "sheet-path-flange",
+    "sheet-hem",
+    "sheet-edge-flange",
+    "sheet-contour-flange",
     "attached-through-all",
     "cone-boolean",
     "native-revolve",
@@ -110,6 +112,13 @@ VISUAL_SCPF_ONLY_IDS = {
     "sheet-contour-flange-recess",
     "topology-face-boundary-box",
     "topology-face-boundary-xz",
+}
+
+STATE_VISUAL_STAGES = {
+    "appearance-color": ("visual-color",),
+    "configuration-position": ("visual-front", "visual-service"),
+    "revolute-joint": ("visual-60", "visual-120"),
+    "shifted-axis-revolve": ("visual-cut", "visual-suppressed"),
 }
 
 class ModelTests(unittest.TestCase):
@@ -124,7 +133,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 60)
+        self.assertEqual(len(self.models), 59)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -135,7 +144,6 @@ class ModelTests(unittest.TestCase):
             "components",
             "sample-plate-drawing",
             "configuration-child-feature",
-            "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
             "configuration-table",
@@ -152,7 +160,6 @@ class ModelTests(unittest.TestCase):
             "components",
             "sample-plate-drawing",
             "configuration-child-feature",
-            "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
             "configuration-table",
@@ -229,6 +236,16 @@ class ModelTests(unittest.TestCase):
                 self.assertEqual(
                     [stage.runtime for stage in model.verifications],
                     ["solidcraft", "reference", "solidcraft"],
+                )
+            elif model_id in STATE_VISUAL_STAGES:
+                expected = ["native", *STATE_VISUAL_STAGES[model_id]]
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    expected,
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft"] * len(expected),
                 )
             elif model_id in VISUAL_SCPF_ONLY_IDS:
                 self.assertEqual(
@@ -339,7 +356,17 @@ class ModelTests(unittest.TestCase):
                                 "multi-profile-extrude",
                                 "asymmetric-chamfer",
                             } | VISUAL_SCPF_ONLY_IDS
-                            else [("scpf", "native")]
+                            else (
+                                [
+                                    ("scpf", "native"),
+                                    *[
+                                        ("scpf", stage)
+                                        for stage in STATE_VISUAL_STAGES[model.id]
+                                    ],
+                                ]
+                                if model.id in STATE_VISUAL_STAGES
+                                else [("scpf", "native")]
+                            )
                         )
                     )
                     if model.id in SCPF_ONLY_IDS

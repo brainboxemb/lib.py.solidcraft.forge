@@ -15,7 +15,7 @@ The Forge migration is complete and the current public product baseline is
 released as **v0.24.0**.
 
 The accepted baseline now includes:
-- 60 physical model owners, with SCPF primary per owner and historically real
+- 59 physical model owners, with SCPF primary per owner and historically real
   reference implementations kept inside the same physical owner;
 - native, geometry, inspection and applicable visual verification with durable
   generated evidence below `build/<scope>/models/**`;
@@ -38,23 +38,23 @@ The accepted baseline now includes:
   `Occurrence.attach(..., kind="revolute", ...)`;
 - display-only `Shape.with_appearance("#RRGGBB")` authoring without changing
   material/density/BOM semantics;
-- native editable configuration-table authoring through
-  `Configure(design, active=..., columns=..., rows=...)`, with
-  `Param(...)` parameter columns and `Suppress(feature)` feature-suppression
-  columns across Shape, component occurrence and Assembly results;
-- Forge-owned Configurations verification for dimensional/suppression variants,
-  complete Assembly Front/Below/Service positions and flexible-fit
-  `Free` / `Installed` physical states, including native saved-design
-  switching after replay;
-- qualified configuration composition where a parent `Configure(...)` table
-  drives a deliberately published reusable-child parameter, multiple child
-  occurrences share that one native parameter, and saved-design row switching
-  recomputes child geometry without rerunning Forge Python;
-- typed native Configuration Rules through
-  `Configure(..., rules=...)`, `ConfigRule(...)`, `Always()` and
-  `DriveParameter(...)`, keeping Installed state independent from ordinary
-  Small / Medium / Large rows while disabling the rule restores the active
-  row's stored Free/base expression;
+- final-model configuration authoring through
+  `model.configure(active=..., columns=..., rows=...)` on Shape, component
+  occurrence and Assembly results;
+- configuration columns use existing semantic handles directly: `Parameter`
+  objects for parameter values and authored Shape/component-feature handles for
+  feature suppression; the former `Configure(...)`, `Param(...)` and
+  `Suppress(...)` wrappers are removed from the target API;
+- Forge-owned Configurations verification for dimensional/suppression variants
+  and complete Assembly Front/Below/Service positions, including native
+  saved-design switching after replay;
+- qualified configuration composition where a final model directly configures
+  a deliberately published reusable-child parameter/feature, multiple child
+  occurrences may reuse one component definition, and saved-design row
+  switching recomputes child geometry without rerunning Forge Python;
+- the former public `ConfigRule(...)`, `Always()`, `DriveParameter(...)`
+  and `rules=` surface is removed; SolidCraft-specific rules remain backend
+  evidence rather than Forge authoring vocabulary;
 - public symbolic CAD math through `scpf.cadmath.min()`, `max()`,
   `sqrt()`, `abs()`, `round()`, `floor()` and `atan()`, preserving
   source parameter dependencies in SolidCraft expressions;
@@ -166,6 +166,21 @@ Normal-lane verification evidence after v0.24.0:
   `cf428d46d3683aa74155aed70c5e946f149f64f7`; permanent dev
   CI/build/publication run 45969693260 and Pages run 45970148895 are green.
 
+Normal-lane configuration API evidence after v0.24.0:
+- #444 / PR #464 replaced wrapper/rule-shaped configuration authoring with
+  final-model `model.configure(...)` using direct Parameter and authored
+  feature handles; the obsolete rule-based `configuration-installed-state`
+  owner was removed rather than preserved for compatibility;
+- rule-free SolidCraft probe run 971 proves one real Installed feature may
+  affect multiple bodies and be configured directly as a suppression column;
+- exact-head PR CI 46022451428 (run 1008) is green; PR #464 merged to
+  permanent `dev` as `a0570f6d11b9dea934cbff878955678ffad464e8`;
+- permanent dev CI/build/publication 46023012718 (run 1009) is green on that
+  exact product head;
+- #488 / PR #489 owns stable `dev -> main` integration and the subsequent
+  release checkpoint; downstream CAD must adopt the new API only from the
+  published Forge tag, not from an unreleased branch.
+
 Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded `SphereIR` through native Mitcad join/cut/intersect;
 - #351 / PR #355 qualified parameter-independent `PolygonProfileIR -> RegionIR -> symmetric ExtrudeIR -> ChamferIR` composition from unchanged public SCPF source;
@@ -198,9 +213,16 @@ The historical repository remains an archived A/B/provenance reference at
 Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
 
 Normal `dev` lane:
-- **v0.24.0 is released** and synchronized back to permanent `dev`; #255,
-  #380, the capturable #256 visual-state slice and #257 folded sheet-metal
-  visual evidence are part of the current development baseline;
+- **v0.24.0 is released**; #444 / PR #464 is additionally qualified on
+  permanent `dev` as `a0570f6d11b9dea934cbff878955678ffad464e8` with
+  permanent build/publication run 46023012718 green;
+- #488 / PR #489 is the immediate normal-lane checkpoint: stabilize that exact
+  qualified product to `main`, then prepare a metadata-only Forge release
+  from the exact qualified stable main head;
+- do not migrate the downstream CAD model to the new `model.configure(...)`
+  API until that Forge tag is published;
+- #255, #380, the capturable #256 visual-state slice and #257 folded
+  sheet-metal visual evidence remain part of the current development baseline;
 - downstream CAD #189 may adopt v0.24.0 for parent/root suppression of an
   explicitly exported feature inside a reusable child component;
 - **#256 remains open but blocked only on #415** for deterministic headless

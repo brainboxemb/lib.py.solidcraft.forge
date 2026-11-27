@@ -1,0 +1,93 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          0,
+          0,
+          2
+        ],
+        "length": 100,
+        "width": 70,
+        "height": 4,
+        "operation": "new",
+        "body_name": "BasePlate"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          0,
+          0,
+          10
+        ],
+        "length": 64,
+        "width": 6,
+        "height": 12,
+        "operation": "new",
+        "body_name": "Panel"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "Panel"
+        ],
+        "translate": [
+          0,
+          30,
+          0
+        ],
+        "name": "ServicePosition"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "ServicePosition"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Normal"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Normal",
+        "values": {
+          "suppress:ServicePosition": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Service",
+        "values": {
+          "suppress:ServicePosition": "false"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Normal"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ]
+}

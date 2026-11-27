@@ -21,22 +21,22 @@ class ConfigurationSymbolicMath:
             cadmath.floor(self.size / self.pitch) * self.step
             + cadmath.max(self.wall, cadmath.abs(self.bias))
         )
-        body = Box(
+        model = Box(
             span,
             grid_span,
             height,
             anchor=Anchor.BOTTOM,
         )
-        return Configure(
-            body,
+        model.configure(
             active="Medium",
-            columns=(Param(self.size),),
+            columns=(self.size,),
             rows={
                 "Small": ("60 mm",),
                 "Medium": ("70 mm",),
                 "Large": ("100 mm",),
             },
         )
+        return model
 
 
 ConfigurationSymbolicMath()

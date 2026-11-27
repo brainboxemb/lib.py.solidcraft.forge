@@ -1,5 +1,5 @@
 """One native editable configuration table with two independent optional holes."""
-from scpf import Anchor, Box, Configure, Hole, Param, Suppress
+from scpf import Anchor, Box, Hole
 
 
 class ConfigurationPlate:
@@ -12,17 +12,24 @@ class ConfigurationPlate:
         plate = Box(self.width, self.depth, self.thickness, anchor=Anchor.BOTTOM)
         left = Hole(d=self.diameter).at(-12, 0, self.thickness)
         right = Hole(d=self.diameter).at(12, 0, self.thickness)
-        return Configure(
-            plate - left - right,
+        model = plate - left - right
+        model.configure(
             active="Medium",
-            columns=(Param(self.width), Param(self.depth), Param(self.thickness),
-                     Param(self.diameter), Suppress(left), Suppress(right)),
+            columns=(
+                self.width,
+                self.depth,
+                self.thickness,
+                self.diameter,
+                left,
+                right,
+            ),
             rows={
                 "Small": ("60 mm", "30 mm", "4 mm", "4 mm", True, True),
                 "Medium": ("80 mm", "40 mm", "5 mm", "5 mm", True, True),
                 "Large": ("100 mm", "50 mm", "6 mm", "6 mm", False, False),
             },
         )
+        return model
 
 
 ConfigurationPlate()
