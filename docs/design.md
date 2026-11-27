@@ -854,11 +854,13 @@ The typed IR began with the first qualified portable slice:
 `CylinderIR`; #343 later replaces the initial bounded Box-Cylinder boolean proof
 with recursive `BooleanIR` plus `SphereIR`. #282 splits the former fused
 Circle+Extrude node into `SketchIR`, `CircleProfileIR`, `RegionIR` and
-`ExtrudeIR`. #351 adds strict-convex `PolygonProfileIR` composition, and
-#381 adds `RevolveIR` over the same Sketch/profile/region semantics rather
-than introducing a second revolve-specific frontend. Symbolic Forge
-`Parameter` / `Expression` values remain semantic values until backend
-lowering.
+`ExtrudeIR`. #351 adds `PolygonProfileIR` composition, initially qualified for
+strict-convex profiles; #424 generalizes semantic region validation to finite
+simple non-self-intersecting polygons so concave authored profiles do not need a
+backend workaround. #381 adds `RevolveIR` over the same
+Sketch/profile/region semantics rather than introducing a second
+revolve-specific frontend. Symbolic Forge `Parameter` / `Expression`
+values remain semantic values until backend lowering.
 
 For the #381 checkpoint, the existing `native-revolve` source evaluates once
 to a parameterized XZ polygon plus `RevolveIR`. #389 refactors its principal
@@ -904,8 +906,41 @@ uid are lowering transport only and never enter `PlaneIR`.
 For the focused shifted Revolve cut, `PlaneIR` and `AxisLineIR` retain the
 same authored `axis_z` dependency and the compiler checks their bounded
 principal-plane coplanarity without replacing it with the current numeric
-value. Rotated/arbitrary planes, attached Sketch supports and configuration
-semantics remain later compiler layers.
+value. Rotated/arbitrary planes and attached Sketch supports remain later
+compiler layers.
+
+#424 adds the first semantic feature-reference and configuration layer rather
+than teaching each backend to interpret public `Configure(...)` authoring.
+`FeatureRefIR` names a feature by its normalized semantic path; the first
+qualified path is the final/root `RevolveIR(operation="cut", target=...)`.
+The reference contains no SolidCraft history id, Mitcad feature uid, replay
+variable, command index or retained Python object id. Source-object identity is
+used only while the frontend resolves the authored `Suppress(pass_through)`
+reference to that semantic feature.
+
+`ModelIR.configuration` carries a bounded `ConfigurationIR`: one semantic
+suppression column, named rows, an explicit active row and boolean cells. This
+is final CAD design state, not a Python variant. Stable SolidCraft lowering
+binds the actual native Revolve feature returned by replay and emits the same
+editable native configuration table contract as before. Mitcad v0.70.0 lowers
+the same intent with a backend-private Unitless driver because its
+configuration rows drive parameters: rows set only that private value, the
+actual native Revolve uid returned by the command array is bound to
+`suppress_feature`, and the feature follows an expression of the private
+driver. Neither the driver nor the returned uid exists in Forge IR.
+
+The `shifted-axis-revolve` owner is the end-to-end proof. Its stepped profile
+also exercises a simple concave `PolygonProfileIR`. Forge validates the
+current evaluated polygon only to reject degenerate/self-intersecting loops and
+derive a deterministic interior region selector. Symbolic coordinates remain
+in IR. Mitcad retains them in the saved Sketch by driving each point coordinate
+from native dimensions whose expressions are the original Forge values.
+
+Native qualification saves the Mitcad design in the authored `Cut` row,
+reopens that same `.mitcad` file without rerunning Forge Python, applies
+`Suppressed`, verifies the uncut target geometry, then applies `Cut` again
+and verifies the cut returns. The reopen/apply helper belongs to native
+qualification infrastructure; it is not public SCPF or semantic IR.
 
 Angle units are semantic compiler data. The `sweep` model parameter becomes
 `ParameterIR(unit="deg")`, and the Mitcad Revolve extent references that
@@ -969,7 +1004,9 @@ slice: `primitive.box`, `primitive.cylinder`, `primitive.sphere`,
 `boolean.subtract`, `boolean.join`, `boolean.intersect`,
 `placement.primitive`, `sketch.circle`, `sketch.polygon`, `profile.region`,
 `feature.extrude.distance`, `feature.extrude.symmetric`,
-`feature.revolve.angle`, `modify.chamfer.face-boundary` and
+`feature.revolve.angle`, `feature.revolve.cut`,
+`reference.axis-line.shifted-principal`, `reference.plane.principal`,
+`configuration.suppress.feature`, `modify.chamfer.face-boundary` and
 `native-topology`; its assembly compiler is absent, so assembly intent fails
 explicitly at the boundary. This registry is intentionally internal: it does
 not rename `scpf`, expose a new public backend API or imply feature parity.
