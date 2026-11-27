@@ -5739,14 +5739,40 @@ def _assembly_configuration_feature_ref(
 
     matches = []
     for key, instance in definition_instances.items():
-        if not _shape_contains(instance.definition.shape, feature):
-            continue
         definition_id = definition_ids[key]
         definition = next(
             item
             for item in assembly_ir.definitions
             if item.id == definition_id
         )
+
+        exported_source = next(
+            (
+                exported
+                for _name, exported in instance.definition.features
+                if (
+                    exported.kind == "exported_feature"
+                    and feature is exported.data[0]
+                )
+            ),
+            None,
+        )
+        if exported_source is not None:
+            semantic = _configuration_feature_ref(
+                instance.definition.shape,
+                exported_source,
+                definition.model.root,
+            )
+            matches.append(
+                DefinitionFeatureRefIR(
+                    definition=definition_id,
+                    feature=semantic,
+                )
+            )
+            continue
+
+        if not _shape_contains(instance.definition.shape, feature):
+            continue
         try:
             semantic = _configuration_feature_ref(
                 instance.definition.shape,
