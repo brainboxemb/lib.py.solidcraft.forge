@@ -85,14 +85,17 @@ def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
 
 def _compile_shape_legacy_with_dependencies(shape: Shape, name: str):
     """Compile one not-yet-migrated Shape through the stable legacy lowering."""
-    from .configurations import _ConfiguredDesign, _configuration_commands
-    if isinstance(shape, _ConfiguredDesign):
-        if not isinstance(shape.design, Shape):
-            raise TypeError("compile_model Configure design must contain one Shape")
-        commands = _compile_model_commands(shape.design, name)
-        commands = _configuration_commands(shape, name, commands)
-    else:
-        commands = _compile_model_commands(shape, name)
+    from .configurations import _configuration_commands
+
+    commands = _compile_model_commands(shape, name)
+    configuration = getattr(shape, "_configuration", None)
+    if configuration is not None:
+        commands = _configuration_commands(
+            shape,
+            configuration,
+            name,
+            commands,
+        )
     plain_commands = _plain_command_value(commands)
     document = (
         replay_document(plain_commands)
