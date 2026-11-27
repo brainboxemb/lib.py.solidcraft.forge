@@ -12,7 +12,8 @@ API for SolidCraft. It is an authoring/compiler layer, not a second CAD kernel.
 - `api-probes/<id>/` contains temporary executable API/design probes. Probes
   are not physical model owners and are not model-catalogue content.
 - `modules/` owns generic repository capabilities such as CI, builders,
-  verification and Pages projection.
+  verification and Pages projection. Generic builders do not import `scpf` or
+  learn Forge-specific authoring semantics.
 - `site/` owns public documentation/presentation sources.
 - `build/<scope>/` owns generated CAD/evidence output.
 - `gh-pages` owns rendered Pages output and never owns CAD source/evidence.
