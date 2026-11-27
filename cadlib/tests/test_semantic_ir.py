@@ -33,6 +33,7 @@ from scpf.ir import (
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
+    PlaneIR,
     PolygonProfileIR,
     RegionIR,
     RevolveIR,
@@ -293,7 +294,10 @@ class SemanticIRTests(unittest.TestCase):
         self.assertIsInstance(model.root, ExtrudeIR)
         self.assertIsInstance(model.root.sketch, SketchIR)
         self.assertEqual(model.root.sketch.name, "Profile")
-        self.assertEqual(model.root.sketch.plane, "XY")
+        self.assertEqual(
+            model.root.sketch.plane,
+            PlaneIR(orientation="XY", origin=(0, 0, 0)),
+        )
         self.assertEqual(len(model.root.sketch.profiles), 1)
         profile = model.root.sketch.profiles[0]
         self.assertIsInstance(profile, CircleProfileIR)
@@ -370,7 +374,7 @@ class SemanticIRTests(unittest.TestCase):
                 root=ExtrudeIR(
                     sketch=SketchIR(
                         name="MissingHole",
-                        plane="XY",
+                        plane=PlaneIR(orientation="XY"),
                         profiles=(
                             CircleProfileIR(diameter=10),
                             CircleProfileIR(diameter=8),
@@ -386,7 +390,7 @@ class SemanticIRTests(unittest.TestCase):
                 root=ExtrudeIR(
                     sketch=SketchIR(
                         name="InsideOut",
-                        plane="XY",
+                        plane=PlaneIR(orientation="XY"),
                         profiles=(
                             CircleProfileIR(diameter=8),
                             CircleProfileIR(diameter=10),
@@ -465,7 +469,10 @@ class SemanticIRTests(unittest.TestCase):
         extrusion = model.root.base
         self.assertEqual(extrusion.direction, "symmetric")
         self.assertEqual(extrusion.distance, 15)
-        self.assertEqual(extrusion.sketch.plane, "XZ")
+        self.assertEqual(
+            extrusion.sketch.plane,
+            PlaneIR(orientation="XZ", origin=(0, 0, 0)),
+        )
         self.assertEqual(len(extrusion.sketch.profiles), 1)
         profile = extrusion.sketch.profiles[0]
         self.assertIsInstance(profile, PolygonProfileIR)
@@ -612,6 +619,60 @@ class SemanticIRTests(unittest.TestCase):
         ):
             compile_mitcad_ir(model, "AsymmetricChamfer")
 
+
+    def test_plane_ir_rejects_non_principal_or_invalid_origins(self):
+        for kwargs in (
+            {"orientation": "ZX"},
+            {"orientation": "XY", "origin": (0, 0)},
+            {"orientation": "XY", "origin": (0, 0, True)},
+        ):
+            with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
+                PlaneIR(**kwargs)
+
+    def test_shifted_sketch_plane_is_symbolic_semantic_ir_before_lowering(self):
+        axis_x = Parameter("axis_x", 8)
+        axis_z = Parameter("axis_z", 3)
+        panel = Box(80, 46, 10)
+        with Sketch(
+            name="ShiftedPassThrough",
+            plane="XY",
+            offset=axis_z,
+        ) as profile:
+            Polygon2D(
+                [
+                    (12, -5),
+                    (16, -5),
+                    (16, 5),
+                    (12, 5),
+                ],
+                plane="XY",
+            )
+        shape = panel - profile.revolve(
+            axis=AxisLine(
+                Axis.Y,
+                origin=(axis_x, 0, axis_z),
+            ),
+        )
+
+        model = normalize_shape(shape)
+
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertNotIsInstance(model.root, LegacyShapeIR)
+        self.assertEqual(model.root.operation, "cut")
+        self.assertEqual(
+            model.root.sketch.plane,
+            PlaneIR(
+                orientation="XY",
+                origin=(0, 0, axis_z),
+            ),
+        )
+        self.assertIs(model.root.sketch.plane.origin[2], axis_z)
+        self.assertIs(model.root.axis.origin[2], axis_z)
+        self.assertIs(model.root.axis.origin[0], axis_x)
+        self.assertEqual(
+            [parameter.name for parameter in model.parameters],
+            ["axis_z", "axis_x"],
+        )
 
     def test_parameterized_polygon_revolve_is_typed_for_both_backends(self):
         length = Parameter("length", 10)
