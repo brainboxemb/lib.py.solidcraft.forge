@@ -984,6 +984,7 @@ def _compile_assembly_ir_core_with_dependencies(model: AssemblyIR, name: str):
 
 def _compile_assembly_legacy_with_dependencies(value, name):
     """Stable SolidCraft presentation/compatibility assembly lowering."""
+    configuration = getattr(value, "_configuration", None)
     assembly = _as_assembly(value)
     _validate_attachment_relationships(assembly)
     names = _definition_names(assembly)
