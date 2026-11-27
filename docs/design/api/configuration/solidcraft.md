@@ -208,40 +208,82 @@ and succeeds with row cells addressed as `suppress:Installed`.
 This proves that SolidCraft already supports the required human-readable native
 feature name. The remaining limitation is Forge's feature-name lowering.
 
-## 6. Consequence for the tube-clamp use case
+## 6. Position suppression result
 
-The standalone Tube Clamp needs two physical states:
+The `configuration-position-suppression` probe tests a real named
+`solid.move` feature:
 
 ~~~text
-Free:
-clamp_bore = tube_d - clamp_interference
-
-Installed:
-clamp_bore = tube_d
+base geometry
+└── ServicePosition move feature
 ~~~
 
-The current released Forge/SolidCraft baseline represents that as:
+SolidCraft 0.49 accepts that move as a normal configuration feature target:
+
+~~~text
+Normal  -> suppress:ServicePosition = true
+Service -> suppress:ServicePosition = false
+~~~
+
+This proves that a positional transition can use ordinary suppression when the
+transition is genuinely a CAD history feature.
+
+That result must not be generalized to assembly occurrence placement.
+`occurrence.move` is documented as changing an occurrence transform and its
+reply contains `occurrence`, `transform` and `pending`; it does not expose
+a timeline feature. True occurrence placement is therefore still driven
+through parameter expressions, as qualified by the existing
+`configuration-position` model.
+
+Forge must distinguish:
+
+~~~text
+authored move feature
+    -> suppressible feature target
+
+occurrence placement
+    -> parameter/expression-driven transform
+~~~
+
+The public API may make both feel coherent, but the SolidCraft lowering must not
+pretend they are the same capability.
+
+## 7. Consequence for the tube-clamp use case
+
+The standalone Tube Clamp needs two physical states, but the important design
+result is no longer the diameter workaround itself.
+
+The released rule-based probe remains useful as a baseline:
 
 ~~~text
 one Configuration
 ├── Free row
-│   └── clamp_bore = tube_d - 0.4 mm
 └── Installed rule
-    ├── enabled = false
-    └── clamp_bore = tube_d
 ~~~
 
-This is not two configuration tables. It is one configuration containing both
-row state and a rule.
+The feature probes show a more direct route when Installed is truthfully an
+authored CAD history transition:
 
-The public Forge API may later hide these native mechanics behind
-`Toggle("Installed", ...)`, but the lowering remains valid only if the saved
-SolidCraft design preserves the same semantics.
+~~~text
+base/free geometry
+└── Installed feature
+    ├── suppressed -> Free
+    └── active     -> Installed
+~~~
 
-For a higher-level parent where Installed differs per named row, the same native
-rule is insufficient because its enabled state is not row-owned.
+The actual production feature should model the real mechanical transition, not
+merely swap a bore diameter.
 
-## 7. Configuration-only parameter dependencies
+A generic Toggle should therefore not be introduced merely to obtain a checkbox
+when the state is already a real suppressible feature. Generic state remains a
+separate problem only where no truthful history feature exists.
+
+For a higher-level design where one global Installed intent must drive several
+independent child-owned Installed features, a composition/binding mechanism is
+still required. The current probes do not yet prove that one native SolidCraft
+control can fan out to several separate child feature suppressions.
+
+## 8. Configuration-only parameter dependencies
 
 The executable probe exposed another SolidCraft/Forge boundary.
 
@@ -266,7 +308,7 @@ That workaround must **not** become public API policy. A parameter referenced by
 configuration is a real semantic dependency and Forge IR/compiler state must
 retain it even when ordinary geometry does not otherwise read it.
 
-## 8. Backend qualification questions
+## 9. Backend qualification questions
 
 For each proposed Forge configuration capability, qualify these questions
 against the saved SolidCraft design:
