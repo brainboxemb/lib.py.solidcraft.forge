@@ -4039,7 +4039,7 @@ class SemanticIRTests(unittest.TestCase):
 
         model = normalize_model(configured)
 
-        self.assertEqual(model.configuration.rules, ())
+        self.assertFalse(hasattr(model.configuration, "rules"))
 
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
         with Sketch(name="HalfProfile", plane="XZ") as sketch:
