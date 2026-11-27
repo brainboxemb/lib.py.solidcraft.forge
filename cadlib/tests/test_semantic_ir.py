@@ -8,7 +8,6 @@ from scpf import (
     Boss,
     Box,
     Circle2D,
-    Configure,
     Cone,
     CounterboreHole,
     CountersinkHole,
@@ -33,7 +32,6 @@ from scpf import (
     Rest,
     SnapFit,
     Sphere,
-    Suppress,
     ThreadedHole,
     X,
     Y,
@@ -464,10 +462,9 @@ class SemanticIRTests(unittest.TestCase):
     def test_shifted_sphere_configuration_binds_semantic_feature_not_helper(self):
         sphere = Sphere(5).move(z=15)
         body = Box(30, 30, 30, anchor=Anchor.BOTTOM) - sphere
-        configured = Configure(
-            body,
+        configured = body.configure(
             active="Cut",
-            columns=(Suppress(sphere),),
+            columns=(sphere,),
             rows={
                 "Cut": (False,),
                 "Uncut": (True,),
@@ -570,10 +567,9 @@ class SemanticIRTests(unittest.TestCase):
             anchor=Anchor.BOTTOM,
         )
         body = Box(30, 30, 30, anchor=Anchor.BOTTOM) - cone
-        configured = Configure(
-            body,
+        configured = body.configure(
             active="Cut",
-            columns=(Suppress(cone),),
+            columns=(cone,),
             rows={
                 "Cut": (False,),
                 "Uncut": (True,),
@@ -853,10 +849,9 @@ class SemanticIRTests(unittest.TestCase):
         base = Box(30, 20, 10)
         bore = Cylinder(d=6, h=14)
         design = (base - bore).move(x=10)
-        configured = Configure(
-            design,
+        configured = design.configure(
             active="Cut",
-            columns=(Suppress(bore),),
+            columns=(bore,),
             rows={"Cut": (False,), "Keep": (True,)},
         )
 
@@ -973,10 +968,9 @@ class SemanticIRTests(unittest.TestCase):
         tool = first + second
         design = base - tool
 
-        configured = Configure(
-            design,
+        configured = design.configure(
             active="Cut",
-            columns=(Suppress(second),),
+            columns=(second,),
             rows={"Cut": (False,), "Keep": (True,)},
         )
         model = normalize_model(configured)
@@ -3800,10 +3794,9 @@ class SemanticIRTests(unittest.TestCase):
             ),
         )
         body = panel - pass_through
-        configured = Configure(
-            body,
+        configured = body.configure(
             active="Cut",
-            columns=(Suppress(pass_through),),
+            columns=(pass_through,),
             rows={
                 "Cut": (False,),
                 "Suppressed": (True,),
@@ -3855,10 +3848,9 @@ class SemanticIRTests(unittest.TestCase):
         clip = Box(50, 50, 30).move(z=15)
         design = cut & clip
 
-        configured_clip = Configure(
-            design,
+        configured_clip = design.configure(
             active="Clipped",
-            columns=(Suppress(clip),),
+            columns=(clip,),
             rows={"Clipped": (False,), "Unclipped": (True,)},
         )
         clip_model = normalize_model(configured_clip)
@@ -3872,10 +3864,10 @@ class SemanticIRTests(unittest.TestCase):
         self.assertIsInstance(clip_node, PlacementIR)
         self.assertIsInstance(clip_node.primitive, BoxIR)
 
-        configured_bore = Configure(
-            design,
+        bore_design = type(design)(design.kind, design.data)
+        configured_bore = bore_design.configure(
             active="Bored",
-            columns=(Suppress(bore),),
+            columns=(bore,),
             rows={"Bored": (False,), "Solid": (True,)},
         )
         bore_model = normalize_model(configured_bore)
@@ -3936,10 +3928,9 @@ class SemanticIRTests(unittest.TestCase):
         design = ((sphere + extension) - bore) & clip
         unrelated = Box(2, 2, 2)
 
-        configured = Configure(
-            design,
+        configured = design.configure(
             active="Clipped",
-            columns=(Suppress(unrelated),),
+            columns=(unrelated,),
             rows={"Clipped": (False,), "Unclipped": (True,)},
         )
 
@@ -3972,10 +3963,9 @@ class SemanticIRTests(unittest.TestCase):
         )
         body = panel - pass_through
         unrelated = Box(2, 2, 2)
-        configured = Configure(
-            body,
+        configured = body.configure(
             active="Cut",
-            columns=(Suppress(unrelated),),
+            columns=(unrelated,),
             rows={"Cut": (False,), "Suppressed": (True,)},
         )
 
@@ -3985,7 +3975,7 @@ class SemanticIRTests(unittest.TestCase):
         ):
             normalize_model(configured)
 
-    def test_configuration_ir_rejects_non_public_rule_objects(self):
+    def test_configuration_ir_has_no_retired_rule_surface(self):
         panel = Box(40, 24, 20)
         with Sketch(name="PassThrough", plane="XY") as profile:
             Polygon2D(
@@ -3996,19 +3986,15 @@ class SemanticIRTests(unittest.TestCase):
             axis=AxisLine(Axis.Y, origin=(8, 0, 0)),
         )
         body = panel - pass_through
-
-        configured = Configure(
-            body,
+        configured = body.configure(
             active="Cut",
-            columns=(Suppress(pass_through),),
+            columns=(pass_through,),
             rows={"Cut": (False,), "Suppressed": (True,)},
         )
-        object.__setattr__(configured, "rules", ("unsupported",))
-        with self.assertRaisesRegex(
-            ValueError,
-            "outside current public grammar",
-        ):
-            normalize_model(configured)
+
+        model = normalize_model(configured)
+
+        self.assertEqual(model.configuration.rules, ())
 
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
         with Sketch(name="HalfProfile", plane="XZ") as sketch:
