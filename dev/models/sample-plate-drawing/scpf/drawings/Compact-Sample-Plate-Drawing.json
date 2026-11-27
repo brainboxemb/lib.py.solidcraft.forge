@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "eqx7s9vqbehb2",
+  "id": "dhvd9syrxhxgz",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "ddjj12k8ctmty"
+        "source": "2x5ndgpxgzhm6"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "1501rfb5r985w",
+      "id": "b9fvtafk4n5t7",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,15 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "391dzd7vy1mx9",
+          "id": "1vb34f8s9czzj",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "57v92zr94fk14",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,37 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "1sx6mfhtt4878",
+          "id": "2raan2cspg9jk",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "391dzd7vy1mx9",
+          "parent": "57v92zr94fk14",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "ea0d7hpgpq38r",
+          "id": "35evrq12480pt",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "391dzd7vy1mx9",
+          "parent": "57v92zr94fk14",
           "side": "above"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "d626hhspgagew",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "ddjj12k8ctmty"
+      "id": "2x5ndgpxgzhm6"
     }
   ],
   "symbols": [],
