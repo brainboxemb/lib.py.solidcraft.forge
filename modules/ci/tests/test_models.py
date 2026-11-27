@@ -103,6 +103,10 @@ SCPF_ONLY_IDS = {
 }
 
 VISUAL_SCPF_ONLY_IDS = {
+    "sheet-path-flange",
+    "sheet-hem",
+    "sheet-edge-flange",
+    "sheet-contour-flange",
     "attached-through-all",
     "cone-boolean",
     "native-revolve",
