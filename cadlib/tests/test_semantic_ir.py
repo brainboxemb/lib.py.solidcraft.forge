@@ -634,6 +634,116 @@ class SemanticIRTests(unittest.TestCase):
         )
         self.assertEqual(cone_feature["def"]["operation"], "join")
 
+    def test_boolean_ir_composes_typed_extrude_target_with_primitive_tool(self):
+        with Sketch(name="BooleanBase", plane="XY") as base_profile:
+            Rectangle2D(30, 20)
+        base = base_profile.extrude(8)
+        bore = Cylinder(d=6, h=20, axis=Axis.Z)
+
+        shape = base - bore
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ExtrudeBooleanTarget",
+        )
+
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(model.root.operation, "cut")
+        self.assertIsInstance(model.root.target, ExtrudeIR)
+        self.assertIsInstance(model.root.tool, PlacementIR)
+
+    def test_boolean_ir_composes_standalone_extrude_as_typed_tool(self):
+        base = Box(40, 30, 10)
+        with Sketch(name="JoinProfile", plane="XY") as tool_profile:
+            Circle2D(d=12)
+        tool = tool_profile.extrude(14)
+
+        shape = base + tool
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ExtrudeBooleanTool",
+        )
+
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(model.root.operation, "join")
+        self.assertIsInstance(model.root.target, PlacementIR)
+        self.assertIsInstance(model.root.tool, ExtrudeIR)
+        solidcraft = compile_solidcraft_ir(model, "ExtrudeBooleanTool")
+        extrude = [
+            command
+            for command in solidcraft["commands"]
+            if command["command"] == "solid.extrude"
+        ][-1]
+        self.assertEqual(extrude["params"]["operation"], "join")
+        self.assertEqual(extrude["params"]["targets"], ["ExtrudeBooleanTool"])
+        with self.assertRaisesRegex(
+            ModelError,
+            "unsupported typed tool ExtrudeIR",
+        ):
+            compile_mitcad_ir(model, "ExtrudeBooleanTool")
+
+    def test_boolean_ir_composes_standalone_revolve_as_typed_tool(self):
+        base = Box(40, 30, 10)
+        with Sketch(name="JoinRevolve", plane="XZ") as tool_profile:
+            Polygon2D([(0, 0), (0, 4), (8, 4), (8, 0)], plane="XZ")
+        tool = tool_profile.revolve(axis=Axis.X, angle=180)
+
+        shape = base | tool
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "RevolveBooleanTool",
+        )
+
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(model.root.operation, "join")
+        self.assertIsInstance(model.root.tool, RevolveIR)
+        solidcraft = compile_solidcraft_ir(model, "RevolveBooleanTool")
+        revolve = [
+            command
+            for command in solidcraft["commands"]
+            if command["command"] == "solid.revolve"
+        ][-1]
+        self.assertEqual(revolve["params"]["operation"], "join")
+        self.assertEqual(revolve["params"]["targets"], ["RevolveBooleanTool"])
+
+    def test_boolean_ir_preserves_recursive_target_and_tool_order(self):
+        with Sketch(name="TargetProfile", plane="XY") as target_profile:
+            Rectangle2D(24, 16)
+        target = target_profile.extrude(6)
+        first_tool = Cylinder(d=5, h=12)
+        left = target - first_tool
+
+        with Sketch(name="ToolProfile", plane="XY") as tool_profile:
+            Circle2D(d=10)
+        right = tool_profile.extrude(8)
+
+        model = normalize_shape(left & right)
+
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(model.root.operation, "intersect")
+        self.assertIsInstance(model.root.target, BooleanIR)
+        self.assertEqual(model.root.target.operation, "cut")
+        self.assertIsInstance(model.root.target.target, ExtrudeIR)
+        self.assertIsInstance(model.root.target.tool, PlacementIR)
+        self.assertIsInstance(model.root.tool, ExtrudeIR)
+        self.assertNotIsInstance(model.root, LegacyShapeIR)
+
+    def test_boolean_ir_rejects_non_body_operands_at_node_boundary(self):
+        placed = normalize_shape(Box(10, 10, 10)).root
+        legacy = LegacyShapeIR(
+            shape=Box(2, 2, 2).with_appearance("#112233"),
+            source_kind="appearance_assignment",
+        )
+
+        with self.assertRaisesRegex(ValueError, "tool must be typed BodyIR"):
+            BooleanIR(operation="join", target=placed, tool=legacy)
+
+    def test_material_appearance_assignment_remains_invalid_csg_operand(self):
+        assigned = Box(10, 10, 10).with_appearance("#112233")
+
+        with self.assertRaisesRegex(TypeError, "cannot be combined"):
+            _ = assigned + Box(2, 2, 2)
+
+
     def test_rectangle_and_rounded_rectangle_profiles_are_semantic(self):
         width = Parameter("rect_width", 40)
         depth = Parameter("rect_depth", 20)
