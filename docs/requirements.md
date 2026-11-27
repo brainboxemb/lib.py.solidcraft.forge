@@ -302,6 +302,13 @@
 273. Boolean join/cut/intersect composition of standalone Revolve bodies belongs to BooleanIR. RevolveIR must not absorb generic CSG semantics merely to satisfy backend command spelling.
 274. #586 completes the current working Revolve semantic family independently from backend coverage; unsupported standalone Sketch forms are explicit compiler-surface limits and backend gaps remain backend catch-up rather than missing Revolve IR meaning.
 
+275. The current public reference-geometry vocabulary is principal Sketch planes plus semantic plane origin/offset and fixed axis lines; Forge does not currently expose a generic native datum/construction-geometry object model.
+276. `PlaneIR(orientation, origin)` must represent every current typed Sketch reference plane: XY/XZ/YZ plus symbolic or fixed world coordinates where the consuming Sketch feature accepts offset/origin intent.
+277. `AxisLineIR(direction, origin)` must represent principal Axis.X/Y/Z, arbitrary fixed non-zero XYZ directions and shifted fixed/symbolic XYZ origins used by current typed axis consumers.
+278. CircularPatternIR must preserve the complete current public fixed-axis vocabulary through AxisLineIR, including an arbitrary fixed XYZ direction with Parameter/Expression origin coordinates. RevolveIR must preserve principal/AxisLine intent and enforce its own coplanarity rule without creating another axis-reference type.
+279. Native construction-axis, edge-axis, face-axis and topology-selected axis selectors are not exposed by the current public SCPF API and must not be invented in semantic IR merely to anticipate future APIs. Fixed Sketch rotation remains transform/frame intent, not reference-geometry identity.
+280. #593 completes the current public Reference geometry: planes and axes semantic family independently from backend helper construction. Backend-created construction planes/axes, replay names and native ids remain transport only.
+
 ## SCPF native associativity
 
 1. When SolidCraft exposes a durable native reference for editable intent, Forge
