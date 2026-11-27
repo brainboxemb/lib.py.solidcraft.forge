@@ -80,3 +80,24 @@ interfaces to it. The consumer should not author `config.rule` mechanics,
 
 A later reusable-child probe should qualify the exact component interface and
 binding syntax.
+
+
+## Observed result
+
+Qualified by PR CI run **46011745132** (run 924).
+
+The probe passed in the pinned SolidCraft runtime. Retained evidence contains:
+
+- one native parameter `coupler_size`;
+- one private transport parameter `installed_offset`;
+- two independently authored move features,
+  `LeftInstalledMotion` and `RightInstalledMotion`;
+- Small/Large rows that keep `installed_offset = 0 mm`;
+- one disabled-by-default native Configuration Rule named `Installed`;
+- that rule drives `installed_offset = 4 mm`.
+
+Both move features reference the same transport parameter, so one native
+Installed control fans out to both model motions.
+
+This qualifies the backend transport pattern only. The public semantic contract
+remains one global state bound to multiple participants.
