@@ -299,13 +299,28 @@ that feature is the additional cutter which widens the free 9.6 mm clamp bore
 to the installed 10.0 mm bore. The final document configures that exported
 feature through `Suppress(clamp.feature("installed"))`.
 
-This probe must answer whether a real suppressible component feature gives the
-native checkbox behavior we want without inventing a generic boolean API.
-The Forge export name is component-local API identity; the probe must also
-record what label SolidCraft actually presents for the native feature column.
+The probe result is positive for the feature-suppression approach, with one
+important Forge naming gap:
 
-Both probes are backend evidence. Neither by itself defines the final public
-API.
+- the SCPF probe compiles and replays successfully;
+- `Free` stores the feature as suppressed and `Installed` stores it active;
+- current Forge lowers the exported `installed` feature to the native history
+  feature `Cylinder3`, so the native configuration target is currently
+  `suppress:Cylinder3`;
+- a second native SolidCraft probe renames that same history feature to
+  `Installed` with `timeline.rename` before configuration and then
+  successfully configures `suppress:Installed`.
+
+Therefore SolidCraft 0.49 already has the backend capability needed for a
+human-readable Installed feature checkbox. The remaining gap is Forge feature
+naming/lowering, not a missing SolidCraft boolean widget.
+
+For this Tube Clamp use case, a generic `Toggle` should **not** be introduced
+merely to obtain a checkbox if `Installed` can be represented truthfully as a
+real suppressible CAD feature. A generic boolean configuration semantic remains
+a separate question for states that are not real feature suppression.
+
+Both probes are backend evidence. Neither by itself defines a new public API.
 
 ## 9. Acceptance criteria
 
@@ -330,8 +345,12 @@ prove:
 
 Still open:
 
-- final naming of `Toggle`;
-- whether `DriveParameter` remains the shared effect object;
+- whether any generic `Toggle` API is required after feature-owned boolean
+  states are handled through real suppressible features;
+- how a Forge exported feature's public name should map to the native SolidCraft
+  history/display name without leaking backend identity;
+- whether `DriveParameter` remains the shared effect object for genuinely
+  rule-driven state;
 - eventual spelling for child-configuration selection.
 
 Not open:
