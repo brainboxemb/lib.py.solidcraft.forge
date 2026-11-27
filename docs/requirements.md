@@ -221,6 +221,13 @@
 196. The stable SolidCraft compatibility classifier must use the same degree role for countersink-angle Parameters so typed and compatibility lowering agree on editable native units.
 197. Fixed non-zero Hole direction vectors remain engine-neutral orientation intent. #550 does not introduce parameter-driven vector components as a new editable direction contract.
 198. Patterning, configuration/suppression and backend-native Hole implementation are separate semantic/backend families; their remaining gaps do not make the Hole feature family itself incomplete once current Hole meaning and placement intent are represented.
+199. Public Sketch entity authoring must normalize independently from Sketch support and solid consumers into one support-independent `SketchEntityGraphIR`.
+200. Closed `Sketch.profile(...)` line/arc geometry uses `ConnectedProfileIR` plus semantic line, three-point-arc and center-point-arc segments; open `Sketch.chain()/line()` uses `OpenChainIR` plus line/tangent-arc segments. Native curve ids and command names are forbidden from these nodes.
+201. `Text2D` inside a Sketch is semantic `TextEntityIR(text, height, font, position)`; its authored height and insertion coordinates retain length dependencies.
+202. Sketch pattern/mirror source identity is represented by Sketch-local `SketchEntityRefIR(kind, index)`, resolved while authored Python identity is still available. Backend curve ids, replay names and command indexes are not semantic source identity.
+203. `SketchRectangularPatternIR` retains authored count/spacing/directions/alignment/reversal semantics and `SketchMirrorIR` retains local X/Y mirror-axis intent. Sketch pattern counts are unitless/count Parameters; spacings remain length-valued.
+204. SolidCraft may translate semantic Sketch entity refs to private `$sketch_*` bindings during lowering. Existing backend limitations, including connected-profile pattern/mirror input, fail closed without invalidating the typed Sketch graph.
+205. #560 completes the current public Sketch entity/operation semantic surface only. Sketch support/reference frames, RegionIR composition and consuming Extrude/Revolve/Sheet Metal features remain separate layers owned by later batches.
 
 ## SCPF native associativity
 
