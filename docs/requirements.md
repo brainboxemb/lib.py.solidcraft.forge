@@ -35,9 +35,19 @@ docstrings and executable tests.
    other non-geometry presentation intent.
 2. Backend-specific limitations may constrain a lowering, but must not silently
    redefine the public semantic model.
-3. Saved-design/native qualification is required where the contract claims
-   editability, state switching, history identity, topology identity or other
-   native persistence.
+3. A semantic slice is IR-ready independently of any one optional backend when
+   it has a backend-neutral contract, typed normalization, pure IR boundary
+   tests and stable typed SolidCraft compatibility; unsupported backends must
+   fail closed on that typed node.
+4. Backend coverage is tracked independently from IR coverage. Mitcad lowering
+   and native Mitcad qualification may lag IR completion and must not become a
+   per-capability gate for permanent `exp` IR migration.
+5. Saved-design/native qualification is required where a backend contract
+   claims editability, state switching, history identity, topology identity or
+   other native persistence.
+6. `docs/ir-coverage.md` is the canonical compiler migration ledger and must
+   distinguish complete, partial, legacy and out-of-scope semantic families
+   from backend lowering/native-qualification status.
 
 ## Verification
 
