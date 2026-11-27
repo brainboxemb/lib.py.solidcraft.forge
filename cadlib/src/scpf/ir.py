@@ -2487,16 +2487,11 @@ class ShellIR(BodyIR):
 
 @dataclass(frozen=True)
 class BooleanIR(BodyIR):
-    """Bounded recursive primitive CSG intent.
-
-    target may be another BooleanIR so a left-associated public CSG expression
-    remains one semantic tree. tool is deliberately one placed primitive in
-    the current qualified slice; more general boolean operands stay legacy.
-    """
+    """Recursive CSG composition over already-typed semantic body histories."""
 
     operation: str
-    target: "PlacementIR | FilletIR | BooleanIR"
-    tool: PlacementIR
+    target: BodyIR
+    tool: BodyIR
     source_kind: str = "boolean"
 
     def __post_init__(self):
@@ -2504,6 +2499,10 @@ class BooleanIR(BodyIR):
             raise ValueError(
                 "BooleanIR operation must be join, cut or intersect"
             )
+        if not isinstance(self.target, BodyIR):
+            raise ValueError("BooleanIR target must be typed BodyIR")
+        if not isinstance(self.tool, BodyIR):
+            raise ValueError("BooleanIR tool must be typed BodyIR")
 
 
 @dataclass(frozen=True)
@@ -5005,23 +5004,7 @@ def _normalize_node(shape: Shape) -> IRNode:
                 return plastic
 
         tool = _normalize_node(tool_shape)
-        fillet_cone_join = (
-            isinstance(target, FilletIR)
-            and isinstance(target.edges, ParallelEdgeSetIR)
-            and target.edges.axis == "Z"
-            and shape.kind == "union"
-            and isinstance(tool, PlacementIR)
-            and isinstance(tool.primitive, ConeIR)
-        )
-        primitive_boolean = (
-            not isinstance(target, FilletIR)
-            and (
-                isinstance(target, BooleanIR)
-                or _portable_csg_placement(target)
-            )
-            and _portable_csg_placement(tool)
-        )
-        if fillet_cone_join or primitive_boolean:
+        if isinstance(target, BodyIR) and isinstance(tool, BodyIR):
             operation = {
                 "union": "join",
                 "difference": "cut",
@@ -5186,10 +5169,7 @@ def _boolean_authored_feature_ref(
     if feature is tool_shape:
         return FeatureRefIR(path=(*path, "tool"))
 
-    if feature is target_shape and isinstance(
-        root.target,
-        (PlacementIR, FilletIR),
-    ):
+    if feature is target_shape and isinstance(root.target, BodyIR):
         return FeatureRefIR(path=(*path, "target"))
 
     if isinstance(root.target, BooleanIR):
@@ -5198,6 +5178,16 @@ def _boolean_authored_feature_ref(
             root.target,
             feature,
             path=(*path, "target"),
+        )
+        if nested is not None:
+            return nested
+
+    if isinstance(root.tool, BooleanIR):
+        nested = _boolean_authored_feature_ref(
+            tool_shape,
+            root.tool,
+            feature,
+            path=(*path, "tool"),
         )
         if nested is not None:
             return nested

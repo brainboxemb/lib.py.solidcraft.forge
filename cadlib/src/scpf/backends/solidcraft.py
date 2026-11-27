@@ -962,22 +962,91 @@ def _plastic_feature_commands(
     ]
 
 
-def _boolean_commands(model: ModelIR, node: BooleanIR, name: str) -> list[dict]:
-    """Flatten one bounded left-associated semantic CSG tree in source order."""
-    commands = []
-    if isinstance(node.target, BooleanIR):
-        commands.extend(_boolean_commands(model, node.target, name))
-    elif isinstance(node.target, FilletIR):
-        commands.extend(_fillet_commands(model, node.target, name))
-    elif isinstance(node.target, PlacementIR):
-        commands.append(_csg_primitive_command(node.target, name, "new"))
-    else:
-        raise ModelError("portable SolidCraft BooleanIR has unsupported target")
-
-    commands.append(
-        _csg_primitive_command(node.tool, name, node.operation)
+def _boolean_tool_commands(
+    model: ModelIR,
+    node: BodyIR,
+    name: str,
+    operation: str,
+    *,
+    prior: list[dict],
+) -> list[dict]:
+    """Apply one typed Boolean tool to an existing native body."""
+    if isinstance(node, PlacementIR):
+        return [
+            *prior,
+            _csg_primitive_command(node, name, operation),
+        ]
+    if isinstance(node, ExtrudeIR):
+        return _extrude_commands(
+            model,
+            node,
+            name,
+            operation_override=operation,
+            prior=prior,
+        )
+    if isinstance(node, RevolveIR):
+        return _revolve_commands(
+            model,
+            node,
+            name,
+            operation_override=operation,
+            prior=prior,
+        )
+    if (
+        isinstance(node, BooleanIR)
+        and node.operation == "join"
+        and operation in {"join", "cut"}
+    ):
+        commands = _boolean_tool_commands(
+            model,
+            node.target,
+            name,
+            operation,
+            prior=prior,
+        )
+        return _boolean_tool_commands(
+            model,
+            node.tool,
+            name,
+            operation,
+            prior=commands,
+        )
+    raise ModelError(
+        "portable SolidCraft BooleanIR has no qualified lowering for tool "
+        f"{type(node).__name__}"
     )
-    return commands
+
+
+def _boolean_commands(model: ModelIR, node: BooleanIR, name: str) -> list[dict]:
+    """Lower generic BooleanIR while keeping backend tool support explicit."""
+    if not isinstance(node.target, BodyIR) or not isinstance(node.tool, BodyIR):
+        raise ModelError("portable SolidCraft BooleanIR requires typed body operands")
+
+    if isinstance(node.target, PlacementIR):
+        primitive_csg_tool = (
+            isinstance(node.tool, PlacementIR)
+            or (
+                isinstance(node.tool, BooleanIR)
+                and node.tool.operation == "join"
+            )
+        )
+        commands = (
+            [_csg_primitive_command(node.target, name, "new")]
+            if primitive_csg_tool
+            else _body_commands(model, node.target, name)
+        )
+    elif isinstance(node.target, BooleanIR):
+        commands = _boolean_commands(model, node.target, name)
+    else:
+        commands = _body_commands(model, node.target, name)
+
+    return _boolean_tool_commands(
+        model,
+        node.tool,
+        name,
+        node.operation,
+        prior=commands,
+    )
 
 
 _PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
@@ -1550,14 +1619,27 @@ def _extrude_commands(
     model: ModelIR,
     node: ExtrudeIR,
     name: str,
+    *,
+    operation_override: str | None = None,
+    prior: list[dict] | None = None,
 ) -> list[dict]:
-    """Lower typed Sketch support/graph/region + Extrude semantics."""
+    """Lower typed Sketch/Extrude semantics, optionally as one CSG tool."""
     sketch = node.sketch
     if not isinstance(sketch, SketchIR):
         raise ModelError("portable SolidCraft ExtrudeIR requires SketchIR")
 
-    commands = []
-    if node.operation != "new_body":
+    if operation_override is not None and (
+        operation_override not in {"join", "cut", "intersect"}
+        or node.operation != "new_body"
+        or node.target is not None
+        or sketch.support is not None
+    ):
+        raise ModelError(
+            "Boolean ExtrudeIR tool requires one standalone new-body ExtrudeIR"
+        )
+
+    commands = list(prior or [])
+    if operation_override is None and node.operation != "new_body":
         if not isinstance(node.target, BodyIR):
             raise ModelError("attached ExtrudeIR requires typed body target")
         commands.extend(_body_commands(model, node.target, name))
@@ -1592,12 +1674,14 @@ def _extrude_commands(
     commands.append(_command("sketch.finish"))
 
     params = {"direction": node.direction}
-    if node.operation == "new_body":
+    effective_operation = operation_override or node.operation
+    if effective_operation == "new_body":
         params["body_name"] = name
     else:
-        params["operation"] = node.operation
+        params["operation"] = effective_operation
         params["targets"] = [name]
-        params["name"] = sketch.name
+        if operation_override is None:
+            params["name"] = sketch.name
 
     if node.through_all:
         params["through_all"] = True
@@ -1664,8 +1748,15 @@ def _solidcraft_axis(axis: AxisLineIR):
     }
 
 
-def _revolve_commands(model: ModelIR, node: RevolveIR, name: str) -> list[dict]:
-    """Lower semantic Sketch/Profile + Revolve IR without raw Shape parsing."""
+def _revolve_commands(
+    model: ModelIR,
+    node: RevolveIR,
+    name: str,
+    *,
+    operation_override: str | None = None,
+    prior: list[dict] | None = None,
+) -> list[dict]:
+    """Lower semantic RevolveIR, optionally as one typed CSG tool."""
     sketch = node.sketch
     _principal_plane_offset(
         sketch.plane,
@@ -1705,16 +1796,31 @@ def _revolve_commands(model: ModelIR, node: RevolveIR, name: str) -> list[dict]:
         if profile.segment_ids is not None
         else [chr(ord("a") + index) for index in range(len(authored_points))]
     )
+    if operation_override is not None and (
+        operation_override not in {"join", "cut", "intersect"}
+        or node.operation != "new_body"
+        or node.target is not None
+        or sketch.support is not None
+    ):
+        raise ModelError(
+            "Boolean RevolveIR tool requires one standalone new-body RevolveIR"
+        )
+
     revolve = {
         "sketch": sketch.name,
         "axis": _solidcraft_axis(node.axis),
         "angle": _role_command_value(model, node.angle, "angle"),
     }
-    if node.operation == "new_body":
+    effective_operation = operation_override or node.operation
+    base_commands = list(prior or [])
+    if effective_operation == "new_body":
         if node.target is not None:
             raise ModelError("new-body RevolveIR must not have a target")
         revolve["body_name"] = name
-    elif node.operation == "cut":
+    elif operation_override is not None:
+        revolve["operation"] = effective_operation
+        revolve["targets"] = [name]
+    elif effective_operation == "cut":
         if (
             not isinstance(node.target, PlacementIR)
             or not isinstance(node.target.primitive, BoxIR)
@@ -1722,14 +1828,16 @@ def _revolve_commands(model: ModelIR, node: RevolveIR, name: str) -> list[dict]:
             raise ModelError(
                 "portable SolidCraft Revolve cut currently requires a Box target"
             )
+        base_commands = [_box_command(node.target, name)]
         revolve["operation"] = "cut"
         revolve["targets"] = [name]
     else:
         raise ModelError(
-            f"unsupported portable SolidCraft Revolve operation {node.operation!r}"
+            f"unsupported portable SolidCraft Revolve operation {effective_operation!r}"
         )
 
     return [
+        *base_commands,
         _solidcraft_sketch_create(sketch),
         _command(
             "sketch.line",
@@ -2697,20 +2805,7 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
         return _fillet_commands(model, node, name)
 
     if isinstance(node, RevolveIR):
-        base_commands = []
-        if node.operation == "cut":
-            if (
-                not isinstance(node.target, PlacementIR)
-                or not isinstance(node.target.primitive, BoxIR)
-            ):
-                raise ModelError(
-                    "portable SolidCraft Revolve cut currently requires a Box target"
-                )
-            base_commands = [_box_command(node.target, name)]
-        return [
-            *base_commands,
-            *_revolve_commands(model, node, name),
-        ]
+        return _revolve_commands(model, node, name)
 
     if isinstance(node, ChamferIR):
         return _chamfer_commands(model, node, name)

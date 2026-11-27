@@ -592,6 +592,11 @@ def _boolean_command_plan(
         raise ModelError("Mitcad BooleanIR has unsupported target")
 
     tool_path = (*path, "tool")
+    if not isinstance(node.tool, PlacementIR):
+        raise ModelError(
+            "Mitcad BooleanIR has unsupported typed tool "
+            f"{type(node.tool).__name__}"
+        )
     tool_commands, relative_feature = _csg_primitive_commands(
         node.tool,
         f"{name}{node.operation.title()}{len(commands)}",
