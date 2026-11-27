@@ -1664,6 +1664,16 @@ def _compile_assembly_legacy_with_dependencies(value, name):
 
     if not commands:
         raise ModelError(f"{name} contains no component instances")
+
+    if configuration is not None:
+        from .configurations import _configuration_commands
+        commands = _configuration_commands(
+            value,
+            configuration,
+            name,
+            commands,
+        )
+
     dependencies = _native_dependencies(commands)
     document = _plain_command_value(replay_document(commands))
     if assembly.drawings:
