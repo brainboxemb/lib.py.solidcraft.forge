@@ -1844,7 +1844,7 @@ def _face_name_commands(
     return commands, variables
 
 
-def _chamfer_commands(node: ChamferIR, name: str) -> list[dict]:
+def _chamfer_commands(model: ModelIR, node: ChamferIR, name: str) -> list[dict]:
     _require_positive(node.distance, "chamfer distance")
     if node.distance2 is not None:
         _require_positive(node.distance2, "chamfer distance2")
@@ -2570,7 +2570,7 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
         ]
 
     if isinstance(node, ChamferIR):
-        return _chamfer_commands(node, name)
+        return _chamfer_commands(model, node, name)
 
     if isinstance(node, ShellIR):
         return _shell_commands(model, node, name)
