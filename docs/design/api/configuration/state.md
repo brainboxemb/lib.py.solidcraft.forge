@@ -135,6 +135,27 @@ The current experimental `ConfigurationIR` is intentionally a bounded
 suppression-row slice. Adding state must extend the semantic model; it must not
 reinterpret a row suppression cell as independent state.
 
+## Implementation order
+
+Do not implement the replacement State API by adding another SolidCraft-specific
+compiler path first.
+
+The required order follows the generic compiler discipline used on the
+experimental lane:
+
+1. define the engine-neutral State meaning and component-use semantics;
+2. add pure semantic IR/normalization tests;
+3. extend typed configuration IR;
+4. add independent SolidCraft and Mitcad lowerings where supported;
+5. qualify real saved/runtime behavior;
+6. then finalize the public SCPF spelling and remove the backend-shaped rule
+   surface it replaces.
+
+A temporary stable compatibility path may continue to execute existing released
+models while this work is in flight, but it does not define the new API and
+creates no requirement to preserve `ConfigRule`, `Always`,
+`DriveParameter` or public `rules=` in the resulting design.
+
 ## Backend lowering
 
 A backend may use any native mechanism that preserves the state semantics.
