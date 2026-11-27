@@ -535,7 +535,11 @@ def _extrude_commands(
                 }
             )
 
-        selector = center if not region.holes else [pick[0], pick[1]]
+        selector = (
+            center
+            if len(sketch.profiles) == 1
+            else [pick[0], pick[1]]
+        )
         extent = {
             "type": "distance",
             "distance": command_value(
