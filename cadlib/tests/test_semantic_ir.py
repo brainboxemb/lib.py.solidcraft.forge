@@ -86,6 +86,7 @@ from scpf.ir import (
     ScalarLiteralIR,
     ScalarParameterRefIR,
     SketchIR,
+    TextEntityIR,
     SketchCoordinateDimensionIR,
     SketchLengthDimensionIR,
     SketchLineIR,
