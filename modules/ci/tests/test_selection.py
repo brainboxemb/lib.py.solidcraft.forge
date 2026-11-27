@@ -2,12 +2,58 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from cad_library_ci.config import ConfigError, load_build
+from cad_library_ci.config import ConfigError, load_build, load_project
 from cad_library_ci.items import PythonModule, select
 from cad_library_ci.selection import changed_selection
 
 
 class SelectionTests(unittest.TestCase):
+    def test_project_loads_optional_qualification_policy(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            (repo / "ci.yml").write_text(
+                "schema: 1\n"
+                "branches:\n"
+                "  stable: main\n"
+                "  development: dev\n"
+                "roots:\n"
+                "  modules: modules\n"
+                "  models: models\n"
+                "  output: build\n"
+                "qualification:\n"
+                "  pull_requests:\n"
+                "    docs_only:\n"
+                "      prefixes: [docs/]\n"
+                "      modules: [ci]\n"
+                "  permanent:\n"
+                "    reuse_pr_qualification:\n"
+                "      branches: [exp]\n"
+            )
+            project = load_project(repo)
+            self.assertEqual(project.docs_only_prefixes, ("docs/",))
+            self.assertEqual(project.docs_only_modules, ("ci",))
+            self.assertEqual(project.reuse_pr_branches, ("exp",))
+
+    def test_reuse_policy_rejects_non_permanent_branch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            repo = Path(tmp)
+            (repo / "ci.yml").write_text(
+                "schema: 1\n"
+                "branches:\n"
+                "  stable: main\n"
+                "  development: dev\n"
+                "roots:\n"
+                "  modules: modules\n"
+                "  models: models\n"
+                "  output: build\n"
+                "qualification:\n"
+                "  permanent:\n"
+                "    reuse_pr_qualification:\n"
+                "      branches: [issue/nope]\n"
+            )
+            with self.assertRaisesRegex(ConfigError, "permanent source branches"):
+                load_project(repo)
+
     def test_stale_build_ignored(self):
         with tempfile.TemporaryDirectory() as tmp:
             repo = Path(tmp)
