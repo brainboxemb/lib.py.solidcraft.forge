@@ -1359,6 +1359,28 @@ radial Sketch height to `shared + 1`. With `shared=4`, the native design has a
 produce one solid with volume `25π/9` and X bounds [0, 10] while retaining one
 unitless editable source parameter.
 
+#577 completes the public value/scalar-expression semantic grammar without
+widening backend support. The scalar IR now represents fixed numeric powers
+through `ScalarPowerIR` and the existing public
+`cadmath.min/max/sqrt/abs/round/floor/atan` operations through
+`ScalarFunctionIR`. Function arguments are scalar IR values, so nested
+arithmetic/functions retain authored structure and deterministic parameter
+dependencies without parsing `Expression.expression`.
+
+The scalar tree itself remains unit-neutral. Length, angle, count and ratio
+meaning belongs to the typed consuming field, as established by #481 and later
+Sketch/Sheet Metal work. This means IR completeness is independent from whether
+one backend can render every dimensional combination. The already-qualified
+affine mixed-role lowering remains unchanged; power, functions and general
+derived-unit arithmetic may still fail closed in a backend until a separate
+backend catch-up batch qualifies them.
+
+The compatibility constructor `Expression(value, expression, parameters)`
+continues to accept text-only expressions, but Forge does not claim semantic
+knowledge it was not given. Such text remains valid on existing compatibility
+paths and has no `scalar_ir`. #577 adds no public unit syntax and no backend
+expression strings or storage-unit conventions to semantic IR.
+
 #485 widens the existing `ChamferIR` rather than adding a second feature
 kind. `distance` remains the primary chamfer distance; optional `distance2`
 and `flip` carry the already-public two-distance semantics. Equal-distance
