@@ -82,3 +82,26 @@ can act on all required objects in one native history step.
 
 Only cases that genuinely require several independent native history features
 still need another composition strategy.
+
+
+## Observed result
+
+The corrected probe passed on CI run **46017873210** (run 959).
+
+SolidCraft 0.49 accepted:
+
+- two separate coupler bodies;
+- one native `solid.move` feature named `Installed` acting on both bodies in
+  the same history step;
+- `Installed` as one configured suppression feature;
+- Small/Large rows storing that feature suppressed;
+- one independent Configuration Rule named `Installed` driving that single
+  feature unsuppressed.
+
+The runtime step and retained evidence therefore prove one native configuration
+control can operate on several model bodies when the Installed transition is
+truthfully represented by one native multi-object history feature.
+
+This does not change the negative timeline-folder result: several distinct
+native history features grouped in a folder still cannot be one SolidCraft 0.49
+configuration feature target.
