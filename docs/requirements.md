@@ -273,7 +273,7 @@
 247. SolidCraft face-boundary lowering must derive native topology through replay-bound face/edge queries; principal/direction selectors must derive picks from typed rectangular-body dimensions; named Polygon selectors must derive picks from typed PolygonProfileIR ids plus Extrude semantics; explicit picks remain authored fixed semantic points.
 248. SolidCraft typed lowering for #562 accepted selector forms must remain document-compatible with the stable compiler for unchanged public source, including wildcard profile ids, symmetric/positive/negative XZ Extrude edge picks, multiple cardinal face boundaries and direction-pair Box selectors.
 249. Mitcad retains its already-qualified face-boundary/principal-edge slices. Newly typed selector forms outside its backend contract must raise ModelError before reading selector-specific attributes or raw Shape payload.
-250. #562 completes the current public Topology/reference selector semantic family. Chamfer and Fillet remain partial until their remaining feature/base variants are separately completed.
+250. #562 completes the current public Topology/reference selector semantic family and also completes the current public Fillet and Chamfer semantic families: Fillet is radius plus EdgeSelectionIR, while Chamfer is distance/distance2/flip plus EdgeSelectionIR over typed BodyIR. Backend/body lowering limits are backend coverage, not missing modifier IR.
 
 ## SCPF native associativity
 
