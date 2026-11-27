@@ -6,6 +6,8 @@ The project follows semantic versioning. Forge compatibility with the native
 SolidCraft engine is qualified separately; the tested engine version is defined
 by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
+## [Unreleased]
+
 ## [0.26.0] - 2026-11-27
 
 ### Added
