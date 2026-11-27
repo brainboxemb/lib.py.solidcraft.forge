@@ -62,7 +62,7 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "full": false,
+  "full": true,
   "library": true,
   "models": [
     {
@@ -736,7 +736,8 @@
     {
       "id": "shifted-axis-revolve",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -904,5 +905,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "45b1b3f8e3376538c952c9f7e19e94e3332182dd"
+  "source_sha": "a90965762fd80b25e842c4ed15154a03472afc0d"
 }
