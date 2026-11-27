@@ -649,13 +649,37 @@ class SketchRelationsIR:
 
 
 @dataclass(frozen=True)
+class SketchSupportIR:
+    """Semantic support of one Sketch on an existing typed body.
+
+    parent is a public Anchor value when the Sketch is attached to a target
+    surface. parent=None means the Sketch uses an explicit world frame while
+    still modifying target.
+    """
+
+    target: BodyIR
+    parent: str | None = None
+
+    def __post_init__(self):
+        if not isinstance(self.target, BodyIR):
+            raise ValueError("SketchSupportIR target must be BodyIR")
+        if self.parent is not None and self.parent not in {
+            "top", "bottom", "center", "inner_bottom",
+        }:
+            raise ValueError("SketchSupportIR parent anchor is unsupported")
+
+
+@dataclass(frozen=True)
 class SketchIR:
-    """Standalone 2D sketch geometry independent of downstream features."""
+    """2D sketch geometry plus backend-neutral support/frame semantics."""
 
     name: str
     plane: PlaneIR
     profiles: tuple[ProfileIR, ...]
     relations: SketchRelationsIR | None = None
+    support: SketchSupportIR | None = None
+    rotation: tuple[float, float, float] | None = None
+    graph: "SketchEntityGraphIR | None" = None
     source_kind: str = "sketch"
 
     def __post_init__(self):
@@ -665,29 +689,92 @@ class SketchIR:
             self.relations, SketchRelationsIR
         ):
             raise ValueError("SketchIR relations must be SketchRelationsIR")
+        if self.support is not None and not isinstance(
+            self.support, SketchSupportIR
+        ):
+            raise ValueError("SketchIR support must be SketchSupportIR")
+        if self.rotation is not None:
+            if (
+                not isinstance(self.rotation, tuple)
+                or len(self.rotation) != 3
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in self.rotation
+                )
+            ):
+                raise ValueError(
+                    "SketchIR rotation must be a fixed finite XYZ degree tuple"
+                )
+        if self.graph is not None and not isinstance(
+            self.graph, SketchEntityGraphIR
+        ):
+            raise ValueError("SketchIR graph must be SketchEntityGraphIR")
 
 
 @dataclass(frozen=True)
 class RegionIR:
-    """Closed sketch region described by semantic profile membership."""
+    """Closed Sketch region by profile membership or authored local selector."""
 
-    outer: int
+    outer: int | None = None
     holes: tuple[int, ...] = ()
+    selector: tuple[float, float] | None = None
+    exact: bool = False
 
     def __post_init__(self):
-        if type(self.outer) is not int or self.outer < 0:
-            raise ValueError("RegionIR outer must be a non-negative profile index")
+        membership = self.outer is not None
+        selected = self.selector is not None
+        if membership == selected:
+            raise ValueError(
+                "RegionIR requires exactly one membership or selector representation"
+            )
+        if membership:
+            if type(self.outer) is not int or self.outer < 0:
+                raise ValueError(
+                    "RegionIR outer must be a non-negative profile index"
+                )
+            if (
+                not isinstance(self.holes, tuple)
+                or any(
+                    type(index) is not int or index < 0
+                    for index in self.holes
+                )
+            ):
+                raise ValueError(
+                    "RegionIR holes must contain non-negative profile indexes"
+                )
+            if self.outer in self.holes:
+                raise ValueError(
+                    "RegionIR outer profile cannot also be a hole"
+                )
+            if len(set(self.holes)) != len(self.holes):
+                raise ValueError(
+                    "RegionIR hole profile indexes must be unique"
+                )
+            if self.exact:
+                raise ValueError(
+                    "membership RegionIR does not need exact selector mode"
+                )
+            return
+
+        if self.holes:
+            raise ValueError("selector RegionIR cannot carry profile holes")
         if (
-            not isinstance(self.holes, tuple)
-            or any(type(index) is not int or index < 0 for index in self.holes)
+            not isinstance(self.selector, tuple)
+            or len(self.selector) != 2
+            or any(
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not isfinite(value)
+                for value in self.selector
+            )
         ):
             raise ValueError(
-                "RegionIR holes must contain non-negative profile indexes"
+                "RegionIR selector must be one fixed finite Sketch-local point"
             )
-        if self.outer in self.holes:
-            raise ValueError("RegionIR outer profile cannot also be a hole")
-        if len(set(self.holes)) != len(self.holes):
-            raise ValueError("RegionIR hole profile indexes must be unique")
+        if not isinstance(self.exact, bool):
+            raise ValueError("RegionIR exact must be bool")
 
 
 def _circle_profile_radii(sketch: SketchIR) -> tuple[float, ...]:
@@ -1013,6 +1100,8 @@ def _region_interior_point(
     region: RegionIR,
 ) -> tuple[float, float]:
     """Derive backend transport from semantic profile/region geometry."""
+    if region.selector is not None:
+        return region.selector
 
     if (
         0 <= region.outer < len(sketch.profiles)
@@ -1029,13 +1118,66 @@ def _region_interior_point(
 
 @dataclass(frozen=True)
 class ExtrudeIR(BodyIR):
-    """Distance extrusion over semantic Sketch regions."""
+    """One authored extrusion over semantic Sketch region selection."""
 
     sketch: SketchIR
     regions: tuple[RegionIR, ...]
-    distance: Any
+    distance: Any | None
     direction: str
+    operation: str = "new_body"
+    target: BodyIR | None = None
+    through_all: bool = False
     source_kind: str = "sketch_base_extrusion"
+
+    def __post_init__(self):
+        if not isinstance(self.sketch, SketchIR):
+            raise ValueError("ExtrudeIR sketch must be SketchIR")
+        if (
+            not isinstance(self.regions, tuple)
+            or any(not isinstance(region, RegionIR) for region in self.regions)
+        ):
+            raise ValueError("ExtrudeIR regions must contain RegionIR")
+        if self.direction not in {"positive", "negative", "symmetric"}:
+            raise ValueError("ExtrudeIR direction is unsupported")
+        if self.operation not in {"new_body", "join", "cut"}:
+            raise ValueError("ExtrudeIR operation is unsupported")
+        if self.operation == "new_body":
+            if self.target is not None or self.sketch.support is not None:
+                raise ValueError(
+                    "new-body ExtrudeIR cannot carry target/support body"
+                )
+        else:
+            if not isinstance(self.target, BodyIR):
+                raise ValueError(
+                    "join/cut ExtrudeIR requires typed target BodyIR"
+                )
+            if (
+                self.sketch.support is None
+                or self.sketch.support.target is not self.target
+            ):
+                raise ValueError(
+                    "attached ExtrudeIR support must reference its semantic target"
+                )
+        if self.through_all:
+            if self.operation != "cut":
+                raise ValueError("through-all ExtrudeIR requires cut operation")
+            if self.distance is not None:
+                raise ValueError(
+                    "through-all ExtrudeIR must not carry finite distance"
+                )
+            if self.direction == "symmetric":
+                raise ValueError(
+                    "through-all ExtrudeIR cannot be symmetric"
+                )
+        elif (
+            self.distance is None
+            or isinstance(self.distance, bool)
+            or not isfinite(pv(self.distance))
+            or pv(self.distance) <= 0
+        ):
+            raise ValueError(
+                "finite ExtrudeIR requires positive CAD distance"
+            )
 
 
 @dataclass(frozen=True)
@@ -4798,6 +4940,7 @@ __all__ = [
     "ScalarParameterRefIR",
     "ScalarUnaryIR",
     "SketchIR",
+    "SketchSupportIR",
     "SketchChainIR",
     "SketchChainSegmentIR",
     "SketchEntityGraphIR",
