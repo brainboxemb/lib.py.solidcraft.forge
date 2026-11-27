@@ -8,6 +8,23 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-11-27
+
+### Changed
+
+- Restrict final-model configuration parameter rows to concrete finite numeric
+  values or unit-bearing literals. Parameter-to-parameter relationships remain
+  ordinary Forge model expressions and are no longer authored inside
+  configuration table cells.
+
+### Fixed
+
+- Reject symbolic configuration-row cells such as `tube_d`, `width/2` and
+  `tube_d-clamp_interference` instead of passing them through as native
+  parameter expressions.
+- Correct the configuration documentation boundary so the historical split-ring
+  coupling probe is no longer presented as supported HUB75 consumer authoring.
+
 ## [0.26.0] - 2026-11-27
 
 ### Added
