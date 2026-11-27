@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "113v62bfbkp3s",
+  "id": "2nngps66dde5k",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "0vb456jfgx4a1"
+        "source": "5mcef6hwzxcg8"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "arf0vyksxk32x",
+      "id": "2s7fmjwjdtxqq",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "7byg6y9d3cstt",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "eensshvnhjknm",
+          "id": "3wz15qj9mrvny",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "3d9wmed3e2jkv",
+          "id": "cdg3czadet0cm",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "eensshvnhjknm",
+          "parent": "3wz15qj9mrvny",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "a443n7pkd7kqz",
+          "id": "ep588gbdt6ywm",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "eensshvnhjknm",
+          "parent": "3wz15qj9mrvny",
           "side": "right"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "9m1c2whskkvmd",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "0vb456jfgx4a1"
+      "id": "5mcef6hwzxcg8"
     }
   ],
   "symbols": [],
