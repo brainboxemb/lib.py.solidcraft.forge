@@ -43,7 +43,7 @@ from .model_objects import (
 )
 from .explicit_sketch import Sketch
 from .backends import get_backend
-from .ir import normalize_shape
+from .ir import normalize_model, normalize_shape
 
 
 class ModelParameterWarning(UserWarning):
@@ -1116,21 +1116,35 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
             )
 
     if isinstance(result, _ConfiguredDesign):
-        if backend_adapter.id != "solidcraft":
-            raise ModelError(
-                f"{backend_adapter.display_name} backend does not support "
-                "Forge configurations in its qualified capability set"
-            )
-
         design = result.design
         if isinstance(design, Shape):
-            # compile_model()/configured Shape is stable SolidCraft-only
-            # document intent; the compiler owns that boundary until a
-            # portable ConfigurationIR exists.
-            document, dependencies = _compile_model_with_dependencies(
-                result, name
-            )
+            try:
+                model = normalize_model(result)
+            except (TypeError, ValueError) as exc:
+                if backend_adapter.id != "solidcraft":
+                    raise ModelError(
+                        f"{backend_adapter.display_name} backend does not support "
+                        "Forge configurations in this qualified capability set: "
+                        f"{exc}"
+                    ) from exc
+                # Stable SolidCraft owns the broad existing configuration
+                # surface while semantic ConfigurationIR migrates slice by
+                # slice. Unsupported portable forms keep that compatibility
+                # path rather than being reinterpreted by another backend.
+                document, dependencies = _compile_model_with_dependencies(
+                    result, name
+                )
+            else:
+                document, dependencies = backend_adapter.compile_ir(
+                    model,
+                    name,
+                )
         elif isinstance(design, (ModelInstance, Assembly)):
+            if backend_adapter.id != "solidcraft":
+                raise ModelError(
+                    f"{backend_adapter.display_name} backend does not support "
+                    "Forge configured assemblies in its qualified capability set"
+                )
             if backend_adapter.compile_assembly is None:
                 raise ModelError(
                     f"{backend_adapter.display_name} backend does not support "

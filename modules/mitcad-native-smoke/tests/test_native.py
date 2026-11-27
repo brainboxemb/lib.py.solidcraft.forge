@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT / "modules/verification/src"))
 from cad_library_mitcad_reference import capture_runtime, git_blob_sha
 from scpf import Axis, AxisLine, Box, Parameter, Polygon2D, Sketch
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
-from scpf.backends.mitcad_headless import run_document
+from scpf.backends.mitcad_headless import run_document, run_saved_configuration
 from scpf.ir import normalize_shape
 from scpf.runner import run_script
 from cad_verification.geometry import (
@@ -46,6 +46,7 @@ RUNTIME_REFERENCE_BLOB = "c839084ba223e814370a55c761644da362fabc93"
 SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
 TOPOLOGY_BOX = ROOT / "models/topology-face-boundary-box/scpf/model.py"
+SHIFTED_AXIS_REVOLVE = ROOT / "models/shifted-axis-revolve/scpf/model.py"
 
 
 def ensure_appimage_runtime() -> None:
@@ -406,6 +407,113 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            configured_document = run_script(
+                SHIFTED_AXIS_REVOLVE,
+                backend="mitcad",
+            )
+            configured_path = root / "out/shifted-axis-revolve.mitcad"
+            configured_cut_stl = root / "out/shifted-axis-revolve-cut.stl"
+            configured_cut = run_document(
+                configured_document,
+                save=configured_path,
+                export=configured_cut_stl,
+                executable=str(executable),
+                work_dir=root / "shifted-axis-configured-workspace",
+            )
+            self.assertEqual(len(configured_cut["bodies"]), 1)
+            configured_cut_body = configured_cut["bodies"][0]
+            self.assertEqual(configured_cut_body["kind"], "solid")
+            configured_cut_volume = (
+                40.0 * 24.0 * 20.0
+                - pi * (
+                    6.0 * (2.25 ** 2)
+                    + 18.0 * (1.85 ** 2)
+                )
+            )
+            self.assertAlmostEqual(
+                configured_cut_body["volume"],
+                configured_cut_volume,
+                places=3,
+            )
+            for actual, expected in zip(
+                configured_cut_body["bbox"]["min"],
+                [-20.0, -12.0, -10.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                configured_cut_body["bbox"]["max"],
+                [20.0, 12.0, 10.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
+            configured_geometry = run_mesh_geometry_verification(
+                configured_cut_stl,
+                evidence / "verification" / "shifted-axis-revolve",
+                load_geometry_contract(
+                    ROOT
+                    / "models/shifted-axis-revolve/verification/geometry.json"
+                ),
+                verification_id="mitcad-shifted-axis-revolve-geometry",
+            )
+            self.assertEqual(
+                configured_geometry["status"],
+                "pass",
+                configured_geometry,
+            )
+
+            suppressed_stl = root / "out/shifted-axis-revolve-suppressed.stl"
+            suppressed = run_saved_configuration(
+                configured_path,
+                "Suppressed",
+                save=configured_path,
+                export=suppressed_stl,
+                executable=str(executable),
+                work_dir=root / "shifted-axis-suppressed-workspace",
+            )
+            self.assertEqual(len(suppressed["bodies"]), 1)
+            suppressed_body = suppressed["bodies"][0]
+            self.assertAlmostEqual(
+                suppressed_body["volume"],
+                40.0 * 24.0 * 20.0,
+                places=4,
+            )
+            suppressed_saved_evidence = (
+                evidence / "shifted-axis-revolve-suppressed.mitcad"
+            )
+            shutil.copy2(configured_path, suppressed_saved_evidence)
+
+            restored_stl = root / "out/shifted-axis-revolve-restored.stl"
+            restored = run_saved_configuration(
+                configured_path,
+                "Cut",
+                save=configured_path,
+                export=restored_stl,
+                executable=str(executable),
+                work_dir=root / "shifted-axis-restored-workspace",
+            )
+            self.assertEqual(len(restored["bodies"]), 1)
+            restored_body = restored["bodies"][0]
+            self.assertAlmostEqual(
+                restored_body["volume"],
+                configured_cut_volume,
+                places=3,
+            )
+            restored_saved_evidence = (
+                evidence / "shifted-axis-revolve-restored.mitcad"
+            )
+            shutil.copy2(configured_path, restored_saved_evidence)
+
+            for artifact in (
+                configured_path,
+                configured_cut_stl,
+                suppressed_stl,
+                restored_stl,
+                suppressed_saved_evidence,
+                restored_saved_evidence,
+            ):
+                self.assertTrue(artifact.is_file(), str(artifact))
+                self.assertGreater(artifact.stat().st_size, 0, str(artifact))
+
             shifted_plane_stl = root / "out/shifted-plane-revolve-cut.stl"
             retained_shifted_plane_stl = (
                 evidence / "shifted-plane-revolve-cut.stl"
@@ -455,6 +563,10 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"shifted_plane_revolve_cut_volume={shifted_plane_body['volume']}",
                         f"shifted_plane_revolve_cut_bbox={shifted_plane_body['bbox']}",
                         f"shifted_revolve_cut_bindings={shifted_cut['bindings']}",
+                        f"configured_shifted_axis_cut_volume={configured_cut_body['volume']}",
+                        f"configured_shifted_axis_suppressed_volume={suppressed_body['volume']}",
+                        f"configured_shifted_axis_restored_volume={restored_body['volume']}",
+                        "configured_shifted_axis_geometry=pass",
                     ]
                 )
                 + "\n",

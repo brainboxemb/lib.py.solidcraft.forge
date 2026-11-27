@@ -16,6 +16,7 @@ TOPOLOGY_BOX = ROOT / "models/topology-face-boundary-box/scpf/model.py"
 NATIVE_REVOLVE = ROOT / "models/native-revolve/scpf/model.py"
 CYLINDER_SUBTRACT = ROOT / "models/cylinder-subtract/scpf/model.py"
 CONFIGURATION_TABLE = ROOT / "models/configuration-table/scpf/model.py"
+SHIFTED_AXIS_REVOLVE = ROOT / "models/shifted-axis-revolve/scpf/model.py"
 
 
 class MitcadBackendTests(unittest.TestCase):
@@ -219,6 +220,78 @@ class MitcadBackendTests(unittest.TestCase):
             "does not yet support Forge shape kind 'cone'",
         ):
             compile_model(Cone(d=10, h=20), "ConeTest")
+
+    def test_shifted_axis_configuration_lowers_semantic_feature_identity(self):
+        document = run_script(SHIFTED_AXIS_REVOLVE, backend="mitcad")
+
+        self.assertEqual(document["format"], "scpf-mitcad")
+        self.assertEqual(len(document["replay"]), 1)
+        stage = document["replay"][0]
+        self.assertEqual(stage["bind_single_body"], "body")
+
+        commands = stage["commands"]
+        revolve = next(
+            row
+            for row in commands
+            if row.get("cmd") == "add_feature"
+            and row.get("def", {}).get("type") == "revolve"
+        )
+        self.assertEqual(revolve["as"], "configured_feature")
+        self.assertEqual(revolve["def"]["operation"], "cut")
+
+        sketch = next(
+            row
+            for row in commands
+            if row.get("cmd") == "add_feature"
+            and row.get("def", {}).get("type") == "sketch"
+        )["def"]
+        dimension_values = [
+            str(row.get("value"))
+            for row in sketch["dimensions"]
+        ]
+        self.assertTrue(any("axis_x" in value for value in dimension_values))
+        self.assertTrue(any("relief_d" in value for value in dimension_values))
+        self.assertTrue(any("core_d" in value for value in dimension_values))
+
+        private = next(
+            row["name"]
+            for row in commands
+            if row.get("cmd") == "add_parameter"
+            and row.get("name", "").startswith("__forge_suppress_root")
+        )
+        self.assertNotIn(
+            private,
+            [row.get("name") for row in document["commands"]],
+        )
+
+        table = next(
+            row["configurations"]
+            for row in commands
+            if row.get("cmd") == "set_configurations"
+        )
+        self.assertEqual(table["default"], "Cut")
+        self.assertEqual(
+            [row["name"] for row in table["rows"]],
+            ["Cut", "Suppressed"],
+        )
+        self.assertEqual(table["parameters"], [private])
+
+        suppression = next(
+            row for row in commands
+            if row.get("cmd") == "suppress_feature"
+        )
+        self.assertEqual(
+            suppression["uid"],
+            {"ref": "configured_feature.uid"},
+        )
+        self.assertEqual(
+            suppression["expression"],
+            f"{private} > 0",
+        )
+        self.assertEqual(
+            commands[-1],
+            {"cmd": "apply_configuration", "name": "Cut"},
+        )
 
     def test_configuration_table_fails_closed_on_mitcad(self):
         with self.assertRaisesRegex(

@@ -26,8 +26,10 @@ from ..ir import (
     BoxIR,
     ChamferIR,
     CircleProfileIR,
+    ConfigurationIR,
     CylinderIR,
     ExtrudeIR,
+    FeatureRefIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
@@ -36,6 +38,7 @@ from ..ir import (
     RegionIR,
     RevolveIR,
     SphereIR,
+    SuppressionColumnIR,
     _region_interior_point,
     normalize_shape,
 )
@@ -576,6 +579,83 @@ def _parameterized_rectangle_sketch(profile: PolygonProfileIR):
     return entities, constraints, dimensions
 
 
+def _parameterized_polygon_sketch(profile: PolygonProfileIR):
+    """Transport a symbolic simple polygon through native point dimensions.
+
+    Current point positions seed the solver only. Every authored X/Y value is
+    retained as a native driving dimension from one fixed sketch origin, so
+    Forge Parameters/Expressions remain editable dependencies in the saved
+    Mitcad design.
+    """
+    values = tuple(
+        tuple(float(pv(value)) for value in point)
+        for point in profile.points
+    )
+    if any(not isfinite(value) for point in values for value in point):
+        raise ModelError(
+            "Mitcad parameterized PolygonProfileIR requires finite current values"
+        )
+
+    entities = [
+        {
+            "id": "p1",
+            "type": "point",
+            "at": [0.0, 0.0],
+            "fixed": True,
+        }
+    ]
+    point_ids = []
+    for index, value in enumerate(values, start=2):
+        uid = f"p{index}"
+        point_ids.append(uid)
+        entities.append(
+            {
+                "id": uid,
+                "type": "point",
+                "at": list(value),
+            }
+        )
+
+    first_curve = len(point_ids) + 2
+    for offset, start_id in enumerate(point_ids):
+        entities.append(
+            {
+                "id": f"c{first_curve + offset}",
+                "type": "line",
+                "start": start_id,
+                "end": point_ids[(offset + 1) % len(point_ids)],
+            }
+        )
+
+    dimensions = []
+    relation = first_curve + len(point_ids)
+    for index, (point_id, authored) in enumerate(
+        zip(point_ids, profile.points)
+    ):
+        dimensions.extend(
+            [
+                {
+                    "id": f"k{relation + 2 * index}",
+                    "type": "horizontal_distance",
+                    "a": "p1",
+                    "b": point_id,
+                    "signed": True,
+                    "value": command_value(authored[0]),
+                },
+                {
+                    "id": f"k{relation + 2 * index + 1}",
+                    "type": "vertical_distance",
+                    "a": "p1",
+                    "b": point_id,
+                    "signed": True,
+                    "value": command_value(authored[1]),
+                },
+            ]
+        )
+
+    return entities, [], dimensions
+
+
 def _next_sketch_entity_number(entities: list[dict]) -> int:
     numbers = []
     for entity in entities:
@@ -752,6 +832,7 @@ def _revolve_commands(
     name: str,
     *,
     participant=None,
+    feature_binding: str | None = None,
 ) -> list[dict]:
     """Lower semantic RevolveIR to native Mitcad Sketch + Revolve."""
     sketch = node.sketch
@@ -801,7 +882,14 @@ def _revolve_commands(
         for value in point
     )
     if parameterized:
-        entities, constraints, dimensions = _parameterized_rectangle_sketch(profile)
+        try:
+            entities, constraints, dimensions = _parameterized_rectangle_sketch(
+                profile
+            )
+        except ModelError:
+            entities, constraints, dimensions = _parameterized_polygon_sketch(
+                profile
+            )
     else:
         point_ids = []
         entities = []
@@ -868,9 +956,80 @@ def _revolve_commands(
             },
         },
         {
+            **({"as": feature_binding} if feature_binding is not None else {}),
             "cmd": "add_feature",
             "name": name,
             "def": revolve_definition,
+        },
+    ]
+
+
+def _private_suppression_parameter(model: ModelIR) -> str:
+    """Choose one backend-private driver outside semantic model parameters."""
+    taken = {parameter.name for parameter in model.parameters}
+    stem = "__forge_suppress_root"
+    if stem not in taken:
+        return stem
+    index = 2
+    while f"{stem}_{index}" in taken:
+        index += 1
+    return f"{stem}_{index}"
+
+
+def _mitcad_configuration_commands(
+    model: ModelIR,
+    configuration: ConfigurationIR,
+    *,
+    feature_binding: str,
+) -> list[dict]:
+    """Lower suppression-only semantic configuration to native Mitcad state."""
+    if (
+        len(configuration.columns) != 1
+        or not isinstance(configuration.columns[0], SuppressionColumnIR)
+        or configuration.columns[0].feature != FeatureRefIR(("root",))
+    ):
+        raise ModelError(
+            "Mitcad ConfigurationIR currently requires one root suppression column"
+        )
+    if any(len(row.cells) != 1 for row in configuration.rows):
+        raise ModelError(
+            "Mitcad ConfigurationIR currently requires one suppression cell per row"
+        )
+
+    driver = _private_suppression_parameter(model)
+    return [
+        {
+            "cmd": "add_parameter",
+            "name": driver,
+            "unit": "",
+            "expression": "0",
+        },
+        {
+            "cmd": "set_configurations",
+            "configurations": {
+                "options": [],
+                "closed": True,
+                "parameters": [driver],
+                "default": configuration.active,
+                "rows": [
+                    {
+                        "name": row.name,
+                        "values": {
+                            driver: "1" if row.cells[0] else "0",
+                        },
+                    }
+                    for row in configuration.rows
+                ],
+            },
+        },
+        {
+            "cmd": "suppress_feature",
+            "uid": {"ref": f"{feature_binding}.uid"},
+            "expression": f"{driver} > 0",
+        },
+        {
+            "cmd": "apply_configuration",
+            "name": configuration.active,
         },
     ]
 
@@ -894,14 +1053,29 @@ def _revolve_cut_document(
         *_parameter_commands(model),
         _box_command(node.target, f"{name}Base"),
     ]
+    feature_binding = (
+        "configured_feature"
+        if model.configuration is not None
+        else None
+    )
+    replay_commands = _revolve_commands(
+        node,
+        name,
+        participant={"$mitcad_bind": "body"},
+        feature_binding=feature_binding,
+    )
+    if model.configuration is not None:
+        replay_commands.extend(
+            _mitcad_configuration_commands(
+                model,
+                model.configuration,
+                feature_binding=feature_binding,
+            )
+        )
     replay = [
         {
             "bind_single_body": "body",
-            "commands": _revolve_commands(
-                node,
-                name,
-                participant={"$mitcad_bind": "body"},
-            ),
+            "commands": replay_commands,
         }
     ]
     dependencies = _native_dependencies((commands, replay))

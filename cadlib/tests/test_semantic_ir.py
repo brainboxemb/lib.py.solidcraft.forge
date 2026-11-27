@@ -7,6 +7,7 @@ from scpf import (
     AxisLine,
     Box,
     Circle2D,
+    Configure,
     Cone,
     Cylinder,
     Edges,
@@ -15,11 +16,13 @@ from scpf import (
     Polygon2D,
     Sketch,
     Sphere,
+    Suppress,
 )
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.solidcraft import compile_ir as compile_solidcraft_ir
 from scpf.compiler import (
     ModelError,
+    _compile_model_with_dependencies,
     _compile_shape_legacy_with_dependencies,
 )
 from scpf.ir import (
@@ -30,6 +33,10 @@ from scpf.ir import (
     CircleProfileIR,
     CylinderIR,
     ExtrudeIR,
+    FeatureRefIR,
+    ConfigurationIR,
+    ConfigurationRowIR,
+    SuppressionColumnIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
@@ -39,6 +46,7 @@ from scpf.ir import (
     RevolveIR,
     SketchIR,
     SphereIR,
+    normalize_model,
     normalize_shape,
 )
 
@@ -527,38 +535,48 @@ class SemanticIRTests(unittest.TestCase):
             {"type": "equal_distance", "distance": 1.5},
         )
 
-    def test_unqualified_polygon_extrude_forms_stay_legacy(self):
+    def test_simple_concave_polygon_region_is_typed_for_extrude(self):
         with Sketch(name="Concave", plane="XY") as sketch:
             Polygon2D(
                 [(0, 0), (20, 0), (5, 10), (20, 30), (0, 30)],
                 plane="XY",
             )
-        concave = sketch.extrude(10, sym=True)
+        shape = sketch.extrude(10, sym=True)
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, ExtrudeIR)
+        self.assertEqual(
+            compile_solidcraft_ir(model, "ConcavePolygon"),
+            _compile_shape_legacy_with_dependencies(
+                shape,
+                "ConcavePolygon",
+            )[0],
+        )
+        mitcad = compile_mitcad_ir(model, "ConcavePolygon")
+        self.assertEqual(mitcad["commands"][-1]["def"]["type"], "extrude")
 
+    def test_parameterized_polygon_extrude_stays_legacy_until_qualified(self):
         width = Parameter("polygon_width", 20)
         with Sketch(name="Parameterized", plane="XY") as sketch:
             Polygon2D(
                 [(0, 0), (width, 0), (width, 30), (0, 30)],
                 plane="XY",
             )
-        parameterized = sketch.extrude(10, sym=True)
-
-        for shape in (concave, parameterized):
-            model = normalize_shape(shape)
-            self.assertIsInstance(model.root, LegacyShapeIR)
-            self.assertEqual(
-                compile_solidcraft_ir(model, "LegacyPolygon"),
-                _compile_shape_legacy_with_dependencies(
-                    shape,
-                    "LegacyPolygon",
-                )[0],
-            )
-            with self.assertRaisesRegex(
-                ModelError,
-                "does not yet support Forge shape kind "
-                "'sketch_base_extrusion'",
-            ):
-                compile_mitcad_ir(model, "LegacyPolygon")
+        shape = sketch.extrude(10, sym=True)
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        self.assertEqual(
+            compile_solidcraft_ir(model, "LegacyPolygon"),
+            _compile_shape_legacy_with_dependencies(
+                shape,
+                "LegacyPolygon",
+            )[0],
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "does not yet support Forge shape kind "
+            "'sketch_base_extrusion'",
+        ):
+            compile_mitcad_ir(model, "LegacyPolygon")
 
     def test_face_boundary_chamfer_keeps_semantic_selector_and_placement(self):
         shape = Box(
@@ -935,6 +953,129 @@ class SemanticIRTests(unittest.TestCase):
             [{"$mitcad_bind": "body"}],
         )
 
+    def test_suppression_configuration_is_semantic_ir_before_lowering(self):
+        axis_x = Parameter("axis_x", 8)
+        axis_z = Parameter("axis_z", 3)
+        panel = Box(40, 24, 20)
+        with Sketch(
+            name="Stepped pass through",
+            plane="XY",
+            offset=axis_z,
+        ) as profile:
+            Polygon2D(
+                [
+                    (axis_x, -12),
+                    (axis_x + 2.25, -12),
+                    (axis_x + 2.25, -9),
+                    (axis_x + 1.85, -9),
+                    (axis_x + 1.85, 9),
+                    (axis_x + 2.25, 9),
+                    (axis_x + 2.25, 12),
+                    (axis_x, 12),
+                ],
+                plane="XY",
+            )
+
+        pass_through = profile.revolve(
+            axis=AxisLine(
+                Axis.Y,
+                origin=(axis_x, 0, axis_z),
+            ),
+        )
+        body = panel - pass_through
+        configured = Configure(
+            body,
+            active="Cut",
+            columns=(Suppress(pass_through),),
+            rows={
+                "Cut": (False,),
+                "Suppressed": (True,),
+            },
+        )
+
+        model = normalize_model(configured)
+
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(model.root.operation, "cut")
+        self.assertNotIsInstance(model.root, LegacyShapeIR)
+        self.assertEqual(
+            [parameter.name for parameter in model.parameters],
+            ["axis_z", "axis_x"],
+        )
+        self.assertEqual(
+            model.configuration,
+            ConfigurationIR(
+                active="Cut",
+                columns=(
+                    SuppressionColumnIR(
+                        feature=FeatureRefIR(path=("root",)),
+                    ),
+                ),
+                rows=(
+                    ConfigurationRowIR(name="Cut", cells=(False,)),
+                    ConfigurationRowIR(name="Suppressed", cells=(True,)),
+                ),
+            ),
+        )
+        self.assertNotIn("uid", repr(model.configuration).lower())
+        self.assertNotIn("command", repr(model.configuration).lower())
+        self.assertNotIn("replay", repr(model.configuration).lower())
+
+        self.assertEqual(
+            compile_solidcraft_ir(model, "ShiftedAxisRevolve"),
+            _compile_model_with_dependencies(
+                configured,
+                "ShiftedAxisRevolve",
+            )[0],
+        )
+
+    def test_suppression_reference_must_be_the_authored_root_feature(self):
+        panel = Box(40, 24, 20)
+        with Sketch(name="PassThrough", plane="XY") as profile:
+            Polygon2D(
+                [(8, -5), (10, -5), (10, 5), (8, 5)],
+                plane="XY",
+            )
+        pass_through = profile.revolve(
+            axis=AxisLine(Axis.Y, origin=(8, 0, 0)),
+        )
+        body = panel - pass_through
+        unrelated = Box(2, 2, 2)
+        configured = Configure(
+            body,
+            active="Cut",
+            columns=(Suppress(unrelated),),
+            rows={"Cut": (False,), "Suppressed": (True,)},
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "not the authored root Revolve feature",
+        ):
+            normalize_model(configured)
+
+    def test_configuration_ir_rejects_non_suppression_columns_and_rules(self):
+        panel = Box(40, 24, 20)
+        with Sketch(name="PassThrough", plane="XY") as profile:
+            Polygon2D(
+                [(8, -5), (10, -5), (10, 5), (8, 5)],
+                plane="XY",
+            )
+        pass_through = profile.revolve(
+            axis=AxisLine(Axis.Y, origin=(8, 0, 0)),
+        )
+        body = panel - pass_through
+
+        configured = Configure(
+            body,
+            active="Cut",
+            columns=(Suppress(pass_through),),
+            rows={"Cut": (False,), "Suppressed": (True,)},
+        )
+        object.__setattr__(configured, "rules", ("unsupported",))
+        with self.assertRaisesRegex(ValueError, "does not support configuration rules"):
+            normalize_model(configured)
+
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
         with Sketch(name="HalfProfile", plane="XZ") as sketch:
             Polygon2D(
@@ -952,27 +1093,30 @@ class SemanticIRTests(unittest.TestCase):
             {"type": "angle", "angle": "180 deg"},
         )
 
-    def test_unqualified_revolve_forms_remain_legacy(self):
+    def test_simple_concave_polygon_revolve_is_typed(self):
+        with Sketch(name="ConcaveRevolve", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 5), (5, 2), (10, 5), (10, 0)],
+                plane="XZ",
+            )
+        model = normalize_shape(sketch.revolve(axis=Axis.X))
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(
+            compile_mitcad_ir(model, "ConcaveRevolve")["commands"][-1]["def"]["type"],
+            "revolve",
+        )
+
+    def test_mixed_role_revolve_parameter_remains_legacy(self):
         shared = Parameter("shared", 4)
         with Sketch(name="MixedRole", plane="XZ") as sketch:
             Polygon2D(
                 [(0, 0), (0, shared), (10, shared), (10, 0)],
                 plane="XZ",
             )
-        mixed_role = sketch.revolve(axis=Axis.X, angle=shared)
-
-        with Sketch(name="ConcaveRevolve", plane="XZ") as sketch:
-            Polygon2D(
-                [(0, 0), (0, 5), (5, 2), (10, 5), (10, 0)],
-                plane="XZ",
-            )
-        concave = sketch.revolve(axis=Axis.X)
-
-        for shape in (mixed_role, concave):
-            model = normalize_shape(shape)
-            self.assertIsInstance(model.root, LegacyShapeIR)
-            with self.assertRaises(ModelError):
-                compile_mitcad_ir(model, "UnsupportedRevolve")
+        model = normalize_shape(sketch.revolve(axis=Axis.X, angle=shared))
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "UnsupportedRevolve")
 
     def test_unmigrated_surface_is_explicit_legacy_ir_only_for_solidcraft(self):
         shape = Cone(d=10, h=20)

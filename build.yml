@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/417-plane-ir
-modules: [builder-scpf-mitcad, mitcad-native-smoke]
-models: [native-revolve]
+branch: issue/424-feature-config-ir
+modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
+models: [shifted-axis-revolve]
 library: true
 tasks: [test]

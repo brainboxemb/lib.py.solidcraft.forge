@@ -88,6 +88,8 @@ def _mitcad_adapter() -> BackendAdapter:
                 "feature.revolve.angle",
                 "feature.revolve.cut",
                 "reference.axis-line.shifted-principal",
+                "reference.plane.principal",
+                "configuration.suppress.feature",
                 "modify.chamfer.face-boundary",
                 "native-topology",
             }

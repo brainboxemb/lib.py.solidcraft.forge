@@ -93,7 +93,6 @@ SCPF_ONLY_IDS = {
     "sheet-contour-flange",
     "sheet-contour-flange-recess",
     "sheet-edge-flange",
-    "shifted-axis-revolve",
     "sheet-hem",
     "sheet-path-flange",
     "sheet-perforate",
@@ -108,12 +107,14 @@ MITCAD_IDS = {
     "native-revolve",
     "primitive-csg",
     "simple-box",
+    "shifted-axis-revolve",
     "topology-face-boundary-box",
     "topology-face-boundary-xz",
 }
 
 MITCAD_FOCUSED_IDS = {
     "cylinder-subtract",
+    "shifted-axis-revolve",
 }
 
 MITCAD_FOCUSED_VISUAL_IDS = {
