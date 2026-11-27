@@ -115,6 +115,12 @@
 90. Typed use-site coercion belongs to semantic fields: Sketch coordinates/dimensions are length-valued and Revolve extent is angle-valued. Backends must not infer the role from command names or native parameter metadata.
 91. The #469 slice qualifies only direct `Parameter` reuse across length and angle slots. If a mixed-role source is nested inside an arbitrary authored `Expression`, the model remains outside portable IR until dimensional expression typing exists.
 92. Exact pinned Mitcad runtime qualification must execute the mixed-role Revolve using one unitless native source parameter, explicit length/angle use expressions and deterministic solid geometry.
+93. Backend lowering may use private helper commands for one semantic feature without adding those helpers to Forge IR. The first qualified case is the Mitcad offset construction plane required by a shifted/anchored Sphere inside `BooleanIR`.
+94. A backend command group for one semantic CSG primitive contains zero or more helper commands plus exactly one native command representing the semantic feature. Helper bindings and command indexes remain backend transport only.
+95. `FeatureRefIR` path meaning must remain independent of native command layout. Root/target/tool and nested history paths must bind the native semantic feature command even when helper commands precede it.
+96. Configuration suppression of a Sphere CSG tool must bind the Sphere operation command, never its support construction plane; existing Box/Cylinder/origin-Sphere feature mapping must remain unchanged.
+97. The #473 normalization slice may reuse the already-qualified standalone `PlacementIR(SphereIR)` anchor/world-point semantics inside primitive Boolean CSG. It does not introduce new Sphere placement meaning or rotated primitive frames.
+98. Exact pinned Mitcad runtime qualification must execute a Box cut by an internal shifted Sphere, retain the private support-plane reference and prove deterministic volume/bounds.
 
 ## SCPF native associativity
 

@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/469-mixed-role-parameter-ir
+branch: issue/473-boolean-helper-feature-mapping
 modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
-models: [native-revolve]
+models: [primitive-csg]
 library: true
 tasks: [test]

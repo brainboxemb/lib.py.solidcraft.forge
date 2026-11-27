@@ -1254,11 +1254,31 @@ centre-Z emits one private offset `construction_plane` and references its
 returned uid from the Sphere feature. That helper feature and binding are
 lowering transport only and never enter `PlacementIR`.
 
-The recursive primitive-CSG qualification remains deliberately narrower.
-Only the already-proven centered-origin Sphere may participate there; shifted
-or tangent-anchor Sphere operands stay outside the bounded Boolean slice until
-a separate history/transport checkpoint qualifies helper support geometry
-inside CSG feature ordering.
+#473 extends the same Sphere placement semantics into recursive primitive CSG
+without adding support geometry to Forge IR. The semantic tree remains only
+`PlacementIR(SphereIR)`, `BooleanIR` and optional `FeatureRefIR` history.
+
+Mitcad lowering now treats one semantic primitive as a private command group:
+zero or more helper commands followed by exactly one command representing that
+semantic feature. Box, Cylinder and an origin-plane Sphere still lower to one
+command. A shifted or tangent-anchor Sphere may lower to an offset
+`construction_plane` followed by the Sphere operation. The helper plane gets
+a deterministic backend binding derived from the semantic history path, but
+that binding never becomes a Forge feature reference.
+
+Boolean lowering therefore keeps a private semantic-path → native-command
+index map while flattening the tree. The map records the Sphere/Box/Cylinder
+operation command rather than the first command in its group. Root, target,
+tool and nested `FeatureRefIR` paths keep their existing meaning even when
+native helpers change raw command positions. Configuration suppression uses the
+same map, so `Suppress(shifted_sphere)` binds the Sphere cut/join feature and
+never the construction plane.
+
+SolidCraft needs no helper command and consumes the widened `BooleanIR`
+through its existing CSG spelling. The exact Mitcad runtime proof cuts a
+30 × 30 × 30 bottom-anchored Box with a radius-5 Sphere centred at world Z=15;
+the resulting volume is `27000 - 500π/3` and the outer Box bounds are
+unchanged.
 
 ### Experimental Sketch/Profile + Extrude IR (#282)
 

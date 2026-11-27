@@ -1080,17 +1080,11 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
 
 
 def _portable_csg_placement(node: IRNode) -> bool:
-    """Keep #461 Sphere placement broader only at the standalone root."""
-    if not isinstance(node, PlacementIR):
-        return False
-    if not isinstance(node.primitive, (BoxIR, CylinderIR, SphereIR)):
-        return False
-    if isinstance(node.primitive, SphereIR):
-        if node.anchor != (0, 0, 0):
-            return False
-        if any(parameters_in(value) or abs(pv(value)) > 1e-12 for value in node.point):
-            return False
-    return True
+    """Accept the already-qualified primitive PlacementIR forms inside CSG."""
+    return (
+        isinstance(node, PlacementIR)
+        and isinstance(node.primitive, (BoxIR, CylinderIR, SphereIR))
+    )
 
 
 _PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}

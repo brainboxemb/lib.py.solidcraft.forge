@@ -323,15 +323,16 @@ def _sphere_commands(
     name: str,
     *,
     operation: str = "new_body",
+    plane_binding: str = "sphere_plane",
 ) -> list[dict]:
-    """Lower standalone Sphere placement with backend-owned support geometry."""
+    """Lower Sphere placement with backend-owned support geometry."""
     primitive = node.primitive
     center = _sphere_center(node)
     plane_commands, native_plane = _mitcad_offset_plane(
         "XY",
         center[2],
         label="Sphere",
-        binding="sphere_plane",
+        binding=plane_binding,
     )
     return [
         *plane_commands,
@@ -353,101 +354,112 @@ def _sphere_commands(
     ]
 
 
-def _csg_primitive_command(
+def _csg_helper_binding(path: tuple[str, ...]) -> str:
+    """Return one deterministic backend-private binding for semantic CSG path."""
+    return "csg_plane_" + "_".join(path)
+
+
+def _csg_primitive_commands(
     node: PlacementIR,
     name: str,
     operation: str,
-) -> dict:
+    *,
+    path: tuple[str, ...],
+) -> tuple[list[dict], int]:
+    """Lower one semantic primitive to native helpers + one feature command.
+
+    The returned index is relative to this command group and identifies the
+    native command representing the semantic Forge feature. Private helper
+    commands before it are never semantic history entries.
+    """
     if isinstance(node.primitive, BoxIR):
-        return _box_command(node, name, operation=operation)
+        return [_box_command(node, name, operation=operation)], 0
     if isinstance(node.primitive, CylinderIR):
-        return _cylinder_command(node, name, operation=operation)
+        return [_cylinder_command(node, name, operation=operation)], 0
     if isinstance(node.primitive, SphereIR):
-        return _sphere_command(node, name, operation=operation)
+        commands = _sphere_commands(
+            node,
+            name,
+            operation=operation,
+            plane_binding=_csg_helper_binding(path),
+        )
+        return commands, len(commands) - 1
     raise ModelError(
         "Mitcad primitive CSG does not support "
         f"{type(node.primitive).__name__}"
     )
 
 
-def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
-    """Flatten one bounded left-associated semantic CSG tree in source order."""
-    commands = []
+def _boolean_command_plan(
+    node: BooleanIR,
+    name: str,
+    *,
+    path: tuple[str, ...] = ("root",),
+) -> tuple[list[dict], dict[tuple[str, ...], int]]:
+    """Lower Boolean history and map semantic paths to native feature commands."""
+    commands: list[dict] = []
+    feature_indexes: dict[tuple[str, ...], int] = {}
+
+    target_path = (*path, "target")
     if isinstance(node.target, BooleanIR):
-        commands.extend(_boolean_commands(node.target, name))
-    elif isinstance(node.target, PlacementIR):
-        commands.append(
-            _csg_primitive_command(node.target, f"{name}Base", "new_body")
+        target_commands, target_indexes = _boolean_command_plan(
+            node.target,
+            name,
+            path=target_path,
         )
+        commands.extend(target_commands)
+        feature_indexes.update(target_indexes)
+    elif isinstance(node.target, PlacementIR):
+        target_commands, relative_feature = _csg_primitive_commands(
+            node.target,
+            f"{name}Base",
+            "new_body",
+            path=target_path,
+        )
+        start = len(commands)
+        commands.extend(target_commands)
+        feature_indexes[target_path] = start + relative_feature
     else:
         raise ModelError("Mitcad BooleanIR has unsupported target")
 
-    commands.append(
-        _csg_primitive_command(
-            node.tool,
-            f"{name}{node.operation.title()}{len(commands)}",
-            node.operation,
-        )
+    tool_path = (*path, "tool")
+    tool_commands, relative_feature = _csg_primitive_commands(
+        node.tool,
+        f"{name}{node.operation.title()}{len(commands)}",
+        node.operation,
+        path=tool_path,
     )
-    return commands
+    start = len(commands)
+    commands.extend(tool_commands)
+    feature_index = start + relative_feature
+    feature_indexes[tool_path] = feature_index
+    # The Boolean operation itself is authored by the tool feature command.
+    feature_indexes[path] = feature_index
+
+    return commands, feature_indexes
 
 
-def _boolean_command_count(node) -> int:
-    if isinstance(node, PlacementIR):
-        return 1
-    if isinstance(node, BooleanIR):
-        return _boolean_command_count(node.target) + 1
-    raise ModelError(
-        "Mitcad Boolean feature references require typed CSG nodes"
-    )
+def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
+    """Return native Boolean commands without exposing helper-layout metadata."""
+    return _boolean_command_plan(node, name)[0]
 
 
 def _boolean_feature_command_index(
     root: BooleanIR,
     reference: FeatureRefIR,
 ) -> int:
-    """Map semantic history roles to Mitcad's private command-array order."""
+    """Map semantic FeatureRefIR to the native semantic feature command."""
     resolve_feature_ref(root, reference)
-    segments = reference.path[1:]
-    node = root
-    offset = 0
-
-    if not segments:
-        return _boolean_command_count(node.target)
-
-    for position, segment in enumerate(segments):
-        last = position == len(segments) - 1
-        if not isinstance(node, BooleanIR):
-            raise ModelError(
-                "Mitcad feature reference descends beyond Boolean history"
-            )
-        if segment == "tool":
-            if not last:
-                raise ModelError(
-                    "Mitcad feature reference cannot descend through a CSG tool"
-                )
-            return offset + _boolean_command_count(node.target)
-        if segment != "target":
-            raise ModelError(
-                f"unsupported Mitcad semantic feature role {segment!r}"
-            )
-
-        target = node.target
-        if isinstance(target, PlacementIR):
-            if not last:
-                raise ModelError(
-                    "Mitcad feature reference cannot descend through a primitive target"
-                )
-            return offset
-        if not isinstance(target, BooleanIR):
-            raise ModelError(
-                "Mitcad feature reference target is not typed Boolean history"
-            )
-        if last:
-            return offset + _boolean_command_count(target.target)
-        node = target
-
-    raise ModelError("Mitcad feature reference did not resolve to a command")
+    _commands, feature_indexes = _boolean_command_plan(
+        root,
+        "FeatureLayout",
+    )
+    try:
+        return feature_indexes[reference.path]
+    except KeyError as exc:
+        raise ModelError(
+            f"Mitcad semantic feature path {reference.path!r} has no native feature"
+        ) from exc
 
 
 _PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
@@ -1354,10 +1366,17 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
     elif isinstance(node, RevolveIR):
         geometry_commands = _revolve_commands(model, node, name)
     elif isinstance(node, BooleanIR):
-        geometry_commands = _boolean_commands(node, name)
+        geometry_commands, feature_indexes = _boolean_command_plan(node, name)
         if model.configuration is not None:
             reference = model.configuration.columns[0].feature
-            selected = _boolean_feature_command_index(node, reference)
+            resolve_feature_ref(node, reference)
+            try:
+                selected = feature_indexes[reference.path]
+            except KeyError as exc:
+                raise ModelError(
+                    f"Mitcad semantic feature path {reference.path!r} "
+                    "has no native feature"
+                ) from exc
             command = dict(geometry_commands[selected])
             command["as"] = "configured_feature"
             geometry_commands[selected] = command
