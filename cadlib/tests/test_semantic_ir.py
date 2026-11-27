@@ -18,7 +18,14 @@ from scpf import (
     Hole,
     Parameter,
     Polygon2D,
+    Rectangle2D,
+    RoundedRectangle2D,
     Sketch,
+    SlotArcCenter2D,
+    SlotArcThreePoint2D,
+    SlotCenterPoint2D,
+    SlotCenterToCenter2D,
+    SlotOverall2D,
     Sphere,
     Suppress,
     ThreadedHole,
@@ -58,8 +65,10 @@ from scpf.ir import (
     PlaneIR,
     PolygonProfileIR,
     RegionIR,
+    RectangleProfileIR,
     RectangularPatternIR,
     RevolveIR,
+    RoundedRectangleProfileIR,
     ScalarBinaryIR,
     ScalarLiteralIR,
     ScalarParameterRefIR,
@@ -71,6 +80,7 @@ from scpf.ir import (
     SketchPointIR,
     SketchRelationsIR,
     ShellIR,
+    SlotProfileIR,
     SphereIR,
     normalize_model,
     normalize_shape,
@@ -596,6 +606,250 @@ class SemanticIRTests(unittest.TestCase):
         )
         self.assertEqual(cone_feature["def"]["operation"], "join")
 
+    def test_rectangle_and_rounded_rectangle_profiles_are_semantic(self):
+        width = Parameter("rect_width", 40)
+        depth = Parameter("rect_depth", 20)
+        offset_x = Parameter("rect_x", 7)
+        with Sketch(name="Rectangle", plane="XY") as sketch:
+            rectangle = Rectangle2D(width, depth)
+            sketch.add(rectangle, offset=(offset_x, 3))
+        shape = sketch.extrude(8, sym=True)
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "TypedRectangle",
+        )
+        self.assertIsInstance(model.root, ExtrudeIR)
+        profile = model.root.sketch.profiles[0]
+        self.assertIsInstance(profile, RectangleProfileIR)
+        self.assertIs(profile.width, width)
+        self.assertIs(profile.depth, depth)
+        self.assertEqual(profile.center, (offset_x, 3))
+        self.assertEqual(model.root.direction, "symmetric")
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "TypedRectangle")
+
+        radius = Parameter("corner_radius", 4)
+        with Sketch(name="Rounded", plane="XZ") as rounded:
+            RoundedRectangle2D(50, 24, radius)
+        rounded_shape = rounded.extrude(-6)
+        rounded_model = self.assert_solidcraft_compatibility(
+            rounded_shape,
+            "TypedRounded",
+        )
+        rounded_profile = rounded_model.root.sketch.profiles[0]
+        self.assertIsInstance(
+            rounded_profile,
+            RoundedRectangleProfileIR,
+        )
+        self.assertIs(rounded_profile.radius, radius)
+        self.assertEqual(rounded_model.root.direction, "negative")
+
+    def test_slot_profile_family_is_semantic(self):
+        cases = (
+            (
+                "center_to_center",
+                lambda: SlotCenterToCenter2D((-12, 0), (12, 0), 6),
+            ),
+            (
+                "overall",
+                lambda: SlotOverall2D((-15, 0), (15, 0), 6),
+            ),
+            (
+                "center_point",
+                lambda: SlotCenterPoint2D((0, 0), (12, 0), 6),
+            ),
+            (
+                "arc_three_point",
+                lambda: SlotArcThreePoint2D(
+                    (-12, 0),
+                    (0, 8),
+                    (12, 0),
+                    6,
+                ),
+            ),
+            (
+                "arc_center_sweep",
+                lambda: SlotArcCenter2D(
+                    (0, 0),
+                    (12, 0),
+                    6,
+                    sweep=120,
+                ),
+            ),
+            (
+                "arc_center_end",
+                lambda: SlotArcCenter2D(
+                    (0, 0),
+                    (12, 0),
+                    6,
+                    end=(0, 12),
+                ),
+            ),
+        )
+        for index, (construction, factory) in enumerate(cases, start=1):
+            with self.subTest(construction=construction):
+                with Sketch(name=f"Slot{index}", plane="XY") as sketch:
+                    factory()
+                shape = sketch.extrude(5)
+                model = normalize_shape(shape)
+                self.assertIsInstance(model.root, ExtrudeIR)
+                profile = model.root.sketch.profiles[0]
+                self.assertIsInstance(profile, SlotProfileIR)
+                self.assertEqual(profile.construction, construction)
+
+                commands = compile_solidcraft_ir(
+                    model,
+                    f"TypedSlot{index}",
+                )["commands"]
+                expected_command = {
+                    "center_to_center": "sketch.slot.center_to_center",
+                    "overall": "sketch.slot.overall",
+                    "center_point": "sketch.slot.center_point",
+                    "arc_three_point": "sketch.slot.arc_three_point",
+                    "arc_center_sweep": "sketch.slot.arc_center",
+                    "arc_center_end": "sketch.slot.arc_center",
+                }[construction]
+                self.assertIn(
+                    expected_command,
+                    [row["command"] for row in commands],
+                )
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, f"TypedSlot{index}")
+
+    def test_basic_closed_profiles_support_all_finite_extrude_directions(self):
+        factories = (
+            ("circle", lambda: Circle2D(d=10)),
+            (
+                "polygon",
+                lambda: Polygon2D(
+                    [(-8, -5), (8, -5), (8, 5), (-8, 5)],
+                    plane="XY",
+                ),
+            ),
+            ("rectangle", lambda: Rectangle2D(20, 12)),
+            (
+                "rounded_rectangle",
+                lambda: RoundedRectangle2D(20, 12, 2),
+            ),
+            (
+                "slot_center_to_center",
+                lambda: SlotCenterToCenter2D((-8, 0), (8, 0), 4),
+            ),
+            (
+                "slot_overall",
+                lambda: SlotOverall2D((-10, 0), (10, 0), 4),
+            ),
+            (
+                "slot_center_point",
+                lambda: SlotCenterPoint2D((0, 0), (8, 0), 4),
+            ),
+            (
+                "slot_arc_three_point",
+                lambda: SlotArcThreePoint2D(
+                    (-8, 0), (0, 6), (8, 0), 4
+                ),
+            ),
+            (
+                "slot_arc_center",
+                lambda: SlotArcCenter2D(
+                    (0, 0), (8, 0), 4, sweep=120
+                ),
+            ),
+        )
+        directions = (
+            ("positive", 5, False),
+            ("negative", -5, False),
+            ("symmetric", 5, True),
+        )
+        for profile_name, factory in factories:
+            for direction, distance, symmetric in directions:
+                with self.subTest(
+                    profile=profile_name,
+                    direction=direction,
+                ):
+                    with Sketch(
+                        name=f"{profile_name}_{direction}",
+                        plane="XY",
+                    ) as sketch:
+                        factory()
+                    shape = sketch.extrude(
+                        distance,
+                        sym=symmetric,
+                    )
+                    model = normalize_shape(shape)
+                    self.assertIsInstance(model.root, ExtrudeIR)
+                    self.assertEqual(model.root.direction, direction)
+                    compile_solidcraft_ir(
+                        model,
+                        f"{profile_name}_{direction}",
+                    )
+
+    def test_parameterized_straight_slot_keeps_semantic_dimensions(self):
+        length = Parameter("slot_length", 30)
+        width = Parameter("slot_width", 8)
+        x = Parameter("slot_x", 5)
+        with Sketch(name="ParametricSlot", plane="XY") as sketch:
+            slot = SlotCenterToCenter2D(
+                (-length / 2, 0),
+                (length / 2, 0),
+                width,
+            )
+            sketch.add(slot, offset=(x, 4))
+        shape = sketch.extrude(6)
+
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, ExtrudeIR)
+        profile = model.root.sketch.profiles[0]
+        self.assertIsInstance(profile, SlotProfileIR)
+        self.assertEqual(profile.offset, (x, 4))
+        self.assertIs(profile.width, width)
+
+        commands = compile_solidcraft_ir(
+            model,
+            "ParametricSlot",
+        )["commands"]
+        names = [row["command"] for row in commands]
+        self.assertIn("sketch.draw.dimensioned", names)
+        self.assertIn("sketch.constraint.horizontal_vertical", names)
+        self.assertEqual(names.count("sketch.dimension"), 2)
+
+    def test_circle_and_polygon_profile_offsets_remain_semantic(self):
+        circle_x = Parameter("circle_x", 9)
+        with Sketch(name="OffsetCircle", plane="XY") as sketch:
+            circle = Circle2D(d=10)
+            sketch.add(circle, offset=(circle_x, -3))
+        circle_shape = sketch.extrude(4)
+        circle_model = self.assert_solidcraft_compatibility(
+            circle_shape,
+            "OffsetCircle",
+        )
+        circle_profile = circle_model.root.sketch.profiles[0]
+        self.assertIsInstance(circle_profile, CircleProfileIR)
+        self.assertEqual(circle_profile.center, (circle_x, -3))
+
+        polygon_x = Parameter("polygon_x", 6)
+        with Sketch(name="OffsetPolygon", plane="XY") as polygon_sketch:
+            polygon = Polygon2D(
+                [(-10, -5), (10, -5), (10, 5), (-10, 5)],
+                plane="XY",
+            )
+            polygon_sketch.add(polygon, offset=(polygon_x, 2))
+        polygon_shape = polygon_sketch.extrude(4)
+        polygon_model = normalize_shape(polygon_shape)
+        self.assertIsInstance(polygon_model.root, ExtrudeIR)
+        polygon_commands = compile_solidcraft_ir(
+            polygon_model,
+            "OffsetPolygon",
+        )["commands"]
+        self.assertIn(
+            "sketch.line",
+            [row["command"] for row in polygon_commands],
+        )
+        polygon_profile = polygon_model.root.sketch.profiles[0]
+        self.assertIsInstance(polygon_profile, PolygonProfileIR)
+        self.assertIn("polygon_x", str(polygon_profile.points[0][0]))
+
     def test_circular_hole_pattern_is_semantic_feature_history(self):
         bolts = Parameter("bolts", 6)
         pcd = Parameter("pcd", 60)
@@ -764,10 +1018,10 @@ class SemanticIRTests(unittest.TestCase):
         self.assertTrue(pattern["reversed"])
 
     def test_pattern_with_legacy_source_remains_legacy(self):
-        from scpf import RoundedRectangle2D
+        from scpf.core import Text2D
 
-        with Sketch(name="Rounded", plane="XY") as sketch:
-            RoundedRectangle2D(40, 20, 3)
+        with Sketch(name="LegacyText", plane="XY") as sketch:
+            Text2D("A", height=8)
         source = sketch.extrude(5)
         body = source.rectangular_pattern(
             source,

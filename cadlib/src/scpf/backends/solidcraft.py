@@ -16,6 +16,8 @@ from ..core import (
     Expression,
     Parameter,
     _DirectionSelector,
+    _dim_abs,
+    _dim_sub,
     _box_corner_from_anchor,
     _cone_base_from_anchor,
     _cylinder_base_from_anchor,
@@ -25,6 +27,8 @@ from ..core import (
     _plain_command_value,
     _pv as pv,
     command_value,
+    half,
+    midpoint,
     number_text,
     parameters_in,
 )
@@ -52,15 +56,19 @@ from ..ir import (
     ParallelEdgeSetIR,
     PolygonProfileIR,
     RegionIR,
+    RectangleProfileIR,
     RectangularPatternIR,
     RevolveIR,
+    RoundedRectangleProfileIR,
     SketchRelationsIR,
     ShellIR,
+    SlotProfileIR,
     SphereIR,
     SuppressionColumnIR,
     _region_interior_point,
     resolve_feature_ref,
 )
+from ..placement import _combine
 from ..replay import replay_document
 from ..scalar_ir import (
     ScalarBinaryIR,
@@ -741,38 +749,69 @@ def _solidcraft_relation_polygon_points(sketch) -> tuple[tuple, ...] | None:
     return tuple(point.position for point in relations.points)
 
 
-def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
-    """Lower qualified Sketch/Profile + Extrude IR without backend parsing."""
-    sketch = node.sketch
-    _principal_plane_offset(
-        sketch.plane,
-        label="portable SolidCraft Sketch IR",
+def _solidcraft_dimension_sum(left, right):
+    """Match the stable standalone Sketch symbolic coordinate spelling."""
+    if isinstance(left, (int, float)) and left == 0:
+        return right
+    if isinstance(right, (int, float)) and right == 0:
+        return left
+    if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+        return left + right
+    native_left = command_value(left)
+    native_right = command_value(right)
+    return _native_expression(
+        f"({native_left}) + ({native_right})",
+        tuple(sorted(_native_dependencies((native_left, native_right)))),
     )
-    if len(node.regions) != 1:
-        raise ModelError("portable SolidCraft Extrude IR requires one region")
 
-    region = node.regions[0]
-    if not isinstance(region, RegionIR):
-        raise ModelError("portable SolidCraft Extrude IR requires RegionIR")
 
-    try:
-        pick = _region_interior_point(sketch, region)
-    except ValueError as exc:
-        raise ModelError(str(exc)) from exc
-
-    commands = [_solidcraft_sketch_create(sketch)]
-
-    polygon = (
-        len(sketch.profiles) == 1
-        and isinstance(sketch.profiles[0], PolygonProfileIR)
-    )
-    if polygon:
-        if node.direction != "symmetric":
-            raise ModelError(
-                "portable SolidCraft PolygonProfileIR currently requires "
-                "symmetric extrusion"
+def _solidcraft_profile_commands(
+    sketch: SketchIR,
+    profile: ProfileIR,
+    *,
+    profile_index: int,
+) -> list[dict]:
+    """Lower one semantic closed profile without reading frontend Shape.data."""
+    if isinstance(profile, CircleProfileIR):
+        _require_positive(profile.diameter, "circle diameter")
+        return [
+            _command(
+                "sketch.circle.center",
+                center=[command_value(value) for value in profile.center],
+                diameter=command_value(profile.diameter),
             )
-        profile = sketch.profiles[0]
+        ]
+
+    if isinstance(
+        profile,
+        (RectangleProfileIR, RoundedRectangleProfileIR),
+    ):
+        _require_positive(profile.width, "sketch rectangle width")
+        _require_positive(profile.depth, "sketch rectangle height")
+        x0 = _solidcraft_dimension_sum(profile.center[0], -half(profile.width))
+        y0 = _solidcraft_dimension_sum(profile.center[1], -half(profile.depth))
+        x1 = _solidcraft_dimension_sum(profile.center[0], half(profile.width))
+        y1 = _solidcraft_dimension_sum(profile.center[1], half(profile.depth))
+        params = {
+            "p0": [command_value(x0), command_value(y0)],
+            "p1": [command_value(x1), command_value(y1)],
+        }
+        if isinstance(profile, RoundedRectangleProfileIR):
+            _require_positive(profile.radius, "sketch rounded rectangle radius")
+            if pv(profile.radius) * 2 >= min(
+                pv(profile.width),
+                pv(profile.depth),
+            ):
+                raise ModelError(
+                    "rounded rectangle radius exceeds half the shorter side"
+                )
+            params["radius"] = command_value(profile.radius)
+            command = "sketch.rectangle.rounded"
+        else:
+            command = "sketch.rectangle.two_point"
+        return [_command(command, **params)]
+
+    if isinstance(profile, PolygonProfileIR):
         relation_points = _solidcraft_relation_polygon_points(sketch)
         points = (
             relation_points
@@ -787,7 +826,7 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
                 for index in range(len(points))
             ]
         )
-        commands.append(
+        return [
             _command(
                 "sketch.line",
                 points=[
@@ -797,35 +836,253 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
                 closed=True,
                 ids=ids,
             )
+        ]
+
+    if not isinstance(profile, SlotProfileIR):
+        raise ModelError(
+            f"unsupported portable SolidCraft profile {type(profile).__name__}"
         )
-    else:
-        if node.direction not in ("positive", "negative"):
+
+    _require_positive(profile.width, "slot width")
+    commands = []
+
+    def intent(point):
+        return tuple(
+            _combine(profile.offset[index], value)
+            for index, value in enumerate(point)
+        )
+
+    def direct_point(point):
+        values = [command_value(value) for value in intent(point)]
+        if any(isinstance(value, str) for value in values):
             raise ModelError(
-                "portable SolidCraft circle Extrude IR requires "
-                "positive or negative direction"
+                "native Slot point coordinates currently require fixed values"
             )
-        for profile in sketch.profiles:
-            if not isinstance(profile, CircleProfileIR):
+        return values
+
+    def seed_point(point):
+        return [pv(value) for value in point]
+
+    def same_intent(left, right):
+        return command_value(left) == command_value(right)
+
+    def parametric_straight(
+        command_name,
+        key_a,
+        point_a,
+        key_b,
+        point_b,
+        *,
+        center_point=False,
+    ):
+        intent_a = intent(point_a)
+        intent_b = intent(point_b)
+        dx = pv(intent_b[0]) - pv(intent_a[0])
+        dy = pv(intent_b[1]) - pv(intent_a[1])
+        tolerance = 1e-9
+        if abs(dy) <= tolerance and abs(dx) > tolerance:
+            axis = 0
+            mode = "horizontal"
+            if not same_intent(intent_a[1], intent_b[1]):
                 raise ModelError(
-                    "portable SolidCraft Extrude IR requires one qualified "
-                    "profile family"
+                    "parametric horizontal Slot endpoints must share "
+                    "the same y-coordinate intent"
                 )
-            if tuple(profile.center) != (0, 0):
+        elif abs(dx) <= tolerance and abs(dy) > tolerance:
+            axis = 1
+            mode = "vertical"
+            if not same_intent(intent_a[0], intent_b[0]):
                 raise ModelError(
-                    "portable SolidCraft CircleProfileIR currently requires "
-                    "origin center"
+                    "parametric vertical Slot endpoints must share "
+                    "the same x-coordinate intent"
                 )
-            _require_positive(profile.diameter, "circle diameter")
+        else:
+            raise ModelError(
+                "parametric straight Slot endpoints currently require "
+                "a horizontal or vertical axis"
+            )
+
+        delta = _dim_abs(_dim_sub(intent_b[axis], intent_a[axis]))
+        if center_point:
+            delta = delta * 2
+        middle = (
+            intent_a
+            if center_point
+            else (
+                midpoint(intent_a[0], intent_b[0]),
+                midpoint(intent_a[1], intent_b[1]),
+            )
+        )
+        centre_line = f"$sketch_1_slot_{profile_index}_centre_line"
+        middle_point = f"$sketch_1_slot_{profile_index}_middle"
+        dimensioned = _command(
+            "sketch.draw.dimensioned",
+            command=command_name,
+            params={
+                key_a: seed_point(intent_a),
+                key_b: seed_point(intent_b),
+                "width": command_value(profile.width),
+            },
+            dimensions={"length": command_value(delta)},
+        )
+        dimensioned["bind"] = {
+            centre_line: "centre_line",
+            middle_point: "middle",
+        }
+        commands.append(dimensioned)
+        commands.append(
+            _command(
+                "sketch.constraint.horizontal_vertical",
+                line=centre_line,
+                mode=mode,
+            )
+        )
+        commands.append(
+            _command(
+                "sketch.dimension",
+                entities=["origin", middle_point],
+                type="horizontal",
+                value=command_value(_dim_abs(middle[0])),
+            )
+        )
+        commands.append(
+            _command(
+                "sketch.dimension",
+                entities=["origin", middle_point],
+                type="vertical",
+                value=command_value(_dim_abs(middle[1])),
+            )
+        )
+
+    points = profile.points
+    if profile.construction == "center_to_center":
+        a, b = points
+        intents = (intent(a), intent(b))
+        if parameters_in(*(intents[0] + intents[1])):
+            parametric_straight(
+                "sketch.slot.center_to_center",
+                "p0",
+                a,
+                "p1",
+                b,
+            )
+        else:
             commands.append(
                 _command(
-                    "sketch.circle.center",
-                    center=[
-                        command_value(value)
-                        for value in profile.center
-                    ],
-                    diameter=command_value(profile.diameter),
+                    "sketch.slot.center_to_center",
+                    p0=direct_point(a),
+                    p1=direct_point(b),
+                    width=command_value(profile.width),
                 )
             )
+    elif profile.construction == "overall":
+        a, b = points
+        intents = (intent(a), intent(b))
+        if parameters_in(*(intents[0] + intents[1])):
+            parametric_straight(
+                "sketch.slot.overall",
+                "p0",
+                a,
+                "p1",
+                b,
+            )
+        else:
+            commands.append(
+                _command(
+                    "sketch.slot.overall",
+                    p0=direct_point(a),
+                    p1=direct_point(b),
+                    width=command_value(profile.width),
+                )
+            )
+    elif profile.construction == "center_point":
+        center, end = points
+        intents = (intent(center), intent(end))
+        if parameters_in(*(intents[0] + intents[1])):
+            parametric_straight(
+                "sketch.slot.center_point",
+                "center",
+                center,
+                "end",
+                end,
+                center_point=True,
+            )
+        else:
+            commands.append(
+                _command(
+                    "sketch.slot.center_point",
+                    center=direct_point(center),
+                    end=direct_point(end),
+                    width=command_value(profile.width),
+                )
+            )
+    elif profile.construction == "arc_three_point":
+        start, through, end = points
+        commands.append(
+            _command(
+                "sketch.slot.arc_three_point",
+                start=direct_point(start),
+                through=direct_point(through),
+                end=direct_point(end),
+                width=command_value(profile.width),
+            )
+        )
+    elif profile.construction == "arc_center_end":
+        center, start, end = points
+        commands.append(
+            _command(
+                "sketch.slot.arc_center",
+                center=direct_point(center),
+                start=direct_point(start),
+                end=direct_point(end),
+                width=command_value(profile.width),
+            )
+        )
+    elif profile.construction == "arc_center_sweep":
+        center, start = points
+        commands.append(
+            _command(
+                "sketch.slot.arc_center",
+                center=direct_point(center),
+                start=direct_point(start),
+                width=command_value(profile.width),
+                sweep=profile.sweep,
+            )
+        )
+    else:
+        raise ModelError(
+            f"unsupported SlotProfileIR construction {profile.construction!r}"
+        )
+    return commands
+
+
+def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
+    """Lower typed Sketch/Profile + Extrude IR without frontend parsing."""
+    sketch = node.sketch
+    _principal_plane_offset(
+        sketch.plane,
+        label="portable SolidCraft Sketch IR",
+    )
+    if len(node.regions) != 1:
+        raise ModelError("portable SolidCraft Extrude IR requires one region")
+    region = node.regions[0]
+    if not isinstance(region, RegionIR):
+        raise ModelError("portable SolidCraft Extrude IR requires RegionIR")
+
+    try:
+        pick = _region_interior_point(sketch, region)
+    except ValueError as exc:
+        raise ModelError(str(exc)) from exc
+
+    commands = [_solidcraft_sketch_create(sketch)]
+    for index, profile in enumerate(sketch.profiles, start=1):
+        commands.extend(
+            _solidcraft_profile_commands(
+                sketch,
+                profile,
+                profile_index=index,
+            )
+        )
 
     _require_positive(node.distance, "sketch extrusion distance")
     commands.append(_command("sketch.finish"))

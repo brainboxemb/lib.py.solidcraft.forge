@@ -194,6 +194,15 @@
 169. Mitcad may remain unsupported for PatternIR after #533 and must fail closed on those typed nodes.
 170. Sketch-level rectangular pattern and mirror remain separate Sketch/Profile IR work and are not part of the native feature Pattern family.
 171. Pattern-family completeness is judged on its own public controls once represented in IR; missing typed semantics in an unrelated source-feature dependency do not make PatternIR itself partial.
+172. The public basic closed-profile constructor family must have explicit semantic IR for Circle, Polygon, Rectangle, RoundedRectangle and all five public Slot construction methods; native sketch command names must not define those IR nodes.
+173. `RectangleProfileIR` and `RoundedRectangleProfileIR` must retain symbolic dimensions and semantic sketch-local centre/offset; RoundedRectangle additionally retains one positive radius below half the shorter side.
+174. `SlotProfileIR` must retain the authored construction method, semantic points, positive symbolic width, optional fixed arc sweep and sketch-local offset rather than approximating the Slot as a PolygonProfileIR.
+175. Public Sketch offsets for Circle and Polygon profiles must remain symbolic in typed IR; offset support must not numerically bake Parameter/Expression dependencies.
+176. One typed standalone closed profile may feed positive, negative or symmetric ExtrudeIR. General attached/support-face Extrude and general multi-region composition remain separately bounded and must not be implied by profile-family completion.
+177. Typed SolidCraft profile lowering must reproduce stable native rectangle/rounded-rectangle/Slot commands from semantic IR only. Parameterized straight Slots must preserve the stable dimension/constraint strategy without reading frontend Shape.data.
+178. Existing concentric-Circle exact-region multi-profile behavior remains separately qualified; #534 must not broaden arbitrary multi-profile region selection merely to declare basic profile constructors complete.
+179. Mitcad may remain unsupported for the new ProfileIR variants after #534 and must fail closed on those typed profiles.
+180. Text and connected/open profile authoring belong to the broader Sketch entity family, not the basic closed-profile constructor family used for #534 completeness.
 
 ## SCPF native associativity
 
