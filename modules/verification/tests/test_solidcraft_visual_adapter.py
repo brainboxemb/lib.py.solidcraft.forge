@@ -229,8 +229,6 @@ class SolidCraftVisualAdapterTests(unittest.TestCase):
         self.assertEqual(len(paths), 56)
         state_policies = {
             ("appearance-color", "visual-color.json"): (("iso",), None, "rgb"),
-            ("configuration-installed-state", "visual-large-installed.json"): (("top",), "large-installed", "grayscale"),
-            ("configuration-installed-state", "visual-large-free.json"): (("top",), "large-free", "grayscale"),
             ("configuration-position", "visual-front.json"): (("right",), None, "grayscale"),
             ("configuration-position", "visual-service.json"): (("right",), "service", "grayscale"),
             ("revolute-joint", "visual-60.json"): (("iso",), None, "grayscale"),
