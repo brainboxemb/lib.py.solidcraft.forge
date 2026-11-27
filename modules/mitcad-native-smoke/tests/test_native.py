@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT / "modules/mitcad-reference/src"))
 sys.path.insert(0, str(ROOT / "modules/verification/src"))
 
 from cad_library_mitcad_reference import capture_runtime, git_blob_sha
-from scpf import Axis, AxisLine, Box, Parameter, Polygon2D, Sketch
+from scpf import Axis, AxisLine, Box, Circle2D, Parameter, Polygon2D, Sketch
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.mitcad_headless import run_document, run_saved_configuration
 from scpf.ir import normalize_shape
@@ -305,6 +305,61 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             for actual, expected in zip(
                 polygon_body["bbox"]["max"],
                 [10.0, 5.0, 5.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
+            with Sketch(name="ThreeCircleRegion", plane="XY") as three_circle:
+                Circle2D(d=10)
+                Circle2D(d=8)
+                Circle2D(d=6)
+            three_circle_document = compile_mitcad_ir(
+                normalize_shape(
+                    three_circle.extrude(
+                        20,
+                        profiles=[(4.5, 0)],
+                        exact_regions=True,
+                    )
+                ),
+                "ThreeCircleRegion",
+            )
+            three_circle_sketch = three_circle_document["commands"][-2]["def"]
+            three_circle_extrude = three_circle_document["commands"][-1]["def"]
+            self.assertEqual(
+                [entity["type"] for entity in three_circle_sketch["entities"]],
+                ["point", "circle", "circle", "circle"],
+            )
+            self.assertEqual(
+                [dimension["value"] for dimension in three_circle_sketch["dimensions"]],
+                [10, 8, 6],
+            )
+            self.assertEqual(
+                three_circle_extrude["profiles"],
+                [{"sketch": {"ref": "sk.uid"}, "point": [4.5, 0.0]}],
+            )
+
+            three_circle_native = run_document(
+                three_circle_document,
+                save=root / "out/three-circle-exact-region.mitcad",
+                export=root / "out/three-circle-exact-region.stl",
+                executable=str(executable),
+                work_dir=root / "three-circle-exact-region-workspace",
+            )
+            self.assertEqual(len(three_circle_native["bodies"]), 1)
+            three_circle_body = three_circle_native["bodies"][0]
+            self.assertEqual(three_circle_body["kind"], "solid")
+            self.assertAlmostEqual(
+                three_circle_body["volume"],
+                180.0 * pi,
+                places=3,
+            )
+            for actual, expected in zip(
+                three_circle_body["bbox"]["min"],
+                [-5.0, -5.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                three_circle_body["bbox"]["max"],
+                [5.0, 5.0, 20.0],
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
@@ -741,6 +796,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "topology-face-boundary-box.stl",
                 "parameterized-polygon-revolve.mitcad",
                 "parameterized-polygon-revolve.stl",
+                "three-circle-exact-region.mitcad",
+                "three-circle-exact-region.stl",
                 "parameterized-polygon-extrude.mitcad",
                 "parameterized-polygon-extrude.stl",
                 "shifted-revolve-cut.mitcad",
@@ -771,6 +828,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"parameterized_polygon_revolve_volume={polygon_body['volume']}",
                         f"parameterized_polygon_revolve_bbox={polygon_body['bbox']}",
                         "parameterized_polygon_coordinate_relations=pass",
+                        f"three_circle_exact_region_volume={three_circle_body['volume']}",
+                        f"three_circle_exact_region_bbox={three_circle_body['bbox']}",
+                        "three_circle_exact_region_membership=pass",
                         f"parameterized_polygon_extrude_volume={extrude_body['volume']}",
                         f"parameterized_polygon_extrude_bbox={extrude_body['bbox']}",
                         "parameterized_polygon_extrude_relations=pass",
