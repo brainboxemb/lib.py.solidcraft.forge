@@ -16,10 +16,15 @@ from typing import Any
 
 from .core import (
     Anchor,
+    Expression,
     Faces,
     Parameter,
     Shape,
     _FaceBoundarySelection,
+    _ScalarBinary,
+    _ScalarLiteral,
+    _ScalarParameterRef,
+    _ScalarUnary,
     _dim_add,
     _pv as pv,
     parameters_in,
@@ -1464,6 +1469,82 @@ def _axis_line_in_sketch_plane(axis: AxisLineIR, plane: PlaneIR) -> bool:
     )
 
 
+def _scalar_tree_parameter_names(node, found=None):
+    """Collect semantic parameter references from one authored scalar tree."""
+    if found is None:
+        found = set()
+    if isinstance(node, _ScalarParameterRef):
+        found.add(node.name)
+    elif isinstance(node, _ScalarUnary):
+        _scalar_tree_parameter_names(node.operand, found)
+    elif isinstance(node, _ScalarBinary):
+        _scalar_tree_parameter_names(node.left, found)
+        _scalar_tree_parameter_names(node.right, found)
+    return found
+
+
+def _portable_affine_scalar_tree(node) -> bool:
+    """Validate the bounded #481 scalar-expression subset without text parsing."""
+    if isinstance(node, _ScalarLiteral):
+        return (
+            not isinstance(node.value, bool)
+            and isinstance(node.value, (int, float))
+            and isfinite(node.value)
+        )
+    if isinstance(node, _ScalarParameterRef):
+        return isinstance(node.name, str) and node.name.isidentifier()
+    if isinstance(node, _ScalarUnary):
+        return (
+            node.op == "neg"
+            and _portable_affine_scalar_tree(node.operand)
+        )
+    if not isinstance(node, _ScalarBinary):
+        return False
+
+    if node.op in {"add", "sub"}:
+        return (
+            _portable_affine_scalar_tree(node.left)
+            and _portable_affine_scalar_tree(node.right)
+        )
+    if node.op == "mul":
+        left_literal = isinstance(node.left, _ScalarLiteral)
+        right_literal = isinstance(node.right, _ScalarLiteral)
+        if left_literal == right_literal:
+            # One side must provide the unitless numeric scale.
+            return False
+        dimensional = node.right if left_literal else node.left
+        scalar = node.left if left_literal else node.right
+        return (
+            _portable_affine_scalar_tree(dimensional)
+            and _portable_affine_scalar_tree(scalar)
+        )
+    if node.op == "div":
+        return (
+            _portable_affine_scalar_tree(node.left)
+            and isinstance(node.right, _ScalarLiteral)
+            and _portable_affine_scalar_tree(node.right)
+            and node.right.value != 0
+        )
+    return False
+
+
+def _portable_mixed_role_value(value, mixed_name: str) -> bool:
+    """Accept direct or typed affine uses of one mixed-role source parameter."""
+    if isinstance(value, Parameter):
+        return value.name == mixed_name
+    if not isinstance(value, Expression) or value.semantic is None:
+        return False
+    semantic_names = _scalar_tree_parameter_names(value.semantic)
+    authored_names = {
+        parameter.name for parameter in parameters_in(value)
+    }
+    return (
+        mixed_name in semantic_names
+        and semantic_names == authored_names
+        and _portable_affine_scalar_tree(value.semantic)
+    )
+
+
 def _portable_revolve(
     shape: Shape,
     *,
@@ -1536,9 +1617,9 @@ def _portable_revolve(
     }
     mixed_parameters = angle_parameters & coordinate_parameters
     if mixed_parameters:
-        # #469 deliberately qualifies only one direct source Parameter reused
-        # across typed length and angle slots. Expression-tree dimensional
-        # typing remains a later compiler checkpoint.
+        # #481 extends #469 with authored affine scalar-expression metadata.
+        # The angle side remains a direct Parameter in this bounded proof; each
+        # length-side use may be direct or a structurally qualified expression.
         if len(mixed_parameters) != 1:
             return None
         mixed_name = next(iter(mixed_parameters))
@@ -1554,7 +1635,7 @@ def _portable_revolve(
             )
         ]
         if any(
-            not isinstance(value, Parameter) or value.name != mixed_name
+            not _portable_mixed_role_value(value, mixed_name)
             for value in mixed_coordinate_uses
         ):
             return None
