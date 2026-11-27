@@ -1,218 +1,97 @@
-# Global Installed configuration contract
+# Installed configuration example
 
-Status: proposed  
+Status: qualified backend pattern; Forge API migration in progress  
 Tracking: #444
 
-This document records the concrete Installed use case. It does **not** introduce
-a public `State` object.
+This document records the concrete Installed pattern that drives the current
+configuration API cleanup.
 
-## 1. Component authoring
+## Desired model
 
-A reusable component always authors its real Installed history step. A private
-Forge/build input may choose only the initial suppression state.
+A final model contains reusable couplers and ordinary size configurations.
 
-Conceptually:
-
-~~~python
-class Coupler:
-    _installed = False
-
-    def build(self):
-        model = step_a()
-        model = step_b(model)
-
-        with feature(
-            "Installed",
-            suppressed=not self._installed,
-        ):
-            model = installed_motion(model)
-
-        return model
+~~~text
+final model
+├── Small / Large configuration rows
+├── left Coupler
+├── right Coupler
+└── Coupler definition feature: installed
 ~~~
 
-The exact `feature(...)` spelling is still proposal-level.
+The Coupler definition owns its real Installed history transition.
 
-The required semantics are:
+Copies of that Coupler reuse the same component definition and therefore the
+same authored feature identity.
 
-- the Installed history feature exists whether the initial state is Free or
-  Installed;
-- `_installed` is only a Forge build/default input;
-- `_installed` is not a saved CAD parameter and does not remove either
-  history path through Python branching;
-- the authored Installed feature remains suppressible after Forge has finished.
+## Forge authoring
 
-So this is intentionally **not**:
+The final configuration should read approximately:
 
 ~~~python
-if self._installed:
-    build_installed_variant()
-else:
-    build_free_variant()
-~~~
-
-Both initial states produce the same history structure; only the initial
-suppression differs.
-
-## 2. Final-model authoring
-
-Configuration belongs to the final model after its parts have been assembled.
-
-Conceptually:
-
-~~~python
-left = Coupler(name="left")
-right = Coupler(name="right")
-panel = Hub75Panel(name="panel")
-
 model = panel + left + right
 
 model.configure(
     active="Small",
     columns=(
         self.coupler_size,
+        right.feature("installed"),
     ),
     rows={
-        "Small": ("40 mm",),
-        "Large": ("60 mm",),
+        "Small": ("40 mm", True),
+        "Large": ("60 mm", True),
     },
 )
 
 return model
 ~~~
 
-The current `Configure(model, ...)` wrapper and `Param(...)` helper are not
-treated as protected final syntax. In particular, if
-`self.coupler_size` is already an unambiguous Parameter handle, an extra
-`Param(...)` wrapper may be unnecessary.
-
-## 3. Global Installed requirement
-
-The saved final model should expose one Installed choice for the whole model:
+The boolean cells are suppression values:
 
 ~~~text
-Size:
-    Small | Large
-
-Installed:
-    off | on
+True  -> Installed feature suppressed
+False -> Installed feature active
 ~~~
 
-Changing Installed must not require changing the active Small/Large row.
+There is no public rule object and no synthetic boolean State object.
 
-When Installed changes, every participating authored Installed transition must
-follow:
+## SolidCraft result
+
+SolidCraft receives a normal configuration with:
 
 ~~~text
-Installed = off
-├── left Installed feature suppressed
-├── right Installed feature suppressed
-└── any later participating Installed behavior suppressed/free
-
-Installed = on
-├── left Installed feature active
-├── right Installed feature active
-└── any later participating Installed behavior active/installed
+parameter column: coupler_size
+feature column:   Suppress: Installed
 ~~~
 
-This is a final-model configuration requirement. It does not imply a public
-`State`, `Bind`, `ConfigRule` or `DriveParameter` object.
-
-## 4. SolidCraft 0.49 result
-
-The direct timeline-folder idea was tested because it matches the authoring
-model closely:
+The existing UI displays such a feature column as:
 
 ~~~text
-Installed folder
-├── LeftInstalled
-└── RightInstalled
+Suppress: <feature name>
 ~~~
 
-The `configuration-installed-group` probe proves:
+or its localized equivalent.
 
-- SolidCraft can create this timeline folder when its features form one
-  contiguous history run;
-- SolidCraft can manually suppress the folder as one group;
-- SolidCraft cannot register the folder as a configuration feature;
-- a Configuration Rule cannot use that folder as one
-  `drive_suppression` target.
+## Qualification
 
-The decisive runtime errors are retained in the probe README:
+The `configuration-installed-single-feature` probe proves that one native
+feature can affect more than one body and can be configured directly as a
+suppression target without `config.rule`.
 
-~~~text
-rule 'Installed' target is not configured
-no feature 'Installed'
+The direct rule-free probe passed in run 971.
+
+## Separate concern: initial suppression
+
+A reusable component may later need to say that an authored feature starts
+suppressed even before a final configuration is attached.
+
+That is a feature-history authoring concern, not a reason to expand the
+configuration API.
+
+A scoped syntax such as:
+
+~~~python
+with feature("Installed", suppressed=True):
+    ...
 ~~~
 
-Therefore a Forge `with feature("Installed", ...)` scope must not be assumed
-to lower directly to one SolidCraft configuration target when it contains
-several native history features.
-
-## 5. One real multi-object Installed feature
-
-The `configuration-installed-single-feature` probe proves the preferred
-**history** shape when Installed can truthfully be authored as one multi-object
-CAD operation:
-
-~~~text
-one real Installed feature
-        |
-        +--> left body
-        +--> right body
-~~~
-
-SolidCraft can configure that one feature directly.
-
-Two different configuration semantics were tested:
-
-- run **971** proves the rule-free direct suppression column; its value is
-  row-owned;
-- runs **959** and **966** prove the same single feature can also be controlled
-  independently from the active Small/Large row through a native SolidCraft
-  Configuration Rule.
-
-So the CAD history does not need to change between those cases. Only the
-SolidCraft configuration lowering differs.
-
-The native rule is backend transport. Forge should not expose `ConfigRule`,
-`Always` or `drive_suppression` merely because SolidCraft needs them for an
-independent control.
-
-## 6. Fallback when several native features are genuinely required
-
-The earlier `configuration-installed-fanout` probe proves another SolidCraft
-0.49 mechanism:
-
-~~~text
-Installed native rule
-        |
-        v
-private shared driver
-        |
-        +--> left Installed behavior
-        +--> right Installed behavior
-~~~
-
-That shared driver is backend transport. It is not public Forge model intent.
-
-The direct timeline-folder experiment does **not** replace this fallback:
-SolidCraft 0.49 cannot use a folder containing several native features as one
-configuration suppression target.
-
-The public authoring problem and the SolidCraft lowering problem therefore stay
-separate. A later backend may gain a simpler multi-feature mechanism without
-changing the Forge authoring model.
-
-## 7. Open API work
-
-The remaining API work is deliberately narrow:
-
-- define the scoped/named authored feature API and its initial suppression;
-- decide how reusable component feature identity is exported to a final model;
-- define the final-model `model.configure(...)` spelling for one global
-  Installed intent without exposing SolidCraft rule mechanics;
-- decide whether `Param(...)` remains useful or is redundant.
-
-Do not add a separate first-class `State` abstraction unless a later use case
-demonstrates semantics that cannot be represented by authored features,
-parameters and final-model configuration intent.
+remains proposal-level until its native history semantics are qualified.
