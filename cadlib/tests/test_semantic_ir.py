@@ -25,6 +25,13 @@ from scpf.compiler import (
     _compile_model_with_dependencies,
     _compile_shape_legacy_with_dependencies,
 )
+from scpf.core import (
+    Expression,
+    _ScalarBinary,
+    _ScalarLiteral,
+    _ScalarParameterRef,
+    _ScalarUnary,
+)
 from scpf.ir import (
     AxisLineIR,
     BooleanIR,
@@ -1699,22 +1706,140 @@ class SemanticIRTests(unittest.TestCase):
             },
         )
 
-    def test_mixed_role_parameter_inside_expression_remains_legacy(self):
+    def test_expression_captures_typed_scalar_tree_without_parsing_text(self):
+        shared = Parameter("tree_shared", 4)
+        expression = shared + 1
+
+        self.assertIsInstance(expression.semantic, _ScalarBinary)
+        self.assertEqual(expression.semantic.op, "add")
+        self.assertEqual(
+            expression.semantic.left,
+            _ScalarParameterRef("tree_shared"),
+        )
+        self.assertEqual(expression.semantic.right, _ScalarLiteral(1))
+        self.assertEqual(expression.expression, "tree_shared + 1 mm")
+
+        chained = -(((shared + 1) * 2) / 4 - 3)
+        self.assertIsInstance(chained.semantic, _ScalarUnary)
+        self.assertEqual(chained.semantic.op, "neg")
+        self.assertIsInstance(chained.semantic.operand, _ScalarBinary)
+        self.assertEqual(chained.semantic.operand.op, "sub")
+
+    def test_three_argument_expression_remains_source_compatible(self):
+        shared = Parameter("legacy_expression_parameter", 4)
+        expression = Expression(
+            5,
+            "legacy_expression_parameter + 1 mm",
+            (shared,),
+        )
+
+        self.assertEqual(expression.value, 5)
+        self.assertEqual(
+            expression.expression,
+            "legacy_expression_parameter + 1 mm",
+        )
+        self.assertEqual(expression.parameters, (shared,))
+        self.assertIsNone(expression.semantic)
+
+    def test_mixed_role_parameter_inside_expression_is_typed_by_use_site(self):
         shared = Parameter("shared_expression", 4)
+        height = shared + 1
         with Sketch(name="MixedRoleExpression", plane="XZ") as sketch:
             Polygon2D(
                 [
                     (0, 0),
-                    (0, shared + 1),
-                    (10, shared + 1),
+                    (0, height),
+                    (10, height),
                     (10, 0),
                 ],
                 plane="XZ",
             )
         model = normalize_shape(sketch.revolve(axis=Axis.X, angle=shared))
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR(
+                    "shared_expression",
+                    4,
+                    roles=("length", "angle"),
+                ),
+            ),
+        )
+
+        solidcraft = compile_solidcraft_ir(
+            model,
+            "MixedRoleExpression",
+        )
+        self.assertEqual(
+            solidcraft["commands"][0]["params"],
+            {
+                "name": "shared_expression",
+                "expression": "4",
+                "unit": "",
+            },
+        )
+        line = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "sketch.line"
+        )
+        self.assertIn(
+            "(shared_expression * 1 mm) + (1 mm)",
+            str(line["params"]["points"]),
+        )
+        revolve = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "solid.revolve"
+        )
+        self.assertEqual(
+            revolve["params"]["angle"],
+            "shared_expression * 1 deg",
+        )
+
+        mitcad = compile_mitcad_ir(model, "MixedRoleExpression")
+        self.assertEqual(
+            mitcad["commands"][0],
+            {
+                "cmd": "add_parameter",
+                "name": "shared_expression",
+                "unit": "",
+                "expression": "4",
+            },
+        )
+        sketch_def = mitcad["commands"][-2]["def"]
+        self.assertIn(
+            "(shared_expression * 1 mm) + (1 mm)",
+            [dimension["value"] for dimension in sketch_def["dimensions"]],
+        )
+        self.assertEqual(
+            mitcad["commands"][-1]["def"]["extent"],
+            {
+                "type": "angle",
+                "angle": "shared_expression * 1 deg",
+            },
+        )
+
+    def test_parameter_times_parameter_mixed_role_remains_legacy(self):
+        shared = Parameter("shared_product", 4)
+        scale = Parameter("product_scale", 2)
+        height = shared * scale
+        with Sketch(name="MixedRoleProduct", plane="XZ") as sketch:
+            Polygon2D(
+                [
+                    (0, 0),
+                    (0, height),
+                    (10, height),
+                    (10, 0),
+                ],
+                plane="XZ",
+            )
+
+        model = normalize_shape(sketch.revolve(axis=Axis.X, angle=shared))
         self.assertIsInstance(model.root, LegacyShapeIR)
         with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "UnsupportedMixedExpression")
+            compile_mitcad_ir(model, "UnsupportedMixedProduct")
 
     def test_cone_is_generic_geometry_plus_placement_ir(self):
         shape = Cone(d=10, h=20)
