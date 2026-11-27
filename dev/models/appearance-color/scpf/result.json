@@ -13,6 +13,11 @@
       "adapter": "solidcraft-model",
       "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
       "status": "pass"
+    },
+    "visual-color": {
+      "adapter": "solidcraft-visual",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "status": "pass"
     }
   },
   "verification_status": "pass"

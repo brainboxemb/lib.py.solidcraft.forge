@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "50ajkfahfqam4",
+  "id": "4vrbxpzt1qn1h",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "65hqhtna06gz9"
+        "source": "19zvgmh78w2cb"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "f7sdytvqb07dg",
+      "id": "5mwe6a2n6sxpv",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,15 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "31afatqc9s9dc",
+          "id": "3xmspwy6vb67s",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "7wdt7pc0wfbz6",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,37 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "75ye4dx6hd9kt",
-          "kind": "projected",
-          "label": "Above Front",
-          "notes": [],
-          "parent": "31afatqc9s9dc",
-          "side": "above"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "et4p5qweteyxv",
+          "id": "0ky0cbm15dct5",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "31afatqc9s9dc",
+          "parent": "7wdt7pc0wfbz6",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "dh50es8d5kz17",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
+          "id": "0x057591dv7ws",
+          "kind": "projected",
+          "label": "Above Front",
+          "notes": [],
+          "parent": "7wdt7pc0wfbz6",
+          "side": "above"
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "65hqhtna06gz9"
+      "id": "19zvgmh78w2cb"
     }
   ],
   "symbols": [],

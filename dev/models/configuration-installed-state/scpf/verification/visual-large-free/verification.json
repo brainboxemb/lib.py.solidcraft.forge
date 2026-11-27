@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "state/large-free/model.sc",
+          "sha256": "42a0bc7cc86f9cbc18c43219cf70efae0acb89ffb9165be7af0e8c55f5958963",
+          "size": 12081
+        },
+        {
+          "kind": "file",
+          "path": "visual/top/camera.json",
+          "sha256": "b4dc232f2b44a280a82c4e90d51e8a8e43ceafe421b910dda131a9131a9d6789",
+          "size": 174
+        },
+        {
+          "kind": "file",
+          "path": "visual/top/actual.png",
+          "sha256": "78fb48586d61499036866aab5afdc44bdf1f8a7275bea5ddfeccda31a22ad879",
+          "size": 33492
+        },
+        {
+          "kind": "file",
+          "path": "visual/top/diff.png",
+          "sha256": "c9ad0aa9500cfa70cf1b3f3edc54b00b88fcbef81f6accc216b5ee2d2420537a",
+          "size": 1631
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/top/actual.png",
+        "baseline": "baselines/visual-large-free-top.json",
+        "baseline_status": "pass",
+        "camera": "visual/top/camera.json",
+        "diff_image": "visual/top/diff.png",
+        "expected_shape_required": false,
+        "expected_shape_status": "missing",
+        "goal_image": null,
+        "overlay_image": null,
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "top"
+      },
+      "id": "top",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/configuration-installed-state/scpf/model.sc",
+  "metadata": {
+    "baseline_provenance": {
+      "approval": "approved",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "83e2274e4fa530309352f81653d42c41088c3267",
+      "workflow_run": 45916016779
+    },
+    "kind": "solidcraft-visual",
+    "measurements": "measurements.json",
+    "rendered_model": "state/large-free/model.sc",
+    "state": {
+      "command": "large_free.json",
+      "id": "large-free"
+    },
+    "visual_report": "visual.json"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "configuration-installed-state-scpf-visual-large-free"
+}

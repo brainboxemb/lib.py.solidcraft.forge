@@ -1,0 +1,71 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/iso/camera.json",
+          "sha256": "20c0b4e9bbad8bb40baee9e492a208f8de12b34e65243b8d539add589492fe6c",
+          "size": 158
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/actual.png",
+          "sha256": "b67a5c4f0d30d29de04a56bbb23219281b79ce170f35e445757c0a9e203022e9",
+          "size": 33092
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/diff.png",
+          "sha256": "c577bd419e5ce38031cef7a05781f12a572b492aaf40de2ff98e0dab36d13750",
+          "size": 3609
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/iso/actual.png",
+        "baseline": "baselines/visual-color-iso.json",
+        "baseline_status": "pass",
+        "camera": "visual/iso/camera.json",
+        "diff_image": "visual/iso/diff.png",
+        "expected_shape_required": false,
+        "expected_shape_status": "missing",
+        "goal_image": null,
+        "overlay_image": null,
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "comparison_mode": "rgb",
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "iso"
+      },
+      "id": "iso",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/appearance-color/scpf/model.sc",
+  "metadata": {
+    "baseline_provenance": {
+      "approval": "approved",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "83e2274e4fa530309352f81653d42c41088c3267",
+      "workflow_run": 45916016779
+    },
+    "kind": "solidcraft-visual",
+    "measurements": "measurements.json",
+    "rendered_model": null,
+    "state": null,
+    "visual_report": "visual.json"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "appearance-color-scpf-visual-color"
+}

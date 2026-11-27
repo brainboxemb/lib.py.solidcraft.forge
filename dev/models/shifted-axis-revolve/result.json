@@ -11,6 +11,16 @@
           "adapter": "solidcraft-model",
           "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
           "status": "pass"
+        },
+        "visual-cut": {
+          "adapter": "solidcraft-visual",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "status": "pass"
+        },
+        "visual-suppressed": {
+          "adapter": "solidcraft-visual",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "status": "pass"
         }
       },
       "verification_status": "pass"
