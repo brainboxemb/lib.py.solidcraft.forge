@@ -28,6 +28,8 @@ class ApiProbeTests(unittest.TestCase):
         self.assertIn("configuration-installed-current", ids)
         self.assertEqual(ids, sorted(ids))
         self.assertEqual(len(ids), len(set(ids)))
+        self.assertTrue(all((probe.root / "README.md").is_file()
+                            for probe in self.probes))
         self.assertEqual(select_api_probes(self.probes, ()), ())
         self.assertEqual(
             [probe.id for probe in select_api_probes(
