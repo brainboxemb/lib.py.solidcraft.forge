@@ -60,6 +60,86 @@ class NamedFeatureTests(unittest.TestCase):
             for row in rows
         ))
 
+    def test_move_history_is_one_suppressible_native_feature(self):
+        fixed = Box(40, 30, 10)
+        arm = Box(20, 10, 10)
+        with feature("installed", suppressed=True) as installed:
+            arm = arm.move_history(
+                origin=(-20, 0, 0),
+                axis=(0, 0, 1),
+                angle=2.7,
+            )
+        body = fixed + arm
+        body.configure(
+            active="Free",
+            columns=(installed,),
+            rows={
+                "Free": (True,),
+                "Installed": (False,),
+            },
+        )
+
+        commands = compile_model(body, "Clamp")["commands"]
+        move = next(
+            command
+            for command in commands
+            if command["command"] == "solid.move"
+        )
+        self.assertEqual(move["params"]["bodies"], ["Clamp MoveTool1"])
+        self.assertEqual(move["params"]["origin"], [-20, 0, 0])
+        self.assertEqual(move["params"]["axis"], [0, 0, 1])
+        self.assertEqual(move["params"]["angle"], 2.7)
+        self.assertEqual(move["bind"]["$feature_installed_name"], "name")
+        self.assertEqual(move["bind"]["$config_name_1"], "name")
+
+        initial = next(
+            command
+            for command in commands
+            if command["command"] == "timeline.suppress"
+        )
+        self.assertEqual(
+            initial["params"],
+            {
+                "features": ["$feature_installed_name"],
+                "suppressed": True,
+            },
+        )
+
+        combine = next(
+            command
+            for command in commands
+            if command["command"] == "solid.combine"
+        )
+        self.assertEqual(
+            combine["params"],
+            {
+                "target": "Clamp",
+                "tools": ["Clamp MoveTool1"],
+                "operation": "join",
+            },
+        )
+        self.assertGreater(commands.index(combine), commands.index(initial))
+
+    def test_move_history_keeps_move_as_pre_history_translation(self):
+        body = Box(20, 10, 5).move(12, 0, 0)
+        commands = compile_model(body, "Shifted")["commands"]
+        self.assertFalse(any(
+            command["command"] == "solid.move"
+            for command in commands
+        ))
+
+        moved = Box(20, 10, 5).move_history(translate=(12, 0, 0))
+        commands = compile_model(moved, "Moved")["commands"]
+        history_move = next(
+            command
+            for command in commands
+            if command["command"] == "solid.move"
+        )
+        self.assertEqual(
+            history_move["params"],
+            {"bodies": ["Moved"], "translate": [12, 0, 0]},
+        )
+
     def test_scope_requires_public_name_boolean_state_and_one_history_step(self):
         with self.assertRaisesRegex(ValueError, "public Python identifier"):
             feature("_installed")
