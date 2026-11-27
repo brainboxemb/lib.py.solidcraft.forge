@@ -213,26 +213,63 @@ That second case is still open and must be qualified separately. The current
 probes prove feature suppression and exported child-feature addressing, but not
 yet one shared control driving several independent child features.
 
-### Why one SolidCraft configuration table is less problematic now
+### One SolidCraft row list remains the key constraint
 
-SolidCraft still has one configuration row list. That remains a backend
-constraint, but it does not mean every user concern must become another row
-axis.
+A feature-suppression column is still **row-owned state**. Putting
+`Installed` or `ServicePosition` beside `coupler_size` in the same table
+does not make it an independent control.
 
-For the HUB75 case, a useful current representation can be:
+For example:
 
 ~~~text
-Configuration   Coupler size   ServicePosition   Installed
-Small              40             [suppressed]   [suppressed]
-Large              60             [suppressed]   [suppressed]
+Configuration   Coupler size   Installed
+Small              40          suppressed
+Large              60          suppressed
 ~~~
 
-The rows carry the size variants. The feature columns carry actual authored
-state transitions.
+stores the Installed suppression value *inside each row*. It does not provide
+one global Installed switch that can be changed independently while Small or
+Large remains active.
 
-This avoids automatically generating a cartesian product such as
-`Small/Service/Installed` unless the design genuinely needs those states stored
-as separate named rows.
+If the authored requirement is:
+
+~~~text
+size:       Small | Large
+installed:  Free  | Installed
+~~~
+
+with both choices independent, flattening both into ordinary row cells would
+require the Cartesian states:
+
+~~~text
+Small / Free
+Small / Installed
+Large / Free
+Large / Installed
+~~~
+
+That is precisely the behavior the generic Forge model should avoid when the
+user intent is one row choice plus one independent global state.
+
+The correct semantic distinction is therefore:
+
+~~~text
+Configuration rows
+    named variant sets such as Small / Large
+
+Global state
+    independent state such as Installed
+    may bind to one or more semantic effects/features
+~~~
+
+SolidCraft may lower that global state through its native Configuration Rule
+mechanism and a private shared dependency. That is a backend implementation
+choice, not Forge public authoring vocabulary.
+
+The same applies to a position transition when it must remain independently
+switchable from the size row. A real `ServicePosition` feature is still the
+right authored CAD effect, but the independent control that activates it is a
+separate semantic state rather than a row-owned suppression cell.
 
 ## 4. Public authoring direction
 
@@ -299,32 +336,43 @@ coupler.configure(
 Feature identity remains Forge-authored identity. Backend feature ids are not
 public API.
 
-### Boolean intent
+### Independent state intent
 
-Proposed semantic spelling remains:
+The public API needs a generic semantic representation for state that remains
+independent from the active configuration row.
+
+Conceptually:
 
 ~~~python
-Toggle(
-    "Installed",
-    default=False,
-    off=DriveParameter(
-        self.clamp_bore,
-        self.tube_d - self.clamp_interference,
-    ),
-    on=DriveParameter(
-        self.clamp_bore,
-        self.tube_d,
-    ),
+installed = State("Installed", default=False)
+
+Bind(
+    installed,
+    left.interface("installed"),
+    right.interface("installed"),
 )
 ~~~
 
-`Toggle` is configuration intent inside the one design configuration. The word
-"standalone" only means that the consumer did not author several named
-configuration rows; it does **not** mean that the toggle exists outside the
-configuration definition.
+The exact `State` / `Bind` spelling is still proposal-level. The required
+meaning is not:
 
-Whether SolidCraft 0.49 can lower a particular Toggle shape is a backend
-capability question documented in `solidcraft.md`.
+~~~text
+run an Always rule that DriveParameters something
+~~~
+
+but:
+
+~~~text
+one authored global state
+    -> zero or more semantic bindings/effects
+~~~
+
+A backend may implement that state through a native rule, feature suppression,
+a private driver parameter or another supported mechanism. Those lowering
+objects must not become public Forge API merely because one backend needs them.
+
+The state still belongs to the one final-design configuration definition; it is
+independent of the active row, not a second configuration owner.
 
 ## 4. Parent and child ownership
 
