@@ -179,7 +179,9 @@ Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #417 / PR #423 generalized standalone Sketch support through typed `PlaneIR(orientation, origin)`, keeping Mitcad construction-plane features backend-only;
 - #424 / PR #429 added engine-neutral `FeatureRefIR` plus the first suppression-only `ConfigurationIR`, and qualified saved native Mitcad row switching on the unchanged `shifted-axis-revolve` owner without rerunning Forge Python;
 - the simple-concave PolygonProfile/Region prerequisite discovered during #424 is also qualified generically in that same permanent merge: symbolic points remain semantic IR while evaluated geometry is used only for validation and deterministic native region transport; #430 is therefore completed without duplicate implementation and the obsolete #431 ordering was closed;
-- current permanent exp `a90965762fd80b25e842c4ed15154a03472afc0d` has full CI/build/publication run 45974013966 green, Pages run 45974521926 green and deployment 45974645722 green;
+- #433 / PR #437 generalized `FeatureRefIR` through typed `BooleanIR.target/tool` semantic history paths, keeping authored identity engine-neutral while SolidCraft and Mitcad independently bind their actual native feature results;
+- the existing `primitive-csg` owner proves nested saved-state identity end to end: `Clipped -> Unclipped -> Clipped` suppresses/restores the exact final clip feature without rerunning Forge authoring, while a deeper bore reference is resolved in backend-independent tests;
+- current permanent exp `2cddd4e29916a2bb72dc38849983d6733963f2bc` has final PR qualification 45982446290, permanent CI/build/publication 45982819170, Pages 45983317799 and deployment 45983462551 green;
 - accepted experimental compiler/backend work remains isolated from `dev` until a separately qualified `exp -> dev` integration is explicitly selected.
 
 The pinned SolidCraft 0.49 registry still has no native centre-mark or
@@ -230,19 +232,17 @@ Normal `dev` lane:
 
 Experimental `exp` lane:
 - #393 remains the compiler control gate: SCPF is one frontend, typed engine-neutral Forge CAD IR is the compiler contract, and SolidCraft/Mitcad are independent lowerings rather than source interpreters;
-- #389, #417 and #424 are complete architecture checkpoints: typed reference geometry now includes symbolic `AxisLineIR` and `PlaneIR`; authored Revolve cut intent remains one `RevolveIR(operation="cut", target=...)`; and final design state may carry engine-neutral `FeatureRefIR` plus the first suppression-only `ConfigurationIR`;
-- #424 / PR #429 is permanently qualified on `exp` as `a90965762fd80b25e842c4ed15154a03472afc0d`: final PR CI 45973662092, permanent CI/build 45974013966, Pages 45974521926 and deployment 45974645722 are green;
-- the same #424 merge qualified simple non-self-intersecting concave `PolygonProfileIR` region transport discovered during implementation; #430 is completed by that landed generic behavior and the obsolete #431 / PR #432 prerequisite ordering must not be reintroduced;
-- current typed/accepted core: `ParameterIR`; Box/Cylinder/Sphere + `PlacementIR`; `AxisLineIR` and `PlaneIR`; `SketchIR` with Circle/simple Polygon profiles and `RegionIR`; bounded `ExtrudeIR`, recursive `BooleanIR`, face-boundary `ChamferIR`, `RevolveIR` with principal/shifted axis plus new-body/cut operation intent; and bounded semantic feature/configuration references;
-- **#433 is the active compiler checkpoint**: generalize `FeatureRefIR` from only the root Revolve feature to authored features nested in an already-typed `BooleanIR` history tree, without introducing native ids, replay names or command indexes into IR;
-- use the existing dual-backend `primitive-csg` physical owner as the runtime consumer: its active configured row must preserve the already-qualified clipped geometry, while suppressing the authored final clip feature must reveal the pre-clip negative-Z geometry and restoring the row must reproduce the original state;
-- semantic feature paths are defined by typed history roles such as `target` / `tool`, not by backend emission order; the same resolver should also prove a deeper authored feature such as the bore Cylinder can be identified backend-independently;
-- SolidCraft and Mitcad may map that semantic path to different native command/result bindings, but those mappings remain backend-only; saved native switching must again happen without rerunning Forge Python;
-- keep the #424 suppression-only configuration surface bounded during #433: one runtime-qualified suppression column with boolean rows; multiple suppression columns, Param/rule ConfigurationIR, reusable-child/definition references and assemblies remain later layers;
-- follow the fixed compiler order: generic history/reference semantics -> pure normalization/IR tests -> independent backend lowering -> backend contract tests -> exact native saved-design qualification -> permanent `exp` merge;
-- after #433, remaining major generic layers include complete Sketch entity/constraint/dimension IR, broader topology/reference graphs, reusable-child configuration references and assembly/occurrence IR; do not hide those gaps behind backend-specific reconstruction;
+- #389, #417, #424 and #433 are complete architecture checkpoints: typed reference geometry includes symbolic `AxisLineIR` and `PlaneIR`; authored Revolve operation/target intent remains semantic; final design state carries bounded `ConfigurationIR`; and `FeatureRefIR` now traverses typed nested Boolean history through semantic `target` / `tool` roles rather than backend ids;
+- #433 / PR #437 is permanently qualified on `exp` as `2cddd4e29916a2bb72dc38849983d6733963f2bc`: final PR CI 45982446290, permanent CI/build/publication 45982819170, Pages 45983317799 and deployment 45983462551 are green;
+- current typed/accepted core: `ParameterIR`; Box/Cylinder/Sphere + `PlacementIR`; `AxisLineIR` and `PlaneIR`; `SketchIR` with Circle/simple Polygon profiles and `RegionIR`; bounded `ExtrudeIR`, recursive `BooleanIR`, face-boundary `ChamferIR`, `RevolveIR` with principal/shifted axis plus new-body/cut operation intent; and bounded semantic feature/history/configuration references;
+- **#440 is the active compiler checkpoint under broader #61**: make the already-authored parameterized rectangle Sketch relations explicit semantic IR instead of letting the Mitcad backend reconstruct points, lines, horizontal/vertical constraints and `length` / `radius` dimensions from Polygon coordinates;
+- use the existing dual-backend `native-revolve` physical owner and unchanged public SCPF source; `PolygonProfileIR` / `RegionIR` remain profile semantics while explicit Sketch entity/constraint/dimension IR becomes a complementary semantic layer;
+- the first #440 slice is deliberately bounded to the already-qualified origin-based axis-aligned four-edge parameterized rectangle; semantic Sketch-local references must contain no SolidCraft curve ids, Mitcad `p/c/k` ids, replay names or backend command indexes;
+- SolidCraft and Mitcad must lower the same typed Sketch relation graph independently; once migrated, neither backend may rediscover horizontal/vertical or dimensional intent by inspecting Polygon coordinate relationships;
+- follow the fixed compiler order: generic Sketch relation semantics -> pure normalization/IR tests -> independent backend lowering -> backend contract tests -> exact native saved-design qualification -> permanent `exp` merge;
+- keep new public constraint-authoring syntax, arbitrary Sketch entity graphs, additional constraint families, generalized topology references, reusable-child configuration references and assembly/occurrence IR as later bounded layers rather than hiding them behind backend reconstruction;
 - `LegacyShapeIR` remains a visible migration boundary for stable SolidCraft compatibility, never a second interpreter; experimental backends continue to fail closed on unmigrated semantics;
-- do not perform `exp -> dev` as part of #433.
+- do not perform `exp -> dev` as part of #440.
 
 ## Later
 
