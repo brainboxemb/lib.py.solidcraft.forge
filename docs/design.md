@@ -889,9 +889,24 @@ slice is typed, neither backend may infer those relations again from Polygon
 coordinate relationships.
 
 The point used to resolve the closed native region is still derived at lowering
-time and is not retained in `RegionIR`. The broader non-rectangle parameterized
-Polygon transport remains a later migration slice; #440 does not pretend the
-complete public Sketch constraint surface is already represented.
+time and is not retained in `RegionIR`.
+
+#447 removes the remaining backend-owned semantic reconstruction for the
+already-qualified non-rectangular parameterized Polygon Revolve path.
+`SketchCoordinateDimensionIR` records one signed Sketch-local X or Y coordinate
+for a semantic point relative to the Sketch origin, retaining the exact authored
+Parameter/Expression value. A general parameterized simple Polygon therefore
+normalizes semantic points, cyclic straight-line connectivity and two coordinate
+dimensions per point before either backend runs.
+
+The #440 rectangle keeps its stronger V/H plus edge-length graph. For the
+generic coordinate graph, SolidCraft validates that every semantic point
+coordinate is represented and then coalesces the graph to its existing symbolic
+closed `sketch.line` command. Mitcad creates an extra fixed native origin point
+and lowers each semantic coordinate to a signed horizontal/vertical distance
+dimension. That origin entity and all p/c/k ids are solver transport only; they
+are not Forge IR. The former Mitcad `_parameterized_polygon_sketch(...)`
+semantic helper is therefore removed.
 
 #389 extends that compiler boundary rather than adding a Mitcad-specific model
 path. `AxisLineIR` records only a principal semantic direction and symbolic
