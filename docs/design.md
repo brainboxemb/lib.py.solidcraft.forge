@@ -865,14 +865,33 @@ values remain semantic values until backend lowering.
 For the #381 checkpoint, the existing `native-revolve` source evaluates once
 to a parameterized XZ polygon plus `RevolveIR`. #389 refactors its principal
 world axis through `AxisLineIR(direction="X", origin=(0, 0, 0))`, so principal
-and shifted axis intent use one semantic reference-geometry form. SolidCraft
-lowers that node to its existing native Sketch + `solid.revolve` sequence.
-Mitcad lowers the same node to one native Sketch and one native Revolve.
-Mitcad's Sketch points are seeded from current parameter values only because
-its entity coordinates are numeric; native horizontal/vertical constraints and
-line dimensions bind the rectangle back to `radius` and `length`. The point
-used to resolve the closed native region is derived at lowering time and is not
-retained in `RegionIR`.
+and shifted axis intent use one semantic reference-geometry form. #440 moves the
+bounded rectangle's Sketch solver meaning into that same compiler boundary:
+`SketchRelationsIR` carries four semantic points, four connected straight
+lines, V/H/V/H orientation constraints and symbolic `radius` / `length`
+line dimensions. Sketch-local tuple positions are compiler references only;
+they are not SolidCraft curve ids, Mitcad p/c/k ids, replay names or command
+indexes.
+
+`PolygonProfileIR` and `RegionIR` remain complementary closed-profile and
+region semantics. The relation graph describes editable Sketch entities and
+constraints; it does not replace region intent.
+
+SolidCraft and Mitcad lower the same relation graph independently. SolidCraft
+can preserve the authored symbolic point expressions directly in its existing
+closed `sketch.line` native form, so it validates/consumes the relation graph
+and coalesces it to that compact equivalent representation rather than emitting
+redundant solver commands. Mitcad needs native solver relations, so it maps the
+same semantic graph to backend-owned point/curve/constraint ids plus horizontal,
+vertical and length relations. Fixing the first native point at the origin is a
+Mitcad solver transport detail and never enters Forge IR. Once this rectangle
+slice is typed, neither backend may infer those relations again from Polygon
+coordinate relationships.
+
+The point used to resolve the closed native region is still derived at lowering
+time and is not retained in `RegionIR`. The broader non-rectangle parameterized
+Polygon transport remains a later migration slice; #440 does not pretend the
+complete public Sketch constraint surface is already represented.
 
 #389 extends that compiler boundary rather than adding a Mitcad-specific model
 path. `AxisLineIR` records only a principal semantic direction and symbolic
