@@ -8,6 +8,7 @@ docs/reference/solidcraft/
   0.45.0/
   0.48.1/
   0.49.0/
+  0.50.0/
   <future-version>/
 ```
 

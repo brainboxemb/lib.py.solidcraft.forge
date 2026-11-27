@@ -16,6 +16,13 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ### Changed
 
+- Adopt immutable CAD runtime `v0.3.8` and qualify Forge against SolidCraft
+  **0.50.0**.
+- Capture the canonical SolidCraft 0.50.0 registry from
+  `cad-solidcraft:v0.3.8`: 930 commands, 44 command IDs added and none
+  removed versus 0.49.0.
+- Retain the known #73 contour-flange live/in-memory divergence as unchanged
+  engine behavior; this runtime upgrade does not claim to fix it.
 - Separate parameter-driven Free/Installed state from real history-feature
   suppression in the configuration contract and qualification evidence.
 - Require consumer-level API acceptance to remain faithful to the motivating
