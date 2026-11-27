@@ -1,7 +1,7 @@
 # Configuration API design
 
 Status: v0.25 consumer-acceptance repair in progress  
-Tracking: #444, #506
+Tracking: #444, #505, #506
 
 Forge configuration belongs to the **final model**.
 
@@ -17,11 +17,12 @@ model.configure(
 
 There is no public configuration wrapper object.
 
-## Two configuration target types
+## Configuration target types
 
 A configuration column is an existing semantic handle:
 
-- a `Parameter` means a parameter-value column;
+- a root/parent `Parameter` means a parameter-value column;
+- `occurrence.parameter("name")` means one explicitly published reusable-component definition parameter;
 - an authored Shape/feature handle means native feature suppression.
 
 Do not turn a parameter-driven consumer state into a synthetic suppression
@@ -29,12 +30,15 @@ feature, and do not replace a real history toggle with a fake boolean parameter.
 
 ### Parameter-driven state
 
-The retained HUB75 tube-clamp source is the concrete consumer example:
+The retained HUB75 tube-clamp source is the concrete consumer example. A
+standalone reusable clamp does not need a synthetic root wrapper merely to
+duplicate the child parameter. The occurrence may target its explicitly
+published definition parameter directly:
 
 ~~~python
 clamp.configure(
     active="Free",
-    columns=(self.clamp_bore,),
+    columns=(clamp.parameter("clamp_bore"),),
     rows={
         "Free": ("tube_d-clamp_interference",),
         "Installed": ("tube_d",),
@@ -44,6 +48,13 @@ clamp.configure(
 
 The clamp geometry remains the consumer's ordinary parametric model. Forge does
 not add a flex/deformation API.
+
+`occurrence.parameter(name)` is definition-level identity, symmetric with
+`occurrence.feature(name)`. It accepts only parameters explicitly published
+through `component(..., include=...)`; fixed/unpublished defaults are rejected.
+Copies sharing one component definition therefore resolve the same native
+parameter. Parent-owned external parameters are still configured through the
+ordinary parent `Parameter` handle.
 
 ### Named history feature
 

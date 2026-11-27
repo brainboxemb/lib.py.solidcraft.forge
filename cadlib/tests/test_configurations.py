@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scpf import Anchor, Box, Hole, Parameter, compile_model, component
+from scpf import Anchor, Box, Hole, Parameter, Placement, compile_model, component
 from scpf.compiler import ModelError
 from scpf.replay import resolve_value, validate_replay_document, variables_in
 from scpf.configurations import _row_variable
@@ -133,7 +133,7 @@ class ConfigurationTests(unittest.TestCase):
             )
 
         body = Box(width, 30, 5)
-        with self.assertRaisesRegex(TypeError, "Parameter or authored feature"):
+        with self.assertRaisesRegex(TypeError, "Parameter.*authored feature"):
             body.configure(
                 active="A",
                 columns=("width",),
@@ -232,6 +232,119 @@ class ConfigurationTests(unittest.TestCase):
                 "param:frame_width": "100 mm",
                 "param:clamp_bore": "20.2 mm",
             },
+        )
+
+    def test_component_parameter_reference_targets_published_definition_parameter(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "model.py"
+            path.write_text(
+                "@component(include=('fit_diameter',))\n"
+                "class Clamp:\n"
+                "    fit_diameter = 20.0\n"
+                "    def build(self):\n"
+                "        return Cylinder(d=self.fit_diameter, h=10)\n"
+                "def model():\n"
+                "    clamp = Clamp()\n"
+                "    clamp.configure(\n"
+                "        active='Free',\n"
+                "        columns=(clamp.parameter('fit_diameter'),),\n"
+                "        rows={\n"
+                "            'Free': ('19.8 mm',),\n"
+                "            'Installed': ('20.0 mm',),\n"
+                "        },\n"
+                "    )\n"
+                "    return clamp\n"
+                "model()\n",
+                encoding="utf-8",
+            )
+            document = run_script(path)
+
+        commands = document["commands"]
+        configure = next(
+            row for row in commands if row["command"] == "config.configure"
+        )
+        self.assertEqual(
+            configure["params"],
+            {"params": ["d1_Clamp_fit_diameter"]},
+        )
+        installed = next(
+            row
+            for row in commands
+            if row["command"] == "config.row"
+            and row["params"].get("name") == "Installed"
+        )
+        self.assertEqual(
+            installed["params"]["values"],
+            {"param:d1_Clamp_fit_diameter": "20.0 mm"},
+        )
+
+    def test_component_parameter_reference_requires_explicit_publication(self):
+        @component(include=("published",))
+        class Clamp:
+            published = 20.0
+            fixed = 1.0
+
+            def build(self):
+                return Box(self.published, self.fixed, 5)
+
+        clamp = Clamp()
+        clamp.parameter("published")
+        with self.assertRaisesRegex(
+            ValueError,
+            "no published component parameter",
+        ):
+            clamp.parameter("fixed")
+        with self.assertRaisesRegex(
+            ValueError,
+            "public Python identifier",
+        ):
+            clamp.parameter("_private")
+
+    def test_copied_occurrences_share_component_parameter_reference(self):
+        @component(include=("width",))
+        class Coupler:
+            width = 40.0
+
+            def build(self):
+                return Box(self.width, 20, 10)
+
+        left = Coupler(name="left")
+        right = left.copy(name="right", placement=Placement(x=60))
+        self.assertEqual(
+            left.parameter("width"),
+            right.parameter("width"),
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "model.py"
+            path.write_text(
+                "@component(include=('width',))\n"
+                "class Coupler:\n"
+                "    width = 40.0\n"
+                "    def build(self):\n"
+                "        return Box(self.width, 20, 10)\n"
+                "def model():\n"
+                "    left = Coupler(name='left')\n"
+                "    right = left.copy(name='right', placement=Placement(x=60))\n"
+                "    result = left + right\n"
+                "    result.configure(\n"
+                "        active='A',\n"
+                "        columns=(right.parameter('width'),),\n"
+                "        rows={'A': ('40 mm',), 'B': ('50 mm',)},\n"
+                "    )\n"
+                "    return result\n"
+                "model()\n",
+                encoding="utf-8",
+            )
+            document = run_script(path)
+
+        configure = next(
+            row for row in document["commands"]
+            if row["command"] == "config.configure"
+        )
+        self.assertEqual(
+            configure["params"],
+            {"params": ["d1_Coupler_width"]},
         )
 
     def test_parent_configure_suppresses_exported_child_feature_by_definition(self):

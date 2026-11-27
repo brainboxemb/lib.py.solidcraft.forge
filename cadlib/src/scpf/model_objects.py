@@ -70,6 +70,14 @@ class _ComponentFeatureReference:
 
 
 @dataclass(frozen=True)
+class _ComponentParameterReference:
+    """Definition-level reference to one explicitly published component parameter."""
+
+    definition_key: tuple
+    name: str
+
+
+@dataclass(frozen=True)
 class Attachment:
     """Associative relationship between two model occurrences."""
 
@@ -519,6 +527,27 @@ class ModelInstance:
                 f"{self.definition.class_name} has no exported component feature {name!r}"
             )
         return _ComponentFeatureReference(self.definition.key, name)
+
+    def parameter(self, name):
+        """Reference one explicitly published parameter of this component definition.
+
+        The returned value identifies a component-definition parameter, not one
+        occurrence-local value and not a SolidCraft parameter name. All copies
+        that reuse this definition therefore resolve the same native parameter.
+        """
+        if (
+            not isinstance(name, str)
+            or not name.isidentifier()
+            or name.startswith("_")
+        ):
+            raise ValueError(
+                "component parameter name must be a public Python identifier"
+            )
+        if name not in {parameter_name for parameter_name, _ in self.definition.parameters}:
+            raise ValueError(
+                f"{self.definition.class_name} has no published component parameter {name!r}"
+            )
+        return _ComponentParameterReference(self.definition.key, name)
 
     def group(self, name):
         """Place this occurrence in a named native subassembly component.
