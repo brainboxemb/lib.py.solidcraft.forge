@@ -3,7 +3,6 @@
 from dataclasses import dataclass
 import hashlib
 from math import isfinite
-import re
 
 from .core import Parameter, Shape, _FeatureHandle, number_text
 
@@ -38,40 +37,6 @@ def _configuration_column(value):
 
     raise TypeError(
         "configuration columns must contain Parameter or authored feature handles"
-    )
-
-
-_PARAMETER_LITERAL = re.compile(
-    r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
-    r"(?:\s+[A-Za-z°%]+)?$"
-)
-
-
-def _parameter_cell_value(cell):
-    """Normalize one concrete configuration parameter value.
-
-    Configuration rows select values. They do not author new relationships
-    between model parameters; those relationships belong in normal Forge model
-    expressions outside the configuration table.
-    """
-    if (
-        isinstance(cell, (int, float))
-        and not isinstance(cell, bool)
-        and isfinite(cell)
-    ):
-        return number_text(cell)
-
-    if isinstance(cell, str):
-        text = cell.strip()
-        if text and _PARAMETER_LITERAL.fullmatch(text):
-            return text
-        raise ValueError(
-            "configuration parameter cells must be literal values; "
-            "parameter coupling expressions are not supported"
-        )
-
-    raise TypeError(
-        "configuration parameter cells require a finite number or unit-bearing literal"
     )
 
 
@@ -125,8 +90,18 @@ def _configure_model(design, *, active, columns, rows):
                 if not isinstance(cell, bool):
                     raise TypeError("suppression cells must be bool")
                 converted.append("true" if cell else "false")
+            elif isinstance(cell, str) and cell.strip():
+                converted.append(cell)
+            elif (
+                isinstance(cell, (int, float))
+                and not isinstance(cell, bool)
+                and isfinite(cell)
+            ):
+                converted.append(number_text(cell))
             else:
-                converted.append(_parameter_cell_value(cell))
+                raise TypeError(
+                    "parameter cells require a finite number or expression"
+                )
         normalized_rows.append((name, tuple(converted)))
 
     if active not in rows:
