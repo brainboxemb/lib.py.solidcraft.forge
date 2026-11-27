@@ -39,11 +39,19 @@ jobs:
             --upstream-commit eeb366c2ff276987a15c043d63b9072b58274703 \
             --runtime-release v0.3.8 \
             --out docs/reference/solidcraft/0.50.0
-          python -m cad_library_solidcraft_reference capture-describe \
-            --image ghcr.io/brainboxemb/cad-solidcraft:v0.3.8 \
-            --version 0.50.0 \
-            --command config.rule \
-            --snapshot docs/reference/solidcraft/0.50.0/describe/config.rule.json
+          python - <<'PY'
+          from pathlib import Path
+          from cad_library_solidcraft_reference import capture_describe_snapshot
+
+          capture_describe_snapshot(
+              image="ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
+              version="0.50.0",
+              command="config.rule",
+              snapshot=Path(
+                  "docs/reference/solidcraft/0.50.0/describe/config.rule.json"
+              ),
+          )
+          PY
 
       - name: Commit captured immutable evidence
         run: |
