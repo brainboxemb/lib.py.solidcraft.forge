@@ -1089,7 +1089,7 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(clip_solidcraft, clip_legacy)
         bound_commands = [
             command
-            for command in clip_solidcraft["replay"]["commands"]
+            for command in clip_solidcraft["commands"]
             if "$config_name_1" in command.get("bind", {})
         ]
         self.assertEqual(len(bound_commands), 1)
@@ -1105,7 +1105,7 @@ class SemanticIRTests(unittest.TestCase):
         )
         bore_bound = [
             command
-            for command in bore_solidcraft["replay"]["commands"]
+            for command in bore_solidcraft["commands"]
             if "$config_name_1" in command.get("bind", {})
         ]
         self.assertEqual(len(bore_bound), 1)
