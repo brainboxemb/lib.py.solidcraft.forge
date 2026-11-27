@@ -2211,6 +2211,26 @@ def _count_parameter_names(value, found=None):
             )
             _count_parameter_names(original, found)
             return found
+        if value.kind == "sketch_pattern_rectangular":
+            (
+                source,
+                count,
+                _spacing,
+                _direction,
+                count2,
+                _spacing2,
+                _direction2,
+                _alignment,
+                _alignment2,
+                _reversed,
+                _reversed2,
+            ) = value.data
+            found.update(
+                parameter.name
+                for parameter in parameters_in(count, count2)
+            )
+            _count_parameter_names(source, found)
+            return found
         if value.kind == "circular_pattern":
             (
                 original,
@@ -2343,6 +2363,25 @@ def _length_parameter_names(value, found=None):
             ) = value.data
             _length_parameter_names(original, found)
             _length_parameter_names(spacing1, found)
+            if spacing2 is not None:
+                _length_parameter_names(spacing2, found)
+            return found
+        if value.kind == "sketch_pattern_rectangular":
+            (
+                source,
+                _count,
+                spacing,
+                _direction,
+                _count2,
+                spacing2,
+                _direction2,
+                _alignment,
+                _alignment2,
+                _reversed,
+                _reversed2,
+            ) = value.data
+            _length_parameter_names(source, found)
+            _length_parameter_names(spacing, found)
             if spacing2 is not None:
                 _length_parameter_names(spacing2, found)
             return found
