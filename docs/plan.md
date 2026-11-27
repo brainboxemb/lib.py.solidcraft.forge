@@ -12,7 +12,7 @@ maintain competing branch-local plans.
 ## Accepted baseline
 
 The Forge migration is complete and the current public product baseline is
-released as **v0.23.0**.
+released as **v0.24.0**.
 
 The accepted baseline now includes:
 - 59 physical model owners, with SCPF primary per owner and historically real
@@ -111,22 +111,75 @@ Release evidence for v0.23.0:
   `bc6cdeb2190abbf6ec2edc24dfef1c5da4c37689` and the GitHub Release is
   published.
 
-Qualified normal-lane evidence after v0.23.0:
-- #380 / PR #392 added explicit reusable-child feature exports through
-  `Shape.export_feature(name)` and definition-level
-  `Occurrence.feature(name)` references, allowing parent/root
-  direct feature-suppression columns without exposing SolidCraft/replay feature ids;
-- the Forge-owned `configuration-child-feature` owner proves two separately
-  constructed occurrences share one parent-driven child parameter while
-  Small/Medium suppress the exported child cut and Large enables the same real
-  native history feature after save/reopen;
-- final PR CI 45908830410 is green, PR #392 merged to permanent `dev` as
-  `d23bc22e7a7af253664fae057d881c8170acd401`, permanent dev
-  qualification/build/publication run 45909235443 is green, and Pages run
-  45909580231 plus deployment 45909680743 are green;
-- this capability is qualified on `dev` but is not part of a published Forge
-  tag yet. Downstream CAD #189 must remain pinned to a released Forge version
-  until the normal-lane release below is published.
+Release evidence for v0.24.0:
+- #255 / PR #376 completed the first verification-audit visual follow-up for
+  seven visible-geometry owners while preserving their existing
+  native/history/topology checks; permanent dev run 45876667570 is green;
+- #380 / PR #392 added `Shape.export_feature(name)` plus definition-level
+  `Occurrence.feature(name)` and the Forge-owned
+  `configuration-child-feature` saved-design qualification; final PR CI
+  45908830410 is green and permanent dev run 45909235443 is green on
+  `d23bc22e7a7af253664fae057d881c8170acd401`;
+- #398 / PR #399 stabilized that qualified product through the permanent
+  `dev -> main` merge-commit path as
+  `ba4c655f552fb9c75a7fb9825e52ee5d3b185f45`; permanent stable full
+  qualification/build run 45910580497 is green on that product head;
+- #400 / PR #402 landed metadata-only v0.24.0 release state as
+  `61aef227ac6723b4fba526912749dc28bf474741`; stable release-only run
+  45911068181 is green, selected release + library and zero model owners, and
+  retained the existing full `build/main` product baseline;
+- annotated tag `v0.24.0` resolves through tag object
+  `fdfa92dd0437f78f7f03a0c102a7740f130e4aba` exactly to
+  `61aef227ac6723b4fba526912749dc28bf474741`, and the GitHub Release is
+  published;
+- PR #403 synchronized released `main -> dev` through the permanent merge
+  policy as `682f42d73aa91f66daab3a9dead4724537989966`; permanent dev
+  qualification/build/publication run 45911643864 is green.
+- downstream CAD #189 may now adopt the released v0.24.0 capability instead of
+  depending on an unreleased Forge branch.
+
+Normal-lane verification evidence after v0.24.0:
+- #256 / PR #410 added deterministic SolidCraft visual-state evidence for the
+  five currently capturable owners: RGB appearance, Installed / Free
+  configuration state, Front / Service configuration placement, 60 / 120
+  degree revolute pose and cut / suppressed revolve geometry;
+- the shared `solidcraft-visual` adapter now materializes persistent
+  saved-design state before measurement/snapshot and supports explicit RGB
+  regression without weakening the existing geometry policies;
+- all nine approved baselines come from SolidCraft 0.49.0 capture run
+  45916016779; exact-head PR CI 45965420591 is green;
+- PR #410 landed on permanent `dev` as
+  `3537cdeb4682f4ef4b49f5a4dab96ed996346941`; permanent dev
+  CI/build/publication run 45965985416 and Pages run 45966386680 are green;
+- #256 remains open only for `exploded-views`: #415 proves that
+  SolidCraft 0.49.0 `explode.show` is transient presentation state and
+  save/reopen snapshotting cannot capture it deterministically. Forge does not
+  add sleep/polling or Python substitute geometry for that gap;
+- #257 / PR #422 added folded-result front/right/isometric visual geometry
+  evidence for `sheet-contour-flange`, `sheet-edge-flange`, `sheet-hem`
+  and `sheet-path-flange` while retaining each owner's saved-design,
+  flat-pattern and SolidCraft-history checks;
+- reviewed SolidCraft 0.49.0 capture run 45967875286 supplied the twelve
+  approved folded-result views and all twelve expected-shape envelope checks
+  passed; final exact-head PR CI 45969116610 is green;
+- PR #422 landed on permanent `dev` as
+  `cf428d46d3683aa74155aed70c5e946f149f64f7`; permanent dev
+  CI/build/publication run 45969693260 and Pages run 45970148895 are green.
+
+Normal-lane configuration API evidence after v0.24.0:
+- #444 / PR #464 replaced wrapper/rule-shaped configuration authoring with
+  final-model `model.configure(...)` using direct Parameter and authored
+  feature handles; the obsolete rule-based `configuration-installed-state`
+  owner was removed rather than preserved for compatibility;
+- rule-free SolidCraft probe run 971 proves one real Installed feature may
+  affect multiple bodies and be configured directly as a suppression column;
+- exact-head PR CI 46022451428 (run 1008) is green; PR #464 merged to
+  permanent `dev` as `a0570f6d11b9dea934cbff878955678ffad464e8`;
+- permanent dev CI/build/publication 46023012718 (run 1009) is green on that
+  exact product head;
+- #488 / PR #489 owns stable `dev -> main` integration and the subsequent
+  release checkpoint; downstream CAD must adopt the new API only from the
+  published Forge tag, not from an unreleased branch.
 
 Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded `SphereIR` through native Mitcad join/cut/intersect;
@@ -136,7 +189,14 @@ Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #381 / PR #386 then qualified parameterized `PolygonProfileIR -> RegionIR -> RevolveIR` from the unchanged public `native-revolve` source, preserving `radius`, `length` and angle-valued `sweep` while lowering the same IR to native SolidCraft Revolve and native Mitcad Revolve;
 - Mitcad's native angular-value contract is handled only at lowering: degree-valued `ParameterIR` becomes a unit-bearing expression such as `360 deg`, so engine storage units do not leak into semantic IR;
 - #387 / PR #388 repaired the focused-owner CI inventory expectation exposed by the first full post-merge run without changing SCPF, IR, backend or model behavior;
-- current permanent exp `a5470e171e1455b54905a51390a25531af93bd47` has full CI/build/publication run 45879270985 green, Pages run 45879685758 green and deployment 45879775624 green;
+- #389 / PR #395 generalized Revolve reference geometry through typed `AxisLineIR` and preserved subtractive Revolve as one semantic feature with cut/target intent;
+- #408 / PR #409 synchronized released v0.24 normal `dev` with the experimental compiler line through reviewed permanent conflict recovery;
+- #417 / PR #423 generalized standalone Sketch support through typed `PlaneIR(orientation, origin)`, keeping Mitcad construction-plane features backend-only;
+- #424 / PR #429 added engine-neutral `FeatureRefIR` plus the first suppression-only `ConfigurationIR`, and qualified saved native Mitcad row switching on the unchanged `shifted-axis-revolve` owner without rerunning Forge Python;
+- the simple-concave PolygonProfile/Region prerequisite discovered during #424 is also qualified generically in that same permanent merge: symbolic points remain semantic IR while evaluated geometry is used only for validation and deterministic native region transport; #430 is therefore completed without duplicate implementation and the obsolete #431 ordering was closed;
+- #433 / PR #437 generalized `FeatureRefIR` through typed `BooleanIR.target/tool` semantic history paths, keeping authored identity engine-neutral while SolidCraft and Mitcad independently bind their actual native feature results;
+- the existing `primitive-csg` owner proves nested saved-state identity end to end: `Clipped -> Unclipped -> Clipped` suppresses/restores the exact final clip feature without rerunning Forge authoring, while a deeper bore reference is resolved in backend-independent tests;
+- current permanent exp `2cddd4e29916a2bb72dc38849983d6733963f2bc` has final PR qualification 45982446290, permanent CI/build/publication 45982819170, Pages 45983317799 and deployment 45983462551 green;
 - accepted experimental compiler/backend work remains isolated from `dev` until a separately qualified `exp -> dev` integration is explicitly selected.
 
 The pinned SolidCraft 0.49 registry still has no native centre-mark or
@@ -153,44 +213,70 @@ The historical repository remains an archived A/B/provenance reference at
 Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
 
 Normal `dev` lane:
-- #380 / PR #392 is complete on permanent `dev`; the reusable-child feature
-  reference contract is qualified independently from experimental Mitcad work;
-- the next normal-lane product checkpoint is the **v0.24.0** minor release:
-  stabilize the already-qualified `dev` product to `main` through the
-  reviewed permanent `dev -> main` merge-commit path, then prepare
-  metadata-only release `release/v0.24.0` from qualified stable `main`;
-- do not integrate downstream CAD #189 against an unreleased Forge branch; it
-  may adopt this capability only after the v0.24.0 tag is published;
-- #255 / PR #376 remains complete on `dev`: seven audited visible-geometry
-  owners retain approved `front`, `right` and `iso` regression baselines
-  plus expected-shape evidence while preserving existing
-  native/history/topology checks;
-- keep later verification-evidence follow-ups #256 and #257 behind this
-  demonstrated consumer release checkpoint.
+- **v0.24.0 is released**; #444 / PR #464 is additionally qualified on
+  permanent `dev` as `a0570f6d11b9dea934cbff878955678ffad464e8` with
+  permanent build/publication run 46023012718 green;
+- #488 / PR #489 is the immediate normal-lane checkpoint: stabilize that exact
+  qualified product to `main`, then prepare a metadata-only Forge release
+  from the exact qualified stable main head;
+- do not migrate the downstream CAD model to the new `model.configure(...)`
+  API until that Forge tag is published;
+- #255, #380, the capturable #256 visual-state slice and #257 folded
+  sheet-metal visual evidence remain part of the current development baseline;
+- downstream CAD #189 may adopt v0.24.0 for parent/root suppression of an
+  explicitly exported feature inside a reusable child component;
+- **#256 remains open but blocked only on #415** for deterministic headless
+  capture of transient `exploded-views` presentation; do not implement a
+  Forge-local timing/polling or substitute-geometry workaround;
+- **#73 investigation is complete on the Forge side**: PR #436 retained one
+  owner-local A/B diagnostic on permanent `dev` as
+  `72f19f177a89d2468de6f7058c17dffede172798`; exact-head PR CI
+  45977349093 is green;
+- #73 reproduces identically on SolidCraft 0.49.0 and 0.50.0: phased headless
+  replay passes, while fully resolved single-process CLI replay and live GUI
+  replay both reject the same broad-face cut as reaching bend `F2/l3`;
+- boundary minimization proves that save/reopen before the contour flange does
+  not help, while save/reopen immediately after `sheet.flange` makes the
+  unchanged cut succeed; `model.faces`, replay-variable binding and live
+  `edit.checkpoint` are therefore not the cause;
+- keep #73 open only as tracking for this external SolidCraft in-memory
+  sheet-state divergence; do not add a Forge save/reopen, `plane.fixed`,
+  physical-hole or other model-local workaround;
+- SolidCraft 0.50 adoption is separate runtime-baseline work: 0.50 does not fix
+  #73, but #73 by itself is not a reason to block an otherwise qualified 0.50
+  baseline;
+- with #73 isolated and #256 blocked on #415, do not invent another verification
+  issue merely to keep the normal lane busy; select further normal work from
+  existing consumer demand and the migrated backlog;
+- return to the remaining #256 exploded visual acceptance when #415 has a
+  supported deterministic SolidCraft capture route;
+- keep normal verification work independent from experimental Mitcad/IR work.
 
 Experimental `exp` lane:
-- #393 is the immediate architecture/control checkpoint before more backend capability code;
-- treat Forge as a generic CAD compiler: SCPF is one frontend, typed engine-neutral Forge CAD IR is the compiler contract, and SolidCraft/Mitcad are independent lowerings rather than separate source interpreters;
-- maintain an explicit IR inventory by semantic layer (values, reference geometry, sketches, profiles/regions, features/history, body operations, topology references, assemblies and configurations) and mark each layer accepted, bounded/partial or still legacy;
-- current typed/accepted core: `ParameterIR`; Box/Cylinder/Sphere + `PlacementIR`; `SketchIR` with Circle/Polygon profiles and `RegionIR`; bounded `ExtrudeIR`, recursive `BooleanIR`, face-boundary `ChamferIR`, and the first principal-axis new-body `RevolveIR` slice;
-- current generic gaps: no general reference-geometry IR (`AxisLineIR`/Plane/Point), no complete Sketch constraint/dimension IR, only partial feature/history and topology-reference identity, and no experimental assembly/occurrence or configuration/suppression IR yet;
-- require every experimental capability to progress in this order: define generic CAD meaning -> pure normalization/IR tests -> backend lowering -> backend contract tests -> real native runtime qualification -> permanent `exp` merge;
-- backend implementation details may never drive semantic IR fields: a Mitcad construction helper, native feature uid/curve id, SolidCraft command spelling or topology id remains backend transport only;
-- symbolic Parameters/Expressions and authored feature identity must survive normalization; current evaluated values may validate semantics but may not replace them;
-- a backend may lower a typed IR node or fail explicitly; it may not reinterpret raw `Shape.data`, silently approximate unsupported intent or create a second CAD interpreter;
-- `LegacyShapeIR` remains a visible migration boundary for stable SolidCraft compatibility, not a second permanent compiler architecture; experimental backends continue to fail closed on it;
-- #389 remains the first candidate capability after #393 because a generic `AxisLineIR` plus feature-operation/target semantics fills real gaps in the inventory; its Mitcad construction-line mechanics are secondary lowering detail and must not determine the IR shape;
-- do not change #389 implementation until #393 is merged to canonical `main`; the existing #389 work branch remains a clean branch from permanent `exp`;
-- keep parameter-driven Sketch-plane placement and portable configuration/suppression semantics as later generic IR gaps rather than hiding them in backend workarounds;
-- do not perform `exp -> dev` as part of #393 or #389.
+- #393 remains the compiler control gate: SCPF is one frontend, typed engine-neutral Forge CAD IR is the compiler contract, and SolidCraft/Mitcad are independent lowerings rather than source interpreters;
+- #389, #417, #424, #433, #440, #447, #451, #456, #461, #469, #473, #477, #481 and #485 are complete architecture checkpoints: typed reference geometry includes symbolic `AxisLineIR` and `PlaneIR`; authored Revolve operation/target intent remains semantic; final design state carries bounded `ConfigurationIR`; `FeatureRefIR` traverses typed nested Boolean history; `SketchIR` carries explicit entity/constraint/dimension semantics; the same relation graph is qualified across Revolve and Extrude; `RegionIR` describes selected concentric-circle regions independently of unrelated Sketch profiles; Sphere and Cone reuse generic `PlacementIR`; `ParameterIR` owns semantic use roles; backend helper commands do not change semantic feature identity; authored affine scalar arithmetic has inspectable engine-neutral IR; and `ChamferIR` now carries equal- or two-distance semantics without a second feature type;
+- #485 / PR #487 is permanently qualified on `exp` as `28966b5d1dffe408e4623d7d11aae5bb766897f6`: PR CI 46023275427 is green with 284 library tests plus exact pinned Mitcad v0.70.0 native smoke, while permanent exp CI 46023756878 reused that qualification and skipped duplicate project/native execution;
+- current typed/accepted core: role-aware `ParameterIR`; affine scalar-expression IR for literals/parameter refs/negation/add/subtract/numeric scale/divide; Box/Cylinder/Sphere/Cone + `PlacementIR`; `AxisLineIR` and `PlaneIR`; `SketchIR` with Circle/simple Polygon profiles, `RegionIR`, semantic points/straight-line connectivity, H/V constraints, symbolic line dimensions and `SketchCoordinateDimensionIR`; bounded `ExtrudeIR`, recursive `BooleanIR`, face-boundary equal- and TOP-oriented two-distance `ChamferIR`, `RevolveIR` with principal/shifted axis plus new-body/cut operation intent; and bounded semantic feature/history/configuration references;
+- the explicit semantic-test `LegacyShapeIR` assertions that remain after #485 are bounded fail-closed cases rather than missing root feature nodes: invalid exact-region selection, asymmetric non-TOP Chamfer orientation, text-only mixed-role expressions without semantic metadata and derived-unit arithmetic outside the affine subset;
+- the next compiler checkpoint therefore tests composition rather than another root node: qualify existing `ConeIR` placements as operands inside the existing recursive `BooleanIR`;
+- do not create `ConeBooleanIR` or a second CSG model. Once a primitive has portable geometry + `PlacementIR`, primitive Boolean composition should be a property of the existing Boolean layer;
+- widen the qualified primitive-operand set from Box/Cylinder/Sphere to Box/Cylinder/Sphere/Cone while retaining existing source-order history and `FeatureRefIR` path semantics;
+- SolidCraft must reuse the already-qualified typed Cone command with authored Boolean `join`/`cut` operation, preserving stable Forge CSG command compatibility;
+- Mitcad v0.70.0 must reuse #477 Cone support-plane transport inside the #473 helper-aware Boolean command plan. An offset Cone may emit a private construction plane, but semantic Boolean/history paths must resolve to the Cone feature command and never that helper;
+- first exact runtime proof: cut a fully internal Cone (base diameter 10, top diameter 0, height 20, BOTTOM at world Z=5) from a 30 × 30 × 30 BOTTOM Box. Expected volume is `27000 - 500π/3` and bounds remain [-15,-15,0]..[15,15,30];
+- backend contract tests should additionally prove Cone `join` uses the same BooleanIR and native operation spelling, and a semantic feature reference to the Cone tool still resolves to the actual Cone command when a helper plane precedes it;
+- keep the first Cone Boolean qualification in library/backend tests plus exact native smoke; do not attach the existing `cone-boolean` owner until its separate Fillet history has typed IR;
+- the existing `cone-boolean` model owner remains outside this checkpoint because it also contains Fillet history. `FilletIR` should be a later independent feature-composition checkpoint rather than being smuggled into Cone Boolean qualification;
+- keep axial Cylinder/Box support-plane widening, asymmetric non-TOP Chamfer orientation, distance-angle Chamfer, general derived-unit algebra, rotated primitive frames and new public unit syntax outside this checkpoint;
+- follow the fixed compiler order: existing semantic contract -> pure Boolean normalization tests -> independent backend lowering -> helper/history mapping tests -> exact native runtime qualification -> permanent `exp` merge;
+- permanent `exp` must reuse the heavy green PR qualification when the reviewed PR-merge tree equals the permanent tree; Pages remains asynchronous publication evidence and is not an IR/compiler closure gate;
+- `LegacyShapeIR` remains a visible migration boundary for stable SolidCraft compatibility, never a second interpreter; experimental backends continue to fail closed on unmigrated semantics;
+- do not perform `exp -> dev` as part of this checkpoint.
 
 ## Later
 
-1. Continue verification-evidence follow-ups #256 and #257 after completed #255, in the order justified
-   by the completed #163 audit unless a newer demonstrated consumer blocker
-   takes priority.
-2. Continue the migrated Forge product/research backlog (#59-#72) according to
+1. Continue the migrated Forge product/research backlog (#59-#72) according to
    demonstrated consumer value and dependencies rather than treating the whole
    historical backlog as release-blocking.
-3. Retire duplicated historical orchestration only after all real consumers and
+2. Retire duplicated historical orchestration only after all real consumers and
    public documentation have equivalent coverage.
