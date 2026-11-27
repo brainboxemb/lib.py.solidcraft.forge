@@ -82,3 +82,28 @@ authored Installed feature
 
 Only a separate requirement for state that must remain independent while rows
 change would justify investigating another mechanism.
+
+
+## Observed result
+
+The direct configuration probe passed on CI run **46018699506** (run 971).
+
+SolidCraft 0.49 accepted:
+
+- two separate coupler bodies;
+- one real multi-body history feature named `Installed`;
+- `Installed` directly as one configuration suppression column;
+- Small storing `suppress:Installed = true`;
+- Large storing `suppress:Installed = false`;
+- no Configuration Rule layer.
+
+This proves that one real multi-body feature can be configured directly.
+
+It also confirms the important limitation stated above: this suppression value
+belongs to the active row. The direct no-rule probe therefore does **not** prove
+an Installed control that remains independently switchable while Small or Large
+stays active.
+
+The independent-control variant was separately proven earlier with the same
+single native Installed feature plus a SolidCraft Configuration Rule. That
+backend mechanism is separate from the direct row-owned configuration result.
