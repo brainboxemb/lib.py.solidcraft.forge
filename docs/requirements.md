@@ -92,6 +92,11 @@
 67. The stronger #440 rectangle graph remains H/V plus edge-length based. Generic coordinate dimensions are a complementary fallback for already-qualified parameterized simple polygons, not a reason to weaken the rectangle semantics.
 68. SolidCraft may coalesce a complete coordinate-dimension graph to its symbolic closed `sketch.line` form after validating that every point coordinate is represented. Mitcad may create one fixed native origin point and native signed horizontal/vertical distance dimensions, but those are lowering transport derived from the typed graph.
 69. Once coordinate dimensions are typed, Mitcad must not keep or reintroduce a backend-private `_parameterized_polygon_sketch(...)` semantic reconstruction path. The exact pinned native runtime must execute a non-rectangular parameterized Revolve through the typed relation graph.
+70. Parameterized simple-Polygon symmetric new-body Extrude must use the same typed `SketchRelationsIR` contract as other qualified profile-driven features; parameterized coordinates alone must not force this bounded feature back to `LegacyShapeIR`.
+71. Polygon Extrude normalization must retain `PolygonProfileIR` / `RegionIR` and attach the strongest already-qualified relation graph available: the #440 origin-based rectangle graph when applicable, otherwise the #447 coordinate-dimension graph.
+72. SolidCraft and Mitcad must consume the attached Sketch relation graph for a parameterized Polygon Extrude. Direct backend reconstruction of parameter dependencies from `PolygonProfileIR` is forbidden once relations are present.
+73. Fixed-coordinate Polygon Extrude remains valid without a relation graph. The #451 checkpoint does not broaden direction/operation/region scope beyond the existing symmetric single-region new-body contract.
+74. Exact pinned Mitcad runtime qualification must execute a parameterized rectangle Extrude, preserve its native parameter-driven Sketch dimension and prove deterministic solid geometry.
 
 ## SCPF native associativity
 
