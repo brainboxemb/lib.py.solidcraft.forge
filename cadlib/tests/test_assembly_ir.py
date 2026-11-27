@@ -40,7 +40,7 @@ class AssemblyIRBlock:
     def anchors(self):
         return {
             "mount": AnchorFrame(
-                origin=(self.width / 2, 0, self.height / 2),
+                origin=(20, 0, 5),
                 z=(1, 0, 0),
                 x=(0, 0, 1),
             )
