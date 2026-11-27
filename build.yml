@@ -1,7 +1,8 @@
 schema: 1
-branch: issue/458-docs-architecture
-modules: [pages, release]
+branch: issue/538-solidcraft-0.50-runtime
+modules:
+  - solidcraft-reference
 library: true
-models: []
+models: all
 api_probes: []
 tasks: [test]

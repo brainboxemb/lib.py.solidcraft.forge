@@ -3,17 +3,17 @@ purpose: [example, verification]
 section: configurations
 priority: 35
 title: Parent Configuration → Child Feature
-tagline: A root table suppresses one explicitly exported feature inside a reusable child definition
+tagline: A root table suppresses one named history feature inside a reusable child definition
 description: >
   Two separately constructed FeatureCoupler occurrences reuse one component
-  definition and one parent-driven width parameter. The child explicitly exports
-  its panel-pin cut as Forge API identity. Small and Medium suppress that child
-  feature while Large enables it, without exposing a SolidCraft history id or
-  rebuilding Python geometry.
+  definition and one parent-driven width parameter. The child authors its
+  panel-pin cut inside one feature("panel_pin", suppressed=True) scope.
+  Small and Medium suppress that definition-level feature while Large enables
+  it, without exposing a SolidCraft history id or rebuilding Python geometry.
 parameters: Small width=30 suppressed; Medium width=40 suppressed; Large width=40 present
 stages:
   - Build two separate occurrences of the same reusable child definition
   - Publish one child width as a shared parent-driven native parameter
-  - Export the exact authored panel-pin feature from the child
-  - Reference that definition-level feature from the parent Configure table
+  - Author and name the exact panel-pin cut as one scoped history feature
+  - Reference that definition-level feature from the parent model.configure table
   - Reopen the saved design and switch Small, Medium and Large natively

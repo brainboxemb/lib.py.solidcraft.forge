@@ -1,7 +1,7 @@
-"""Probe Installed as a real suppressible component feature.
+"""Backend probe for a named suppressible component feature.
 
-Free keeps the Installed cutter suppressed, leaving a 9.6 mm bore.
-Installed unsuppresses the same feature, widening the bore to 10.0 mm.
+This deliberately uses simple bore-widening geometry to isolate native feature
+suppression. It is backend evidence, not the consumer proof for a flexible clamp.
 """
 
 
@@ -17,12 +17,10 @@ class FlexibleClamp:
         free_bore = Cylinder(d=self.free_bore, h=self.height + 2)
         relief = Box(8, 1.5, self.height + 2).move(x=4)
 
-        installed = (
-            Cylinder(d=self.tube_d, h=self.height + 2)
-            .export_feature("installed")
-        )
-
-        return outer - free_bore - relief - installed
+        body = outer - free_bore - relief
+        with feature("installed", suppressed=True):
+            body = body - Cylinder(d=self.tube_d, h=self.height + 2)
+        return body
 
 
 class ConfigurationInstalledFeature:
@@ -35,18 +33,15 @@ class ConfigurationInstalledFeature:
             free_bore=self.free_bore,
             name="clamp",
         )
-
-        return Configure(
-            clamp,
+        clamp.configure(
             active="Free",
-            columns=(
-                Suppress(clamp.feature("installed")),
-            ),
+            columns=(clamp.feature("installed"),),
             rows={
                 "Free": (True,),
                 "Installed": (False,),
             },
         )
+        return clamp
 
 
 ConfigurationInstalledFeature()

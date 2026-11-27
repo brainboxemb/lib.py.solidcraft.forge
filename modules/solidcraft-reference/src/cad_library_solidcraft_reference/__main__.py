@@ -18,7 +18,7 @@ from . import (
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    subparsers = parser.add_subparsers(dest="command", required=True)
+    subparsers = parser.add_subparsers(dest="action", required=True)
 
     capture = subparsers.add_parser("capture")
     capture.add_argument("--image", required=True)
@@ -47,7 +47,7 @@ def main() -> int:
     verify_describe.add_argument("--snapshot", type=Path)
 
     args = parser.parse_args()
-    if args.command == "capture":
+    if args.action == "capture":
         count = capture_snapshot(
             image=args.image,
             version=args.version,
@@ -61,7 +61,7 @@ def main() -> int:
         )
         return 0
 
-    if args.command == "capture-describe":
+    if args.action == "capture-describe":
         capture_describe_snapshot(
             image=args.image,
             version=args.version,
@@ -74,7 +74,7 @@ def main() -> int:
         )
         return 0
 
-    if args.command == "verify-describe":
+    if args.action == "verify-describe":
         explicit = (args.image, args.version, args.snapshot)
         if any(value is not None for value in explicit):
             if not all(value is not None for value in explicit):

@@ -1,40 +1,43 @@
-# Installed exported-feature probe
+# Installed named-feature backend probe
 
 ## Why this probe exists
 
-This tests whether a reusable component can publish one real `installed`
-feature and let the final design configure that feature through normal
-suppression.
+This is a focused backend/API-mechanism probe. It proves that one feature
+authored with the public `feature(...)` scope can be initially suppressed,
+exported through a reusable component definition and targeted by the final
+model through `clamp.feature("installed")`.
 
-## Question
-
-Can `Suppress(clamp.feature("installed"))` lower to a native SolidCraft
-configuration feature target and survive saved-design replay?
+It is **not** the consumer acceptance case for flexible-clamp mechanics.
 
 ## Model
 
-The component exports one extra cutter as `installed`.
+The fixture intentionally uses a second cylindrical cut so the two native
+states are easy to inspect:
 
-- `Free` suppresses that feature;
-- `Installed` activates it.
+- `Free` keeps the named `installed` cut suppressed;
+- `Installed` activates that exact cut.
 
-The cutter only makes the two states visibly different. It is not intended as
-the mechanical model of a flexible clamp.
+The simplified geometry isolates feature identity, initial suppression and
+saved configuration switching. It does not claim that widening a bore is a
+generic model of elastic deformation.
 
 ## What success proves
 
-Forge can address one explicitly exported child feature from the final design
-and SolidCraft can store its suppression state per configuration row.
+- `with feature("installed", suppressed=True): ...` identifies exactly one
+  authored CAD history feature;
+- initial suppression uses that exact native feature;
+- a reusable definition exposes the same semantic identity through
+  `occurrence.feature("installed")`;
+- `model.configure(...)` stores normal row-owned suppression values;
+- saved-design switching does not rerun Forge Python.
 
-## Important finding
+## Consumer evidence boundary
 
-The Forge export name is component-local API identity. Current lowering resolves
-the right SolidCraft history feature but does not propagate the export name to
-its native display/history name, so retained evidence used a generated name
-such as `Cylinder3`.
+Consumer-level acceptance uses real model intent separately:
 
-## Decision this probe informs
+- HUB75 tube-clamp Free/Installed is parameter-driven through `clamp_bore`;
+- HUB75 Edge/Right-Corner panel-pin pass-through is one real shifted-axis
+  revolve whose Small/Medium/Large rows suppress or enable that feature.
 
-A real Free/Installed component interface can be based on exported feature
-handles, but Forge still needs a deliberate rule for semantic feature naming in
-the native backend.
+A synthetic backend probe must never be cited as proof of richer consumer
+semantics it does not contain.

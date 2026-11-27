@@ -552,6 +552,12 @@ def _component_feature_exports(shape):
         if isinstance(node, Shape):
             if node.kind == "exported_feature":
                 _source, name = node.data
+            elif node.kind == "named_feature":
+                _source, name, _suppressed = node.data
+            else:
+                name = None
+
+            if name is not None:
                 previous = exports.get(name)
                 if previous is not None and previous is not node:
                     raise ValueError(
@@ -994,6 +1000,7 @@ def run_script(path: str | Path) -> dict:
         "Y": core.Y,
         "Z": core.Z,
         "Sketch": Sketch,
+        "feature": core.feature,
         "component": component,
         "assembly": assembly,
     }
