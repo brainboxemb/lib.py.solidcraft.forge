@@ -54,6 +54,14 @@ from ..ir import (
     resolve_feature_ref,
 )
 from ..replay import replay_document
+from ..scalar_ir import (
+    ScalarBinaryIR,
+    ScalarLiteralIR,
+    ScalarParameterRefIR,
+    ScalarUnaryIR,
+    is_affine_scalar_expression,
+    scalar_parameter_names,
+)
 
 
 _FACE_NORMALS = {
@@ -89,8 +97,84 @@ def _parameter_commands(model: ModelIR) -> list[dict]:
     ]
 
 
+def _role_scalar_expression_text(
+    model: ModelIR,
+    node,
+    role: str,
+    *,
+    scalar_literal: bool = False,
+) -> str:
+    """Render bounded semantic scalar IR for one typed SolidCraft use site."""
+    unit = "mm" if role == "length" else "deg"
+    parameters = {parameter.name: parameter for parameter in model.parameters}
+
+    if isinstance(node, ScalarLiteralIR):
+        text = number_text(node.value)
+        return text if scalar_literal else f"{text} {unit}"
+
+    if isinstance(node, ScalarParameterRefIR):
+        parameter = parameters.get(node.name)
+        if parameter is None:
+            raise ModelError(
+                f"semantic scalar expression references unknown parameter {node.name!r}"
+            )
+        if role not in parameter.roles:
+            raise ModelError(
+                f"parameter {node.name!r} has no semantic {role} role"
+            )
+        if len(parameter.roles) > 1:
+            return f"{node.name} * 1 {unit}"
+        return node.name
+
+    if isinstance(node, ScalarUnaryIR):
+        if node.operation != "negate":
+            raise ModelError(
+                f"unsupported scalar unary operation {node.operation!r}"
+            )
+        return (
+            f"-({_role_scalar_expression_text(model, node.operand, role)})"
+        )
+
+    if not isinstance(node, ScalarBinaryIR):
+        raise ModelError("typed scalar expression has unsupported IR node")
+
+    if node.operation in {"add", "subtract"}:
+        operator = "+" if node.operation == "add" else "-"
+        return (
+            f"({_role_scalar_expression_text(model, node.left, role)}) "
+            f"{operator} "
+            f"({_role_scalar_expression_text(model, node.right, role)})"
+        )
+
+    if node.operation == "multiply":
+        if isinstance(node.left, ScalarLiteralIR):
+            return (
+                f"{_role_scalar_expression_text(model, node.left, role, scalar_literal=True)} "
+                f"* ({_role_scalar_expression_text(model, node.right, role)})"
+            )
+        if isinstance(node.right, ScalarLiteralIR):
+            return (
+                f"({_role_scalar_expression_text(model, node.left, role)}) * "
+                f"{_role_scalar_expression_text(model, node.right, role, scalar_literal=True)}"
+            )
+
+    if (
+        node.operation == "divide"
+        and isinstance(node.right, ScalarLiteralIR)
+        and node.right.value != 0
+    ):
+        return (
+            f"({_role_scalar_expression_text(model, node.left, role)}) / "
+            f"{_role_scalar_expression_text(model, node.right, role, scalar_literal=True)}"
+        )
+
+    raise ModelError(
+        "typed scalar expression requires affine numeric scaling"
+    )
+
+
 def _role_command_value(model: ModelIR, value, role: str):
-    """Spell one typed use of a mixed-role source parameter."""
+    """Spell one typed use of a mixed-role source parameter or expression."""
     if role not in {"length", "angle"}:
         raise ModelError(f"unsupported Forge parameter role {role!r}")
 
@@ -106,21 +190,28 @@ def _role_command_value(model: ModelIR, value, role: str):
     ]
     if not used_mixed:
         return command_value(value)
-
-    if (
-        len(used_mixed) == 1
-        and isinstance(value, Parameter)
-        and value.name == used_mixed[0].name
-    ):
-        unit = "mm" if role == "length" else "deg"
-        return _native_expression(
-            f"{value.name} * 1 {unit}",
-            (value.name,),
+    if len(used_mixed) != 1:
+        raise ModelError(
+            "mixed-role scalar expressions currently require one mixed source parameter"
         )
 
-    raise ModelError(
-        "mixed-role Forge parameters inside symbolic expressions are "
-        "outside the qualified IR slice"
+    if isinstance(value, Parameter):
+        node = ScalarParameterRefIR(value.name)
+    elif isinstance(value, Expression) and value.scalar_ir is not None:
+        node = value.scalar_ir
+    else:
+        raise ModelError(
+            "mixed-role Forge expression has no typed scalar semantics"
+        )
+
+    if not is_affine_scalar_expression(node):
+        raise ModelError(
+            "mixed-role Forge expression is outside affine scalar IR"
+        )
+    dependencies = scalar_parameter_names(node)
+    return _native_expression(
+        _role_scalar_expression_text(model, node, role),
+        dependencies,
     )
 
 
