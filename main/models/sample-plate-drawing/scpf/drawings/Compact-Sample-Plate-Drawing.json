@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "5jgkq7gdc0b5w",
+  "id": "9neb8zwzq6jhm",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "3zv6b5985dm0z"
+        "source": "fzzdh285famf1"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "egh5vggkq3tp2",
+      "id": "ff28mzhpcqvkg",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "0epag1t8z3wvp",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "dc71xbcgtfxa1",
+          "id": "cthmb5ax996jd",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "7d8249w645eyk",
+          "id": "5avv0d34p8z6v",
+          "kind": "projected",
+          "label": "Above Front",
+          "notes": [],
+          "parent": "cthmb5ax996jd",
+          "side": "above"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "ajjmndw03zn9m",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "dc71xbcgtfxa1",
+          "parent": "cthmb5ax996jd",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "bykf1q1nwjw90",
-          "kind": "projected",
-          "label": "Above Front",
-          "notes": [],
-          "parent": "dc71xbcgtfxa1",
-          "side": "above"
+          "id": "fge4mnqh5qg81",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "3zv6b5985dm0z"
+      "id": "fzzdh285famf1"
     }
   ],
   "symbols": [],
