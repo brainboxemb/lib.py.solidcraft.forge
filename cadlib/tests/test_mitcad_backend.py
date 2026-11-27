@@ -3,9 +3,10 @@
 from pathlib import Path
 import unittest
 
-from scpf import Anchor, Box, Cone, Cylinder, Sphere
-from scpf.backends.mitcad import compile_model
+from scpf import Anchor, Axis, Box, Cone, Configure, Cylinder, Sphere, Suppress
+from scpf.backends.mitcad import compile_ir, compile_model
 from scpf.compiler import ModelError
+from scpf.ir import normalize_model
 from scpf.runner import run_script
 
 
@@ -292,6 +293,72 @@ class MitcadBackendTests(unittest.TestCase):
             commands[-1],
             {"cmd": "apply_configuration", "name": "Cut"},
         )
+
+    def test_nested_boolean_configuration_binds_semantic_feature_result(self):
+        sphere = Sphere(20)
+        extension = Box(30, 30, 20).move(x=18, z=10)
+        joined = sphere + extension
+        bore = Cylinder(d=8, h=60, axis=Axis.X)
+        cut = joined - bore
+        clip = Box(50, 50, 30).move(z=15)
+        design = cut & clip
+
+        configured = Configure(
+            design,
+            active="Clipped",
+            columns=(Suppress(clip),),
+            rows={"Clipped": (False,), "Unclipped": (True,)},
+        )
+        document = compile_ir(
+            normalize_model(configured),
+            "PrimitiveCsgConfigured",
+        )
+        features = [
+            row for row in document["commands"]
+            if row.get("cmd") == "add_feature"
+        ]
+        self.assertEqual(
+            [row["def"]["operation"] for row in features],
+            ["new_body", "join", "cut", "intersect"],
+        )
+        bound = [row for row in features if row.get("as") == "configured_feature"]
+        self.assertEqual(len(bound), 1)
+        self.assertEqual(bound[0]["def"]["operation"], "intersect")
+
+        suppression = next(
+            row for row in document["commands"]
+            if row.get("cmd") == "suppress_feature"
+        )
+        self.assertEqual(
+            suppression["uid"],
+            {"ref": "configured_feature.uid"},
+        )
+        self.assertEqual(document["commands"][-1], {
+            "cmd": "apply_configuration",
+            "name": "Clipped",
+        })
+
+        bore_configured = Configure(
+            design,
+            active="Bored",
+            columns=(Suppress(bore),),
+            rows={"Bored": (False,), "Solid": (True,)},
+        )
+        bore_document = compile_ir(
+            normalize_model(bore_configured),
+            "PrimitiveCsgBoreConfigured",
+        )
+        bore_features = [
+            row for row in bore_document["commands"]
+            if row.get("cmd") == "add_feature"
+        ]
+        bore_bound = [
+            row for row in bore_features
+            if row.get("as") == "configured_feature"
+        ]
+        self.assertEqual(len(bore_bound), 1)
+        self.assertEqual(bore_bound[0]["def"]["type"], "cylinder")
+        self.assertEqual(bore_bound[0]["def"]["operation"], "cut")
 
     def test_configuration_table_fails_closed_on_mitcad(self):
         with self.assertRaisesRegex(

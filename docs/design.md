@@ -942,6 +942,28 @@ reopens that same `.mitcad` file without rerunning Forge Python, applies
 and verifies the cut returns. The reopen/apply helper belongs to native
 qualification infrastructure; it is not public SCPF or semantic IR.
 
+#433 generalizes semantic feature identity through already-typed Boolean
+history. A reference such as `("root", "tool")` means the authored tool of
+the root `BooleanIR`; `("root", "target", "tool")` descends through the
+target history and selects its authored tool. These segments are Forge semantic
+roles, not indexes into a backend command stream.
+
+Normalization resolves the path while both the authored Shape tree and typed IR
+tree are available, using source-object identity only during that frontend
+step. After normalization, `FeatureRefIR` retains only semantic roles.
+SolidCraft lowering maps the path to its replay-returned native feature, while
+Mitcad attaches an `as` result binding to the corresponding native command;
+those backend mappings are deliberately independent.
+
+The existing `primitive-csg` owner proves the boundary without adding another
+model. Its active `Clipped` row preserves the established geometry and
+reference-engine comparisons. `Unclipped` suppresses the exact final
+intersection tool: reopening the saved native design must restore the negative-Z
+geometry hidden by the clip and increase volume, then reapplying `Clipped`
+must return the original bounds and volume. A deeper bore reference is also
+resolved in backend-independent tests so the model does not merely special-case
+the final tool.
+
 Angle units are semantic compiler data. The `sweep` model parameter becomes
 `ParameterIR(unit="deg")`, and the Mitcad Revolve extent references that
 parameter instead of replacing an authored 360-degree value with an

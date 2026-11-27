@@ -47,6 +47,7 @@ SIMPLE_BOX = ROOT / "models/simple-box/scpf/model.py"
 NEGATIVE_CIRCLE = ROOT / "models/circle-negative-extrude/scpf/model.py"
 TOPOLOGY_BOX = ROOT / "models/topology-face-boundary-box/scpf/model.py"
 SHIFTED_AXIS_REVOLVE = ROOT / "models/shifted-axis-revolve/scpf/model.py"
+PRIMITIVE_CSG = ROOT / "models/primitive-csg/scpf/model.py"
 
 
 def ensure_appimage_runtime() -> None:
@@ -514,6 +515,103 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 self.assertTrue(artifact.is_file(), str(artifact))
                 self.assertGreater(artifact.stat().st_size, 0, str(artifact))
 
+            primitive_document = run_script(
+                PRIMITIVE_CSG,
+                backend="mitcad",
+            )
+            primitive_path = root / "out/primitive-csg-configured.mitcad"
+            primitive_clipped_stl = root / "out/primitive-csg-clipped.stl"
+            primitive_clipped = run_document(
+                primitive_document,
+                save=primitive_path,
+                export=primitive_clipped_stl,
+                executable=str(executable),
+                work_dir=root / "primitive-csg-configured-workspace",
+            )
+            self.assertEqual(len(primitive_clipped["bodies"]), 1)
+            primitive_clipped_body = primitive_clipped["bodies"][0]
+            self.assertEqual(primitive_clipped_body["kind"], "solid")
+            primitive_geometry = run_mesh_geometry_verification(
+                primitive_clipped_stl,
+                evidence / "verification" / "primitive-csg",
+                load_geometry_contract(
+                    ROOT / "models/primitive-csg/verification/geometry.json"
+                ),
+                verification_id="mitcad-primitive-csg-geometry",
+            )
+            self.assertEqual(
+                primitive_geometry["status"],
+                "pass",
+                primitive_geometry,
+            )
+
+            primitive_unclipped_stl = root / "out/primitive-csg-unclipped.stl"
+            primitive_unclipped = run_saved_configuration(
+                primitive_path,
+                "Unclipped",
+                save=primitive_path,
+                export=primitive_unclipped_stl,
+                executable=str(executable),
+                work_dir=root / "primitive-csg-unclipped-workspace",
+            )
+            self.assertEqual(len(primitive_unclipped["bodies"]), 1)
+            primitive_unclipped_body = primitive_unclipped["bodies"][0]
+            self.assertEqual(primitive_unclipped_body["kind"], "solid")
+            self.assertLess(
+                primitive_unclipped_body["bbox"]["min"][2],
+                -19.9,
+            )
+            self.assertGreater(
+                primitive_unclipped_body["volume"],
+                primitive_clipped_body["volume"] + 100.0,
+            )
+            primitive_unclipped_evidence = (
+                evidence / "primitive-csg-unclipped.mitcad"
+            )
+            shutil.copy2(primitive_path, primitive_unclipped_evidence)
+
+            primitive_restored_stl = root / "out/primitive-csg-restored.stl"
+            primitive_restored = run_saved_configuration(
+                primitive_path,
+                "Clipped",
+                save=primitive_path,
+                export=primitive_restored_stl,
+                executable=str(executable),
+                work_dir=root / "primitive-csg-restored-workspace",
+            )
+            self.assertEqual(len(primitive_restored["bodies"]), 1)
+            primitive_restored_body = primitive_restored["bodies"][0]
+            self.assertAlmostEqual(
+                primitive_restored_body["volume"],
+                primitive_clipped_body["volume"],
+                places=4,
+            )
+            for actual, expected in zip(
+                primitive_restored_body["bbox"]["min"],
+                primitive_clipped_body["bbox"]["min"],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                primitive_restored_body["bbox"]["max"],
+                primitive_clipped_body["bbox"]["max"],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            primitive_restored_evidence = (
+                evidence / "primitive-csg-restored.mitcad"
+            )
+            shutil.copy2(primitive_path, primitive_restored_evidence)
+
+            for artifact in (
+                primitive_path,
+                primitive_clipped_stl,
+                primitive_unclipped_stl,
+                primitive_restored_stl,
+                primitive_unclipped_evidence,
+                primitive_restored_evidence,
+            ):
+                self.assertTrue(artifact.is_file(), str(artifact))
+                self.assertGreater(artifact.stat().st_size, 0, str(artifact))
+
             shifted_plane_stl = root / "out/shifted-plane-revolve-cut.stl"
             retained_shifted_plane_stl = (
                 evidence / "shifted-plane-revolve-cut.stl"
@@ -567,6 +665,13 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"configured_shifted_axis_suppressed_volume={suppressed_body['volume']}",
                         f"configured_shifted_axis_restored_volume={restored_body['volume']}",
                         "configured_shifted_axis_geometry=pass",
+                        f"primitive_csg_clipped_volume={primitive_clipped_body['volume']}",
+                        f"primitive_csg_clipped_bbox={primitive_clipped_body['bbox']}",
+                        f"primitive_csg_unclipped_volume={primitive_unclipped_body['volume']}",
+                        f"primitive_csg_unclipped_bbox={primitive_unclipped_body['bbox']}",
+                        f"primitive_csg_restored_volume={primitive_restored_body['volume']}",
+                        f"primitive_csg_restored_bbox={primitive_restored_body['bbox']}",
+                        "primitive_csg_geometry=pass",
                     ]
                 )
                 + "\n",
