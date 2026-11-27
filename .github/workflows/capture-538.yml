@@ -1,0 +1,56 @@
+name: Capture SolidCraft 0.50 reference for #538
+
+on:
+  push:
+    branches:
+      - issue/538-solidcraft-0.50-runtime
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Capture canonical 0.50.0 registry from immutable runtime
+        env:
+          PYTHONPATH: ${{ github.workspace }}/modules/solidcraft-reference/src
+        run: |
+          set -euo pipefail
+          python -m cad_library_solidcraft_reference capture \
+            --image ghcr.io/brainboxemb/cad-solidcraft:v0.3.8 \
+            --version 0.50.0 \
+            --upstream-commit eeb366c2ff276987a15c043d63b9072b58274703 \
+            --runtime-release v0.3.8 \
+            --out docs/reference/solidcraft/0.50.0
+          python -m cad_library_solidcraft_reference capture-describe \
+            --image ghcr.io/brainboxemb/cad-solidcraft:v0.3.8 \
+            --version 0.50.0 \
+            --command config.rule \
+            --snapshot docs/reference/solidcraft/0.50.0/describe/config.rule.json
+
+      - name: Commit captured immutable evidence
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/reference/solidcraft/0.50.0
+          git diff --cached --exit-code && {
+            echo "ERROR: capture produced no reference changes" >&2
+            exit 2
+          } || true
+          git commit -m "docs: capture SolidCraft 0.50.0 canonical reference (#538)"
+          git push origin HEAD:issue/538-solidcraft-0.50-runtime
