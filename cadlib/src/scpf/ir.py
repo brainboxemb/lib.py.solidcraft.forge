@@ -966,13 +966,10 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
 
     if shape.kind == "sphere":
         radius, anchor = shape.data
-        anchor_vector = _anchor_vector(anchor)
-        if anchor_vector != (0, 0, 0):
-            return None
         return PlacementIR(
             primitive=SphereIR(radius=radius),
             point=(0, 0, 0),
-            anchor=anchor_vector,
+            anchor=_anchor_vector(anchor),
         )
 
     if shape.kind == "placed_box":
@@ -1006,7 +1003,7 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
     if shape.kind == "translated":
         child, delta = shape.data
         placement = _portable_placement(child)
-        if placement is None or isinstance(placement.primitive, SphereIR):
+        if placement is None:
             return None
         return PlacementIR(
             primitive=placement.primitive,
@@ -1016,6 +1013,20 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
         )
 
     return None
+
+
+def _portable_csg_placement(node: IRNode) -> bool:
+    """Keep #461 Sphere placement broader only at the standalone root."""
+    if not isinstance(node, PlacementIR):
+        return False
+    if not isinstance(node.primitive, (BoxIR, CylinderIR, SphereIR)):
+        return False
+    if isinstance(node.primitive, SphereIR):
+        if node.anchor != (0, 0, 0):
+            return False
+        if any(parameters_in(value) or abs(pv(value)) > 1e-12 for value in node.point):
+            return False
+    return True
 
 
 _PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
@@ -1544,9 +1555,8 @@ def _normalize_node(shape: Shape) -> IRNode:
         target = _normalize_node(target_shape)
         tool = _normalize_node(tool_shape)
         if (
-            isinstance(target, (PlacementIR, BooleanIR))
-            and isinstance(tool, PlacementIR)
-            and isinstance(tool.primitive, (BoxIR, CylinderIR, SphereIR))
+            (isinstance(target, BooleanIR) or _portable_csg_placement(target))
+            and _portable_csg_placement(tool)
         ):
             operation = {
                 "union": "join",
