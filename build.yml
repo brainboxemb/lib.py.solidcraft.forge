@@ -3,5 +3,7 @@ branch: docs/444-configuration-api-structure
 modules: []
 library: true
 models: []
-api_probes: [configuration-installed-feature]
+api_probes:
+  - configuration-installed-feature
+  - configuration-installed-feature-native-name
 tasks: [test]
