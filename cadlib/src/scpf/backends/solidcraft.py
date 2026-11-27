@@ -6,6 +6,7 @@ to typed semantic IR.
 """
 from __future__ import annotations
 
+from fnmatch import fnmatchcase
 from math import isfinite
 
 from ..compiler import (
@@ -46,6 +47,8 @@ from ..ir import (
     ConfigurationIR,
     ConeIR,
     CylinderIR,
+    DirectionPairEdgeSetIR,
+    ExplicitEdgePicksIR,
     ExtrudeIR,
     FaceBoundaryIR,
     FaceSetIR,
@@ -61,6 +64,7 @@ from ..ir import (
     ParallelEdgeSetIR,
     PlasticFeatureIR,
     PolygonProfileIR,
+    ProfileEdgeSetIR,
     RegionIR,
     RectangleProfileIR,
     RectangularPatternIR,
@@ -536,41 +540,33 @@ def _parallel_box_edge_picks(
     ]
 
 
-def _fillet_commands(node: FilletIR, name: str) -> list[dict]:
-    """Lower one bounded constant-radius FilletIR."""
-    if (
-        not isinstance(node.base, PlacementIR)
-        or not isinstance(node.base.primitive, BoxIR)
-    ):
-        raise ModelError(
-            "portable SolidCraft FilletIR currently requires a Box base"
-        )
+def _fillet_commands(model: ModelIR, node: FilletIR, name: str) -> list[dict]:
+    """Lower one constant-radius FilletIR through shared selector semantics."""
+    if not isinstance(node.base, BodyIR):
+        raise ModelError("portable SolidCraft FilletIR requires typed BodyIR base")
 
+    base_commands = _body_commands(model, node.base, name)
+    topology, edges = _edge_selection_commands(
+        node.base,
+        node.edges,
+        name,
+        prior=base_commands,
+    )
+
+    radius = _require_positive(node.radius, "fillet radius")
     if isinstance(node.edges, ParallelEdgeSetIR):
         if node.edges.axis != "Z":
             raise ModelError(
-                "portable SolidCraft FilletIR parallel edges must be Z"
+                "portable SolidCraft parallel-edge selection currently requires Z"
             )
-        topology = []
-        edges = _parallel_box_edge_picks(node.base, node.edges)
-    elif isinstance(node.edges, FaceBoundaryIR):
-        if node.edges.faces != ("top",):
-            raise ModelError(
-                "portable SolidCraft FilletIR face boundary must be TOP"
-            )
-        topology, edges = _face_boundary_commands(node.edges, name)
-    else:
-        raise ModelError(
-            "portable SolidCraft FilletIR has unsupported edge semantics"
+        width, depth, _corner, _center, _height = _typed_rectangular_base(
+            node.base
         )
-
-    radius = _require_positive(node.radius, "fillet radius")
-    primitive = node.base.primitive
-    if radius * 2 >= min(pv(primitive.length), pv(primitive.width)):
-        raise ModelError("fillet radius exceeds rectangular base dimensions")
+        if radius * 2 >= min(pv(width), pv(depth)):
+            raise ModelError("fillet radius exceeds rectangular base dimensions")
 
     return [
-        _box_command(node.base, name),
+        *base_commands,
         *topology,
         _command(
             "solid.fillet",
@@ -966,13 +962,13 @@ def _plastic_feature_commands(
     ]
 
 
-def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
+def _boolean_commands(model: ModelIR, node: BooleanIR, name: str) -> list[dict]:
     """Flatten one bounded left-associated semantic CSG tree in source order."""
     commands = []
     if isinstance(node.target, BooleanIR):
-        commands.extend(_boolean_commands(node.target, name))
+        commands.extend(_boolean_commands(model, node.target, name))
     elif isinstance(node.target, FilletIR):
-        commands.extend(_fillet_commands(node.target, name))
+        commands.extend(_fillet_commands(model, node.target, name))
     elif isinstance(node.target, PlacementIR):
         commands.append(_csg_primitive_command(node.target, name, "new"))
     else:
@@ -1821,6 +1817,163 @@ def _face_boundary_commands(
     return commands, previous_edges
 
 
+def _rectangular_edge_picks(
+    base: BodyIR,
+    vectors: tuple[tuple[int, int, int], ...],
+) -> list[list[float]]:
+    """Derive stable SolidCraft edge picks from typed rectangular-body semantics."""
+    width, depth, corner, _center, height = _typed_rectangular_base(base)
+    dimensions = (width, depth, height)
+    picks = []
+    for vector in vectors:
+        point = []
+        for minimum, dimension, side in zip(corner, dimensions, vector):
+            if side < 0:
+                value = minimum
+            elif side > 0:
+                value = _combine(minimum, dimension)
+            else:
+                value = _combine(minimum, half(dimension))
+            point.append(pv(value))
+        if not all(isfinite(value) for value in point):
+            raise ModelError("rectangular edge selection must be finite")
+        picks.append(point)
+    return picks
+
+
+def _profile_edge_picks(
+    base: BodyIR,
+    selection: ProfileEdgeSetIR,
+) -> list[list[float]]:
+    """Derive named Polygon-extrusion edge picks from semantic profile intent."""
+    if (
+        not isinstance(base, ExtrudeIR)
+        or base.operation != "new_body"
+        or base.through_all
+        or base.distance is None
+        or base.sketch.support is not None
+        or base.sketch.plane.orientation != "XZ"
+        or len(base.sketch.profiles) != 1
+        or not isinstance(base.sketch.profiles[0], PolygonProfileIR)
+    ):
+        raise ModelError(
+            "named profile edges require a standalone XZ polygon extrusion"
+        )
+
+    profile = base.sketch.profiles[0]
+    names = profile.segment_ids
+    if names is None:
+        raise ModelError(
+            "Polygon2D must define ids= or named points to select profile edges"
+        )
+    for pattern in selection.patterns:
+        if not any(fnmatchcase(label, pattern) for label in names):
+            raise ModelError(
+                f"no polygon segment or vertex matches {pattern!r}"
+            )
+
+    matches = [
+        index
+        for index, label in enumerate(names)
+        if any(
+            fnmatchcase(label, pattern)
+            for pattern in selection.patterns
+        )
+    ]
+    plane_y = base.sketch.plane.origin[1]
+    thickness = base.distance
+    if base.direction == "symmetric":
+        start_y = _combine(plane_y, -half(thickness))
+        end_y = _combine(plane_y, half(thickness))
+    elif base.direction == "positive":
+        start_y = plane_y
+        end_y = _combine(plane_y, thickness)
+    elif base.direction == "negative":
+        start_y = plane_y
+        end_y = _combine(plane_y, -thickness)
+    else:
+        raise ModelError(
+            "named profile edges require finite positive/negative/symmetric Extrude"
+        )
+
+    points = profile.points
+    if selection.kind == "vertices":
+        sweep_mid_y = midpoint(pv(start_y), pv(end_y))
+        return [
+            [pv(points[index][0]), sweep_mid_y, -pv(points[index][1])]
+            for index in matches
+        ]
+
+    if selection.kind != "segments":
+        raise ModelError(
+            f"unsupported profile edge selection: {selection.kind}"
+        )
+
+    picks = []
+    for y in (start_y, end_y):
+        for index in matches:
+            first = points[index]
+            second = points[(index + 1) % len(points)]
+            picks.append(
+                [
+                    midpoint(pv(first[0]), pv(second[0])),
+                    pv(y),
+                    -midpoint(pv(first[1]), pv(second[1])),
+                ]
+            )
+    return picks
+
+
+def _edge_selection_commands(
+    base: BodyIR,
+    selection,
+    name: str,
+    *,
+    prior: list[dict] | None = None,
+) -> tuple[list[dict], list[list[float]] | str]:
+    """Lower shared semantic edge-selection intent to SolidCraft transport."""
+    if isinstance(selection, FaceBoundaryIR):
+        return _face_boundary_commands(
+            selection,
+            name,
+            prior=prior,
+        )
+
+    if isinstance(selection, ParallelEdgeSetIR):
+        if selection.axis != "Z":
+            raise ModelError(
+                "portable SolidCraft parallel-edge selection currently requires Z"
+            )
+        return [], _rectangular_edge_picks(
+            base,
+            (
+                (-1, -1, 0),
+                (1, -1, 0),
+                (1, 1, 0),
+                (-1, 1, 0),
+            ),
+        )
+
+    if isinstance(selection, DirectionPairEdgeSetIR):
+        return [], _rectangular_edge_picks(base, selection.vectors)
+
+    if isinstance(selection, ProfileEdgeSetIR):
+        return [], _profile_edge_picks(base, selection)
+
+    if isinstance(selection, ExplicitEdgePicksIR):
+        picks = [
+            [pv(value) for value in point]
+            for point in selection.points
+        ]
+        if not all(isfinite(value) for point in picks for value in point):
+            raise ModelError("edge selection must be finite")
+        return [], picks
+
+    raise ModelError(
+        f"unsupported portable SolidCraft edge selector {type(selection).__name__}"
+    )
+
+
 def _face_name_commands(
     prior: list[dict],
     selection: FaceSetIR,
@@ -1846,48 +1999,36 @@ def _face_name_commands(
 
 
 def _chamfer_commands(model: ModelIR, node: ChamferIR, name: str) -> list[dict]:
+    """Lower ChamferIR through the same shared semantic selector vocabulary."""
     _require_positive(node.distance, "chamfer distance")
     if node.distance2 is not None:
         _require_positive(node.distance2, "chamfer distance2")
     if node.flip and node.distance2 is None:
         raise ModelError("portable SolidCraft ChamferIR flip requires distance2")
+    if not isinstance(node.base, BodyIR):
+        raise ModelError("portable SolidCraft ChamferIR requires typed BodyIR base")
 
-    if isinstance(node.base, PlacementIR):
-        if not isinstance(node.base.primitive, BoxIR):
-            raise ModelError(
-                "portable SolidCraft ChamferIR placement base requires BoxIR"
-            )
-        base_commands = [_box_command(node.base, name)]
-    elif isinstance(node.base, ExtrudeIR):
-        if node.distance2 is not None or node.flip:
-            raise ModelError(
-                "portable SolidCraft asymmetric ChamferIR requires BoxIR"
-            )
-        base_commands = _extrude_commands(model, node.base, name)
-    else:
-        raise ModelError(
-            "portable SolidCraft ChamferIR has unsupported typed base"
-        )
-
-    topology, edges = _face_boundary_commands(
+    base_commands = _body_commands(model, node.base, name)
+    topology, edges = _edge_selection_commands(
+        node.base,
         node.edges,
         name,
         prior=base_commands,
     )
-    chamfer = {
+    params = {
         "body": name,
         "distance": command_value(node.distance),
         "edges": edges,
     }
     if node.distance2 is not None:
-        chamfer["distance2"] = command_value(node.distance2)
+        params["distance2"] = command_value(node.distance2)
     if node.flip:
-        chamfer["flip"] = True
+        params["flip"] = True
 
     return [
         *base_commands,
         *topology,
-        _command("solid.chamfer", **chamfer),
+        _command("solid.chamfer", **params),
     ]
 
 
@@ -2544,7 +2685,7 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
         return _extrude_commands(model, node, name)
 
     if isinstance(node, BooleanIR):
-        return _boolean_commands(node, name)
+        return _boolean_commands(model, node, name)
 
     if isinstance(node, HoleIR):
         return _hole_commands(model, node, name)
@@ -2553,7 +2694,7 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
         return _plastic_feature_commands(model, node, name)
 
     if isinstance(node, FilletIR):
-        return _fillet_commands(node, name)
+        return _fillet_commands(model, node, name)
 
     if isinstance(node, RevolveIR):
         base_commands = []

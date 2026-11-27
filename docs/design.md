@@ -1820,6 +1820,35 @@ This batch completes the current public Region/profile-selection and Extrude
 semantic families. Broader datum/transform semantics, Revolve widening and
 modify-feature topology remain separate partial families.
 
+#562 completes the shared public edge-selector vocabulary independently from
+any one modifier. `FaceBoundaryIR` retains cardinal face-perimeter intent,
+`ParallelEdgeSetIR` retains principal-axis parallel edges,
+`DirectionPairEdgeSetIR` retains one or more rank-two cardinal edge selectors,
+`ProfileEdgeSetIR` retains named/wildcard Polygon segment or vertex intent, and
+`ExplicitEdgePicksIR` retains authored fixed XYZ pick points. Together these
+form `EdgeSelectionIR`; none contains a native edge name, BRep id, replay
+variable or command index.
+
+`FilletIR` and `ChamferIR` consume that same selector union over typed `BodyIR`.
+Frontend normalization therefore no longer decides topology support by one
+modifier-specific whitelist. A selector may be semantically typed even when a
+particular backend or body shape cannot yet lower it; that limitation is
+reported fail-closed by the backend.
+
+SolidCraft derives transport only after normalization. Cardinal face sets reuse
+the replay-bound `model.faces` / `model.edges` path. Principal and direction-pair
+edges are derived from typed rectangular-body dimensions. Named Polygon
+segment/vertex selectors are resolved against typed XZ `PolygonProfileIR`
+segment ids and Extrude extent, reproducing the stable pick coordinates.
+Explicit picks are preserved as authored fixed semantic points and converted to
+native numeric picks only while lowering.
+
+This closes the current public Topology/reference selector family. Chamfer and
+Fillet remain separate partial families because feature/base variants beyond
+the shared selector vocabulary still require semantic completion. Existing
+Mitcad face-boundary/principal-edge slices remain valid; newly typed selector
+forms that Mitcad cannot lower fail closed without falling back to legacy IR.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are

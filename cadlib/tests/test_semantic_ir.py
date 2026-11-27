@@ -16,7 +16,9 @@ from scpf import (
     Depth,
     Edges,
     Faces,
+    FRONT,
     Hole,
+    LEFT,
     Lip,
     Parameter,
     Polygon2D,
@@ -56,6 +58,8 @@ from scpf.ir import (
     CircularPatternIR,
     ConeIR,
     CylinderIR,
+    DirectionPairEdgeSetIR,
+    ExplicitEdgePicksIR,
     ExtrudeIR,
     FaceBoundaryIR,
     FaceSetIR,
@@ -77,6 +81,7 @@ from scpf.ir import (
     PlacementIR,
     PlaneIR,
     PolygonProfileIR,
+    ProfileEdgeSetIR,
     RegionIR,
     RectangleProfileIR,
     RectangularPatternIR,
@@ -1847,6 +1852,140 @@ class SemanticIRTests(unittest.TestCase):
                 length=10,
             )
 
+    def test_shared_modify_selectors_are_semantic_and_solidcraft_compatible(self):
+        direction_shape = Box(
+            80,
+            50,
+            8,
+            anchor=Anchor.BOTTOM,
+        ).chamfer(
+            2,
+            edges=FRONT + LEFT,
+        )
+        direction_model = self.assert_solidcraft_compatibility(
+            direction_shape,
+            "DirectionChamfer",
+        )
+        self.assertIsInstance(direction_model.root, ChamferIR)
+        self.assertEqual(
+            direction_model.root.edges,
+            DirectionPairEdgeSetIR(((-1, -1, 0),)),
+        )
+
+        explicit_shape = Box(
+            80,
+            50,
+            8,
+            anchor=Anchor.BOTTOM,
+        ).fillet(
+            2,
+            edges=[(-40, -25, 0)],
+        )
+        explicit_model = self.assert_solidcraft_compatibility(
+            explicit_shape,
+            "ExplicitFillet",
+        )
+        self.assertIsInstance(explicit_model.root, FilletIR)
+        self.assertEqual(
+            explicit_model.root.edges,
+            ExplicitEdgePicksIR(((-40, -25, 0),)),
+        )
+
+        face_shape = Box(
+            80,
+            50,
+            8,
+            anchor=Anchor.BOTTOM,
+        ).chamfer(
+            1,
+            edges=Edges.from_faces(Faces.TOP, Faces.FRONT),
+        )
+        face_model = self.assert_solidcraft_compatibility(
+            face_shape,
+            "MultiFaceChamfer",
+        )
+        self.assertEqual(
+            face_model.root.edges,
+            FaceBoundaryIR(("top", "front")),
+        )
+
+        for model, name in (
+            (direction_model, "DirectionChamfer"),
+            (explicit_model, "ExplicitFillet"),
+        ):
+            with self.subTest(name=name):
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, name)
+
+        mitcad_face = compile_mitcad_ir(
+            face_model,
+            "MultiFaceChamfer",
+        )
+        self.assertEqual(
+            len(
+                mitcad_face["replay"][0][
+                    "bind_face_boundary_edges"
+                ]["faces"]
+            ),
+            2,
+        )
+
+    def test_named_polygon_modify_selectors_are_semantic_and_compatible(self):
+        with Sketch(name="ProfileEdges", plane="XZ") as sketch:
+            Polygon2D(
+                [
+                    ("start", (0, 0)),
+                    ("tip", (10, 0)),
+                    ("far", (10, 8)),
+                    ("end", (0, 8)),
+                ],
+                plane="XZ",
+                world=True,
+            )
+        body = sketch.extrude(8, sym=True)
+
+        segment_model = self.assert_solidcraft_compatibility(
+            body.chamfer(
+                0.5,
+                edges=Edges.from_profile("start"),
+            ),
+            "ProfileSegmentChamfer",
+        )
+        self.assertIsInstance(segment_model.root, ChamferIR)
+        self.assertEqual(
+            segment_model.root.edges,
+            ProfileEdgeSetIR(
+                patterns=("start",),
+                kind="segments",
+                sides="both",
+            ),
+        )
+
+        vertex_model = self.assert_solidcraft_compatibility(
+            body.fillet(
+                0.5,
+                edges=Edges.from_vertices("tip", "end"),
+            ),
+            "ProfileVertexFillet",
+        )
+        self.assertIsInstance(vertex_model.root, FilletIR)
+        self.assertEqual(
+            vertex_model.root.edges,
+            ProfileEdgeSetIR(
+                patterns=("tip", "end"),
+                kind="vertices",
+                sides="axis",
+            ),
+        )
+
+        for model, name in (
+            (segment_model, "ProfileSegmentChamfer"),
+            (vertex_model, "ProfileVertexFillet"),
+        ):
+            with self.subTest(name=name):
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, name)
+
     def test_vertical_box_fillet_is_semantic_parallel_edge_ir(self):
         radius = Parameter("fillet_radius", 2)
         shape = Box(
@@ -2086,10 +2225,13 @@ class SemanticIRTests(unittest.TestCase):
             "top_fillet_radius",
         )
 
-    def test_other_face_boundary_fillet_selectors_remain_legacy(self):
-        for faces in (
-            (Faces.FRONT,),
-            (Faces.TOP, Faces.FRONT),
+    def test_other_face_boundary_fillet_selectors_are_typed(self):
+        for index, faces in enumerate(
+            (
+                (Faces.FRONT,),
+                (Faces.TOP, Faces.FRONT),
+            ),
+            start=1,
         ):
             with self.subTest(faces=faces):
                 shape = Box(
@@ -2101,12 +2243,24 @@ class SemanticIRTests(unittest.TestCase):
                     2,
                     edges=Edges.from_faces(*faces),
                 )
-                model = normalize_shape(shape)
-                self.assertIsInstance(model.root, LegacyShapeIR)
+                model = self.assert_solidcraft_compatibility(
+                    shape,
+                    f"TypedFaceBoundaryFillet{index}",
+                )
+                self.assertIsInstance(model.root, FilletIR)
+                self.assertEqual(
+                    model.root.edges,
+                    FaceBoundaryIR(
+                        tuple(face.value for face in faces)
+                    ),
+                )
                 with self.assertRaises(ModelError):
-                    compile_mitcad_ir(model, "UnsupportedFaceBoundaryFillet")
+                    compile_mitcad_ir(
+                        model,
+                        f"TypedFaceBoundaryFillet{index}",
+                    )
 
-    def test_face_boundary_fillet_over_non_box_remains_legacy(self):
+    def test_face_boundary_fillet_over_non_box_is_typed(self):
         shape = Cylinder(
             d=30,
             h=12,
@@ -2115,10 +2269,15 @@ class SemanticIRTests(unittest.TestCase):
             2,
             edges=Edges.from_faces(Faces.TOP),
         )
-        model = normalize_shape(shape)
-        self.assertIsInstance(model.root, LegacyShapeIR)
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "CylinderFaceBoundaryFillet",
+        )
+        self.assertIsInstance(model.root, FilletIR)
+        self.assertIsInstance(model.root.base, PlacementIR)
+        self.assertIsInstance(model.root.base.primitive, CylinderIR)
         with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "UnsupportedFaceBoundaryFilletBase")
+            compile_mitcad_ir(model, "CylinderFaceBoundaryFillet")
 
     def test_top_face_boundary_fillet_cone_join_remains_legacy(self):
         filleted = Box(
@@ -2687,7 +2846,7 @@ class SemanticIRTests(unittest.TestCase):
             },
         )
 
-    def test_asymmetric_non_top_face_boundary_remains_legacy(self):
+    def test_asymmetric_non_top_face_boundary_is_typed(self):
         shape = Box(
             60,
             40,
@@ -2699,10 +2858,17 @@ class SemanticIRTests(unittest.TestCase):
             edges=Edges.from_faces(Faces.FRONT),
         )
 
-        model = normalize_shape(shape)
-        self.assertIsInstance(model.root, LegacyShapeIR)
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "AsymmetricFront",
+        )
+        self.assertIsInstance(model.root, ChamferIR)
+        self.assertEqual(
+            model.root.edges,
+            FaceBoundaryIR(("front",)),
+        )
         with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "UnsupportedAsymmetricFront")
+            compile_mitcad_ir(model, "AsymmetricFront")
 
 
     def test_plane_ir_rejects_non_principal_or_invalid_origins(self):

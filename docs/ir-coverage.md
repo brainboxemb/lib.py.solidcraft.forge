@@ -29,8 +29,8 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **11 / 20 (55%)**
-- partial: **9 / 20 (45%)**
+- complete: **12 / 20 (60%)**
+- partial: **8 / 20 (40%)**
 - legacy: **0 / 20 (0%)**
 - families with at least some typed IR: **20 / 20 (100%)**
 - physical SCPF owners on permanent `exp`: **61**
@@ -53,7 +53,7 @@ not effort or backend parity.
 | Extrude | complete | yes | partial | qualified slices | #561 covers current public standalone/attached finite positive/negative/symmetric and through-all cut semantics over typed Sketch graphs/regions; Mitcad support remains partial. |
 | Revolve | partial | partial | partial | qualified slices | Broader profile/operation/reference forms. |
 | Boolean body operations | partial | partial | partial | qualified slices | General feature/body operands. |
-| Topology/reference selectors | partial | partial | partial | qualified slices | Profile/vertex/explicit and broader directional selectors. |
+| Topology/reference selectors | complete | yes | partial | qualified slices | #562 types the current public face-boundary, principal-parallel, cardinal direction-pair, named Polygon segment/vertex and explicit fixed-pick selector vocabulary; Mitcad support remains a backend subset. |
 | Chamfer | partial | partial | partial | qualified slices | Broader bases/selectors/orientations. |
 | Fillet | partial | partial | partial | qualified slices | Broader bases/selectors/variable forms. |
 | Feature identity, suppression, configuration | partial | partial | partial | qualified slices | #555 adds definition-level ComponentFeatureRefIR for exported reusable-child identity; broader configuration/rule/feature composition remains. |
@@ -97,5 +97,8 @@ legacy. #560 then completes the support-independent public Sketch entity and
 operation graph while reusing the same SketchChainIR. #561 composes that graph
 with semantic Sketch support/frame intent, general RegionIR selector semantics
 and the current public standalone/attached Extrude contract, moving Regions and
-Extrude to complete. The migration therefore continues entirely as partial ->
-complete closure while backend catch-up remains independent.
+Extrude to complete. #562 then completes the shared public edge-selector
+vocabulary and moves Topology/reference selectors to complete while Chamfer and
+Fillet remain partial for non-selector feature/base gaps. The migration therefore
+continues entirely as partial -> complete closure while backend catch-up remains
+independent.

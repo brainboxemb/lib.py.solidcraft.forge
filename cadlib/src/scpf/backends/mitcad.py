@@ -1531,6 +1531,10 @@ def _chamfer_document(
         _require_positive(node.distance2, "chamfer distance2")
     if node.flip and node.distance2 is None:
         raise ModelError("Mitcad ChamferIR flip requires distance2")
+    if not isinstance(node.edges, FaceBoundaryIR):
+        raise ModelError(
+            "Mitcad ChamferIR currently supports FaceBoundaryIR selectors only"
+        )
     if not node.edges.faces:
         raise ModelError("Mitcad face-boundary chamfer has no Faces values")
 

@@ -266,6 +266,14 @@
 240. Backend-derived Sketch origins, native face queries and profile picks are lowering transport only and must not be added to SketchSupportIR, SketchIR, RegionIR or ExtrudeIR.
 241. Mitcad may remain unsupported for newly typed support/frame/region/Extrude forms and must fail closed after frontend normalization rather than forcing valid public semantics back to LegacyShapeIR.
 242. #561 completes the current public Regions/profile-membership and Extrude semantic families; remaining placement/reference, Revolve and topology/modify gaps are tracked independently.
+243. Public Fillet/Chamfer edge selection must normalize through one shared engine-neutral `EdgeSelectionIR` vocabulary rather than modifier-specific selector branches.
+244. `FaceBoundaryIR` carries one or more cardinal face perimeters; `ParallelEdgeSetIR` carries principal-axis parallel-edge intent; `DirectionPairEdgeSetIR` carries rank-two cardinal edge vectors; `ProfileEdgeSetIR` carries named/wildcard Polygon segment or vertex intent; and `ExplicitEdgePicksIR` carries authored fixed XYZ picks.
+245. Semantic edge selectors must never contain native edge names, BRep ids, SolidCraft query bindings, Mitcad topology ids, replay variables or command indexes.
+246. `FilletIR` and `ChamferIR` consume the shared selector union over typed BodyIR. A valid semantic selector remains typed even when one backend or body form cannot lower it; unsupported combinations fail closed in that backend.
+247. SolidCraft face-boundary lowering must derive native topology through replay-bound face/edge queries; principal/direction selectors must derive picks from typed rectangular-body dimensions; named Polygon selectors must derive picks from typed PolygonProfileIR ids plus Extrude semantics; explicit picks remain authored fixed semantic points.
+248. SolidCraft typed lowering for #562 accepted selector forms must remain document-compatible with the stable compiler for unchanged public source, including wildcard profile ids, symmetric/positive/negative XZ Extrude edge picks, multiple cardinal face boundaries and direction-pair Box selectors.
+249. Mitcad retains its already-qualified face-boundary/principal-edge slices. Newly typed selector forms outside its backend contract must raise ModelError before reading selector-specific attributes or raw Shape payload.
+250. #562 completes the current public Topology/reference selector semantic family. Chamfer and Fillet remain partial until their remaining feature/base variants are separately completed.
 
 ## SCPF native associativity
 
