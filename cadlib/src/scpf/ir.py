@@ -113,8 +113,12 @@ class SphereIR:
 PrimitiveIR = BoxIR | CylinderIR | ConeIR | SphereIR
 
 
+class BodyIR:
+    """Marker for one engine-neutral typed body result/history node."""
+
+
 @dataclass(frozen=True)
-class PlacementIR:
+class PlacementIR(BodyIR):
     """Absolute placement of one typed primitive.
 
     point is the world-space point at which the selected semantic anchor is
@@ -681,7 +685,7 @@ def _region_interior_point(
 
 
 @dataclass(frozen=True)
-class ExtrudeIR:
+class ExtrudeIR(BodyIR):
     """Distance extrusion over semantic Sketch regions."""
 
     sketch: SketchIR
@@ -716,7 +720,7 @@ class AxisLineIR:
 
 
 @dataclass(frozen=True)
-class RevolveIR:
+class RevolveIR(BodyIR):
     """Angular sweep of one Sketch region as one authored body feature."""
 
     sketch: SketchIR
@@ -742,6 +746,26 @@ class RevolveIR:
 
 
 @dataclass(frozen=True)
+class FaceSetIR:
+    """Semantic set of cardinal planar faces themselves."""
+
+    faces: tuple[str, ...]
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.faces, tuple)
+            or not self.faces
+            or any(
+                face not in {"top", "bottom", "left", "right", "front", "back"}
+                for face in self.faces
+            )
+        ):
+            raise ValueError(
+                "FaceSetIR requires one or more cardinal face names"
+            )
+
+
+@dataclass(frozen=True)
 class FaceBoundaryIR:
     """Semantic request for all boundary edges of cardinal planar faces."""
 
@@ -760,7 +784,7 @@ class ParallelEdgeSetIR:
 
 
 @dataclass(frozen=True)
-class FilletIR:
+class FilletIR(BodyIR):
     """Constant-radius fillet over one qualified typed body result."""
 
     base: PlacementIR
@@ -793,7 +817,7 @@ class FilletIR:
 
 
 @dataclass(frozen=True)
-class ChamferIR:
+class ChamferIR(BodyIR):
     """One semantic chamfer over a qualified typed body result."""
 
     base: "PlacementIR | ExtrudeIR"
@@ -811,7 +835,7 @@ class ChamferIR:
 
 
 @dataclass(frozen=True)
-class HoleIR:
+class HoleIR(BodyIR):
     """One explicitly positioned semantic Hole-family feature.
 
     depth_mode is either through_all or distance. A missing direction means
@@ -819,7 +843,7 @@ class HoleIR:
     direction is fixed authored CAD intent, not a backend face/topology id.
     """
 
-    target: "PlacementIR | HoleIR"
+    target: BodyIR
     hole_type: str
     point: tuple[Any, Any, Any]
     diameter: Any | None = None
@@ -838,11 +862,8 @@ class HoleIR:
     source_kind: str = "hole"
 
     def __post_init__(self):
-        if isinstance(self.target, PlacementIR):
-            if not isinstance(self.target.primitive, BoxIR):
-                raise ValueError("HoleIR first qualified target must be BoxIR")
-        elif not isinstance(self.target, HoleIR):
-            raise ValueError("HoleIR target must be PlacementIR(BoxIR) or HoleIR")
+        if not isinstance(self.target, BodyIR):
+            raise ValueError("HoleIR target must be one typed BodyIR result")
 
         if self.hole_type not in {
             "simple",
@@ -970,7 +991,29 @@ class HoleIR:
 
 
 @dataclass(frozen=True)
-class BooleanIR:
+class ShellIR(BodyIR):
+    """Uniform wall shell over one typed body result."""
+
+    base: BodyIR
+    thickness: Any
+    open_faces: FaceSetIR
+    source_kind: str = "shell"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("ShellIR base must be one typed BodyIR result")
+        if (
+            isinstance(self.thickness, bool)
+            or not isfinite(pv(self.thickness))
+            or pv(self.thickness) <= 0
+        ):
+            raise ValueError("ShellIR thickness must be one positive CAD dimension")
+        if not isinstance(self.open_faces, FaceSetIR):
+            raise ValueError("ShellIR open_faces must be FaceSetIR")
+
+
+@dataclass(frozen=True)
+class BooleanIR(BodyIR):
     """Bounded recursive primitive CSG intent.
 
     target may be another BooleanIR so a left-associated public CSG expression
@@ -998,16 +1041,7 @@ class LegacyShapeIR:
     source_kind: str
 
 
-IRNode = (
-    PlacementIR
-    | ExtrudeIR
-    | RevolveIR
-    | ChamferIR
-    | FilletIR
-    | HoleIR
-    | BooleanIR
-    | LegacyShapeIR
-)
+IRNode = BodyIR | LegacyShapeIR
 
 
 @dataclass(frozen=True)
@@ -1926,13 +1960,7 @@ def _portable_hole(
     tool_shape: Shape,
 ) -> HoleIR | None:
     """Normalize explicit public Hole-family intent over the bounded typed target."""
-    if not (
-        isinstance(target, HoleIR)
-        or (
-            isinstance(target, PlacementIR)
-            and isinstance(target.primitive, BoxIR)
-        )
-    ):
+    if not isinstance(target, BodyIR):
         return None
     if tool_shape.kind != "placed3d":
         return None
@@ -1999,6 +2027,29 @@ def _portable_hole(
             ease_out=spec["ease_out"],
         )
     except ValueError:
+        return None
+
+
+def _portable_shell(shape: Shape) -> ShellIR | None:
+    """Normalize shell intent over any already typed body history."""
+    if shape.kind != "shell" or len(shape.data) != 3:
+        return None
+
+    base_shape, thickness, faces = shape.data
+    base = _normalize_node(base_shape)
+    if not isinstance(base, BodyIR):
+        return None
+
+    try:
+        semantic_faces = FaceSetIR(
+            tuple(Faces(face).value for face in faces)
+        )
+        return ShellIR(
+            base=base,
+            thickness=thickness,
+            open_faces=semantic_faces,
+        )
+    except (TypeError, ValueError):
         return None
 
 
@@ -2077,6 +2128,10 @@ def _normalize_node(shape: Shape) -> IRNode:
     chamfer = _portable_chamfer(shape)
     if chamfer is not None:
         return chamfer
+
+    shell = _portable_shell(shape)
+    if shell is not None:
+        return shell
 
     return LegacyShapeIR(shape=shape, source_kind=shape.kind)
 
@@ -2286,6 +2341,7 @@ def is_portable(model: ModelIR) -> bool:
 
 __all__ = [
     "AxisLineIR",
+    "BodyIR",
     "BooleanIR",
     "BoxIR",
     "ChamferIR",
@@ -2294,6 +2350,7 @@ __all__ = [
     "ConeIR",
     "ExtrudeIR",
     "FaceBoundaryIR",
+    "FaceSetIR",
     "FeatureRefIR",
     "FilletIR",
     "HoleIR",
@@ -2323,6 +2380,7 @@ __all__ = [
     "SketchOrientationConstraintIR",
     "SketchPointIR",
     "SketchRelationsIR",
+    "ShellIR",
     "SphereIR",
     "_polygon_region_interior_point",
     "_region_interior_point",

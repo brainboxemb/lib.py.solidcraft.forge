@@ -30,6 +30,7 @@ from ..core import (
 )
 from ..ir import (
     AxisLineIR,
+    BodyIR,
     BooleanIR,
     BoxIR,
     ChamferIR,
@@ -39,6 +40,7 @@ from ..ir import (
     CylinderIR,
     ExtrudeIR,
     FaceBoundaryIR,
+    FaceSetIR,
     FeatureRefIR,
     FilletIR,
     HoleIR,
@@ -51,6 +53,7 @@ from ..ir import (
     RegionIR,
     RevolveIR,
     SketchRelationsIR,
+    ShellIR,
     SphereIR,
     SuppressionColumnIR,
     _region_interior_point,
@@ -531,19 +534,11 @@ def _fillet_commands(node: FilletIR, name: str) -> list[dict]:
     ]
 
 
-def _hole_commands(node: HoleIR, name: str) -> list[dict]:
+def _hole_commands(model: ModelIR, node: HoleIR, name: str) -> list[dict]:
     """Lower one semantic explicit Hole-family history chain."""
-    if isinstance(node.target, HoleIR):
-        commands = _hole_commands(node.target, name)
-    elif (
-        isinstance(node.target, PlacementIR)
-        and isinstance(node.target.primitive, BoxIR)
-    ):
-        commands = [_box_command(node.target, name)]
-    else:
-        raise ModelError(
-            "portable SolidCraft HoleIR currently requires a Box/Hole target"
-        )
+    if not isinstance(node.target, BodyIR):
+        raise ModelError("portable SolidCraft HoleIR requires typed BodyIR target")
+    commands = _body_commands(model, node.target, name)
 
     params = {
         "position": (
@@ -937,38 +932,55 @@ def _revolve_commands(model: ModelIR, node: RevolveIR, name: str) -> list[dict]:
 
 
 
+def _next_face_query_index(commands: list[dict]) -> int:
+    return 1 + sum(
+        command.get("command") == "model.faces"
+        for command in commands
+    )
+
+
+def _face_query_command(
+    name: str,
+    face: str,
+    variable: str,
+    *,
+    select: str | None = None,
+) -> dict:
+    try:
+        normal = _FACE_NORMALS[face]
+    except KeyError as exc:
+        raise ModelError(
+            f"unsupported Forge face in IR: {face!r}"
+        ) from exc
+    selector = {
+        "field": "faces",
+        "where": {"plane_normal": normal},
+        "max": "area",
+    }
+    if select is not None:
+        selector["select"] = select
+    command = _command("model.faces", body=name)
+    command["bind"] = {variable: selector}
+    return command
+
+
 def _face_boundary_commands(
     selection: FaceBoundaryIR,
     name: str,
+    *,
+    prior: list[dict] | None = None,
 ) -> tuple[list[dict], str]:
     if not selection.faces:
         raise ModelError("portable SolidCraft face-boundary IR has no faces")
 
     commands = []
     previous_edges = None
-    for index, face in enumerate(selection.faces, start=1):
-        try:
-            normal = _FACE_NORMALS[face]
-        except KeyError as exc:
-            raise ModelError(
-                f"unsupported Forge face in IR: {face!r}"
-            ) from exc
-
+    start = _next_face_query_index(prior or [])
+    for offset, face in enumerate(selection.faces):
+        index = start + offset
         face_variable = f"$topology_face_{index}"
         edge_variable = f"$topology_edges_{index}"
-        commands.append(
-            {
-                "command": "model.faces",
-                "params": {"body": name},
-                "bind": {
-                    face_variable: {
-                        "field": "faces",
-                        "where": {"plane_normal": normal},
-                        "max": "area",
-                    }
-                },
-            }
-        )
+        commands.append(_face_query_command(name, face, face_variable))
         binding = {
             "field": "edges",
             "body": name,
@@ -987,47 +999,126 @@ def _face_boundary_commands(
 
     return commands, previous_edges
 
-def _portable_commands(model: ModelIR, name: str) -> list[dict]:
-    node = model.root
-    parameters = _parameter_commands(model)
 
+def _face_name_commands(
+    prior: list[dict],
+    selection: FaceSetIR,
+    name: str,
+) -> tuple[list[dict], list[str]]:
+    if not isinstance(selection, FaceSetIR):
+        raise ModelError("portable SolidCraft shell requires FaceSetIR")
+    commands = []
+    variables = []
+    start = _next_face_query_index(prior)
+    for offset, face in enumerate(selection.faces):
+        variable = f"$topology_face_name_{start + offset}"
+        commands.append(
+            _face_query_command(
+                name,
+                face,
+                variable,
+                select="name",
+            )
+        )
+        variables.append(variable)
+    return commands, variables
+
+
+def _chamfer_commands(node: ChamferIR, name: str) -> list[dict]:
+    _require_positive(node.distance, "chamfer distance")
+    if node.distance2 is not None:
+        _require_positive(node.distance2, "chamfer distance2")
+    if node.flip and node.distance2 is None:
+        raise ModelError("portable SolidCraft ChamferIR flip requires distance2")
+
+    if isinstance(node.base, PlacementIR):
+        if not isinstance(node.base.primitive, BoxIR):
+            raise ModelError(
+                "portable SolidCraft ChamferIR placement base requires BoxIR"
+            )
+        base_commands = [_box_command(node.base, name)]
+    elif isinstance(node.base, ExtrudeIR):
+        if node.distance2 is not None or node.flip:
+            raise ModelError(
+                "portable SolidCraft asymmetric ChamferIR requires BoxIR"
+            )
+        base_commands = _extrude_commands(node.base, name)
+    else:
+        raise ModelError(
+            "portable SolidCraft ChamferIR has unsupported typed base"
+        )
+
+    topology, edges = _face_boundary_commands(
+        node.edges,
+        name,
+        prior=base_commands,
+    )
+    chamfer = {
+        "body": name,
+        "distance": command_value(node.distance),
+        "edges": edges,
+    }
+    if node.distance2 is not None:
+        chamfer["distance2"] = command_value(node.distance2)
+    if node.flip:
+        chamfer["flip"] = True
+
+    return [
+        *base_commands,
+        *topology,
+        _command("solid.chamfer", **chamfer),
+    ]
+
+
+def _shell_commands(model: ModelIR, node: ShellIR, name: str) -> list[dict]:
+    if not isinstance(node.base, BodyIR):
+        raise ModelError("portable SolidCraft ShellIR requires typed BodyIR base")
+    _require_positive(node.thickness, "shell thickness")
+    base_commands = _body_commands(model, node.base, name)
+    topology, faces = _face_name_commands(
+        base_commands,
+        node.open_faces,
+        name,
+    )
+    return [
+        *base_commands,
+        *topology,
+        _command(
+            "solid.shell",
+            faces=faces,
+            thickness=command_value(node.thickness),
+            body=name,
+        ),
+    ]
+
+
+def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
+    """Lower one typed semantic body history without re-reading Shape.data."""
     if isinstance(node, PlacementIR):
         if isinstance(node.primitive, BoxIR):
-            return [*parameters, _box_command(node, name)]
+            return [_box_command(node, name)]
         if isinstance(node.primitive, CylinderIR):
-            return [*parameters, _cylinder_command(node, name)]
+            return [_cylinder_command(node, name)]
         if isinstance(node.primitive, ConeIR):
-            return [*parameters, _cone_command(node, name)]
+            return [_cone_command(node, name)]
         if isinstance(node.primitive, SphereIR):
-            return [*parameters, _sphere_command(node, name)]
+            return [_sphere_command(node, name)]
         raise TypeError(
             f"unsupported SolidCraft placed primitive "
             f"{type(node.primitive).__name__}"
         )
 
     if isinstance(node, ExtrudeIR):
-        return [
-            *parameters,
-            *_extrude_commands(node, name),
-        ]
+        return _extrude_commands(node, name)
 
     if isinstance(node, BooleanIR):
-        return [
-            *parameters,
-            *_boolean_commands(node, name),
-        ]
+        return _boolean_commands(node, name)
 
     if isinstance(node, HoleIR):
-        return [
-            *parameters,
-            *_hole_commands(node, name),
-        ]
+        return _hole_commands(model, node, name)
 
     if isinstance(node, FilletIR):
-        return [
-            *parameters,
-            *_fillet_commands(node, name),
-        ]
+        return _fillet_commands(node, name)
 
     if isinstance(node, RevolveIR):
         base_commands = []
@@ -1041,54 +1132,27 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
                 )
             base_commands = [_box_command(node.target, name)]
         return [
-            *parameters,
             *base_commands,
             *_revolve_commands(model, node, name),
         ]
 
     if isinstance(node, ChamferIR):
-        _require_positive(node.distance, "chamfer distance")
-        if node.distance2 is not None:
-            _require_positive(node.distance2, "chamfer distance2")
-        if node.flip and node.distance2 is None:
-            raise ModelError("portable SolidCraft ChamferIR flip requires distance2")
+        return _chamfer_commands(node, name)
 
-        topology, edges = _face_boundary_commands(node.edges, name)
-        if isinstance(node.base, PlacementIR):
-            if not isinstance(node.base.primitive, BoxIR):
-                raise ModelError(
-                    "portable SolidCraft ChamferIR placement base requires BoxIR"
-                )
-            base_commands = [_box_command(node.base, name)]
-        elif isinstance(node.base, ExtrudeIR):
-            if node.distance2 is not None or node.flip:
-                raise ModelError(
-                    "portable SolidCraft asymmetric ChamferIR requires BoxIR"
-                )
-            base_commands = _extrude_commands(node.base, name)
-        else:
-            raise ModelError(
-                "portable SolidCraft ChamferIR has unsupported typed base"
-            )
+    if isinstance(node, ShellIR):
+        return _shell_commands(model, node, name)
 
-        chamfer = {
-            "body": name,
-            "distance": command_value(node.distance),
-            "edges": edges,
-        }
-        if node.distance2 is not None:
-            chamfer["distance2"] = command_value(node.distance2)
-        if node.flip:
-            chamfer["flip"] = True
+    raise TypeError(f"not a portable Forge BodyIR node: {type(node).__name__}")
 
-        return [
-            *parameters,
-            *base_commands,
-            *topology,
-            _command("solid.chamfer", **chamfer),
-        ]
 
-    raise TypeError(f"not a portable Forge IR node: {type(node).__name__}")
+def _portable_commands(model: ModelIR, name: str) -> list[dict]:
+    node = model.root
+    if not isinstance(node, BodyIR):
+        raise TypeError(f"not a portable Forge IR node: {type(node).__name__}")
+    return [
+        *_parameter_commands(model),
+        *_body_commands(model, node, name),
+    ]
 
 
 def _boolean_command_count(node) -> int:

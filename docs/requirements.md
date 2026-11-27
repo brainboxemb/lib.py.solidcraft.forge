@@ -174,7 +174,16 @@
 149. Length-valued Hole dimensions retain authored Parameter/Expression dependencies. Countersink angle and direction remain fixed numeric intent in #519; parameter-driven widening must be separately typed rather than misclassified as length.
 150. SolidCraft typed Hole lowering must reproduce the existing one-feature `solid.hole` behavior and command document for unchanged public source, including omitted through-all depth, omitted automatic-inward direction, recess fields and thread metadata.
 151. Mitcad may remain unsupported for `HoleIR` after #519 and must fail closed on that typed node. Absence of Mitcad Hole lowering must not force valid #519 source back to `LegacyShapeIR`.
-152. Topology-relative `Hole.on(...)`, attached Hole construction, Hole over broader typed targets, feature-pattern/configuration composition and parameter-driven direction/countersink-angle semantics remain outside #519.
+152. Topology-relative `Hole.on(...)`, attached Hole construction, feature-pattern/configuration composition and parameter-driven direction/countersink-angle semantics remain outside #519.
+153. Typed body-producing semantic nodes must share one engine-neutral `BodyIR` result/history contract so downstream features can target the current typed body without pair-specific feature unions or backend body ids.
+154. `BodyIR` is a semantic marker only; adding a node to that contract must not silently widen that node's own normalization or selector boundaries.
+155. `ShellIR` must preserve one typed BodyIR base, one positive symbolic wall thickness and one non-empty `FaceSetIR` of cardinal open faces. `FaceSetIR` selects faces themselves and must remain distinct from edge-boundary `FaceBoundaryIR`.
+156. SolidCraft ShellIR lowering must lower the typed body history first, resolve the requested current faces through native topology, then reproduce stable `solid.shell` command behavior without putting native face names in IR.
+157. Typed SolidCraft body-history lowering must be shared by downstream feature consumers rather than duplicating a new target-pair lowering path for every composition.
+158. `HoleIR.target` may reference any already-typed BodyIR result after #532; explicit Hole semantics remain unchanged and legacy/untyped targets still fail to normalize.
+159. Nested topology queries in typed SolidCraft history must allocate deterministic non-conflicting replay variables from prior typed commands so stable source order remains observable.
+160. Mitcad may remain unsupported for ShellIR and newly widened HoleIR histories and must fail closed rather than reinterpret source Shape payloads.
+161. #532 does not itself widen vertical Fillet selector semantics or the existing Chamfer/Revolve/Boolean normalization boundaries merely because those result nodes implement BodyIR.
 
 ## SCPF native associativity
 

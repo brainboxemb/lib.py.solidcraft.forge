@@ -33,6 +33,7 @@ from scpf.compiler import (
 )
 from scpf.ir import (
     AxisLineIR,
+    BodyIR,
     BooleanIR,
     BoxIR,
     ChamferIR,
@@ -41,6 +42,7 @@ from scpf.ir import (
     CylinderIR,
     ExtrudeIR,
     FaceBoundaryIR,
+    FaceSetIR,
     FeatureRefIR,
     FilletIR,
     HoleIR,
@@ -66,6 +68,7 @@ from scpf.ir import (
     SketchOrientationConstraintIR,
     SketchPointIR,
     SketchRelationsIR,
+    ShellIR,
     SphereIR,
     normalize_model,
     normalize_shape,
@@ -591,6 +594,116 @@ class SemanticIRTests(unittest.TestCase):
         )
         self.assertEqual(cone_feature["def"]["operation"], "join")
 
+    def test_shell_is_semantic_body_history_with_face_set(self):
+        wall = Parameter("wall", 2)
+        shape = Box(
+            80,
+            50,
+            30,
+            anchor=Anchor.BOTTOM,
+        ).shell(
+            wall,
+            open=(Faces.TOP, Faces.FRONT),
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "TypedShell",
+        )
+        self.assertIsInstance(model.root, BodyIR)
+        self.assertIsInstance(model.root, ShellIR)
+        self.assertIsInstance(model.root.base, PlacementIR)
+        self.assertEqual(
+            model.root.open_faces,
+            FaceSetIR(("top", "front")),
+        )
+        self.assertIs(model.root.thickness, wall)
+        self.assertEqual(
+            model.parameters,
+            (ParameterIR("wall", 2, roles=("length",)),),
+        )
+
+        commands = compile_solidcraft_ir(model, "TypedShell")["commands"]
+        self.assertEqual(
+            [
+                row["command"]
+                for row in commands
+                if row["command"].startswith(("solid.", "model."))
+            ],
+            [
+                "solid.box",
+                "model.faces",
+                "model.faces",
+                "solid.shell",
+            ],
+        )
+        shell = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.shell"
+        )
+        self.assertEqual(
+            shell["faces"],
+            ["$topology_face_name_1", "$topology_face_name_2"],
+        )
+        self.assertEqual(shell["thickness"], "wall")
+
+        with self.assertRaisesRegex(ModelError, "ShellIR"):
+            compile_mitcad_ir(model, "TypedShell")
+
+    def test_shell_and_hole_compose_over_generic_body_ir(self):
+        chamfered = Box(
+            80,
+            50,
+            20,
+            anchor=Anchor.BOTTOM,
+        ).chamfer(
+            1,
+            edges=Edges.from_faces(Faces.TOP),
+        )
+        shelled = chamfered.shell(
+            2,
+            open=Faces.FRONT,
+        )
+        shell_model = self.assert_solidcraft_compatibility(
+            shelled,
+            "ChamferShell",
+        )
+        self.assertIsInstance(shell_model.root, ShellIR)
+        self.assertIsInstance(shell_model.root.base, ChamferIR)
+
+        shell_commands = compile_solidcraft_ir(
+            shell_model,
+            "ChamferShell",
+        )["commands"]
+        face_bind_names = [
+            next(iter(row.get("bind", {})))
+            for row in shell_commands
+            if row["command"] == "model.faces"
+        ]
+        self.assertEqual(
+            face_bind_names,
+            ["$topology_face_1", "$topology_face_name_2"],
+        )
+
+        drilled = (
+            chamfered
+            + Hole(
+                d=5,
+                direction=(0, 0, -1),
+            ).at(0, 0, 20)
+        )
+        hole_model = self.assert_solidcraft_compatibility(
+            drilled,
+            "ChamferHole",
+        )
+        self.assertIsInstance(hole_model.root, HoleIR)
+        self.assertIsInstance(hole_model.root.target, BodyIR)
+        self.assertIsInstance(hole_model.root.target, ChamferIR)
+
+        with self.assertRaisesRegex(ModelError, "HoleIR"):
+            compile_mitcad_ir(hole_model, "ChamferHole")
+
     def test_explicit_hole_family_is_semantic_hole_history(self):
         hole_d = Parameter("hole_d", 6)
         hole_depth = Parameter("hole_depth", 8)
@@ -717,11 +830,25 @@ class SemanticIRTests(unittest.TestCase):
         self.assertNotIn("direction", hole)
         self.assertNotIn("depth", hole)
 
+    def test_hole_ir_accepts_generic_typed_body_target(self):
+        shape = (
+            Cylinder(d=30, h=12, anchor=Anchor.BOTTOM)
+            + Hole(d=5, direction=(0, 0, -1)).at(0, 0, 12)
+        )
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "CylinderHole",
+        )
+        self.assertIsInstance(model.root, HoleIR)
+        self.assertIsInstance(model.root.target, BodyIR)
+        self.assertIsInstance(model.root.target, PlacementIR)
+        self.assertIsInstance(model.root.target.primitive, CylinderIR)
+        with self.assertRaisesRegex(ModelError, "HoleIR"):
+            compile_mitcad_ir(model, "CylinderHole")
+
     def test_hole_ir_widening_stays_fail_closed(self):
         direction_parameter = Parameter("drill_direction", -1)
         unsupported = (
-            Cylinder(d=30, h=12, anchor=Anchor.BOTTOM)
-            + Hole(d=5, direction=(0, 0, -1)).at(0, 0, 12),
             Box(30, 30, 12, anchor=Anchor.BOTTOM)
             + Hole(
                 d=5,

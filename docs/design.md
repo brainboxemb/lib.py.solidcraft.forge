@@ -1511,8 +1511,38 @@ may lower the same Hole semantics using native Hole intent or backend-owned cut
 geometry without changing Forge IR.
 
 Topology-relative `Hole.on(...)`, attached Hole construction,
-non-Box/already-featured targets, feature-pattern/configuration composition and
-parameter-driven direction/countersink-angle widening remain separate IR work.
+feature-pattern/configuration composition and parameter-driven
+direction/countersink-angle widening remain separate IR work.
+
+#532 adds a generic `BodyIR` result/history contract so downstream features do
+not need pair-specific target unions merely to say “the current typed body”.
+All already-typed body-producing nodes participate in that marker without
+changing their existing feature semantics or their current normalization
+boundaries.
+
+The first new consumer is `ShellIR`. It owns one typed BodyIR base, one
+positive symbolic wall thickness and a `FaceSetIR` containing the cardinal
+faces that remain open. `FaceSetIR` means the faces themselves; it is
+deliberately distinct from `FaceBoundaryIR`, whose meaning is the boundary
+edges of selected faces.
+
+SolidCraft now lowers typed body history through one shared dispatcher. Shell
+first lowers its semantic base, then performs cardinal native face queries and
+passes only the privately bound face names to the existing `solid.shell`
+command. Topology query indexes are derived from the already-emitted typed
+history, preserving stable command documents when Shell follows another
+topology-consuming feature.
+
+`HoleIR.target` also becomes the generic BodyIR contract. This allows an
+explicit Hole to follow any already-typed body history that SolidCraft can
+lower, such as a typed Chamfer, without inventing a Chamfer→Hole special IR
+pair. The Hole node itself is unchanged. This composition widening does not
+claim that legacy targets, attached Hole placement or other feature semantics
+have become typed.
+
+Mitcad remains fail-closed for unsupported ShellIR/HoleIR histories. #532 does
+not widen vertical Fillet, Chamfer, Revolve or Boolean normalization merely
+because their result classes participate in BodyIR.
 
 ### Experimental Sketch/Profile + Extrude IR (#282)
 

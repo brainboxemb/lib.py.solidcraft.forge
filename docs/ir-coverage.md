@@ -30,9 +30,9 @@ Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
 - complete: **1 / 20 (5%)**
-- partial: **14 / 20 (70%)**
-- legacy: **5 / 20 (25%)**
-- families with at least some typed IR: **15 / 20 (75%)**
+- partial: **15 / 20 (75%)**
+- legacy: **4 / 20 (20%)**
+- families with at least some typed IR: **16 / 20 (80%)**
 - physical SCPF owners on permanent `exp`: **61**
 - owners with current end-to-end `scpf-mitcad` evidence: **10 / 61 (16.4%)**
 
@@ -57,9 +57,9 @@ not effort or backend parity.
 | Chamfer | partial | partial | partial | qualified slices | Broader bases/selectors/orientations. |
 | Fillet | partial | partial | partial | qualified slices | Broader bases/selectors/variable forms. |
 | Feature identity, suppression, configuration | partial | partial | partial | qualified slices | General feature/config composition. |
-| Hole family | partial | yes | unsupported | no | Explicit `.at(...)` Hole/Counterbore/Countersink/Threaded intent is typed by #519; attached/on, broader targets, pattern/config composition and parameter-driven direction/angle remain. |
+| Hole family | partial | yes | unsupported | no | Explicit `.at(...)` Hole-family intent is typed and #532 allows any already-typed BodyIR target; attached/on, pattern/config composition and parameter-driven direction/angle remain. |
 | Native feature patterns | legacy | legacy stable | unsupported | no | Semantic source-feature and pattern IR. |
-| Shell | legacy | legacy stable | unsupported | no | Semantic shell feature/history node. |
+| Shell | partial | yes | unsupported | no | #532 adds ShellIR over any already-typed BodyIR with semantic cardinal FaceSetIR; legacy targets remain outside typed history. |
 | Plastic features: Lip, SnapFit, Boss, Rest | legacy | legacy stable | unsupported | no | Generic mechanical feature/history semantics. |
 | Sheet metal | legacy | legacy stable | unsupported | no | Sheet rule/body/features form a separate large semantic layer. |
 | Assemblies, occurrences, relationships | legacy | legacy stable | unsupported | no | Coherent assembly/relationship IR. |
@@ -84,5 +84,6 @@ For an IR batch:
 6. update this inventory.
 
 Mitcad may consume several newly IR-ready capabilities later in one
-backend-focused batch with backend tests and native qualification. The immediate
-IR queue begins with the coherent explicit Hole-family #519 `HoleIR` batch.
+backend-focused batch with backend tests and native qualification. #532 adds the
+generic BodyIR history contract and ShellIR; the next selected wave items are
+#533 native feature PatternIR and #534 basic 2D ProfileIR completion.
