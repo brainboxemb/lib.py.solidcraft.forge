@@ -1003,6 +1003,33 @@ def _principal_plane_offset(plane: PlaneIR, *, label: str):
 
 
 def _solidcraft_sketch_create(sketch) -> dict:
+    """Create one standalone/world-frame Sketch from semantic frame intent."""
+    normal = _PLANE_NORMAL_INDEX[sketch.plane.orientation]
+    in_plane = tuple(
+        value
+        for index, value in enumerate(sketch.plane.origin)
+        if index != normal
+    )
+    explicit_frame = (
+        sketch.rotation is not None
+        or any(parameters_in(value) or abs(pv(value)) > 1e-12 for value in in_plane)
+    )
+    if explicit_frame:
+        if any(parameters_in(value) for value in sketch.plane.origin):
+            raise ModelError(
+                "explicit rotated/in-plane Sketch frame currently requires fixed origin"
+            )
+        from ..sketches import _sketch_plane_frame
+        return _command(
+            "sketch.create",
+            plane=_sketch_plane_frame(
+                sketch.plane.orientation,
+                origin=sketch.plane.origin,
+                rotation=sketch.rotation,
+            ),
+            name=sketch.name,
+        )
+
     offset = _principal_plane_offset(
         sketch.plane,
         label="portable SolidCraft Sketch IR",
@@ -1014,6 +1041,111 @@ def _solidcraft_sketch_create(sketch) -> dict:
     if parameters_in(offset) or abs(pv(offset)) > 1e-12:
         params["offset"] = command_value(offset)
     return _command("sketch.create", **params)
+
+
+def _typed_rectangular_support(node: BodyIR):
+    """Find the typed axis-aligned Box datum underlying one body history."""
+    if isinstance(node, PlacementIR) and isinstance(node.primitive, BoxIR):
+        return node, None
+    if isinstance(node, HoleIR):
+        return _typed_rectangular_support(node.target)
+    if isinstance(node, PlasticFeatureIR):
+        return _typed_rectangular_support(node.target)
+    if isinstance(node, ShellIR):
+        placement, _wall = _typed_rectangular_support(node.base)
+        return placement, node.thickness
+    if isinstance(node, (ChamferIR, FilletIR)):
+        return _typed_rectangular_support(node.base)
+    if isinstance(node, (RectangularPatternIR, CircularPatternIR)):
+        return _typed_rectangular_support(node.base)
+    if isinstance(node, BooleanIR):
+        return _typed_rectangular_support(node.target)
+    if isinstance(node, ExtrudeIR) and node.target is not None:
+        return _typed_rectangular_support(node.target)
+    raise ModelError(
+        "BOTTOM/CENTER/INNER_BOTTOM Sketch support currently requires "
+        "a typed rectangular Box history"
+    )
+
+
+def _solidcraft_sketch_support_commands(
+    sketch: SketchIR,
+    name: str,
+    *,
+    prior: list[dict],
+) -> tuple[list[dict], tuple]:
+    """Lower semantic Sketch support and return backend-local XY origin."""
+    support = sketch.support
+    if support is None or support.parent is None:
+        return [_solidcraft_sketch_create(sketch)], (0, 0)
+    if not isinstance(support, SketchSupportIR):
+        raise ModelError("portable SolidCraft Sketch support is malformed")
+
+    if support.parent == "top":
+        index = _next_face_query_index(prior)
+        point_var = f"$face_point_{index}"
+        index_var = f"$face_index_{index}"
+        selector = {
+            "field": "faces",
+            "where": {"plane_normal": [0, 0, 1]},
+            "max": "area",
+        }
+        face_query = _command("model.faces", body=name)
+        face_query["bind"] = {
+            point_var: {**selector, "select": "point"},
+            index_var: {**selector, "select": "index"},
+        }
+        return [
+            face_query,
+            _command(
+                "sketch.create",
+                plane={
+                    "face": point_var,
+                    "body": name,
+                    "index": index_var,
+                },
+                project_edges=False,
+                name=sketch.name,
+            ),
+        ], (0, 0)
+
+    placement, wall = _typed_rectangular_support(support.target)
+    primitive = placement.primitive
+    corner = _box_corner_from_anchor(
+        primitive.length,
+        primitive.width,
+        primitive.height,
+        placement.point,
+        _DirectionSelector(placement.anchor),
+    )
+    center_x = _combine(corner[0], half(primitive.length))
+    center_y = _combine(corner[1], half(primitive.width))
+    if support.parent == "bottom":
+        plane_z = corner[2]
+    elif support.parent == "center":
+        plane_z = _combine(corner[2], half(primitive.height))
+    elif support.parent == "inner_bottom":
+        if wall is None:
+            raise ModelError(
+                "INNER_BOTTOM Sketch support requires typed ShellIR history"
+            )
+        plane_z = _combine(corner[2], wall)
+    else:
+        raise ModelError(
+            f"unsupported portable Sketch support anchor {support.parent!r}"
+        )
+
+    params = {"plane": "XY", "name": sketch.name}
+    if parameters_in(plane_z) or abs(pv(plane_z)) > 1e-12:
+        params["offset"] = command_value(plane_z)
+    return [_command("sketch.create", **params)], (center_x, center_y)
+
+
+def _next_sketch_index(commands: list[dict]) -> int:
+    return 1 + sum(
+        command.get("command") == "sketch.create"
+        for command in commands
+    )
 
 
 def _solidcraft_relation_polygon_points(sketch) -> tuple[tuple, ...] | None:
@@ -1417,46 +1549,94 @@ def _solidcraft_profile_commands(
     return commands
 
 
-def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
-    """Lower typed Sketch/Profile + Extrude IR without frontend parsing."""
+def _extrude_commands(
+    model: ModelIR,
+    node: ExtrudeIR,
+    name: str,
+) -> list[dict]:
+    """Lower typed Sketch support/graph/region + Extrude semantics."""
     sketch = node.sketch
-    _principal_plane_offset(
-        sketch.plane,
-        label="portable SolidCraft Sketch IR",
+    if not isinstance(sketch, SketchIR):
+        raise ModelError("portable SolidCraft ExtrudeIR requires SketchIR")
+
+    commands = []
+    if node.operation != "new_body":
+        if not isinstance(node.target, BodyIR):
+            raise ModelError("attached ExtrudeIR requires typed body target")
+        commands.extend(_body_commands(model, node.target, name))
+
+    support_commands, local_origin = _solidcraft_sketch_support_commands(
+        sketch,
+        name,
+        prior=commands,
     )
-    if len(node.regions) != 1:
-        raise ModelError("portable SolidCraft Extrude IR requires one region")
-    region = node.regions[0]
-    if not isinstance(region, RegionIR):
-        raise ModelError("portable SolidCraft Extrude IR requires RegionIR")
+    sketch_index = _next_sketch_index(commands)
+    commands.extend(support_commands)
 
-    try:
-        pick = _region_interior_point(sketch, region)
-    except ValueError as exc:
-        raise ModelError(str(exc)) from exc
-
-    commands = [_solidcraft_sketch_create(sketch)]
-    for index, profile in enumerate(sketch.profiles, start=1):
+    if sketch.graph is not None:
         commands.extend(
-            _solidcraft_profile_commands(
-                sketch,
-                profile,
-                profile_index=index,
+            _solidcraft_sketch_graph_commands(
+                sketch.graph,
+                sketch_index=sketch_index,
+                model=model,
+                origin_offset=local_origin,
             )
         )
-
-    _require_positive(node.distance, "sketch extrusion distance")
+    else:
+        for index, profile in enumerate(sketch.profiles, start=1):
+            commands.extend(
+                _solidcraft_profile_commands(
+                    sketch,
+                    profile,
+                    profile_index=index,
+                    origin_offset=local_origin,
+                )
+            )
     commands.append(_command("sketch.finish"))
 
-    extrude = {
-        "body_name": name,
-        "direction": node.direction,
-        "distance": command_value(node.distance),
-    }
-    if len(sketch.profiles) > 1:
-        extrude["profiles"] = [{"point": [pick[0], pick[1]]}]
-        extrude["exact_regions"] = True
-    commands.append(_command("solid.extrude", **extrude))
+    params = {"direction": node.direction}
+    if node.operation == "new_body":
+        params["body_name"] = name
+    else:
+        params["operation"] = node.operation
+        params["targets"] = [name]
+
+    if node.through_all:
+        params["through_all"] = True
+    else:
+        _require_positive(node.distance, "sketch extrusion distance")
+        params["distance"] = _role_command_value(
+            model,
+            node.distance,
+            "length",
+        )
+
+    if node.regions:
+        # A single direct profile with no authored selector keeps the stable
+        # implicit all-profile spelling.
+        implicit_single = (
+            len(node.regions) == 1
+            and node.regions[0].selector is None
+            and len(sketch.profiles) == 1
+            and sketch.graph is not None
+            and len(sketch.graph.entities) == 1
+            and not sketch.graph.operations
+        )
+        if not implicit_single:
+            picks = []
+            exact = False
+            for region in node.regions:
+                try:
+                    pick = _region_interior_point(sketch, region)
+                except ValueError as exc:
+                    raise ModelError(str(exc)) from exc
+                picks.append({"point": [pick[0], pick[1]]})
+                exact = exact or region.exact or region.selector is None
+            params["profiles"] = picks
+            if exact:
+                params["exact_regions"] = True
+
+    commands.append(_command("solid.extrude", **params))
     return commands
 
 
@@ -1681,7 +1861,7 @@ def _chamfer_commands(node: ChamferIR, name: str) -> list[dict]:
             raise ModelError(
                 "portable SolidCraft asymmetric ChamferIR requires BoxIR"
             )
-        base_commands = _extrude_commands(node.base, name)
+        base_commands = _extrude_commands(model, node.base, name)
     else:
         raise ModelError(
             "portable SolidCraft ChamferIR has unsupported typed base"
@@ -2358,7 +2538,7 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
         )
 
     if isinstance(node, ExtrudeIR):
-        return _extrude_commands(node, name)
+        return _extrude_commands(model, node, name)
 
     if isinstance(node, BooleanIR):
         return _boolean_commands(node, name)
