@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/424-feature-config-ir
+branch: issue/433-nested-feature-history
 modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
-models: [shifted-axis-revolve]
+models: [primitive-csg]
 library: true
 tasks: [test]
