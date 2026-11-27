@@ -61,7 +61,7 @@ family such as assemblies is not equivalent in effort to one primitive family.
 | Chamfer | partial | partial | partial | qualified slices | Equal/two-distance bounded `ChamferIR` exists; broader bases/selectors/orientations remain. |
 | Fillet | partial | partial | partial | qualified slices | Vertical and TOP face-boundary bounded `FilletIR` exist; broader bases/selectors/variable forms remain. |
 | Feature identity, suppression and configuration | partial | partial | partial | qualified slices | `FeatureRefIR` and bounded suppression/configuration IR exist; general feature/config composition is not complete. |
-| Hole family | legacy | legacy stable | unsupported | no | #519 starts semantic simple through-all `HoleIR`; counterbore/countersink/threaded and wider depth/direction forms follow. |
+| Hole family | legacy | legacy stable | unsupported | no | #519 migrates the explicitly positioned public Hole family (`Hole`, `CounterboreHole`, `CountersinkHole`, `ThreadedHole`) to semantic `HoleIR`; topology-relative/attached placement, pattern/configuration composition and broader targets remain. |
 | Native feature patterns | legacy | legacy stable | unsupported | no | Rectangular/circular history patterns need semantic source-feature/pattern IR after feature identity/Hole groundwork. |
 | Shell | legacy | legacy stable | unsupported | no | Public shell intent still uses the legacy SolidCraft compiler path. |
 | Plastic/mechanical feature intents: Lip, SnapFit, Boss, Rest | legacy | legacy stable | unsupported | no | Need generic feature/history semantics rather than SolidCraft command-shaped nodes. |
@@ -94,6 +94,6 @@ For an IR PR:
 Mitcad work may then consume several newly IR-ready families in one
 backend-focused batch, with backend contract tests and native qualification.
 
-The immediate IR queue starts with #519 HoleIR. After that, choose coherent
+The immediate IR queue starts with the coherent explicit Hole-family #519 `HoleIR` batch. After that, choose coherent
 families/batches from the remaining partial/legacy rows, with priority on
 finishing a family rather than adding another narrow backend-qualified slice.
