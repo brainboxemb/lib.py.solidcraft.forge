@@ -213,6 +213,14 @@
 188. SolidCraft typed PlasticFeatureIR lowering must reproduce the existing `plastic.lip`, `plastic.snap_fit`, `plastic.boss` and `plastic.rest` command contracts for accepted public source.
 189. Mitcad may remain unsupported for FeaturePlacementIR consumers after #544 and must fail closed on HoleIR/PlasticFeatureIR forms it cannot lower. Mitcad support is not an IR-ready merge gate.
 190. General side-face feature placement, attached Cylinder placement, assembly occurrence placement and rotated component frames remain separate semantic layers; #544 does not conflate within-component feature placement with assembly attachment.
+191. Hole semantic normalization is independent from backend anchor/variant support. Current public Hole-family `.at(...)` and `.on()/attach()` authoring over a typed target must produce `HoleIR` when its dimensions and fixed direction are otherwise valid.
+192. Anchored HoleIR retains the generic FeaturePlacementIR parent/child anchor and offset intent. SolidCraft capability errors for side-face, directional or non-simple anchored forms must occur during lowering rather than by reverting the model to LegacyShapeIR.
+193. SolidCraft must lower simple non-directional anchored Hole on both TOP and BOTTOM rectangular support faces. TOP retains the stable editable Sketch-circle + cut-Extrude spelling; BOTTOM finite depth drills in the positive body-normal direction from the bottom entry face.
+194. Through-all TOP/BOTTOM simple anchored Hole remains one full body-thickness cut whose semantic result is independent of which supported entry face authored the request.
+195. `countersink_angle` is an angle-valued Hole use site. Direct Parameters in that field remain semantic ParameterIR with role `angle` and lower to native degree units; Forge must not classify them as millimetre dimensions.
+196. The stable SolidCraft compatibility classifier must use the same degree role for countersink-angle Parameters so typed and compatibility lowering agree on editable native units.
+197. Fixed non-zero Hole direction vectors remain engine-neutral orientation intent. #550 does not introduce parameter-driven vector components as a new editable direction contract.
+198. Patterning, configuration/suppression and backend-native Hole implementation are separate semantic/backend families; their remaining gaps do not make the Hole feature family itself incomplete once current Hole meaning and placement intent are represented.
 
 ## SCPF native associativity
 
