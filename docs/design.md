@@ -1583,6 +1583,40 @@ legacy whole-model boundary because its dependency is not typed; that is not
 missing Pattern semantics. Sketch-level pattern/mirror remains separate Sketch
 IR work.
 
+#534 completes the public basic closed-profile constructor family in semantic
+Sketch IR. `RectangleProfileIR` retains width/depth plus semantic centre,
+`RoundedRectangleProfileIR` adds the circular corner radius, and
+`SlotProfileIR` retains the exact authored Slot construction method, points,
+width, optional sweep and sketch-local offset. Slots are not rewritten as
+anonymous polygons because their construction/dimension intent is part of the
+editable CAD meaning.
+
+Existing `CircleProfileIR` now uses its already-present `center` field for
+public Sketch offsets instead of requiring the origin, and Polygon offsets are
+applied symbolically to authored points with `_dim_add`; Parameters and
+Expressions are therefore retained rather than numerically baked.
+
+The standalone single-profile Extrude normalizer is generalized around the
+typed ProfileIR family. Any one typed basic closed profile may feed positive,
+negative or symmetric distance extrusion. Existing multi-profile exact-region
+support remains intentionally bounded to the separately-qualified concentric
+Circle case; profile-family completion does not claim general multi-region
+Sketch completion.
+
+SolidCraft lowers each typed profile directly. Rectangle and rounded rectangle
+use dimension-derived two-point commands; fixed Slot constructions use their
+native `sketch.slot.*` commands. Parameterized straight Slots reproduce the
+existing dimensioned-native strategy from semantic SlotProfileIR values:
+current numeric seed points create the Slot, native dimensions/constraints own
+the authored symbolic centre-line length and placement, and no frontend
+`Shape.data` is re-read by the backend.
+
+Text and connected/open profile authoring remain part of the broader Sketch
+entity family rather than this basic closed-profile constructor family.
+Attached/support-face Sketch extrusion, Sketch pattern/mirror and general
+multi-region composition remain separately partial even though the underlying
+basic profiles are now complete.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are

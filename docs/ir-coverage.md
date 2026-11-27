@@ -29,8 +29,8 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **3 / 20 (15%)**
-- partial: **14 / 20 (70%)**
+- complete: **4 / 20 (20%)**
+- partial: **13 / 20 (65%)**
 - legacy: **3 / 20 (15%)**
 - families with at least some typed IR: **17 / 20 (85%)**
 - physical SCPF owners on permanent `exp`: **61**
@@ -48,7 +48,7 @@ not effort or backend parity.
 | Placement and transforms | partial | partial | partial | qualified slices | Rotated primitive frames and broader transform composition. |
 | Reference geometry: planes and axes | partial | partial | partial | qualified slices | PlaneIR plus principal/vector AxisLineIR are typed; broader datum/reference semantics remain. |
 | Sketch entities, constraints, dimensions | partial | partial | partial | qualified slices | Full public Sketch surface. |
-| 2D profiles | partial | partial | partial | qualified slices | Rectangle/RoundedRectangle/Slot families are not fully generic profile IR. |
+| 2D profiles | complete | yes | partial | qualified slices | #534 covers public Circle/Polygon/Rectangle/RoundedRectangle/Slot closed-profile constructors; text/open connected geometry remains in the broader Sketch-entity family. |
 | Regions/profile membership | partial | partial | partial | qualified slices | General region composition. |
 | Extrude | partial | partial | partial | qualified slices | Attached/rotated/broader profile and operation forms. |
 | Revolve | partial | partial | partial | qualified slices | Broader profile/operation/reference forms. |
@@ -84,6 +84,7 @@ For an IR batch:
 6. update this inventory.
 
 Mitcad may consume several newly IR-ready capabilities later in one
-backend-focused batch with backend tests and native qualification. #532 added the generic BodyIR history contract and ShellIR; #533 completes the
-current native feature Pattern family. The next selected wave item is #534
-basic 2D ProfileIR completion.
+backend-focused batch with backend tests and native qualification. #532 added generic BodyIR history and ShellIR; #533 completed native feature
+PatternIR; #534 completes the public basic closed-profile constructor family.
+The selected #535 wave is therefore complete and the next work should be chosen
+from the remaining partial/legacy families rather than Mitcad catch-up.

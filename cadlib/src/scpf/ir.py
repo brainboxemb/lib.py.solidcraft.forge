@@ -148,6 +148,182 @@ class CircleProfileIR:
 
 
 @dataclass(frozen=True)
+class RectangleProfileIR:
+    """Dimension-defined rectangle around one semantic sketch-local centre."""
+
+    width: Any
+    depth: Any
+    center: tuple[Any, Any] = (0, 0)
+    source_kind: str = "rectangle"
+
+    def __post_init__(self):
+        if (
+            isinstance(self.width, bool)
+            or isinstance(self.depth, bool)
+            or not isfinite(pv(self.width))
+            or not isfinite(pv(self.depth))
+            or pv(self.width) <= 0
+            or pv(self.depth) <= 0
+        ):
+            raise ValueError(
+                "RectangleProfileIR width/depth must be positive CAD dimensions"
+            )
+        if (
+            not isinstance(self.center, tuple)
+            or len(self.center) != 2
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.center
+            )
+        ):
+            raise ValueError(
+                "RectangleProfileIR center must contain two finite CAD dimensions"
+            )
+
+
+@dataclass(frozen=True)
+class RoundedRectangleProfileIR:
+    """Rectangle profile whose four corners share one circular radius."""
+
+    width: Any
+    depth: Any
+    radius: Any
+    center: tuple[Any, Any] = (0, 0)
+    source_kind: str = "rounded_rectangle"
+
+    def __post_init__(self):
+        if (
+            isinstance(self.width, bool)
+            or isinstance(self.depth, bool)
+            or isinstance(self.radius, bool)
+            or not isfinite(pv(self.width))
+            or not isfinite(pv(self.depth))
+            or not isfinite(pv(self.radius))
+            or pv(self.width) <= 0
+            or pv(self.depth) <= 0
+            or pv(self.radius) <= 0
+            or pv(self.radius) * 2 >= min(pv(self.width), pv(self.depth))
+        ):
+            raise ValueError(
+                "RoundedRectangleProfileIR requires positive dimensions and "
+                "radius below half the shorter side"
+            )
+        if (
+            not isinstance(self.center, tuple)
+            or len(self.center) != 2
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.center
+            )
+        ):
+            raise ValueError(
+                "RoundedRectangleProfileIR center must contain two finite CAD dimensions"
+            )
+
+
+@dataclass(frozen=True)
+class SlotProfileIR:
+    """One authored native Slot construction in semantic sketch coordinates."""
+
+    construction: str
+    points: tuple[tuple[Any, Any], ...]
+    width: Any
+    sweep: float | None = None
+    offset: tuple[Any, Any] = (0, 0)
+    source_kind: str = "slot"
+
+    def __post_init__(self):
+        expected = {
+            "center_to_center": 2,
+            "overall": 2,
+            "center_point": 2,
+            "arc_three_point": 3,
+            "arc_center_end": 3,
+            "arc_center_sweep": 2,
+        }
+        if self.construction not in expected:
+            raise ValueError("SlotProfileIR construction is unsupported")
+        if (
+            not isinstance(self.points, tuple)
+            or len(self.points) != expected[self.construction]
+            or any(
+                not isinstance(point, tuple)
+                or len(point) != 2
+                or any(
+                    isinstance(value, bool) or not isfinite(pv(value))
+                    for value in point
+                )
+                for point in self.points
+            )
+        ):
+            raise ValueError(
+                "SlotProfileIR points do not match the construction contract"
+            )
+        if (
+            isinstance(self.width, bool)
+            or not isfinite(pv(self.width))
+            or pv(self.width) <= 0
+        ):
+            raise ValueError("SlotProfileIR width must be positive")
+        if (
+            not isinstance(self.offset, tuple)
+            or len(self.offset) != 2
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.offset
+            )
+        ):
+            raise ValueError(
+                "SlotProfileIR offset must contain two finite CAD dimensions"
+            )
+
+        numeric = tuple(
+            tuple(float(pv(value)) for value in point)
+            for point in self.points
+        )
+        if self.construction in {
+            "center_to_center",
+            "overall",
+            "center_point",
+        }:
+            if numeric[0] == numeric[1]:
+                raise ValueError("straight SlotProfileIR endpoints must differ")
+            if self.construction == "overall":
+                if hypot(
+                    numeric[1][0] - numeric[0][0],
+                    numeric[1][1] - numeric[0][1],
+                ) <= pv(self.width):
+                    raise ValueError(
+                        "overall SlotProfileIR length must exceed width"
+                    )
+        elif self.construction == "arc_three_point":
+            if len(set(numeric)) != 3:
+                raise ValueError(
+                    "arc-three-point SlotProfileIR points must be distinct"
+                )
+        else:
+            if numeric[0] == numeric[1]:
+                raise ValueError(
+                    "arc-center SlotProfileIR center and start must differ"
+                )
+            if self.construction == "arc_center_sweep":
+                if (
+                    self.sweep is None
+                    or isinstance(self.sweep, bool)
+                    or not isinstance(self.sweep, (int, float))
+                    or not isfinite(self.sweep)
+                    or not 0 < self.sweep < 360
+                ):
+                    raise ValueError(
+                        "arc-center SlotProfileIR sweep must be fixed in (0, 360)"
+                    )
+            elif self.sweep is not None:
+                raise ValueError(
+                    "arc-center end SlotProfileIR must not also carry sweep"
+                )
+
+
+@dataclass(frozen=True)
 class PolygonProfileIR:
     """One closed straight-segment profile in Sketch-local coordinates."""
 
@@ -182,7 +358,13 @@ class PolygonProfileIR:
                 )
 
 
-ProfileIR = CircleProfileIR | PolygonProfileIR
+ProfileIR = (
+    CircleProfileIR
+    | RectangleProfileIR
+    | RoundedRectangleProfileIR
+    | SlotProfileIR
+    | PolygonProfileIR
+)
 
 
 @dataclass(frozen=True)
@@ -501,6 +683,24 @@ def _circle_region_interior_point(
     region. Other concentric profiles may remain in the Sketch without becoming
     region members.
     """
+    if (
+        len(sketch.profiles) == 1
+        and region.outer == 0
+        and not region.holes
+        and isinstance(sketch.profiles[0], CircleProfileIR)
+    ):
+        profile = sketch.profiles[0]
+        if (
+            isinstance(profile.diameter, bool)
+            or not isfinite(pv(profile.diameter))
+            or pv(profile.diameter) <= 0
+        ):
+            raise ValueError("qualified circle diameter must be positive")
+        center = tuple(float(pv(value)) for value in profile.center)
+        if any(not isfinite(value) for value in center):
+            raise ValueError("qualified circle center must be finite")
+        return center
+
     indexes = (region.outer,) + region.holes
     if any(index >= len(sketch.profiles) for index in indexes):
         raise ValueError("circle region references a missing sketch profile")
@@ -675,6 +875,44 @@ def _polygon_region_interior_point(
     return (x, y)
 
 
+def _basic_profile_region_interior_point(
+    sketch: SketchIR,
+    region: RegionIR,
+) -> tuple[float, float]:
+    if len(sketch.profiles) != 1 or region.outer != 0 or region.holes:
+        raise ValueError(
+            "qualified basic profile region requires one outer profile"
+        )
+    profile = sketch.profiles[0]
+    if isinstance(
+        profile,
+        (RectangleProfileIR, RoundedRectangleProfileIR),
+    ):
+        return tuple(float(pv(value)) for value in profile.center)
+    if not isinstance(profile, SlotProfileIR):
+        raise ValueError("profile is not one qualified basic profile")
+
+    def shifted(point):
+        return tuple(
+            float(pv(_dim_add(value, profile.offset[index])))
+            for index, value in enumerate(point)
+        )
+
+    points = tuple(shifted(point) for point in profile.points)
+    if profile.construction in {"center_to_center", "overall"}:
+        return (
+            (points[0][0] + points[1][0]) / 2.0,
+            (points[0][1] + points[1][1]) / 2.0,
+        )
+    if profile.construction == "center_point":
+        return points[0]
+    if profile.construction == "arc_three_point":
+        return points[1]
+    # The start point lies on the Slot centre-line and strictly inside the
+    # finite-width region for both arc-center construction forms.
+    return points[1]
+
+
 def _region_interior_point(
     sketch: SketchIR,
     region: RegionIR,
@@ -686,7 +924,12 @@ def _region_interior_point(
         and isinstance(sketch.profiles[region.outer], PolygonProfileIR)
     ):
         return _polygon_region_interior_point(sketch, region)
-    return _circle_region_interior_point(sketch, region)
+    if (
+        0 <= region.outer < len(sketch.profiles)
+        and isinstance(sketch.profiles[region.outer], CircleProfileIR)
+    ):
+        return _circle_region_interior_point(sketch, region)
+    return _basic_profile_region_interior_point(sketch, region)
 
 
 @dataclass(frozen=True)
@@ -1801,8 +2044,124 @@ def _parameterized_polygon_coordinate_relations(
     )
 
 
+def _profile_ir_from_shape(
+    profile: Shape,
+    profile_anchor,
+    offset,
+    plane: str,
+) -> ProfileIR | None:
+    try:
+        offset = tuple(offset)
+        if len(offset) != 2:
+            return None
+
+        if profile.kind == "circle":
+            if profile_anchor is not Anchor.CENTER:
+                return None
+            (diameter,) = profile.data
+            return CircleProfileIR(
+                diameter=diameter,
+                center=offset,
+            )
+
+        if profile.kind == "rectangle":
+            if profile_anchor is not Anchor.CENTER:
+                return None
+            width, depth = profile.data
+            return RectangleProfileIR(
+                width=width,
+                depth=depth,
+                center=offset,
+            )
+
+        if profile.kind == "rounded_rectangle":
+            if profile_anchor is not Anchor.CENTER:
+                return None
+            width, depth, radius = profile.data
+            return RoundedRectangleProfileIR(
+                width=width,
+                depth=depth,
+                radius=radius,
+                center=offset,
+            )
+
+        if profile.kind == "polygon":
+            if profile_anchor is not None:
+                return None
+            points, profile_plane, ids = profile.data
+            if profile_plane != plane:
+                return None
+            shifted = tuple(
+                tuple(
+                    _dim_add(value, offset[index])
+                    for index, value in enumerate(point)
+                )
+                for point in points
+            )
+            return PolygonProfileIR(
+                points=shifted,
+                segment_ids=tuple(ids) if ids is not None else None,
+            )
+
+        if profile_anchor is not None:
+            return None
+
+        if profile.kind == "slot_center_to_center":
+            p0, p1, width = profile.data
+            return SlotProfileIR(
+                construction="center_to_center",
+                points=(tuple(p0), tuple(p1)),
+                width=width,
+                offset=offset,
+            )
+        if profile.kind == "slot_overall":
+            p0, p1, width = profile.data
+            return SlotProfileIR(
+                construction="overall",
+                points=(tuple(p0), tuple(p1)),
+                width=width,
+                offset=offset,
+            )
+        if profile.kind == "slot_center_point":
+            center, end, width = profile.data
+            return SlotProfileIR(
+                construction="center_point",
+                points=(tuple(center), tuple(end)),
+                width=width,
+                offset=offset,
+            )
+        if profile.kind == "slot_arc_three_point":
+            start, through, end, width = profile.data
+            return SlotProfileIR(
+                construction="arc_three_point",
+                points=(tuple(start), tuple(through), tuple(end)),
+                width=width,
+                offset=offset,
+            )
+        if profile.kind == "slot_arc_center":
+            center, start, end, sweep, width = profile.data
+            if end is not None:
+                return SlotProfileIR(
+                    construction="arc_center_end",
+                    points=(tuple(center), tuple(start), tuple(end)),
+                    width=width,
+                    offset=offset,
+                )
+            return SlotProfileIR(
+                construction="arc_center_sweep",
+                points=(tuple(center), tuple(start)),
+                width=width,
+                sweep=float(sweep),
+                offset=offset,
+            )
+    except (TypeError, ValueError):
+        return None
+
+    return None
+
+
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
-    """Normalize the qualified standalone Sketch + Extrude slices."""
+    """Normalize standalone Sketch + closed-profile Extrude semantics."""
     if shape.kind != "sketch_base_extrusion":
         return None
 
@@ -1825,73 +2184,39 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     if origin is not None or plane_offset is not None or rotation is not None:
         return None
     plane_ir = _plane_ir(plane)
-    if plane_ir is None:
-        return None
-    if operations:
+    if plane_ir is None or operations or not profiles:
         return None
     if direction not in ("positive", "negative", "symmetric"):
         return None
 
-    # Bounded straight-segment feature-composition slice (#351).
-    if len(profiles) == 1 and profiles[0][0].kind == "polygon":
-        if direction != "symmetric":
-            return None
-        if profile_picks is not None or exact_regions:
-            return None
-
-        profile, profile_anchor, offset = profiles[0]
-        if profile_anchor is not None or tuple(offset) != (0, 0):
-            return None
-        points, profile_plane, ids = profile.data
-        if profile_plane != plane:
-            return None
-
-        polygon = PolygonProfileIR(
-            points=tuple(tuple(point) for point in points),
-            segment_ids=tuple(ids) if ids is not None else None,
-        )
-        sketch = SketchIR(
-            name=sketch_name,
-            plane=plane_ir,
-            profiles=(polygon,),
-            relations=(
-                _parameterized_rectangle_relations(polygon)
-                or _parameterized_polygon_coordinate_relations(polygon)
-            ),
-        )
-        region = RegionIR(outer=0)
-        try:
-            _polygon_region_interior_point(sketch, region)
-        except ValueError:
-            return None
-        return ExtrudeIR(
-            sketch=sketch,
-            regions=(region,),
-            distance=distance,
-            direction=direction,
-        )
-
-    # Circle exact-region slices qualified by #282/#320/#456.
-    if direction not in ("positive", "negative"):
-        return None
-    if not profiles:
-        return None
-
     semantic_profiles = []
     for profile, profile_anchor, offset in profiles:
-        if profile.kind != "circle":
+        semantic = _profile_ir_from_shape(
+            profile,
+            profile_anchor,
+            offset,
+            plane,
+        )
+        if semantic is None:
             return None
-        if profile_anchor is not Anchor.CENTER:
-            return None
-        if tuple(offset) != (0, 0):
-            return None
-        (diameter,) = profile.data
-        semantic_profiles.append(CircleProfileIR(diameter=diameter))
+        semantic_profiles.append(semantic)
+
+    relations = None
+    if (
+        len(semantic_profiles) == 1
+        and isinstance(semantic_profiles[0], PolygonProfileIR)
+    ):
+        polygon = semantic_profiles[0]
+        relations = (
+            _parameterized_rectangle_relations(polygon)
+            or _parameterized_polygon_coordinate_relations(polygon)
+        )
 
     sketch = SketchIR(
         name=sketch_name,
         plane=plane_ir,
         profiles=tuple(semantic_profiles),
+        relations=relations,
     )
 
     if len(semantic_profiles) == 1:
@@ -1899,11 +2224,20 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
             return None
         region = RegionIR(outer=0)
         try:
-            _circle_region_interior_point(sketch, region)
+            _region_interior_point(sketch, region)
         except ValueError:
             return None
         regions = (region,)
     else:
+        # Keep the already-qualified exact-region multi-profile contract
+        # deliberately narrow to concentric circles.
+        if direction not in ("positive", "negative"):
+            return None
+        if any(
+            not isinstance(profile, CircleProfileIR)
+            for profile in semantic_profiles
+        ):
+            return None
         if not exact_regions or profile_picks is None or len(profile_picks) != 1:
             return None
         try:
@@ -2825,6 +3159,8 @@ __all__ = [
     "ChamferIR",
     "CircleProfileIR",
     "CircularPatternIR",
+    "RectangleProfileIR",
+    "RoundedRectangleProfileIR",
     "CylinderIR",
     "ConeIR",
     "ExtrudeIR",
@@ -2861,6 +3197,7 @@ __all__ = [
     "SketchPointIR",
     "SketchRelationsIR",
     "ShellIR",
+    "SlotProfileIR",
     "SphereIR",
     "_polygon_region_interior_point",
     "_region_interior_point",
