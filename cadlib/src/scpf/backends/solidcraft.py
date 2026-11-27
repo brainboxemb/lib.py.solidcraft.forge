@@ -17,7 +17,6 @@ from ..core import (
     Parameter,
     _DirectionSelector,
     _dim_abs,
-    _dim_add,
     _dim_sub,
     _box_corner_from_anchor,
     _cone_base_from_anchor,
@@ -69,6 +68,7 @@ from ..ir import (
     _region_interior_point,
     resolve_feature_ref,
 )
+from ..placement import _combine
 from ..replay import replay_document
 from ..scalar_ir import (
     ScalarBinaryIR,
@@ -749,6 +749,22 @@ def _solidcraft_relation_polygon_points(sketch) -> tuple[tuple, ...] | None:
     return tuple(point.position for point in relations.points)
 
 
+def _solidcraft_dimension_sum(left, right):
+    """Match the stable standalone Sketch symbolic coordinate spelling."""
+    if isinstance(left, (int, float)) and left == 0:
+        return right
+    if isinstance(right, (int, float)) and right == 0:
+        return left
+    if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+        return left + right
+    native_left = command_value(left)
+    native_right = command_value(right)
+    return _native_expression(
+        f"({native_left}) + ({native_right})",
+        tuple(sorted(_native_dependencies((native_left, native_right)))),
+    )
+
+
 def _solidcraft_profile_commands(
     sketch: SketchIR,
     profile: ProfileIR,
@@ -772,10 +788,10 @@ def _solidcraft_profile_commands(
     ):
         _require_positive(profile.width, "sketch rectangle width")
         _require_positive(profile.depth, "sketch rectangle height")
-        x0 = _dim_add(profile.center[0], -half(profile.width))
-        y0 = _dim_add(profile.center[1], -half(profile.depth))
-        x1 = _dim_add(profile.center[0], half(profile.width))
-        y1 = _dim_add(profile.center[1], half(profile.depth))
+        x0 = _solidcraft_dimension_sum(profile.center[0], -half(profile.width))
+        y0 = _solidcraft_dimension_sum(profile.center[1], -half(profile.depth))
+        x1 = _solidcraft_dimension_sum(profile.center[0], half(profile.width))
+        y1 = _solidcraft_dimension_sum(profile.center[1], half(profile.depth))
         params = {
             "p0": [command_value(x0), command_value(y0)],
             "p1": [command_value(x1), command_value(y1)],
@@ -832,7 +848,7 @@ def _solidcraft_profile_commands(
 
     def intent(point):
         return tuple(
-            _dim_add(value, profile.offset[index])
+            _combine(profile.offset[index], value)
             for index, value in enumerate(point)
         )
 
