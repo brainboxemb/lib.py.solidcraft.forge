@@ -109,6 +109,12 @@
 84. For a qualified standalone Sphere whose semantic centre has non-zero or symbolic Z, Mitcad must lower one backend-owned offset XY construction plane and reference it from the Sphere feature. The construction-plane uid/binding must not enter Forge IR.
 85. The #461 checkpoint does not broaden primitive Boolean CSG: shifted or non-center-anchor Sphere operands remain outside the qualified recursive CSG slice even though the same standalone PlacementIR is now representable.
 86. Exact pinned Mitcad runtime qualification must execute a parameterized top-anchor Sphere placement, retain radius/world-Z dependencies in the native support-plane/Sphere definitions and prove deterministic geometry.
+87. `ParameterIR` must retain semantic use roles rather than assigning one global physical unit to every authored Forge `Parameter`; the first qualified roles are `length` and `angle` in canonical order.
+88. Existing single-role length and angle parameters must retain their current native spelling and editability. A direct authored parameter used in both roles must remain one semantic parameter with one current numeric value.
+89. Mixed-role lowering must publish one editable native source parameter, not independent length/angle aliases. SolidCraft and Mitcad may represent that source as unitless/Number and apply explicit `mm` or `deg` context at the typed use site.
+90. Typed use-site coercion belongs to semantic fields: Sketch coordinates/dimensions are length-valued and Revolve extent is angle-valued. Backends must not infer the role from command names or native parameter metadata.
+91. The #469 slice qualifies only direct `Parameter` reuse across length and angle slots. If a mixed-role source is nested inside an arbitrary authored `Expression`, the model remains outside portable IR until dimensional expression typing exists.
+92. Exact pinned Mitcad runtime qualification must execute the mixed-role Revolve using one unitless native source parameter, explicit length/angle use expressions and deterministic solid geometry.
 
 ## SCPF native associativity
 
