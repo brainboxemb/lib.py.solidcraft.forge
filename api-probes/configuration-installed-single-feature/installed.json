@@ -1,0 +1,125 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "spacing",
+        "expression": "60",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          "-spacing / 2",
+          "0",
+          "10"
+        ],
+        "length": 20,
+        "width": 16,
+        "height": 12,
+        "operation": "new",
+        "body_name": "LeftCoupler"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          "spacing / 2",
+          "0",
+          "10"
+        ],
+        "length": 20,
+        "width": 16,
+        "height": 12,
+        "operation": "new",
+        "body_name": "RightCoupler"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "LeftCoupler",
+          "RightCoupler"
+        ],
+        "translate": [
+          0,
+          0,
+          -4
+        ],
+        "name": "Installed"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "spacing"
+        ],
+        "features": [
+          "Installed"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:spacing": "60 mm",
+          "suppress:Installed": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:spacing": "100 mm",
+          "suppress:Installed": "true"
+        }
+      }
+    },
+    {
+      "command": "config.rule",
+      "params": {
+        "rule": {
+          "id": "installed",
+          "name": "Installed",
+          "enabled": true,
+          "condition": {
+            "type": "always"
+          },
+          "effect": {
+            "type": "drive_suppression",
+            "feature": 3,
+            "value": false
+          }
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Small"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ]
+}
