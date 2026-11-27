@@ -585,9 +585,26 @@ def _sketch_relations_transport(relations: SketchRelationsIR):
     if not isinstance(relations, SketchRelationsIR):
         raise ModelError("Mitcad Sketch relations require SketchRelationsIR")
 
+    coordinate_mode = bool(relations.coordinate_dimensions)
     entities = []
     point_ids = []
-    for index, point in enumerate(relations.points, start=1):
+
+    if coordinate_mode:
+        # A fixed origin entity is native solver transport. Semantic coordinate
+        # dimensions reference the Sketch origin, not this Mitcad uid.
+        entities.append(
+            {
+                "id": "p1",
+                "type": "point",
+                "at": [0.0, 0.0],
+                "fixed": True,
+            }
+        )
+        point_start = 2
+    else:
+        point_start = 1
+
+    for index, point in enumerate(relations.points, start=point_start):
         point_id = f"p{index}"
         point_ids.append(point_id)
         at = [float(pv(value)) for value in point.position]
@@ -598,9 +615,8 @@ def _sketch_relations_transport(relations: SketchRelationsIR):
             "type": "point",
             "at": at,
         }
-        if index == 1:
-            # Solver anchoring is Mitcad transport, not semantic IR. The #440
-            # slice is intentionally the origin-based rectangle.
+        if not coordinate_mode and index == 1:
+            # Solver anchoring for the #440 rectangle remains backend transport.
             if any(
                 parameters_in(value) or abs(pv(value)) > 1e-12
                 for value in point.position
@@ -611,7 +627,7 @@ def _sketch_relations_transport(relations: SketchRelationsIR):
             entity["fixed"] = True
         entities.append(entity)
 
-    first_curve = len(point_ids) + 1
+    first_curve = point_start + len(point_ids)
     curve_ids = []
     for offset, line in enumerate(relations.lines):
         curve_id = f"c{first_curve + offset}"
@@ -644,83 +660,25 @@ def _sketch_relations_transport(relations: SketchRelationsIR):
         }
         for offset, dimension in enumerate(relations.dimensions)
     ]
+
+    coordinate_start = first_dimension + len(dimensions)
+    for offset, dimension in enumerate(relations.coordinate_dimensions):
+        dimensions.append(
+            {
+                "id": f"k{coordinate_start + offset}",
+                "type": (
+                    "horizontal_distance"
+                    if dimension.axis == "x"
+                    else "vertical_distance"
+                ),
+                "a": "p1",
+                "b": point_ids[dimension.point],
+                "signed": True,
+                "value": command_value(dimension.value),
+            }
+        )
+
     return entities, constraints, dimensions
-
-def _parameterized_polygon_sketch(profile: PolygonProfileIR):
-    """Transport a symbolic simple polygon through native point dimensions.
-
-    Current point positions seed the solver only. Every authored X/Y value is
-    retained as a native driving dimension from one fixed sketch origin, so
-    Forge Parameters/Expressions remain editable dependencies in the saved
-    Mitcad design.
-    """
-    values = tuple(
-        tuple(float(pv(value)) for value in point)
-        for point in profile.points
-    )
-    if any(not isfinite(value) for point in values for value in point):
-        raise ModelError(
-            "Mitcad parameterized PolygonProfileIR requires finite current values"
-        )
-
-    entities = [
-        {
-            "id": "p1",
-            "type": "point",
-            "at": [0.0, 0.0],
-            "fixed": True,
-        }
-    ]
-    point_ids = []
-    for index, value in enumerate(values, start=2):
-        uid = f"p{index}"
-        point_ids.append(uid)
-        entities.append(
-            {
-                "id": uid,
-                "type": "point",
-                "at": list(value),
-            }
-        )
-
-    first_curve = len(point_ids) + 2
-    for offset, start_id in enumerate(point_ids):
-        entities.append(
-            {
-                "id": f"c{first_curve + offset}",
-                "type": "line",
-                "start": start_id,
-                "end": point_ids[(offset + 1) % len(point_ids)],
-            }
-        )
-
-    dimensions = []
-    relation = first_curve + len(point_ids)
-    for index, (point_id, authored) in enumerate(
-        zip(point_ids, profile.points)
-    ):
-        dimensions.extend(
-            [
-                {
-                    "id": f"k{relation + 2 * index}",
-                    "type": "horizontal_distance",
-                    "a": "p1",
-                    "b": point_id,
-                    "signed": True,
-                    "value": command_value(authored[0]),
-                },
-                {
-                    "id": f"k{relation + 2 * index + 1}",
-                    "type": "vertical_distance",
-                    "a": "p1",
-                    "b": point_id,
-                    "signed": True,
-                    "value": command_value(authored[1]),
-                },
-            ]
-        )
-
-    return entities, [], dimensions
 
 
 def _next_sketch_entity_number(entities: list[dict]) -> int:
@@ -953,8 +911,8 @@ def _revolve_commands(
             sketch.relations
         )
     elif parameterized:
-        entities, constraints, dimensions = _parameterized_polygon_sketch(
-            profile
+        raise ModelError(
+            "parameterized Mitcad Polygon Revolve requires typed Sketch relations"
         )
     else:
         point_ids = []

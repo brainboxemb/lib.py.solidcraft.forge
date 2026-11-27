@@ -251,6 +251,63 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            polygon_width = Parameter("polygon_width", 10)
+            polygon_height = Parameter("polygon_height", 4)
+            polygon_half = polygon_width / 2
+            polygon_crown = polygon_height + 1
+            with Sketch(name="ParametricPolygon", plane="XZ") as polygon_profile:
+                Polygon2D(
+                    [
+                        (0, 0),
+                        (0, polygon_height),
+                        (polygon_half, polygon_crown),
+                        (polygon_width, 0),
+                    ],
+                    plane="XZ",
+                )
+            polygon_document = compile_mitcad_ir(
+                normalize_shape(polygon_profile.revolve(axis=Axis.X)),
+                "ParametricPolygonRevolve",
+            )
+            polygon_sketch = polygon_document["commands"][-2]["def"]
+            self.assertEqual(len(polygon_sketch["dimensions"]), 8)
+            self.assertEqual(
+                [dimension["type"] for dimension in polygon_sketch["dimensions"]],
+                [
+                    "horizontal_distance", "vertical_distance",
+                    "horizontal_distance", "vertical_distance",
+                    "horizontal_distance", "vertical_distance",
+                    "horizontal_distance", "vertical_distance",
+                ],
+            )
+            self.assertTrue(polygon_sketch["entities"][0]["fixed"])
+
+            polygon_native = run_document(
+                polygon_document,
+                save=root / "out/parameterized-polygon-revolve.mitcad",
+                export=root / "out/parameterized-polygon-revolve.stl",
+                executable=str(executable),
+                work_dir=root / "parameterized-polygon-revolve-workspace",
+            )
+            self.assertEqual(len(polygon_native["bodies"]), 1)
+            polygon_body = polygon_native["bodies"][0]
+            self.assertEqual(polygon_body["kind"], "solid")
+            self.assertAlmostEqual(
+                polygon_body["volume"],
+                pi * (430.0 / 3.0),
+                places=3,
+            )
+            for actual, expected in zip(
+                polygon_body["bbox"]["min"],
+                [0.0, -5.0, -5.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                polygon_body["bbox"]["max"],
+                [10.0, 5.0, 5.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
             axis_x = Parameter("axis_x", 8)
             panel = Box(80, 46, 10)
             with Sketch(name="PassThrough", plane="XY") as profile:
@@ -631,6 +688,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "circle-negative-extrude.stl",
                 "topology-face-boundary-box.mitcad",
                 "topology-face-boundary-box.stl",
+                "parameterized-polygon-revolve.mitcad",
+                "parameterized-polygon-revolve.stl",
                 "shifted-revolve-cut.mitcad",
                 "shifted-revolve-cut.stl",
                 "shifted-plane-revolve-cut.mitcad",
@@ -656,6 +715,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"topology_volume={topology_body['volume']}",
                         f"topology_bbox={topology_body['bbox']}",
                         f"topology_bindings={topology['bindings']}",
+                        f"parameterized_polygon_revolve_volume={polygon_body['volume']}",
+                        f"parameterized_polygon_revolve_bbox={polygon_body['bbox']}",
+                        "parameterized_polygon_coordinate_relations=pass",
                         f"shifted_revolve_cut_volume={shifted_body['volume']}",
                         f"shifted_revolve_cut_bbox={shifted_body['bbox']}",
                         f"shifted_plane_revolve_cut_volume={shifted_plane_body['volume']}",

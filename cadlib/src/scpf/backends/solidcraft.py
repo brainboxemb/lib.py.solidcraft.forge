@@ -324,9 +324,8 @@ def _solidcraft_relation_polygon_points(sketch) -> tuple[tuple, ...] | None:
     """Coalesce explicit semantic relations into SolidCraft's symbolic polyline.
 
     SolidCraft can retain authored point expressions directly in sketch.line,
-    so emitting duplicate solver constraints/dimensions would be unnecessary.
-    The relation graph is nevertheless the source of the geometry in this
-    qualified slice; this lowering only chooses a more compact native spelling.
+    so duplicate solver relations are unnecessary. The relation graph remains
+    the semantic source; this lowering only chooses an efficient native spelling.
     """
     relations = sketch.relations
     if relations is None:
@@ -343,9 +342,34 @@ def _solidcraft_relation_polygon_points(sketch) -> tuple[tuple, ...] | None:
         (line.start, line.end)
         for line in relations.lines
     )
-    if count != 4 or actual_lines != expected_lines:
+    if actual_lines != expected_lines:
         raise ModelError(
-            "portable SolidCraft #440 relations require one closed four-line loop"
+            "portable SolidCraft Sketch relations require one closed line loop"
+        )
+
+    if relations.coordinate_dimensions:
+        if relations.constraints or relations.dimensions:
+            raise ModelError(
+                "portable SolidCraft coordinate relations must not mix relation families"
+            )
+        expected = {
+            (point, axis): command_value(relations.points[point].position[index])
+            for point in range(count)
+            for index, axis in enumerate(("x", "y"))
+        }
+        actual = {
+            (dimension.point, dimension.axis): command_value(dimension.value)
+            for dimension in relations.coordinate_dimensions
+        }
+        if actual != expected or len(relations.coordinate_dimensions) != 2 * count:
+            raise ModelError(
+                "portable SolidCraft coordinate relations must drive every point coordinate"
+            )
+        return tuple(point.position for point in relations.points)
+
+    if count != 4:
+        raise ModelError(
+            "portable SolidCraft #440 relations require one four-line rectangle"
         )
 
     expected_orientations = (

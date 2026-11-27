@@ -45,6 +45,7 @@ from scpf.ir import (
     RegionIR,
     RevolveIR,
     SketchIR,
+    SketchCoordinateDimensionIR,
     SketchLengthDimensionIR,
     SketchLineIR,
     SketchOrientationConstraintIR,
@@ -817,23 +818,98 @@ class SemanticIRTests(unittest.TestCase):
                     SketchOrientationConstraintIR(1, "horizontal"),
                 ),
             )
+        with self.assertRaisesRegex(ValueError, "coordinate dimension references"):
+            SketchRelationsIR(
+                points=(
+                    SketchPointIR((0, 0)),
+                    SketchPointIR((1, 0)),
+                ),
+                lines=(SketchLineIR(0, 1),),
+                coordinate_dimensions=(
+                    SketchCoordinateDimensionIR(2, "x", 1),
+                ),
+            )
 
-    def test_non_rectangular_parameterized_revolve_does_not_fake_rectangle_relations(self):
+    def test_non_rectangular_parameterized_revolve_has_coordinate_relations(self):
         width = Parameter("width", 10)
         height = Parameter("height", 4)
+        half_width = width / 2
+        crown = height + 1
         with Sketch(name="NonRectangle", plane="XZ") as sketch:
             Polygon2D(
                 [
                     (0, 0),
                     (0, height),
-                    (width / 2, height + 1),
+                    (half_width, crown),
                     (width, 0),
                 ],
                 plane="XZ",
             )
-        model = normalize_shape(sketch.revolve(axis=Axis.X))
+        shape = sketch.revolve(axis=Axis.X)
+        model = self.assert_solidcraft_compatibility(shape, "NonRectangle")
         self.assertIsInstance(model.root, RevolveIR)
-        self.assertIsNone(model.root.sketch.relations)
+
+        relations = model.root.sketch.relations
+        self.assertIsInstance(relations, SketchRelationsIR)
+        self.assertEqual(
+            relations.lines,
+            (
+                SketchLineIR(0, 1),
+                SketchLineIR(1, 2),
+                SketchLineIR(2, 3),
+                SketchLineIR(3, 0),
+            ),
+        )
+        self.assertEqual(relations.constraints, ())
+        self.assertEqual(relations.dimensions, ())
+        self.assertEqual(
+            [(dimension.point, dimension.axis) for dimension in relations.coordinate_dimensions],
+            [
+                (0, "x"), (0, "y"),
+                (1, "x"), (1, "y"),
+                (2, "x"), (2, "y"),
+                (3, "x"), (3, "y"),
+            ],
+        )
+        self.assertIs(relations.coordinate_dimensions[3].value, height)
+        self.assertIs(relations.coordinate_dimensions[4].value, half_width)
+        self.assertIs(relations.coordinate_dimensions[5].value, crown)
+        self.assertIs(relations.coordinate_dimensions[6].value, width)
+
+        rendered = repr(relations).lower()
+        for backend_identity in ("uid", "replay", "command", "p1", "c6", "k10"):
+            self.assertNotIn(backend_identity, rendered)
+
+        mitcad = compile_mitcad_ir(model, "NonRectangle")
+        sketch_def = mitcad["commands"][-2]["def"]
+        self.assertEqual(
+            [entity["type"] for entity in sketch_def["entities"]],
+            [
+                "point",
+                "point", "point", "point", "point",
+                "line", "line", "line", "line",
+            ],
+        )
+        self.assertTrue(sketch_def["entities"][0]["fixed"])
+        self.assertEqual(
+            [dimension["type"] for dimension in sketch_def["dimensions"]],
+            [
+                "horizontal_distance", "vertical_distance",
+                "horizontal_distance", "vertical_distance",
+                "horizontal_distance", "vertical_distance",
+                "horizontal_distance", "vertical_distance",
+            ],
+        )
+        values = [dimension["value"] for dimension in sketch_def["dimensions"]]
+        self.assertIn("height", values)
+        self.assertIn("width", values)
+        rendered_values = [str(value) for value in values]
+        self.assertTrue(
+            any("width" in value and "2" in value for value in rendered_values)
+        )
+        self.assertTrue(
+            any("height" in value and "1" in value for value in rendered_values)
+        )
 
     def test_shifted_axis_revolve_cut_is_one_semantic_feature(self):
         axis_x = Parameter("axis_x", 8)
