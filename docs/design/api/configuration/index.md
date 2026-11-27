@@ -90,6 +90,153 @@ This distinction is central:
 - per-row Installed state requires a real row-owned boolean capability;
 - Forge must not pretend those two meanings are equivalent.
 
+## 3. Canonical HUB75 use case
+
+The configuration API must be judged against a realistic assembly rather than
+only isolated table features.
+
+A representative HUB75 assembly needs three independent authoring concerns:
+
+1. **Position** — for example Front versus Service position.
+2. **Coupler size** — for example Small versus Large, affecting the couplers and
+   any base-plate dimensions derived from that choice.
+3. **Free / Installed** — one global state which can be connected to several
+   participating items at once.
+
+Conceptually these are three independent axes:
+
+~~~text
+HUB75 assembly
+├── position: Front | Service
+├── coupler_size: Small | Large
+└── installed: Free | Installed
+~~~
+
+They must not be modelled as properties of one particular Coupler instance.
+They are final-design configuration intent. Individual reusable components may
+publish parameters or state interfaces that the final design binds to these
+global choices.
+
+A target semantic API should therefore be able to express something in this
+direction:
+
+~~~python
+position = Choice("Position", default="Front", values=("Front", "Service"))
+coupler_size = Choice("Coupler size", default="Small", values=("Small", "Large"))
+installed = State("Installed", default=False)
+
+left = Coupler(
+    size=coupler_size,
+    free_installed=installed,
+    name="left",
+)
+right = Coupler(
+    size=coupler_size,
+    free_installed=installed,
+    name="right",
+)
+
+display = Hub75Panel(
+    placement=Placement(y=position.parameter(...)),
+)
+
+Configure(
+    position,
+    coupler_size,
+    installed,
+)
+~~~
+
+The exact spelling above is **not yet normative**. The required semantics are:
+
+- configuration declarations are final-design/top-level intent;
+- reusable components consume explicit bound inputs/interfaces;
+- several components may bind to the same global state;
+- one global Free / Installed control must not become one checkbox per child;
+- placement may be driven by configuration just like geometry parameters;
+- backend limitations must not leak into the public semantic model.
+
+### Current SolidCraft 0.49 lowering pressure
+
+SolidCraft currently exposes one row list plus independent Configuration Rules.
+That creates a useful distinction for this example.
+
+A practical current mapping can use:
+
+- the row list for one named choice, for example Coupler size:
+  `Small` / `Large`;
+- one rule checkbox for a binary Position override, for example
+  `Service position`, driving one or more placement parameters;
+- one rule checkbox for global `Installed`, driving a shared installed-state
+  dependency used by all participating components.
+
+This avoids immediately flattening all three choices into rows such as:
+
+~~~text
+Small / Front / Free
+Small / Front / Installed
+Small / Service / Free
+Small / Service / Installed
+Large / Front / Free
+...
+~~~
+
+That cartesian-product representation is acceptable only as a backend fallback,
+not as the Forge public model.
+
+A SolidCraft rule has one direct effect, so a global Installed control that must
+affect several items needs one shared semantic dependency. For example, the
+rule may drive one assembly-level installed-state parameter, while all bound
+Free/Installed component interfaces derive their local motion or feature state
+from that shared value. Such transport may remain backend-private; Forge must
+not expose a fake numeric boolean merely because the SolidCraft backend uses one
+internally.
+
+The same applies to Position. A binary Front/Service choice can currently lower
+naturally to one rule driving a placement parameter. A future choice with three
+or more named positions cannot be represented as one checkbox; Forge should
+keep the multi-choice semantic intent and either lower it through rows or fail
+explicitly where the backend cannot preserve an independent selector.
+
+### Global Free / Installed interface
+
+Free / Installed is especially important because it is a **shared state**, not a
+Coupler property.
+
+A reusable item may publish a Free/Installed interface. The final design then
+binds several such interfaces to one global state:
+
+~~~text
+global Installed
+├── left coupler FreeInstalled interface
+├── right coupler FreeInstalled interface
+└── any later item exposing the same interface
+~~~
+
+Changing the one global state must update every bound participant.
+
+How that interface is spelled in Python is still open. Two viable directions
+are:
+
+~~~python
+left = Coupler(free_installed=installed)
+right = Coupler(free_installed=installed)
+~~~
+
+or an explicit final-design binding:
+
+~~~python
+Bind(
+    installed,
+    left.interface("free_installed"),
+    right.interface("free_installed"),
+)
+~~~
+
+The first is more concise and resembles parameter binding. The second makes
+final-design ownership more explicit. The API should choose one only after the
+feature/state handle model is qualified.
+
 ## 3. Public authoring direction
 
 Configuration belongs to the final design result.
