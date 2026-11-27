@@ -1,0 +1,157 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "size",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          -30,
+          0,
+          10
+        ],
+        "length": 24,
+        "width": 16,
+        "height": 12,
+        "operation": "new",
+        "body_name": "LeftCoupler"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          30,
+          0,
+          10
+        ],
+        "length": 24,
+        "width": 16,
+        "height": 12,
+        "operation": "new",
+        "body_name": "RightCoupler"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "LeftCoupler"
+        ],
+        "translate": [
+          4,
+          0,
+          0
+        ],
+        "name": "LeftInstalled"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "RightCoupler"
+        ],
+        "translate": [
+          -4,
+          0,
+          0
+        ],
+        "name": "RightInstalled"
+      }
+    },
+    {
+      "command": "timeline.group",
+      "params": {
+        "name": "Installed",
+        "features": [
+          "LeftInstalled",
+          "RightInstalled"
+        ]
+      }
+    },
+    {
+      "command": "timeline.suppress",
+      "params": {
+        "groups": [
+          5
+        ],
+        "suppressed": true
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "size"
+        ],
+        "features": [
+          "Installed"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:size": "40 mm",
+          "suppress:Installed": "true"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:size": "60 mm",
+          "suppress:Installed": "true"
+        }
+      }
+    },
+    {
+      "command": "config.rule",
+      "params": {
+        "rule": {
+          "id": "installed",
+          "name": "Installed",
+          "enabled": false,
+          "condition": {
+            "type": "always"
+          },
+          "effect": {
+            "type": "drive_suppression",
+            "feature": 5,
+            "value": false
+          }
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Small"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ]
+}

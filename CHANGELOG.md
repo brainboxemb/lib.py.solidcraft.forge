@@ -8,6 +8,23 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Changed
+
+- Replace wrapper-style configuration authoring with final-model
+  `model.configure(active=..., columns=..., rows=...)`.
+- Accept existing `Parameter` and authored Shape/component-feature handles
+  directly as configuration targets.
+
+### Removed
+
+- Remove the public `Configure(...)`, `Param(...)`, `Suppress(...)`,
+  `ConfigRule(...)`, `Always()`, `DriveParameter(...)` and
+  `Configure(..., rules=...)` surface.
+- Remove the obsolete rule-based `configuration-installed-state`
+  qualification model; direct feature suppression is the active Installed
+  configuration pattern.
+
+
 ## [0.24.0] - 2026-11-27
 
 ### Added

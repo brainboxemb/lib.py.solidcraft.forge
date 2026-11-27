@@ -26,7 +26,7 @@ def _repository(source_root):
 
 
 def _verification_sections(source_root: Path) -> tuple[dict[str, dict], list[dict]]:
-    path = source_root / "docs/verification/sections.yml"
+    path = source_root / "site/source/verification/sections.yml"
     if not path.is_file():
         raise ValueError(f"missing verification sections: {path}")
 

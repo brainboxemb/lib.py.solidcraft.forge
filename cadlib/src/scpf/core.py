@@ -5,7 +5,7 @@ become named parameters by the runner, not by user-written decorators.
 """
 from contextlib import contextmanager
 from contextvars import ContextVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 from math import isfinite
 from typing import Any
@@ -1417,6 +1417,11 @@ class Shape:
 
     kind: str
     data: Any
+    _configuration: object | None = field(
+        default=None,
+        repr=False,
+        compare=False,
+    )
 
     def __getattr__(self, name):
         if name == "group":
@@ -1453,6 +1458,21 @@ class Shape:
 
     def __sub__(self, other):
         return Shape("difference", (self, self._csg_operand(other, "-")))
+
+    def configure(self, *, active, columns, rows):
+        """Attach one editable configuration definition to this final model.
+
+        Configuration is final-model presentation/behavior metadata. The Shape
+        itself remains the return value so normal model code can build first,
+        call configure(), and then return the model.
+        """
+        from .configurations import _configure_model
+        return _configure_model(
+            self,
+            active=active,
+            columns=columns,
+            rows=rows,
+        )
 
     def export_feature(self, name):
         """Export this Forge-authored feature through a reusable component.

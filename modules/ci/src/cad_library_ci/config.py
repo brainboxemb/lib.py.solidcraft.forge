@@ -20,6 +20,7 @@ class ProjectConfig:
     development_branch: str
     modules_root: Path
     models_root: Path
+    api_probes_root: Path
     output_root: Path
 
 
@@ -28,12 +29,14 @@ class BuildSelection:
     branch: str
     modules: tuple[str, ...] | None
     models: tuple[str, ...] | None
+    api_probes: tuple[str, ...] | None = ()
     tasks: tuple[str, ...] = ("test",)
     library: bool = False
 
 
 def full_selection(branch):
-    return BuildSelection(branch, None, None, library=True)
+    # API probes are deliberately opt-in, even for full permanent builds.
+    return BuildSelection(branch, None, None, (), library=True)
 
 
 def mapping(path):
@@ -76,6 +79,7 @@ def load_project(repo):
         dev,
         _relative(roots.get("modules")),
         _relative(roots.get("models")),
+        _relative(roots.get("api_probes")),
         _relative(roots.get("output")),
     )
 
@@ -96,6 +100,7 @@ def load_build(repo, branch):
         branch,
         _ids(data.get("modules"), "modules"),
         _ids(data.get("models"), "models"),
+        _ids(data.get("api_probes", []), "api_probes"),
         library=library,
     )
 

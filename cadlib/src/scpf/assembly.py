@@ -418,6 +418,7 @@ def _validate_attachment_relationships(assembly):
 
 def _compile_assembly_with_dependencies(value, name):
     """Compile a root assembly into reusable components and occurrences."""
+    configuration = getattr(value, "_configuration", None)
     assembly = _as_assembly(value)
     _validate_attachment_relationships(assembly)
     names = _definition_names(assembly)
@@ -1098,6 +1099,16 @@ def _compile_assembly_with_dependencies(value, name):
 
     if not commands:
         raise ModelError(f"{name} contains no component instances")
+
+    if configuration is not None:
+        from .configurations import _configuration_commands
+        commands = _configuration_commands(
+            value,
+            configuration,
+            name,
+            commands,
+        )
+
     dependencies = _native_dependencies(commands)
     document = _plain_command_value(replay_document(commands))
     if assembly.drawings:

@@ -23,6 +23,7 @@ from .history import (
 from .items import discover_modules, select
 from .library import library_owner, build_wheel
 from .models import discover_models, select_models
+from .probes import discover_api_probes, select_api_probes
 from .runner import execute, execute_model_tests
 from .selection import changed_selection
 
@@ -39,7 +40,7 @@ def _is_full(plan):
 
 
 def _release_plan(branch):
-    return BuildSelection(branch, ("release",), (), library=True)
+    return BuildSelection(branch, ("release",), (), (), library=True)
 
 
 def _source_target():
@@ -135,6 +136,8 @@ def qualification_plan(
     full,
     library,
     release_only=False,
+    probes=(),
+    selected_probes=(),
 ):
     return {
         "schema": 2,
@@ -144,6 +147,10 @@ def qualification_plan(
         "selected": [model.id for model in selected],
         "full": bool(full),
         "release_only": bool(release_only),
+        "api_probes": {
+            "available": [probe.id for probe in probes],
+            "selected": [probe.id for probe in selected_probes],
+        },
         "models": [
             {
                 "id": model.id,
@@ -190,6 +197,14 @@ def main():
         dependencies_installed=plan.library,
     )
 
+    probes = discover_api_probes(repo, project, modules)
+    selected_probes = select_api_probes(probes, plan.api_probes)
+    print(
+        "Selected API probes:",
+        ", ".join(probe.id for probe in selected_probes),
+        flush=True,
+    )
+
     output = repo / project.output_root / "qualification"
     output.mkdir(parents=True, exist_ok=True)
     if plan.library:
@@ -205,12 +220,21 @@ def main():
         full=full,
         library=plan.library,
         release_only=release_only,
+        probes=probes,
+        selected_probes=selected_probes,
     )
     (output / "build-plan.json").write_text(
         json.dumps(build_plan, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
     )
-    run_batches(repo, project, modules, selected, output)
+    run_batches(
+        repo,
+        project,
+        modules,
+        selected,
+        output,
+        probes=selected_probes,
+    )
 
 
 if __name__ == "__main__":

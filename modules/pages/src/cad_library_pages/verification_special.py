@@ -67,7 +67,7 @@ def _case_links(cases: list[str]) -> str:
 
 
 def _coverage_page(source_root: Path, build_scope: Path | None) -> str:
-    declaration = source_root / "docs" / "verification" / "api-coverage.py"
+    declaration = source_root / "site" / "source" / "verification" / "api-coverage.py"
     exports = _literal_assignment(declaration, "EXPORT_COVERAGE")
     capabilities = _literal_assignment(declaration, "CAPABILITY_COVERAGE")
     owners = _verification_owners(source_root)
@@ -152,7 +152,7 @@ def _results_page(source_root: Path, build_scope: Path | None) -> str:
 
 
 def _joint_anatomy_page(source_root: Path, site: Path) -> None:
-    source = source_root / "docs" / "verification" / "joint-anatomy"
+    source = source_root / "site" / "source" / "verification" / "joint-anatomy"
     body_path = source / "body.html"
     if not body_path.is_file():
         return
@@ -186,7 +186,7 @@ def prepare_verification_special(source_root: Path, site: Path, build_scope: Pat
     _joint_anatomy_page(source_root, site)
     verification = site / "content" / "verification"
 
-    declaration = source_root / "docs" / "verification" / "api-coverage.py"
+    declaration = source_root / "site" / "source" / "verification" / "api-coverage.py"
     if declaration.is_file():
         (verification / "coverage").mkdir(parents=True, exist_ok=True)
         (verification / "coverage" / "index.md").write_text(

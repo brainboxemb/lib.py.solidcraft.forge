@@ -29,7 +29,12 @@ def describe_error(exc):
 
 
 def target_for(output, row):
-    return output / "models" / row["owner"] / row["implementation"]
+    return (
+        output
+        / row.get("output_root", "models")
+        / row["owner"]
+        / row["implementation"]
+    )
 
 
 def build_row(row, output):

@@ -136,7 +136,7 @@ def html_to_markdown(text: str) -> str:
 
 
 def prepare_guides(source_root: Path, site: Path) -> None:
-    guide_root = source_root / "docs" / "guide"
+    guide_root = source_root / "site" / "source" / "guide"
     index = guide_root / "index.json"
     if not index.is_file():
         return

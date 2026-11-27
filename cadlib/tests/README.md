@@ -1,7 +1,9 @@
 # SCPF package-owner tests
 
-This directory contains tests that can execute with the `cadlib` owner and its direct source dependencies present.
+This directory contains tests owned by the public `cadlib` package and its
+direct source dependencies.
 
-Historical Forge tests that reach into `examples/.../scpf` are intentionally not kept here during bootstrap. Those assertions migrate with their example owner so the package test suite does not depend on a partially migrated example graph.
-
-Deferred files are tracked in `docs/migration-tests.md`.
+Tests that require a physical CAD fixture belong with that model owner. Generic
+repository capability tests belong with their module. Historical migration
+fixture lists are retained only under `docs/legacy/` and are not an active
+test backlog.
