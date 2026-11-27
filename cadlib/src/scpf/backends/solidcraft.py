@@ -693,7 +693,11 @@ def _anchored_feature_position(target: BodyIR, placement: FeaturePlacementIR):
     return x, y, z, thickness, corner
 
 
-def _absolute_hole_command(node: HoleIR, name: str) -> dict:
+def _absolute_hole_command(
+    model: ModelIR,
+    node: HoleIR,
+    name: str,
+) -> dict:
     if node.placement.mode != "absolute" or node.placement.point is None:
         raise ModelError("absolute HoleIR requires absolute FeaturePlacementIR")
 
@@ -732,7 +736,11 @@ def _absolute_hole_command(node: HoleIR, name: str) -> dict:
         params.update(
             type="countersink",
             cs_diameter=command_value(node.countersink_diameter),
-            cs_angle=node.countersink_angle,
+            cs_angle=_role_command_value(
+                model,
+                node.countersink_angle,
+                "angle",
+            ),
         )
     elif node.hole_type == "threaded":
         params["thread"] = node.thread
@@ -760,13 +768,14 @@ def _anchored_hole_commands(node: HoleIR, name: str) -> list[dict]:
     placement = node.placement
     if (
         placement.mode != "anchored"
-        or placement.parent_anchor != "top"
+        or placement.parent_anchor not in {"top", "bottom"}
         or placement.child_anchor != "bottom"
         or node.hole_type != "simple"
         or node.direction is not None
     ):
         raise ModelError(
-            "portable anchored HoleIR currently requires simple TOP/BOTTOM placement"
+            "portable anchored HoleIR currently lowers only simple "
+            "TOP or BOTTOM placement with child Anchor.BOTTOM"
         )
     if node.diameter is None:
         raise ModelError("anchored HoleIR requires a diameter")
@@ -784,7 +793,11 @@ def _anchored_hole_commands(node: HoleIR, name: str) -> list[dict]:
         _require_positive(node.depth, "hole depth")
         sketch_z = entry_z
         distance = node.depth
-        direction = "negative"
+        direction = (
+            "negative"
+            if placement.parent_anchor == "top"
+            else "positive"
+        )
     else:
         raise ModelError("portable anchored HoleIR has unsupported depth mode")
 
@@ -816,7 +829,10 @@ def _hole_commands(model: ModelIR, node: HoleIR, name: str) -> list[dict]:
         raise ModelError("portable SolidCraft HoleIR requires typed BodyIR target")
     commands = _body_commands(model, node.target, name)
     if node.placement.mode == "absolute":
-        return [*commands, _absolute_hole_command(node, name)]
+        return [
+            *commands,
+            _absolute_hole_command(model, node, name),
+        ]
     if node.placement.mode == "anchored":
         return [*commands, *_anchored_hole_commands(node, name)]
     raise ModelError("portable SolidCraft HoleIR has unsupported placement mode")
