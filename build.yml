@@ -1,8 +1,7 @@
 schema: 1
-branch: issue/538-solidcraft-0.50-runtime
-modules:
-  - solidcraft-reference
+branch: issue/622-body-move-angle-expression-units
+modules: []
 library: true
-models: all
+models: []
 api_probes: []
 tasks: [test]
