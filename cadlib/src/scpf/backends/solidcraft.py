@@ -17,6 +17,7 @@ from ..core import (
     Parameter,
     _DirectionSelector,
     _box_corner_from_anchor,
+    _cone_base_from_anchor,
     _cylinder_base_from_anchor,
     _sphere_center_from_anchor,
     _native_dependencies,
@@ -34,6 +35,7 @@ from ..ir import (
     ChamferIR,
     CircleProfileIR,
     ConfigurationIR,
+    ConeIR,
     CylinderIR,
     ExtrudeIR,
     FaceBoundaryIR,
@@ -258,6 +260,44 @@ def _cylinder_command(
     else:
         params["targets"] = [name]
     return _command("solid.cylinder", **params)
+
+
+def _cone_command(
+    node: PlacementIR,
+    name: str,
+    *,
+    operation: str = "new",
+) -> dict:
+    primitive = node.primitive
+    if not isinstance(primitive, ConeIR):
+        raise TypeError(
+            "SolidCraft cone lowering requires PlacementIR(ConeIR)"
+        )
+
+    _require_positive(primitive.height, "cone height")
+    _require_positive(primitive.diameter, "cone diameter")
+    if pv(primitive.top_diameter) < 0:
+        raise ModelError("cone top diameter must be zero or positive")
+
+    base = _cone_base_from_anchor(
+        primitive.height,
+        primitive.axis,
+        node.point,
+        _DirectionSelector(node.anchor),
+    )
+    params = {
+        "height": command_value(primitive.height),
+        "diameter": command_value(primitive.diameter),
+        "top_diameter": command_value(primitive.top_diameter),
+        "base": [command_value(value) for value in base],
+        "axis": primitive.axis,
+        "operation": operation,
+    }
+    if operation == "new":
+        params["body_name"] = name
+    else:
+        params["targets"] = [name]
+    return _command("solid.cone", **params)
 
 
 def _sphere_command(
@@ -696,6 +736,8 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
             return [*parameters, _box_command(node, name)]
         if isinstance(node.primitive, CylinderIR):
             return [*parameters, _cylinder_command(node, name)]
+        if isinstance(node.primitive, ConeIR):
+            return [*parameters, _cone_command(node, name)]
         if isinstance(node.primitive, SphereIR):
             return [*parameters, _sphere_command(node, name)]
         raise TypeError(
