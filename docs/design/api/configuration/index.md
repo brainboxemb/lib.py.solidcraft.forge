@@ -137,45 +137,68 @@ with the same history structure in both cases.
 
 ## 4. Global Installed behavior
 
-The final HUB75-style model can represent Installed directly as one configured
-feature-suppression target.
-
-The preferred shape is:
+The preferred mechanical shape is one authored Installed feature whenever the
+real CAD transition can truthfully be one history operation:
 
 ~~~text
 one authored feature: Installed
     ├── affects left coupler
     ├── affects right coupler
     └── may affect other participating geometry
-
-final model configuration
-    ├── coupler size
-    └── Suppress: Installed
 ~~~
 
-No `State`, `Toggle`, `Bind`, `ConfigRule`, `Always`,
-`DriveParameter` or `drive_suppression` layer is required for this example.
+SolidCraft proves that one native feature may act on several bodies. That keeps
+the CAD history simple.
 
-The configuration table itself stores the suppression value for the Installed
-feature.
+The configuration semantics still have two distinct cases.
 
-## 5. Configuration suppression
+### Row-owned Installed
 
-Feature suppression is a normal configuration column.
-
-For example:
+Installed may be stored directly as a normal feature-suppression column:
 
 ~~~text
 Configuration   Coupler size   Suppress: Installed
 Small              40 mm              [x]
-Large              60 mm              [x]
+Large             100 mm              [ ]
 ~~~
 
-The checkbox is stored per configuration row, exactly like the other row
-values. A user can edit the suppression checkbox directly in SolidCraft.
+This needs no Configuration Rule. The suppression value belongs to each row.
 
-There is no need to synthesize separate Free/Installed rows merely to expose
-the suppression value.
+### Installed independent from Small/Large
+
+If the requirement is instead:
+
+~~~text
+active row: Small
+
+Installed: off | on
+~~~
+
+with Installed switchable without changing or rewriting the Small row, then
+direct row-owned suppression is not the same semantic.
+
+SolidCraft 0.49 can preserve that independent control by keeping the same one
+real Installed feature as the suppression target and using a native
+Configuration Rule to drive its suppression. That backend route was proven by
+the single-feature rule variant before the direct row-owned probe.
+
+The rule is a SolidCraft lowering mechanism. It does **not** justify public
+`ConfigRule`, `Always`, `DriveParameter` or a new first-class `State`
+object in Forge.
+
+## 5. Configuration suppression
+
+Feature suppression is a normal configuration target. Use it directly when the
+suppression value is genuinely part of a named configuration row.
+
+Do not describe a row-owned suppression cell as an independent global control.
+Those semantics must remain separate even when both eventually operate on the
+same authored Installed feature.
+
+There is no need to synthesize separate Free/Installed rows merely to expose a
+row-owned suppression value. A separate global Installed requirement is handled
+at the final-model configuration level and may require backend-specific
+lowering.
 
 ## 6. SolidCraft 0.49 evidence
 
@@ -194,22 +217,23 @@ The `configuration-installed-single-feature` probe uses one native
 
 SolidCraft accepts that one history feature directly as the configured
 suppression target. The rule-free direct configuration probe passed on run
-**971**.
+**971** and proves the row-owned case.
 
-So when the mechanical Installed transition is truthfully one native operation,
-the preferred backend shape is simply:
+The earlier single-feature rule variant also passed (runs **959** and **966**)
+and proves that the same one native feature can be controlled independently
+from the active Small/Large row through SolidCraft's rule mechanism.
+
+So the preferred **history** shape is the same in both cases:
 
 ~~~text
-one Installed control
-        |
-        v
 one Installed history feature
         |
         +--> body A
         +--> body B
 ~~~
 
-No grouping, rule or shared driver is needed for that case.
+Only the configuration lowering differs between row-owned suppression and an
+independent Installed control.
 
 ### A timeline folder can contain several Installed features
 
