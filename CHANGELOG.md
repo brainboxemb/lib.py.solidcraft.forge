@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-11-27
+
 ### Changed
 
 - Replace wrapper-style configuration authoring with final-model
