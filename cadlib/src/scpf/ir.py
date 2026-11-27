@@ -16,6 +16,7 @@ from typing import Any
 
 from .core import (
     Anchor,
+    Edges,
     Expression,
     Faces,
     Parameter,
@@ -746,6 +747,41 @@ class FaceBoundaryIR:
 
 
 @dataclass(frozen=True)
+class ParallelEdgeSetIR:
+    """Semantic request for straight edges parallel to one principal axis."""
+
+    axis: str
+
+    def __post_init__(self):
+        if self.axis not in {"X", "Y", "Z"}:
+            raise ValueError("ParallelEdgeSetIR axis must be X, Y or Z")
+
+
+@dataclass(frozen=True)
+class FilletIR:
+    """Constant-radius fillet over one qualified typed body result."""
+
+    base: PlacementIR
+    radius: Any
+    edges: ParallelEdgeSetIR
+    source_kind: str = "fillet"
+
+    def __post_init__(self):
+        if not isinstance(self.base, PlacementIR):
+            raise ValueError("FilletIR base must be PlacementIR")
+        if not isinstance(self.base.primitive, BoxIR):
+            raise ValueError("FilletIR first qualified base must be BoxIR")
+        if not isinstance(self.edges, ParallelEdgeSetIR):
+            raise ValueError("FilletIR edges must be ParallelEdgeSetIR")
+        if (
+            isinstance(self.radius, bool)
+            or not isfinite(pv(self.radius))
+            or pv(self.radius) <= 0
+        ):
+            raise ValueError("FilletIR radius must be one positive CAD dimension")
+
+
+@dataclass(frozen=True)
 class ChamferIR:
     """One semantic chamfer over a qualified typed body result."""
 
@@ -773,7 +809,7 @@ class BooleanIR:
     """
 
     operation: str
-    target: "PlacementIR | BooleanIR"
+    target: "PlacementIR | FilletIR | BooleanIR"
     tool: PlacementIR
     source_kind: str = "boolean"
 
@@ -797,6 +833,7 @@ IRNode = (
     | ExtrudeIR
     | RevolveIR
     | ChamferIR
+    | FilletIR
     | BooleanIR
     | LegacyShapeIR
 )
@@ -1615,6 +1652,33 @@ def _portable_revolve(
 
 
 
+def _portable_fillet(shape: Shape) -> FilletIR | None:
+    """Normalize the first semantic constant-radius principal-edge Fillet."""
+    if shape.kind != "fillet" or len(shape.data) != 3:
+        return None
+
+    base, radius, edges = shape.data
+    if edges is not Edges.VERTICAL:
+        return None
+    if (
+        isinstance(radius, bool)
+        or not isinstance(radius, (int, float, Parameter))
+        or not isfinite(pv(radius))
+        or pv(radius) <= 0
+    ):
+        return None
+
+    placement = _portable_placement(base)
+    if placement is None or not isinstance(placement.primitive, BoxIR):
+        return None
+
+    return FilletIR(
+        base=placement,
+        radius=radius,
+        edges=ParallelEdgeSetIR("Z"),
+    )
+
+
 def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     if shape.kind != "chamfer":
         return None
@@ -1703,7 +1767,10 @@ def _normalize_node(shape: Shape) -> IRNode:
         target = _normalize_node(target_shape)
         tool = _normalize_node(tool_shape)
         if (
-            (isinstance(target, BooleanIR) or _portable_csg_placement(target))
+            (
+                isinstance(target, (BooleanIR, FilletIR))
+                or _portable_csg_placement(target)
+            )
             and _portable_csg_placement(tool)
         ):
             operation = {
@@ -1725,6 +1792,10 @@ def _normalize_node(shape: Shape) -> IRNode:
     revolve = _portable_revolve(shape)
     if revolve is not None:
         return revolve
+
+    fillet = _portable_fillet(shape)
+    if fillet is not None:
+        return fillet
 
     chamfer = _portable_chamfer(shape)
     if chamfer is not None:
@@ -1766,7 +1837,10 @@ def _boolean_authored_feature_ref(
     if feature is tool_shape:
         return FeatureRefIR(path=(*path, "tool"))
 
-    if feature is target_shape and isinstance(root.target, PlacementIR):
+    if feature is target_shape and isinstance(
+        root.target,
+        (PlacementIR, FilletIR),
+    ):
         return FeatureRefIR(path=(*path, "target"))
 
     if isinstance(root.target, BooleanIR):
