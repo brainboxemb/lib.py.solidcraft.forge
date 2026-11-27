@@ -68,6 +68,7 @@ from ..ir import (
     RoundedRectangleProfileIR,
     SketchRelationsIR,
     SketchIR,
+    SketchSupportIR,
     SketchChainIR,
     SketchEntityGraphIR,
     SketchEntityRefIR,
@@ -1113,14 +1114,24 @@ def _solidcraft_profile_commands(
     profile: ProfileIR,
     *,
     profile_index: int,
+    origin_offset=(0, 0),
 ) -> list[dict]:
     """Lower one semantic closed profile without reading frontend Shape.data."""
+
+    def shifted(point):
+        return (
+            _solidcraft_dimension_sum(origin_offset[0], point[0]),
+            _solidcraft_dimension_sum(origin_offset[1], point[1]),
+        )
     if isinstance(profile, CircleProfileIR):
         _require_positive(profile.diameter, "circle diameter")
         return [
             _command(
                 "sketch.circle.center",
-                center=[command_value(value) for value in profile.center],
+                center=[
+                    command_value(value)
+                    for value in shifted(profile.center)
+                ],
                 diameter=command_value(profile.diameter),
             )
         ]
@@ -1131,10 +1142,11 @@ def _solidcraft_profile_commands(
     ):
         _require_positive(profile.width, "sketch rectangle width")
         _require_positive(profile.depth, "sketch rectangle height")
-        x0 = _solidcraft_dimension_sum(profile.center[0], -half(profile.width))
-        y0 = _solidcraft_dimension_sum(profile.center[1], -half(profile.depth))
-        x1 = _solidcraft_dimension_sum(profile.center[0], half(profile.width))
-        y1 = _solidcraft_dimension_sum(profile.center[1], half(profile.depth))
+        center = shifted(profile.center)
+        x0 = _solidcraft_dimension_sum(center[0], -half(profile.width))
+        y0 = _solidcraft_dimension_sum(center[1], -half(profile.depth))
+        x1 = _solidcraft_dimension_sum(center[0], half(profile.width))
+        y1 = _solidcraft_dimension_sum(center[1], half(profile.depth))
         params = {
             "p0": [command_value(x0), command_value(y0)],
             "p1": [command_value(x1), command_value(y1)],
@@ -1173,7 +1185,10 @@ def _solidcraft_profile_commands(
             _command(
                 "sketch.line",
                 points=[
-                    [command_value(value) for value in point]
+                    [
+                        command_value(value)
+                        for value in shifted(point)
+                    ]
                     for point in points
                 ],
                 closed=True,
@@ -1191,7 +1206,10 @@ def _solidcraft_profile_commands(
 
     def intent(point):
         return tuple(
-            _combine(profile.offset[index], value)
+            _combine(
+                origin_offset[index],
+                _combine(profile.offset[index], value),
+            )
             for index, value in enumerate(point)
         )
 
@@ -1838,6 +1856,7 @@ def _sketch_chain_geometry_commands(
     model: ModelIR | None = None,
     bind_curves: bool = False,
     binding_prefix: str = "$contour_curves",
+    origin_offset=(0, 0),
 ) -> tuple[list[dict], str | None]:
     """Lower shared semantic line/arc chain geometry without Sketch support."""
     if not isinstance(chain, SketchChainIR):
@@ -1856,7 +1875,11 @@ def _sketch_chain_geometry_commands(
         )
 
     def point(coordinates):
-        return [value(coordinates[0]), value(coordinates[1])]
+        shifted = (
+            _solidcraft_dimension_sum(origin_offset[0], coordinates[0]),
+            _solidcraft_dimension_sum(origin_offset[1], coordinates[1]),
+        )
+        return [value(shifted[0]), value(shifted[1])]
 
     def append_curve(command):
         nonlocal curve_variable, curve_count
@@ -1965,6 +1988,8 @@ def _solidcraft_sketch_graph_commands(
     graph: SketchEntityGraphIR,
     *,
     sketch_index: int = 1,
+    model: ModelIR | None = None,
+    origin_offset=(0, 0),
 ) -> list[dict]:
     """Lower support-independent Sketch graph contents.
 
@@ -2007,13 +2032,25 @@ def _solidcraft_sketch_graph_commands(
                 _command(
                     "sketch.text",
                     text=entity.text,
-                    at=[command_value(value) for value in entity.position],
+                    at=[
+                        command_value(
+                            _solidcraft_dimension_sum(
+                                origin_offset[index],
+                                value,
+                            )
+                        )
+                        for index, value in enumerate(entity.position)
+                    ],
                     height=command_value(entity.height),
                     font=entity.font,
                 )
             ]
         elif isinstance(entity, SketchChainIR):
-            rows, _binding = _sketch_chain_geometry_commands(entity)
+            rows, _binding = _sketch_chain_geometry_commands(
+                entity,
+                model=model,
+                origin_offset=origin_offset,
+            )
         else:
             dummy = SketchIR(
                 name="Graph",
@@ -2024,6 +2061,7 @@ def _solidcraft_sketch_graph_commands(
                 dummy,
                 entity,
                 profile_index=index + 1,
+                origin_offset=origin_offset,
             )
 
         if index in referenced_entities:
@@ -2039,7 +2077,11 @@ def _solidcraft_sketch_graph_commands(
         commands.extend(rows)
 
     for chain in graph.open_chains:
-        rows, _binding = _sketch_chain_geometry_commands(chain)
+        rows, _binding = _sketch_chain_geometry_commands(
+            chain,
+            model=model,
+            origin_offset=origin_offset,
+        )
         commands.extend(rows)
 
     for index, operation in enumerate(graph.operations):
