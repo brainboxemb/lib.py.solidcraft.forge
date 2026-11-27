@@ -887,6 +887,26 @@ that returned body as the native Revolve participant; Forge never predicts the
 body uid. The first qualified transport slice is deliberately bounded to an
 unshifted XY Sketch, principal X/Y shifted axis and one Box target.
 
+#417 extends reference geometry from axes to standalone Sketch planes. A typed
+`PlaneIR(orientation, origin)` carries principal XY/XZ/YZ plane intent and
+retains a symbolic normal-axis offset such as `axis_z`. Existing world-origin
+Sketch/Profile/Extrude/Revolve slices use the same node; typed IR no longer
+stores a backend-shaped plane string.
+
+The semantic plane does not describe how a native engine constructs that
+support. SolidCraft lowers the qualified principal plane directly through its
+existing `sketch.create` plane/offset contract. Mitcad uses an origin plane
+directly when the offset is zero; for a symbolic shifted plane the Mitcad
+backend creates a native construction-plane feature and references the uid
+returned by that command when it creates the Sketch. That helper feature and
+uid are lowering transport only and never enter `PlaneIR`.
+
+For the focused shifted Revolve cut, `PlaneIR` and `AxisLineIR` retain the
+same authored `axis_z` dependency and the compiler checks their bounded
+principal-plane coplanarity without replacing it with the current numeric
+value. Rotated/arbitrary planes, attached Sketch supports and configuration
+semantics remain later compiler layers.
+
 Angle units are semantic compiler data. The `sweep` model parameter becomes
 `ParameterIR(unit="deg")`, and the Mitcad Revolve extent references that
 parameter instead of replacing an authored 360-degree value with an
