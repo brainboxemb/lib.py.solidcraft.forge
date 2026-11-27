@@ -308,6 +308,57 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            extrude_width = Parameter("extrude_width", 20)
+            with Sketch(name="ParametricExtrude", plane="XY") as extrude_profile:
+                Polygon2D(
+                    [
+                        (0, 0),
+                        (0, 30),
+                        (extrude_width, 30),
+                        (extrude_width, 0),
+                    ],
+                    plane="XY",
+                )
+            extrude_document = compile_mitcad_ir(
+                normalize_shape(extrude_profile.extrude(10, sym=True)),
+                "ParametricPolygonExtrude",
+            )
+            extrude_sketch = extrude_document["commands"][-2]["def"]
+            self.assertEqual(
+                [constraint["type"] for constraint in extrude_sketch["constraints"]],
+                ["vertical", "horizontal", "vertical", "horizontal"],
+            )
+            self.assertEqual(
+                [dimension["type"] for dimension in extrude_sketch["dimensions"]],
+                ["length", "length"],
+            )
+            self.assertIn(
+                "extrude_width",
+                [dimension["value"] for dimension in extrude_sketch["dimensions"]],
+            )
+
+            extrude_native = run_document(
+                extrude_document,
+                save=root / "out/parameterized-polygon-extrude.mitcad",
+                export=root / "out/parameterized-polygon-extrude.stl",
+                executable=str(executable),
+                work_dir=root / "parameterized-polygon-extrude-workspace",
+            )
+            self.assertEqual(len(extrude_native["bodies"]), 1)
+            extrude_body = extrude_native["bodies"][0]
+            self.assertEqual(extrude_body["kind"], "solid")
+            self.assertAlmostEqual(extrude_body["volume"], 6000.0, places=4)
+            for actual, expected in zip(
+                extrude_body["bbox"]["min"],
+                [0.0, 0.0, -5.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                extrude_body["bbox"]["max"],
+                [20.0, 30.0, 5.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
             axis_x = Parameter("axis_x", 8)
             panel = Box(80, 46, 10)
             with Sketch(name="PassThrough", plane="XY") as profile:
@@ -690,6 +741,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "topology-face-boundary-box.stl",
                 "parameterized-polygon-revolve.mitcad",
                 "parameterized-polygon-revolve.stl",
+                "parameterized-polygon-extrude.mitcad",
+                "parameterized-polygon-extrude.stl",
                 "shifted-revolve-cut.mitcad",
                 "shifted-revolve-cut.stl",
                 "shifted-plane-revolve-cut.mitcad",
@@ -718,6 +771,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"parameterized_polygon_revolve_volume={polygon_body['volume']}",
                         f"parameterized_polygon_revolve_bbox={polygon_body['bbox']}",
                         "parameterized_polygon_coordinate_relations=pass",
+                        f"parameterized_polygon_extrude_volume={extrude_body['volume']}",
+                        f"parameterized_polygon_extrude_bbox={extrude_body['bbox']}",
+                        "parameterized_polygon_extrude_relations=pass",
                         f"shifted_revolve_cut_volume={shifted_body['volume']}",
                         f"shifted_revolve_cut_bbox={shifted_body['bbox']}",
                         f"shifted_plane_revolve_cut_volume={shifted_plane_body['volume']}",
