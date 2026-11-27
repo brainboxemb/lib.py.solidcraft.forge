@@ -20,7 +20,7 @@ def _model_link(source_root: Path, model_id: str) -> str | None:
 
 
 def prepare_cheatsheet(source_root: Path, site: Path) -> None:
-    source = source_root / "docs" / "cheatsheet.yml"
+    source = source_root / "site" / "source" / "cheatsheet.yml"
     if not source.is_file():
         return
 

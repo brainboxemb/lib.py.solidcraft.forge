@@ -8,7 +8,7 @@ import re
 import tomllib
 
 
-BLOCKERS_PATH = Path("docs/background/design/release-blockers.txt")
+BLOCKERS_PATH = Path("cadlib/release-blockers.txt")
 MIGRATED_BASELINE_VERSION = (0, 15, 0)
 _SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 _SHA = re.compile(r"^[0-9a-f]{40}$")

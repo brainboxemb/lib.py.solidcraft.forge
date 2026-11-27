@@ -1,6 +1,6 @@
 # Agent guidance
 
-Read `docs/requirements.md`, `docs/design.md`, `docs/plan.md` and `docs/handoff.md` before making repository changes.
+Read `docs/README.md`, the current `main` version of `docs/plan.md`, `docs/architecture.md`, `docs/requirements.md` and `docs/handoff.md` before making repository changes. Ignore `docs/legacy/` as current guidance.
 
 ## Plan ownership
 
