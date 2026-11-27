@@ -2796,6 +2796,242 @@ def _profile_ir_from_shape(
     return None
 
 
+def _sketch_graph_point(point, offset=(0, 0)):
+    if (
+        not isinstance(point, (tuple, list))
+        or len(point) != 2
+        or not isinstance(offset, (tuple, list))
+        or len(offset) != 2
+    ):
+        raise ValueError("Sketch graph point/offset must be 2D")
+    return tuple(
+        _dim_add(point[index], offset[index])
+        for index in range(2)
+    )
+
+
+def _sketch_segment_ir(segment, *, offset=(0, 0)) -> SketchSegmentIR:
+    if not isinstance(segment, tuple) or not segment:
+        raise ValueError("Sketch connected segment is malformed")
+    kind = segment[0]
+    if kind == "line":
+        _kind, start, end = segment
+        return SketchSegmentIR(
+            kind="line",
+            start=_sketch_graph_point(start, offset),
+            end=_sketch_graph_point(end, offset),
+        )
+    if kind == "arc_three_point":
+        _kind, start, end, through = segment
+        return SketchSegmentIR(
+            kind="arc_three_point",
+            start=_sketch_graph_point(start, offset),
+            end=_sketch_graph_point(end, offset),
+            through=_sketch_graph_point(through, offset),
+        )
+    if kind == "arc_center_point":
+        _kind, start, end, center, clockwise = segment
+        return SketchSegmentIR(
+            kind="arc_center_point",
+            start=_sketch_graph_point(start, offset),
+            end=_sketch_graph_point(end, offset),
+            center=_sketch_graph_point(center, offset),
+            clockwise=clockwise,
+        )
+    if kind == "arc_tangent":
+        _kind, start, end = segment
+        return SketchSegmentIR(
+            kind="arc_tangent",
+            start=_sketch_graph_point(start, offset),
+            end=_sketch_graph_point(end, offset),
+        )
+    raise ValueError(f"unsupported Sketch connected segment {kind!r}")
+
+
+def _connected_profile_ir(
+    profile: Shape,
+    offset,
+) -> ConnectedProfileIR:
+    if profile.kind != "connected_profile":
+        raise ValueError("expected connected_profile Shape")
+    start, segments = profile.data
+    return ConnectedProfileIR(
+        start=_sketch_graph_point(start, offset),
+        segments=tuple(
+            _sketch_segment_ir(segment, offset=offset)
+            for segment in segments
+        ),
+    )
+
+
+def _open_chain_ir(chain: Shape) -> OpenChainIR:
+    if chain.kind != "sketch_open_chain":
+        raise ValueError("expected sketch_open_chain Shape")
+    _name, _plane, _plane_offset, start, segments = chain.data
+    return OpenChainIR(
+        start=tuple(start),
+        segments=tuple(
+            _sketch_segment_ir(segment)
+            for segment in segments
+        ),
+    )
+
+
+def _sketch_graph_entity_ir(
+    profile: Shape,
+    profile_anchor,
+    offset,
+    sketch_plane,
+) -> SketchEntityIR:
+    offset = tuple(offset)
+    if profile.kind == "text":
+        if profile_anchor is not None:
+            raise ValueError(
+                "Text2D graph entity must use authored insertion coordinates"
+            )
+        text, height, font = profile.data
+        return TextEntityIR(
+            text=text,
+            height=height,
+            font=font,
+            position=offset,
+        )
+
+    if profile.kind == "connected_profile":
+        if profile_anchor is not None:
+            raise ValueError(
+                "connected profile graph entity must use authored coordinates"
+            )
+        return _connected_profile_ir(profile, offset)
+
+    if profile.kind == "polygon" and sketch_plane is None:
+        if profile_anchor is not None:
+            raise ValueError(
+                "Polygon2D graph entity must use authored coordinates"
+            )
+        points, _profile_plane, ids = profile.data
+        return PolygonProfileIR(
+            points=tuple(
+                _sketch_graph_point(point, offset)
+                for point in points
+            ),
+            segment_ids=tuple(ids) if ids is not None else None,
+        )
+
+    semantic = _profile_ir_from_shape(
+        profile,
+        profile_anchor,
+        offset,
+        sketch_plane or "XY",
+    )
+    if semantic is None:
+        raise ValueError(
+            f"unsupported Sketch graph entity {profile.kind!r}"
+        )
+    return semantic
+
+
+def normalize_sketch_entities(sketch) -> SketchEntityGraphIR:
+    """Normalize public Sketch-authored contents independent from its support.
+
+    This boundary intentionally stops before Sketch plane/support and consuming
+    solid features. #561 composes this graph with support/Region/Extrude IR.
+    """
+    from .explicit_sketch import Sketch
+
+    if not isinstance(sketch, Sketch):
+        raise TypeError("Sketch entity normalization requires a Sketch")
+    if not sketch._closed or sketch._token is not None:
+        raise ValueError(
+            "Sketch entity normalization requires a completed Sketch scope"
+        )
+
+    entities = []
+    source_refs = {}
+    for index, (profile, profile_anchor, offset) in enumerate(
+        sketch._profiles
+    ):
+        entity = _sketch_graph_entity_ir(
+            profile,
+            profile_anchor,
+            offset,
+            sketch.plane,
+        )
+        entities.append(entity)
+        source_refs[id(profile)] = SketchEntityRefIR(
+            kind="entity",
+            index=index,
+        )
+
+    open_chains = tuple(
+        _open_chain_ir(chain)
+        for chain in sketch._chains
+    )
+
+    operations = []
+    for index, operation in enumerate(sketch._operations):
+        source = operation.data[0]
+        source_ref = source_refs.get(id(source))
+        if source_ref is None:
+            raise ValueError(
+                "Sketch operation source has no semantic graph identity"
+            )
+
+        if operation.kind == "sketch_pattern_rectangular":
+            (
+                _source,
+                count,
+                spacing,
+                direction,
+                count2,
+                spacing2,
+                direction2,
+                alignment,
+                alignment2,
+                reversed1,
+                reversed2,
+            ) = operation.data
+            semantic = SketchRectangularPatternIR(
+                source=source_ref,
+                count=count,
+                spacing=spacing,
+                direction=tuple(direction),
+                count2=count2,
+                spacing2=spacing2,
+                direction2=(
+                    tuple(direction2)
+                    if direction2 is not None
+                    else None
+                ),
+                alignment=alignment,
+                alignment2=alignment2,
+                reversed=reversed1,
+                reversed2=reversed2,
+            )
+        elif operation.kind == "sketch_mirror":
+            _source, axis = operation.data
+            semantic = SketchMirrorIR(
+                source=source_ref,
+                axis=axis,
+            )
+        else:
+            raise ValueError(
+                f"unsupported Sketch operation {operation.kind!r}"
+            )
+
+        operations.append(semantic)
+        source_refs[id(operation)] = SketchEntityRefIR(
+            kind="operation",
+            index=index,
+        )
+
+    return SketchEntityGraphIR(
+        entities=tuple(entities),
+        open_chains=open_chains,
+        operations=tuple(operations),
+    )
+
+
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     """Normalize standalone Sketch + closed-profile Extrude semantics."""
     if shape.kind != "sketch_base_extrusion":
