@@ -162,6 +162,12 @@
 137. Mitcad TOP face-boundary Fillet lowering must reuse replay `bind_face_boundary_edges`, not principal-edge reconstruction; native face/edge names remain private transport and no Chamfer-style `reference_face` enters Fillet semantics.
 138. The first face-boundary Fillet slice remains standalone. Existing Fillet→Cone `BooleanIR` composition remains qualified only for `ParallelEdgeSetIR("Z")`; face-boundary Fillet composition must fail closed.
 139. Exact pinned Mitcad v0.70.0 runtime qualification must execute a 60×40×12 BOTTOM Box with R2 TOP-boundary Fillet, retain one watertight solid and saved native design/STL evidence, prove bounds [-30,-20,0]..[30,20,12], and preserve the first accepted native volume 28631.38638124875 mm³ as the regression value.
+140. IR completion and backend completion are separate experimental states. A semantic slice may be IR-ready without Mitcad support when the generic CAD contract, typed normalization, pure IR boundary tests and stable typed SolidCraft lowering are complete.
+141. A backend that does not support an IR-ready node must fail closed on that typed node. It may not fall back to raw `Shape.data`, reinterpret source authoring or force the semantic node back to `LegacyShapeIR` merely because that backend lags.
+142. Mitcad lowering, Mitcad backend-contract tests and exact native Mitcad runtime qualification are independent backend milestones and may be completed in later backend-focused batches.
+143. `docs/ir-coverage.md` is the permanent-`exp` compiler migration inventory. It must report semantic-family IR status separately from SolidCraft typed lowering, Mitcad lowering and native Mitcad qualification.
+144. IR migration should prefer coherent family completion over one backend-qualified micro-slice per issue when the generic semantic contract can be widened safely and tested independently.
+145. The first #525-policy batch is #519: explicitly positioned `Hole`, `CounterboreHole`, `CountersinkHole` and `ThreadedHole` over the bounded typed target migrate together to semantic `HoleIR`; Mitcad Hole support is not a #519 merge gate.
 
 ## SCPF native associativity
 
