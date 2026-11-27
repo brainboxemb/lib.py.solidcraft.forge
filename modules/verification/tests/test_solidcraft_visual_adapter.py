@@ -226,7 +226,7 @@ class SolidCraftVisualAdapterTests(unittest.TestCase):
     def test_all_migrated_visual_policies_are_approved_and_supported(self):
         repo = Path(__file__).resolve().parents[3]
         paths = sorted((repo / "models").glob("*/verification/visual*.json"))
-        self.assertEqual(len(paths), 54)
+        self.assertEqual(len(paths), 58)
         state_policies = {
             ("appearance-color", "visual-color.json"): (("iso",), None, "rgb"),
             ("configuration-installed-state", "visual-large-installed.json"): (("top",), "large-installed", "grayscale"),
@@ -249,6 +249,25 @@ class SolidCraftVisualAdapterTests(unittest.TestCase):
                 self.assertEqual(tuple(policy["views"]), ("front", "right", "iso"))
                 self.assertTrue(policy["expected_views"])
                 self.assertTrue(policy["expected_boxes"])
+                if owner in {
+                    "sheet-contour-flange",
+                    "sheet-edge-flange",
+                    "sheet-hem",
+                    "sheet-path-flange",
+                }:
+                    provenance = policy["baseline_provenance"]
+                    self.assertEqual(
+                        provenance["source_commit"],
+                        "16e0a7e5783347177a34cd020a857fc79c0fbfe7",
+                    )
+                    self.assertEqual(provenance["workflow_run"], 45967875286)
+                    self.assertEqual(provenance["solidcraft_version"], "0.49.0")
+                    self.assertEqual(
+                        provenance["runtime"],
+                        "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+                    )
+                    self.assertNotIn("capture_seed", provenance)
+                    self.assertNotIn("not_for_merge", provenance)
             else:
                 self.assertIn(key, state_policies)
                 views, state_id, mode = state_policies[key]
