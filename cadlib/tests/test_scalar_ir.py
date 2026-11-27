@@ -140,5 +140,16 @@ class ScalarExpressionIRTests(unittest.TestCase):
         self.assertIsNone(expression.scalar_ir)
 
 
+    def test_power_rejects_non_finite_exponent(self):
+        with self.assertRaises(ValueError):
+            ScalarPowerIR(ScalarLiteralIR(2), float("inf"))
+
+    def test_function_ir_rejects_invalid_name_and_arity(self):
+        with self.assertRaises(ValueError):
+            ScalarFunctionIR("sqrt", ())
+        with self.assertRaises(ValueError):
+            ScalarFunctionIR("sin", (ScalarLiteralIR(1),))
+
+
 if __name__ == "__main__":
     unittest.main()
