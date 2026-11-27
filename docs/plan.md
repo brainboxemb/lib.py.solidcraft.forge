@@ -154,7 +154,17 @@ Normal-lane verification evidence after v0.24.0:
 - #256 remains open only for `exploded-views`: #415 proves that
   SolidCraft 0.49.0 `explode.show` is transient presentation state and
   save/reopen snapshotting cannot capture it deterministically. Forge does not
-  add sleep/polling or Python substitute geometry for that gap.
+  add sleep/polling or Python substitute geometry for that gap;
+- #257 / PR #422 added folded-result front/right/isometric visual geometry
+  evidence for `sheet-contour-flange`, `sheet-edge-flange`, `sheet-hem`
+  and `sheet-path-flange` while retaining each owner's saved-design,
+  flat-pattern and SolidCraft-history checks;
+- reviewed SolidCraft 0.49.0 capture run 45967875286 supplied the twelve
+  approved folded-result views and all twelve expected-shape envelope checks
+  passed; final exact-head PR CI 45969116610 is green;
+- PR #422 landed on permanent `dev` as
+  `cf428d46d3683aa74155aed70c5e946f149f64f7`; permanent dev
+  CI/build/publication run 45969693260 and Pages run 45970148895 are green.
 
 Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded `SphereIR` through native Mitcad join/cut/intersect;
@@ -182,18 +192,23 @@ Normal consumer work and isolated compiler research may proceed independently; n
 
 Normal `dev` lane:
 - **v0.24.0 is released** and synchronized back to permanent `dev`; #255,
-  #380 and the capturable #256 visual-state slice are part of the current
-  development baseline;
+  #380, the capturable #256 visual-state slice and #257 folded sheet-metal
+  visual evidence are part of the current development baseline;
 - downstream CAD #189 may adopt v0.24.0 for parent/root suppression of an
   explicitly exported feature inside a reusable child component;
 - **#256 remains open but blocked only on #415** for deterministic headless
   capture of transient `exploded-views` presentation; do not implement a
   Forge-local timing/polling or substitute-geometry workaround;
-- **#257 is the active normal-lane item while #415 is blocked**: add folded
-  result visual geometry baselines for `sheet-contour-flange`,
-  `sheet-edge-flange`, `sheet-hem` and `sheet-path-flange` while
-  retaining their existing saved-design, flat-pattern and native-history
-  checks;
+- **#73 is the active normal-lane investigation while #415 is blocked**:
+  reproduce the existing contour-flange recess document unchanged against
+  SolidCraft 0.49.0 / runtime v0.3.6 in both headless and live replay before
+  changing Forge behavior;
+- if #73 no longer reproduces on the current SolidCraft baseline, close it with
+  current evidence instead of preserving obsolete replay changes; if it still
+  reproduces, isolate replay chunk/checkpoint semantics, in-memory sheet-metal
+  state and face binding before choosing a fix;
+- do not move the downstream physical hole or introduce a model-local
+  workaround for #73;
 - return to the remaining #256 exploded visual acceptance when #415 has a
   supported deterministic SolidCraft capture route;
 - keep normal verification work independent from experimental Mitcad/IR work.
