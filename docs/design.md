@@ -1843,11 +1843,14 @@ segment ids and Extrude extent, reproducing the stable pick coordinates.
 Explicit picks are preserved as authored fixed semantic points and converted to
 native numeric picks only while lowering.
 
-This closes the current public Topology/reference selector family. Chamfer and
-Fillet remain separate partial families because feature/base variants beyond
-the shared selector vocabulary still require semantic completion. Existing
-Mitcad face-boundary/principal-edge slices remain valid; newly typed selector
-forms that Mitcad cannot lower fail closed without falling back to legacy IR.
+This closes the current public Topology/reference selector family. Because the
+public Fillet contract is exactly radius plus the shared edge selector and the
+public Chamfer contract is exactly distance/distance2/flip plus that selector,
+#562 also completes both modifier semantic families over typed `BodyIR`.
+Whether a particular backend/body combination can lower the typed selector is
+backend coverage, not missing Fillet/Chamfer IR. Existing Mitcad
+face-boundary/principal-edge slices remain valid; newly typed selector forms
+that Mitcad cannot lower fail closed without falling back to legacy IR.
 
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
