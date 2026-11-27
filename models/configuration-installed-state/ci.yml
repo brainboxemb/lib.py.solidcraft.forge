@@ -17,5 +17,19 @@ verifications:
     artifact: model.sc
     implementations: [scpf]
 
+  - id: visual-large-installed
+    module: verification
+    adapter: solidcraft-visual
+    definition: verification/visual-large-installed.json
+    artifact: model.sc
+    implementations: [scpf]
+
+  - id: visual-large-free
+    module: verification
+    adapter: solidcraft-visual
+    definition: verification/visual-large-free.json
+    artifact: model.sc
+    implementations: [scpf]
+
 dependencies: []
 needs: [cadlib]

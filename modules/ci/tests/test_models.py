@@ -112,6 +112,17 @@ VISUAL_SCPF_ONLY_IDS = {
     "topology-face-boundary-xz",
 }
 
+STATE_VISUAL_STAGES = {
+    "appearance-color": ("visual-color",),
+    "configuration-installed-state": (
+        "visual-large-installed",
+        "visual-large-free",
+    ),
+    "configuration-position": ("visual-front", "visual-service"),
+    "revolute-joint": ("visual-60", "visual-120"),
+    "shifted-axis-revolve": ("visual-cut", "visual-suppressed"),
+}
+
 class ModelTests(unittest.TestCase):
     def setUp(self):
         self.repo = Path.cwd()
@@ -230,6 +241,16 @@ class ModelTests(unittest.TestCase):
                     [stage.runtime for stage in model.verifications],
                     ["solidcraft", "reference", "solidcraft"],
                 )
+            elif model_id in STATE_VISUAL_STAGES:
+                expected = ["native", *STATE_VISUAL_STAGES[model_id]]
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    expected,
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft"] * len(expected),
+                )
             elif model_id in VISUAL_SCPF_ONLY_IDS:
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
@@ -339,7 +360,17 @@ class ModelTests(unittest.TestCase):
                                 "multi-profile-extrude",
                                 "asymmetric-chamfer",
                             } | VISUAL_SCPF_ONLY_IDS
-                            else [("scpf", "native")]
+                            else (
+                                [
+                                    ("scpf", "native"),
+                                    *[
+                                        ("scpf", stage)
+                                        for stage in STATE_VISUAL_STAGES[model.id]
+                                    ],
+                                ]
+                                if model.id in STATE_VISUAL_STAGES
+                                else [("scpf", "native")]
+                            )
                         )
                     )
                     if model.id in SCPF_ONLY_IDS

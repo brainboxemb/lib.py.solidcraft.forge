@@ -80,10 +80,13 @@ class VisualVerificationTests(unittest.TestCase):
         )
         first = normalize_image(rgb, 5, 7)
         second = normalize_image(rgba, 5, 7)
+        color = normalize_image(rgb, 5, 7, mode="rgb")
         self.assertEqual(first.mode, "L")
         self.assertEqual(second.mode, "L")
+        self.assertEqual(color.mode, "RGB")
         self.assertEqual(first.size, (5, 7))
         self.assertEqual(second.size, (5, 7))
+        self.assertEqual(color.size, (5, 7))
 
         with self.assertRaises(VisualEvidenceError):
             normalize_image(self.root / "missing.png", 5, 7)
@@ -95,6 +98,8 @@ class VisualVerificationTests(unittest.TestCase):
 
         with self.assertRaises(VerificationConfigError):
             normalize_image(rgb, 0, 7)
+        with self.assertRaises(VerificationConfigError):
+            normalize_image(rgb, 5, 7, mode="lab")
 
     def test_r2_baseline_raw_zlib_and_png_round_trip(self):
         image = Image.new("L", (4, 3))
@@ -125,6 +130,36 @@ class VisualVerificationTests(unittest.TestCase):
         }
         with self.assertRaises(VisualEvidenceError):
             decode_baseline(corrupt)
+
+        color = Image.new("RGB", (2, 2))
+        color.putdata([
+            (255, 0, 0),
+            (0, 255, 0),
+            (0, 0, 255),
+            (20, 40, 60),
+        ])
+        for encoding in ("raw", "zlib", "png"):
+            with self.subTest(color_encoding=encoding):
+                payload = encode_baseline(
+                    color,
+                    encoding=encoding,
+                    mode="rgb",
+                )
+                self.assertEqual(payload["mode"], "rgb")
+                restored = decode_baseline(payload)
+                self.assertEqual(restored.mode, "RGB")
+                self.assertEqual(restored.size, color.size)
+                self.assertEqual(restored.tobytes(), color.tobytes())
+
+        invalid_mode = {
+            "encoding": "raw",
+            "mode": "lab",
+            "width": 1,
+            "height": 1,
+            "data": b64encode(b"\x00").decode("ascii"),
+        }
+        with self.assertRaises(VisualEvidenceError):
+            decode_baseline(invalid_mode)
 
     def test_r3_regression_metrics_and_independent_limits(self):
         reference = Image.new("L", (10, 10), 100)
@@ -193,6 +228,32 @@ class VisualVerificationTests(unittest.TestCase):
             max_changed_fraction=0,
         )
         self.assertEqual(json.dumps(first), json.dumps(second))
+
+        red = Image.new("RGB", (4, 4), (255, 0, 0))
+        same_luminance_green = Image.new("RGB", (4, 4), (0, 130, 0))
+        grayscale = compare_images(
+            red,
+            same_luminance_green,
+            changed_pixel_threshold=1,
+            max_mean_difference=0,
+            max_changed_fraction=0,
+        )
+        self.assertTrue(grayscale["pass"])
+
+        with self.assertRaises(VerificationFailure) as caught:
+            compare_images(
+                red,
+                same_luminance_green,
+                changed_pixel_threshold=1,
+                max_mean_difference=0,
+                max_changed_fraction=0,
+                mode="rgb",
+            )
+        self.assertEqual(caught.exception.evidence["comparison_mode"], "rgb")
+        self.assertGreater(
+            caught.exception.evidence["changed_pixel_fraction"],
+            0,
+        )
 
     def test_r4_diff_image_is_deterministic_and_sensitive(self):
         reference = Image.new("L", (5, 4), 100)
