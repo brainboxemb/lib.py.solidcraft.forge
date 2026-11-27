@@ -1035,11 +1035,28 @@ must return the original bounds and volume. A deeper bore reference is also
 resolved in backend-independent tests so the model does not merely special-case
 the final tool.
 
-Angle units are semantic compiler data. The `sweep` model parameter becomes
-`ParameterIR(unit="deg")`, and the Mitcad Revolve extent references that
-parameter instead of replacing an authored 360-degree value with an
-unconditional full-revolution flag. This preserves the same dependency needed
-by the existing SolidCraft saved-design mutation to 180 degrees.
+Parameter physical role is semantic compiler data, but it belongs to each
+typed use rather than to one globally physical source variable. `ParameterIR`
+therefore retains canonical use roles such as `length` and `angle`. A
+single-role `sweep` keeps the accepted degree-native spelling and a
+single-role Sketch dimension keeps the accepted millimetre spelling.
+
+#469 qualifies the first mixed-role case: one direct Forge `Parameter` drives
+both a Sketch length and the Revolve extent. The IR retains one source
+parameter with roles `("length", "angle")`; neither backend creates two
+editable aliases. SolidCraft and Mitcad instead publish one unitless/Number
+native parameter and apply units at the typed use site: the Sketch relation or
+coordinate uses `shared * 1 mm`, while the Revolve extent uses
+`shared * 1 deg`. Those coercions are selected from `SketchRelationsIR` /
+profile-coordinate and `RevolveIR.angle` meaning, not from backend command
+names.
+
+This slice deliberately does not dimension arbitrary symbolic expression
+trees. A mixed-role source nested inside an authored `Expression` stays
+behind `LegacyShapeIR` until the compiler owns expression-level dimensional
+typing. The unchanged single-role parameter tests protect existing native
+command spelling and the Mitcad v0.70.0 runtime smoke proves the mixed-role
+source remains one editable native dependency.
 
 The stable SolidCraft surface is larger than this first migration slice. A
 temporary `LegacyShapeIR` therefore wraps not-yet-migrated stable intent so
