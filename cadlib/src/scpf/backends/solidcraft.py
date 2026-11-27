@@ -2750,20 +2750,7 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
         return _fillet_commands(model, node, name)
 
     if isinstance(node, RevolveIR):
-        base_commands = []
-        if node.operation == "cut":
-            if (
-                not isinstance(node.target, PlacementIR)
-                or not isinstance(node.target.primitive, BoxIR)
-            ):
-                raise ModelError(
-                    "portable SolidCraft Revolve cut currently requires a Box target"
-                )
-            base_commands = [_box_command(node.target, name)]
-        return [
-            *base_commands,
-            *_revolve_commands(model, node, name),
-        ]
+        return _revolve_commands(model, node, name)
 
     if isinstance(node, ChamferIR):
         return _chamfer_commands(model, node, name)
