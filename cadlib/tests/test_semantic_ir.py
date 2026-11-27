@@ -22,6 +22,7 @@ from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.solidcraft import compile_ir as compile_solidcraft_ir
 from scpf.compiler import (
     ModelError,
+    _compile_model_with_dependencies,
     _compile_shape_legacy_with_dependencies,
 )
 from scpf.ir import (
@@ -1009,6 +1010,14 @@ class SemanticIRTests(unittest.TestCase):
         self.assertNotIn("uid", repr(model.configuration).lower())
         self.assertNotIn("command", repr(model.configuration).lower())
         self.assertNotIn("replay", repr(model.configuration).lower())
+
+        self.assertEqual(
+            compile_solidcraft_ir(model, "ShiftedAxisRevolve"),
+            _compile_model_with_dependencies(
+                configured,
+                "ShiftedAxisRevolve",
+            )[0],
+        )
 
     def test_suppression_reference_must_be_the_authored_root_feature(self):
         panel = Box(40, 24, 20)
