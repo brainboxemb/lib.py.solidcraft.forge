@@ -1078,6 +1078,40 @@ class SemanticIRTests(unittest.TestCase):
             self.assertNotIn("command", rendered)
             self.assertNotIn("replay", rendered)
 
+        clip_solidcraft = compile_solidcraft_ir(
+            clip_model,
+            "PrimitiveCsgConfigured",
+        )
+        clip_legacy = _compile_model_with_dependencies(
+            configured_clip,
+            "PrimitiveCsgConfigured",
+        )[0]
+        self.assertEqual(clip_solidcraft, clip_legacy)
+        bound_commands = [
+            command
+            for command in clip_solidcraft["replay"]["commands"]
+            if "$config_name_1" in command.get("bind", {})
+        ]
+        self.assertEqual(len(bound_commands), 1)
+        self.assertEqual(bound_commands[0]["command"], "solid.box")
+        self.assertEqual(
+            bound_commands[0]["params"]["operation"],
+            "intersect",
+        )
+
+        bore_solidcraft = compile_solidcraft_ir(
+            bore_model,
+            "PrimitiveCsgBoreConfigured",
+        )
+        bore_bound = [
+            command
+            for command in bore_solidcraft["replay"]["commands"]
+            if "$config_name_1" in command.get("bind", {})
+        ]
+        self.assertEqual(len(bore_bound), 1)
+        self.assertEqual(bore_bound[0]["command"], "solid.cylinder")
+        self.assertEqual(bore_bound[0]["params"]["operation"], "cut")
+
     def test_boolean_feature_reference_rejects_non_member_before_lowering(self):
         sphere = Sphere(20)
         extension = Box(30, 30, 20).move(x=18, z=10)
