@@ -1023,9 +1023,18 @@ def _boolean_commands(model: ModelIR, node: BooleanIR, name: str) -> list[dict]:
         raise ModelError("portable SolidCraft BooleanIR requires typed body operands")
 
     if isinstance(node.target, PlacementIR):
-        commands = [
-            _csg_primitive_command(node.target, name, "new")
-        ]
+        primitive_csg_tool = (
+            isinstance(node.tool, PlacementIR)
+            or (
+                isinstance(node.tool, BooleanIR)
+                and node.tool.operation == "join"
+            )
+        )
+        commands = (
+            [_csg_primitive_command(node.target, name, "new")]
+            if primitive_csg_tool
+            else _body_commands(model, node.target, name)
+        )
     elif isinstance(node.target, BooleanIR):
         commands = _boolean_commands(model, node.target, name)
     else:
