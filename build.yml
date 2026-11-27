@@ -1,6 +1,7 @@
 schema: 1
-branch: issue/411-durable-conflicted-head-recovery
-modules: [merge-policy]
-library: false
+branch: issue/444-configuration-api-design
+modules: [ci, build]
+library: true
 models: []
+api_probes: [configuration-installed-current]
 tasks: [test]
