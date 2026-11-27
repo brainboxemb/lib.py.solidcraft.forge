@@ -128,7 +128,18 @@ VISUAL_SCPF_ONLY_IDS = {
     "attached-through-all",
     "cone-boolean",
     "rotated-sketch-cutter",
+    "sheet-contour-flange",
     "sheet-contour-flange-recess",
+    "sheet-edge-flange",
+    "sheet-hem",
+    "sheet-path-flange",
+}
+
+STATE_VISUAL_STAGES = {
+    "appearance-color": ("visual-color",),
+    "configuration-position": ("visual-front", "visual-service"),
+    "revolute-joint": ("visual-60", "visual-120"),
+    "shifted-axis-revolve": ("visual-cut", "visual-suppressed"),
 }
 
 STANDARD_MULTI_ENGINE_IDS = (
@@ -515,6 +526,7 @@ class ModelTests(unittest.TestCase):
                     if model.id in SCPF_ONLY_IDS
                     or model.id in MITCAD_FOCUSED_IDS
                     or model.id in MITCAD_FOCUSED_VISUAL_IDS
+                    or model.id in MITCAD_STATE_VISUAL_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
                 )
             ],
