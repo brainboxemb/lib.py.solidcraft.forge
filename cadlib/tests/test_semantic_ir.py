@@ -417,6 +417,23 @@ class SemanticIRTests(unittest.TestCase):
                 ),
                 parameters=(),
             ),
+            ModelIR(
+                root=ExtrudeIR(
+                    sketch=SketchIR(
+                        name="SkippedBoundary",
+                        plane=PlaneIR(orientation="XY"),
+                        profiles=(
+                            CircleProfileIR(diameter=10),
+                            CircleProfileIR(diameter=8),
+                            CircleProfileIR(diameter=6),
+                        ),
+                    ),
+                    regions=(RegionIR(outer=0, holes=(2,)),),
+                    distance=20,
+                    direction="positive",
+                ),
+                parameters=(),
+            ),
         )
 
         for model in cases:
@@ -425,7 +442,7 @@ class SemanticIRTests(unittest.TestCase):
                     with self.assertRaises(ModelError):
                         compiler(model, model.root.sketch.name)
 
-    def test_three_profile_exact_region_stays_legacy_for_solidcraft_only(self):
+    def test_three_profile_exact_region_is_typed_boundary_membership(self):
         with Sketch(name="Three circles", plane="XY") as sketch:
             Circle2D(d=10)
             Circle2D(d=8)
@@ -436,20 +453,88 @@ class SemanticIRTests(unittest.TestCase):
             exact_regions=True,
         )
 
-        model = normalize_shape(shape)
-        self.assertIsInstance(model.root, LegacyShapeIR)
-        self.assertEqual(
-            compile_solidcraft_ir(model, "ThreeCircles"),
-            _compile_shape_legacy_with_dependencies(
-                shape,
-                "ThreeCircles",
-            )[0],
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ThreeCircles",
         )
-        with self.assertRaisesRegex(
-            ModelError,
-            "does not yet support Forge shape kind 'sketch_base_extrusion'",
-        ):
-            compile_mitcad_ir(model, "ThreeCircles")
+        self.assertIsInstance(model.root, ExtrudeIR)
+        self.assertEqual(len(model.root.sketch.profiles), 3)
+        self.assertTrue(
+            all(
+                isinstance(profile, CircleProfileIR)
+                for profile in model.root.sketch.profiles
+            )
+        )
+        self.assertEqual(
+            model.root.regions,
+            (RegionIR(outer=0, holes=(1,)),),
+        )
+        self.assertNotIn(2, model.root.regions[0].holes)
+
+        mitcad = compile_mitcad_ir(model, "ThreeCircles")
+        sketch_def = mitcad["commands"][-2]["def"]
+        extrude_def = mitcad["commands"][-1]["def"]
+        self.assertEqual(
+            [entity["type"] for entity in sketch_def["entities"]],
+            ["point", "circle", "circle", "circle"],
+        )
+        self.assertEqual(
+            [dimension["value"] for dimension in sketch_def["dimensions"]],
+            [10, 8, 6],
+        )
+        self.assertEqual(
+            extrude_def["profiles"],
+            [{"sketch": {"ref": "sk.uid"}, "point": [4.5, 0.0]}],
+        )
+
+    def test_three_profile_exact_region_can_select_innermost_disk(self):
+        with Sketch(name="Three circles inner", plane="XY") as sketch:
+            Circle2D(d=10)
+            Circle2D(d=8)
+            Circle2D(d=6)
+        shape = sketch.extrude(
+            20,
+            profiles=[(2, 0)],
+            exact_regions=True,
+        )
+
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, ExtrudeIR)
+        self.assertEqual(
+            model.root.regions,
+            (RegionIR(outer=2),),
+        )
+
+        solidcraft = compile_solidcraft_ir(model, "InnerDisk")
+        self.assertEqual(
+            solidcraft[-1]["params"]["profiles"],
+            [{"point": [0.0, 0.0]}],
+        )
+        self.assertTrue(solidcraft[-1]["params"]["exact_regions"])
+
+        mitcad = compile_mitcad_ir(model, "InnerDisk")
+        self.assertEqual(
+            mitcad["commands"][-1]["def"]["profiles"],
+            [{"sketch": {"ref": "sk.uid"}, "point": [0.0, 0.0]}],
+        )
+
+    def test_multi_circle_exact_region_rejects_boundary_or_outside_pick(self):
+        for pick in ((5, 0), (6, 0)):
+            with self.subTest(pick=pick):
+                with Sketch(name="Invalid circle pick", plane="XY") as sketch:
+                    Circle2D(d=10)
+                    Circle2D(d=8)
+                    Circle2D(d=6)
+                model = normalize_shape(
+                    sketch.extrude(
+                        20,
+                        profiles=[pick],
+                        exact_regions=True,
+                    )
+                )
+                self.assertIsInstance(model.root, LegacyShapeIR)
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, "InvalidCirclePick")
 
     def test_region_ir_rejects_invalid_profile_membership(self):
         for kwargs in (
