@@ -62,7 +62,7 @@ class ApiReferenceProjectionTests(unittest.TestCase):
     def test_all_public_callables_have_use_when_and_limits(self):
         root = Path(__file__).resolve().parents[3]
         manifest = json.loads(
-            (root / 'docs/api-reference.json').read_text(encoding='utf-8')
+            (root / 'site/source/api-reference.json').read_text(encoding='utf-8')
         )
         callables = [
             row for row in manifest['references']

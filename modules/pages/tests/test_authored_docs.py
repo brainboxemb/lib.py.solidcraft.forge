@@ -27,7 +27,7 @@ class AuthoredDocumentationProjectionTests(unittest.TestCase):
     def test_guide_and_cheatsheet_are_projected(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
-            guide = root / "docs/guide"
+            guide = root / "site/source/guide"
             guide.mkdir(parents=True)
             (guide / "index.json").write_text(
                 json.dumps(
@@ -52,7 +52,7 @@ class AuthoredDocumentationProjectionTests(unittest.TestCase):
                 "<tbody><tr><td><code>x</code></td><td>Value</td></tr></tbody></table>\n",
                 encoding="utf-8",
             )
-            (root / "docs/cheatsheet.yml").write_text(
+            (root / "site/source/cheatsheet.yml").write_text(
                 "schema: 1\n"
                 "groups:\n"
                 "  - heading: Model classes\n"

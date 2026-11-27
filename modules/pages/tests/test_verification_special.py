@@ -24,7 +24,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
                 encoding='utf-8',
             )
 
-            docs = root / 'docs/verification'
+            docs = root / 'site/source/verification'
             docs.mkdir(parents=True)
             (docs / 'api-coverage.py').write_text(
                 'EXPORT_COVERAGE = {"Box": ("Visual", "Visual", ["example"], "Baseline.")}\n'
@@ -106,7 +106,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
     def test_coverage_rejects_unknown_owner(self):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
-            docs = root / 'docs/verification'
+            docs = root / 'site/source/verification'
             docs.mkdir(parents=True)
             (docs / 'api-coverage.py').write_text(
                 'EXPORT_COVERAGE = {"Box": ("Visual", "Visual", ["missing"], "Baseline.")}\n'
