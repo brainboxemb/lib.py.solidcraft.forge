@@ -856,6 +856,8 @@ class SemanticIRTests(unittest.TestCase):
         self.assertIsInstance(model.root.base, PlacementIR)
         self.assertIsInstance(model.root.base.primitive, BoxIR)
         self.assertEqual(model.root.edges.faces, ("top",))
+        self.assertIsNone(model.root.distance2)
+        self.assertFalse(model.root.flip)
 
         mitcad = compile_mitcad_ir(model, "TopologyFaceBoundaryBox")
         stage = mitcad["replay"][0]
@@ -868,7 +870,71 @@ class SemanticIRTests(unittest.TestCase):
             "chamfer",
         )
 
-    def test_asymmetric_chamfer_stays_solidcraft_legacy_until_portable(self):
+    def test_asymmetric_top_chamfer_is_typed_with_two_distances(self):
+        primary = Parameter("primary_chamfer", 0.18)
+        secondary = Parameter("secondary_chamfer", 0.65)
+        shape = Box(
+            60,
+            40,
+            12,
+            anchor=Anchor.BOTTOM,
+        ).chamfer(
+            primary,
+            distance2=secondary,
+            edges=Edges.from_faces(Faces.TOP),
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "AsymmetricChamfer",
+        )
+        self.assertIsInstance(model.root, ChamferIR)
+        self.assertIsInstance(model.root.base, PlacementIR)
+        self.assertIsInstance(model.root.base.primitive, BoxIR)
+        self.assertIs(model.root.distance, primary)
+        self.assertIs(model.root.distance2, secondary)
+        self.assertFalse(model.root.flip)
+        self.assertEqual(model.root.edges.faces, ("top",))
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR("primary_chamfer", 0.18, roles=("length",)),
+                ParameterIR("secondary_chamfer", 0.65, roles=("length",)),
+            ),
+        )
+
+        solidcraft = compile_solidcraft_ir(model, "AsymmetricChamfer")
+        command = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "solid.chamfer"
+        )
+        self.assertEqual(command["params"]["distance"], "primary_chamfer")
+        self.assertEqual(command["params"]["distance2"], "secondary_chamfer")
+        self.assertNotIn("flip", command["params"])
+
+        mitcad = compile_mitcad_ir(model, "AsymmetricChamfer")
+        stage = mitcad["replay"][0]
+        boundary = stage["bind_face_boundary_edges"]
+        self.assertEqual(boundary["face"]["normal"], [0, 0, 1])
+        self.assertEqual(boundary["face_name"], "reference_face")
+        chamfer = stage["commands"][0]["def"]
+        self.assertEqual(chamfer["type"], "chamfer")
+        self.assertEqual(
+            chamfer["sets"][0]["size"],
+            {
+                "type": "two_distances",
+                "distance1": "primary_chamfer",
+                "distance2": "secondary_chamfer",
+            },
+        )
+        self.assertEqual(
+            chamfer["sets"][0]["reference_face"],
+            {"$mitcad_bind": "reference_face"},
+        )
+        self.assertNotIn("flip", chamfer["sets"][0])
+
+    def test_asymmetric_top_chamfer_preserves_flip(self):
         shape = Box(
             60,
             40,
@@ -877,24 +943,60 @@ class SemanticIRTests(unittest.TestCase):
         ).chamfer(
             0.18,
             distance2=0.65,
+            flip=True,
             edges=Edges.from_faces(Faces.TOP),
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "FlippedAsymmetricChamfer",
+        )
+        self.assertIsInstance(model.root, ChamferIR)
+        self.assertTrue(model.root.flip)
+
+        solidcraft = compile_solidcraft_ir(
+            model,
+            "FlippedAsymmetricChamfer",
+        )
+        command = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "solid.chamfer"
+        )
+        self.assertTrue(command["params"]["flip"])
+
+        mitcad = compile_mitcad_ir(
+            model,
+            "FlippedAsymmetricChamfer",
+        )
+        chamfer_set = mitcad["replay"][0]["commands"][0]["def"]["sets"][0]
+        self.assertEqual(chamfer_set["distance2"] if "distance2" in chamfer_set else None, None)
+        self.assertTrue(chamfer_set["flip"])
+        self.assertEqual(
+            chamfer_set["size"],
+            {
+                "type": "two_distances",
+                "distance1": 0.18,
+                "distance2": 0.65,
+            },
+        )
+
+    def test_asymmetric_non_top_face_boundary_remains_legacy(self):
+        shape = Box(
+            60,
+            40,
+            12,
+            anchor=Anchor.BOTTOM,
+        ).chamfer(
+            0.18,
+            distance2=0.65,
+            edges=Edges.from_faces(Faces.FRONT),
         )
 
         model = normalize_shape(shape)
         self.assertIsInstance(model.root, LegacyShapeIR)
-        self.assertEqual(model.root.source_kind, "chamfer")
-        self.assertEqual(
-            compile_solidcraft_ir(model, "AsymmetricChamfer"),
-            _compile_shape_legacy_with_dependencies(
-                shape,
-                "AsymmetricChamfer",
-            )[0],
-        )
-        with self.assertRaisesRegex(
-            ModelError,
-            "does not yet support Forge shape kind 'chamfer'",
-        ):
-            compile_mitcad_ir(model, "AsymmetricChamfer")
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "UnsupportedAsymmetricFront")
 
 
     def test_plane_ir_rejects_non_principal_or_invalid_origins(self):
