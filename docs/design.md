@@ -1337,6 +1337,41 @@ radial Sketch height to `shared + 1`. With `shared=4`, the native design has a
 produce one solid with volume `25π/9` and X bounds [0, 10] while retaining one
 unitless editable source parameter.
 
+#485 widens the existing `ChamferIR` rather than adding a second feature
+kind. `distance` remains the primary chamfer distance; optional `distance2`
+and `flip` carry the already-public two-distance semantics. Equal-distance
+models continue to normalize to the same fields with `distance2=None` and
+`flip=False`.
+
+The first asymmetric portable boundary is intentionally narrower than the
+public SolidCraft API: one typed Box and exactly the semantic TOP face boundary.
+This is the orientation for which both engines can be made equivalent without
+inventing an engine-specific face-order rule. SolidCraft documents the first
+two-distance face as the most-upward adjacent face by default, with `flip`
+swapping sides. For `Faces.TOP`, the semantic selected face is therefore the
+unambiguous primary face.
+
+SolidCraft keeps the accepted topology replay and emits the same
+`solid.chamfer` command as the stable compiler, adding `distance2` and
+`flip=true` only when authored.
+
+Mitcad v0.70.0 represents a chamfer with an explicit reference face only in the
+general `sets` form. Forge therefore keeps `FaceBoundaryIR(("top",))` as the
+semantic contract while replay privately resolves both the selected TOP
+boundary edges and one valid native name for that exact face. The native set
+contains `size={type: two_distances, distance1, distance2}`,
+`reference_face=<replay binding>` and optional `flip`. Native topology names
+remain backend transport and never appear in `ChamferIR`. Equal-distance
+Chamfer continues to use the existing short `edges + equal_distance` document
+and requires no reference-face binding.
+
+The exact runtime proof uses a 60×40×12 bottom-anchored Box and chamfers all
+four TOP boundary edges with primary 0.18 mm and secondary 0.65 mm. The outer
+bounds remain unchanged. The removed top-perimeter wedge is
+`100*d1*d2 - (4/3)*d1^2*d2`, so the expected remaining volume is
+28788.32808 mm³. A separate backend contract test proves `flip=True` changes
+side ordering without changing the authored distances.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
