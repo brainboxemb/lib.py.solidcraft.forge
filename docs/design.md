@@ -1678,6 +1678,37 @@ Mitcad still rejects HoleIR explicitly. Pattern/configuration capability that
 references a Hole is tracked by those separate semantic families rather than
 being counted as missing Hole meaning.
 
+#554 removes Sheet metal from the remaining legacy islands as one semantic
+history family rather than as one backend slice per sheet command. A
+`SheetRuleIR` retains thickness, bend radius, K-factor and authored rule name;
+K-factor uses a distinct dimensionless continuous `ratio` Parameter role
+rather than being misclassified as a length or integer count.
+
+Connected Sketch intent is shared through `SketchChainIR`. The same semantic
+line/arc chain can be closed when it is the blank profile, or open when it
+drives contour flange, path flange or an associative Fold. Segment identity
+contains authored points and arc controls only; SolidCraft curve ids and replay
+bindings are created during lowering and never enter Forge IR.
+
+The typed sheet history consists of `SheetBaseIR`,
+`SheetContourFlangeIR`, `SheetFoldIR`, `SheetEdgeFlangeIR`,
+`SheetHemIR`, `SheetPathFlangeIR` and `SheetPerforateIR`. Downstream
+sheet operations may consume a sheet-derived `BodyIR` history rather than
+requiring the immediately preceding node itself to be a sheet node. This keeps
+a common public sequence such as sheet blank -> Hole -> Fold fully typed.
+
+SolidCraft lowers the semantic sheet rule, Sketch/profile/chain and feature
+history back to the existing native commands: `sheet.manage_rules`,
+`sheet.flange`, `sheet.fold`, `sheet.hem`, `sheet.path_flange` and
+`sheet.perforate`. Compatibility tests compare the typed document with the
+stable legacy compiler for base sheets, connected blanks, contour/path
+flanges, fixed and associative folds, edge flanges, hems and perforation.
+
+Perforation remains manufacturing intent. Forge does not synthesize repeated
+solid holes merely to make B-rep geometry look perforated. Mitcad remains
+unsupported for the sheet family and fails closed on these typed nodes; that
+backend gap does not force sheet semantics back into `LegacyShapeIR`.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
