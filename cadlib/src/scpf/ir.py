@@ -2100,6 +2100,37 @@ def _count_parameter_names(value, found=None):
         found = set()
 
     if isinstance(value, Shape):
+        if value.kind == "sheet_base":
+            (
+                _sketch_name, _plane, origin, plane_offset, profiles, operations,
+                thickness, bend_radius, _k_factor, _rule_name,
+            ) = value.data
+            _length_parameter_names((origin, plane_offset, profiles, operations, thickness, bend_radius), found)
+            return found
+        if value.kind == "sheet_contour_flange":
+            contour, distance, thickness, bend_radius, _k_factor, _rule_name, _flip, _reverse = value.data
+            _length_parameter_names((contour, distance, thickness, bend_radius), found)
+            return found
+        if value.kind == "sheet_fold":
+            original, line, _angle, fixed, _position, _flip = value.data
+            _length_parameter_names((original, line, fixed), found)
+            return found
+        if value.kind == "sheet_edge_flange":
+            original, _edges, height, _angle, _height_from, _position, _flip = value.data
+            _length_parameter_names((original, height), found)
+            return found
+        if value.kind == "sheet_hem":
+            original, _edges, length, gap, _flip = value.data
+            _length_parameter_names((original, length, gap), found)
+            return found
+        if value.kind == "sheet_path_flange":
+            original, _edge, path, radius = value.data
+            _length_parameter_names((original, path, radius), found)
+            return found
+        if value.kind == "sheet_perforate":
+            original, diameter, pitch, margin, _pattern = value.data
+            _length_parameter_names((original, diameter, pitch, margin), found)
+            return found
         if value.kind == "rectangular_pattern":
             (
                 original,
@@ -2120,6 +2151,16 @@ def _count_parameter_names(value, found=None):
                 for parameter in parameters_in(count1, count2)
             )
             _count_parameter_names(original, found)
+            return found
+        if value.kind == "sheet_fold":
+            original, _line, angle, _fixed, _position, _flip = value.data
+            found.update(parameter.name for parameter in parameters_in(angle))
+            _angle_parameter_names(original, found)
+            return found
+        if value.kind == "sheet_edge_flange":
+            original, _edges, _height, angle, _height_from, _position, _flip = value.data
+            found.update(parameter.name for parameter in parameters_in(angle))
+            _angle_parameter_names(original, found)
             return found
         if value.kind == "circular_pattern":
             (
@@ -3527,7 +3568,288 @@ def _portable_shell(shape: Shape) -> ShellIR | None:
         return None
 
 
+def _sketch_chain_ir(
+    shape: Shape,
+    *,
+    closed: bool | None = None,
+    name: str | None = None,
+    plane: str | None = None,
+    offset=(0, 0),
+) -> SketchChainIR | None:
+    """Normalize authored connected Sketch paths without native curve ids."""
+    if shape.kind == "sketch_open_chain":
+        sketch_name, orientation, plane_offset, _start, segments = shape.data
+        if closed is True:
+            return None
+        plane_ir = _plane_ir(orientation, plane_offset)
+        if plane_ir is None:
+            return None
+        chain_name = sketch_name
+        is_closed = False
+        profile_offset = (0, 0)
+    elif shape.kind == "connected_profile":
+        if closed is False or name is None or plane is None:
+            return None
+        _start, segments = shape.data
+        plane_ir = _plane_ir(plane)
+        if plane_ir is None:
+            return None
+        chain_name = name
+        is_closed = True
+        profile_offset = tuple(offset)
+        if len(profile_offset) != 2:
+            return None
+    else:
+        return None
+
+    semantic = []
+    for segment in segments:
+        kind = segment[0]
+        if kind == "line":
+            _kind, start, end = segment
+            through = center = None
+            clockwise = None
+        elif kind == "arc_tangent":
+            _kind, start, end = segment
+            through = center = None
+            clockwise = None
+        elif kind == "arc_three_point":
+            _kind, start, end, through = segment
+            center = None
+            clockwise = None
+        elif kind == "arc_center_point":
+            _kind, start, end, center, clockwise = segment
+            through = None
+        else:
+            return None
+
+        def shifted(point):
+            if point is None:
+                return None
+            return tuple(
+                _dim_add(point[index], profile_offset[index])
+                for index in range(2)
+            )
+
+        try:
+            semantic.append(
+                SketchChainSegmentIR(
+                    kind=kind,
+                    start=shifted(start),
+                    end=shifted(end),
+                    through=shifted(through),
+                    center=shifted(center),
+                    clockwise=clockwise,
+                )
+            )
+        except ValueError:
+            return None
+
+    try:
+        return SketchChainIR(
+            name=chain_name,
+            plane=plane_ir,
+            segments=tuple(semantic),
+            closed=is_closed,
+        )
+    except ValueError:
+        return None
+
+
+def _sheet_rule_ir(
+    name,
+    thickness,
+    bend_radius,
+    k_factor,
+) -> SheetRuleIR | None:
+    try:
+        return SheetRuleIR(
+            name=name,
+            thickness=thickness,
+            bend_radius=bend_radius,
+            k_factor=k_factor,
+        )
+    except ValueError:
+        return None
+
+
+def _portable_sheet_base(shape: Shape) -> SheetBaseIR | None:
+    if shape.kind != "sheet_base":
+        return None
+    (
+        sketch_name,
+        plane,
+        origin,
+        plane_offset,
+        profiles,
+        operations,
+        thickness,
+        bend_radius,
+        k_factor,
+        rule_name,
+    ) = shape.data
+    if (
+        plane != "XY"
+        or origin is not None
+        or plane_offset is not None
+        or operations
+        or len(profiles) != 1
+    ):
+        return None
+
+    rule = _sheet_rule_ir(rule_name, thickness, bend_radius, k_factor)
+    if rule is None:
+        return None
+
+    profile, profile_anchor, offset = profiles[0]
+    if profile.kind == "connected_profile":
+        if profile_anchor is not None:
+            return None
+        blank = _sketch_chain_ir(
+            profile,
+            closed=True,
+            name=sketch_name,
+            plane=plane,
+            offset=offset,
+        )
+    else:
+        semantic = _profile_ir_from_shape(
+            profile,
+            profile_anchor,
+            offset,
+            plane,
+        )
+        if semantic is None:
+            return None
+        blank = SketchIR(
+            name=sketch_name,
+            plane=PlaneIR("XY"),
+            profiles=(semantic,),
+        )
+    if blank is None:
+        return None
+    try:
+        return SheetBaseIR(blank=blank, rule=rule)
+    except ValueError:
+        return None
+
+
+def _portable_sheet(shape: Shape) -> SheetBodyIR | None:
+    base = _portable_sheet_base(shape)
+    if base is not None:
+        return base
+
+    if shape.kind == "sheet_contour_flange":
+        (
+            contour, distance, thickness, bend_radius, k_factor,
+            rule_name, flip, reverse,
+        ) = shape.data
+        chain = _sketch_chain_ir(contour, closed=False)
+        rule = _sheet_rule_ir(rule_name, thickness, bend_radius, k_factor)
+        if chain is None or rule is None:
+            return None
+        try:
+            return SheetContourFlangeIR(
+                contour=chain,
+                distance=distance,
+                rule=rule,
+                flip=flip,
+                reverse=reverse,
+            )
+        except ValueError:
+            return None
+
+    if shape.kind not in {
+        "sheet_fold",
+        "sheet_edge_flange",
+        "sheet_hem",
+        "sheet_path_flange",
+        "sheet_perforate",
+    }:
+        return None
+
+    original = shape.data[0]
+    typed_base = _portable_sheet(original)
+    if typed_base is None:
+        # Sheet history may contain another already-typed body operation, such
+        # as a Hole between the flat blank and a Fold.
+        normalized = _normalize_node(original)
+        if not isinstance(normalized, SheetBodyIR):
+            return None
+        typed_base = normalized
+
+    try:
+        if shape.kind == "sheet_fold":
+            _original, line, angle, fixed, position, flip = shape.data
+            if isinstance(line, Shape):
+                semantic_line = _sketch_chain_ir(line, closed=False)
+                if semantic_line is None:
+                    return None
+            else:
+                semantic_line = tuple(tuple(float(v) for v in point) for point in line)
+            return SheetFoldIR(
+                base=typed_base,
+                line=semantic_line,
+                angle=angle,
+                fixed=None if fixed is None else tuple(float(v) for v in fixed),
+                position=position,
+                flip=flip,
+            )
+
+        if shape.kind == "sheet_edge_flange":
+            (
+                _original, edges, height, angle,
+                height_from, position, flip,
+            ) = shape.data
+            return SheetEdgeFlangeIR(
+                base=typed_base,
+                edges=tuple(tuple(point) for point in edges),
+                height=height,
+                angle=angle,
+                height_from=height_from,
+                position=position,
+                flip=flip,
+            )
+
+        if shape.kind == "sheet_hem":
+            _original, edges, length, gap, flip = shape.data
+            return SheetHemIR(
+                base=typed_base,
+                edges=tuple(tuple(point) for point in edges),
+                length=length,
+                gap=gap,
+                flip=flip,
+            )
+
+        if shape.kind == "sheet_path_flange":
+            _original, edge, path, radius = shape.data
+            semantic_path = _sketch_chain_ir(path, closed=False)
+            if semantic_path is None:
+                return None
+            return SheetPathFlangeIR(
+                base=typed_base,
+                edge=tuple(edge),
+                path=semantic_path,
+                radius=radius,
+            )
+
+        _original, diameter, pitch, margin, pattern = shape.data
+        return SheetPerforateIR(
+            base=typed_base,
+            diameter=diameter,
+            pitch=pitch,
+            margin=margin,
+            pattern=pattern,
+        )
+    except (TypeError, ValueError):
+        return None
+
+
 def _normalize_node(shape: Shape) -> IRNode:
+    sheet = _portable_sheet(shape)
+    if sheet is not None:
+        return sheet
+
     placement = _portable_placement(shape)
     if placement is not None:
         return placement
