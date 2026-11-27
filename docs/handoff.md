@@ -38,14 +38,12 @@ Start by:
 2. reading AGENTS.md;
 3. reading the current `main` version of docs/plan.md;
 4. treating `main:docs/plan.md` as the single source of truth for unfinished work across `main`, `dev` and `exp`;
-5. reading docs/requirements.md and docs/design.md before changing behavior or
-   architecture;
+5. reading docs/README.md, docs/architecture.md and docs/requirements.md before changing behavior or architecture;
 6. following the current work order from the plan rather than from old handoff
    text;
 7. creating an issue before implementation when the logical change has none;
 8. keeping one logical change to one issue, branch and PR;
-9. updating requirements/design documentation when behavior or architecture
-   changes;
+9. updating the active architecture/requirements/API documentation when behavior or architecture changes;
 10. reconciling the plan after merge or release.
 
 Durable working rules:

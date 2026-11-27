@@ -50,8 +50,8 @@ def write_candidate(
     changelog = changelog_version or version
     solidcraft = solidcraft_version or tested_solidcraft_version()
 
-    (root / "docs/background/design").mkdir(parents=True)
-    (root / "docs/background/design/release-blockers.txt").write_text(
+    (root / "cadlib").mkdir(parents=True)
+    (root / "cadlib/release-blockers.txt").write_text(
         blockers or "# no active blockers\n",
         encoding="utf-8",
     )

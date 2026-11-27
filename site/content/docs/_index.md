@@ -7,7 +7,7 @@ cascade:
 SolidCraft Forge exposes the `scpf` Python authoring API under `cadlib/src/scpf/`. Authored documentation and generated reference views remain source-owned here; CAD evidence remains on the durable `build` branch.
 
 {{< cards >}}
-  {{< card link="../../guide/" title="Guide" subtitle="The authored SCPF guide, projected from docs/guide/." >}}
+  {{< card link="../../guide/" title="Guide" subtitle="The authored SCPF guide, projected from site/source/guide/." >}}
   {{< card link="../../reference/" title="API Reference" subtitle="The public SCPF API contract, statically checked against cadlib/src/scpf." >}}
   {{< card link="../../cheatsheet/" title="Cheatsheet" subtitle="Compact SCPF syntax and usage reference." >}}
   {{< card link="reference/" title="SolidCraft references" subtitle="Retained versioned external engineering references." >}}
