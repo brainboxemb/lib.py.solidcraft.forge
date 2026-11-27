@@ -67,7 +67,13 @@ from ..ir import (
     RevolveIR,
     RoundedRectangleProfileIR,
     SketchRelationsIR,
+    SketchIR,
     SketchChainIR,
+    SketchEntityGraphIR,
+    SketchEntityRefIR,
+    SketchMirrorIR,
+    SketchRectangularPatternIR,
+    TextEntityIR,
     SheetBaseIR,
     SheetContourFlangeIR,
     SheetEdgeFlangeIR,
@@ -1826,32 +1832,37 @@ def _sheet_rule_command(model: ModelIR, rule: SheetRuleIR) -> dict:
     )
 
 
-def _sheet_chain_commands(
-    model: ModelIR,
+def _sketch_chain_geometry_commands(
     chain: SketchChainIR,
     *,
+    model: ModelIR | None = None,
     bind_curves: bool = False,
+    binding_prefix: str = "$contour_curves",
 ) -> tuple[list[dict], str | None]:
-    """Lower semantic connected Sketch intent without frontend Shape payloads."""
+    """Lower shared semantic line/arc chain geometry without Sketch support."""
     if not isinstance(chain, SketchChainIR):
-        raise ModelError("sheet Sketch path requires SketchChainIR")
-    commands = [_solidcraft_sketch_create(chain)]
+        raise ModelError("Sketch chain geometry requires SketchChainIR")
+    commands = []
     curve_variable = None
     curve_count = 0
     previous_line_id = None
     line_count = 0
 
-    def point(value):
-        return [
-            _role_command_value(model, value[0], "length"),
-            _role_command_value(model, value[1], "length"),
-        ]
+    def value(item):
+        return (
+            _role_command_value(model, item, "length")
+            if model is not None
+            else command_value(item)
+        )
+
+    def point(coordinates):
+        return [value(coordinates[0]), value(coordinates[1])]
 
     def append_curve(command):
         nonlocal curve_variable, curve_count
         if bind_curves:
             curve_count += 1
-            next_variable = f"$contour_curves_{curve_count}"
+            next_variable = f"{binding_prefix}_{curve_count}"
             binding = (
                 "curves"
                 if curve_variable is None
@@ -1922,10 +1933,164 @@ def _sheet_chain_commands(
             f"unsupported semantic Sketch chain segment {segment.kind!r}"
         )
 
-    commands.append(_command("sketch.finish"))
     if bind_curves and curve_variable is None:
-        raise ModelError("semantic open Sketch chain has no curves to consume")
+        raise ModelError("semantic Sketch chain has no curves to consume")
     return commands, curve_variable
+
+
+def _sheet_chain_commands(
+    model: ModelIR,
+    chain: SketchChainIR,
+    *,
+    bind_curves: bool = False,
+) -> tuple[list[dict], str | None]:
+    """Lower semantic connected Sketch intent with its standalone support."""
+    if not isinstance(chain, SketchChainIR):
+        raise ModelError("sheet Sketch path requires SketchChainIR")
+    if chain.plane is None:
+        raise ModelError("sheet Sketch path requires semantic PlaneIR support")
+    geometry, curve_variable = _sketch_chain_geometry_commands(
+        chain,
+        model=model,
+        bind_curves=bind_curves,
+    )
+    return [
+        _solidcraft_sketch_create(chain),
+        *geometry,
+        _command("sketch.finish"),
+    ], curve_variable
+
+
+def _solidcraft_sketch_graph_commands(
+    graph: SketchEntityGraphIR,
+    *,
+    sketch_index: int = 1,
+) -> list[dict]:
+    """Lower support-independent Sketch graph contents.
+
+    Support creation and consuming solid features are deliberately owned by
+    #561. Native/replay identities are created only in this backend.
+    """
+    if not isinstance(graph, SketchEntityGraphIR):
+        raise TypeError("Sketch graph lowering requires SketchEntityGraphIR")
+    if type(sketch_index) is not int or sketch_index < 1:
+        raise ModelError("Sketch graph index must be positive")
+
+    commands = []
+    referenced_entities = {
+        operation.source.index
+        for operation in graph.operations
+        if operation.source.kind == "entity"
+    }
+
+    def entity_variable(index):
+        return f"$sketch_{sketch_index}_profile_{index + 1}"
+
+    def operation_variable(index):
+        return f"$sketch_{sketch_index}_operation_{index + 1}"
+
+    def source_variable(reference: SketchEntityRefIR):
+        if reference.kind == "entity":
+            entity = graph.entities[reference.index]
+            if isinstance(entity, SketchChainIR):
+                raise ModelError(
+                    "sketch pattern/mirror does not yet support connected profiles"
+                )
+            return entity_variable(reference.index)
+        return operation_variable(reference.index)
+
+    for index, entity in enumerate(graph.entities):
+        variable = entity_variable(index)
+        if isinstance(entity, TextEntityIR):
+            _require_positive(entity.height, "sketch text height")
+            rows = [
+                _command(
+                    "sketch.text",
+                    text=entity.text,
+                    at=[command_value(value) for value in entity.position],
+                    height=command_value(entity.height),
+                    font=entity.font,
+                )
+            ]
+        elif isinstance(entity, SketchChainIR):
+            rows, _binding = _sketch_chain_geometry_commands(entity)
+        else:
+            dummy = SketchIR(
+                name="Graph",
+                plane=PlaneIR("XY"),
+                profiles=(entity,),
+            )
+            rows = _solidcraft_profile_commands(
+                dummy,
+                entity,
+                profile_index=index + 1,
+            )
+
+        if index in referenced_entities:
+            if isinstance(entity, SketchChainIR):
+                raise ModelError(
+                    "sketch pattern/mirror does not yet support connected profiles"
+                )
+            if not rows:
+                raise ModelError(
+                    "semantic Sketch entity produced no SolidCraft curves"
+                )
+            rows[0].setdefault("bind", {})[variable] = "curves"
+        commands.extend(rows)
+
+    for chain in graph.open_chains:
+        rows, _binding = _sketch_chain_geometry_commands(chain)
+        commands.extend(rows)
+
+    for index, operation in enumerate(graph.operations):
+        source = source_variable(operation.source)
+        variable = operation_variable(index)
+        if isinstance(operation, SketchRectangularPatternIR):
+            params = {
+                "entities": source,
+                "count": command_value(operation.count),
+                "spacing": command_value(operation.spacing),
+                "dir": list(operation.direction),
+            }
+            has_second_direction = (
+                pv(operation.count2) != 1
+                or bool(parameters_in(operation.count2))
+            )
+            if has_second_direction:
+                params["count2"] = command_value(operation.count2)
+                if operation.spacing2 is not None:
+                    params["spacing2"] = command_value(operation.spacing2)
+                if operation.direction2 is not None:
+                    params["dir2"] = list(operation.direction2)
+            if operation.alignment != "right":
+                params["alignment"] = operation.alignment
+            if has_second_direction and operation.alignment2 != "right":
+                params["alignment2"] = operation.alignment2
+            if operation.reversed:
+                params["reversed"] = True
+            if has_second_direction and operation.reversed2:
+                params["reversed2"] = True
+            row = _command("sketch.pattern.rectangular", **params)
+            row["bind"] = {
+                variable: {
+                    "field": "curves",
+                    "prepend": source,
+                }
+            }
+        elif isinstance(operation, SketchMirrorIR):
+            row = _command(
+                "sketch.mirror",
+                entities=source,
+                line=operation.axis,
+            )
+            row["bind"] = {variable: "curves"}
+        else:
+            raise ModelError(
+                f"unsupported Sketch operation IR {type(operation).__name__}"
+            )
+        commands.append(row)
+
+    return commands
 
 
 def _sheet_base_commands(
