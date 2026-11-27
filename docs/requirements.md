@@ -221,6 +221,20 @@
 196. The stable SolidCraft compatibility classifier must use the same degree role for countersink-angle Parameters so typed and compatibility lowering agree on editable native units.
 197. Fixed non-zero Hole direction vectors remain engine-neutral orientation intent. #550 does not introduce parameter-driven vector components as a new editable direction contract.
 198. Patterning, configuration/suppression and backend-native Hole implementation are separate semantic/backend families; their remaining gaps do not make the Hole feature family itself incomplete once current Hole meaning and placement intent are represented.
+199. Public sheet-metal authoring must normalize as one typed native-history family rather than as generic solid CSG or backend command-shaped payloads.
+200. `SheetRuleIR` owns the authored rule name, positive thickness, positive bend radius and K-factor in (0,1). A symbolic K-factor uses the dimensionless continuous `ratio` Parameter role; it is neither a length nor an integer count.
+201. Connected line/arc Sketch intent used by sheet metal is represented by engine-neutral `SketchChainIR`. Open/closed state and semantic segment controls are retained while native curve ids, sketch entity ids and replay bindings remain backend transport.
+202. `SheetBaseIR` represents `Sketch.sheet_metal(...)` over one typed closed profile or closed connected chain plus one `SheetRuleIR`. The current public standalone XY restrictions remain source-compatible.
+203. `SheetContourFlangeIR`, `SheetFoldIR`, `SheetEdgeFlangeIR`, `SheetHemIR`, `SheetPathFlangeIR` and `SheetPerforateIR` preserve the current public native sheet feature controls as semantic history nodes.
+204. A sheet operation may consume a sheet-derived typed BodyIR history containing intervening typed features such as HoleIR. The compiler must not lose sheet identity merely because the immediately preceding semantic node is not itself a SheetBodyIR subclass.
+205. Fixed-point Fold and associative `Sketch.line(...)` Fold remain distinct typed source forms. Associative Fold retains its semantic one-line Sketch chain; SolidCraft derives `sketch` / `curve` transport only while lowering.
+206. Edge flange and Hem explicit XYZ picks remain fixed semantic selection intent in the current public contract; native edge identities are not stored in IR.
+207. Path flange retains one fixed semantic edge pick plus one line-only open `SketchChainIR`; contour flange may retain the broader already-public connected line/tangent-arc chain.
+208. Sheet perforation remains manufacturing semantics for flat-pattern/DXF and measured-volume behavior. Forge must not replace `SheetPerforateIR` with repeated B-rep HoleIR or Boolean cuts.
+209. Sheet length fields retain length roles and Fold/Flange angle fields retain angle roles. Typed and stable SolidCraft parameter declarations must remain unit-compatible.
+210. SolidCraft typed sheet lowering must reproduce the existing stable native command/history documents for current public sheet base, contour flange, fold, edge flange, hem, path flange and perforation source.
+211. Mitcad may remain unsupported for the sheet-metal family after #554 and must fail closed on typed sheet nodes. Mitcad support is not an IR-ready merge gate.
+212. The Sheet metal family is complete when the current public sheet rule/body/features above normalize to typed IR; unsupported backend execution does not make the semantic family partial.
 
 ## SCPF native associativity
 
