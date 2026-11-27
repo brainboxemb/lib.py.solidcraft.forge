@@ -173,7 +173,7 @@ class ModelPagesTests(unittest.TestCase):
             (config / "hugo.toml").write_text(
                 '[params]\ncadSourceRepository = "owner/repo"\n'
             )
-            sections = root / "docs/verification"
+            sections = root / "site/source/verification"
             sections.mkdir(parents=True)
             (sections / "sections.yml").write_text(
                 "schema: 1\nsections:\n"
