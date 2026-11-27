@@ -365,18 +365,79 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(sphere["def"]["center"], [3, 4])
         self.assertIn("sphere_radius", str(sphere["def"]["diameter"]))
 
-    def test_shifted_or_anchored_sphere_csg_remains_outside_bounded_slice(self):
-        for sphere in (
-            Sphere(20, anchor=Anchor.TOP),
-            Sphere(20).move(z=10),
+    def test_shifted_or_anchored_sphere_csg_keeps_typed_boolean_ir(self):
+        for index, sphere in enumerate(
+            (
+                Sphere(20, anchor=Anchor.TOP),
+                Sphere(20).move(z=10),
+            ),
+            start=1,
         ):
             with self.subTest(sphere=sphere):
-                model = normalize_shape(
-                    sphere + Box(10, 10, 10)
+                shape = sphere + Box(10, 10, 10)
+                model = self.assert_solidcraft_compatibility(
+                    shape,
+                    f"SphereCsg{index}",
                 )
-                self.assertIsInstance(model.root, LegacyShapeIR)
-                with self.assertRaises(ModelError):
-                    compile_mitcad_ir(model, "UnsupportedSphereCsg")
+                self.assertIsInstance(model.root, BooleanIR)
+                self.assertIsInstance(model.root.target, PlacementIR)
+                self.assertIsInstance(model.root.target.primitive, SphereIR)
+
+                mitcad = compile_mitcad_ir(model, f"SphereCsg{index}")
+                features = [
+                    row
+                    for row in mitcad["commands"]
+                    if row["cmd"] == "add_feature"
+                ]
+                self.assertEqual(
+                    [row["def"]["type"] for row in features],
+                    ["construction_plane", "sphere", "box"],
+                )
+                self.assertEqual(features[1]["def"]["operation"], "new_body")
+                self.assertEqual(features[2]["def"]["operation"], "join")
+                self.assertTrue(
+                    features[0]["as"].startswith("csg_plane_root_target")
+                )
+                self.assertEqual(
+                    features[1]["def"]["plane"],
+                    {"ref": f"{features[0]['as']}.uid"},
+                )
+
+    def test_shifted_sphere_configuration_binds_semantic_feature_not_helper(self):
+        sphere = Sphere(5).move(z=15)
+        body = Box(30, 30, 30, anchor=Anchor.BOTTOM) - sphere
+        configured = Configure(
+            body,
+            active="Cut",
+            columns=(Suppress(sphere),),
+            rows={
+                "Cut": (False,),
+                "Uncut": (True,),
+            },
+        )
+
+        model = normalize_model(configured)
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(
+            model.configuration.columns[0].feature,
+            FeatureRefIR(path=("root", "tool")),
+        )
+
+        mitcad = compile_mitcad_ir(model, "ShiftedSphereConfigured")
+        helper = next(
+            row
+            for row in mitcad["commands"]
+            if row.get("as") == "csg_plane_root_tool"
+        )
+        self.assertEqual(helper["def"]["type"], "construction_plane")
+        configured_feature = next(
+            row
+            for row in mitcad["commands"]
+            if row.get("as") == "configured_feature"
+        )
+        self.assertEqual(configured_feature["def"]["type"], "sphere")
+        self.assertEqual(configured_feature["def"]["operation"], "cut")
+        self.assertNotEqual(helper, configured_feature)
 
     def test_circle_extrude_is_separate_sketch_region_and_extrude_ir(self):
         diameter = Parameter("diameter", 20)
