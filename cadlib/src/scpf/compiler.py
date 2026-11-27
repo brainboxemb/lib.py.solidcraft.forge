@@ -106,15 +106,14 @@ def _compile_shape_legacy_with_dependencies(shape: Shape, name: str):
 
 
 def _compile_model_with_dependencies(shape: Shape, name: str):
-    """Compile stable SolidCraft product intent through the IR boundary.
+    """Compile current public Shape intent through the SolidCraft boundary.
 
-    Geometry Shapes normalize to ModelIR. Configure(...) remains a
-    SolidCraft-only document-level wrapper until configuration semantics gain
-    their own portable IR boundary, so it deliberately uses the stable legacy
-    lowering that already owns native configuration-table authoring.
+    Unconfigured geometry normalizes to semantic ModelIR. The broad v0.26
+    final-model configuration table retains the stable SolidCraft compatibility
+    lowering until typed backend coverage is complete; no retired frontend
+    wrapper is reconstructed.
     """
-    from .configurations import _ConfiguredDesign
-    if isinstance(shape, _ConfiguredDesign):
+    if getattr(shape, "_configuration", None) is not None:
         return _compile_shape_legacy_with_dependencies(shape, name)
 
     from .backends.solidcraft import compile_ir_with_dependencies
