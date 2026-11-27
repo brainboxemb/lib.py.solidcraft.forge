@@ -60,6 +60,7 @@ from ..ir import (
     LipFeatureIR,
     LegacyShapeIR,
     ModelIR,
+    NamedFeatureIR,
     PlacementIR,
     PlaneIR,
     ParallelEdgeSetIR,
@@ -2975,12 +2976,47 @@ def _boolean_feature_command_index(
     raise ModelError("SolidCraft feature reference did not resolve to a command")
 
 
+def _history_command_indexes(commands: list[dict]) -> list[int]:
+    """Return backend-local native history commands, excluding helpers."""
+    return [
+        index
+        for index, command in enumerate(commands)
+        if command.get("command", "").startswith(("solid.", "sheet."))
+    ]
+
+
+def _semantic_feature_command_index(
+    model: ModelIR,
+    reference: FeatureRefIR,
+    commands: list[dict],
+    name: str,
+) -> int:
+    """Map one semantic feature reference to the current native command list."""
+    if isinstance(model.root, BooleanIR):
+        geometry_index = _boolean_feature_command_index(model.root, reference)
+        return len(model.parameters) + geometry_index
+
+    resolved = resolve_feature_ref(model.root, reference)
+    if not isinstance(resolved, BodyIR):
+        raise ModelError("semantic feature reference does not resolve to BodyIR")
+
+    prefix = _body_commands(model, resolved, name)
+    prefix_history = _history_command_indexes(prefix)
+    full_history = _history_command_indexes(commands)
+    if not prefix_history or len(prefix_history) > len(full_history):
+        raise ModelError(
+            "semantic feature reference has no matching SolidCraft history command"
+        )
+    return full_history[len(prefix_history) - 1]
+
+
 def _configured_feature_command_index(
     model: ModelIR,
     configuration: ConfigurationIR,
     commands: list[dict],
+    name: str,
 ) -> int:
-    """Resolve semantic feature identity to one backend-local native command."""
+    """Resolve one qualified configuration feature through semantic identity."""
     if (
         len(configuration.columns) != 1
         or not isinstance(configuration.columns[0], SuppressionColumnIR)
@@ -2988,39 +3024,63 @@ def _configured_feature_command_index(
         raise ModelError(
             "portable SolidCraft configuration requires one suppression feature"
         )
-    reference = configuration.columns[0].feature
-
-    if isinstance(model.root, RevolveIR) and reference == FeatureRefIR(("root",)):
-        indexes = [
-            index
-            for index, command in enumerate(commands)
-            if command.get("command") == "solid.revolve"
-        ]
-        if len(indexes) != 1:
-            raise ModelError(
-                "portable SolidCraft configuration root must resolve to one Revolve feature"
-            )
-        return indexes[0]
-
-    if isinstance(model.root, BooleanIR):
-        geometry_index = _boolean_feature_command_index(model.root, reference)
-        return len(model.parameters) + geometry_index
-
-    raise ModelError(
-        "portable SolidCraft configuration feature is outside qualified history"
+    return _semantic_feature_command_index(
+        model,
+        configuration.columns[0].feature,
+        commands,
+        name,
     )
+
+
+def _portable_named_feature_commands(
+    model: ModelIR,
+    commands: list[dict],
+    name: str,
+) -> list[dict]:
+    """Apply public feature() initial suppression through semantic identity."""
+    commands = [dict(command) for command in commands]
+    for feature in model.named_features:
+        if not isinstance(feature, NamedFeatureIR):
+            raise ModelError("invalid semantic named feature")
+        if not feature.suppressed:
+            continue
+        index = _semantic_feature_command_index(
+            model,
+            feature.feature,
+            commands,
+            name,
+        )
+        variable = f"$feature_{feature.name}_name"
+        target = dict(commands[index])
+        bindings = dict(target.get("bind", {}))
+        if variable in bindings:
+            raise ModelError(f"duplicate named feature {feature.name!r}")
+        bindings[variable] = "name"
+        target["bind"] = bindings
+        commands[index] = target
+        commands.append(
+            _command(
+                "timeline.suppress",
+                features=[variable],
+                suppressed=True,
+            )
+        )
+    return commands
 
 
 def _portable_configuration_commands(
     model: ModelIR,
     configuration: ConfigurationIR,
     commands: list[dict],
+    name: str,
 ) -> list[dict]:
     """Lower semantic suppression rows without source-object/native-id lookup."""
     from ..configurations import _row_variable
 
     commands = [dict(command) for command in commands]
-    index = _configured_feature_command_index(model, configuration, commands)
+    index = _configured_feature_command_index(
+        model, configuration, commands, name
+    )
 
     feature_name = "$config_name_1"
     target = dict(commands[index])
@@ -3103,11 +3163,18 @@ def compile_ir_commands_with_dependencies(model: ModelIR, name: str):
         return commands, _native_dependencies(commands)
 
     commands = _portable_commands(model, name)
+    if model.named_features:
+        commands = _portable_named_feature_commands(
+            model,
+            commands,
+            name,
+        )
     if model.configuration is not None:
         commands = _portable_configuration_commands(
             model,
             model.configuration,
             commands,
+            name,
         )
     return commands, _native_dependencies(commands)
 
