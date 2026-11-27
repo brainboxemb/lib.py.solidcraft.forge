@@ -247,11 +247,11 @@ def _polygon_region_interior_point(
     sketch: SketchIR,
     region: RegionIR,
 ) -> tuple[float, float]:
-    """Return transport geometry for one qualified convex semantic polygon.
+    """Return deterministic transport geometry for one simple semantic polygon.
 
     Symbolic coordinates remain untouched in PolygonProfileIR. Current values
-    are evaluated only to validate strict convexity and derive a backend
-    selector when a native API requires one.
+    are evaluated only to validate a finite, non-self-intersecting region and
+    derive an interior selector when a native API requires one.
     """
 
     if (
@@ -274,36 +274,106 @@ def _polygon_region_interior_point(
     if len(set(points)) != len(points):
         raise ValueError("qualified polygon region has duplicate vertices")
 
-    crosses = []
+    epsilon = 1e-12
     count = len(points)
     for index in range(count):
         a = points[index]
         b = points[(index + 1) % count]
-        c = points[(index + 2) % count]
-        ab = (b[0] - a[0], b[1] - a[1])
-        bc = (c[0] - b[0], c[1] - b[1])
-        if hypot(*ab) <= 1e-12:
+        if hypot(b[0] - a[0], b[1] - a[1]) <= epsilon:
             raise ValueError("qualified polygon region has a zero-length edge")
-        cross = ab[0] * bc[1] - ab[1] * bc[0]
-        if abs(cross) <= 1e-12:
-            raise ValueError(
-                "qualified polygon region currently requires strict convexity"
-            )
-        crosses.append(cross)
 
-    if not (
-        all(value > 0 for value in crosses)
-        or all(value < 0 for value in crosses)
-    ):
-        raise ValueError(
-            "qualified polygon region currently requires a convex polygon"
+    def orientation(a, b, c):
+        return (
+            (b[0] - a[0]) * (c[1] - a[1])
+            - (b[1] - a[1]) * (c[0] - a[0])
         )
 
-    # The arithmetic vertex centroid is strictly inside a convex polygon.
-    return (
-        sum(point[0] for point in points) / count,
-        sum(point[1] for point in points) / count,
+    def on_segment(a, b, p):
+        return (
+            min(a[0], b[0]) - epsilon <= p[0] <= max(a[0], b[0]) + epsilon
+            and min(a[1], b[1]) - epsilon <= p[1] <= max(a[1], b[1]) + epsilon
+            and abs(orientation(a, b, p)) <= epsilon
+        )
+
+    def segments_intersect(a, b, c, d):
+        o1 = orientation(a, b, c)
+        o2 = orientation(a, b, d)
+        o3 = orientation(c, d, a)
+        o4 = orientation(c, d, b)
+        if (
+            ((o1 > epsilon and o2 < -epsilon) or (o1 < -epsilon and o2 > epsilon))
+            and ((o3 > epsilon and o4 < -epsilon) or (o3 < -epsilon and o4 > epsilon))
+        ):
+            return True
+        return (
+            (abs(o1) <= epsilon and on_segment(a, b, c))
+            or (abs(o2) <= epsilon and on_segment(a, b, d))
+            or (abs(o3) <= epsilon and on_segment(c, d, a))
+            or (abs(o4) <= epsilon and on_segment(c, d, b))
+        )
+
+    # Reject bow-ties, touching non-neighbour edges and other ambiguous loops.
+    for left in range(count):
+        a = points[left]
+        b = points[(left + 1) % count]
+        for right in range(left + 1, count):
+            if right == left:
+                continue
+            if right == (left + 1) % count:
+                continue
+            if left == (right + 1) % count:
+                continue
+            c = points[right]
+            d = points[(right + 1) % count]
+            if segments_intersect(a, b, c, d):
+                raise ValueError(
+                    "qualified polygon region must be a simple non-self-intersecting polygon"
+                )
+
+    twice_area = sum(
+        points[index][0] * points[(index + 1) % count][1]
+        - points[(index + 1) % count][0] * points[index][1]
+        for index in range(count)
     )
+    if abs(twice_area) <= epsilon:
+        raise ValueError("qualified polygon region must enclose non-zero area")
+
+    # Pick a horizontal scanline strictly between authored vertex levels.
+    # A simple polygon intersects such a line in interior pairs. The midpoint
+    # of the widest interval is strictly inside and is independent of winding.
+    levels = sorted({point[1] for point in points})
+    candidates = []
+    for low, high in zip(levels, levels[1:]):
+        if high - low <= epsilon:
+            continue
+        y = (low + high) / 2.0
+        intersections = []
+        for index in range(count):
+            a = points[index]
+            b = points[(index + 1) % count]
+            if (a[1] <= y < b[1]) or (b[1] <= y < a[1]):
+                x = a[0] + (y - a[1]) * (b[0] - a[0]) / (b[1] - a[1])
+                intersections.append(x)
+        intersections.sort()
+        if len(intersections) % 2:
+            raise ValueError(
+                "qualified polygon region has ambiguous scanline intersections"
+            )
+        for first, second in zip(intersections[0::2], intersections[1::2]):
+            width = second - first
+            if width > epsilon:
+                candidates.append((width, (first + second) / 2.0, y))
+
+    if not candidates:
+        raise ValueError(
+            "qualified polygon region has no deterministic interior selector"
+        )
+
+    _width, x, y = max(
+        candidates,
+        key=lambda item: (item[0], -abs(item[2]), -abs(item[1])),
+    )
+    return (x, y)
 
 
 def _region_interior_point(
