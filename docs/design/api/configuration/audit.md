@@ -130,8 +130,12 @@ features but cannot themselves be configured.
 This object is a typed wrapper around SolidCraft Configuration Rules.
 
 Its original practical reason was the Installed use case. The direct
-configuration probe now shows that this example does not need a rule at all:
-one real Installed feature can be configured directly through suppression.
+configuration probe shows that **row-owned** Installed suppression needs no
+rule. A separately switchable Installed control independent from the active
+Small/Large row is different: SolidCraft 0.49 can lower that intent through a
+native rule driving suppression of the same real Installed feature.
+
+That backend need still does not make `ConfigRule` a good public Forge object.
 
 ## `Always()`
 
@@ -147,9 +151,12 @@ those semantic requirements rather than retaining this helper.
 
 **Remove with the public rule surface.**
 
-`DriveParameter` is not needed for the direct Installed configuration path.
-It remains a SolidCraft-shaped helper and should not be used as the foundation
-for the replacement API.
+`DriveParameter` is not needed for either direct row-owned Installed
+suppression or the cleaner independent single-feature lowering. The independent
+case can use SolidCraft's native `drive_suppression` effect internally.
+
+`DriveParameter` remains a SolidCraft-shaped helper and should not be used as
+the foundation for the replacement API.
 
 ## `Configure(..., rules=...)`
 
@@ -195,9 +202,14 @@ public rules=
 first-class State/Toggle invented only for this use case
 ~~~
 
-Installed does not need a separate global-state abstraction for the qualified
-example. The remaining API question is only how the authored feature handle is
-passed to `model.configure(...)`.
+The qualified example does not yet justify a separate first-class `State`
+object. It does require the public configuration contract to distinguish
+row-owned feature suppression from an Installed control that is independent of
+the active named row.
+
+The remaining API question is how the authored feature handle and that
+final-model intent are expressed through `model.configure(...)` without
+exposing SolidCraft rule mechanics.
 
 ## Relationship to `exp`
 
