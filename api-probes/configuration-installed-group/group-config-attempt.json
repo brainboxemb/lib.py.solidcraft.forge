@@ -92,6 +92,9 @@
       "params": {
         "params": [
           "size"
+        ],
+        "features": [
+          "Installed"
         ]
       }
     },
@@ -107,7 +110,8 @@
       "params": {
         "name": "Small",
         "values": {
-          "param:size": "40 mm"
+          "param:size": "40 mm",
+          "suppress:Installed": "true"
         }
       }
     },
@@ -116,7 +120,8 @@
       "params": {
         "name": "Large",
         "values": {
-          "param:size": "60 mm"
+          "param:size": "60 mm",
+          "suppress:Installed": "true"
         }
       }
     },
