@@ -34,14 +34,13 @@ from scpf import (
     SnapFit,
     Sphere,
     Suppress,
-    Text2D,
     ThreadedHole,
     X,
     Y,
 )
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.solidcraft import compile_ir as compile_solidcraft_ir
-from scpf.core import Expression
+from scpf.core import Expression, Text2D
 from scpf.compiler import (
     ModelError,
     _compile_model_with_dependencies,
