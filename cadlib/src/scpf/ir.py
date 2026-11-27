@@ -1135,7 +1135,7 @@ def _portable_csg_placement(node: IRNode) -> bool:
     """Accept the already-qualified primitive PlacementIR forms inside CSG."""
     return (
         isinstance(node, PlacementIR)
-        and isinstance(node.primitive, (BoxIR, CylinderIR, SphereIR))
+        and isinstance(node.primitive, (BoxIR, CylinderIR, ConeIR, SphereIR))
     )
 
 

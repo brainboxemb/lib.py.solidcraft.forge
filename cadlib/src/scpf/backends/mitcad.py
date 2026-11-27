@@ -534,6 +534,14 @@ def _csg_primitive_commands(
         return [_box_command(node, name, operation=operation)], 0
     if isinstance(node.primitive, CylinderIR):
         return [_cylinder_command(node, name, operation=operation)], 0
+    if isinstance(node.primitive, ConeIR):
+        commands = _cone_commands(
+            node,
+            name,
+            operation=operation,
+            plane_binding=_csg_helper_binding(path),
+        )
+        return commands, len(commands) - 1
     if isinstance(node.primitive, SphereIR):
         commands = _sphere_commands(
             node,
