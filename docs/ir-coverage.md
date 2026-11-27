@@ -29,8 +29,8 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **9 / 20 (45%)**
-- partial: **11 / 20 (55%)**
+- complete: **11 / 20 (55%)**
+- partial: **9 / 20 (45%)**
 - legacy: **0 / 20 (0%)**
 - families with at least some typed IR: **20 / 20 (100%)**
 - physical SCPF owners on permanent `exp`: **61**
@@ -49,8 +49,8 @@ not effort or backend parity.
 | Reference geometry: planes and axes | partial | partial | partial | qualified slices | PlaneIR plus principal/vector AxisLineIR are typed; broader datum/reference semantics remain. |
 | Sketch entities, constraints, dimensions | complete | partial | partial | qualified slices | #560 completes current public Sketch entity/operation semantics by reusing #554 SketchChainIR and adding Text plus Sketch-local rectangular-pattern/mirror source identity; support/consumer composition is tracked separately. |
 | 2D profiles | complete | yes | partial | qualified slices | #534 covers public Circle/Polygon/Rectangle/RoundedRectangle/Slot closed-profile constructors; text/open connected geometry remains in the broader Sketch-entity family. |
-| Regions/profile membership | partial | partial | partial | qualified slices | General region composition. |
-| Extrude | partial | partial | partial | qualified slices | Attached/rotated/broader profile and operation forms. |
+| Regions/profile membership | complete | yes | partial | qualified slices | #561 covers current public all-profile, exact-region and explicit Sketch-local selector intent; Mitcad support remains backend catch-up. |
+| Extrude | complete | yes | partial | qualified slices | #561 covers current public standalone/attached finite positive/negative/symmetric and through-all cut semantics over typed Sketch graphs/regions; Mitcad support remains partial. |
 | Revolve | partial | partial | partial | qualified slices | Broader profile/operation/reference forms. |
 | Boolean body operations | partial | partial | partial | qualified slices | General feature/body operands. |
 | Topology/reference selectors | partial | partial | partial | qualified slices | Profile/vertex/explicit and broader directional selectors. |
@@ -94,6 +94,8 @@ SketchChainIR and typed sheet history. #555 then introduces AssemblyIR for
 reusable definitions, occurrences, placement/grouping, anchors and relationships.
 All 20 tracked semantic families now have typed IR and no family is fully
 legacy. #560 then completes the support-independent public Sketch entity and
-operation graph while reusing the same SketchChainIR. The migration therefore
-continues entirely as partial -> complete closure while backend catch-up remains
-independent.
+operation graph while reusing the same SketchChainIR. #561 composes that graph
+with semantic Sketch support/frame intent, general RegionIR selector semantics
+and the current public standalone/attached Extrude contract, moving Regions and
+Extrude to complete. The migration therefore continues entirely as partial ->
+complete closure while backend catch-up remains independent.
