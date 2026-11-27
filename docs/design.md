@@ -1514,13 +1514,14 @@ The semantic table is heterogeneous by construction:
   deterministic Parameter dependency names, and typed scalar IR when the
   authored value was a Parameter/Expression with semantic scalar meaning.
 
-Shape suppression uses `FeatureRefIR`. Exported reusable-component feature
-suppression reuses #555 `ComponentFeatureRefIR` and definition identity.
-The current public API also permits `Suppress(Shape)` while configuring an
-Assembly; when that Shape resolves uniquely inside one reusable definition,
-`DefinitionFeatureRefIR(definition, feature)` combines the semantic definition
-id with that definition-local `FeatureRefIR`. It never uses occurrence ids,
-native feature ids or replay variables.
+Shape suppression uses `FeatureRefIR`. Reusable-component suppression
+uses the public exported-feature contract and reuses #555
+`ComponentFeatureRefIR` plus semantic definition identity. A Shape object
+stored as the exported wrapper resolves to that same component-feature
+identity. Internal raw Shapes from a component `build()` are not a separate
+public definition-selector API and therefore do not acquire a speculative
+definition-local reference type. No occurrence ids, native feature ids or
+replay variables enter semantic configuration identity.
 
 A configured Shape remains `ModelIR(configuration=ConfigurationIR)` so the
 already-qualified typed suppression backend path stays source compatible.
