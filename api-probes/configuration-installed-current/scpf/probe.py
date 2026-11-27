@@ -17,7 +17,6 @@ class FlexibleClamp:
 
 class ConfigurationInstalledCurrent:
     tube_d = 10.0
-    clamp_interference = 0.4
     clamp_bore = 9.6
 
     def build(self):
@@ -32,7 +31,7 @@ class ConfigurationInstalledCurrent:
             active="Free",
             columns=(Param(self.clamp_bore),),
             rows={
-                "Free": ("tube_d-clamp_interference",),
+                "Free": ("tube_d - 0.4 mm",),
             },
             rules=(
                 ConfigRule(
