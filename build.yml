@@ -1,5 +1,5 @@
 schema: 1
-branch: issue/447-polygon-coordinate-relations-ir
+branch: issue/451-parameterized-polygon-extrude-ir
 modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
 models: [native-revolve]
 library: true
