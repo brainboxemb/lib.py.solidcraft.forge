@@ -1766,13 +1766,21 @@ def _normalize_node(shape: Shape) -> IRNode:
 
         target = _normalize_node(target_shape)
         tool = _normalize_node(tool_shape)
-        if (
-            (
-                isinstance(target, (BooleanIR, FilletIR))
+        fillet_cone_join = (
+            isinstance(target, FilletIR)
+            and shape.kind == "union"
+            and isinstance(tool, PlacementIR)
+            and isinstance(tool.primitive, ConeIR)
+        )
+        primitive_boolean = (
+            not isinstance(target, FilletIR)
+            and (
+                isinstance(target, BooleanIR)
                 or _portable_csg_placement(target)
             )
             and _portable_csg_placement(tool)
-        ):
+        )
+        if fillet_cone_join or primitive_boolean:
             operation = {
                 "union": "join",
                 "difference": "cut",
