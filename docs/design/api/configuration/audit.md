@@ -129,12 +129,9 @@ features but cannot themselves be configured.
 
 This object is a typed wrapper around SolidCraft Configuration Rules.
 
-Its original practical reason was the independent Installed checkbox. That
-requirement remains valid, but the user should author Installed behavior, not a
-SolidCraft-shaped rule object.
-
-The backend may still lower global Installed intent through a native rule when
-that is the available SolidCraft mechanism.
+Its original practical reason was the Installed use case. The direct
+configuration probe now shows that this example does not need a rule at all:
+one real Installed feature can be configured directly through suppression.
 
 ## `Always()`
 
@@ -150,19 +147,17 @@ those semantic requirements rather than retaining this helper.
 
 **Remove with the public rule surface.**
 
-The working SolidCraft fan-out probe uses a native rule plus a private shared
-driver parameter. That proves a backend transport pattern; it does not prove
-that users should author `DriveParameter`.
-
-A backend-created driver remains backend-private.
+`DriveParameter` is not needed for the direct Installed configuration path.
+It remains a SolidCraft-shaped helper and should not be used as the foundation
+for the replacement API.
 
 ## `Configure(..., rules=...)`
 
 **Remove from the intended public contract.**
 
 This exposes native rule mechanics through the public configuration object.
-Final-model Installed behavior should be described in Forge terms and lowered
-to whatever mechanism each backend supports.
+Final-model Installed behavior should be described as a real authored feature
+and configured directly through suppression where supported.
 
 ## `Shape.export_feature(name)` / `occurrence.feature(name)`
 
@@ -200,8 +195,9 @@ public rules=
 first-class State/Toggle invented only for this use case
 ~~~
 
-The global Installed requirement is real, but its final public spelling is
-still open.
+Installed does not need a separate global-state abstraction for the qualified
+example. The remaining API question is only how the authored feature handle is
+passed to `model.configure(...)`.
 
 ## Relationship to `exp`
 
@@ -224,7 +220,7 @@ authoring pieces:
 1. scoped/named feature authoring with initial suppression;
 2. reusable feature identity/export;
 3. final `model.configure(...)` syntax;
-4. one global Installed control affecting all participating Installed behavior;
+4. direct configuration of the one authored Installed feature;
 5. removal/replacement of the released rule-shaped public surface.
 
 Do not add another abstraction until the concrete example demonstrates why it
