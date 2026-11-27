@@ -1231,26 +1231,88 @@ def _normalize_node(shape: Shape) -> IRNode:
     return LegacyShapeIR(shape=shape, source_kind=shape.kind)
 
 
+def resolve_feature_ref(root: IRNode, reference: FeatureRefIR) -> IRNode:
+    """Resolve one semantic feature path without backend/native identity."""
+    if not isinstance(reference, FeatureRefIR):
+        raise TypeError("feature reference resolution requires FeatureRefIR")
+    if reference.path[0] != "root":
+        raise ValueError("FeatureRefIR path must begin at root")
+
+    node = root
+    for segment in reference.path[1:]:
+        if not isinstance(node, BooleanIR) or segment not in {"target", "tool"}:
+            raise ValueError(
+                f"FeatureRefIR path segment {segment!r} is not valid for "
+                f"{type(node).__name__}"
+            )
+        node = getattr(node, segment)
+    return node
+
+
+def _boolean_authored_feature_ref(
+    design: Shape,
+    root: BooleanIR,
+    feature: Shape,
+    *,
+    path: tuple[str, ...] = ("root",),
+) -> FeatureRefIR | None:
+    """Map authored CSG object identity to typed semantic history roles."""
+    if design.kind not in {"union", "difference", "intersection"}:
+        return None
+
+    target_shape, tool_shape = design.data
+    if feature is tool_shape:
+        return FeatureRefIR(path=(*path, "tool"))
+
+    if feature is target_shape and isinstance(root.target, PlacementIR):
+        return FeatureRefIR(path=(*path, "target"))
+
+    if isinstance(root.target, BooleanIR):
+        nested = _boolean_authored_feature_ref(
+            target_shape,
+            root.target,
+            feature,
+            path=(*path, "target"),
+        )
+        if nested is not None:
+            return nested
+    return None
+
+
 def _configuration_feature_ref(
     design: Shape,
     feature: Shape,
     root: IRNode,
 ) -> FeatureRefIR:
     """Resolve authored identity to semantic IR before native ids exist."""
+    # Keep the already-qualified #424 authored Revolve-cut identity stable: the
+    # source tool becomes the semantic root feature rather than a Boolean tool.
     if (
-        not isinstance(root, RevolveIR)
-        or root.operation != "cut"
-        or design.kind != "difference"
+        isinstance(root, RevolveIR)
+        and root.operation == "cut"
+        and design.kind == "difference"
     ):
+        _target, authored_tool = design.data
+        if feature is not authored_tool:
+            raise ValueError(
+                "suppression feature is not the authored root Revolve feature"
+            )
+        return FeatureRefIR(path=("root",))
+
+    if isinstance(root, BooleanIR):
+        reference = _boolean_authored_feature_ref(design, root, feature)
+        if reference is not None:
+            # Resolve immediately so malformed semantic paths fail during
+            # frontend normalization rather than in a backend.
+            resolve_feature_ref(root, reference)
+            return reference
         raise ValueError(
-            "portable suppression currently requires the root Revolve cut feature"
+            "suppression feature is not a member of the typed Boolean history"
         )
-    _target, authored_tool = design.data
-    if feature is not authored_tool:
-        raise ValueError(
-            "suppression feature is not the authored root Revolve feature"
-        )
-    return FeatureRefIR(path=("root",))
+
+    raise ValueError(
+        "portable suppression requires a qualified semantic feature history"
+    )
 
 
 def _normalize_configuration(configured, root: IRNode) -> ConfigurationIR:
@@ -1326,12 +1388,7 @@ def normalize_configured_design(configured) -> ModelIR | None:
         return None
 
     root = _normalize_node(configured.design)
-    if (
-        not isinstance(root, RevolveIR)
-        or root.operation != "cut"
-        or not isinstance(root.target, PlacementIR)
-        or not isinstance(root.target.primitive, BoxIR)
-    ):
+    if isinstance(root, LegacyShapeIR):
         return None
 
     return ModelIR(
@@ -1405,4 +1462,5 @@ __all__ = [
     "normalize_configured_design",
     "normalize_model",
     "normalize_shape",
+    "resolve_feature_ref",
 ]
