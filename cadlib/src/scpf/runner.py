@@ -1124,7 +1124,8 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
                 if backend_adapter.id != "solidcraft":
                     raise ModelError(
                         f"{backend_adapter.display_name} backend does not support "
-                        f"this Forge configuration: {exc}"
+                        "Forge configurations in this qualified capability set: "
+                        f"{exc}"
                     ) from exc
                 # Stable SolidCraft owns the broad existing configuration
                 # surface while semantic ConfigurationIR migrates slice by
