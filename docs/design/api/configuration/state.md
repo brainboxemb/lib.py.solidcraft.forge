@@ -1,233 +1,195 @@
-# Configuration state semantic contract
+# Global Installed configuration contract
 
 Status: proposed  
 Tracking: #444
 
-This document defines the generic meaning required for configuration state.
-It deliberately does not define SolidCraft Configuration Rules as Forge API.
+This document records the concrete Installed use case. It does **not** introduce
+a public `State` object.
 
-## Purpose
+## 1. Component authoring
 
-A final model may need state that is independent from its active named
-configuration row.
-
-Canonical example:
-
-~~~text
-size row:
-    Small | Large
-
-global state:
-    Installed = false | true
-~~~
-
-Changing Installed must not require changing or duplicating the active size
-row.
-
-The same state may be consumed by several reusable components.
-
-## Ownership
-
-A configuration State is owned by the final model configuration.
-
-It is not:
-
-- a property of one Coupler occurrence;
-- a second configuration table;
-- a numeric model parameter disguised as boolean;
-- a SolidCraft Configuration Rule;
-- a backend feature id.
-
-A reusable component may **consume** a state input and author behavior that
-depends on it. Several occurrences may consume the same state object.
+A reusable component always authors its real Installed history step. A private
+Forge/build input may choose only the initial suppression state.
 
 Conceptually:
 
 ~~~python
-installed = State("Installed", default=False)
+class Coupler:
+    _installed = False
 
-left = Coupler(
-    size=self.coupler_size,
-    installed=installed,
+    def build(self):
+        model = step_a()
+        model = step_b(model)
+
+        with feature(
+            "Installed",
+            suppressed=not self._installed,
+        ):
+            model = installed_motion(model)
+
+        return model
+~~~
+
+The exact `feature(...)` spelling is still proposal-level.
+
+The required semantics are:
+
+- the Installed history feature exists whether the initial state is Free or
+  Installed;
+- `_installed` is only a Forge build/default input;
+- `_installed` is not a saved CAD parameter and does not remove either
+  history path through Python branching;
+- the authored Installed feature remains suppressible after Forge has finished.
+
+So this is intentionally **not**:
+
+~~~python
+if self._installed:
+    build_installed_variant()
+else:
+    build_free_variant()
+~~~
+
+Both initial states produce the same history structure; only the initial
+suppression differs.
+
+## 2. Final-model authoring
+
+Configuration belongs to the final model after its parts have been assembled.
+
+Conceptually:
+
+~~~python
+left = Coupler(name="left")
+right = Coupler(name="right")
+panel = Hub75Panel(name="panel")
+
+model = panel + left + right
+
+model.configure(
+    active="Small",
+    columns=(
+        self.coupler_size,
+    ),
+    rows={
+        "Small": ("40 mm",),
+        "Large": ("60 mm",),
+    },
 )
 
-right = Coupler(
-    size=self.coupler_size,
-    installed=installed,
-)
+return model
 ~~~
 
-The exact frontend spelling remains proposal-level. The required property is
-shared semantic identity: `left` and `right` receive the same authored state,
-not two unrelated booleans with the same label.
+The current `Configure(model, ...)` wrapper and `Param(...)` helper are not
+treated as protected final syntax. In particular, if
+`self.coupler_size` is already an unambiguous Parameter handle, an extra
+`Param(...)` wrapper may be unnecessary.
 
-## State is not a row cell
+## 3. Global Installed requirement
 
-A suppression cell in a configuration row means:
+The saved final model should expose one Installed choice for the whole model:
 
 ~~~text
-Small -> feature suppressed
-Large -> feature active
+Size:
+    Small | Large
+
+Installed:
+    off | on
 ~~~
 
-That value belongs to the selected row.
+Changing Installed must not require changing the active Small/Large row.
 
-A State means:
+When Installed changes, every participating authored Installed transition must
+follow:
 
 ~~~text
-active row = Small
-Installed = false
+Installed = off
+├── left Installed feature suppressed
+├── right Installed feature suppressed
+└── any later participating Installed behavior suppressed/free
 
-or
-
-active row = Small
-Installed = true
+Installed = on
+├── left Installed feature active
+├── right Installed feature active
+└── any later participating Installed behavior active/installed
 ~~~
 
-without changing the active row.
+This is a final-model configuration requirement. It does not imply a public
+`State`, `Bind`, `ConfigRule` or `DriveParameter` object.
 
-These are different semantic dimensions and must remain different in IR.
+## 4. SolidCraft 0.49 result
 
-## Component behavior
-
-A component consuming a State may use it to author semantic behavior such as:
-
-- selecting between Free and Installed dimensional/placement values;
-- activating an authored Installed transition;
-- selecting a service/normal position;
-- controlling another explicitly supported state-aware CAD behavior.
-
-The component must not inspect the selected backend or author
-`config.rule`/Mitcad transport itself.
-
-An eventual frontend may provide state-dependent value expressions or
-state-controlled feature authoring. Those APIs must be designed from this
-semantic contract rather than from one backend command vocabulary.
-
-## Generic IR requirement
-
-The complete engine-neutral configuration IR needs a representation for an
-independent state.
-
-The final type names are not fixed here, but the semantic data must contain at
-least:
+The direct timeline-folder idea was tested because it matches the authoring
+model closely:
 
 ~~~text
-state identity
-display name
-default boolean value
-configuration ownership
-semantic uses/bindings
+Installed folder
+├── LeftInstalled
+└── RightInstalled
 ~~~
 
-A use/binding must reference semantic model identity such as a parameter/value
-dependency, authored feature or component state interface. It must not contain a
-native backend id.
+The `configuration-installed-group` probe proves:
 
-The state representation is orthogonal to:
+- SolidCraft can create this timeline folder when its features form one
+  contiguous history run;
+- SolidCraft can manually suppress the folder as one group;
+- SolidCraft cannot register the folder as a configuration feature;
+- a Configuration Rule cannot use that folder as one
+  `drive_suppression` target.
+
+The decisive runtime errors are retained in the probe README:
 
 ~~~text
-ConfigurationIR.rows
-ConfigurationIR.active
+rule 'Installed' target is not configured
+no feature 'Installed'
 ~~~
 
-The current experimental `ConfigurationIR` is intentionally a bounded
-suppression-row slice. Adding state must extend the semantic model; it must not
-reinterpret a row suppression cell as independent state.
+Therefore a Forge `with feature("Installed", ...)` scope must not be assumed
+to lower directly to one SolidCraft configuration target when it contains
+several native history features.
 
-## Implementation order
+## 5. Working SolidCraft fallback already proved
 
-Do not implement the replacement State API by adding another SolidCraft-specific
-compiler path first.
-
-The required order follows the generic compiler discipline used on the
-experimental lane:
-
-1. define the engine-neutral State meaning and component-use semantics;
-2. add pure semantic IR/normalization tests;
-3. extend typed configuration IR;
-4. add independent SolidCraft and Mitcad lowerings where supported;
-5. qualify real saved/runtime behavior;
-6. then finalize the public SCPF spelling and remove the backend-shaped rule
-   surface it replaces.
-
-A temporary stable compatibility path may continue to execute existing released
-models while this work is in flight, but it does not define the new API and
-creates no requirement to preserve `ConfigRule`, `Always`,
-`DriveParameter` or public `rules=` in the resulting design.
-
-## Backend lowering
-
-A backend may use any native mechanism that preserves the state semantics.
-
-For SolidCraft 0.49 the qualified fan-out probe demonstrates one possible
-lowering:
+The earlier `configuration-installed-fanout` probe proves one SolidCraft 0.49
+mechanism that does provide one independent Installed control:
 
 ~~~text
-semantic Installed state
+Installed native rule
         |
         v
-native Configuration Rule          backend-private
+private shared driver
         |
-        v
-private installed_offset           backend-private
-        |
-        +--> left authored motion
-        |
-        +--> right authored motion
+        +--> left Installed behavior
+        +--> right Installed behavior
 ~~~
 
-Neither the rule nor `installed_offset` belongs in public Forge API or
-engine-neutral IR.
+That shared driver is backend transport. It is not public Forge model intent.
 
-The experimental Mitcad configuration lowering already demonstrates the same
-ownership principle for row suppression: it synthesizes a private driver
-parameter that is absent from semantic `ConfigurationIR`.
-
-A backend that cannot preserve a particular State use must fail explicitly.
-It may not silently turn the state into duplicated rows or expose a private
-numeric flag as public model intent.
-
-## HUB75 acceptance use case
-
-The minimum reference design is:
+The public authoring problem and the SolidCraft lowering problem therefore stay
+separate:
 
 ~~~text
-HUB75 assembly
-├── size row
-│   ├── Small
-│   └── Large
-├── Installed state
-│   ├── left coupler reacts
-│   └── right coupler reacts
-└── optional ServicePosition state
-    └── display/assembly position reacts
+Forge authoring:
+    real named Installed features + final-model Installed intent
+
+SolidCraft 0.49 lowering:
+    use a supported native mechanism that preserves one global control
 ~~~
 
-The required observable behavior is:
+If SolidCraft later supports configuration suppression of timeline folders or a
+multi-feature suppression target, the lowering may become simpler without
+changing the Forge authoring model.
 
-1. Small and Large remain the only size rows.
-2. Installed can toggle without changing the active size row.
-3. Both participating couplers react to the same Installed state.
-4. Save/reopen preserves both the active row and state.
-5. The public model contains no backend-private driver parameter.
-6. Backend-specific rule/driver objects do not appear in semantic IR.
-7. A second independent state such as ServicePosition does not force a
-   Small/Large Cartesian row expansion.
+## 6. Open API work
 
-## Consequence for the current public API
+The remaining API work is deliberately narrow:
 
-The semantic requirement supports adding a first-class State concept.
+- define the scoped/named authored feature API and its initial suppression;
+- decide how reusable component feature identity is exported to a final model;
+- define the final-model `model.configure(...)` spelling for one global
+  Installed intent without exposing SolidCraft rule mechanics;
+- decide whether `Param(...)` remains useful or is redundant.
 
-It does not support retaining the current public rule vocabulary:
-
-~~~text
-ConfigRule
-Always
-DriveParameter
-Configure(..., rules=...)
-~~~
-
-Those objects describe one SolidCraft lowering path and should be removed from
-the intended public generic API when the semantic State path replaces their
-qualified use case.
+Do not add a separate first-class `State` abstraction unless a later use case
+demonstrates semantics that cannot be represented by authored features,
+parameters and final-model configuration intent.
