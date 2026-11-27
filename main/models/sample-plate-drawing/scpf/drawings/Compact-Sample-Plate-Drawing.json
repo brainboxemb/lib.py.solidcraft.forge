@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "1pn8r5374me1y",
+  "id": "b5pzk43dqwwxx",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "40qm8pvafb7ch"
+        "source": "9r4f5pcnpzg93"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "bxmbj17717b50",
+      "id": "0rg96d94ryjdm",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "5n7fqy10p5rq1",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "b6f43fxz89n4d",
+          "id": "5zjyds7syxrg8",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "6p1kahhg7m8ds",
+          "id": "723dhmf7jdftj",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "b6f43fxz89n4d",
+          "parent": "5zjyds7syxrg8",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "8dkmybzjq2zs6",
+          "id": "e9f5vjhk64st9",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "b6f43fxz89n4d",
+          "parent": "5zjyds7syxrg8",
           "side": "right"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "dp81zgf434jhk",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "40qm8pvafb7ch"
+      "id": "9r4f5pcnpzg93"
     }
   ],
   "symbols": [],
