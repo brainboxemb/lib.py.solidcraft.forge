@@ -21,6 +21,7 @@ from ..core import (
     _box_corner_from_anchor,
     _cone_base_from_anchor,
     _cylinder_base_from_anchor,
+    _primitive_center_from_anchor,
     _sphere_center_from_anchor,
     _native_dependencies,
     _native_expression,
@@ -35,6 +36,8 @@ from ..core import (
 from ..ir import (
     AxisLineIR,
     BodyIR,
+    BossFeatureIR,
+    BoundOffsetIR,
     BooleanIR,
     BoxIR,
     ChamferIR,
@@ -46,14 +49,17 @@ from ..ir import (
     ExtrudeIR,
     FaceBoundaryIR,
     FaceSetIR,
+    FeaturePlacementIR,
     FeatureRefIR,
     FilletIR,
     HoleIR,
+    LipFeatureIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
     PlaneIR,
     ParallelEdgeSetIR,
+    PlasticFeatureIR,
     PolygonProfileIR,
     RegionIR,
     RectangleProfileIR,
@@ -63,7 +69,9 @@ from ..ir import (
     SketchRelationsIR,
     ShellIR,
     SlotProfileIR,
+    SnapFitFeatureIR,
     SphereIR,
+    RestFeatureIR,
     SuppressionColumnIR,
     _region_interior_point,
     resolve_feature_ref,
@@ -556,17 +564,144 @@ def _fillet_commands(node: FilletIR, name: str) -> list[dict]:
     ]
 
 
-def _hole_commands(model: ModelIR, node: HoleIR, name: str) -> list[dict]:
-    """Lower one semantic explicit Hole-family history chain."""
-    if not isinstance(node.target, BodyIR):
-        raise ModelError("portable SolidCraft HoleIR requires typed BodyIR target")
-    commands = _body_commands(model, node.target, name)
+def _typed_rectangular_base(node: BodyIR):
+    """Return stable rectangular-base semantics from typed body history."""
+    if isinstance(node, PlacementIR) and isinstance(node.primitive, BoxIR):
+        primitive = node.primitive
+        selector = _DirectionSelector(node.anchor)
+        corner = _box_corner_from_anchor(
+            primitive.length,
+            primitive.width,
+            primitive.height,
+            node.point,
+            selector,
+        )
+        center = _primitive_center_from_anchor(
+            (primitive.length, primitive.width, primitive.height),
+            node.point,
+            selector,
+        )
+        return (
+            primitive.length,
+            primitive.width,
+            corner,
+            center,
+            primitive.height,
+        )
+
+    if isinstance(node, ExtrudeIR):
+        if (
+            node.sketch.plane.orientation != "XY"
+            or node.sketch.plane.origin != (0, 0, 0)
+            or node.direction != "positive"
+            or len(node.sketch.profiles) != 1
+            or not isinstance(node.sketch.profiles[0], RectangleProfileIR)
+        ):
+            raise ModelError(
+                "anchored feature requires a positive XY rectangular body"
+            )
+        profile = node.sketch.profiles[0]
+        corner = (
+            _combine(profile.center[0], -half(profile.width)),
+            _combine(profile.center[1], -half(profile.depth)),
+            0,
+        )
+        center = (profile.center[0], profile.center[1], half(node.distance))
+        return (
+            profile.width,
+            profile.depth,
+            corner,
+            center,
+            node.distance,
+        )
+
+    if isinstance(node, FilletIR):
+        return _typed_rectangular_base(node.base)
+    if isinstance(node, ChamferIR):
+        return _typed_rectangular_base(node.base)
+    if isinstance(node, ShellIR):
+        return _typed_rectangular_base(node.base)
+    if isinstance(node, HoleIR):
+        return _typed_rectangular_base(node.target)
+    if isinstance(node, PlasticFeatureIR):
+        return _typed_rectangular_base(node.target)
+    if isinstance(node, (RectangularPatternIR, CircularPatternIR)):
+        return _typed_rectangular_base(node.base)
+    if isinstance(node, BooleanIR) and isinstance(node.target, BodyIR):
+        return _typed_rectangular_base(node.target)
+
+    raise ModelError(
+        "anchored feature target has no qualified rectangular base semantics"
+    )
+
+
+def _typed_shell_thickness(node: BodyIR):
+    if isinstance(node, ShellIR):
+        return node.thickness
+    if isinstance(node, FilletIR):
+        return _typed_shell_thickness(node.base)
+    if isinstance(node, ChamferIR):
+        return _typed_shell_thickness(node.base)
+    if isinstance(node, HoleIR):
+        return _typed_shell_thickness(node.target)
+    if isinstance(node, PlasticFeatureIR):
+        return _typed_shell_thickness(node.target)
+    if isinstance(node, (RectangularPatternIR, CircularPatternIR)):
+        return _typed_shell_thickness(node.base)
+    if isinstance(node, BooleanIR) and isinstance(node.target, BodyIR):
+        return _typed_shell_thickness(node.target)
+    return None
+
+
+def _feature_offset_value(value, size, axis: str):
+    if not isinstance(value, BoundOffsetIR):
+        return value
+    if value.axis != axis:
+        raise ModelError(f"anchored {axis} offset uses {value.axis} bounds")
+    if value.reference == "min":
+        return _combine(-half(size), value.delta)
+    if value.reference == "center":
+        return value.delta
+    if value.reference == "max":
+        return _combine(half(size), value.delta)
+    raise ModelError(f"unsupported anchored {axis} bound reference")
+
+
+def _anchored_feature_position(target: BodyIR, placement: FeaturePlacementIR):
+    if placement.mode != "anchored":
+        raise ModelError("anchored feature lowering requires anchored placement")
+    width, depth, corner, center, thickness = _typed_rectangular_base(target)
+    offset_x = _feature_offset_value(placement.offset[0], width, "X")
+    offset_y = _feature_offset_value(placement.offset[1], depth, "Y")
+    x = _combine(center[0], offset_x)
+    y = _combine(center[1], offset_y)
+
+    if placement.parent_anchor == "top":
+        z = _combine(corner[2], thickness)
+    elif placement.parent_anchor == "bottom":
+        z = corner[2]
+    elif placement.parent_anchor == "inner_bottom":
+        wall = _typed_shell_thickness(target)
+        if wall is None:
+            raise ModelError("Anchor.INNER_BOTTOM requires a typed ShellIR history")
+        z = _combine(corner[2], wall)
+    else:
+        raise ModelError(
+            "native placement/topology limitation: anchored feature currently "
+            "requires TOP, BOTTOM or INNER_BOTTOM"
+        )
+    return x, y, z, thickness, corner
+
+
+def _absolute_hole_command(node: HoleIR, name: str) -> dict:
+    if node.placement.mode != "absolute" or node.placement.point is None:
+        raise ModelError("absolute HoleIR requires absolute FeaturePlacementIR")
 
     params = {
         "position": (
-            [command_value(value) for value in node.point]
+            [command_value(value) for value in node.placement.point]
             if node.direction is not None
-            else [pv(value) for value in node.point]
+            else [pv(value) for value in node.placement.point]
         ),
         "targets": [name],
     }
@@ -618,8 +753,184 @@ def _hole_commands(model: ModelIR, node: HoleIR, name: str) -> list[dict]:
         raise ModelError(
             f"portable SolidCraft HoleIR has unsupported type {node.hole_type!r}"
         )
+    return _command("solid.hole", **params)
 
-    return [*commands, _command("solid.hole", **params)]
+
+def _anchored_hole_commands(node: HoleIR, name: str) -> list[dict]:
+    placement = node.placement
+    if (
+        placement.mode != "anchored"
+        or placement.parent_anchor != "top"
+        or placement.child_anchor != "bottom"
+        or node.hole_type != "simple"
+        or node.direction is not None
+    ):
+        raise ModelError(
+            "portable anchored HoleIR currently requires simple TOP/BOTTOM placement"
+        )
+    if node.diameter is None:
+        raise ModelError("anchored HoleIR requires a diameter")
+    _require_positive(node.diameter, "hole diameter")
+
+    x, y, entry_z, thickness, corner = _anchored_feature_position(
+        node.target,
+        placement,
+    )
+    if node.depth_mode == "through_all":
+        sketch_z = corner[2]
+        distance = thickness
+        direction = "positive"
+    elif node.depth_mode == "distance":
+        _require_positive(node.depth, "hole depth")
+        sketch_z = entry_z
+        distance = node.depth
+        direction = "negative"
+    else:
+        raise ModelError("portable anchored HoleIR has unsupported depth mode")
+
+    plane = {"plane": "XY", "name": "Hole"}
+    if pv(sketch_z):
+        plane["offset"] = command_value(sketch_z)
+    return [
+        _command("sketch.create", **plane),
+        _command(
+            "sketch.circle.center",
+            center=[command_value(x), command_value(y)],
+            diameter=command_value(node.diameter),
+        ),
+        _command("sketch.finish"),
+        _command(
+            "solid.extrude",
+            distance=command_value(distance),
+            direction=direction,
+            operation="cut",
+            targets=[name],
+            name="Hole",
+        ),
+    ]
+
+
+def _hole_commands(model: ModelIR, node: HoleIR, name: str) -> list[dict]:
+    """Lower Hole semantics after lowering the typed target history."""
+    if not isinstance(node.target, BodyIR):
+        raise ModelError("portable SolidCraft HoleIR requires typed BodyIR target")
+    commands = _body_commands(model, node.target, name)
+    if node.placement.mode == "absolute":
+        return [*commands, _absolute_hole_command(node, name)]
+    if node.placement.mode == "anchored":
+        return [*commands, *_anchored_hole_commands(node, name)]
+    raise ModelError("portable SolidCraft HoleIR has unsupported placement mode")
+
+
+def _plastic_feature_command_ir(
+    node: PlasticFeatureIR,
+    name: str,
+) -> dict:
+    placement = node.placement
+    if placement.mode == "absolute":
+        if placement.point is None:
+            raise ModelError("absolute PlasticFeatureIR requires point")
+        point = [pv(value) for value in placement.point]
+    elif placement.mode == "anchored":
+        if placement.child_anchor != "bottom":
+            raise ModelError(
+                "plastic features use their supporting point as Anchor.BOTTOM"
+            )
+        if placement.parent_anchor not in {"top", "bottom", "inner_bottom"}:
+            raise ModelError(
+                "plastic features require TOP, BOTTOM or INNER_BOTTOM placement"
+            )
+        x, y, z, _thickness, _corner = _anchored_feature_position(
+            node.target,
+            placement,
+        )
+        point = [pv(x), pv(y), pv(z)]
+    else:
+        raise ModelError("unsupported PlasticFeatureIR placement mode")
+
+    feature = node.feature
+    if isinstance(feature, LipFeatureIR):
+        _require_positive(feature.width, "lip width")
+        _require_positive(feature.height, "lip height")
+        return _command(
+            "plastic.lip",
+            face=point,
+            width=command_value(feature.width),
+            height=command_value(feature.height),
+            body=name,
+        )
+
+    if isinstance(feature, SnapFitFeatureIR):
+        for value, label in (
+            (feature.length, "snap-fit length"),
+            (feature.thickness, "snap-fit thickness"),
+            (feature.width, "snap-fit width"),
+            (feature.catch_depth, "snap-fit catch depth"),
+            (feature.catch_length, "snap-fit catch length"),
+        ):
+            _require_positive(value, label)
+        params = {
+            "position": point,
+            "hook": list(feature.hook),
+            "length": command_value(feature.length),
+            "thickness": command_value(feature.thickness),
+            "width": command_value(feature.width),
+            "catch_depth": command_value(feature.catch_depth),
+            "catch_length": command_value(feature.catch_length),
+            "body": name,
+        }
+        if feature.direction is not None:
+            params["direction"] = list(feature.direction)
+        return _command("plastic.snap_fit", **params)
+
+    if isinstance(feature, BossFeatureIR):
+        _require_positive(feature.diameter, "boss diameter")
+        _require_positive(feature.height, "boss height")
+        params = {
+            "position": point,
+            "diameter": command_value(feature.diameter),
+            "height": command_value(feature.height),
+            "body": name,
+        }
+        if feature.hole_diameter is not None:
+            _require_positive(feature.hole_diameter, "boss hole diameter")
+            params["hole_diameter"] = command_value(feature.hole_diameter)
+        if feature.direction is not None:
+            params["direction"] = list(feature.direction)
+        return _command("plastic.boss", **params)
+
+    if isinstance(feature, RestFeatureIR):
+        _require_positive(feature.width, "rest width")
+        _require_positive(feature.height, "rest height")
+        params = {
+            "position": point,
+            "width": command_value(feature.width),
+            "height": command_value(feature.height),
+            "body": name,
+        }
+        if feature.length is not None:
+            _require_positive(feature.length, "rest length")
+            params["length"] = command_value(feature.length)
+        if feature.along is not None:
+            params["along"] = list(feature.along)
+        if feature.direction is not None:
+            params["direction"] = list(feature.direction)
+        return _command("plastic.rest", **params)
+
+    raise ModelError(
+        f"unsupported PlasticFeatureIR spec {type(feature).__name__}"
+    )
+
+
+def _plastic_feature_commands(
+    model: ModelIR,
+    node: PlasticFeatureIR,
+    name: str,
+) -> list[dict]:
+    return [
+        *_body_commands(model, node.target, name),
+        _plastic_feature_command_ir(node, name),
+    ]
 
 
 def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
@@ -1495,6 +1806,9 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
 
     if isinstance(node, HoleIR):
         return _hole_commands(model, node, name)
+
+    if isinstance(node, PlasticFeatureIR):
+        return _plastic_feature_commands(model, node, name)
 
     if isinstance(node, FilletIR):
         return _fillet_commands(node, name)
