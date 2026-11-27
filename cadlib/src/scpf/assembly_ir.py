@@ -131,6 +131,24 @@ class ComponentDefinitionIR:
 
 
 @dataclass(frozen=True)
+class ComponentFeatureRefIR:
+    """Definition-level reference to one explicitly exported child feature."""
+
+    definition: str
+    name: str
+
+    def __post_init__(self):
+        if not self.definition.startswith("definition_"):
+            raise ValueError("ComponentFeatureRefIR definition must be semantic id")
+        if (
+            not isinstance(self.name, str)
+            or not self.name.isidentifier()
+            or self.name.startswith("_")
+        ):
+            raise ValueError("ComponentFeatureRefIR name must be public identity")
+
+
+@dataclass(frozen=True)
 class OccurrenceIR:
     """One semantic occurrence of a reusable definition."""
 
@@ -286,6 +304,36 @@ def _definition_bounds(instance: ModelInstance):
         return None
 
 
+def component_feature_ref(
+    model: AssemblyIR,
+    occurrence: str,
+    name: str,
+) -> ComponentFeatureRefIR:
+    """Resolve occurrence-facing exported feature API to definition identity."""
+    if not isinstance(model, AssemblyIR):
+        raise TypeError("component feature resolution requires AssemblyIR")
+    try:
+        occurrence_ir = next(
+            item for item in model.occurrences if item.id == occurrence
+        )
+    except StopIteration as exc:
+        raise ValueError(
+            f"AssemblyIR has no occurrence {occurrence!r}"
+        ) from exc
+    definition = next(
+        item for item in model.definitions
+        if item.id == occurrence_ir.definition
+    )
+    if name not in definition.exported_features:
+        raise ValueError(
+            f"component definition has no exported feature {name!r}"
+        )
+    return ComponentFeatureRefIR(
+        definition=definition.id,
+        name=name,
+    )
+
+
 def normalize_assembly(value: ModelInstance | Assembly) -> AssemblyIR:
     """Normalize one authored reusable-component assembly into semantic IR."""
     assembly = Assembly((value,)) if isinstance(value, ModelInstance) else value
@@ -418,9 +466,11 @@ __all__ = [
     "AnchorReferenceIR",
     "OccurrencePlacementIR",
     "ComponentDefinitionIR",
+    "ComponentFeatureRefIR",
     "OccurrenceIR",
     "RelationshipIR",
     "AssemblyAnchorIR",
     "AssemblyIR",
+    "component_feature_ref",
     "normalize_assembly",
 ]
