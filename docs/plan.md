@@ -38,23 +38,23 @@ The accepted baseline now includes:
   `Occurrence.attach(..., kind="revolute", ...)`;
 - display-only `Shape.with_appearance("#RRGGBB")` authoring without changing
   material/density/BOM semantics;
-- native editable configuration-table authoring through
-  `Configure(design, active=..., columns=..., rows=...)`, with
-  `Param(...)` parameter columns and `Suppress(feature)` feature-suppression
-  columns across Shape, component occurrence and Assembly results;
-- Forge-owned Configurations verification for dimensional/suppression variants,
-  complete Assembly Front/Below/Service positions and flexible-fit
-  `Free` / `Installed` physical states, including native saved-design
-  switching after replay;
-- qualified configuration composition where a parent `Configure(...)` table
-  drives a deliberately published reusable-child parameter, multiple child
-  occurrences share that one native parameter, and saved-design row switching
-  recomputes child geometry without rerunning Forge Python;
-- typed native Configuration Rules through
-  `Configure(..., rules=...)`, `ConfigRule(...)`, `Always()` and
-  `DriveParameter(...)`, keeping Installed state independent from ordinary
-  Small / Medium / Large rows while disabling the rule restores the active
-  row's stored Free/base expression;
+- final-model configuration authoring through
+  `model.configure(active=..., columns=..., rows=...)` on Shape, component
+  occurrence and Assembly results;
+- configuration columns use existing semantic handles directly: `Parameter`
+  objects for parameter values and authored Shape/component-feature handles for
+  feature suppression; the former `Configure(...)`, `Param(...)` and
+  `Suppress(...)` wrappers are removed from the target API;
+- Forge-owned Configurations verification for dimensional/suppression variants
+  and complete Assembly Front/Below/Service positions, including native
+  saved-design switching after replay;
+- qualified configuration composition where a final model directly configures
+  a deliberately published reusable-child parameter/feature, multiple child
+  occurrences may reuse one component definition, and saved-design row
+  switching recomputes child geometry without rerunning Forge Python;
+- the former public `ConfigRule(...)`, `Always()`, `DriveParameter(...)`
+  and `rules=` surface is removed; SolidCraft-specific rules remain backend
+  evidence rather than Forge authoring vocabulary;
 - public symbolic CAD math through `scpf.cadmath.min()`, `max()`,
   `sqrt()`, `abs()`, `round()`, `floor()` and `atan()`, preserving
   source parameter dependencies in SolidCraft expressions;
@@ -115,7 +115,7 @@ Qualified normal-lane evidence after v0.23.0:
 - #380 / PR #392 added explicit reusable-child feature exports through
   `Shape.export_feature(name)` and definition-level
   `Occurrence.feature(name)` references, allowing parent/root
-  `Suppress(...)` columns without exposing SolidCraft/replay feature ids;
+  direct feature-suppression columns without exposing SolidCraft/replay feature ids;
 - the Forge-owned `configuration-child-feature` owner proves two separately
   constructed occurrences share one parent-driven child parameter while
   Small/Medium suppress the exported child cut and Large enables the same real
