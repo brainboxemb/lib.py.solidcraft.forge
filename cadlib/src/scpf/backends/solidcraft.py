@@ -48,6 +48,7 @@ from ..ir import (
     SphereIR,
     SuppressionColumnIR,
     _region_interior_point,
+    resolve_feature_ref,
 )
 from ..replay import replay_document
 
@@ -633,33 +634,105 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
     raise TypeError(f"not a portable Forge IR node: {type(node).__name__}")
 
 
-def _configured_root_command_index(
+def _boolean_command_count(node) -> int:
+    """Return SolidCraft geometry command count for one typed Boolean subtree."""
+    if isinstance(node, PlacementIR):
+        return 1
+    if isinstance(node, BooleanIR):
+        return _boolean_command_count(node.target) + 1
+    raise ModelError(
+        "portable SolidCraft Boolean feature references require typed CSG nodes"
+    )
+
+
+def _boolean_feature_command_index(
+    root: BooleanIR,
+    reference: FeatureRefIR,
+) -> int:
+    """Map semantic target/tool history roles to backend-local command order."""
+    resolve_feature_ref(root, reference)
+    segments = reference.path[1:]
+    node = root
+    offset = 0
+
+    if not segments:
+        # A BooleanIR feature is represented natively by the command applying
+        # its tool to its target.
+        return _boolean_command_count(node.target)
+
+    for position, segment in enumerate(segments):
+        last = position == len(segments) - 1
+        if not isinstance(node, BooleanIR):
+            raise ModelError(
+                "SolidCraft feature reference descends beyond Boolean history"
+            )
+        if segment == "tool":
+            if not last:
+                raise ModelError(
+                    "SolidCraft feature reference cannot descend through a CSG tool"
+                )
+            return offset + _boolean_command_count(node.target)
+        if segment != "target":
+            raise ModelError(
+                f"unsupported SolidCraft semantic feature role {segment!r}"
+            )
+
+        target = node.target
+        if isinstance(target, PlacementIR):
+            if not last:
+                raise ModelError(
+                    "SolidCraft feature reference cannot descend through a primitive target"
+                )
+            return offset
+        if not isinstance(target, BooleanIR):
+            raise ModelError(
+                "SolidCraft feature reference target is not typed Boolean history"
+            )
+        if last:
+            return offset + _boolean_command_count(target.target)
+        node = target
+
+    raise ModelError("SolidCraft feature reference did not resolve to a command")
+
+
+def _configured_feature_command_index(
+    model: ModelIR,
     configuration: ConfigurationIR,
     commands: list[dict],
 ) -> int:
-    """Resolve one semantic root feature to its native SolidCraft command."""
+    """Resolve semantic feature identity to one backend-local native command."""
     if (
         len(configuration.columns) != 1
         or not isinstance(configuration.columns[0], SuppressionColumnIR)
-        or configuration.columns[0].feature != FeatureRefIR(("root",))
     ):
         raise ModelError(
-            "portable SolidCraft configuration requires one root feature reference"
+            "portable SolidCraft configuration requires one suppression feature"
         )
+    reference = configuration.columns[0].feature
 
-    indexes = [
-        index
-        for index, command in enumerate(commands)
-        if command.get("command") == "solid.revolve"
-    ]
-    if len(indexes) != 1:
-        raise ModelError(
-            "portable SolidCraft configuration root must resolve to one Revolve feature"
-        )
-    return indexes[0]
+    if isinstance(model.root, RevolveIR) and reference == FeatureRefIR(("root",)):
+        indexes = [
+            index
+            for index, command in enumerate(commands)
+            if command.get("command") == "solid.revolve"
+        ]
+        if len(indexes) != 1:
+            raise ModelError(
+                "portable SolidCraft configuration root must resolve to one Revolve feature"
+            )
+        return indexes[0]
+
+    if isinstance(model.root, BooleanIR):
+        geometry_index = _boolean_feature_command_index(model.root, reference)
+        return len(model.parameters) + geometry_index
+
+    raise ModelError(
+        "portable SolidCraft configuration feature is outside qualified history"
+    )
 
 
 def _portable_configuration_commands(
+    model: ModelIR,
     configuration: ConfigurationIR,
     commands: list[dict],
 ) -> list[dict]:
@@ -667,7 +740,7 @@ def _portable_configuration_commands(
     from ..configurations import _row_variable
 
     commands = [dict(command) for command in commands]
-    index = _configured_root_command_index(configuration, commands)
+    index = _configured_feature_command_index(model, configuration, commands)
 
     feature_name = "$config_name_1"
     target = dict(commands[index])
@@ -747,6 +820,7 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
     commands = _portable_commands(model, name)
     if model.configuration is not None:
         commands = _portable_configuration_commands(
+            model,
             model.configuration,
             commands,
         )
