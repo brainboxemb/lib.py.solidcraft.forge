@@ -235,6 +235,13 @@
 210. SolidCraft typed sheet lowering must reproduce the existing stable native command/history documents for current public sheet base, contour flange, fold, edge flange, hem, path flange and perforation source.
 211. Mitcad may remain unsupported for the sheet-metal family after #554 and must fail closed on typed sheet nodes. Mitcad support is not an IR-ready merge gate.
 212. The Sheet metal family is complete when the current public sheet rule/body/features above normalize to typed IR; unsupported backend execution does not make the semantic family partial.
+213. Public Sketch entity authoring must normalize independently from Sketch support and solid consumers into one support-independent `SketchEntityGraphIR`.
+214. `SketchChainIR` is the single semantic connected line/arc representation shared by Sheet Metal and general Sketch authoring. Its `plane` may be absent only when support is deliberately deferred to an enclosing attached-Sketch layer; standalone consumers that own their support require PlaneIR.
+215. `Text2D` inside a Sketch is semantic `TextEntityIR(text, height, font, position)`; its authored height and insertion coordinates retain length dependencies.
+216. Sketch pattern/mirror source identity is represented by Sketch-local `SketchEntityRefIR(kind, index)`, resolved while authored Python identity is still available. Backend curve ids, replay names and command indexes are forbidden from semantic source identity.
+217. `SketchRectangularPatternIR` retains authored count/spacing/directions/alignment/reversal semantics and `SketchMirrorIR` retains local X/Y mirror-axis intent. Sketch pattern counts use the unitless/count Parameter role while spacings remain length-valued.
+218. SolidCraft and Sheet Metal must share the same SketchChainIR geometry lowering contract. SolidCraft may translate semantic Sketch entity refs to private `$sketch_*` bindings during lowering; existing backend limitations such as connected-profile pattern/mirror input fail closed without invalidating the typed graph.
+219. #560 completes the current public support-independent Sketch entity/operation semantic surface. Sketch support/reference frames, RegionIR composition and consuming Extrude/Revolve/Sheet Metal placement remain separate layers owned by later batches.
 
 ## SCPF native associativity
 
