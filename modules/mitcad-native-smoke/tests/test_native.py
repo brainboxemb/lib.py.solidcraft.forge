@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT / "modules/mitcad-reference/src"))
 sys.path.insert(0, str(ROOT / "modules/verification/src"))
 
 from cad_library_mitcad_reference import capture_runtime, git_blob_sha
-from scpf import Anchor, Axis, AxisLine, Box, Circle2D, Parameter, Polygon2D, Sketch, Sphere
+from scpf import Anchor, Axis, AxisLine, Box, Circle2D, Cone, Parameter, Polygon2D, Sketch, Sphere
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.mitcad_headless import run_document, run_saved_configuration
 from scpf.ir import normalize_shape
@@ -370,6 +370,56 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             )
             self.assertAlmostEqual(mixed_body["bbox"]["min"][0], 0.0, places=5)
             self.assertAlmostEqual(mixed_body["bbox"]["max"][0], 10.0, places=5)
+
+            placed_frustum_document = compile_mitcad_ir(
+                normalize_shape(
+                    Cone(
+                        d=18,
+                        top_d=10,
+                        h=8,
+                        anchor=Anchor.BOTTOM,
+                    ).at(
+                        0,
+                        0,
+                        18,
+                        anchor=Anchor.BOTTOM,
+                    )
+                ),
+                "PlacedFrustum",
+            )
+            self.assertEqual(
+                [
+                    row["def"]["type"]
+                    for row in placed_frustum_document["commands"]
+                    if row["cmd"] == "add_feature"
+                ],
+                ["construction_plane", "cone"],
+            )
+            placed_frustum_native = run_document(
+                placed_frustum_document,
+                save=root / "out/placed-frustum.mitcad",
+                export=root / "out/placed-frustum.stl",
+                executable=str(executable),
+                work_dir=root / "placed-frustum-workspace",
+            )
+            self.assertEqual(len(placed_frustum_native["bodies"]), 1)
+            placed_frustum_body = placed_frustum_native["bodies"][0]
+            self.assertEqual(placed_frustum_body["kind"], "solid")
+            self.assertAlmostEqual(
+                placed_frustum_body["volume"],
+                1208.0 * pi / 3.0,
+                places=3,
+            )
+            for actual, expected in zip(
+                placed_frustum_body["bbox"]["min"],
+                [-9.0, -9.0, 18.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                placed_frustum_body["bbox"]["max"],
+                [9.0, 9.0, 26.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
 
             shifted_sphere_csg_document = compile_mitcad_ir(
                 normalize_shape(
@@ -976,6 +1026,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "parameterized-polygon-revolve.stl",
                 "mixed-role-revolve.mitcad",
                 "mixed-role-revolve.stl",
+                "placed-frustum.mitcad",
+                "placed-frustum.stl",
                 "shifted-sphere-csg.mitcad",
                 "shifted-sphere-csg.stl",
                 "placed-sphere.mitcad",
@@ -1015,6 +1067,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"mixed_role_revolve_volume={mixed_body['volume']}",
                         f"mixed_role_revolve_bbox={mixed_body['bbox']}",
                         "mixed_role_parameter_units=pass",
+                        f"placed_frustum_volume={placed_frustum_body['volume']}",
+                        f"placed_frustum_bbox={placed_frustum_body['bbox']}",
+                        "placed_frustum_cone_ir=pass",
                         f"shifted_sphere_csg_volume={shifted_sphere_csg_body['volume']}",
                         f"shifted_sphere_csg_bbox={shifted_sphere_csg_body['bbox']}",
                         "shifted_sphere_csg_helper_mapping=pass",
