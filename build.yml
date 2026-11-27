@@ -1,7 +1,8 @@
 schema: 1
-branch: issue/584-reject-config-parameter-coupling
-modules: []
+branch: issue/538-solidcraft-0.50-runtime
+modules:
+  - solidcraft-reference
 library: true
-models: []
+models: all
 api_probes: []
 tasks: [test]

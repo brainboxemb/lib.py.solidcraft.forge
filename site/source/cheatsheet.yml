@@ -269,7 +269,7 @@ groups:
   - heading: Configuration tables
     items:
       - title: "model.configure(active=..., columns=..., rows=...)"
-        description: "Attach one editable native configuration table. Parameter rows select concrete values; they do not define parameter-to-parameter expressions."
+        description: "Attach one editable native configuration table to the completed Shape, component occurrence or Assembly."
         snippet: |
           model.configure(
               active="Medium",
@@ -291,6 +291,15 @@ groups:
               columns=(coupler.feature("panel_pin"),),
               rows={"Small": (True,), "Large": (False,)})
         example: configuration-child-feature
+      - title: "Free / Installed via Parameter"
+        description: "Use a normal Parameter column when physical state is genuinely a dimension/expression change; do not invent a suppression feature."
+        snippet: |
+          clamp.configure(
+              active="Free",
+              columns=(self.clamp_bore,),
+              rows={"Free": ("tube_d-clamp_interference",),
+                    "Installed": ("tube_d",)})
+        example: configuration-table
 
   - heading: Symbolic CAD math
     items:
