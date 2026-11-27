@@ -848,6 +848,28 @@ Forge semantic ModelIR
 code is evaluated. `ModelIR` is the compiler boundary. Native backends do not
 interpret portable raw `Shape.kind` / `Shape.data` payloads independently.
 
+### IR completion versus backend completion (#525)
+
+IR completion and backend completion are independent dimensions.
+
+An **IR-ready** semantic family or slice has a backend-neutral CAD contract,
+normalizes unchanged public SCPF source into typed IR rather than
+`LegacyShapeIR`, has pure IR tests for its accepted and rejected boundaries,
+preserves symbolic/history/topology dependencies, and retains the stable
+SolidCraft behavior through typed lowering. A backend without support for that
+typed node must fail closed.
+
+A backend is tracked independently as unsupported, lowered, contract-tested or
+native-qualified. Mitcad may deliberately lag the IR layer and catch up in
+backend-focused batches. Exact Mitcad runtime qualification is therefore no
+longer a per-capability gate for declaring IR semantics ready on permanent
+`exp`.
+
+This keeps backend transport from pacing or shaping the compiler contract.
+Experimental coverage is recorded in `docs/ir-coverage.md`; that inventory is
+evidence/status for `exp`, while the canonical work order remains
+`main:docs/plan.md`.
+
 The typed IR began with the first qualified portable slice:
 `BoxIR`, standalone Circle2D Sketch+Extrude intent, `ChamferIR` and semantic
 `FaceBoundaryIR` selection intent. #246 extends the same boundary with
