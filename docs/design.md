@@ -1400,6 +1400,36 @@ Boolean histories may therefore be traversed on either side without encoding
 backend command order; configuration/pattern consumers resolve those paths
 before backend-local history identity is chosen.
 
+#586 completes the current public Sketch Revolve semantic family by making
+`RevolveIR` consume the already-completed semantic Sketch graph rather than a
+Polygon-only reconstruction. The public feature owns one completed standalone
+Sketch result, one coplanar `AxisLineIR`, one symbolic sweep angle and optional
+symmetric direction. The Sketch graph may therefore contain any profile/entity
+form already accepted by the current public `Sketch.revolve()` frontend,
+including the basic closed-profile family, Text, a closed connected profile and
+Sketch-local pattern/mirror operations.
+
+`RevolveIR.region` is retained only when one direct semantic profile has an
+unambiguous `RegionIR(outer=0)`. It is `None` for Text, connected-profile or
+operation-derived Sketch results because public Revolve has no profile-selector
+argument and SolidCraft consumes the completed Sketch as a whole. This avoids
+inventing fake region ids or baking backend picks into IR.
+
+The completed scalar-expression tree owns symbolic sweep meaning, so Revolve
+normalization no longer applies the historical affine mixed-role restriction.
+Principal and shifted public axes still normalize through `AxisLineIR` and
+must remain coplanar with `PlaneIR`. The current frontend limits remain
+unchanged: standalone, unrotated Sketch, one authored source profile and no
+topology-selected axis.
+
+SolidCraft lowers the semantic Sketch graph with the same graph/profile
+lowering used by other typed Sketch consumers, then emits the existing native
+`solid.revolve` command including `direction="symmetric"` when authored.
+Mitcad intentionally retains its qualified non-symmetric Polygon slice and
+fails closed for newly typed forms. CSG is not encoded into Revolve semantics:
+#581 `BooleanIR` composes standalone Revolve bodies; the historical typed cut
+path remains only where existing suppression/history qualification requires it.
+
 #485 widens the existing `ChamferIR` rather than adding a second feature
 kind. `distance` remains the primary chamfer distance; optional `distance2`
 and `flip` carry the already-public two-distance semantics. Equal-distance
