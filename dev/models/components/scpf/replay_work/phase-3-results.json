@@ -3,7 +3,7 @@
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "fpe6swcxkgan9",
+    "id": "1vwwv01b7xz0w",
     "language": "en",
     "line_group": "0.5",
     "name": "Block drawing",
@@ -23,14 +23,14 @@
       {
         "documents": {
           "component": 1,
-          "source": "781vya3xdkwj0"
+          "source": "309a01ex1gphg"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "bwjzeqeczvxt9",
+        "id": "ae1wmcnshebt0",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -727,15 +727,7 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "59m1pjq2b15wg",
-            "kind": "base",
-            "label": "Iso front right",
-            "notes": []
-          },
-          {
-            "balloons": [],
-            "dimensions": [],
-            "id": "ap9eztsq903c2",
+            "id": "axcc31ezjgv7v",
             "kind": "base",
             "label": "Front",
             "notes": []
@@ -743,29 +735,37 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "b61and4gghvny",
+            "id": "389c8gat5mhpn",
+            "kind": "projected",
+            "label": "Right of Front",
+            "notes": [],
+            "parent": "axcc31ezjgv7v",
+            "side": "right"
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "6r72z4tqhwwrh",
             "kind": "projected",
             "label": "Above Front",
             "notes": [],
-            "parent": "ap9eztsq903c2",
+            "parent": "axcc31ezjgv7v",
             "side": "above"
           },
           {
             "balloons": [],
             "dimensions": [],
-            "id": "d89vhwf4z5hxs",
-            "kind": "projected",
-            "label": "Right of Front",
-            "notes": [],
-            "parent": "ap9eztsq903c2",
-            "side": "right"
+            "id": "f3g4fxedw6xha",
+            "kind": "base",
+            "label": "Iso front right",
+            "notes": []
           }
         ]
       }
     ],
     "sources": [
       {
-        "id": "781vya3xdkwj0"
+        "id": "309a01ex1gphg"
       }
     ],
     "symbols": [],
@@ -781,23 +781,23 @@
       "source"
     ],
     "followers": [
-      "b61and4gghvny",
-      "d89vhwf4z5hxs"
+      "389c8gat5mhpn",
+      "6r72z4tqhwwrh"
     ],
-    "view": "ap9eztsq903c2"
+    "view": "axcc31ezjgv7v"
   },
   {
     "changed": [
       "source"
     ],
     "followers": [],
-    "view": "59m1pjq2b15wg"
+    "view": "f3g4fxedw6xha"
   },
   {
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "fpe6swcxkgan9",
+    "id": "1vwwv01b7xz0w",
     "language": "en",
     "line_group": "0.5",
     "name": "Block drawing",
@@ -817,14 +817,14 @@
       {
         "documents": {
           "component": 1,
-          "source": "781vya3xdkwj0"
+          "source": "309a01ex1gphg"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "bwjzeqeczvxt9",
+        "id": "ae1wmcnshebt0",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -1521,15 +1521,7 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "59m1pjq2b15wg",
-            "kind": "base",
-            "label": "Iso front right",
-            "notes": []
-          },
-          {
-            "balloons": [],
-            "dimensions": [],
-            "id": "ap9eztsq903c2",
+            "id": "axcc31ezjgv7v",
             "kind": "base",
             "label": "Front",
             "notes": []
@@ -1537,29 +1529,37 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "b61and4gghvny",
+            "id": "389c8gat5mhpn",
+            "kind": "projected",
+            "label": "Right of Front",
+            "notes": [],
+            "parent": "axcc31ezjgv7v",
+            "side": "right"
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "6r72z4tqhwwrh",
             "kind": "projected",
             "label": "Above Front",
             "notes": [],
-            "parent": "ap9eztsq903c2",
+            "parent": "axcc31ezjgv7v",
             "side": "above"
           },
           {
             "balloons": [],
             "dimensions": [],
-            "id": "d89vhwf4z5hxs",
-            "kind": "projected",
-            "label": "Right of Front",
-            "notes": [],
-            "parent": "ap9eztsq903c2",
-            "side": "right"
+            "id": "f3g4fxedw6xha",
+            "kind": "base",
+            "label": "Iso front right",
+            "notes": []
           }
         ]
       }
     ],
     "sources": [
       {
-        "id": "781vya3xdkwj0"
+        "id": "309a01ex1gphg"
       }
     ],
     "symbols": [],
@@ -1571,6 +1571,6 @@
     }
   },
   {
-    "closed": "fpe6swcxkgan9"
+    "closed": "1vwwv01b7xz0w"
   }
 ]
