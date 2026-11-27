@@ -23,6 +23,17 @@ from .model_objects import (
     _corner_normal,
 )
 from .compiler import _compile_model_commands
+from .assembly_ir import (
+    AnchorFrameIR,
+    AnchorReferenceIR,
+    AnchorTopologyIR,
+    AssemblyIR,
+    ComponentDefinitionIR,
+    OccurrenceIR,
+    RelationshipIR,
+    normalize_assembly,
+)
+from .backends.solidcraft import compile_ir_commands_with_dependencies
 from .replay import replay_document
 
 
@@ -416,8 +427,563 @@ def _validate_attachment_relationships(assembly):
             )
 
 
-def _compile_assembly_with_dependencies(value, name):
-    """Compile a root assembly into reusable components and occurrences."""
+def _semantic_definition_names(model: AssemblyIR):
+    """Assign stable component names from semantic definition order."""
+    names = {}
+    class_counts = {}
+    for definition in model.definitions:
+        base = definition.class_name
+        count = class_counts.get(base, 0) + 1
+        class_counts[base] = count
+        names[definition.id] = base if count == 1 else f"{base} {count}"
+    return names
+
+
+def _semantic_occurrence_labels(model: AssemblyIR, names):
+    totals = {}
+    for occurrence in model.occurrences:
+        totals[occurrence.definition] = totals.get(occurrence.definition, 0) + 1
+    seen = {}
+    labels = {}
+    for occurrence in model.occurrences:
+        key = occurrence.definition
+        seen[key] = seen.get(key, 0) + 1
+        component_name = names[key]
+        if occurrence.name is not None:
+            label = occurrence.name
+        elif totals[key] == 1:
+            label = component_name
+        else:
+            label = f"{component_name} occurrence {seen[key]}"
+        labels[occurrence.id] = label
+    return labels
+
+
+def _semantic_occurrence_replay_variables(model: AssemblyIR, labels):
+    variables = {}
+    counts = {}
+    for occurrence in model.occurrences:
+        base = _component_slug(labels[occurrence.id]).lower()
+        count = counts.get(base, 0) + 1
+        counts[base] = count
+        suffix = "" if count == 1 else f"_{count}"
+        variables[occurrence.id] = "$" + base + suffix
+    return variables
+
+
+def _semantic_identity_placement(occurrence: OccurrenceIR):
+    position = occurrence.placement.position
+    return (
+        occurrence.placement.rotation_axis is None
+        and not parameters_in(*position)
+        and not any(pv(value) != 0 for value in position)
+    )
+
+
+def _semantic_relationship_map(model: AssemblyIR):
+    return {relationship.child: relationship for relationship in model.relationships}
+
+
+def _validate_semantic_relationships(model: AssemblyIR):
+    relationships = _semantic_relationship_map(model)
+    occurrences = {item.id: item for item in model.occurrences}
+    for relationship in model.relationships:
+        if relationship.parent in relationships:
+            raise ModelError(
+                "chained attachments are not supported yet; the parent would "
+                "move when its first joint is created, before Forge creates the "
+                "child joint"
+            )
+        if relationship.as_built:
+            continue
+        child = occurrences[relationship.child]
+        parent = occurrences[relationship.parent]
+        if (
+            child.placement.rotation_axis is not None
+            or parent.placement.rotation_axis is not None
+        ):
+            raise ModelError(
+                "rotated Placement in a normal attachment is not supported yet; "
+                "Forge cannot transform every semantic anchor reference through "
+                "occurrence rotation"
+            )
+
+
+def _definition_by_id(model: AssemblyIR):
+    return {definition.id: definition for definition in model.definitions}
+
+
+def _semantic_anchor_frame(definition: ComponentDefinitionIR, reference: AnchorReferenceIR):
+    if reference.kind == "frame":
+        return reference.value
+    if reference.kind == "topology":
+        return reference.value
+    if reference.kind == "named":
+        try:
+            return dict(definition.anchors)[reference.value]
+        except KeyError as exc:
+            raise ModelError(
+                f"component {definition.class_name!r} has no semantic anchor "
+                f"{reference.value!r}"
+            ) from exc
+    return None
+
+
+def _semantic_anchor_local_point(
+    definition: ComponentDefinitionIR,
+    reference: AnchorReferenceIR,
+):
+    custom = _semantic_anchor_frame(definition, reference)
+    if isinstance(custom, AnchorFrameIR):
+        return custom.origin
+    if isinstance(custom, AnchorTopologyIR):
+        return custom.corner if custom.corner is not None else custom.edge
+    if reference.kind != "standard":
+        raise ModelError("semantic assembly anchor has unsupported reference")
+    if definition.bounds is None:
+        raise ModelError(
+            f"component {definition.class_name!r} has no typed rectangular "
+            "bounds for standard assembly anchors"
+        )
+    try:
+        anchor = Anchor(reference.value)
+    except ValueError as exc:
+        raise ModelError(
+            f"unsupported standard assembly anchor {reference.value!r}"
+        ) from exc
+    (xmin, xmax), (ymin, ymax), (zmin, zmax) = definition.bounds
+    xmid = (xmin + xmax) / 2
+    ymid = (ymin + ymax) / 2
+    zmid = (zmin + zmax) / 2
+    points = {
+        Anchor.CENTER: (xmid, ymid, zmid),
+        Anchor.LEFT: (xmin, ymid, zmid),
+        Anchor.RIGHT: (xmax, ymid, zmid),
+        Anchor.FRONT: (xmid, ymin, zmid),
+        Anchor.BACK: (xmid, ymax, zmid),
+        Anchor.BOTTOM: (xmid, ymid, zmin),
+        Anchor.TOP: (xmid, ymid, zmax),
+        Anchor.FRONT_TOP_LEFT: (xmin, ymin, zmax),
+        Anchor.FRONT_TOP_RIGHT: (xmax, ymin, zmax),
+        Anchor.FRONT_BOTTOM_LEFT: (xmin, ymin, zmin),
+        Anchor.FRONT_BOTTOM_RIGHT: (xmax, ymin, zmin),
+        Anchor.BACK_TOP_LEFT: (xmin, ymax, zmax),
+        Anchor.BACK_TOP_RIGHT: (xmax, ymax, zmax),
+        Anchor.BACK_BOTTOM_LEFT: (xmin, ymax, zmin),
+        Anchor.BACK_BOTTOM_RIGHT: (xmax, ymax, zmin),
+    }
+    try:
+        return points[anchor]
+    except KeyError as exc:
+        raise ModelError(
+            f"{anchor.value} is not a supported typed assembly anchor"
+        ) from exc
+
+
+def _semantic_corner_data(definition: ComponentDefinitionIR, anchor: Anchor):
+    if definition.bounds is None or anchor not in _CORNER_ANCHORS:
+        raise ModelError("typed corner anchor requires rectangular bounds")
+    (xmin, xmax), (ymin, ymax), (zmin, zmax) = definition.bounds
+    xmid = (xmin + xmax) / 2
+    zmid = (zmin + zmax) / 2
+    front = anchor.value.startswith("front_")
+    left = anchor.value.endswith("_left")
+    top = "_top_" in anchor.value
+    y = ymin if front else ymax
+    x = xmin if left else xmax
+    z = zmax if top else zmin
+    return (x, y, zmid), (xmid, y, zmid), (x, y, z)
+
+
+def _semantic_anchor_origin(
+    definition: ComponentDefinitionIR,
+    reference: AnchorReferenceIR,
+    occurrence,
+    position,
+):
+    def world(point):
+        return [
+            point[index] + position[index]
+            for index in range(3)
+        ]
+
+    custom = _semantic_anchor_frame(definition, reference)
+    if isinstance(custom, AnchorTopologyIR):
+        result = {
+            "edge": world(custom.edge),
+            "on": world(custom.on),
+        }
+        if custom.corner is not None:
+            result["corner"] = world(custom.corner)
+        if custom.z is not None:
+            result["z"] = list(custom.z)
+        if custom.x is not None:
+            result["x"] = list(custom.x)
+    elif isinstance(custom, AnchorFrameIR):
+        result = {
+            "point": world(custom.origin),
+            "z": list(custom.z),
+            "x": list(custom.x),
+        }
+    else:
+        anchor = Anchor(reference.value)
+        if anchor in _CORNER_ANCHORS:
+            edge, on, corner = _semantic_corner_data(definition, anchor)
+            result = {
+                "edge": world(edge),
+                "on": world(on),
+                "corner": world(corner),
+            }
+        else:
+            result = {
+                "face": world(
+                    _semantic_anchor_local_point(definition, reference)
+                ),
+            }
+    result["occurrence"] = occurrence
+    return result
+
+
+def _semantic_corner_native_x(anchor: Anchor):
+    return _corner_native_x(anchor)
+
+
+def _semantic_corner_normal(anchor: Anchor):
+    return _corner_normal(anchor)
+
+
+def _compile_assembly_ir_core_with_dependencies(model: AssemblyIR, name: str):
+    """Lower core AssemblyIR without reading authoring ModelInstance state."""
+    if not isinstance(model, AssemblyIR):
+        raise TypeError("SolidCraft assembly backend requires AssemblyIR")
+    _validate_semantic_relationships(model)
+
+    names = _semantic_definition_names(model)
+    definitions = _definition_by_id(model)
+    occurrence_labels = _semantic_occurrence_labels(model, names)
+    occurrence_refs = _semantic_occurrence_replay_variables(
+        model,
+        occurrence_labels,
+    )
+    relationships = _semantic_relationship_map(model)
+    commands = []
+    inherited_parameters = {}
+    shared_materials = {}
+    positioned_at_copy = set()
+    grounded_occurrence_ids = set()
+
+    group_names = list(dict.fromkeys(
+        occurrence.group
+        for occurrence in model.occurrences
+        if occurrence.group is not None
+    ))
+    if set(group_names) & set(names.values()):
+        raise ModelError("assembly group name conflicts with a component name")
+    for group_name in group_names:
+        commands.append(_command(
+            "component.create",
+            name=group_name,
+            activate=False,
+            grounded=False,
+        ))
+
+    by_definition = {}
+    for occurrence in model.occurrences:
+        by_definition.setdefault(
+            occurrence.definition,
+            [],
+        ).append(occurrence)
+
+    for definition_number, (definition_id, occurrences) in enumerate(
+        by_definition.items(),
+        start=1,
+    ):
+        component_name = names[definition_id]
+        definition = definitions[definition_id]
+        parent_name = occurrences[0].group
+        compiled, _definition_dependencies = (
+            compile_ir_commands_with_dependencies(
+                definition.model,
+                _component_slug(component_name),
+            )
+        )
+        external_names = {
+            parameter_name
+            for parameter_name, _ in definition.external_parameters
+        }
+        compiled = _namespace_commands(
+            compiled,
+            component_name,
+            definition_number=definition_number,
+            external_names=external_names,
+        )
+        parameter_commands = [
+            command for command in compiled
+            if command["command"] == "parameters.add"
+        ]
+        geometry_commands = [
+            command for command in compiled
+            if command["command"] != "parameters.add"
+        ]
+
+        for command in parameter_commands:
+            parameter_name = command["params"]["name"]
+            if parameter_name in external_names:
+                expression = command["params"]["expression"]
+                previous = inherited_parameters.setdefault(
+                    parameter_name,
+                    expression,
+                )
+                if previous != expression:
+                    raise ModelError(
+                        f"conflicting inherited parameter {parameter_name}"
+                    )
+                if previous == expression and any(
+                    existing["command"] == "parameters.add"
+                    and existing["params"]["name"] == parameter_name
+                    for existing in commands
+                ):
+                    continue
+            commands.append(command)
+
+        first = occurrences[0]
+        first_is_root = first.id == model.occurrences[0].id
+        create_grounded = (
+            first_is_root
+            and first.id not in relationships
+            and not parameters_in(*first.placement.position)
+        )
+        create_params = {
+            "name": component_name,
+            "grounded": create_grounded,
+        }
+        if create_grounded:
+            grounded_occurrence_ids.add(first.id)
+        if parent_name is not None:
+            create_params["parent"] = parent_name
+        commands.append(_bound_command(
+            "component.create",
+            occurrence_refs[first.id],
+            **create_params,
+        ))
+
+        for command in geometry_commands:
+            if command["command"] == "material.create":
+                material_name = command["params"]["name"]
+                previous = shared_materials.get(material_name)
+                if previous is None:
+                    shared_materials[material_name] = command["params"]
+                    commands.append(command)
+                elif previous != command["params"]:
+                    raise ModelError(
+                        f"material {material_name!r} is defined differently "
+                        "by multiple components"
+                    )
+                continue
+            commands.append(command)
+        commands.append(_command("component.activate", component="root"))
+
+        for occurrence in occurrences[1:]:
+            params = {"component": component_name}
+            if occurrence.group != parent_name:
+                params["parent"] = occurrence.group or "root"
+            relationship = relationships.get(occurrence.id)
+            normal_relationship = (
+                relationship is not None and not relationship.as_built
+            )
+            position = occurrence.placement.position
+            symbolic_position = bool(parameters_in(*position))
+            if (
+                not normal_relationship
+                and occurrence.placement.rotation_axis is None
+                and not symbolic_position
+            ):
+                concrete_position = [pv(value) for value in position]
+                if any(concrete_position):
+                    params["translate"] = concrete_position
+                positioned_at_copy.add(occurrence.id)
+            commands.append(_bound_command(
+                "occurrence.copy",
+                occurrence_refs[occurrence.id],
+                **params,
+            ))
+
+    for occurrence in model.occurrences:
+        relationship = relationships.get(occurrence.id)
+        normal_relationship = (
+            relationship is not None and not relationship.as_built
+        )
+        if occurrence.id in positioned_at_copy:
+            continue
+        if _semantic_identity_placement(occurrence):
+            continue
+
+        position = occurrence.placement.position
+        for parameter in parameters_in(*position):
+            if not any(
+                command["command"] == "parameters.add"
+                and command["params"]["name"] == parameter.name
+                for command in commands
+            ):
+                commands.append(_command(
+                    "parameters.add",
+                    name=parameter.name,
+                    expression=f"{parameter.value:g} mm",
+                ))
+
+        params = {
+            "occurrence": occurrence_refs[occurrence.id],
+            "translate": list(position),
+        }
+        if normal_relationship:
+            commands.append(_command("occurrence.move", **params))
+            continue
+        if occurrence.placement.rotation_axis is not None:
+            params["axis"] = list(occurrence.placement.rotation_axis)
+            params["angle"] = f"{occurrence.placement.rotation_angle:g} deg"
+        if occurrence.id in grounded_occurrence_ids:
+            params["move_grounded"] = True
+        commands.append(_command("occurrence.move", **params))
+
+    occurrence_by_id = {item.id: item for item in model.occurrences}
+    for relationship in model.relationships:
+        child = occurrence_by_id[relationship.child]
+        parent = occurrence_by_id[relationship.parent]
+        child_occurrence = occurrence_refs[child.id]
+        parent_occurrence = occurrence_refs[parent.id]
+        child_label = occurrence_labels[child.id]
+        parent_label = occurrence_labels[parent.id]
+        joint_name = (
+            relationship.name
+            or f"Attach {child_label} to {parent_label}"
+        )
+
+        if relationship.as_built:
+            commands.append(_command(
+                "joint.as_built",
+                type="rigid",
+                name=joint_name,
+                a=parent_occurrence,
+                b=child_occurrence,
+            ))
+            continue
+
+        parent_definition = definitions[parent.definition]
+        child_definition = definitions[child.definition]
+        parent_position = parent.placement.position
+        child_position = child.placement.position
+        parent_origin = _semantic_anchor_origin(
+            parent_definition,
+            relationship.parent_anchor,
+            parent_occurrence,
+            parent_position,
+        )
+
+        explicit_corner_pair = False
+        if (
+            relationship.parent_anchor.kind == "standard"
+            and relationship.child_anchor.kind == "standard"
+        ):
+            parent_anchor = Anchor(relationship.parent_anchor.value)
+            child_anchor = Anchor(relationship.child_anchor.value)
+            explicit_corner_pair = (
+                parent_anchor in _CORNER_ANCHORS
+                and child_anchor in _CORNER_ANCHORS
+            )
+        if explicit_corner_pair:
+            child_point = _semantic_anchor_local_point(
+                child_definition,
+                relationship.child_anchor,
+            )
+            child_origin = {
+                "point": [
+                    child_point[index] + child_position[index]
+                    for index in range(3)
+                ],
+                "z": list(_semantic_corner_normal(child_anchor)),
+                "x": list(_semantic_corner_native_x(parent_anchor)),
+                "occurrence": child_occurrence,
+            }
+        else:
+            child_origin = _semantic_anchor_origin(
+                child_definition,
+                relationship.child_anchor,
+                child_occurrence,
+                child_position,
+            )
+
+        for parameter in parameters_in(
+            relationship.gap,
+            *relationship.offset,
+        ):
+            if not any(
+                command["command"] == "parameters.add"
+                and command["params"]["name"] == parameter.name
+                for command in commands
+            ):
+                commands.append(_command(
+                    "parameters.add",
+                    name=parameter.name,
+                    expression=f"{parameter.value:g} mm",
+                ))
+
+        parent_origin = _concrete_joint_reference(parent_origin)
+        child_origin = _concrete_joint_reference(child_origin)
+        params = {
+            "type": relationship.kind,
+            "name": joint_name,
+            "a": parent_origin,
+            "b": child_origin,
+        }
+        if relationship.gap != 0:
+            params["offset"] = command_value(relationship.gap)
+        if relationship.flip:
+            params["flip"] = True
+
+        if relationship.kind == "revolute":
+            params["values"] = [relationship.value]
+            if relationship.limits is not None:
+                params["limits"] = [[
+                    relationship.limits[0],
+                    relationship.limits[1],
+                ]]
+            if relationship.angle is not None:
+                params["angle"] = relationship.angle
+            elif relationship.child_anchor.kind == "frame":
+                params["angle"] = 0.0
+        elif relationship.kind == "planar":
+            u, v = relationship.offset
+            params["values"] = [
+                command_value(u),
+                command_value(v),
+                relationship.angle if relationship.angle is not None else 0.0,
+            ]
+            if (
+                relationship.parent_anchor.kind == "frame"
+                and relationship.child_anchor.kind == "frame"
+            ):
+                params["angle"] = 0.0
+        elif relationship.angle is not None:
+            params["angle"] = relationship.angle
+        elif relationship.child_anchor.kind == "frame":
+            params["angle"] = 0.0
+        commands.append(_command("joint.create", **params))
+
+    if model.relationships:
+        commands.append(_command(
+            "browser.visibility",
+            folder="joints",
+            visible=False,
+        ))
+
+    if not commands:
+        raise ModelError(f"{name} contains no component instances")
+    dependencies = _native_dependencies(commands)
+    return _plain_command_value(replay_document(commands)), dependencies
+
+
+def _compile_assembly_legacy_with_dependencies(value, name):
+    """Stable SolidCraft presentation/compatibility assembly lowering."""
     assembly = _as_assembly(value)
     _validate_attachment_relationships(assembly)
     names = _definition_names(assembly)
@@ -1147,6 +1713,29 @@ def _compile_assembly_with_dependencies(value, name):
     return document, dependencies
 
 
+def _compile_assembly_with_dependencies(value, name):
+    """Normalize core assembly semantics before SolidCraft lowering.
+
+    Drawings and exploded views are presentation state outside the core CAD-IR
+    denominator. Until their output layer is split from the historical compiler
+    they retain the stable presentation path, but normalization still runs first
+    so invalid core assembly semantics cannot bypass AssemblyIR.
+    """
+    assembly = _as_assembly(value)
+    model = normalize_assembly(assembly)
+
+    if assembly.drawings or assembly.exploded_views or assembly.exploded_display_set:
+        _validate_semantic_relationships(model)
+        return _compile_assembly_legacy_with_dependencies(assembly, name)
+
+    return _compile_assembly_ir_core_with_dependencies(model, name)
+
+
+def compile_assembly_ir(model: AssemblyIR, name: str):
+    """Compile already-normalized core AssemblyIR through SolidCraft."""
+    return _compile_assembly_ir_core_with_dependencies(model, name)[0]
+
+
 def compile_assembly(value, name):
-    """Compile an assembly to the public replay document."""
+    """Compile an assembly through semantic AssemblyIR to SolidCraft."""
     return _compile_assembly_with_dependencies(value, name)[0]
