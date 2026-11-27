@@ -143,6 +143,12 @@
 118. The native reference-face identity is backend replay transport derived from `FaceBoundaryIR`; it must never enter semantic Forge IR. Equal-distance replay must not require this additional binding.
 119. Parameterized primary and secondary chamfer distances must remain separate editable length dependencies in both native backends.
 120. Exact pinned Mitcad v0.70.0 runtime qualification must execute a 60×40×12 BOTTOM Box with TOP-boundary distances 0.18/0.65, prove unchanged bounds and volume 28788.32808 mm³, and retain saved native design/STL evidence.
+121. A qualified primitive geometry/placement IR must compose through the existing recursive `BooleanIR` rather than requiring primitive-specific Boolean node types; the #496 slice adds `PlacementIR(ConeIR)` to the bounded primitive operand set.
+122. Cone participation in `BooleanIR` must retain existing source-order `join`, `cut` and `intersect` semantics plus unchanged `FeatureRefIR` path meaning. No Cone-specific history vocabulary may enter semantic IR.
+123. SolidCraft Cone Boolean lowering must reuse the already-qualified typed `solid.cone` command with the Boolean operation and target spelling used by stable Forge CSG.
+124. Mitcad v0.70.0 Cone Boolean lowering must reuse the existing principal/offset support-plane transport. A private construction plane may precede the native Cone command, but semantic feature/history references must bind the Cone command rather than the helper.
+125. Backend contract qualification must prove both an offset Cone cut and Cone join through the same `BooleanIR`; suppression/configuration lookup of `FeatureRefIR(("root", "tool"))` must resolve to the Cone feature when a helper plane precedes it.
+126. Exact pinned Mitcad v0.70.0 runtime qualification must cut a d10→0 × 20 Cone whose BOTTOM is at world Z=5 from a 30×30×30 BOTTOM Box, retaining bounds [-15,-15,0]..[15,15,30], remaining volume `27000 - 500π/3`, and saved native design/STL evidence.
 
 ## SCPF native associativity
 
