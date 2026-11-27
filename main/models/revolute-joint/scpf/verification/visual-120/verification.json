@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "state/drive-120/model.sc",
+          "sha256": "7168bf1268f018d588182691da4d9a0200412ed7d30ce33868fda0f3f9e5419d",
+          "size": 4525
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/camera.json",
+          "sha256": "cbbe5d6bb50dc2b9a4f9be6b54b073082a46d931d94bcb1dcca9db577fe6632b",
+          "size": 186
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/actual.png",
+          "sha256": "94269531b82776b14bcf906f08c9d8cf7af9906a61a82918c5492462aa246a55",
+          "size": 49910
+        },
+        {
+          "kind": "file",
+          "path": "visual/iso/diff.png",
+          "sha256": "2c2f64c7cc58e9c5d9aca6f826630390cceaab9dc9cda4badf0891b450dbe976",
+          "size": 4148
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/iso/actual.png",
+        "baseline": "baselines/visual-120-iso.json",
+        "baseline_status": "pass",
+        "camera": "visual/iso/camera.json",
+        "diff_image": "visual/iso/diff.png",
+        "expected_shape_required": false,
+        "expected_shape_status": "missing",
+        "goal_image": null,
+        "overlay_image": null,
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "iso"
+      },
+      "id": "iso",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/revolute-joint/scpf/model.sc",
+  "metadata": {
+    "baseline_provenance": {
+      "approval": "approved",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "83e2274e4fa530309352f81653d42c41088c3267",
+      "workflow_run": 45916016779
+    },
+    "kind": "solidcraft-visual",
+    "measurements": "measurements.json",
+    "rendered_model": "state/drive-120/model.sc",
+    "state": {
+      "command": "drive_120.json",
+      "id": "drive-120"
+    },
+    "visual_report": "visual.json"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "revolute-joint-scpf-visual-120"
+}

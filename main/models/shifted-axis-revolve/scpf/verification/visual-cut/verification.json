@@ -1,0 +1,70 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "visual/front/camera.json",
+          "sha256": "662ea6dd1f2492d0af3a05e941ed9bfec89c5f800a38dfc7eb1f0aac058cad3b",
+          "size": 127
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/actual.png",
+          "sha256": "3e6d9519f4cb129712e3d9011dc4767f4e0e45f5e97289617ec2fa875a02b86b",
+          "size": 13651
+        },
+        {
+          "kind": "file",
+          "path": "visual/front/diff.png",
+          "sha256": "9e0df473f9d0e278aec00133239a587da110bb1abde74b03671d4e3325aaeb60",
+          "size": 743
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/front/actual.png",
+        "baseline": "baselines/visual-cut-front.json",
+        "baseline_status": "pass",
+        "camera": "visual/front/camera.json",
+        "diff_image": "visual/front/diff.png",
+        "expected_shape_required": false,
+        "expected_shape_status": "missing",
+        "goal_image": null,
+        "overlay_image": null,
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "front"
+      },
+      "id": "front",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/shifted-axis-revolve/scpf/model.sc",
+  "metadata": {
+    "baseline_provenance": {
+      "approval": "approved",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "83e2274e4fa530309352f81653d42c41088c3267",
+      "workflow_run": 45916016779
+    },
+    "kind": "solidcraft-visual",
+    "measurements": "measurements.json",
+    "rendered_model": null,
+    "state": null,
+    "visual_report": "visual.json"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "shifted-axis-revolve-scpf-visual-cut"
+}

@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "d1sdkgbbrbnz1",
+  "id": "9t5xkmb4wdv16",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "2n7zvtst5tvaw"
+        "source": "0tzvf6rsddj9k"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "3w0pgmr1z4s7k",
+      "id": "4rsqs9jv0a9yd",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,15 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "2xgk3ets9zy0g",
+          "id": "09w6ebsx0j7hf",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "csrz1t3zw7kh0",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,37 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "7ggjz2g9fmjrw",
+          "id": "53zrezprkm44x",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "2xgk3ets9zy0g",
+          "parent": "csrz1t3zw7kh0",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "b1zs2kv2k02vk",
+          "id": "87f2hv9btk1k3",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "2xgk3ets9zy0g",
+          "parent": "csrz1t3zw7kh0",
           "side": "right"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "enpszqzv146j7",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "2n7zvtst5tvaw"
+      "id": "0tzvf6rsddj9k"
     }
   ],
   "symbols": [],

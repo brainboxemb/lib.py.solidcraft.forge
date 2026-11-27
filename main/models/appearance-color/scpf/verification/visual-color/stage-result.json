@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-visual",
+  "id": "appearance-color--scpf",
+  "implementation": "scpf",
+  "owner": "appearance-color",
+  "schema": 1,
+  "stage_id": "visual-color",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+}

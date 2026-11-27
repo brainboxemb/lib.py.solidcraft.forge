@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "state/service/model.sc",
+          "sha256": "af4dc392cd402c242b966c7399a4f996f855d87f7058f99b471351632afd008f",
+          "size": 6185
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/camera.json",
+          "sha256": "ad0f04cf6a93835ebe1efce6379c47bc79c44171dc637e76fcff39208610a7e2",
+          "size": 145
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/actual.png",
+          "sha256": "ae8f6ef5928a538c4ba923b4b98026be0d7d29cf6e2eafc8ff92659e628d39d9",
+          "size": 10164
+        },
+        {
+          "kind": "file",
+          "path": "visual/right/diff.png",
+          "sha256": "fac6d8ebf20eec9883faa0db373b2f8e97942d7fdebfcf6682b4779500e9b89c",
+          "size": 666
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "actual_image": "visual/right/actual.png",
+        "baseline": "baselines/visual-service-right.json",
+        "baseline_status": "pass",
+        "camera": "visual/right/camera.json",
+        "diff_image": "visual/right/diff.png",
+        "expected_shape_required": false,
+        "expected_shape_status": "missing",
+        "goal_image": null,
+        "overlay_image": null,
+        "regression": {
+          "changed_pixel_fraction": 0.0,
+          "changed_pixel_threshold": 12,
+          "max_changed_fraction": 0.08,
+          "max_mean_difference": 6.0,
+          "mean_absolute_difference": 0.0,
+          "pass": true
+        },
+        "regression_required": true,
+        "view": "right"
+      },
+      "id": "right",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/configuration-position/scpf/model.sc",
+  "metadata": {
+    "baseline_provenance": {
+      "approval": "approved",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "solidcraft_version": "0.49.0",
+      "source_commit": "83e2274e4fa530309352f81653d42c41088c3267",
+      "workflow_run": 45916016779
+    },
+    "kind": "solidcraft-visual",
+    "measurements": "measurements.json",
+    "rendered_model": "state/service/model.sc",
+    "state": {
+      "command": "service.json",
+      "id": "service"
+    },
+    "visual_report": "visual.json"
+  },
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "configuration-position-scpf-visual-service"
+}
