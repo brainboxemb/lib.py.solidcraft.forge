@@ -31,6 +31,7 @@ from ..ir import (
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
+    PlaneIR,
     PolygonProfileIR,
     RegionIR,
     RevolveIR,
@@ -297,14 +298,56 @@ def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
     return commands
 
 
+_PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
+
+
+def _principal_plane_offset(plane: PlaneIR, *, label: str):
+    """Return one bounded principal-plane offset without baking symbols."""
+    if not isinstance(plane, PlaneIR):
+        raise ModelError(f"{label} requires PlaneIR")
+    normal = _PLANE_NORMAL_INDEX[plane.orientation]
+    for index, value in enumerate(plane.origin):
+        if index == normal:
+            continue
+        if parameters_in(value) or abs(pv(value)) > 1e-12:
+            raise ModelError(
+                f"{label} currently requires zero in-plane PlaneIR origin"
+            )
+    return plane.origin[normal]
+
+
+def _mitcad_sketch_plane(plane: PlaneIR):
+    """Lower PlaneIR; construction-plane identity stays backend transport."""
+    offset = _principal_plane_offset(
+        plane,
+        label="Mitcad Sketch IR",
+    )
+    if not parameters_in(offset) and abs(pv(offset)) <= 1e-12:
+        return [], plane.orientation.lower()
+
+    return [
+        {
+            "cmd": "add_feature",
+            "as": "plane",
+            "def": {
+                "type": "construction_plane",
+                "definition": {
+                    "type": "offset",
+                    "plane": plane.orientation.lower(),
+                    "distance": command_value(offset),
+                },
+            },
+        }
+    ], {"ref": "plane.uid"}
+
+
 def _extrude_commands(
     node: ExtrudeIR,
     name: str,
 ) -> list[dict]:
     """Lower semantic Sketch/Profile + Extrude IR to native Mitcad features."""
     sketch = node.sketch
-    if sketch.plane not in ("XY", "XZ", "YZ"):
-        raise ModelError("Mitcad Sketch IR requires XY, XZ or YZ")
+    plane_commands, native_plane = _mitcad_sketch_plane(sketch.plane)
     if len(node.regions) != 1:
         raise ModelError("Mitcad Extrude IR requires one region")
 
@@ -435,7 +478,7 @@ def _extrude_commands(
 
     sketch_definition = {
         "type": "sketch",
-        "plane": sketch.plane.lower(),
+        "plane": native_plane,
         "entities": entities,
         "constraints": [],
         "dimensions": dimensions,
@@ -454,6 +497,7 @@ def _extrude_commands(
         "participants": [],
     }
     return [
+        *plane_commands,
         {
             "cmd": "add_feature",
             "as": "sk",
@@ -564,6 +608,7 @@ def _next_sketch_relation_number(
 
 def _shifted_xy_axis_transport(
     axis: AxisLineIR,
+    plane: PlaneIR,
     entities: list[dict],
     constraints: list[dict],
     dimensions: list[dict],
@@ -573,9 +618,12 @@ def _shifted_xy_axis_transport(
         raise ModelError(
             "Mitcad shifted AxisLineIR on XY requires X or Y direction"
         )
-    if parameters_in(axis.origin[2]) or abs(pv(axis.origin[2])) > 1e-12:
+    if (
+        plane.orientation != "XY"
+        or not _same_semantic_value(axis.origin[2], plane.origin[2])
+    ):
         raise ModelError(
-            "Mitcad shifted AxisLineIR must lie in the XY Sketch plane"
+            "Mitcad shifted AxisLineIR must lie in the semantic XY PlaneIR"
         )
 
     next_entity = _next_sketch_entity_number(entities)
@@ -686,12 +734,13 @@ def _mitcad_revolve_axis(
     ):
         return axis.direction.lower()
 
-    if node.sketch.plane != "XY":
+    if node.sketch.plane.orientation != "XY":
         raise ModelError(
             "Mitcad shifted AxisLineIR transport currently requires an XY Sketch"
         )
     return _shifted_xy_axis_transport(
         axis,
+        node.sketch.plane,
         entities,
         constraints,
         dimensions,
@@ -706,8 +755,7 @@ def _revolve_commands(
 ) -> list[dict]:
     """Lower semantic RevolveIR to native Mitcad Sketch + Revolve."""
     sketch = node.sketch
-    if sketch.plane not in ("XY", "XZ", "YZ"):
-        raise ModelError("Mitcad RevolveIR requires XY, XZ or YZ Sketch")
+    plane_commands, native_plane = _mitcad_sketch_plane(sketch.plane)
     if (
         len(sketch.profiles) != 1
         or not isinstance(sketch.profiles[0], PolygonProfileIR)
@@ -806,13 +854,14 @@ def _revolve_commands(
         revolve_definition["participants"] = [participant]
 
     return [
+        *plane_commands,
         {
             "cmd": "add_feature",
             "as": "sk",
             "name": sketch.name,
             "def": {
                 "type": "sketch",
-                "plane": sketch.plane.lower(),
+                "plane": native_plane,
                 "entities": entities,
                 "constraints": constraints,
                 "dimensions": dimensions,
