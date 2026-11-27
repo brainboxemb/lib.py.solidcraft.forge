@@ -3446,16 +3446,30 @@ def _extrude_regions(
 ) -> tuple[RegionIR, ...] | None:
     """Normalize public all-region or point-selected region intent.
 
-    Existing directly-resolvable profile families retain stronger semantic
-    boundary membership. Selector RegionIR is reserved for the general Sketch
-    entity/operation graph where static membership cannot be known beforehand.
+    Existing directly-resolvable concentric/polygon families retain stronger
+    semantic boundary membership. General picks remain authored selector intent.
     """
     if profile_picks is not None:
         if not isinstance(profile_picks, (tuple, list)):
             return None
 
-        # Preserve the already-qualified concentric-circle membership model.
-        if (
+        # A single explicitly selected profile remains explicit selector intent
+        # so the native command preserves its authored profiles=[...] spelling.
+        if len(sketch.profiles) == 1:
+            try:
+                return tuple(
+                    RegionIR(
+                        selector=tuple(float(value) for value in point),
+                        exact=exact_regions,
+                    )
+                    for point in profile_picks
+                )
+            except (TypeError, ValueError):
+                return None
+
+        # Preserve the already-qualified stronger membership model only when
+        # the source really is the bounded concentric-circle family.
+        concentric = (
             exact_regions
             and sketch.graph is not None
             and not sketch.graph.operations
@@ -3465,7 +3479,14 @@ def _extrude_regions(
                 for profile in sketch.profiles
             )
             and len(sketch.profiles) == len(sketch.graph.entities)
-        ):
+        )
+        if concentric:
+            try:
+                _circle_profile_radii(sketch)
+            except ValueError:
+                concentric = False
+
+        if concentric:
             try:
                 return tuple(
                     _concentric_circle_region_from_pick(sketch, point)
@@ -3474,7 +3495,9 @@ def _extrude_regions(
             except ValueError:
                 return None
 
-        # Preserve the already-qualified exact single-polygon membership model.
+        # Preserve exact single-polygon membership for the older qualified
+        # profile contract (normally reached above only if graph/profile
+        # composition changes later).
         if (
             exact_regions
             and sketch.graph is not None
@@ -3507,8 +3530,6 @@ def _extrude_regions(
     if exact_regions:
         return None
 
-    # Preserve the older inspectable one-profile membership form where it is
-    # unambiguous. Empty means the public "all closed regions" contract.
     if (
         sketch.graph is not None
         and not sketch.graph.operations
