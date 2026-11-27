@@ -908,6 +908,22 @@ dimension. That origin entity and all p/c/k ids are solver transport only; they
 are not Forge IR. The former Mitcad `_parameterized_polygon_sketch(...)`
 semantic helper is therefore removed.
 
+#451 proves that this Sketch relation layer is feature-independent rather than
+Revolve-specific. The existing symmetric single-region Polygon Extrude
+normalization now accepts authored parameterized point coordinates and attaches
+the same relation graph to `SketchIR`. An origin-based rectangle uses the
+stronger #440 V/H + edge-length graph; other accepted parameterized simple
+polygons may use the #447 coordinate-dimension graph.
+
+`ExtrudeIR` itself does not gain a relation field. Profile closure remains
+`PolygonProfileIR`, selected area remains `RegionIR`, editable Sketch meaning
+remains `SketchRelationsIR`, and the feature node owns only extrusion intent.
+SolidCraft consumes the relation graph and can still emit its compact symbolic
+closed polyline. Mitcad routes the same graph through its generic Sketch solver
+transport before creating the native Extrude. Fixed-coordinate Polygon Extrude
+continues to use fixed native Sketch points without inventing redundant relation
+IR.
+
 #389 extends that compiler boundary rather than adding a Mitcad-specific model
 path. `AxisLineIR` records only a principal semantic direction and symbolic
 XYZ origin. A subtractive public composition such as `body - profile.revolve(...)`

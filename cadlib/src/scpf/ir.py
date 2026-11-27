@@ -1141,11 +1141,7 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
         if profile_anchor is not None or tuple(offset) != (0, 0):
             return None
         points, profile_plane, ids = profile.data
-        if profile_plane != plane or any(
-            parameters_in(value)
-            for point in points
-            for value in point
-        ):
+        if profile_plane != plane:
             return None
 
         polygon = PolygonProfileIR(
@@ -1156,6 +1152,10 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
             name=sketch_name,
             plane=plane_ir,
             profiles=(polygon,),
+            relations=(
+                _parameterized_rectangle_relations(polygon)
+                or _parameterized_polygon_coordinate_relations(polygon)
+            ),
         )
         region = RegionIR(outer=0)
         try:

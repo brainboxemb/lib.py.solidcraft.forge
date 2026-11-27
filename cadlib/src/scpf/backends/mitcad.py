@@ -436,39 +436,45 @@ def _extrude_commands(
                 "Mitcad PolygonProfileIR currently requires symmetric extrusion"
             )
         profile = sketch.profiles[0]
-        if any(
+        parameterized = any(
             parameters_in(value)
             for point in profile.points
             for value in point
-        ):
+        )
+        if sketch.relations is not None:
+            entities, constraints, dimensions = _sketch_relations_transport(
+                sketch.relations
+            )
+        elif parameterized:
             raise ModelError(
-                "Mitcad PolygonProfileIR currently requires fixed coordinates"
+                "parameterized Mitcad Polygon Extrude requires typed Sketch relations"
             )
+        else:
+            constraints = []
+            point_ids = []
+            for index, point in enumerate(profile.points, start=1):
+                point_id = f"p{index}"
+                point_ids.append(point_id)
+                entities.append(
+                    {
+                        "id": point_id,
+                        "type": "point",
+                        "at": [pv(value) for value in point],
+                        "fixed": True,
+                    }
+                )
 
-        point_ids = []
-        for index, point in enumerate(profile.points, start=1):
-            point_id = f"p{index}"
-            point_ids.append(point_id)
-            entities.append(
-                {
-                    "id": point_id,
-                    "type": "point",
-                    "at": [pv(value) for value in point],
-                    "fixed": True,
-                }
-            )
-
-        first_curve = len(point_ids) + 1
-        for offset, start_id in enumerate(point_ids):
-            end_id = point_ids[(offset + 1) % len(point_ids)]
-            entities.append(
-                {
-                    "id": f"c{first_curve + offset}",
-                    "type": "line",
-                    "start": start_id,
-                    "end": end_id,
-                }
-            )
+            first_curve = len(point_ids) + 1
+            for offset, start_id in enumerate(point_ids):
+                end_id = point_ids[(offset + 1) % len(point_ids)]
+                entities.append(
+                    {
+                        "id": f"c{first_curve + offset}",
+                        "type": "line",
+                        "start": start_id,
+                        "end": end_id,
+                    }
+                )
 
         selector = [pick[0], pick[1]]
         extent = {
@@ -543,7 +549,7 @@ def _extrude_commands(
         "type": "sketch",
         "plane": native_plane,
         "entities": entities,
-        "constraints": [],
+        "constraints": constraints if polygon else [],
         "dimensions": dimensions,
     }
     extrude_definition = {
