@@ -26,7 +26,6 @@ EXPECTED_IDS = {
     "circular-feature-pattern",
     "components",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -118,10 +117,6 @@ VISUAL_SCPF_ONLY_IDS = {
 
 STATE_VISUAL_STAGES = {
     "appearance-color": ("visual-color",),
-    "configuration-installed-state": (
-        "visual-large-installed",
-        "visual-large-free",
-    ),
     "configuration-position": ("visual-front", "visual-service"),
     "revolute-joint": ("visual-60", "visual-120"),
     "shifted-axis-revolve": ("visual-cut", "visual-suppressed"),
@@ -139,7 +134,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 60)
+        self.assertEqual(len(self.models), 59)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
