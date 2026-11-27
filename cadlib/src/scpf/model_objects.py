@@ -475,11 +475,26 @@ class ModelInstance:
     group_name: str | None = None
     name: str | None = None
     flattened_parameters: tuple[str, ...] = ()
+    _configuration: object | None = field(
+        default=None,
+        repr=False,
+        compare=False,
+    )
     _occurrence_id: int = field(
         default_factory=_next_occurrence_id,
         repr=False,
         compare=False,
     )
+
+    def configure(self, *, active, columns, rows):
+        """Attach one editable configuration definition to this final model."""
+        from .configurations import _configure_model
+        return _configure_model(
+            self,
+            active=active,
+            columns=columns,
+            rows=rows,
+        )
 
     @property
     def occurrence_id(self):
@@ -1103,6 +1118,21 @@ class Assembly:
     exploded_display: str | None = None
     exploded_display_set: bool = False
     drawings: tuple[ComponentDrawing, ...] = ()
+    _configuration: object | None = field(
+        default=None,
+        repr=False,
+        compare=False,
+    )
+
+    def configure(self, *, active, columns, rows):
+        """Attach one editable configuration definition to this final model."""
+        from .configurations import _configure_model
+        return _configure_model(
+            self,
+            active=active,
+            columns=columns,
+            rows=rows,
+        )
 
     def group(self, name):
         """Wrap these assembly occurrences in a real nested native component.
