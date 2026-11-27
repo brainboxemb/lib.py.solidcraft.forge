@@ -1678,6 +1678,40 @@ Mitcad still rejects HoleIR explicitly. Pattern/configuration capability that
 references a Hole is tracked by those separate semantic families rather than
 being counted as missing Hole meaning.
 
+#560 separates public Sketch-authored contents from Sketch support and solid
+consumers. `SketchEntityGraphIR` is a support-independent semantic graph
+containing authored entities, reusable open chains and ordered Sketch
+operations. It does not carry a native Sketch id, support face, curve id or
+consumer feature.
+
+Closed connected line/arc geometry is represented by
+`ConnectedProfileIR` plus typed `SketchSegmentIR` line,
+three-point-arc and center-point-arc nodes. Reusable open
+`Sketch.chain()/line()` geometry uses `OpenChainIR`; tangent arcs remain a
+distinct semantic segment rather than a SolidCraft command string.
+`TextEntityIR` retains text, font, insertion point and symbolic text height.
+
+Sketch-native rectangular pattern and mirror use semantic
+`SketchEntityRefIR` references to graph entity/operation indexes.
+`SketchRectangularPatternIR` retains count/spacing/direction/alignment/reverse
+intent and `SketchMirrorIR` retains local X/Y axis meaning. Python object
+identity is used only while resolving authored source membership; it never
+enters the graph. Sketch pattern counts receive the unitless/count parameter
+role while spacings remain length-valued.
+
+SolidCraft has a graph lowerer that maps semantic source refs to private
+`$sketch_*_profile_*` / `$sketch_*_operation_*` bindings only during
+lowering. Existing connected profile, Text, open-chain, rectangular-pattern
+and mirror command spelling is reproduced from typed nodes. The existing
+SolidCraft limitation that pattern/mirror cannot consume a connected profile
+remains a backend capability error; the semantic source reference is still
+valid IR.
+
+This issue deliberately stops before support and consuming solid features.
+#561 composes the completed entity graph with attached/rotated Sketch support,
+RegionIR and Extrude semantics instead of duplicating entity interpretation in
+that layer.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
