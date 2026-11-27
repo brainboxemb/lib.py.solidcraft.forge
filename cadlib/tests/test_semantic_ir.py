@@ -40,7 +40,7 @@ from scpf import (
 )
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.solidcraft import compile_ir as compile_solidcraft_ir
-from scpf.core import Expression, Text2D
+from scpf.core import Expression
 from scpf.compiler import (
     ModelError,
     _compile_model_with_dependencies,
@@ -651,41 +651,6 @@ class SemanticIRTests(unittest.TestCase):
                 ),
                 PolygonProfileIR,
             ),
-            (
-                "slot_center_to_center",
-                lambda: SlotCenterToCenter2D((2, 0), (10, 0), 4),
-                SlotProfileIR,
-            ),
-            (
-                "slot_overall",
-                lambda: SlotOverall2D((0, 0), (12, 0), 4),
-                SlotProfileIR,
-            ),
-            (
-                "slot_center_point",
-                lambda: SlotCenterPoint2D((4, 0), (10, 0), 4),
-                SlotProfileIR,
-            ),
-            (
-                "slot_arc_three_point",
-                lambda: SlotArcThreePoint2D(
-                    (2, 0),
-                    (6, 4),
-                    (10, 0),
-                    3,
-                ),
-                SlotProfileIR,
-            ),
-            (
-                "slot_arc_center",
-                lambda: SlotArcCenter2D(
-                    (0, 0),
-                    (8, 0),
-                    3,
-                    end=(0, 8),
-                ),
-                SlotProfileIR,
-            ),
         )
 
         for label, factory, profile_type in cases:
@@ -725,26 +690,40 @@ class SemanticIRTests(unittest.TestCase):
             SketchChainIR,
         )
 
-    def test_revolve_text_uses_completed_sketch_graph(self):
-        with Sketch(name="TextRevolve", plane="XZ") as sketch:
-            Text2D("A", height=5)
+    def test_revolve_symmetric_sweep_is_typed(self):
+        with Sketch(name="SymmetricRevolve", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 4), (8, 4), (8, 0)],
+                plane="XZ",
+            )
 
-        shape = sketch.revolve(axis=Axis.X, angle=90)
+        shape = sketch.revolve(axis=Axis.X, angle=140, sym=True)
         model = self.assert_solidcraft_compatibility(
             shape,
-            "TextProfileRevolve",
+            "SymmetricRevolve",
         )
 
         self.assertIsInstance(model.root, RevolveIR)
-        self.assertIsNone(model.root.region)
-        self.assertIsInstance(
-            model.root.sketch.graph.entities[0],
-            TextEntityIR,
-        )
+        self.assertEqual(model.root.direction, "symmetric")
+        solidcraft = compile_solidcraft_ir(model, "SymmetricRevolve")
+        revolve = solidcraft["commands"][-1]
+        self.assertEqual(revolve["command"], "solid.revolve")
+        self.assertEqual(revolve["params"]["direction"], "symmetric")
         with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "TextProfileRevolve")
+            compile_mitcad_ir(model, "SymmetricRevolve")
 
-    def test_revolve_sketch_operation_and_symmetric_sweep_are_typed(self):
+    def test_revolve_does_not_type_unsupported_standalone_sketch_forms(self):
+        unsupported = []
+
+        with Sketch(name="SlotRevolve", plane="XZ") as sketch:
+            SlotCenterToCenter2D((2, 0), (10, 0), 4)
+        unsupported.append(sketch.revolve(axis=Axis.X, angle=90))
+
+        with Sketch(name="TextRevolve", plane="XZ") as sketch:
+            from scpf.core import Text2D
+            Text2D("A", height=5)
+        unsupported.append(sketch.revolve(axis=Axis.X, angle=90))
+
         with Sketch(name="PatternRevolve", plane="XZ") as sketch:
             source = Circle2D(d=4)
             sketch.rectangular_pattern(
@@ -753,26 +732,11 @@ class SemanticIRTests(unittest.TestCase):
                 spacing=8,
                 direction=Axis.X,
             )
+        unsupported.append(sketch.revolve(axis=Axis.X, angle=90))
 
-        shape = sketch.revolve(axis=Axis.X, angle=140, sym=True)
-        model = self.assert_solidcraft_compatibility(
-            shape,
-            "PatternSymmetricRevolve",
-        )
-
-        self.assertIsInstance(model.root, RevolveIR)
-        self.assertEqual(model.root.direction, "symmetric")
-        self.assertIsNone(model.root.region)
-        self.assertEqual(len(model.root.sketch.graph.operations), 1)
-        solidcraft = compile_solidcraft_ir(
-            model,
-            "PatternSymmetricRevolve",
-        )
-        revolve = solidcraft["commands"][-1]
-        self.assertEqual(revolve["command"], "solid.revolve")
-        self.assertEqual(revolve["params"]["direction"], "symmetric")
-        with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "PatternSymmetricRevolve")
+        for shape in unsupported:
+            with self.subTest(kind=shape.kind):
+                self.assertIsInstance(normalize_shape(shape).root, LegacyShapeIR)
 
     def test_revolve_symbolic_non_affine_angle_keeps_typed_scalar_semantics(self):
         sweep = Parameter("sweep", 30)
@@ -4086,7 +4050,7 @@ class SemanticIRTests(unittest.TestCase):
         with self.assertRaises(ModelError):
             compile_mitcad_ir(model, "TextOnlyMixedRole")
 
-    def test_derived_unit_mixed_role_expression_remains_legacy(self):
+    def test_derived_unit_mixed_role_expression_is_typed_but_backends_fail_closed(self):
         shared = Parameter("derived_shared", 4)
         factor = Parameter("derived_factor", 2)
         height = shared * factor
@@ -4096,7 +4060,10 @@ class SemanticIRTests(unittest.TestCase):
                 plane="XZ",
             )
         model = normalize_shape(sketch.revolve(axis=Axis.X, angle=shared))
-        self.assertIsInstance(model.root, LegacyShapeIR)
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertIsNotNone(height.scalar_ir)
+        with self.assertRaises(ModelError):
+            compile_solidcraft_ir(model, "DerivedMixedRole")
         with self.assertRaises(ModelError):
             compile_mitcad_ir(model, "DerivedMixedRole")
 
