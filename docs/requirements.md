@@ -121,6 +121,12 @@
 96. Configuration suppression of a Sphere CSG tool must bind the Sphere operation command, never its support construction plane; existing Box/Cylinder/origin-Sphere feature mapping must remain unchanged.
 97. The #473 normalization slice may reuse the already-qualified standalone `PlacementIR(SphereIR)` anchor/world-point semantics inside primitive Boolean CSG. It does not introduce new Sphere placement meaning or rotated primitive frames.
 98. Exact pinned Mitcad runtime qualification must execute a Box cut by an internal shifted Sphere, retain the private support-plane reference and prove deterministic volume/bounds.
+99. Standalone and placed public Cone/frustum intent must normalize to typed `ConeIR(height, diameter, top_diameter, axis)` under the existing generic `PlacementIR`; Forge must not add a Cone-specific placement node or backend plane identity to semantic IR.
+100. `PlacementIR.point` remains the world-space point of the selected Cone axial anchor. The backend derives the Cone base from height, principal axis, point and anchor using the same semantic helper as the stable SolidCraft surface.
+101. SolidCraft typed Cone lowering must preserve the accepted `solid.cone` command contract: height, diameter, top_diameter, derived base, principal axis, operation and body name.
+102. Mitcad Cone lowering must use its native principal support plane, plane-local centre, radius, top_radius and height. When the semantic Cone base is off the origin plane, a private offset construction plane may be emitted; that helper remains backend transport only.
+103. The #477 bounded slice covers standalone/placed/translated Cone on principal X/Y/Z axes. Cone inside `BooleanIR`, Fillet composition and rotated primitive frames remain outside the qualified slice.
+104. Exact pinned Mitcad runtime qualification must execute a placed Ø18→Ø10 × 8 frustum with BOTTOM at world Z=18 and prove volume `1208π/3` plus Z bounds [18, 26].
 
 ## SCPF native associativity
 

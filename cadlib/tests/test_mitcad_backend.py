@@ -230,12 +230,15 @@ class MitcadBackendTests(unittest.TestCase):
                 "AxiallyOffsetCylinder",
             )
 
-    def test_unsupported_shape_fails_explicitly(self):
+    def test_cone_boolean_fails_explicitly_until_qualified(self):
         with self.assertRaisesRegex(
             ModelError,
-            "does not yet support Forge shape kind 'cone'",
+            "does not yet support Forge shape kind 'union'",
         ):
-            compile_model(Cone(d=10, h=20), "ConeTest")
+            compile_model(
+                Cone(d=10, h=20) + Box(10, 10, 10),
+                "ConeBooleanTest",
+            )
 
     def test_shifted_axis_configuration_lowers_semantic_feature_identity(self):
         document = run_script(SHIFTED_AXIS_REVOLVE, backend="mitcad")

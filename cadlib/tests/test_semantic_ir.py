@@ -31,6 +31,7 @@ from scpf.ir import (
     BoxIR,
     ChamferIR,
     CircleProfileIR,
+    ConeIR,
     CylinderIR,
     ExtrudeIR,
     FeatureRefIR,
@@ -1715,22 +1716,105 @@ class SemanticIRTests(unittest.TestCase):
         with self.assertRaises(ModelError):
             compile_mitcad_ir(model, "UnsupportedMixedExpression")
 
-    def test_unmigrated_surface_is_explicit_legacy_ir_only_for_solidcraft(self):
+    def test_cone_is_generic_geometry_plus_placement_ir(self):
         shape = Cone(d=10, h=20)
-        model = normalize_shape(shape)
 
-        self.assertIsInstance(model.root, LegacyShapeIR)
-        self.assertEqual(model.root.source_kind, "cone")
-        solidcraft = compile_solidcraft_ir(model, "ConeTest")
-        self.assertEqual(
-            solidcraft["commands"][-1]["command"],
-            "solid.cone",
+        model = self.assert_solidcraft_compatibility(shape, "ConeTest")
+        self.assertIsInstance(model.root, PlacementIR)
+        self.assertIsInstance(model.root.primitive, ConeIR)
+        self.assertEqual(model.root.primitive.height, 20)
+        self.assertEqual(model.root.primitive.diameter, 10)
+        self.assertEqual(model.root.primitive.top_diameter, 0)
+        self.assertEqual(model.root.primitive.axis, "Z")
+        self.assertEqual(model.root.point, (0, 0, 0))
+        self.assertEqual(model.root.anchor, (0, 0, 0))
+
+        mitcad = compile_mitcad_ir(model, "ConeTest")
+        cone = mitcad["commands"][-1]["def"]
+        self.assertEqual(cone["type"], "cone")
+        self.assertEqual(cone["center"], [0, 0])
+        self.assertEqual(cone["radius"], 5.0)
+        self.assertEqual(cone["top_radius"], 0.0)
+        self.assertEqual(cone["height"], 20)
+        self.assertFalse(cone["symmetric"])
+        plane = mitcad["commands"][-2]
+        self.assertEqual(plane["def"]["type"], "construction_plane")
+        self.assertEqual(plane["def"]["definition"]["plane"], "xy")
+        self.assertEqual(plane["def"]["definition"]["distance"], -10.0)
+
+    def test_parameterized_bottom_frustum_preserves_typed_dimensions(self):
+        height = Parameter("cone_height", 8)
+        diameter = Parameter("cone_diameter", 18)
+        top = Parameter("cone_top_diameter", 10)
+        shape = Cone(
+            d=diameter,
+            top_d=top,
+            h=height,
+            anchor=Anchor.BOTTOM,
         )
-        with self.assertRaisesRegex(
-            ModelError,
-            "does not yet support Forge shape kind 'cone'",
-        ):
-            compile_mitcad_ir(model, "ConeTest")
+
+        model = self.assert_solidcraft_compatibility(shape, "Frustum")
+        self.assertEqual(
+            [parameter.name for parameter in model.parameters],
+            ["cone_height", "cone_diameter", "cone_top_diameter"],
+        )
+        self.assertIsInstance(model.root.primitive, ConeIR)
+        self.assertEqual(model.root.anchor, (0, 0, -1))
+
+        mitcad = compile_mitcad_ir(model, "Frustum")
+        cone = mitcad["commands"][-1]["def"]
+        self.assertEqual(cone["plane"], "xy")
+        self.assertIn("cone_diameter", str(cone["radius"]))
+        self.assertIn("cone_top_diameter", str(cone["top_radius"]))
+        self.assertEqual(cone["height"], "cone_height")
+
+    def test_placed_bottom_frustum_uses_backend_owned_offset_plane(self):
+        shape = Cone(
+            d=18,
+            top_d=10,
+            h=8,
+            anchor=Anchor.BOTTOM,
+        ).at(
+            0,
+            0,
+            18,
+            anchor=Anchor.BOTTOM,
+        )
+
+        model = self.assert_solidcraft_compatibility(shape, "PlacedFrustum")
+        self.assertIsInstance(model.root.primitive, ConeIR)
+        self.assertEqual(model.root.point, (0, 0, 18))
+        self.assertEqual(model.root.anchor, (0, 0, -1))
+        self.assertTrue(model.root.explicit)
+
+        mitcad = compile_mitcad_ir(model, "PlacedFrustum")
+        self.assertEqual(len(mitcad["commands"]), 2)
+        plane, feature = mitcad["commands"]
+        self.assertEqual(plane["def"]["type"], "construction_plane")
+        self.assertEqual(plane["def"]["definition"]["plane"], "xy")
+        self.assertEqual(plane["def"]["definition"]["distance"], 18)
+        self.assertEqual(feature["def"]["plane"], {"ref": "cone_plane.uid"})
+        self.assertEqual(feature["def"]["center"], [0, 0])
+        self.assertEqual(feature["def"]["radius"], 9.0)
+        self.assertEqual(feature["def"]["top_radius"], 5.0)
+
+    def test_x_axis_cone_uses_principal_yz_plane(self):
+        shape = Cone(
+            d=12,
+            top_d=4,
+            h=20,
+            axis=Axis.X,
+            anchor=Anchor.LEFT,
+        )
+
+        model = self.assert_solidcraft_compatibility(shape, "XAxisCone")
+        self.assertEqual(model.root.primitive.axis, "X")
+        self.assertEqual(model.root.anchor, (-1, 0, 0))
+
+        cone = compile_mitcad_ir(model, "XAxisCone")["commands"][-1]["def"]
+        self.assertEqual(cone["plane"], "yz")
+        self.assertEqual(cone["center"], [0, 0])
+        self.assertEqual(cone["height"], 20)
 
 
 if __name__ == "__main__":

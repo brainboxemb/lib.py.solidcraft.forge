@@ -14,6 +14,7 @@ from ..core import (
     Shape,
     _DirectionSelector,
     _box_corner_from_anchor,
+    _cone_base_from_anchor,
     _native_dependencies,
     _native_expression,
     _plain_command_value,
@@ -30,6 +31,7 @@ from ..ir import (
     ChamferIR,
     CircleProfileIR,
     ConfigurationIR,
+    ConeIR,
     CylinderIR,
     ExtrudeIR,
     FeatureRefIR,
@@ -276,6 +278,72 @@ def _cylinder_command(
             "participants": [],
         },
     }
+
+
+def _cone_commands(
+    node: PlacementIR,
+    name: str,
+    *,
+    operation: str = "new_body",
+    plane_binding: str = "cone_plane",
+) -> list[dict]:
+    """Lower semantic Cone placement through a principal support plane."""
+    primitive = node.primitive
+    if not isinstance(primitive, ConeIR):
+        raise TypeError("Mitcad cone lowering requires PlacementIR(ConeIR)")
+
+    _require_positive(primitive.height, "cone height")
+    _require_positive(primitive.diameter, "cone diameter")
+    if pv(primitive.top_diameter) < 0:
+        raise ModelError("cone top diameter must be zero or positive")
+
+    try:
+        plane, _axial_start, axial_index = _CYLINDER_PLANES[primitive.axis]
+    except KeyError as exc:
+        raise ModelError(
+            f"Mitcad ConeIR requires a principal axis, got {primitive.axis!r}"
+        ) from exc
+
+    selector = _DirectionSelector(node.anchor)
+    try:
+        base = _cone_base_from_anchor(
+            primitive.height,
+            primitive.axis,
+            node.point,
+            selector,
+        )
+    except ValueError as exc:
+        raise ModelError(str(exc)) from exc
+
+    plane_commands, native_plane = _mitcad_offset_plane(
+        plane.upper(),
+        base[axial_index],
+        label="Cone",
+        binding=plane_binding,
+    )
+    center = _cylinder_plane_center(primitive.axis, base)
+
+    return [
+        *plane_commands,
+        {
+            "cmd": "add_feature",
+            "name": name,
+            "def": {
+                "type": "cone",
+                "plane": native_plane,
+                "center": [
+                    command_value(center[0]),
+                    command_value(center[1]),
+                ],
+                "radius": command_value(primitive.diameter / 2),
+                "top_radius": command_value(primitive.top_diameter / 2),
+                "height": command_value(primitive.height),
+                "symmetric": False,
+                "operation": operation,
+                "participants": [],
+            },
+        },
+    ]
 
 
 def _sphere_center(node: PlacementIR):
@@ -1354,6 +1422,8 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
             geometry_commands = [_box_command(node, name)]
         elif isinstance(node.primitive, CylinderIR):
             geometry_commands = [_cylinder_command(node, name)]
+        elif isinstance(node.primitive, ConeIR):
+            geometry_commands = _cone_commands(node, name)
         elif isinstance(node.primitive, SphereIR):
             geometry_commands = _sphere_commands(node, name)
         else:

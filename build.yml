@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/473-boolean-helper-feature-mapping
+branch: issue/477-cone-ir
 modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
-models: [primitive-csg]
+models: []
 library: true
 tasks: [test]

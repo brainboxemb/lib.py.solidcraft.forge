@@ -1280,6 +1280,30 @@ through its existing CSG spelling. The exact Mitcad runtime proof cuts a
 the resulting volume is `27000 - 500π/3` and the outer Box bounds are
 unchanged.
 
+#477 migrates the standalone Cone/frustum surface through the same primitive
+geometry/placement split. `ConeIR` stores only height, base diameter, top
+diameter and principal axis; the existing `PlacementIR` stores the selected
+axial anchor point. The frontend therefore does not expose a Mitcad plane or
+invent a Cone-specific placement representation.
+
+SolidCraft derives the same base point with `_cone_base_from_anchor` and emits
+the accepted `solid.cone` spelling, so typed lowering remains command-compatible
+with the stable legacy compiler.
+
+Mitcad v0.70.0 represents a Cone by a principal support plane, plane-local
+centre, base radius, top radius and height. Forge derives the semantic base
+first. If its axial coordinate is zero the Cone uses the origin principal plane;
+otherwise lowering emits one private offset construction plane at that base and
+references it from the Cone feature. Plane-local coordinates use the same
+X/Y/Z mapping as Cylinder. This preserves CENTER and both axial-end placement
+without adding support geometry to Forge IR.
+
+The bounded runtime proof is a Ø18→Ø10 × 8 frustum whose BOTTOM anchor is at
+world Z=18. It must remain one solid with volume `1208π/3`, XY base radius 9
+and Z bounds [18, 26]. Cone participation in `BooleanIR` remains separate
+because the existing `cone-boolean` owner also contains Fillet history and
+would combine two migrations.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are

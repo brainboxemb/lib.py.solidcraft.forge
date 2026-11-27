@@ -79,6 +79,17 @@ class CylinderIR:
 
 
 @dataclass(frozen=True)
+class ConeIR:
+    """Principal-axis cone/frustum geometry independent of placement."""
+
+    height: Any
+    diameter: Any
+    top_diameter: Any
+    axis: str
+    source_kind: str = "cone"
+
+
+@dataclass(frozen=True)
 class SphereIR:
     """Spherical primitive geometry independent of native diameter spelling."""
 
@@ -86,7 +97,7 @@ class SphereIR:
     source_kind: str = "sphere"
 
 
-PrimitiveIR = BoxIR | CylinderIR | SphereIR
+PrimitiveIR = BoxIR | CylinderIR | ConeIR | SphereIR
 
 
 @dataclass(frozen=True)
@@ -1028,6 +1039,19 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
             anchor=_anchor_vector(anchor),
         )
 
+    if shape.kind == "cone":
+        height, diameter, top_diameter, axis, anchor = shape.data
+        return PlacementIR(
+            primitive=ConeIR(
+                height=height,
+                diameter=diameter,
+                top_diameter=top_diameter,
+                axis=axis,
+            ),
+            point=(0, 0, 0),
+            anchor=_anchor_vector(anchor),
+        )
+
     if shape.kind == "sphere":
         radius, anchor = shape.data
         return PlacementIR(
@@ -1050,15 +1074,25 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
 
     if shape.kind == "placed3d":
         child, x, y, z = shape.data
-        if child.kind != "cylinder":
-            return None
-        height, diameter, axis, anchor = child.data
-        return PlacementIR(
-            primitive=CylinderIR(
+        if child.kind == "cylinder":
+            height, diameter, axis, anchor = child.data
+            primitive = CylinderIR(
                 height=height,
                 diameter=diameter,
                 axis=axis,
-            ),
+            )
+        elif child.kind == "cone":
+            height, diameter, top_diameter, axis, anchor = child.data
+            primitive = ConeIR(
+                height=height,
+                diameter=diameter,
+                top_diameter=top_diameter,
+                axis=axis,
+            )
+        else:
+            return None
+        return PlacementIR(
+            primitive=primitive,
             point=(x, y, z),
             anchor=_anchor_vector(anchor),
             explicit=True,
@@ -1872,6 +1906,7 @@ __all__ = [
     "ChamferIR",
     "CircleProfileIR",
     "CylinderIR",
+    "ConeIR",
     "ExtrudeIR",
     "FaceBoundaryIR",
     "FeatureRefIR",
