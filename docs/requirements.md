@@ -161,7 +161,7 @@
 136. SolidCraft TOP face-boundary Fillet lowering must reuse the typed face-boundary topology query/binding path and reproduce the stable `solid.fillet` command behavior for unchanged public SCPF source.
 137. Mitcad TOP face-boundary Fillet lowering must reuse replay `bind_face_boundary_edges`, not principal-edge reconstruction; native face/edge names remain private transport and no Chamfer-style `reference_face` enters Fillet semantics.
 138. The first face-boundary Fillet slice remains standalone. Existing Fillet→Cone `BooleanIR` composition remains qualified only for `ParallelEdgeSetIR("Z")`; face-boundary Fillet composition must fail closed.
-139. Exact pinned Mitcad v0.70.0 runtime qualification must execute a 60×40×12 BOTTOM Box with R2 TOP-boundary Fillet, retain one watertight solid and saved native design/STL evidence, prove bounds [-30,-20,0]..[30,20,12], and freeze the exact native volume observed by the first accepted runtime pass.
+139. Exact pinned Mitcad v0.70.0 runtime qualification must execute a 60×40×12 BOTTOM Box with R2 TOP-boundary Fillet, retain one watertight solid and saved native design/STL evidence, prove bounds [-30,-20,0]..[30,20,12], and preserve the first accepted native volume 28631.38638124875 mm³ as the regression value.
 
 ## SCPF native associativity
 

@@ -1458,9 +1458,9 @@ Fillet→Cone `BooleanIR` widening is intentionally restricted to
 `ParallelEdgeSetIR("Z")`, so adding TOP-boundary Fillet does not implicitly
 qualify a new composition path. Exact Mitcad v0.70.0 qualification uses a
 60×40×12 BOTTOM Box with R2 TOP-boundary Fillet, unchanged
-[-30,-20,0]..[30,20,12] bounds, and freezes the exact native volume observed by
-the first accepted runtime pass rather than deriving a guessed regression
-value.
+[-30,-20,0]..[30,20,12] bounds. The first accepted pinned runtime pass measured
+28631.38638124875 mm³; that literal native result is the regression value rather
+than a separately derived geometric estimate.
 
 ### Experimental Sketch/Profile + Extrude IR (#282)
 

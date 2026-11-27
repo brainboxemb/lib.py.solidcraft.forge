@@ -657,9 +657,10 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 len(top_face_fillet_native["bindings"]["edges"]),
                 4,
             )
-            print(
-                "top_face_boundary_fillet_volume="
-                f"{top_face_fillet_body['volume']}"
+            self.assertAlmostEqual(
+                top_face_fillet_body["volume"],
+                28631.38638124875,
+                places=6,
             )
             for actual, expected in zip(
                 top_face_fillet_body["bbox"]["min"],
