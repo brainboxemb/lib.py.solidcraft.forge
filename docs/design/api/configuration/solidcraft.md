@@ -183,6 +183,14 @@ Free      -> suppress native feature = true
 Installed -> suppress native feature = false
 ~~~
 
+The probe geometry uses an extra cylindrical cutter only as a minimal way to
+make the two states visibly different. That is probe transport, not the intended
+mechanical model of the clamp. A production clamp should model the real
+installed motion/state, for example by moving the split clamp arms/halves into
+their installed position. The configuration contract only requires that this
+real authored Installed history feature can be suppressed in Free and active in
+Installed.
+
 Current Forge does not propagate the exported feature name to the native
 SolidCraft history name. The retained replay evidence therefore shows the
 native feature as `Cylinder3` and the configuration target as
