@@ -26,6 +26,7 @@ EXPECTED_IDS = {
     "circular-feature-pattern",
     "cylinder-subtract",
     "components",
+    "configuration-child-feature",
     "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
@@ -79,6 +80,7 @@ SCPF_ONLY_IDS = {
     "appearance-color",
     "asymmetric-chamfer",
     "attached-through-all",
+    "configuration-child-feature",
     "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
@@ -112,12 +114,25 @@ MITCAD_IDS = {
 
 MITCAD_FOCUSED_IDS = {
     "cylinder-subtract",
+}
+
+MITCAD_FOCUSED_VISUAL_IDS = {
     "native-revolve",
     "topology-face-boundary-box",
 }
 
+VISUAL_SCPF_ONLY_IDS = {
+    "attached-through-all",
+    "cone-boolean",
+    "rotated-sketch-cutter",
+    "sheet-contour-flange-recess",
+}
+
 STANDARD_MULTI_ENGINE_IDS = (
-    EXPECTED_IDS - SCPF_ONLY_IDS - MITCAD_FOCUSED_IDS
+    EXPECTED_IDS
+    - SCPF_ONLY_IDS
+    - MITCAD_FOCUSED_IDS
+    - MITCAD_FOCUSED_VISUAL_IDS
 )
 
 
@@ -133,7 +148,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 60)
+        self.assertEqual(len(self.models), 61)
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -143,6 +158,7 @@ class ModelTests(unittest.TestCase):
             "corner-anchor",
             "components",
             "sample-plate-drawing",
+            "configuration-child-feature",
             "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
@@ -159,6 +175,7 @@ class ModelTests(unittest.TestCase):
             "corner-anchor",
             "components",
             "sample-plate-drawing",
+            "configuration-child-feature",
             "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
@@ -228,6 +245,37 @@ class ModelTests(unittest.TestCase):
                 expected_geometry_implementations,
             )
 
+
+        for model_id in MITCAD_FOCUSED_VISUAL_IDS:
+            model = by_id[model_id]
+            self.assertEqual(
+                [impl.id for impl in model.implementations],
+                ["scpf", "scpf-mitcad"],
+            )
+            self.assertEqual(
+                [stage.id for stage in model.verifications],
+                ["native", "geometry", "visual"],
+            )
+            self.assertEqual(
+                [stage.runtime for stage in model.verifications],
+                ["solidcraft", "reference", "solidcraft"],
+            )
+            self.assertEqual(
+                model.verifications[0].implementations,
+                ("scpf",),
+            )
+            if model_id == "native-revolve":
+                self.assertEqual(
+                    model.verifications[1].implementations,
+                    ("scpf", "scpf-mitcad"),
+                )
+            else:
+                self.assertIsNone(model.verifications[1].implementations)
+            self.assertEqual(
+                model.verifications[2].implementations,
+                ("scpf",),
+            )
+
         for model_id in SCPF_ONLY_IDS:
             model = by_id[model_id]
             expected_implementations = ["scpf"]
@@ -276,11 +324,28 @@ class ModelTests(unittest.TestCase):
             elif model_id == "topology-face-boundary-xz":
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
-                    ["native", "geometry"],
+                    ["native", "geometry", "visual"],
                 )
                 self.assertEqual(
                     [stage.runtime for stage in model.verifications],
-                    ["solidcraft", "reference"],
+                    ["solidcraft", "reference", "solidcraft"],
+                )
+                self.assertEqual(
+                    model.verifications[1].implementations,
+                    ("scpf", "scpf-mitcad"),
+                )
+                self.assertEqual(
+                    model.verifications[2].implementations,
+                    ("scpf",),
+                )
+            elif model_id in VISUAL_SCPF_ONLY_IDS:
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "solidcraft"],
                 )
             else:
                 self.assertEqual(

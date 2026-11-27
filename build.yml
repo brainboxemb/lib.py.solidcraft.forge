@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/387-native-revolve-verification-inventory
-modules: [ci]
-library: false
-models: []
+branch: resolve/408-v024-dev-into-exp
+modules: all
+library: true
+models: all
 tasks: [test]

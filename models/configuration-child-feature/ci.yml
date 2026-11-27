@@ -1,0 +1,21 @@
+schema: 1
+id: configuration-child-feature
+process: true
+primary: scpf
+
+implementations:
+  - id: scpf
+    builder: builder-scpf
+    source: scpf/model.py
+    preview: false
+
+verifications:
+  - id: native
+    module: verification
+    adapter: solidcraft-model
+    definition: verification/solidcraft.py
+    artifact: model.sc
+    implementations: [scpf]
+
+dependencies: []
+needs: [cadlib]
