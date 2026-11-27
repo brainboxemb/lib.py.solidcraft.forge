@@ -763,7 +763,7 @@ class FilletIR:
 
     base: PlacementIR
     radius: Any
-    edges: ParallelEdgeSetIR
+    edges: ParallelEdgeSetIR | FaceBoundaryIR
     source_kind: str = "fillet"
 
     def __post_init__(self):
@@ -771,8 +771,10 @@ class FilletIR:
             raise ValueError("FilletIR base must be PlacementIR")
         if not isinstance(self.base.primitive, BoxIR):
             raise ValueError("FilletIR first qualified base must be BoxIR")
-        if not isinstance(self.edges, ParallelEdgeSetIR):
-            raise ValueError("FilletIR edges must be ParallelEdgeSetIR")
+        if not isinstance(self.edges, (ParallelEdgeSetIR, FaceBoundaryIR)):
+            raise ValueError(
+                "FilletIR edges must be ParallelEdgeSetIR or FaceBoundaryIR"
+            )
         if (
             isinstance(self.radius, bool)
             or not isfinite(pv(self.radius))
@@ -1653,13 +1655,21 @@ def _portable_revolve(
 
 
 def _portable_fillet(shape: Shape) -> FilletIR | None:
-    """Normalize the first semantic constant-radius principal-edge Fillet."""
+    """Normalize the bounded semantic constant-radius Box Fillet slice."""
     if shape.kind != "fillet" or len(shape.data) != 3:
         return None
 
     base, radius, edges = shape.data
-    if edges is not Edges.VERTICAL:
+    if edges is Edges.VERTICAL:
+        edge_ir = ParallelEdgeSetIR("Z")
+    elif isinstance(edges, _FaceBoundarySelection) and edges.faces:
+        semantic_faces = tuple(Faces(face).value for face in edges.faces)
+        if semantic_faces != ("top",):
+            return None
+        edge_ir = FaceBoundaryIR(semantic_faces)
+    else:
         return None
+
     if (
         isinstance(radius, bool)
         or not isinstance(radius, (int, float, Parameter))
@@ -1675,7 +1685,7 @@ def _portable_fillet(shape: Shape) -> FilletIR | None:
     return FilletIR(
         base=placement,
         radius=radius,
-        edges=ParallelEdgeSetIR("Z"),
+        edges=edge_ir,
     )
 
 
@@ -1768,6 +1778,8 @@ def _normalize_node(shape: Shape) -> IRNode:
         tool = _normalize_node(tool_shape)
         fillet_cone_join = (
             isinstance(target, FilletIR)
+            and isinstance(target.edges, ParallelEdgeSetIR)
+            and target.edges.axis == "Z"
             and shape.kind == "union"
             and isinstance(tool, PlacementIR)
             and isinstance(tool.primitive, ConeIR)
