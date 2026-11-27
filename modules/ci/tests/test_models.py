@@ -102,6 +102,7 @@ SCPF_ONLY_IDS = {
 
 MITCAD_IDS = {
     "circle-negative-extrude",
+    "cone-boolean",
     "cylinder-subtract",
     "multi-profile-extrude",
     "native-revolve",
@@ -322,6 +323,22 @@ class ModelTests(unittest.TestCase):
                     [stage.runtime for stage in model.verifications],
                     ["solidcraft", "reference", "solidcraft"],
                 )
+            elif model_id == "cone-boolean":
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    ["native", "geometry", "visual"],
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft", "reference", "solidcraft"],
+                )
+                self.assertIsNone(
+                    model.verifications[1].implementations,
+                )
+                self.assertEqual(
+                    model.verifications[2].implementations,
+                    ("scpf",),
+                )
             elif model_id == "topology-face-boundary-xz":
                 self.assertEqual(
                     [stage.id for stage in model.verifications],
@@ -504,6 +521,7 @@ class ModelTests(unittest.TestCase):
                 "sample-plate-drawing",
                 "multi-profile-extrude",
                 "asymmetric-chamfer",
+                "cone-boolean",
                 "topology-face-boundary-xz",
             },
         )
