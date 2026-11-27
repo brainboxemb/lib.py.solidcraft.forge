@@ -1234,10 +1234,10 @@ class AxisLineIR:
 
 @dataclass(frozen=True)
 class RevolveIR(BodyIR):
-    """Angular sweep of one Sketch region as one authored body feature."""
+    """Angular sweep of one completed semantic Sketch result."""
 
     sketch: SketchIR
-    region: RegionIR
+    region: RegionIR | None
     axis: AxisLineIR
     angle: Any
     direction: str | None = None
@@ -1246,10 +1246,23 @@ class RevolveIR(BodyIR):
     source_kind: str = "sketch_base_revolve"
 
     def __post_init__(self):
+        if not isinstance(self.sketch, SketchIR):
+            raise ValueError("RevolveIR sketch must be SketchIR")
+        if self.region is not None and not isinstance(self.region, RegionIR):
+            raise ValueError("RevolveIR region must be RegionIR or None")
         if not isinstance(self.axis, AxisLineIR):
             raise ValueError("RevolveIR axis must be AxisLineIR")
         if self.direction not in (None, "symmetric"):
             raise ValueError("RevolveIR direction must be None or symmetric")
+        if (
+            isinstance(self.angle, bool)
+            or not isfinite(pv(self.angle))
+            or pv(self.angle) <= 0
+            or pv(self.angle) > 360
+        ):
+            raise ValueError(
+                "RevolveIR angle must be finite, above 0 and at most 360"
+            )
         if self.operation not in {"new_body", "cut"}:
             raise ValueError("RevolveIR operation must be new_body or cut")
         if self.operation == "new_body" and self.target is not None:
@@ -3868,7 +3881,7 @@ def _portable_revolve(
     operation: str = "new_body",
     target: PlacementIR | None = None,
 ) -> RevolveIR | None:
-    """Normalize the qualified standalone/cut Sketch + Revolve semantic slice."""
+    """Normalize the complete current public standalone Sketch Revolve grammar."""
     if shape.kind != "sketch_base_revolve":
         return None
 
@@ -3885,14 +3898,9 @@ def _portable_revolve(
         rotation,
     ) = shape.data
 
-    if plane not in ("XY", "XZ", "YZ"):
+    if origin is not None or rotation is not None or len(profiles) != 1:
         return None
-    if origin is not None or rotation is not None:
-        return None
-    plane_ir = _plane_ir(plane, plane_offset)
-    if plane_ir is None:
-        return None
-    if operations or direction is not None:
+    if direction not in (None, "symmetric"):
         return None
     if operation not in {"new_body", "cut"}:
         return None
@@ -3900,98 +3908,57 @@ def _portable_revolve(
         return None
     if operation == "cut" and not isinstance(target, PlacementIR):
         return None
-    if len(profiles) != 1:
+
+    sketch = _sketch_ir_from_payload(
+        sketch_name,
+        plane,
+        origin,
+        plane_offset,
+        profiles,
+        operations,
+        rotation,
+    )
+    if sketch is None or sketch.support is not None:
         return None
 
     axis_ir = _axis_line_ir(axis)
-    if axis_ir is None or not _axis_line_in_sketch_plane(axis_ir, plane_ir):
-        return None
-
-    profile, profile_anchor, offset = profiles[0]
-    if (
-        profile.kind != "polygon"
-        or profile_anchor is not None
-        or tuple(offset) != (0, 0)
+    if axis_ir is None or not _axis_line_in_sketch_plane(
+        axis_ir,
+        sketch.plane,
     ):
         return None
 
-    points, profile_plane, ids = profile.data
-    if profile_plane != plane:
-        return None
+    # A direct semantic closed profile can retain the historical explicit
+    # region identity. Text, connected-profile and operation-derived Sketch
+    # results intentionally use region=None: public Revolve consumes the
+    # completed Sketch result as a whole and has no profile-selector argument.
+    region = None
+    if (
+        sketch.graph is not None
+        and not sketch.graph.operations
+        and len(sketch.profiles) == 1
+        and len(sketch.graph.entities) == 1
+    ):
+        candidate = RegionIR(outer=0)
+        try:
+            _region_interior_point(sketch, candidate)
+        except ValueError:
+            pass
+        else:
+            region = candidate
 
-    sweep = pv(angle)
-    if not isfinite(sweep) or sweep <= 0 or sweep > 360:
-        return None
-
-    angle_parameters = {
-        parameter.name for parameter in parameters_in(angle)
-    }
-    coordinate_parameters = {
-        parameter.name
-        for point in points
-        for value in point
-        for parameter in parameters_in(value)
-    }
-    mixed_parameters = angle_parameters & coordinate_parameters
-    if mixed_parameters:
-        # #481 extends #469 from one direct Parameter to authored affine
-        # scalar expressions whose operation tree is captured semantically.
-        # Text-only expressions remain outside the portable slice; no backend
-        # or normalizer is allowed to recover meaning by parsing their text.
-        if len(mixed_parameters) != 1:
-            return None
-        mixed_name = next(iter(mixed_parameters))
-        if not isinstance(angle, Parameter) or angle.name != mixed_name:
-            return None
-        mixed_coordinate_uses = [
-            value
-            for point in points
-            for value in point
-            if any(
-                parameter.name == mixed_name
-                for parameter in parameters_in(value)
-            )
-        ]
-        for value in mixed_coordinate_uses:
-            if isinstance(value, Parameter) and value.name == mixed_name:
-                continue
-            if (
-                isinstance(value, Expression)
-                and value.scalar_ir is not None
-                and mixed_name in scalar_parameter_names(value.scalar_ir)
-                and is_affine_scalar_expression(value.scalar_ir)
-            ):
-                continue
-            return None
-
-    polygon = PolygonProfileIR(
-        points=tuple(tuple(point) for point in points),
-        segment_ids=tuple(ids) if ids is not None else None,
-    )
-    sketch = SketchIR(
-        name=sketch_name,
-        plane=plane_ir,
-        profiles=(polygon,),
-        relations=(
-            _parameterized_rectangle_relations(polygon)
-            or _parameterized_polygon_coordinate_relations(polygon)
-        ),
-    )
-    region = RegionIR(outer=0)
     try:
-        _polygon_region_interior_point(sketch, region)
+        return RevolveIR(
+            sketch=sketch,
+            region=region,
+            axis=axis_ir,
+            angle=angle,
+            direction=direction,
+            operation=operation,
+            target=target,
+        )
     except ValueError:
         return None
-
-    return RevolveIR(
-        sketch=sketch,
-        region=region,
-        axis=axis_ir,
-        angle=angle,
-        direction=direction,
-        operation=operation,
-        target=target,
-    )
 
 
 
