@@ -1,10 +1,7 @@
 schema: 1
-branch: issue/506-named-feature-authoring
-modules: []
-library: true
-models:
-  - configuration-child-feature
-  - shifted-axis-revolve
-api_probes:
-  - configuration-installed-feature
+branch: issue/503-release-contract-test
+modules: [ci]
+library: false
+models: []
+api_probes: []
 tasks: [test]
