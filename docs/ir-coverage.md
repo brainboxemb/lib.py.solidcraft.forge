@@ -30,9 +30,9 @@ Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
 - complete: **1 / 20 (5%)**
-- partial: **13 / 20 (65%)**
-- legacy: **6 / 20 (30%)**
-- families with at least some typed IR: **14 / 20 (70%)**
+- partial: **14 / 20 (70%)**
+- legacy: **5 / 20 (25%)**
+- families with at least some typed IR: **15 / 20 (75%)**
 - physical SCPF owners on permanent `exp`: **61**
 - owners with current end-to-end `scpf-mitcad` evidence: **10 / 61 (16.4%)**
 
@@ -57,7 +57,7 @@ not effort or backend parity.
 | Chamfer | partial | partial | partial | qualified slices | Broader bases/selectors/orientations. |
 | Fillet | partial | partial | partial | qualified slices | Broader bases/selectors/variable forms. |
 | Feature identity, suppression, configuration | partial | partial | partial | qualified slices | General feature/config composition. |
-| Hole family | legacy | legacy stable | unsupported | no | #519 migrates explicit `.at(...)` Hole/Counterbore/Countersink/Threaded intent; attached/on/pattern/config composition remains. |
+| Hole family | partial | yes | unsupported | no | Explicit `.at(...)` Hole/Counterbore/Countersink/Threaded intent is typed by #519; attached/on, broader targets, pattern/config composition and parameter-driven direction/angle remain. |
 | Native feature patterns | legacy | legacy stable | unsupported | no | Semantic source-feature and pattern IR. |
 | Shell | legacy | legacy stable | unsupported | no | Semantic shell feature/history node. |
 | Plastic features: Lip, SnapFit, Boss, Rest | legacy | legacy stable | unsupported | no | Generic mechanical feature/history semantics. |

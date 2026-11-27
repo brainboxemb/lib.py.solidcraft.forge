@@ -41,6 +41,7 @@ from ..ir import (
     FaceBoundaryIR,
     FeatureRefIR,
     FilletIR,
+    HoleIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
@@ -530,6 +531,80 @@ def _fillet_commands(node: FilletIR, name: str) -> list[dict]:
     ]
 
 
+def _hole_commands(node: HoleIR, name: str) -> list[dict]:
+    """Lower one semantic explicit Hole-family history chain."""
+    if isinstance(node.target, HoleIR):
+        commands = _hole_commands(node.target, name)
+    elif (
+        isinstance(node.target, PlacementIR)
+        and isinstance(node.target.primitive, BoxIR)
+    ):
+        commands = [_box_command(node.target, name)]
+    else:
+        raise ModelError(
+            "portable SolidCraft HoleIR currently requires a Box/Hole target"
+        )
+
+    params = {
+        "position": (
+            [command_value(value) for value in node.point]
+            if node.direction is not None
+            else [pv(value) for value in node.point]
+        ),
+        "targets": [name],
+    }
+    if node.diameter is not None:
+        _require_positive(node.diameter, "hole diameter")
+        params["diameter"] = command_value(node.diameter)
+    if node.depth_mode == "distance":
+        _require_positive(node.depth, "hole depth")
+        params["depth"] = command_value(node.depth)
+    elif node.depth_mode != "through_all":
+        raise ModelError("portable SolidCraft HoleIR has unsupported depth mode")
+
+    if node.direction is not None:
+        params["direction"] = list(node.direction)
+
+    if node.hole_type == "simple":
+        pass
+    elif node.hole_type == "counterbore":
+        _require_positive(node.counterbore_diameter, "counterbore diameter")
+        _require_positive(node.counterbore_depth, "counterbore depth")
+        params.update(
+            type="counterbore",
+            cb_diameter=command_value(node.counterbore_diameter),
+            cb_depth=command_value(node.counterbore_depth),
+        )
+    elif node.hole_type == "countersink":
+        _require_positive(node.countersink_diameter, "countersink diameter")
+        params.update(
+            type="countersink",
+            cs_diameter=command_value(node.countersink_diameter),
+            cs_angle=node.countersink_angle,
+        )
+    elif node.hole_type == "threaded":
+        params["thread"] = node.thread
+        if node.hand != "right":
+            params["hand"] = node.hand
+        if node.thread_depth is not None:
+            _require_positive(node.thread_depth, "thread depth")
+            params["thread_depth"] = command_value(node.thread_depth)
+        if node.modeled:
+            params["modeled"] = True
+        if node.ease_out is not None:
+            params["ease_out"] = (
+                node.ease_out
+                if isinstance(node.ease_out, str)
+                else command_value(node.ease_out)
+            )
+    else:
+        raise ModelError(
+            f"portable SolidCraft HoleIR has unsupported type {node.hole_type!r}"
+        )
+
+    return [*commands, _command("solid.hole", **params)]
+
+
 def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
     """Flatten one bounded left-associated semantic CSG tree in source order."""
     commands = []
@@ -940,6 +1015,12 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
         return [
             *parameters,
             *_boolean_commands(node, name),
+        ]
+
+    if isinstance(node, HoleIR):
+        return [
+            *parameters,
+            *_hole_commands(node, name),
         ]
 
     if isinstance(node, FilletIR):
