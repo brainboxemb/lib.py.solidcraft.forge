@@ -291,6 +291,17 @@
 263. Material/appearance-assigned final Shapes remain invalid CSG operands at the public frontend boundary and must not be reclassified as Boolean body semantics.
 264. #581 completes the current public Boolean body-operation semantic family independently from backend coverage; any remaining Boolean limitation is a backend lowering/qualification gap or an operand-family IR gap, not missing Boolean meaning.
 
+265. The current public Sketch Revolve semantic contract is one completed standalone, unrotated Sketch with exactly one authored closed source profile, one coplanar principal or public AxisLine axis, a finite positive sweep not exceeding 360 degrees, and optional symmetric sweep.
+266. Revolve normalization must reuse the completed semantic Sketch graph rather than reconstruct a Polygon-only Sketch. Every profile/entity and Sketch-local pattern/mirror result accepted by the current public Sketch.revolve frontend must remain typed if the Sketch itself is semantically typed.
+267. RevolveIR consumes the completed Sketch result as a whole. Its optional RegionIR may identify one direct unambiguous semantic profile, but Text, connected-profile and operation-derived results must use no invented region selector because public Revolve has no profile-pick argument.
+268. RevolveIR must preserve symmetric intent explicitly and must preserve symbolic sweep angle semantics through the completed scalar-expression IR. IR completeness must not be restricted to affine expressions merely because one backend has a narrower mixed-role lowering.
+269. Revolve axes remain AxisLineIR plus PlaneIR semantics. Principal Axis.X/Y/Z and public shifted AxisLine origins/directions must remain backend-neutral and coplanar with the authored Sketch plane; topology/native axis ids are forbidden.
+270. Public Revolve completion must not add attached Sketch revolve, multiple authored source profiles, rotated/origin-frame Sketches, topology-selected axes or any new SCPF syntax.
+271. SolidCraft typed Revolve lowering must reproduce the existing public Sketch graph and solid.revolve command contract, including symmetric direction, without reading raw Shape.data after normalization.
+272. Mitcad may retain its qualified non-symmetric Polygon Revolve subset after #586 and must fail closed for newly typed profile, Sketch-operation or symmetric forms.
+273. Boolean join/cut/intersect composition of standalone Revolve bodies belongs to BooleanIR. RevolveIR must not absorb generic CSG semantics merely to satisfy backend command spelling.
+274. #586 completes the current public Revolve semantic family independently from backend coverage; remaining Revolve limits are explicit public frontend limits or backend catch-up rather than missing IR meaning.
+
 ## SCPF native associativity
 
 1. When SolidCraft exposes a durable native reference for editable intent, Forge
