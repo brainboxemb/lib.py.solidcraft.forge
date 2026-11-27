@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "4xyeqdwcsxy1y",
+  "id": "96bx0mef6pxj5",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "8ejkxcx1ma1mv"
+        "source": "7bh8ggvqmjtrx"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "eyt5826s4t4ws",
+      "id": "9yk6f01m0xana",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "4prx2sa36k5ex",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "e2qxwhaswcbjm",
+          "id": "1dvqddp1k9r8d",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "6t0rev352v77n",
+          "id": "1hddsrn7be0xh",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "e2qxwhaswcbjm",
+          "parent": "1dvqddp1k9r8d",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "89js8704jvx9e",
+          "id": "5nk2zry6srhnw",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "e2qxwhaswcbjm",
+          "parent": "1dvqddp1k9r8d",
           "side": "right"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "8x35v6nq4xsxf",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "8ejkxcx1ma1mv"
+      "id": "7bh8ggvqmjtrx"
     }
   ],
   "symbols": [],
