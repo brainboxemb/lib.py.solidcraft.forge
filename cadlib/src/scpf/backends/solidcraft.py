@@ -1005,13 +1005,14 @@ def _principal_plane_offset(plane: PlaneIR, *, label: str):
 def _solidcraft_sketch_create(sketch) -> dict:
     """Create one standalone/world-frame Sketch from semantic frame intent."""
     normal = _PLANE_NORMAL_INDEX[sketch.plane.orientation]
+    rotation = getattr(sketch, "rotation", None)
     in_plane = tuple(
         value
         for index, value in enumerate(sketch.plane.origin)
         if index != normal
     )
     explicit_frame = (
-        sketch.rotation is not None
+        rotation is not None
         or any(parameters_in(value) or abs(pv(value)) > 1e-12 for value in in_plane)
     )
     if explicit_frame:
@@ -1025,7 +1026,7 @@ def _solidcraft_sketch_create(sketch) -> dict:
             plane=_sketch_plane_frame(
                 sketch.plane.orientation,
                 origin=sketch.plane.origin,
-                rotation=sketch.rotation,
+                rotation=rotation,
             ),
             name=sketch.name,
         )
