@@ -962,13 +962,13 @@ def _plastic_feature_commands(
     ]
 
 
-def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
+def _boolean_commands(model: ModelIR, node: BooleanIR, name: str) -> list[dict]:
     """Flatten one bounded left-associated semantic CSG tree in source order."""
     commands = []
     if isinstance(node.target, BooleanIR):
-        commands.extend(_boolean_commands(node.target, name))
+        commands.extend(_boolean_commands(model, node.target, name))
     elif isinstance(node.target, FilletIR):
-        commands.extend(_fillet_commands(node.target, name))
+        commands.extend(_fillet_commands(model, node.target, name))
     elif isinstance(node.target, PlacementIR):
         commands.append(_csg_primitive_command(node.target, name, "new"))
     else:
@@ -2685,7 +2685,7 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
         return _extrude_commands(model, node, name)
 
     if isinstance(node, BooleanIR):
-        return _boolean_commands(node, name)
+        return _boolean_commands(model, node, name)
 
     if isinstance(node, HoleIR):
         return _hole_commands(model, node, name)
