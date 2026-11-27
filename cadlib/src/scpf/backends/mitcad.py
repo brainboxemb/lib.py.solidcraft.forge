@@ -1725,6 +1725,10 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
         raise ModelError("the model name must be a valid identifier")
 
     node = model.root
+    if any(feature.suppressed for feature in model.named_features):
+        raise ModelError(
+            "Mitcad backend does not support initially suppressed named features"
+        )
     if (
         model.configuration is not None
         and not _qualified_configuration_slice(model.configuration)
