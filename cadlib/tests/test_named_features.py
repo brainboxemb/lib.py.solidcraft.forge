@@ -2,7 +2,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from scpf import Box, Cylinder, Parameter, compile_model, feature, run_script
+from scpf import Box, Cylinder, Parameter, cadmath, compile_model, feature, run_script
 
 
 class NamedFeatureTests(unittest.TestCase):
@@ -119,6 +119,36 @@ class NamedFeatureTests(unittest.TestCase):
             },
         )
         self.assertGreater(commands.index(combine), commands.index(initial))
+
+    def test_move_history_angle_expression_keeps_length_dependencies(self):
+        tube_d = Parameter("tube_d", 10.0)
+        clamp_bore = Parameter("clamp_bore", 9.6)
+        angle = cadmath.atan(
+            (tube_d - clamp_bore) / clamp_bore
+        )
+        body = Box(tube_d, 10, 5).move_history(
+            origin=(-5.8, 0, 0),
+            axis=(0, 0, 1),
+            angle=angle,
+        )
+        commands = compile_model(body, "Arm")["commands"]
+
+        parameters = {
+            command["params"]["name"]: command["params"]["unit"]
+            for command in commands
+            if command["command"] == "parameters.add"
+        }
+        self.assertEqual(parameters["tube_d"], "mm")
+        self.assertEqual(parameters["clamp_bore"], "mm")
+
+        move = next(
+            command
+            for command in commands
+            if command["command"] == "solid.move"
+        )
+        self.assertIn("atan(", move["params"]["angle"])
+        self.assertIn("tube_d", move["params"]["angle"])
+        self.assertIn("clamp_bore", move["params"]["angle"])
 
     def test_move_history_angle_parameter_uses_degrees(self):
         angle = Parameter("arm_angle", 2.7)
