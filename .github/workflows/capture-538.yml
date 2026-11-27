@@ -25,6 +25,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install reference-module dependency
+        run: python -m pip install PyYAML==6.0.3
+
       - name: Capture canonical 0.50.0 registry from immutable runtime
         env:
           PYTHONPATH: ${{ github.workspace }}/modules/solidcraft-reference/src
