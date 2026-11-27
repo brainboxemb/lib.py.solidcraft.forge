@@ -1,7 +1,7 @@
 # Configuration API design
 
 Status: v0.25 consumer-acceptance repair in progress  
-Tracking: #444, #506
+Tracking: #444, #506, #584
 
 Forge configuration belongs to the **final model**.
 
@@ -17,33 +17,41 @@ model.configure(
 
 There is no public configuration wrapper object.
 
-## Two configuration target types
+## Configuration target types
 
 A configuration column is an existing semantic handle:
 
-- a `Parameter` means a parameter-value column;
+- a root/parent `Parameter` means a parameter-value column;
 - an authored Shape/feature handle means native feature suppression.
 
 Do not turn a parameter-driven consumer state into a synthetic suppression
 feature, and do not replace a real history toggle with a fake boolean parameter.
 
-### Parameter-driven state
+### Parameter values
 
-The retained HUB75 tube-clamp source is the concrete consumer example:
+A parameter configuration column selects concrete values for an existing
+root/parent `Parameter`:
 
 ~~~python
-clamp.configure(
-    active="Free",
-    columns=(self.clamp_bore,),
+model.configure(
+    active="Medium",
+    columns=(self.width,),
     rows={
-        "Free": ("tube_d-clamp_interference",),
-        "Installed": ("tube_d",),
+        "Small": ("60 mm",),
+        "Medium": ("80 mm",),
+        "Large": ("100 mm",),
     },
 )
 ~~~
 
-The clamp geometry remains the consumer's ordinary parametric model. Forge does
-not add a flex/deformation API.
+Configuration rows do **not** author a second parameter-dependency graph.
+Relationships between parameters belong in normal Forge model expressions.
+Therefore cells such as `"width/2"`, `"tube_d"` or
+`"tube_d-clamp_interference"` are not supported configuration values.
+
+The split-ring Free/Installed experiments used this kind of parameter coupling
+while exploring SolidCraft configuration behavior. That probe is not a public
+consumer contract and must not be copied into product models.
 
 ### Named history feature
 
@@ -163,8 +171,10 @@ For #506:
 - `configuration-installed-feature` remains focused backend evidence;
 - `configuration-child-feature` proves reusable child feature identity;
 - `shifted-axis-revolve` proves one real stepped panel-pin-style history cut;
-- the retained HUB75 clamp source remains parameter configuration and is not
-  rewritten as a suppression feature.
+- the split-ring parameter-coupling experiment is historical/backend evidence,
+  not supported consumer authoring;
+- the current HUB75 tube-clamp source must be migrated away from that probe
+  pattern rather than used to justify it.
 
 ## Compiler boundary
 

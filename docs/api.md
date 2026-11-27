@@ -861,6 +861,12 @@ Bracket = component(
 `include="*"` explicitly publishes all public child defaults. A mapping may
 publish one selected child default under a chosen shared model name.
 
+Configuration tables may assign concrete row values to an existing root/parent
+`Parameter`, but row cells do not create new parameter relationships. Use
+finite numeric values or unit-bearing literals such as `80 mm`. Relationships
+such as `tube_d-clamp_interference` belong in ordinary Forge model expressions
+and are rejected when supplied as configuration row cells.
+
 When several parts must share one parent parameter, pass the parent Parameter
 or Expression directly:
 
