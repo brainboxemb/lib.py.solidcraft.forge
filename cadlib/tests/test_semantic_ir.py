@@ -5,6 +5,7 @@ from scpf import (
     Anchor,
     Axis,
     AxisLine,
+    Boss,
     Box,
     Circle2D,
     Configure,
@@ -16,6 +17,7 @@ from scpf import (
     Edges,
     Faces,
     Hole,
+    Lip,
     Parameter,
     Polygon2D,
     Rectangle2D,
@@ -26,9 +28,13 @@ from scpf import (
     SlotCenterPoint2D,
     SlotCenterToCenter2D,
     SlotOverall2D,
+    Rest,
+    SnapFit,
     Sphere,
     Suppress,
     ThreadedHole,
+    X,
+    Y,
 )
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.solidcraft import compile_ir as compile_solidcraft_ir
@@ -41,6 +47,8 @@ from scpf.compiler import (
 from scpf.ir import (
     AxisLineIR,
     BodyIR,
+    BossFeatureIR,
+    BoundOffsetIR,
     BooleanIR,
     BoxIR,
     ChamferIR,
@@ -51,9 +59,14 @@ from scpf.ir import (
     ExtrudeIR,
     FaceBoundaryIR,
     FaceSetIR,
+    FeaturePlacementIR,
     FeatureRefIR,
     FilletIR,
     HoleIR,
+    LipFeatureIR,
+    PlasticFeatureIR,
+    RestFeatureIR,
+    SnapFitFeatureIR,
     ConfigurationIR,
     ConfigurationRowIR,
     SuppressionColumnIR,
@@ -849,6 +862,222 @@ class SemanticIRTests(unittest.TestCase):
         polygon_profile = polygon_model.root.sketch.profiles[0]
         self.assertIsInstance(polygon_profile, PolygonProfileIR)
         self.assertIn("polygon_x", str(polygon_profile.points[0][0]))
+
+    def test_absolute_plastic_feature_family_is_typed_history(self):
+        size = Parameter("plastic_size", 4)
+        body = Box(100, 60, 12, anchor=Anchor.BOTTOM)
+        features = (
+            Lip(width=size, height=3).at(-30, 0, 12),
+            SnapFit(
+                length=20,
+                thickness=2,
+                width=8,
+                catch_depth=1.5,
+                catch_length=4,
+                hook=(1, 0, 0),
+                direction=(0, 0, 1),
+            ).at(-10, 0, 12),
+            Boss(
+                d=10,
+                h=8,
+                hole_d=3,
+                direction=(0, 0, 1),
+            ).at(10, 0, 12),
+            Rest(
+                width=12,
+                height=size,
+                length=24,
+                along=(1, 0, 0),
+                direction=(0, 0, 1),
+            ).at(30, 0, 12),
+        )
+        for feature in features:
+            body = body + feature
+
+        model = self.assert_solidcraft_compatibility(
+            body,
+            "TypedPlasticFamily",
+        )
+        self.assertIsInstance(model.root, PlasticFeatureIR)
+
+        nodes = []
+        current = model.root
+        while isinstance(current, PlasticFeatureIR):
+            nodes.append(current)
+            current = current.target
+        nodes.reverse()
+
+        self.assertEqual(len(nodes), 4)
+        self.assertIsInstance(current, PlacementIR)
+        self.assertEqual(
+            [type(node.feature) for node in nodes],
+            [
+                LipFeatureIR,
+                SnapFitFeatureIR,
+                BossFeatureIR,
+                RestFeatureIR,
+            ],
+        )
+        self.assertTrue(
+            all(
+                isinstance(node.placement, FeaturePlacementIR)
+                and node.placement.mode == "absolute"
+                for node in nodes
+            )
+        )
+        self.assertEqual(
+            model.parameters,
+            (ParameterIR("plastic_size", 4, roles=("length",)),),
+        )
+
+        commands = compile_solidcraft_ir(
+            model,
+            "TypedPlasticFamily",
+        )["commands"]
+        self.assertEqual(
+            [
+                row["command"]
+                for row in commands
+                if row["command"].startswith("plastic.")
+            ],
+            [
+                "plastic.lip",
+                "plastic.snap_fit",
+                "plastic.boss",
+                "plastic.rest",
+            ],
+        )
+        with self.assertRaisesRegex(ModelError, "PlasticFeatureIR"):
+            compile_mitcad_ir(model, "TypedPlasticFamily")
+
+    def test_anchored_plastic_placement_preserves_bounds_and_shell_intent(self):
+        delta = Parameter("lip_delta", 2)
+        wall = Parameter("wall", 2)
+        shell = Box(
+            80,
+            50,
+            30,
+            anchor=Anchor.BOTTOM,
+        ).shell(
+            wall,
+            open=Faces.TOP,
+        )
+        lip = Lip(width=3, height=4).attach(
+            shell,
+            parent=Anchor.INNER_BOTTOM,
+            child=Anchor.BOTTOM,
+            offset=(X.MIN + 10 + delta, Y.MAX - 5),
+        )
+        shape = shell + lip
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "AnchoredLip",
+        )
+        self.assertIsInstance(model.root, PlasticFeatureIR)
+        placement = model.root.placement
+        self.assertEqual(placement.mode, "anchored")
+        self.assertEqual(placement.parent_anchor, "inner_bottom")
+        self.assertEqual(placement.child_anchor, "bottom")
+        self.assertIsInstance(placement.offset[0], BoundOffsetIR)
+        self.assertIsInstance(placement.offset[1], BoundOffsetIR)
+        self.assertEqual(placement.offset[0].axis, "X")
+        self.assertEqual(placement.offset[0].reference, "min")
+        self.assertEqual(placement.offset[1].axis, "Y")
+        self.assertEqual(placement.offset[1].reference, "max")
+        self.assertIn("lip_delta", str(placement.offset[0].delta))
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR("wall", 2, roles=("length",)),
+                ParameterIR("lip_delta", 2, roles=("length",)),
+            ),
+        )
+
+        plastic = next(
+            row["params"]
+            for row in compile_solidcraft_ir(
+                model,
+                "AnchoredLip",
+            )["commands"]
+            if row["command"] == "plastic.lip"
+        )
+        self.assertEqual(plastic["body"], "AnchoredLip")
+        self.assertEqual(plastic["face"][2], 2.0)
+
+    def test_anchored_hole_uses_generic_feature_placement(self):
+        x = Parameter("hole_x", 7)
+        diameter = Parameter("bore_d", 6)
+        plate = Box(
+            60,
+            40,
+            10,
+            anchor=Anchor.BOTTOM,
+        )
+        hole = Hole(
+            d=diameter,
+            depth=Depth.THROUGH_ALL,
+        ).attach(
+            plate,
+            parent=Anchor.TOP,
+            child=Anchor.BOTTOM,
+            offset=(x, 0),
+        )
+        shape = plate + hole
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "AnchoredHole",
+        )
+        self.assertIsInstance(model.root, HoleIR)
+        self.assertIsInstance(model.root.placement, FeaturePlacementIR)
+        self.assertEqual(model.root.placement.mode, "anchored")
+        self.assertEqual(model.root.placement.parent_anchor, "top")
+        self.assertEqual(model.root.placement.child_anchor, "bottom")
+        self.assertEqual(model.root.placement.offset, (x, 0))
+        self.assertIsNone(model.root.point)
+
+        commands = compile_solidcraft_ir(
+            model,
+            "AnchoredHole",
+        )["commands"]
+        self.assertEqual(
+            [
+                row["command"]
+                for row in commands
+                if row["command"].startswith(("sketch.", "solid."))
+            ],
+            [
+                "solid.box",
+                "sketch.create",
+                "sketch.circle.center",
+                "sketch.finish",
+                "solid.extrude",
+            ],
+        )
+        circle = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.circle.center"
+        )
+        self.assertEqual(circle["center"], ["(hole_x)", 0.0])
+        cut = commands[-1]["params"]
+        self.assertEqual(cut["direction"], "positive")
+        self.assertEqual(cut["distance"], 10)
+        self.assertEqual(cut["name"], "Hole")
+        with self.assertRaisesRegex(ModelError, "HoleIR"):
+            compile_mitcad_ir(model, "AnchoredHole")
+
+    def test_side_face_hole_remains_outside_stable_anchored_lowering(self):
+        plate = Box(40, 30, 10, anchor=Anchor.BOTTOM)
+        shape = plate + Hole(d=4).on(
+            plate,
+            face=Faces.LEFT,
+        )
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "SideHole")
 
     def test_circular_hole_pattern_is_semantic_feature_history(self):
         bolts = Parameter("bolts", 6)

@@ -22,6 +22,7 @@ from .core import (
     Faces,
     Parameter,
     Shape,
+    _BoundOffset,
     _FaceBoundarySelection,
     _dim_add,
     _hole_spec,
@@ -120,6 +121,100 @@ PrimitiveIR = BoxIR | CylinderIR | ConeIR | SphereIR
 
 class BodyIR:
     """Marker for one engine-neutral typed body result/history node."""
+
+
+@dataclass(frozen=True)
+class BoundOffsetIR:
+    """Semantic offset from one named X/Y bound of a parent body."""
+
+    axis: str
+    reference: str
+    delta: Any = 0
+
+    def __post_init__(self):
+        if self.axis not in {"X", "Y"}:
+            raise ValueError("BoundOffsetIR axis must be X or Y")
+        if self.reference not in {"min", "center", "max"}:
+            raise ValueError(
+                "BoundOffsetIR reference must be min, center or max"
+            )
+        if isinstance(self.delta, bool) or not isfinite(pv(self.delta)):
+            raise ValueError("BoundOffsetIR delta must be one finite CAD dimension")
+
+
+@dataclass(frozen=True)
+class FeaturePlacementIR:
+    """Engine-neutral placement of one history feature on an existing body.
+
+    Absolute placement retains an authored XYZ point. Anchored placement keeps
+    parent/child anchor meaning plus two in-plane offsets. Backends resolve
+    body topology/pick coordinates only after semantic normalization.
+    """
+
+    mode: str
+    point: tuple[Any, Any, Any] | None = None
+    parent_anchor: str | None = None
+    child_anchor: str | None = None
+    offset: tuple[Any, Any] = (0, 0)
+    source_kind: str = "feature_placement"
+
+    def __post_init__(self):
+        if self.mode not in {"absolute", "anchored"}:
+            raise ValueError(
+                "FeaturePlacementIR mode must be absolute or anchored"
+            )
+
+        if self.mode == "absolute":
+            if (
+                not isinstance(self.point, tuple)
+                or len(self.point) != 3
+                or any(
+                    isinstance(value, bool) or not isfinite(pv(value))
+                    for value in self.point
+                )
+            ):
+                raise ValueError(
+                    "absolute FeaturePlacementIR requires three finite CAD dimensions"
+                )
+            if self.parent_anchor is not None or self.child_anchor is not None:
+                raise ValueError(
+                    "absolute FeaturePlacementIR cannot carry parent/child anchors"
+                )
+            if self.offset != (0, 0):
+                raise ValueError(
+                    "absolute FeaturePlacementIR cannot carry anchored offsets"
+                )
+            return
+
+        if self.point is not None:
+            raise ValueError(
+                "anchored FeaturePlacementIR must not contain an absolute point"
+            )
+        try:
+            parent = Anchor(self.parent_anchor)
+            child = Anchor(self.child_anchor)
+        except (TypeError, ValueError):
+            raise ValueError(
+                "anchored FeaturePlacementIR requires valid parent/child anchors"
+            ) from None
+        object.__setattr__(self, "parent_anchor", parent.value)
+        object.__setattr__(self, "child_anchor", child.value)
+
+        if not isinstance(self.offset, tuple) or len(self.offset) != 2:
+            raise ValueError(
+                "anchored FeaturePlacementIR offset must contain X/Y values"
+            )
+        for index, value in enumerate(self.offset):
+            expected_axis = "X" if index == 0 else "Y"
+            if isinstance(value, BoundOffsetIR):
+                if value.axis != expected_axis:
+                    raise ValueError(
+                        f"FeaturePlacementIR offset {index} requires {expected_axis} bounds"
+                    )
+            elif isinstance(value, bool) or not isfinite(pv(value)):
+                raise ValueError(
+                    "FeaturePlacementIR offsets must be finite CAD dimensions"
+                )
 
 
 @dataclass(frozen=True)
@@ -1108,16 +1203,11 @@ class ChamferIR(BodyIR):
 
 @dataclass(frozen=True)
 class HoleIR(BodyIR):
-    """One explicitly positioned semantic Hole-family feature.
-
-    depth_mode is either through_all or distance. A missing direction means
-    automatic inward drilling from the target surface at point; an explicit
-    direction is fixed authored CAD intent, not a backend face/topology id.
-    """
+    """One semantic Hole-family history feature over generic feature placement."""
 
     target: BodyIR
+    placement: FeaturePlacementIR
     hole_type: str
-    point: tuple[Any, Any, Any]
     diameter: Any | None = None
     depth_mode: str = "through_all"
     depth: Any | None = None
@@ -1136,6 +1226,8 @@ class HoleIR(BodyIR):
     def __post_init__(self):
         if not isinstance(self.target, BodyIR):
             raise ValueError("HoleIR target must be one typed BodyIR result")
+        if not isinstance(self.placement, FeaturePlacementIR):
+            raise ValueError("HoleIR placement must be FeaturePlacementIR")
 
         if self.hole_type not in {
             "simple",
@@ -1144,16 +1236,6 @@ class HoleIR(BodyIR):
             "threaded",
         }:
             raise ValueError("HoleIR has unsupported hole_type")
-
-        if (
-            not isinstance(self.point, tuple)
-            or len(self.point) != 3
-            or any(
-                isinstance(value, bool) or not isfinite(pv(value))
-                for value in self.point
-            )
-        ):
-            raise ValueError("HoleIR point must contain three finite CAD dimensions")
 
         if self.direction is not None:
             if (
@@ -1260,6 +1342,166 @@ class HoleIR(BodyIR):
                 raise ValueError(
                     "HoleIR thread metadata requires threaded type"
                 )
+
+    @property
+    def point(self):
+        """Compatibility view for absolute Hole placement."""
+        return self.placement.point
+
+
+def _positive_feature_dimension(value, label: str, *, optional=False):
+    if value is None and optional:
+        return
+    if (
+        value is None
+        or isinstance(value, bool)
+        or not isfinite(pv(value))
+        or pv(value) <= 0
+    ):
+        raise ValueError(f"{label} must be a positive CAD dimension")
+
+
+def _fixed_feature_vector(value, label: str, *, optional=False):
+    if value is None and optional:
+        return
+    if (
+        not isinstance(value, tuple)
+        or len(value) != 3
+        or any(
+            isinstance(component, bool)
+            or not isinstance(component, (int, float))
+            or not isfinite(component)
+            for component in value
+        )
+        or all(component == 0 for component in value)
+    ):
+        raise ValueError(f"{label} must be a fixed finite non-zero XYZ vector")
+
+
+@dataclass(frozen=True)
+class LipFeatureIR:
+    width: Any
+    height: Any
+    source_kind: str = "lip"
+
+    def __post_init__(self):
+        _positive_feature_dimension(self.width, "LipFeatureIR width")
+        _positive_feature_dimension(self.height, "LipFeatureIR height")
+
+
+@dataclass(frozen=True)
+class SnapFitFeatureIR:
+    length: Any
+    thickness: Any
+    width: Any
+    catch_depth: Any
+    catch_length: Any
+    hook: tuple[float, float, float]
+    direction: tuple[float, float, float] | None = None
+    source_kind: str = "snap_fit"
+
+    def __post_init__(self):
+        for value, label in (
+            (self.length, "length"),
+            (self.thickness, "thickness"),
+            (self.width, "width"),
+            (self.catch_depth, "catch depth"),
+            (self.catch_length, "catch length"),
+        ):
+            _positive_feature_dimension(value, f"SnapFitFeatureIR {label}")
+        _fixed_feature_vector(self.hook, "SnapFitFeatureIR hook")
+        _fixed_feature_vector(
+            self.direction,
+            "SnapFitFeatureIR direction",
+            optional=True,
+        )
+
+
+@dataclass(frozen=True)
+class BossFeatureIR:
+    diameter: Any
+    height: Any
+    hole_diameter: Any | None = None
+    direction: tuple[float, float, float] | None = None
+    source_kind: str = "boss"
+
+    def __post_init__(self):
+        _positive_feature_dimension(self.diameter, "BossFeatureIR diameter")
+        _positive_feature_dimension(self.height, "BossFeatureIR height")
+        _positive_feature_dimension(
+            self.hole_diameter,
+            "BossFeatureIR hole diameter",
+            optional=True,
+        )
+        _fixed_feature_vector(
+            self.direction,
+            "BossFeatureIR direction",
+            optional=True,
+        )
+
+
+@dataclass(frozen=True)
+class RestFeatureIR:
+    width: Any
+    height: Any
+    length: Any | None = None
+    along: tuple[float, float, float] | None = None
+    direction: tuple[float, float, float] | None = None
+    source_kind: str = "rest"
+
+    def __post_init__(self):
+        _positive_feature_dimension(self.width, "RestFeatureIR width")
+        _positive_feature_dimension(self.height, "RestFeatureIR height")
+        _positive_feature_dimension(
+            self.length,
+            "RestFeatureIR length",
+            optional=True,
+        )
+        _fixed_feature_vector(
+            self.along,
+            "RestFeatureIR along",
+            optional=True,
+        )
+        _fixed_feature_vector(
+            self.direction,
+            "RestFeatureIR direction",
+            optional=True,
+        )
+
+
+PlasticFeatureSpecIR = (
+    LipFeatureIR
+    | SnapFitFeatureIR
+    | BossFeatureIR
+    | RestFeatureIR
+)
+
+
+@dataclass(frozen=True)
+class PlasticFeatureIR(BodyIR):
+    """One native plastic/mechanical history feature on typed body history."""
+
+    target: BodyIR
+    placement: FeaturePlacementIR
+    feature: PlasticFeatureSpecIR
+    source_kind: str = "plastic_feature"
+
+    def __post_init__(self):
+        if not isinstance(self.target, BodyIR):
+            raise ValueError(
+                "PlasticFeatureIR target must be one typed BodyIR result"
+            )
+        if not isinstance(self.placement, FeaturePlacementIR):
+            raise ValueError(
+                "PlasticFeatureIR placement must be FeaturePlacementIR"
+            )
+        if not isinstance(
+            self.feature,
+            (LipFeatureIR, SnapFitFeatureIR, BossFeatureIR, RestFeatureIR),
+        ):
+            raise ValueError(
+                "PlasticFeatureIR feature must be one typed plastic feature spec"
+            )
 
 
 def _positive_pattern_count(value, label: str):
@@ -2553,20 +2795,65 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     )
 
 
-def _portable_hole(
-    target: IRNode,
+def _semantic_feature_offset(value):
+    if isinstance(value, _BoundOffset):
+        return BoundOffsetIR(
+            axis=value.axis,
+            reference=value.reference,
+            delta=value.delta,
+        )
+    return value
+
+
+def _anchored_feature_placement(
     tool_shape: Shape,
-) -> HoleIR | None:
-    """Normalize explicit public Hole-family intent over the bounded typed target."""
-    if not isinstance(target, BodyIR):
+    target_shape: Shape,
+) -> tuple[Shape, FeaturePlacementIR] | None:
+    if tool_shape.kind != "anchored":
         return None
+    child, authored_target, parent_anchor, child_anchor, offset = tool_shape.data
+    if authored_target is not target_shape and authored_target != target_shape:
+        return None
+    try:
+        placement = FeaturePlacementIR(
+            mode="anchored",
+            parent_anchor=parent_anchor.value,
+            child_anchor=child_anchor.value,
+            offset=tuple(
+                _semantic_feature_offset(value)
+                for value in offset
+            ),
+        )
+    except (AttributeError, TypeError, ValueError):
+        return None
+    return child, placement
+
+
+def _absolute_feature_placement(
+    tool_shape: Shape,
+) -> tuple[Shape, FeaturePlacementIR] | None:
     if tool_shape.kind != "placed3d":
         return None
-
     feature, x, y, z = tool_shape.data
-    if not isinstance(feature, Shape) or feature.kind != "hole":
+    if not isinstance(feature, Shape):
         return None
+    try:
+        placement = FeaturePlacementIR(
+            mode="absolute",
+            point=(x, y, z),
+        )
+    except (TypeError, ValueError):
+        return None
+    return feature, placement
 
+
+def _hole_ir_from_feature(
+    target: BodyIR,
+    feature: Shape,
+    placement: FeaturePlacementIR,
+) -> HoleIR | None:
+    if feature.kind != "hole":
+        return None
     spec = _hole_spec(feature)
     direction = spec["direction"]
     if direction is not None:
@@ -2608,8 +2895,8 @@ def _portable_hole(
     try:
         return HoleIR(
             target=target,
+            placement=placement,
             hole_type=spec["type"],
-            point=(x, y, z),
             diameter=spec["diameter"],
             depth_mode=depth_mode,
             depth=semantic_depth,
@@ -2623,6 +2910,155 @@ def _portable_hole(
             thread_depth=spec["thread_depth"],
             modeled=spec["modeled"],
             ease_out=spec["ease_out"],
+        )
+    except ValueError:
+        return None
+
+
+def _portable_hole(
+    target: IRNode,
+    target_shape: Shape,
+    tool_shape: Shape,
+) -> HoleIR | None:
+    """Normalize absolute or stable anchored Hole-family feature placement."""
+    if not isinstance(target, BodyIR):
+        return None
+
+    absolute = _absolute_feature_placement(tool_shape)
+    if absolute is not None:
+        feature, placement = absolute
+        return _hole_ir_from_feature(target, feature, placement)
+
+    anchored = _anchored_feature_placement(tool_shape, target_shape)
+    if anchored is None:
+        return None
+    feature, placement = anchored
+    if feature.kind != "hole":
+        return None
+
+    # Preserve the stable anchored Hole contract exactly. More general Hole
+    # variants remain typed through absolute placement until their anchored
+    # lowering is separately qualified.
+    spec = _hole_spec(feature)
+    if (
+        placement.parent_anchor != Anchor.TOP.value
+        or placement.child_anchor != Anchor.BOTTOM.value
+        or spec["type"] != "simple"
+        or spec["direction"] is not None
+    ):
+        return None
+    return _hole_ir_from_feature(target, feature, placement)
+
+
+def _fixed_vector_from_shape(value):
+    if value is None:
+        return None
+    if (
+        not isinstance(value, (tuple, list))
+        or len(value) != 3
+        or any(parameters_in(component) for component in value)
+    ):
+        return None
+    try:
+        vector = tuple(float(pv(component)) for component in value)
+    except (TypeError, ValueError):
+        return None
+    if (
+        any(not isfinite(component) for component in vector)
+        or all(component == 0 for component in vector)
+    ):
+        return None
+    return vector
+
+
+def _plastic_feature_spec_ir(feature: Shape) -> PlasticFeatureSpecIR | None:
+    try:
+        if feature.kind == "lip":
+            width, height = feature.data
+            return LipFeatureIR(width=width, height=height)
+
+        if feature.kind == "snap_fit":
+            (
+                length,
+                thickness,
+                width,
+                catch_depth,
+                catch_length,
+                hook,
+                direction,
+            ) = feature.data
+            hook_ir = _fixed_vector_from_shape(hook)
+            direction_ir = _fixed_vector_from_shape(direction)
+            if hook_ir is None or (
+                direction is not None and direction_ir is None
+            ):
+                return None
+            return SnapFitFeatureIR(
+                length=length,
+                thickness=thickness,
+                width=width,
+                catch_depth=catch_depth,
+                catch_length=catch_length,
+                hook=hook_ir,
+                direction=direction_ir,
+            )
+
+        if feature.kind == "boss":
+            diameter, height, hole_diameter, direction = feature.data
+            direction_ir = _fixed_vector_from_shape(direction)
+            if direction is not None and direction_ir is None:
+                return None
+            return BossFeatureIR(
+                diameter=diameter,
+                height=height,
+                hole_diameter=hole_diameter,
+                direction=direction_ir,
+            )
+
+        if feature.kind == "rest":
+            width, height, length, along, direction = feature.data
+            along_ir = _fixed_vector_from_shape(along)
+            direction_ir = _fixed_vector_from_shape(direction)
+            if (
+                (along is not None and along_ir is None)
+                or (direction is not None and direction_ir is None)
+            ):
+                return None
+            return RestFeatureIR(
+                width=width,
+                height=height,
+                length=length,
+                along=along_ir,
+                direction=direction_ir,
+            )
+    except (TypeError, ValueError):
+        return None
+    return None
+
+
+def _portable_plastic_feature(
+    target: IRNode,
+    target_shape: Shape,
+    tool_shape: Shape,
+) -> PlasticFeatureIR | None:
+    if not isinstance(target, BodyIR):
+        return None
+
+    placed = _absolute_feature_placement(tool_shape)
+    if placed is None:
+        placed = _anchored_feature_placement(tool_shape, target_shape)
+    if placed is None:
+        return None
+
+    feature, placement = placed
+    spec = _plastic_feature_spec_ir(feature)
+    if spec is None:
+        return None
+    try:
+        return PlasticFeatureIR(
+            target=target,
+            placement=placement,
+            feature=spec,
         )
     except ValueError:
         return None
@@ -2795,9 +3231,17 @@ def _normalize_node(shape: Shape) -> IRNode:
 
         target = _normalize_node(target_shape)
         if shape.kind in {"union", "difference"}:
-            hole = _portable_hole(target, tool_shape)
+            hole = _portable_hole(target, target_shape, tool_shape)
             if hole is not None:
                 return hole
+        if shape.kind == "union":
+            plastic = _portable_plastic_feature(
+                target,
+                target_shape,
+                tool_shape,
+            )
+            if plastic is not None:
+                return plastic
 
         tool = _normalize_node(tool_shape)
         fillet_cone_join = (
@@ -2868,7 +3312,7 @@ def resolve_feature_ref(root: IRNode, reference: FeatureRefIR) -> IRNode:
         if isinstance(node, BooleanIR) and segment in {"target", "tool"}:
             node = getattr(node, segment)
             continue
-        if isinstance(node, HoleIR) and segment == "target":
+        if isinstance(node, (HoleIR, PlasticFeatureIR)) and segment == "target":
             node = node.target
             continue
         if isinstance(node, (ChamferIR, FilletIR, ShellIR)) and segment == "base":
@@ -2906,7 +3350,7 @@ def _pattern_authored_feature_ref(
         return FeatureRefIR(path=path)
 
     if (
-        isinstance(root, (HoleIR, BooleanIR))
+        isinstance(root, (HoleIR, PlasticFeatureIR, BooleanIR))
         and design.kind in {"union", "difference", "intersection"}
     ):
         target_shape, tool_shape = design.data
@@ -3154,6 +3598,8 @@ def is_portable(model: ModelIR) -> bool:
 __all__ = [
     "AxisLineIR",
     "BodyIR",
+    "BossFeatureIR",
+    "BoundOffsetIR",
     "BooleanIR",
     "BoxIR",
     "ChamferIR",
@@ -3166,9 +3612,11 @@ __all__ = [
     "ExtrudeIR",
     "FaceBoundaryIR",
     "FaceSetIR",
+    "FeaturePlacementIR",
     "FeatureRefIR",
     "FilletIR",
     "HoleIR",
+    "LipFeatureIR",
     "ConfigurationIR",
     "ConfigurationRowIR",
     "SuppressionColumnIR",
@@ -3178,6 +3626,8 @@ __all__ = [
     "ParameterIR",
     "ParallelEdgeSetIR",
     "PlacementIR",
+    "PlasticFeatureIR",
+    "PlasticFeatureSpecIR",
     "PolygonProfileIR",
     "PrimitiveIR",
     "ProfileIR",
@@ -3198,7 +3648,9 @@ __all__ = [
     "SketchRelationsIR",
     "ShellIR",
     "SlotProfileIR",
+    "SnapFitFeatureIR",
     "SphereIR",
+    "RestFeatureIR",
     "_polygon_region_interior_point",
     "_region_interior_point",
     "is_portable",
