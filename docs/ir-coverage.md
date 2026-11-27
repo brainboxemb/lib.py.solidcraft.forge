@@ -33,8 +33,8 @@ Current conservative family-level inventory:
 - partial: **0 / 20 (0%)**
 - legacy: **0 / 20 (0%)**
 - families with at least some typed IR: **20 / 20 (100%)**
-- physical SCPF owners on permanent `exp`: **61**
-- owners with current end-to-end `scpf-mitcad` evidence: **10 / 61 (16.4%)**
+- physical SCPF owners on the integration candidate: **60**
+- owners with current end-to-end `scpf-mitcad` evidence: **10 / 60 (16.7%)**
 
 The family percentages are intentionally unweighted. They show migration shape,
 not effort or backend parity.
@@ -56,7 +56,7 @@ not effort or backend parity.
 | Topology/reference selectors | complete | yes | partial | qualified slices | #562 types the current public face-boundary, principal-parallel, cardinal direction-pair, named Polygon segment/vertex and explicit fixed-pick selector vocabulary; Mitcad support remains a backend subset. |
 | Chamfer | complete | yes | partial | qualified slices | #562 types the complete public distance/distance2/flip contract over shared EdgeSelectionIR and typed BodyIR; backend support remains a separate dimension. |
 | Fillet | complete | yes | partial | qualified slices | #562 types the complete public radius + EdgeSelectionIR contract over typed BodyIR; backend support remains a separate dimension. |
-| Feature identity, suppression, configuration | partial | partial | partial | qualified slices | #555 adds definition-level ComponentFeatureRefIR for exported reusable-child identity; broader configuration/rule/feature composition remains. |
+| Feature identity, suppression, configuration | complete | partial | partial | qualified slices | #615 aligns the completed semantic family with the v0.26 public frontend: final-model `.configure(...)` becomes ordered `ConfigurationIR`, reusable child identity stays `ComponentFeatureRefIR`, and scoped `feature(name, suppressed=...)` becomes backend-neutral `NamedFeatureIR` over exact `FeatureRefIR`. Backend support remains independent. |
 | Hole family | complete | yes | unsupported | no | #550 represents current public absolute/anchored Hole-family meaning through shared FeaturePlacementIR, with TOP/BOTTOM simple SolidCraft lowering and backend-unsupported anchored variants remaining typed/fail-closed. |
 | Native feature patterns | complete | yes | unsupported | no | #533 covers current public rectangular/circular feature-pattern controls with semantic FeatureRefIR source identity; models still depend on their source features being typed. |
 | Shell | complete | yes | unsupported | no | #532 covers the current public shell operation through ShellIR + cardinal FaceSetIR over typed body history; a legacy base is a dependency boundary, not missing Shell semantics. |
@@ -112,8 +112,10 @@ non-exposed native datum/topology selectors are not counted as missing IR.
 #598 then completes the current working Placement/transforms surface with
 TranslationIR over typed primitive Boolean bodies while retaining PlacementIR,
 FeaturePlacementIR and assembly occurrence pose as distinct semantic layers.
-#605 completes configuration/feature identity with one heterogeneous
-ConfigurationIR shared by Shape and Assembly targets, semantic component
-feature identity and the current ConfigRule/DriveParameter grammar.
-All 20/20 tracked CAD-semantic families are therefore complete at the IR layer;
-backend catch-up remains independent and may still fail closed.
+#605 completed the configuration/feature-identity family against the then-current
+experimental frontend. #615 reconciles that semantic boundary with the released
+v0.26 API: configuration is final-model `.configure(...)` metadata with no
+public rule grammar, and scoped `feature(name, suppressed=...)` identity/state
+is retained as `NamedFeatureIR` over `FeatureRefIR`. All 20/20 tracked
+CAD-semantic families therefore remain complete against the current public
+frontend; backend catch-up remains independent and may still fail closed.
