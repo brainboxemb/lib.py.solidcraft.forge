@@ -16,6 +16,10 @@ from ..core import (
     Expression,
     Parameter,
     _DirectionSelector,
+    _ScalarBinary,
+    _ScalarLiteral,
+    _ScalarParameterRef,
+    _ScalarUnary,
     _box_corner_from_anchor,
     _cone_base_from_anchor,
     _cylinder_base_from_anchor,
@@ -89,10 +93,116 @@ def _parameter_commands(model: ModelIR) -> list[dict]:
     ]
 
 
+def _role_unit(role: str) -> str:
+    if role == "length":
+        return "mm"
+    if role == "angle":
+        return "deg"
+    raise ModelError(f"unsupported Forge parameter role {role!r}")
+
+
+def _parameter_role_map(model: ModelIR):
+    return {parameter.name: parameter for parameter in model.parameters}
+
+
+def _render_role_scalar_tree(model: ModelIR, node, role: str, *, dimensional=True):
+    """Render one qualified scalar tree with units supplied by its use site."""
+    unit = _role_unit(role)
+    parameters = _parameter_role_map(model)
+
+    if isinstance(node, _ScalarLiteral):
+        text = number_text(node.value)
+        return f"{text} {unit}" if dimensional else text
+
+    if isinstance(node, _ScalarParameterRef):
+        parameter = parameters.get(node.name)
+        if parameter is None or role not in parameter.roles:
+            raise ModelError(
+                f"parameter {node.name!r} is not qualified for {role} use"
+            )
+        if not dimensional:
+            raise ModelError(
+                "Forge scalar factors must be numeric literals in this IR slice"
+            )
+        if len(parameter.roles) > 1:
+            return f"{node.name} * 1 {unit}"
+        return node.name
+
+    if isinstance(node, _ScalarUnary):
+        if node.op != "neg":
+            raise ModelError("unsupported Forge scalar unary operation")
+        return f"-({_render_role_scalar_tree(model, node.operand, role, dimensional=dimensional)})"
+
+    if not isinstance(node, _ScalarBinary):
+        raise ModelError("missing typed Forge scalar-expression metadata")
+
+    if node.op in {"add", "sub"}:
+        left = _render_role_scalar_tree(
+            model,
+            node.left,
+            role,
+            dimensional=dimensional,
+        )
+        right = _render_role_scalar_tree(
+            model,
+            node.right,
+            role,
+            dimensional=dimensional,
+        )
+        operator = "+" if node.op == "add" else "-"
+        return f"({left}) {operator} ({right})"
+
+    if node.op == "mul":
+        if isinstance(node.left, _ScalarLiteral):
+            scalar, value = node.left, node.right
+        elif isinstance(node.right, _ScalarLiteral):
+            scalar, value = node.right, node.left
+        else:
+            raise ModelError(
+                "Forge mixed-role multiplication requires one numeric scalar"
+            )
+        rendered = _render_role_scalar_tree(
+            model,
+            value,
+            role,
+            dimensional=dimensional,
+        )
+        factor = _render_role_scalar_tree(
+            model,
+            scalar,
+            role,
+            dimensional=False,
+        )
+        return f"({rendered}) * {factor}"
+
+    if node.op == "div":
+        if (
+            not isinstance(node.right, _ScalarLiteral)
+            or node.right.value == 0
+        ):
+            raise ModelError(
+                "Forge mixed-role division requires a non-zero numeric scalar"
+            )
+        rendered = _render_role_scalar_tree(
+            model,
+            node.left,
+            role,
+            dimensional=dimensional,
+        )
+        divisor = _render_role_scalar_tree(
+            model,
+            node.right,
+            role,
+            dimensional=False,
+        )
+        return f"({rendered}) / {divisor}"
+
+    raise ModelError(f"unsupported Forge scalar operation {node.op!r}")
+
+
 def _role_command_value(model: ModelIR, value, role: str):
-    """Spell one typed use of a mixed-role source parameter."""
-    if role not in {"length", "angle"}:
-        raise ModelError(f"unsupported Forge parameter role {role!r}")
+    """Spell one typed use of a mixed-role source parameter or expression."""
+    _role_unit(role)
 
     mixed_names = {
         parameter.name
@@ -112,15 +222,26 @@ def _role_command_value(model: ModelIR, value, role: str):
         and isinstance(value, Parameter)
         and value.name == used_mixed[0].name
     ):
-        unit = "mm" if role == "length" else "deg"
+        unit = _role_unit(role)
         return _native_expression(
             f"{value.name} * 1 {unit}",
             (value.name,),
         )
 
+    if isinstance(value, Expression) and value.semantic is not None:
+        rendered = _render_role_scalar_tree(
+            model,
+            value.semantic,
+            role,
+        )
+        return _native_expression(
+            rendered,
+            tuple(parameter.name for parameter in value.parameters),
+        )
+
     raise ModelError(
-        "mixed-role Forge parameters inside symbolic expressions are "
-        "outside the qualified IR slice"
+        "mixed-role Forge parameters inside symbolic expressions require "
+        "typed scalar-expression metadata"
     )
 
 
