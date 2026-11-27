@@ -90,6 +90,33 @@ If a later SolidCraft version adds row-owned boolean columns or child
 configuration selection, this document should record that new native capability
 and version explicitly before Forge relies on it.
 
+
+### Configuration-only parameter dependencies
+
+The executable probe exposed an additional current boundary. A Forge model field
+that is referenced only inside a configuration row/effect is not automatically
+retained as a native SolidCraft Parameter today.
+
+The first probe form used:
+
+```text
+clamp_bore = tube_d - clamp_interference
+```
+
+where `clamp_interference` existed as a Forge model field but had no independent
+geometry/placement dependency. SolidCraft rejected the row expression because
+the replayed design had no native `clamp_interference` parameter.
+
+The current-baseline probe therefore uses `tube_d - 0.4 mm` only to isolate the
+UI/rule behavior.
+
+This must **not** become a public API requirement. In the proposed configuration
+model, a Parameter referenced by a configuration row, Toggle effect or other
+typed configuration expression is itself a legitimate native dependency. The
+compiler/IR must retain it even when ordinary geometry does not otherwise read
+that Parameter. Consumers must not need fake geometry or an unrelated visible
+configuration column merely to materialize a configuration-only dependency.
+
 ## 3. Public syntax considerations
 
 
@@ -536,8 +563,21 @@ Free row
 [ ] Installed rule
 ```
 
-The rule is disabled by default. Its native effect drives `clamp_bore` from
-`tube_d-clamp_interference` to `tube_d`.
+The rule is disabled by default. The current qualified probe stores:
+
+```text
+active row: Free
+clamp_bore row expression: tube_d - 0.4 mm
+Installed.enabled: false
+Installed effect: clamp_bore = tube_d
+```
+
+Replay produces a saved `model.sc`, `solidcraft.json`, replay evidence,
+`model.stl` and `model.png`.
+
+The literal `0.4 mm` is intentionally a current-baseline workaround for the
+configuration-only dependency limitation described above; the proposed API
+still models that value as `clamp_interference`.
 
 The probe exists to answer two questions with executable evidence:
 
@@ -578,12 +618,14 @@ prove:
    default and survives save/reopen.
 6. Toggle effects update real native dependencies without rerunning Forge
    Python.
-7. A backend may not claim row-owned Toggle support until two named rows with
+7. Parameters referenced only by configuration rows/effects are retained as
+   native dependencies without fake geometry or unrelated visible columns.
+8. A backend may not claim row-owned Toggle support until two named rows with
    different boolean values survive save/reopen and row switching.
-8. Multiple child occurrences sharing one parent Parameter continue to follow
+9. Multiple child occurrences sharing one parent Parameter continue to follow
    the parent configuration.
-9. Unsupported child-configuration selection fails explicitly.
-10. No public configuration semantic depends on backend ids or command spelling.
+10. Unsupported child-configuration selection fails explicitly.
+11. No public configuration semantic depends on backend ids or command spelling.
 
 ## 10. Open design decisions
 
