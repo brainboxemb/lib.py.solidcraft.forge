@@ -24,15 +24,15 @@ class ApiProbeTests(unittest.TestCase):
         )
 
     def test_template_smoke_probe_is_discoverable_but_explicitly_selected(self):
-        self.assertEqual([probe.id for probe in self.probes], ["smoke"])
+        self.assertEqual([probe.id for probe in self.probes], ["configuration-installed-current"])
         self.assertEqual(select_api_probes(self.probes, ()), ())
         self.assertEqual(
-            [probe.id for probe in select_api_probes(self.probes, ("smoke",))],
-            ["smoke"],
+            [probe.id for probe in select_api_probes(self.probes, ("configuration-installed-current",))],
+            ["configuration-installed-current"],
         )
 
     def test_manual_probe_selection_accepts_ids_or_all(self):
-        self.assertEqual(_selection("smoke,other,smoke"), ("smoke", "other"))
+        self.assertEqual(_selection("configuration-installed-current,other,configuration-installed-current"), ("configuration-installed-current", "other"))
         self.assertIsNone(_selection("all"))
 
     def test_probe_uses_own_output_root_in_runtime_manifest(self):
@@ -66,13 +66,13 @@ class ApiProbeTests(unittest.TestCase):
 
         self.assertEqual(invoked.call_count, 1)
         manifest = manifests[0]
-        self.assertEqual(manifest["runtime"], "reference")
+        self.assertEqual(manifest["runtime"], "solidcraft")
         self.assertEqual(len(manifest["build_items"]), 1)
         row = manifest["build_items"][0]
-        self.assertEqual(row["owner"], "smoke")
+        self.assertEqual(row["owner"], "configuration-installed-current")
         self.assertEqual(row["output_root"], "api-probes")
         self.assertEqual(row["implementation"], "probe")
-        self.assertEqual(row["builder"], "builder-pythonscad")
+        self.assertEqual(row["builder"], "builder-scpf")
         self.assertEqual(manifest["verify_items"], [])
         self.assertEqual(manifest["preview_items"], [])
 
