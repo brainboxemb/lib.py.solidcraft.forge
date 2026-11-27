@@ -1,10 +1,7 @@
 schema: 1
-branch: issue/506-named-feature-authoring
+branch: chore/solidcraft-0.50-edge-qualification
 modules: []
 library: true
-models:
-  - configuration-child-feature
-  - shifted-axis-revolve
-api_probes:
-  - configuration-installed-feature
+models: all
+api_probes: []
 tasks: [test]
