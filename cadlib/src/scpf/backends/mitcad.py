@@ -37,6 +37,7 @@ from ..ir import (
     PolygonProfileIR,
     RegionIR,
     RevolveIR,
+    SketchRelationsIR,
     SphereIR,
     SuppressionColumnIR,
     _region_interior_point,
@@ -579,64 +580,71 @@ def _same_semantic_value(left, right) -> bool:
     return str(command_value(left)) == str(command_value(right))
 
 
-def _parameterized_rectangle_sketch(profile: PolygonProfileIR):
-    """Return native Mitcad sketch relations for the #381 rectangle slice."""
-    if len(profile.points) != 4:
-        raise ModelError(
-            "Mitcad parameterized RevolveIR currently requires a rectangle"
+def _sketch_relations_transport(relations: SketchRelationsIR):
+    """Lower explicit semantic Sketch relations to Mitcad-native solver data."""
+    if not isinstance(relations, SketchRelationsIR):
+        raise ModelError("Mitcad Sketch relations require SketchRelationsIR")
+
+    entities = []
+    point_ids = []
+    for index, point in enumerate(relations.points, start=1):
+        point_id = f"p{index}"
+        point_ids.append(point_id)
+        at = [float(pv(value)) for value in point.position]
+        if any(not isfinite(value) for value in at):
+            raise ModelError("Mitcad Sketch relation points require finite seed values")
+        entity = {
+            "id": point_id,
+            "type": "point",
+            "at": at,
+        }
+        if index == 1:
+            # Solver anchoring is Mitcad transport, not semantic IR. The #440
+            # slice is intentionally the origin-based rectangle.
+            if any(
+                parameters_in(value) or abs(pv(value)) > 1e-12
+                for value in point.position
+            ):
+                raise ModelError(
+                    "Mitcad #440 Sketch relations require the first semantic point at origin"
+                )
+            entity["fixed"] = True
+        entities.append(entity)
+
+    first_curve = len(point_ids) + 1
+    curve_ids = []
+    for offset, line in enumerate(relations.lines):
+        curve_id = f"c{first_curve + offset}"
+        curve_ids.append(curve_id)
+        entities.append(
+            {
+                "id": curve_id,
+                "type": "line",
+                "start": point_ids[line.start],
+                "end": point_ids[line.end],
+            }
         )
 
-    p1, p2, p3, p4 = profile.points
-    values = tuple(
-        tuple(float(pv(value)) for value in point)
-        for point in profile.points
-    )
-    if any(
-        parameters_in(value)
-        for value in (p1[0], p1[1], p2[0], p4[1])
-    ):
-        raise ModelError(
-            "Mitcad parameterized RevolveIR rectangle must start at origin"
-        )
-    if (
-        abs(values[0][0]) > 1e-12
-        or abs(values[0][1]) > 1e-12
-        or abs(values[1][0]) > 1e-12
-        or abs(values[3][1]) > 1e-12
-        or not _same_semantic_value(p2[1], p3[1])
-        or not _same_semantic_value(p3[0], p4[0])
-        or values[1][1] <= 0
-        or values[2][0] <= 0
-    ):
-        raise ModelError(
-            "Mitcad parameterized RevolveIR currently requires an "
-            "origin-based axis-aligned rectangle"
-        )
-
-    entities = [
-        {"id": "p1", "type": "point", "at": list(values[0]), "fixed": True},
-        {"id": "p2", "type": "point", "at": list(values[1])},
-        {"id": "p3", "type": "point", "at": list(values[2])},
-        {"id": "p4", "type": "point", "at": list(values[3])},
-        {"id": "c5", "type": "line", "start": "p1", "end": "p2"},
-        {"id": "c6", "type": "line", "start": "p2", "end": "p3"},
-        {"id": "c7", "type": "line", "start": "p3", "end": "p4"},
-        {"id": "c8", "type": "line", "start": "p4", "end": "p1"},
-    ]
+    first_relation = first_curve + len(curve_ids)
     constraints = [
-        {"id": "k9", "type": "vertical", "line": "c5"},
-        {"id": "k10", "type": "horizontal", "line": "c6"},
-        {"id": "k11", "type": "vertical", "line": "c7"},
-        {"id": "k12", "type": "horizontal", "line": "c8"},
+        {
+            "id": f"k{first_relation + offset}",
+            "type": constraint.orientation,
+            "line": curve_ids[constraint.line],
+        }
+        for offset, constraint in enumerate(relations.constraints)
     ]
+    first_dimension = first_relation + len(constraints)
     dimensions = [
-        {"id": "k13", "type": "length", "line": "c5",
-         "value": command_value(p2[1])},
-        {"id": "k14", "type": "length", "line": "c6",
-         "value": command_value(p3[0])},
+        {
+            "id": f"k{first_dimension + offset}",
+            "type": "length",
+            "line": curve_ids[dimension.line],
+            "value": command_value(dimension.value),
+        }
+        for offset, dimension in enumerate(relations.dimensions)
     ]
     return entities, constraints, dimensions
-
 
 def _parameterized_polygon_sketch(profile: PolygonProfileIR):
     """Transport a symbolic simple polygon through native point dimensions.
@@ -940,15 +948,14 @@ def _revolve_commands(
         for point in profile.points
         for value in point
     )
-    if parameterized:
-        try:
-            entities, constraints, dimensions = _parameterized_rectangle_sketch(
-                profile
-            )
-        except ModelError:
-            entities, constraints, dimensions = _parameterized_polygon_sketch(
-                profile
-            )
+    if sketch.relations is not None:
+        entities, constraints, dimensions = _sketch_relations_transport(
+            sketch.relations
+        )
+    elif parameterized:
+        entities, constraints, dimensions = _parameterized_polygon_sketch(
+            profile
+        )
     else:
         point_ids = []
         entities = []
