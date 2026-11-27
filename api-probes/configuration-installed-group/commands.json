@@ -68,24 +68,6 @@
           "LeftInstalled",
           "RightInstalled"
         ]
-      },
-      "bind": {
-        "$installed_group": "group"
-      }
-    },
-    {
-      "command": "timeline.suppress",
-      "params": {
-        "groups": [
-          "$installed_group"
-        ],
-        "suppressed": true
-      }
-    },
-    {
-      "command": "timeline.inspect",
-      "params": {
-        "group": "$installed_group"
       }
     }
   ]
