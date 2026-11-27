@@ -1631,6 +1631,60 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(pattern["alignment"], "left")
         self.assertTrue(pattern["reversed"])
 
+    def test_circular_pattern_axisline_keeps_symbolic_origin_and_fixed_vector(self):
+        axis_x = Parameter("pattern_axis_x", 5)
+        axis_z = Parameter("pattern_axis_z", 7)
+        plate = Box(80, 80, 6, anchor=Anchor.BOTTOM)
+        source = Hole(
+            d=5,
+            direction=(0, 0, -1),
+        ).at(15, 0, 6)
+        plate = plate + source
+        shape = plate.circular_pattern(
+            source,
+            count=4,
+            axis=AxisLine(
+                (0, 1, 1),
+                origin=(axis_x, 0, axis_z),
+            ),
+            angle=180,
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "SymbolicAxisPattern",
+        )
+
+        self.assertIsInstance(model.root, CircularPatternIR)
+        self.assertEqual(model.root.axis.direction, (0.0, 1.0, 1.0))
+        self.assertIs(model.root.axis.origin[0], axis_x)
+        self.assertIs(model.root.axis.origin[2], axis_z)
+        self.assertEqual(
+            [
+                (parameter.name, parameter.roles)
+                for parameter in model.parameters
+            ],
+            [
+                ("pattern_axis_x", ("length",)),
+                ("pattern_axis_z", ("length",)),
+            ],
+        )
+        pattern = next(
+            row["params"]
+            for row in compile_solidcraft_ir(
+                model,
+                "SymbolicAxisPattern",
+            )["commands"]
+            if row["command"] == "solid.pattern.circular"
+        )
+        self.assertEqual(
+            pattern["axis"],
+            {
+                "origin": ["pattern_axis_x", 0, "pattern_axis_z"],
+                "dir": [0.0, 1.0, 1.0],
+            },
+        )
+
     def test_pattern_with_text_extrude_source_is_typed_history(self):
         from scpf.core import Text2D
 
