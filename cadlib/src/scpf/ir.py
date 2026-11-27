@@ -16,6 +16,7 @@ from typing import Any
 
 from .core import (
     Anchor,
+    Depth,
     Edges,
     Expression,
     Faces,
@@ -23,6 +24,7 @@ from .core import (
     Shape,
     _FaceBoundarySelection,
     _dim_add,
+    _hole_spec,
     _pv as pv,
     parameters_in,
 )
@@ -809,6 +811,165 @@ class ChamferIR:
 
 
 @dataclass(frozen=True)
+class HoleIR:
+    """One explicitly positioned semantic Hole-family feature.
+
+    depth_mode is either through_all or distance. A missing direction means
+    automatic inward drilling from the target surface at point; an explicit
+    direction is fixed authored CAD intent, not a backend face/topology id.
+    """
+
+    target: "PlacementIR | HoleIR"
+    hole_type: str
+    point: tuple[Any, Any, Any]
+    diameter: Any | None = None
+    depth_mode: str = "through_all"
+    depth: Any | None = None
+    direction: tuple[float, float, float] | None = None
+    counterbore_diameter: Any | None = None
+    counterbore_depth: Any | None = None
+    countersink_diameter: Any | None = None
+    countersink_angle: float | None = None
+    thread: str | None = None
+    hand: str = "right"
+    thread_depth: Any | None = None
+    modeled: bool = False
+    ease_out: Any | None = None
+    source_kind: str = "hole"
+
+    def __post_init__(self):
+        if isinstance(self.target, PlacementIR):
+            if not isinstance(self.target.primitive, BoxIR):
+                raise ValueError("HoleIR first qualified target must be BoxIR")
+        elif not isinstance(self.target, HoleIR):
+            raise ValueError("HoleIR target must be PlacementIR(BoxIR) or HoleIR")
+
+        if self.hole_type not in {
+            "simple",
+            "counterbore",
+            "countersink",
+            "threaded",
+        }:
+            raise ValueError("HoleIR has unsupported hole_type")
+
+        if (
+            not isinstance(self.point, tuple)
+            or len(self.point) != 3
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.point
+            )
+        ):
+            raise ValueError("HoleIR point must contain three finite CAD dimensions")
+
+        if self.direction is not None:
+            if (
+                not isinstance(self.direction, tuple)
+                or len(self.direction) != 3
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in self.direction
+                )
+                or all(value == 0 for value in self.direction)
+            ):
+                raise ValueError(
+                    "HoleIR direction must be a fixed finite non-zero XYZ vector"
+                )
+
+        if self.depth_mode not in {"through_all", "distance"}:
+            raise ValueError("HoleIR depth_mode must be through_all or distance")
+        if self.depth_mode == "through_all":
+            if self.depth is not None:
+                raise ValueError("HoleIR through_all depth must not carry distance")
+        elif (
+            self.depth is None
+            or isinstance(self.depth, bool)
+            or not isfinite(pv(self.depth))
+            or pv(self.depth) <= 0
+        ):
+            raise ValueError("HoleIR distance depth must be positive")
+
+        def positive(value, label, *, optional=False):
+            if value is None and optional:
+                return
+            if (
+                value is None
+                or isinstance(value, bool)
+                or not isfinite(pv(value))
+                or pv(value) <= 0
+            ):
+                raise ValueError(f"HoleIR {label} must be positive")
+
+        if self.hole_type in {"simple", "counterbore", "countersink"}:
+            positive(self.diameter, "diameter")
+        else:
+            positive(self.diameter, "diameter", optional=True)
+
+        if self.hole_type == "counterbore":
+            positive(self.counterbore_diameter, "counterbore diameter")
+            positive(self.counterbore_depth, "counterbore depth")
+            if pv(self.counterbore_diameter) <= pv(self.diameter):
+                raise ValueError(
+                    "HoleIR counterbore diameter must exceed hole diameter"
+                )
+        elif (
+            self.counterbore_diameter is not None
+            or self.counterbore_depth is not None
+        ):
+            raise ValueError("HoleIR counterbore fields require counterbore type")
+
+        if self.hole_type == "countersink":
+            positive(self.countersink_diameter, "countersink diameter")
+            if pv(self.countersink_diameter) <= pv(self.diameter):
+                raise ValueError(
+                    "HoleIR countersink diameter must exceed hole diameter"
+                )
+            if (
+                self.countersink_angle is None
+                or isinstance(self.countersink_angle, bool)
+                or not isinstance(self.countersink_angle, (int, float))
+                or not isfinite(self.countersink_angle)
+                or not 0 < self.countersink_angle < 180
+            ):
+                raise ValueError(
+                    "HoleIR countersink angle must be fixed between 0 and 180 degrees"
+                )
+        elif (
+            self.countersink_diameter is not None
+            or self.countersink_angle is not None
+        ):
+            raise ValueError("HoleIR countersink fields require countersink type")
+
+        if self.hole_type == "threaded":
+            if not isinstance(self.thread, str) or not self.thread.strip():
+                raise ValueError("HoleIR threaded type requires thread designation")
+            if self.hand not in {"right", "left"}:
+                raise ValueError("HoleIR hand must be right or left")
+            positive(self.thread_depth, "thread depth", optional=True)
+            if not isinstance(self.modeled, bool):
+                raise ValueError("HoleIR modeled must be bool")
+            if self.ease_out is not None:
+                if isinstance(self.ease_out, str):
+                    if self.ease_out not in {"standard", "short"}:
+                        raise ValueError(
+                            "HoleIR ease_out must be standard, short or positive length"
+                        )
+                else:
+                    positive(self.ease_out, "ease_out")
+        else:
+            if self.thread is not None:
+                raise ValueError("HoleIR thread requires threaded type")
+            if self.hand != "right":
+                raise ValueError("HoleIR non-threaded hole cannot change hand")
+            if self.thread_depth is not None or self.modeled or self.ease_out is not None:
+                raise ValueError(
+                    "HoleIR thread metadata requires threaded type"
+                )
+
+
+@dataclass(frozen=True)
 class BooleanIR:
     """Bounded recursive primitive CSG intent.
 
@@ -843,6 +1004,7 @@ IRNode = (
     | RevolveIR
     | ChamferIR
     | FilletIR
+    | HoleIR
     | BooleanIR
     | LegacyShapeIR
 )
@@ -1759,6 +1921,87 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     )
 
 
+def _portable_hole(
+    target: IRNode,
+    tool_shape: Shape,
+) -> HoleIR | None:
+    """Normalize explicit public Hole-family intent over the bounded typed target."""
+    if not (
+        isinstance(target, HoleIR)
+        or (
+            isinstance(target, PlacementIR)
+            and isinstance(target.primitive, BoxIR)
+        )
+    ):
+        return None
+    if tool_shape.kind != "placed3d":
+        return None
+
+    feature, x, y, z = tool_shape.data
+    if not isinstance(feature, Shape) or feature.kind != "hole":
+        return None
+
+    spec = _hole_spec(feature)
+    direction = spec["direction"]
+    if direction is not None:
+        if (
+            not isinstance(direction, (tuple, list))
+            or len(direction) != 3
+            or any(parameters_in(value) for value in direction)
+        ):
+            return None
+        try:
+            semantic_direction = tuple(float(pv(value)) for value in direction)
+        except (TypeError, ValueError):
+            return None
+        if (
+            any(not isfinite(value) for value in semantic_direction)
+            or all(value == 0 for value in semantic_direction)
+        ):
+            return None
+    else:
+        semantic_direction = None
+
+    countersink_angle = spec["countersink_angle"]
+    if countersink_angle is not None and parameters_in(countersink_angle):
+        return None
+    if countersink_angle is not None:
+        try:
+            countersink_angle = float(pv(countersink_angle))
+        except (TypeError, ValueError):
+            return None
+
+    depth = spec["depth"]
+    if depth is Depth.THROUGH_ALL:
+        depth_mode = "through_all"
+        semantic_depth = None
+    else:
+        depth_mode = "distance"
+        semantic_depth = depth
+
+    try:
+        return HoleIR(
+            target=target,
+            hole_type=spec["type"],
+            point=(x, y, z),
+            diameter=spec["diameter"],
+            depth_mode=depth_mode,
+            depth=semantic_depth,
+            direction=semantic_direction,
+            counterbore_diameter=spec["counterbore_diameter"],
+            counterbore_depth=spec["counterbore_depth"],
+            countersink_diameter=spec["countersink_diameter"],
+            countersink_angle=countersink_angle,
+            thread=spec["thread"],
+            hand=spec["hand"],
+            thread_depth=spec["thread_depth"],
+            modeled=spec["modeled"],
+            ease_out=spec["ease_out"],
+        )
+    except ValueError:
+        return None
+
+
 def _normalize_node(shape: Shape) -> IRNode:
     placement = _portable_placement(shape)
     if placement is not None:
@@ -1784,6 +2027,11 @@ def _normalize_node(shape: Shape) -> IRNode:
                     return revolve_cut
 
         target = _normalize_node(target_shape)
+        if shape.kind in {"union", "difference"}:
+            hole = _portable_hole(target, tool_shape)
+            if hole is not None:
+                return hole
+
         tool = _normalize_node(tool_shape)
         fillet_cone_join = (
             isinstance(target, FilletIR)
@@ -2048,6 +2296,7 @@ __all__ = [
     "FaceBoundaryIR",
     "FeatureRefIR",
     "FilletIR",
+    "HoleIR",
     "ConfigurationIR",
     "ConfigurationRowIR",
     "SuppressionColumnIR",

@@ -1484,6 +1484,36 @@ qualify a new composition path. Exact Mitcad v0.70.0 qualification uses a
 28631.38638124875 mm³; that literal native result is the regression value rather
 than a separately derived geometric estimate.
 
+#519 is the first IR-completion batch under the #525 IR-first policy. Explicit
+public Hole-family authoring is one CAD feature/history concept rather than a
+special Cylinder Boolean. `HoleIR` therefore owns the typed target, entry
+point, automatic-inward or fixed drilling direction, through-all/finite depth
+intent and the variant-specific simple/counterbore/countersink/thread metadata.
+
+The bounded target is a typed Box, and repeated explicit holes form a semantic
+history chain by allowing one `HoleIR` to target the preceding `HoleIR`.
+That preserves source feature order without inventing a generic Boolean for an
+operation whose authored meaning is “Hole”. Parameter/Expression values in
+length-valued fields remain semantic CAD dimensions. Countersink angle and
+drilling direction stay fixed numeric intent in this batch rather than silently
+changing their stable parameter-unit behavior.
+
+SolidCraft lowers the typed chain back to the existing one-native-feature
+`solid.hole` spelling for each authored Hole. This is checked against the
+legacy compiler document, including the distinction between omitted through-all
+depth, omitted auto-inward direction, counterbore/countersink fields and
+thread metadata. No SolidCraft command field is part of `HoleIR`.
+
+Mitcad is intentionally not implemented in #519. It must reject `HoleIR`
+explicitly as an unsupported typed node, proving that backend lag does not push
+valid semantic intent back into `LegacyShapeIR`. A later Mitcad backend batch
+may lower the same Hole semantics using native Hole intent or backend-owned cut
+geometry without changing Forge IR.
+
+Topology-relative `Hole.on(...)`, attached Hole construction,
+non-Box/already-featured targets, feature-pattern/configuration composition and
+parameter-driven direction/countersink-angle widening remain separate IR work.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are

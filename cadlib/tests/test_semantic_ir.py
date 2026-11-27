@@ -9,14 +9,19 @@ from scpf import (
     Circle2D,
     Configure,
     Cone,
+    CounterboreHole,
+    CountersinkHole,
     Cylinder,
+    Depth,
     Edges,
     Faces,
+    Hole,
     Parameter,
     Polygon2D,
     Sketch,
     Sphere,
     Suppress,
+    ThreadedHole,
 )
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.solidcraft import compile_ir as compile_solidcraft_ir
@@ -38,6 +43,7 @@ from scpf.ir import (
     FaceBoundaryIR,
     FeatureRefIR,
     FilletIR,
+    HoleIR,
     ConfigurationIR,
     ConfigurationRowIR,
     SuppressionColumnIR,
@@ -584,6 +590,157 @@ class SemanticIRTests(unittest.TestCase):
             if row.get("def", {}).get("type") == "cone"
         )
         self.assertEqual(cone_feature["def"]["operation"], "join")
+
+    def test_explicit_hole_family_is_semantic_hole_history(self):
+        hole_d = Parameter("hole_d", 6)
+        hole_depth = Parameter("hole_depth", 8)
+        cb_d = Parameter("cb_d", 12)
+        cb_depth = Parameter("cb_depth", 4)
+        cs_d = Parameter("cs_d", 12)
+        thread_depth = Parameter("thread_depth", 10)
+
+        body = Box(120, 40, 12, anchor=Anchor.BOTTOM)
+        features = (
+            Hole(
+                d=hole_d,
+                depth=hole_depth,
+                direction=(0, 0, -1),
+            ).at(-45, 0, 12),
+            CounterboreHole(
+                d=6,
+                counterbore_d=cb_d,
+                counterbore_depth=cb_depth,
+                direction=(0, 0, -1),
+            ).at(-15, 0, 12),
+            CountersinkHole(
+                d=6,
+                countersink_d=cs_d,
+                countersink_angle=90,
+                direction=(0, 0, -1),
+            ).at(15, 0, 12),
+            ThreadedHole(
+                thread="M6",
+                d=5,
+                direction=(0, 0, -1),
+                thread_depth=thread_depth,
+                modeled=True,
+                ease_out="short",
+            ).at(45, 0, 12),
+        )
+        for feature in features:
+            body = body + feature
+
+        model = self.assert_solidcraft_compatibility(
+            body,
+            "TypedHoleFamily",
+        )
+        self.assertIsInstance(model.root, HoleIR)
+
+        holes = []
+        current = model.root
+        while isinstance(current, HoleIR):
+            holes.append(current)
+            current = current.target
+        holes.reverse()
+
+        self.assertEqual(len(holes), 4)
+        self.assertIsInstance(current, PlacementIR)
+        self.assertIsInstance(current.primitive, BoxIR)
+        self.assertEqual(
+            [hole.hole_type for hole in holes],
+            ["simple", "counterbore", "countersink", "threaded"],
+        )
+
+        simple, counterbore, countersink, threaded = holes
+        self.assertIs(simple.diameter, hole_d)
+        self.assertEqual(simple.depth_mode, "distance")
+        self.assertIs(simple.depth, hole_depth)
+        self.assertEqual(simple.direction, (0.0, 0.0, -1.0))
+        self.assertIs(counterbore.counterbore_diameter, cb_d)
+        self.assertIs(counterbore.counterbore_depth, cb_depth)
+        self.assertIs(countersink.countersink_diameter, cs_d)
+        self.assertEqual(countersink.countersink_angle, 90.0)
+        self.assertEqual(threaded.thread, "M6")
+        self.assertIs(threaded.thread_depth, thread_depth)
+        self.assertTrue(threaded.modeled)
+        self.assertEqual(threaded.ease_out, "short")
+
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR("hole_d", 6, roles=("length",)),
+                ParameterIR("hole_depth", 8, roles=("length",)),
+                ParameterIR("cb_d", 12, roles=("length",)),
+                ParameterIR("cb_depth", 4, roles=("length",)),
+                ParameterIR("cs_d", 12, roles=("length",)),
+                ParameterIR("thread_depth", 10, roles=("length",)),
+            ),
+        )
+
+        solidcraft = compile_solidcraft_ir(model, "TypedHoleFamily")
+        hole_commands = [
+            row["params"]
+            for row in solidcraft["commands"]
+            if row["command"] == "solid.hole"
+        ]
+        self.assertEqual(len(hole_commands), 4)
+        self.assertEqual(hole_commands[0]["depth"], "hole_depth")
+        self.assertEqual(hole_commands[1]["cb_diameter"], "cb_d")
+        self.assertEqual(hole_commands[2]["cs_diameter"], "cs_d")
+        self.assertEqual(hole_commands[3]["thread_depth"], "thread_depth")
+
+        with self.assertRaisesRegex(ModelError, "HoleIR"):
+            compile_mitcad_ir(model, "TypedHoleFamily")
+
+    def test_explicit_hole_without_direction_preserves_auto_inward_intent(self):
+        body = (
+            Box(40, 30, 10, anchor=Anchor.BOTTOM)
+            + Hole(d=5).at(0, 0, 10)
+        )
+        model = self.assert_solidcraft_compatibility(
+            body,
+            "AutoInwardHole",
+        )
+        self.assertIsInstance(model.root, HoleIR)
+        self.assertIsNone(model.root.direction)
+        self.assertEqual(model.root.depth_mode, "through_all")
+        self.assertIsNone(model.root.depth)
+
+        hole = next(
+            row["params"]
+            for row in compile_solidcraft_ir(
+                model,
+                "AutoInwardHole",
+            )["commands"]
+            if row["command"] == "solid.hole"
+        )
+        self.assertNotIn("direction", hole)
+        self.assertNotIn("depth", hole)
+
+    def test_hole_ir_widening_stays_fail_closed(self):
+        direction_parameter = Parameter("drill_direction", -1)
+        unsupported = (
+            Cylinder(d=30, h=12, anchor=Anchor.BOTTOM)
+            + Hole(d=5, direction=(0, 0, -1)).at(0, 0, 12),
+            Box(30, 30, 12, anchor=Anchor.BOTTOM)
+            + Hole(
+                d=5,
+                direction=(0, 0, direction_parameter),
+            ).at(0, 0, 12),
+            Box(30, 30, 12, anchor=Anchor.BOTTOM)
+            + CountersinkHole(
+                d=5,
+                countersink_d=10,
+                countersink_angle=Parameter("sink_angle", 90),
+                direction=(0, 0, -1),
+            ).at(0, 0, 12),
+        )
+        for index, shape in enumerate(unsupported):
+            with self.subTest(index=index):
+                model = normalize_shape(shape)
+                self.assertIsInstance(model.root, LegacyShapeIR)
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, f"UnsupportedHole{index}")
 
     def test_vertical_box_fillet_is_semantic_parallel_edge_ir(self):
         radius = Parameter("fillet_radius", 2)

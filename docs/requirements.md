@@ -168,6 +168,13 @@
 143. `docs/ir-coverage.md` is the permanent-`exp` compiler migration inventory. It must report semantic-family IR status separately from SolidCraft typed lowering, Mitcad lowering and native Mitcad qualification.
 144. IR migration should prefer coherent family completion over one backend-qualified micro-slice per issue when the generic semantic contract can be widened safely and tested independently.
 145. The first #525-policy batch is #519: explicitly positioned `Hole`, `CounterboreHole`, `CountersinkHole` and `ThreadedHole` over the bounded typed target migrate together to semantic `HoleIR`; Mitcad Hole support is not a #519 merge gate.
+146. `HoleIR` must preserve authored Hole feature/history meaning directly; Forge must not replace it in semantic IR with an anonymous Cylinder Boolean merely because one backend may later implement Hole using cut geometry.
+147. The #519 typed Hole contract carries a qualified Box/Hole target history, semantic entry point, through-all or positive finite depth, automatic-inward or fixed numeric non-zero direction, and the existing simple/counterbore/countersink/thread variant metadata.
+148. Repeated explicitly positioned Hole-family features may form a recursive `HoleIR.target` history chain so source feature order remains semantic without requiring a generic Boolean node between Hole features.
+149. Length-valued Hole dimensions retain authored Parameter/Expression dependencies. Countersink angle and direction remain fixed numeric intent in #519; parameter-driven widening must be separately typed rather than misclassified as length.
+150. SolidCraft typed Hole lowering must reproduce the existing one-feature `solid.hole` behavior and command document for unchanged public source, including omitted through-all depth, omitted automatic-inward direction, recess fields and thread metadata.
+151. Mitcad may remain unsupported for `HoleIR` after #519 and must fail closed on that typed node. Absence of Mitcad Hole lowering must not force valid #519 source back to `LegacyShapeIR`.
+152. Topology-relative `Hole.on(...)`, attached Hole construction, Hole over broader typed targets, feature-pattern/configuration composition and parameter-driven direction/countersink-angle semantics remain outside #519.
 
 ## SCPF native associativity
 
