@@ -1713,7 +1713,6 @@ def _qualified_configuration_slice(configuration: ConfigurationIR) -> bool:
         isinstance(configuration, ConfigurationIR)
         and len(configuration.columns) == 1
         and isinstance(configuration.columns[0], SuppressionColumnIR)
-        and not configuration.rules
     )
 
 
@@ -1725,6 +1724,10 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
         raise ModelError("the model name must be a valid identifier")
 
     node = model.root
+    if any(feature.suppressed for feature in model.named_features):
+        raise ModelError(
+            "Mitcad backend does not support initially suppressed named features"
+        )
     if (
         model.configuration is not None
         and not _qualified_configuration_slice(model.configuration)

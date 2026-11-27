@@ -1,0 +1,159 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "coupler_size",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "installed_offset",
+        "expression": "0",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          0,
+          0,
+          2
+        ],
+        "length": "coupler_size * 3",
+        "width": 50,
+        "height": 4,
+        "operation": "new",
+        "body_name": "BasePlate"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          "-coupler_size",
+          "0",
+          "10"
+        ],
+        "length": 24,
+        "width": 16,
+        "height": 12,
+        "operation": "new",
+        "body_name": "LeftCoupler"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "LeftCoupler"
+        ],
+        "translate": [
+          "installed_offset",
+          "0",
+          "0"
+        ],
+        "name": "LeftInstalledMotion"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          "coupler_size",
+          "0",
+          "10"
+        ],
+        "length": 24,
+        "width": 16,
+        "height": 12,
+        "operation": "new",
+        "body_name": "RightCoupler"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "RightCoupler"
+        ],
+        "translate": [
+          "-installed_offset",
+          "0",
+          "0"
+        ],
+        "name": "RightInstalledMotion"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "params": [
+          "coupler_size",
+          "installed_offset"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:coupler_size": "40 mm",
+          "param:installed_offset": "0 mm"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:coupler_size": "60 mm",
+          "param:installed_offset": "0 mm"
+        }
+      }
+    },
+    {
+      "command": "config.rule",
+      "params": {
+        "rule": {
+          "id": "installed",
+          "name": "Installed",
+          "enabled": false,
+          "condition": {
+            "type": "always"
+          },
+          "effect": {
+            "type": "drive_parameter",
+            "parameter": "installed_offset",
+            "expression": "4 mm"
+          }
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "Small"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ]
+}

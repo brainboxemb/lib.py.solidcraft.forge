@@ -911,6 +911,9 @@ See [change 0016](background/changes/0016-parameter-dependency-diagnostics.md).
 - `-` expresses subtraction/cut where supported.
 - `&` expresses intersection where supported.
 - `shell()`, `fillet()` and `chamfer()` are modifiers of supported feature trees.
+- `move()` remains a pre-history CSG translation. Use
+  `move_history(...)` only when the movement itself must exist as one native
+  Move/Copy timeline feature that can be named or suppressed.
 - `rectangular_pattern()` and `circular_pattern()` repeat already-applied native history features. Both keep one native SolidCraft pattern feature instead of expanding independent Python copies. Circular patterns support principal or fixed XYZ axes plus an optional fixed axis origin; native construction/edge/face axis selectors are separate future extensions.
 - `fillet(..., edges=...)` and `chamfer(..., edges=...)` use the same edge-selection vocabulary. Prefer `Edges.from_faces(...)` when intent is a named face perimeter; existing `Edges.VERTICAL`, supported two-direction Box selectors, `Edges.from_profile(...)`, `Edges.from_vertices(...)` and explicit XYZ picks remain supported.
 - `chamfer(distance, distance2=..., flip=...)` maps directly to SolidCraft's
@@ -923,6 +926,43 @@ See [change 0016](background/changes/0016-parameter-dependency-diagnostics.md).
 - `X.MIN/CENTER/MAX` and `Y.MIN/CENTER/MAX` express placement relative to
   parent bounds rather than copied world coordinates.
 
+### Native body Move/Copy history
+
+`move_history(...)` authors a real SolidCraft `solid.move` feature. It is
+separate from `move(x, y, z)`, which only changes Forge geometry coordinates
+before native history is emitted.
+
+```python
+arm = arm.move_history(
+    origin=(-5.8, 0, 0),
+    axis=(0, 0, 1),
+    angle=2.7,
+)
+```
+
+Translation is also supported:
+
+```python
+panel = panel.move_history(translate=(0, 30, 0))
+```
+
+Because this is one native history operation it can be scoped normally:
+
+```python
+with feature("installed", suppressed=True) as installed:
+    arm = arm.move_history(
+        origin=(-5.8, 0, 0),
+        axis=(0, 0, 1),
+        angle=2.7,
+    )
+```
+
+When a moved Shape is joined as the right-hand side of `+`, Forge authors it
+as a temporary body, applies the Move/Copy feature, then performs the downstream
+join. Suppressing the move therefore leaves the temporary body in its original
+position while the join remains active.
+
+The first public slice does not expose Move/Copy's copy mode.
 ### Native Hole family
 
 Forge exposes explicit native hole intent rather than requiring a caller to

@@ -9,6 +9,7 @@ branches:
     - docs/
     - chore/
     - release/
+    - resolve/
 generated:
   build_branch: build
   pages_branch: gh-pages
@@ -25,13 +26,14 @@ qualification:
         - exp
 runtimes:
   reference:
-    image: ghcr.io/brainboxemb/cad-reference:v0.3.6
+    image: ghcr.io/brainboxemb/cad-reference:v0.3.8
   solidcraft:
-    image: ghcr.io/brainboxemb/cad-solidcraft:v0.3.6
-    version: 0.49.0
+    image: ghcr.io/brainboxemb/cad-solidcraft:v0.3.8
+    version: 0.50.0
   mitcad:
     image: ghcr.io/brainboxemb/cad-mitcad:v0.3.7
 roots:
   modules: modules
   models: models
+  api_probes: api-probes
   output: build

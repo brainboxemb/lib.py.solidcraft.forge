@@ -15,10 +15,9 @@ class PrimitiveCsg:
         clip = Box(50, 50, 30).move(z=15)
         clipped = body & clip
 
-        return Configure(
-            clipped,
+        return clipped.configure(
             active="Clipped",
-            columns=(Suppress(clip),),
+            columns=(clip,),
             rows={
                 "Clipped": (False,),
                 "Unclipped": (True,),

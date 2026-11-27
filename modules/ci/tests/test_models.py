@@ -27,7 +27,6 @@ EXPECTED_IDS = {
     "cylinder-subtract",
     "components",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -81,7 +80,6 @@ SCPF_ONLY_IDS = {
     "asymmetric-chamfer",
     "attached-through-all",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -115,6 +113,9 @@ MITCAD_IDS = {
 
 MITCAD_FOCUSED_IDS = {
     "cylinder-subtract",
+}
+
+MITCAD_STATE_VISUAL_IDS = {
     "shifted-axis-revolve",
 }
 
@@ -127,7 +128,18 @@ VISUAL_SCPF_ONLY_IDS = {
     "attached-through-all",
     "cone-boolean",
     "rotated-sketch-cutter",
+    "sheet-contour-flange",
     "sheet-contour-flange-recess",
+    "sheet-edge-flange",
+    "sheet-hem",
+    "sheet-path-flange",
+}
+
+STATE_VISUAL_STAGES = {
+    "appearance-color": ("visual-color",),
+    "configuration-position": ("visual-front", "visual-service"),
+    "revolute-joint": ("visual-60", "visual-120"),
+    "shifted-axis-revolve": ("visual-cut", "visual-suppressed"),
 }
 
 STANDARD_MULTI_ENGINE_IDS = (
@@ -135,6 +147,7 @@ STANDARD_MULTI_ENGINE_IDS = (
     - SCPF_ONLY_IDS
     - MITCAD_FOCUSED_IDS
     - MITCAD_FOCUSED_VISUAL_IDS
+    - MITCAD_STATE_VISUAL_IDS
 )
 
 
@@ -150,7 +163,7 @@ class ModelTests(unittest.TestCase):
         )
 
     def test_complete_migrated_owner_graph_preserves_real_implementation_sets(self):
-        self.assertEqual(len(self.models), 61)
+        self.assertEqual(len(self.models), len(EXPECTED_IDS))
         self.assertEqual({model.id for model in self.models}, EXPECTED_IDS)
         by_id = {model.id: model for model in self.models}
 
@@ -161,7 +174,6 @@ class ModelTests(unittest.TestCase):
             "components",
             "sample-plate-drawing",
             "configuration-child-feature",
-            "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
             "configuration-table",
@@ -178,7 +190,6 @@ class ModelTests(unittest.TestCase):
             "components",
             "sample-plate-drawing",
             "configuration-child-feature",
-            "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
             "configuration-table",
@@ -245,6 +256,26 @@ class ModelTests(unittest.TestCase):
             self.assertEqual(
                 model.verifications[1].implementations,
                 expected_geometry_implementations,
+            )
+
+
+        for model_id in MITCAD_STATE_VISUAL_IDS:
+            model = by_id[model_id]
+            self.assertEqual(
+                [impl.id for impl in model.implementations],
+                ["scpf", "scpf-mitcad"],
+            )
+            self.assertEqual(
+                [stage.id for stage in model.verifications],
+                ["native", "visual-cut", "visual-suppressed", "geometry"],
+            )
+            self.assertEqual(
+                [stage.runtime for stage in model.verifications],
+                ["solidcraft", "solidcraft", "solidcraft", "reference"],
+            )
+            self.assertEqual(
+                model.verifications[0].implementations,
+                ("scpf",),
             )
 
 
@@ -355,6 +386,19 @@ class ModelTests(unittest.TestCase):
                 self.assertEqual(
                     model.verifications[2].implementations,
                     ("scpf",),
+                )
+            elif model_id in STATE_VISUAL_STAGES:
+                expected_stages = [
+                    "native",
+                    *STATE_VISUAL_STAGES[model_id],
+                ]
+                self.assertEqual(
+                    [stage.id for stage in model.verifications],
+                    expected_stages,
+                )
+                self.assertEqual(
+                    [stage.runtime for stage in model.verifications],
+                    ["solidcraft"] * len(expected_stages),
                 )
             elif model_id in VISUAL_SCPF_ONLY_IDS:
                 self.assertEqual(
@@ -479,12 +523,23 @@ class ModelTests(unittest.TestCase):
                             }
                             | VISUAL_SCPF_ONLY_IDS
                             | MITCAD_FOCUSED_VISUAL_IDS
-                            else [("scpf", "native")]
+                            else (
+                                [
+                                    ("scpf", "native"),
+                                    *[
+                                        ("scpf", stage)
+                                        for stage in STATE_VISUAL_STAGES[model.id]
+                                    ],
+                                ]
+                                if model.id in STATE_VISUAL_STAGES
+                                else [("scpf", "native")]
+                            )
                         )
                     )
                     if model.id in SCPF_ONLY_IDS
                     or model.id in MITCAD_FOCUSED_IDS
                     or model.id in MITCAD_FOCUSED_VISUAL_IDS
+                    or model.id in MITCAD_STATE_VISUAL_IDS
                     else [("scpf", "native"), ("scpf", "visual")]
                 )
             ],

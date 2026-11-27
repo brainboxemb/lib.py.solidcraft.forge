@@ -1,64 +1,46 @@
-"""Configuration-table authoring and replay identity tests."""
+"""Final-model configuration authoring and replay identity tests."""
 import tempfile
 import unittest
 from pathlib import Path
 
-from scpf import (
-    Always, Anchor, Box, ConfigRule, Configure, DriveParameter, Hole, Param,
-    Parameter, Suppress, compile_model, component,
-)
-from scpf.assembly_ir import AssemblyIR, ComponentFeatureRefIR
+from scpf import Anchor, Box, Hole, Parameter, compile_model, component
 from scpf.compiler import ModelError
-from scpf.ir import (
-    AlwaysConditionIR,
-    ConfiguredDesignIR,
-    ConfigurationExpressionIR,
-    ConfigurationIR,
-    ConfigurationRuleIR,
-    DriveParameterEffectIR,
-    FeatureRefIR,
-    ParameterCellIR,
-    ParameterColumnIR,
-    SuppressionColumnIR,
-    normalize_model,
-)
 from scpf.replay import resolve_value, validate_replay_document, variables_in
 from scpf.configurations import _row_variable
 from scpf.runner import run_script
 
 
-@component(include=("width",))
-class ConfigurationIRBlock:
-    width = 40.0
-
-    def build(self):
-        body = Box(
-            self.width,
-            30,
-            10,
-            anchor=Anchor.BOTTOM,
-        )
-        pin = Hole(
-            d=5,
-            direction=(0, 0, -1),
-        ).at(0, 0, 10).export_feature("panel_pin")
-        return body - pin
-
-
 class ConfigurationTests(unittest.TestCase):
     def test_named_parameter_rows_and_active(self):
-        shape = Box(Parameter("width", 80), 30, 5)
-        design = Configure(shape, active="Medium", columns=(Param("width"),),
-                           rows={"Small": ("60 mm",), "Medium": ("80 mm",),
-                                 "Large": ("100 mm",)})
-        doc = compile_model(design, "Plate")
-        commands = doc["commands"]
+        width = Parameter("width", 80)
+        shape = Box(width, 30, 5)
+        returned = shape.configure(
+            active="Medium",
+            columns=(width,),
+            rows={
+                "Small": ("60 mm",),
+                "Medium": ("80 mm",),
+                "Large": ("100 mm",),
+            },
+        )
+        self.assertIs(returned, shape)
+
+        commands = compile_model(shape, "Plate")["commands"]
         self.assertEqual(commands[-7]["params"], {"params": ["width"]})
-        self.assertEqual(commands[-6]["params"], {"name": "Default", "rename": "Small"})
-        self.assertEqual(commands[-3]["params"], {"name": "Large", "values": {"param:width": "100 mm"}})
+        self.assertEqual(
+            commands[-6]["params"],
+            {"name": "Default", "rename": "Small"},
+        )
+        self.assertEqual(
+            commands[-3]["params"],
+            {"name": "Large", "values": {"param:width": "100 mm"}},
+        )
         self.assertEqual(
             commands[-2],
-            {"command": "config.activate", "params": {"row": _row_variable("Medium")}},
+            {
+                "command": "config.activate",
+                "params": {"row": _row_variable("Medium")},
+            },
         )
         self.assertEqual(commands[-1]["command"], "config.table")
         self.assertEqual(
@@ -70,127 +52,27 @@ class ConfigurationTests(unittest.TestCase):
             {"field": "rows", "where": {"name": "Medium"}, "select": "id"},
         )
 
-    def test_enabled_rule_drives_configured_parameter_after_rows(self):
-        size = Parameter("size", 80)
-        tube_d = Parameter("tube_d", 20)
-        fit_diameter = Parameter("fit_diameter", 20.4)
-        shape = Box(size, tube_d, fit_diameter)
-        design = Configure(
-            shape,
-            active="Medium",
-            columns=(Param(size), Param(fit_diameter)),
-            rows={
-                "Small": ("60 mm", "20.4 mm"),
-                "Medium": ("80 mm", "20.4 mm"),
-                "Large": ("100 mm", "20.4 mm"),
-            },
-            rules=(
-                ConfigRule(
-                    "installed",
-                    "Installed",
-                    enabled=True,
-                    condition=Always(),
-                    effect=DriveParameter(fit_diameter, tube_d),
-                ),
-            ),
-        )
-
-        commands = compile_model(design, "RulePlate")["commands"]
-        rule = next(row for row in commands if row["command"] == "config.rule")
-        self.assertEqual(
-            rule["params"],
-            {
-                "rule": {
-                    "id": "installed",
-                    "name": "Installed",
-                    "enabled": True,
-                    "condition": {"type": "always"},
-                    "effect": {
-                        "type": "drive_parameter",
-                        "parameter": "fit_diameter",
-                        "expression": "tube_d",
-                    },
-                },
-            },
-        )
-        rule_index = commands.index(rule)
-        activate_index = next(
-            i for i, row in enumerate(commands)
-            if row["command"] == "config.activate"
-        )
-        self.assertLess(rule_index, activate_index)
-
-    def test_rule_can_be_authored_disabled(self):
-        fit = Parameter("fit", 20.4)
-        shape = Box(40, 30, fit)
-        design = Configure(
-            shape,
-            active="Medium",
-            columns=(Param(fit),),
-            rows={"Medium": ("20.4 mm",)},
-            rules=(
-                ConfigRule(
-                    "installed",
-                    "Installed",
-                    enabled=False,
-                    condition=Always(),
-                    effect=DriveParameter(fit, 20.0),
-                ),
-            ),
-        )
-        command = next(
-            row for row in compile_model(design, "Fit")["commands"]
-            if row["command"] == "config.rule"
-        )
-        self.assertFalse(command["params"]["rule"]["enabled"])
-
-    def test_rule_requires_configured_parameter_target(self):
-        fit = Parameter("fit", 20.4)
-        other = Parameter("other", 20.0)
-        shape = Box(40, fit, other)
-        with self.assertRaisesRegex(ValueError, "also be a Param"):
-            Configure(
-                shape,
-                active="Medium",
-                columns=(Param(fit),),
-                rows={"Medium": ("20.4 mm",)},
-                rules=(
-                    ConfigRule(
-                        "installed",
-                        "Installed",
-                        condition=Always(),
-                        effect=DriveParameter(other, 20.0),
-                    ),
-                ),
-            )
-
-    def test_rule_rejects_untyped_condition_and_effect(self):
-        with self.assertRaisesRegex(TypeError, "condition must use Always"):
-            ConfigRule(
-                "installed",
-                "Installed",
-                condition="always",
-                effect=DriveParameter("fit", 20.0),
-            )
-        with self.assertRaisesRegex(TypeError, "effect must use DriveParameter"):
-            ConfigRule(
-                "installed",
-                "Installed",
-                condition=Always(),
-                effect="fit",
-            )
-
-    def test_feature_binding(self):
-        plate = Box(Parameter("width", 80), 30, 5, anchor=Anchor.BOTTOM)
+    def test_feature_binding_uses_direct_feature_handle(self):
+        width = Parameter("width", 80)
+        plate = Box(width, 30, 5, anchor=Anchor.BOTTOM)
         hole = Hole(d=5).at(0, 0, 5)
         body = plate - hole
-        doc = compile_model(Configure(body, active="Medium",
-                            columns=(Param("width"), Suppress(hole)),
-                            rows={"Medium": ("80 mm", True),
-                                  "Large": ("100 mm", False)}), "Plate")
+        body.configure(
+            active="Medium",
+            columns=(width, hole),
+            rows={
+                "Medium": ("80 mm", True),
+                "Large": ("100 mm", False),
+            },
+        )
+
+        doc = compile_model(body, "Plate")
         validate_replay_document(doc)
-        feature = next(c for c in doc["commands"] if c["command"] == "solid.hole")
-        self.assertNotIn("$config_feature_2", feature["bind"])
+        feature = next(
+            command
+            for command in doc["commands"]
+            if command["command"] == "solid.hole"
+        )
         self.assertEqual(feature["bind"]["$config_name_2"], "name")
         cell = {"suppress:$config_name_2": "true"}
         self.assertEqual(variables_in(cell), {"$config_name_2"})
@@ -199,23 +81,79 @@ class ConfigurationTests(unittest.TestCase):
             {"suppress:Hole1": "true"},
         )
 
-    def test_reject_unknown_param_and_unapplied_feature(self):
+    def test_reject_unknown_parameter_and_unapplied_feature(self):
         body = Box(80, 30, 5)
-        with self.assertRaisesRegex(ModelError, "unknown native configuration parameter"):
-            compile_model(Configure(body, active="A", columns=(Param("missing"),),
-                                    rows={"A": (60,)}), "Plate")
+        missing = Parameter("missing", 60)
+        body.configure(
+            active="A",
+            columns=(missing,),
+            rows={"A": (60,)},
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "unknown native configuration parameter",
+        ):
+            compile_model(body, "Plate")
+
+        second = Box(80, 30, 5)
+        second.configure(
+            active="A",
+            columns=(Hole(d=5),),
+            rows={"A": (True,)},
+        )
         with self.assertRaisesRegex(ModelError, "already-applied"):
-            compile_model(Configure(body, active="A", columns=(Suppress(Hole(d=5)),),
-                                    rows={"A": (True,)}), "Plate")
+            compile_model(second, "Plate")
 
     def test_reject_invalid_table(self):
-        body = Box(80, 30, 5)
+        width = Parameter("width", 80)
+
+        body = Box(width, 30, 5)
         with self.assertRaisesRegex(ValueError, "active configuration"):
-            Configure(body, active="B", columns=(Param("width"),), rows={"A": (60,)})
+            body.configure(
+                active="B",
+                columns=(width,),
+                rows={"A": (60,)},
+            )
+
+        body = Box(width, 30, 5)
         with self.assertRaisesRegex(ValueError, "cell count"):
-            Configure(body, active="A", columns=(Param("width"),), rows={"A": ()})
+            body.configure(
+                active="A",
+                columns=(width,),
+                rows={"A": ()},
+            )
+
+        feature = Hole(d=5).at(0, 0, 5)
+        body = Box(80, 30, 5, anchor=Anchor.BOTTOM) - feature
         with self.assertRaisesRegex(TypeError, "suppression cells"):
-            Configure(body, active="A", columns=(Suppress(body),), rows={"A": (1,)})
+            body.configure(
+                active="A",
+                columns=(feature,),
+                rows={"A": (1,)},
+            )
+
+        body = Box(width, 30, 5)
+        with self.assertRaisesRegex(TypeError, "Parameter or authored feature"):
+            body.configure(
+                active="A",
+                columns=("width",),
+                rows={"A": (60,)},
+            )
+
+    def test_reject_second_configuration(self):
+        width = Parameter("width", 80)
+        body = Box(width, 30, 5)
+        body.configure(
+            active="A",
+            columns=(width,),
+            rows={"A": (80,)},
+        )
+        with self.assertRaisesRegex(ValueError, "already has a configuration"):
+            body.configure(
+                active="B",
+                columns=(width,),
+                rows={"B": (100,)},
+            )
 
     def test_row_replay_identity_is_stable_across_order(self):
         self.assertEqual(_row_variable("Medium"), _row_variable("Medium"))
@@ -244,15 +182,17 @@ class ConfigurationTests(unittest.TestCase):
                 "        right = left.copy(\n"
                 "            name='right', placement=Placement(x=40)\n"
                 "        )\n"
-                "        return Configure(\n"
-                "            body + left + right, active='Medium',\n"
-                "            columns=(Param(self.frame_width), Param(self.clamp_bore)),\n"
+                "        model = body + left + right\n"
+                "        model.configure(\n"
+                "            active='Medium',\n"
+                "            columns=(self.frame_width, self.clamp_bore),\n"
                 "            rows={\n"
                 "                'Small': ('60 mm', '19.8 mm'),\n"
                 "                'Medium': ('80 mm', '20.0 mm'),\n"
                 "                'Large': ('100 mm', '20.2 mm'),\n"
                 "            },\n"
                 "        )\n"
+                "        return model\n"
                 "Frame()\n",
                 encoding="utf-8",
             )
@@ -275,12 +215,14 @@ class ConfigurationTests(unittest.TestCase):
             1,
         )
         clamp = next(
-            row for row in commands
+            row
+            for row in commands
             if row["command"] == "solid.cylinder"
         )
         self.assertEqual(clamp["params"]["diameter"], "clamp_bore")
         large = next(
-            row for row in commands
+            row
+            for row in commands
             if row["command"] == "config.row"
             and row["params"].get("name") == "Large"
         )
@@ -289,78 +231,6 @@ class ConfigurationTests(unittest.TestCase):
             {
                 "param:frame_width": "100 mm",
                 "param:clamp_bore": "20.2 mm",
-            },
-        )
-
-    def test_rule_drives_published_child_parameter_with_size_rows(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "model.py"
-            path.write_text(
-                "@component(include=('tube_d', 'fit_diameter'))\n"
-                "class Clamp:\n"
-                "    tube_d = 20.0\n"
-                "    fit_diameter = 20.4\n"
-                "    def build(self):\n"
-                "        return Cylinder(d=self.tube_d + 4, h=10) - Cylinder(d=self.fit_diameter, h=12)\n"
-                "class Frame:\n"
-                "    frame_width = 80.0\n"
-                "    tube_d = 20.0\n"
-                "    clamp_bore = 20.4\n"
-                "    def build(self):\n"
-                "        left = Clamp(\n"
-                "            tube_d=self.tube_d, fit_diameter=self.clamp_bore, name='left',\n"
-                "            placement=Placement(x=-self.frame_width / 4),\n"
-                "        )\n"
-                "        right = left.copy(\n"
-                "            name='right',\n"
-                "            placement=Placement(x=self.frame_width / 4),\n"
-                "        )\n"
-                "        return Configure(\n"
-                "            left + right, active='Medium',\n"
-                "            columns=(Param(self.frame_width), Param(self.clamp_bore)),\n"
-                "            rows={\n"
-                "                'Small': ('60 mm', '20.4 mm'),\n"
-                "                'Medium': ('80 mm', '20.4 mm'),\n"
-                "                'Large': ('100 mm', '20.4 mm'),\n"
-                "            },\n"
-                "            rules=(\n"
-                "                ConfigRule(\n"
-                "                    'installed', 'Installed', enabled=True,\n"
-                "                    condition=Always(),\n"
-                "                    effect=DriveParameter(self.clamp_bore, self.tube_d),\n"
-                "                ),\n"
-                "            ),\n"
-                "        )\n"
-                "Frame()\n",
-                encoding="utf-8",
-            )
-            document = run_script(path)
-
-        commands = document["commands"]
-        configure = next(
-            row for row in commands if row["command"] == "config.configure"
-        )
-        self.assertEqual(
-            configure["params"],
-            {"params": ["frame_width", "clamp_bore"]},
-        )
-        self.assertEqual(
-            [
-                row["params"]["name"]
-                for row in commands
-                if row["command"] == "parameters.add"
-            ].count("clamp_bore"),
-            1,
-        )
-        rule = next(row for row in commands if row["command"] == "config.rule")
-        self.assertEqual(rule["params"]["rule"]["id"], "installed")
-        self.assertTrue(rule["params"]["rule"]["enabled"])
-        self.assertEqual(
-            rule["params"]["rule"]["effect"],
-            {
-                "type": "drive_parameter",
-                "parameter": "clamp_bore",
-                "expression": "tube_d",
             },
         )
 
@@ -379,15 +249,15 @@ class ConfigurationTests(unittest.TestCase):
                 "    coupler_width = 40.0\n"
                 "    def build(self):\n"
                 "        left = Coupler(width=self.coupler_width, name='left')\n"
-                "        right = Coupler(\n"
-                "            width=self.coupler_width, name='right',\n"
-                "            placement=Placement(x=60),\n"
+                "        right = left.copy(\n"
+                "            name='right', placement=Placement(x=60)\n"
                 "        )\n"
-                "        return Configure(\n"
-                "            left + right, active='Medium',\n"
+                "        model = left + right\n"
+                "        model.configure(\n"
+                "            active='Medium',\n"
                 "            columns=(\n"
-                "                Param(self.coupler_width),\n"
-                "                Suppress(right.feature('panel_pin')),\n"
+                "                self.coupler_width,\n"
+                "                right.feature('panel_pin'),\n"
                 "            ),\n"
                 "            rows={\n"
                 "                'Small': ('30 mm', True),\n"
@@ -395,6 +265,7 @@ class ConfigurationTests(unittest.TestCase):
                 "                'Large': ('50 mm', False),\n"
                 "            },\n"
                 "        )\n"
+                "        return model\n"
                 "Frame()\n",
                 encoding="utf-8",
             )
@@ -407,12 +278,15 @@ class ConfigurationTests(unittest.TestCase):
         self.assertEqual(configure["params"]["params"], ["coupler_width"])
         self.assertEqual(configure["params"]["features"], ["$config_name_2"])
 
-        holes = [row for row in commands if row["command"] == "solid.hole"]
+        holes = [
+            row for row in commands if row["command"] == "solid.hole"
+        ]
         self.assertEqual(len(holes), 1)
         self.assertEqual(holes[0]["bind"]["$config_name_2"], "name")
 
         large = next(
-            row for row in commands
+            row
+            for row in commands
             if row["command"] == "config.row"
             and row["params"].get("name") == "Large"
         )
@@ -424,155 +298,6 @@ class ConfigurationTests(unittest.TestCase):
             },
         )
 
-    def test_complete_shape_configuration_ir_is_heterogeneous_and_ordered(self):
-        width = Parameter("width", 40)
-        tube = Parameter("tube", 8)
-        hole = Hole(
-            d=tube,
-            direction=(0, 0, -1),
-        ).at(0, 0, 10)
-        design = Box(width, 30, 10, anchor=Anchor.BOTTOM) - hole
-        configured = Configure(
-            design,
-            active="Compact",
-            columns=(
-                Param(width),
-                Suppress(hole),
-            ),
-            rows={
-                "Default": (40, False),
-                "Compact": ("width / 2", True),
-            },
-            rules=(
-                ConfigRule(
-                    "literal",
-                    "Literal width",
-                    condition=Always(),
-                    effect=DriveParameter(width, 42),
-                ),
-                ConfigRule(
-                    "text",
-                    "Text width",
-                    condition=Always(),
-                    effect=DriveParameter(width, "width + 1 mm"),
-                ),
-                ConfigRule(
-                    "scalar",
-                    "Scalar width",
-                    condition=Always(),
-                    effect=DriveParameter(width, width / 2),
-                ),
-            ),
-        )
-
-        model = normalize_model(configured)
-
-        self.assertIsInstance(model.configuration, ConfigurationIR)
-        self.assertEqual(model.configuration.active, "Compact")
-        self.assertEqual(
-            [type(column) for column in model.configuration.columns],
-            [ParameterColumnIR, SuppressionColumnIR],
-        )
-        self.assertEqual(model.configuration.columns[0].name, "width")
-        self.assertIsInstance(
-            model.configuration.columns[1].feature,
-            FeatureRefIR,
-        )
-        self.assertEqual(
-            [row.name for row in model.configuration.rows],
-            ["Default", "Compact"],
-        )
-        self.assertEqual(
-            model.configuration.rows[0].cells,
-            (ParameterCellIR("40"), False),
-        )
-        self.assertEqual(
-            model.configuration.rows[1].cells,
-            (ParameterCellIR("width / 2"), True),
-        )
-        self.assertEqual(
-            [rule.id for rule in model.configuration.rules],
-            ["literal", "text", "scalar"],
-        )
-        for rule in model.configuration.rules:
-            self.assertIsInstance(rule, ConfigurationRuleIR)
-            self.assertIsInstance(rule.condition, AlwaysConditionIR)
-            self.assertIsInstance(rule.effect, DriveParameterEffectIR)
-            self.assertEqual(rule.effect.parameter, "width")
-            self.assertIsInstance(
-                rule.effect.expression,
-                ConfigurationExpressionIR,
-            )
-        scalar = model.configuration.rules[2].effect.expression
-        self.assertIsNotNone(scalar.scalar_ir)
-        self.assertEqual(scalar.parameters, ("width",))
-
-    def test_component_feature_configuration_uses_definition_identity(self):
-        block = ConfigurationIRBlock(name="panel")
-        configured = Configure(
-            block,
-            active="Installed",
-            columns=(
-                Param("width"),
-                Suppress(block.feature("panel_pin")),
-            ),
-            rows={
-                "Installed": (40, False),
-                "Removed": (40, True),
-            },
-        )
-
-        model = normalize_model(configured)
-
-        self.assertIsInstance(model, ConfiguredDesignIR)
-        self.assertIsInstance(model.design, AssemblyIR)
-        self.assertEqual(len(model.design.definitions), 1)
-        self.assertEqual(
-            model.configuration.columns[0],
-            ParameterColumnIR("width"),
-        )
-        feature = model.configuration.columns[1].feature
-        self.assertIsInstance(feature, ComponentFeatureRefIR)
-        self.assertEqual(feature.definition, "definition_1")
-        self.assertEqual(feature.name, "panel_pin")
-
-    def test_exported_shape_wrapper_uses_component_feature_identity(self):
-        block = ConfigurationIRBlock(name="panel")
-        exported = dict(block.definition.features)["panel_pin"]
-        configured = Configure(
-            block,
-            active="Installed",
-            columns=(Suppress(exported),),
-            rows={
-                "Installed": (False,),
-                "Removed": (True,),
-            },
-        )
-
-        model = normalize_model(configured)
-
-        feature = model.configuration.columns[0].feature
-        self.assertIsInstance(feature, ComponentFeatureRefIR)
-        self.assertEqual(feature.definition, "definition_1")
-        self.assertEqual(feature.name, "panel_pin")
-
-    def test_configuration_semantics_contain_no_native_row_or_feature_ids(self):
-        width = Parameter("width", 40)
-        hole = Hole(d=5, direction=(0, 0, -1)).at(0, 0, 10)
-        configured = Configure(
-            Box(width, 30, 10, anchor=Anchor.BOTTOM) - hole,
-            active="Default",
-            columns=(Param(width), Suppress(hole)),
-            rows={"Default": (40, False)},
-        )
-
-        model = normalize_model(configured)
-        semantic = repr(model.configuration)
-
-        self.assertNotIn("$config_", semantic)
-        self.assertNotIn("feature_id", semantic)
-        self.assertNotIn("row_id", semantic)
-
     def test_component_feature_reference_requires_explicit_export(self):
         @component
         class Coupler:
@@ -580,8 +305,29 @@ class ConfigurationTests(unittest.TestCase):
                 return Box(40, 20, 10)
 
         instance = Coupler()
-        with self.assertRaisesRegex(ValueError, "no exported component feature"):
+        with self.assertRaisesRegex(
+            ValueError,
+            "no exported component feature",
+        ):
             instance.feature("panel_pin")
+
+    def test_reusable_component_cannot_own_configuration(self):
+        @component
+        class BadComponent:
+            def build(self):
+                body = Box(40, 20, 10)
+                body.configure(
+                    active="A",
+                    columns=(body,),
+                    rows={"A": (True,)},
+                )
+                return body
+
+        with self.assertRaisesRegex(
+            TypeError,
+            "cannot own final-model configuration",
+        ):
+            BadComponent()
 
     def test_configure_wraps_parametric_assembly_placement(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -598,25 +344,34 @@ class ConfigurationTests(unittest.TestCase):
                 "    plate_z = 0.0\n"
                 "    def build(self):\n"
                 "        screen = Screen(name='screen')\n"
-                "        plate = FrontPlate(name='front_plate', "
-                "placement=Placement(y=self.plate_y, z=self.plate_z))\n"
-                "        return Configure(\n"
-                "            screen + plate, active='Front',\n"
-                "            columns=(Param('plate_y'), Param('plate_z')),\n"
+                "        plate = FrontPlate(\n"
+                "            name='front_plate',\n"
+                "            placement=Placement(y=self.plate_y, z=self.plate_z),\n"
+                "        )\n"
+                "        model = screen + plate\n"
+                "        model.configure(\n"
+                "            active='Front',\n"
+                "            columns=(self.plate_y, self.plate_z),\n"
                 "            rows={\n"
                 "                'Front': ('8 mm', '0 mm'),\n"
                 "                'Below': ('0 mm', '-55 mm'),\n"
                 "                'Service': ('25 mm', '0 mm'),\n"
                 "            },\n"
                 "        )\n"
+                "        return model\n"
                 "Display()\n",
                 encoding="utf-8",
             )
             document = run_script(path)
 
         commands = document["commands"]
-        move = next(row for row in commands if row["command"] == "occurrence.move")
-        self.assertEqual(move["params"]["translate"][1:], ["plate_y", "plate_z"])
+        move = next(
+            row for row in commands if row["command"] == "occurrence.move"
+        )
+        self.assertEqual(
+            move["params"]["translate"][1:],
+            ["plate_y", "plate_z"],
+        )
         configure = next(
             row for row in commands if row["command"] == "config.configure"
         )
@@ -625,7 +380,11 @@ class ConfigurationTests(unittest.TestCase):
             {"params": ["plate_y", "plate_z"]},
         )
         self.assertEqual(
-            next(row for row in commands if row["command"] == "config.activate")["params"],
+            next(
+                row
+                for row in commands
+                if row["command"] == "config.activate"
+            )["params"],
             {"row": _row_variable("Front")},
         )
 

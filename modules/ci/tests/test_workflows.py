@@ -38,13 +38,14 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn("source-dev", pages)
         self.assertNotIn("actions/deploy-pages", pages)
         self.assertIn("issue_comment:", release)
+        self.assertIn("Check out repository-local release implementation", release)
+        self.assertIn("cad_library_release.command parse", release)
         self.assertIn("python -m cad_library_release", release)
-        self.assertIn(
-            "tool.py.lib.ci/.github/workflows/reusable-release.yml@58ead6897a4ac8cafef22a3c1f834491bf61568d",
-            release,
-        )
-        self.assertIn("validator_path: cadlib/release.py", release)
+        self.assertIn("cadlib/release.py", release)
+        self.assertIn("cad_library_release.command publish", release)
         self.assertIn("--source-root", release)
         self.assertIn("path: source", release)
         self.assertIn("fetch-depth: 0", release)
+        self.assertNotIn("tool.py.lib.ci", release)
+        self.assertNotIn("uses: brainboxemb/", release)
         self.assertNotIn("tool.cad.ci", release)

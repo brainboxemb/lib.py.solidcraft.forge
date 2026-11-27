@@ -82,6 +82,7 @@ def _is_feature_tree(shape):
         return False
     if shape.kind in (
         "exported_feature",
+        "named_feature",
         "box",
         "placed_box",
         "tapered_box",
@@ -95,12 +96,13 @@ def _is_feature_tree(shape):
         "sheet_path_flange",
         "sheet_perforate",
         "sheet_fold",
+        "body_move",
     ):
         return True
     if shape.kind in (
         "fillet", "chamfer", "shell", "union", "difference", "intersection",
         "material_assignment", "appearance_assignment",
-        "rectangular_pattern", "circular_pattern",
+        "rectangular_pattern", "circular_pattern", "body_move",
     ):
         return True
     return False
@@ -461,6 +463,29 @@ def _vector(values, label):
     if concrete == [0, 0, 0]:
         raise ModelError(f"{label} cannot be the zero vector")
     return concrete
+
+
+def _body_move_command(
+    name,
+    *,
+    translate=None,
+    origin=None,
+    axis=None,
+    angle=None,
+):
+    """Lower one real SolidCraft Move/Copy history feature."""
+    params = {"bodies": [name]}
+    if translate is not None:
+        params["translate"] = [
+            command_value(value) for value in translate
+        ]
+    if angle is not None:
+        params["origin"] = [
+            command_value(value) for value in origin
+        ]
+        params["axis"] = _vector(axis, "body move axis")
+        params["angle"] = command_value(angle)
+    return _command("solid.move", **params)
 
 
 def _plastic_feature_command(feature, position, name):
@@ -1304,6 +1329,14 @@ def _non_count_parameter_names(node, found=None):
             _non_count_parameter_names(original, found)
             _non_count_parameter_names((axis, alignment, reversed), found)
             return found
+        if node.kind == "body_move":
+            original, translate, origin, axis, _angle = node.data
+            _non_count_parameter_names(original, found)
+            _non_count_parameter_names(
+                (translate, origin, axis),
+                found,
+            )
+            return found
         if node.kind == "sketch_base_revolve":
             (
                 sketch_name,
@@ -1481,6 +1514,12 @@ def _pattern_angle_parameter_names(node, found=None):
             found.update(param.name for param in parameters_in(angle))
             _pattern_angle_parameter_names(original, found)
             return found
+        if node.kind == "body_move":
+            original, _translate, _origin, _axis, angle = node.data
+            if isinstance(angle, Parameter):
+                found.add(angle.name)
+            _pattern_angle_parameter_names(original, found)
+            return found
         _pattern_angle_parameter_names(node.data, found)
     elif isinstance(node, (tuple, list)):
         for item in node:
@@ -1544,7 +1583,7 @@ def _applied_feature_prefix(root, source):
         return None
     if root is source:
         return root
-    if root.kind == "exported_feature":
+    if root.kind in ("exported_feature", "named_feature"):
         return _applied_feature_prefix(root.data[0], source)
 
     if root.kind in ("rectangular_pattern", "circular_pattern"):
@@ -1600,11 +1639,106 @@ def _native_feature_name(root, feature, model_name):
     return f"{base_name}{ordinal}"
 
 
+def _named_feature_parent(shape):
+    """Return the history state immediately before one scoped feature."""
+    if not isinstance(shape, Shape):
+        return None
+    if shape.kind in (
+        "translated",
+        "placed3d",
+        "anchored",
+        "labeled",
+        "material_assignment",
+        "appearance_assignment",
+        "exported_feature",
+    ):
+        return _named_feature_parent(shape.data[0])
+    if shape.kind in (
+        "union",
+        "difference",
+        "intersection",
+        "fillet",
+        "chamfer",
+        "shell",
+        "rectangular_pattern",
+        "circular_pattern",
+        "sheet_fold",
+        "sheet_edge_flange",
+        "sheet_hem",
+        "sheet_path_flange",
+        "sheet_perforate",
+        "body_move",
+    ):
+        return shape.data[0]
+    return None
+
+
+def _named_feature_commands(steps, feature_name, suppressed, *, start=0):
+    """Validate one native history result and apply its explicit initial state."""
+    candidates = [
+        index
+        for index in range(start, len(steps))
+        if steps[index]["command"].startswith(("solid.", "sheet."))
+    ]
+    if len(candidates) != 1:
+        raise ModelError(
+            f"feature {feature_name!r} must lower to exactly one native "
+            "solid/sheet history feature"
+        )
+    if not suppressed:
+        return steps
+
+    target = candidates[0]
+    variable = f"$feature_{feature_name}_name"
+    if any(variable in command.get("bind", {}) for command in steps):
+        raise ModelError(f"duplicate named feature {feature_name!r}")
+
+    steps = [dict(command) for command in steps]
+    binding = dict(steps[target].get("bind", {}))
+    binding[variable] = "name"
+    steps[target]["bind"] = binding
+    steps.append(
+        _command(
+            "timeline.suppress",
+            features=[variable],
+            suppressed=True,
+        )
+    )
+    return steps
+
+
 def _to_commands(shape, name):
+    if shape.kind == "named_feature":
+        source, feature_name, suppressed = shape.data
+        steps, base = _to_commands(source, name)
+        parent = _named_feature_parent(source)
+        start = 0
+        if parent is not None:
+            parent_steps, _ = _to_commands(parent, name)
+            start = len(parent_steps)
+        return _named_feature_commands(
+            steps,
+            feature_name,
+            suppressed,
+            start=start,
+        ), base
     if shape.kind == "exported_feature":
         return _to_commands(shape.data[0], name)
     if shape.kind == "sketch_open_chain":
         return compile_open_chain(shape)
+
+    if shape.kind == "body_move":
+        original, translate, origin, axis, angle = shape.data
+        steps, base = _to_commands(original, name)
+        return steps + [
+            _body_move_command(
+                name,
+                translate=translate,
+                origin=origin,
+                axis=axis,
+                angle=angle,
+            )
+        ], base
 
     if shape.kind == "sheet_contour_flange":
         (
@@ -1962,14 +2096,64 @@ def _to_commands(shape, name):
     if shape.kind in ("union", "difference", "intersection"):
         original, added = shape.data
         steps, base = _to_commands(original, name)
+
+        moved_child = None
+        if shape.kind == "union":
+            if added.kind == "body_move":
+                moved_child = added
+            elif (
+                added.kind == "named_feature"
+                and added.data[0].kind == "body_move"
+            ):
+                moved_child = added
+        if moved_child is not None:
+            move_index = 1 + sum(
+                command["command"] == "solid.combine"
+                for command in steps
+            )
+            tool_name = f"{name} MoveTool{move_index}"
+            moved_steps, _ = _to_commands(moved_child, tool_name)
+            return steps + moved_steps + [
+                _command(
+                    "solid.combine",
+                    target=name,
+                    tools=[tool_name],
+                    operation="join",
+                )
+            ], base
+
         feature_name = None
-        if added.kind == "exported_feature":
+        named_state = None
+        if added.kind == "named_feature":
+            added, named_name, named_suppressed = added.data
+            named_state = (named_name, named_suppressed)
+        elif added.kind == "exported_feature":
             added, _export_name = added.data
+
+        def finish(added_steps):
+            combined = steps + added_steps
+            if named_state is None:
+                return combined, base
+            named_name, named_suppressed = named_state
+            return _named_feature_commands(
+                combined,
+                named_name,
+                named_suppressed,
+                start=len(steps),
+            ), base
+
         if added.kind == "labeled":
             added, feature_name = added.data
         if added.kind == "anchored":
-            return steps + _attached_commands(
-                shape, original, added, name, feature_name=feature_name), base
+            return finish(
+                _attached_commands(
+                    shape,
+                    original,
+                    added,
+                    name,
+                    feature_name=feature_name,
+                )
+            )
         if added.kind in ("sketch_base_extrusion", "sketch_base_revolve"):
             operation = {
                 "union": "join",
@@ -1981,7 +2165,7 @@ def _to_commands(shape, name):
                 name,
                 operation=operation,
             )
-            return steps + added_steps, base
+            return finish(added_steps)
         if added.kind == "explicit_sketch_extrusion":
             face_query_index = 1 + sum(
                 command["command"] == "model.faces"
@@ -1991,25 +2175,27 @@ def _to_commands(shape, name):
                 command["command"] == "sketch.create"
                 for command in steps
             )
-            return steps + _explicit_sketch_commands(
-                shape,
-                original,
-                added,
-                name,
-                face_query_index=face_query_index,
-                sketch_index=sketch_index,
-            ), base
+            return finish(
+                _explicit_sketch_commands(
+                    shape,
+                    original,
+                    added,
+                    name,
+                    face_query_index=face_query_index,
+                    sketch_index=sketch_index,
+                )
+            )
         if added.kind == "placed3d" and added.data[0].kind in (
                 "lip", "snap_fit", "boss", "rest"):
             if shape.kind != "union":
                 raise ModelError("plastic features are added with +")
-            feature, x, y, z = added.data
-            return steps + [
-                _plastic_feature_command(feature, (x, y, z), name)
-            ], base
+            plastic, x, y, z = added.data
+            return finish([
+                _plastic_feature_command(plastic, (x, y, z), name)
+            ])
         if added.kind == "placed3d" and added.data[0].kind == "hole":
             hole, x, y, z = added.data
-            return steps + _hole_commands(hole, (x, y, z), name), base
+            return finish(_hole_commands(hole, (x, y, z), name))
         if added.kind == "hole":
             raise ModelError("Hole must be positioned with .attach() or .at()")
         if added.kind in ("lip", "snap_fit", "boss", "rest"):
@@ -2027,7 +2213,7 @@ def _to_commands(shape, name):
                 "difference": "cut",
                 "intersection": "intersect",
             }[shape.kind]
-            return steps + _csg_apply(added, name, operation), base
+            return finish(_csg_apply(added, name, operation))
         raise ModelError(f"unsupported CAD feature {added.kind}")
     raise ModelError(f"unsupported CAD solid {shape.kind}")
 
@@ -2040,8 +2226,8 @@ def compile_features(shape, name):
     # XY rectangular footprints instead list their plan dimensions first.
     root = shape
     while root.kind in (
-        "exported_feature", "fillet", "chamfer", "shell", "union", "difference",
-        "material_assignment", "appearance_assignment",
+        "exported_feature", "named_feature", "fillet", "chamfer", "shell", "union", "difference",
+        "material_assignment", "appearance_assignment", "body_move",
     ):
         root = root.data[0]
     if root.kind == "sketch_base_extrusion":

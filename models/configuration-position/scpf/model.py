@@ -21,16 +21,17 @@ class ConfigurationPosition:
             name="front_plate",
             placement=Placement(y=self.plate_y, z=self.plate_z),
         )
-        return Configure(
-            screen + front_plate,
+        model = screen + front_plate
+        model.configure(
             active="Front",
-            columns=(Param(self.plate_y), Param(self.plate_z)),
+            columns=(self.plate_y, self.plate_z),
             rows={
                 "Front": ("8 mm", "0 mm"),
                 "Below": ("0 mm", "-55 mm"),
                 "Service": ("25 mm", "0 mm"),
             },
         )
+        return model
 
 
 ConfigurationPosition()

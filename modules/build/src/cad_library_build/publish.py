@@ -85,6 +85,9 @@ def _preserve_release_baseline(plan, source_ref, stable_ref):
         raise PublishError("release-only candidate must qualify the library")
     if plan.get("selected") not in ([], ()):
         raise PublishError("release-only candidate must not select model owners")
+    probes = plan.get("api_probes", {})
+    if isinstance(probes, dict) and probes.get("selected") not in (None, [], ()):
+        raise PublishError("release-only candidate must not select API probes")
     return True
 
 
@@ -122,6 +125,38 @@ def update_scope(target, candidate, plan):
     missing = active - {p.name for p in existing.iterdir() if p.is_dir()}
     if missing:
         raise PublishError(f"missing successful model output: {sorted(missing)}")
+
+    probe_plan = plan.get("api_probes", {"available": [], "selected": []})
+    if not isinstance(probe_plan, dict):
+        raise PublishError("invalid API probe selection")
+    available_probes = set(probe_plan.get("available", []))
+    selected_probes = set(probe_plan.get("selected", []))
+    if (
+        not selected_probes <= available_probes
+        or not all(
+            isinstance(item, str)
+            and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", item)
+            for item in available_probes
+        )
+    ):
+        raise PublishError("invalid API probe selection")
+
+    probe_target = target / "api-probes"
+    if selected_probes:
+        probe_target.mkdir(parents=True, exist_ok=True)
+    for item in sorted(selected_probes):
+        source = candidate / "api-probes" / item
+        result = json.loads((source / "result.json").read_text())
+        if result.get("status") != "pass" or result.get("id") != item:
+            raise PublishError(f"cannot publish unsuccessful API probe: {item}")
+        dest = probe_target / item
+        if dest.exists():
+            shutil.rmtree(dest)
+        shutil.copytree(source, dest)
+        (dest / "source.json").write_text(
+            json.dumps({"source_sha": plan["source_sha"]}, indent=2) + "\n"
+        )
+
     (target / "build-plan.json").write_text(
         json.dumps(plan, indent=2, sort_keys=True) + "\n"
     )

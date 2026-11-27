@@ -19,16 +19,6 @@ import sys
 import warnings
 
 from . import core, cadmath
-from .configurations import (
-    Always,
-    ConfigRule,
-    Configure,
-    DriveParameter,
-    Param,
-    Suppress,
-    _ConfiguredDesign,
-    _apply_configuration_document,
-)
 from .compiler import ModelError, _compile_model_with_dependencies
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
 from .model_objects import (
@@ -546,7 +536,7 @@ def _design_object(cls, *args, **kwargs):
     result, concrete, _, _, _, _, pv_parameters = _build_object(
         cls, *args, **kwargs
     )
-    if not isinstance(result, (Shape, ModelInstance, Assembly, _ConfiguredDesign)):
+    if not isinstance(result, (Shape, ModelInstance, Assembly)):
         raise TypeError(
             f"{cls.__name__}.build() must finish with a Shape or assembly"
         )
@@ -565,6 +555,12 @@ def _component_feature_exports(shape):
         if isinstance(node, Shape):
             if node.kind == "exported_feature":
                 _source, name = node.data
+            elif node.kind == "named_feature":
+                _source, name, _suppressed = node.data
+            else:
+                name = None
+
+            if name is not None:
                 previous = exports.get(name)
                 if previous is not None and previous is not node:
                     raise ValueError(
@@ -616,6 +612,10 @@ def _reusable_model_object(
     if not isinstance(result, Shape):
         raise TypeError(
             f"{cls.__name__}.build() must produce one Shape when reused as a component"
+        )
+    if getattr(result, "_configuration", None) is not None:
+        raise TypeError(
+            f"{cls.__name__}: reusable components cannot own final-model configuration"
         )
     return ModelInstance(
         ModelDefinition(
@@ -1016,12 +1016,6 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
         "Shape": core.Shape,
         "Parameter": core.Parameter,
         "cadmath": cadmath,
-        "Configure": Configure,
-        "Param": Param,
-        "Suppress": Suppress,
-        "ConfigRule": ConfigRule,
-        "Always": Always,
-        "DriveParameter": DriveParameter,
         "CENTER": core.CENTER,
         "TOP": core.TOP,
         "BOTTOM": core.BOTTOM,
@@ -1047,6 +1041,7 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
         "Y": core.Y,
         "Z": core.Z,
         "Sketch": Sketch,
+        "feature": core.feature,
         "component": component,
         "assembly": assembly,
     }
@@ -1149,55 +1144,42 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
                 f"an imported model/component/assembly: {name}"
             )
 
-    if isinstance(result, _ConfiguredDesign):
-        design = result.design
-        if isinstance(design, Shape):
-            try:
-                model = normalize_model(result)
-            except (TypeError, ValueError) as exc:
-                if backend_adapter.id != "solidcraft":
-                    raise ModelError(
-                        f"{backend_adapter.display_name} backend does not support "
-                        "Forge configurations in this qualified capability set: "
-                        f"{exc}"
-                    ) from exc
-                # Stable SolidCraft owns the broad existing configuration
-                # surface while semantic ConfigurationIR migrates slice by
-                # slice. Unsupported portable forms keep that compatibility
-                # path rather than being reinterpreted by another backend.
-                document, dependencies = _compile_model_with_dependencies(
-                    result, name
+    if isinstance(result, Shape):
+        configuration = getattr(result, "_configuration", None)
+        if configuration is not None and backend_adapter.id == "solidcraft":
+            document, dependencies = _compile_model_with_dependencies(
+                result, name
+            )
+        else:
+            model_ir = normalize_model(result)
+            document, dependencies = backend_adapter.compile_ir(
+                model_ir,
+                name,
+            )
+    elif isinstance(result, (ModelInstance, Assembly)):
+        configuration = getattr(result, "_configuration", None)
+        if configuration is not None and backend_adapter.id == "solidcraft":
+            from .assembly import _compile_assembly_with_dependencies
+            document, dependencies = _compile_assembly_with_dependencies(
+                result, name
+            )
+        elif configuration is not None:
+            model_ir = normalize_model(result)
+            if not hasattr(model_ir, "design"):
+                raise ModelError(
+                    f"{backend_adapter.display_name} backend could not normalize "
+                    "configured assembly semantics"
                 )
-            else:
-                document, dependencies = backend_adapter.compile_ir(
-                    model,
-                    name,
-                )
-        elif isinstance(design, (ModelInstance, Assembly)):
+            raise ModelError(
+                f"{backend_adapter.display_name} backend does not support "
+                "configured AssemblyIR in its qualified capability set"
+            )
+        else:
             document, dependencies = _compile_assembly_result(
-                design,
+                result,
                 name,
                 backend_adapter,
             )
-            if backend_adapter.id != "solidcraft":
-                raise ModelError(
-                    f"{backend_adapter.display_name} backend does not support "
-                    "Forge configured AssemblyIR in its qualified capability set"
-                )
-            document = _apply_configuration_document(
-                result, name, document
-            )
-        else:
-            raise TypeError("Configure contains an unsupported design result")
-    elif isinstance(result, Shape):
-        model_ir = normalize_shape(result)
-        document, dependencies = backend_adapter.compile_ir(model_ir, name)
-    elif isinstance(result, (ModelInstance, Assembly)):
-        document, dependencies = _compile_assembly_result(
-            result,
-            name,
-            backend_adapter,
-        )
     else:
         raise TypeError(f"{name}() must produce CAD geometry or an assembly")
 

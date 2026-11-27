@@ -1,6 +1,6 @@
-# Thin CAD-library release adapter.
-# Durable build qualification stays repository/template-owned.
-# Tag and GitHub Release publication stays in released tool.py.lib.ci.
+# Repository-local CAD-library release publication.
+# Durable qualification, request parsing, tag creation and GitHub Release
+# publication are all owned by this repository/template.
 
 name: Publish library release
 
@@ -12,34 +12,53 @@ permissions:
   contents: read
 
 jobs:
-  check_build:
+  release:
     if: >-
       !github.event.issue.pull_request &&
       startsWith(github.event.comment.body, '/release ')
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: cad-library-release-${{ github.repository }}
+      cancel-in-progress: false
     permissions:
-      contents: read
-    env:
-      TOOL_ROOT: ${{ github.workspace }}/.tool-py-lib-ci
+      contents: write
+      issues: write
 
     steps:
-      - name: Check out released Python release tool
+      - name: Validate release actor
+        shell: bash
+        env:
+          ACTOR: ${{ github.actor }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+          [ "$ACTOR" = "$OWNER" ] || {
+            echo "ERROR: only the repository owner may publish a release" >&2
+            exit 2
+          }
+
+      - name: Check out repository-local release implementation
         uses: actions/checkout@v7
         with:
-          repository: brainboxemb/tool.py.lib.ci
-          ref: 58ead6897a4ac8cafef22a3c1f834491bf61568d
-          path: .tool-py-lib-ci
+          ref: main
+          path: release-tool
           fetch-depth: 1
           fetch-tags: false
           persist-credentials: false
 
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
       - name: Parse exact release request
         id: request
         shell: bash
+        env:
+          PYTHONPATH: ${{ github.workspace }}/release-tool/modules/release/src
         run: |
-          python "$TOOL_ROOT/scripts/release_command.py" parse \
-            --command "${{ github.event.comment.body }}" \
-            --github-output "$GITHUB_OUTPUT"
+          python -m cad_library_release.command parse             --command "${{ github.event.comment.body }}"             --github-output "$GITHUB_OUTPUT"
 
       - name: Check out exact requested library source
         uses: actions/checkout@v7
@@ -47,7 +66,7 @@ jobs:
           ref: ${{ steps.request.outputs.target_sha }}
           path: source
           fetch-depth: 0
-          fetch-tags: false
+          fetch-tags: true
           persist-credentials: false
 
       - name: Check out durable build output
@@ -59,28 +78,42 @@ jobs:
           fetch-tags: false
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-
       - name: Check exact stable build evidence
         env:
-          PYTHONPATH: ${{ github.workspace }}/source/modules/release/src
+          PYTHONPATH: ${{ github.workspace }}/release-tool/modules/release/src
         run: >-
           python -m cad_library_release
           --build-scope "${{ github.workspace }}/generated-build/main"
           --source-root "${{ github.workspace }}/source"
           --source-sha "${{ steps.request.outputs.target_sha }}"
 
-  release:
-    needs: check_build
-    permissions:
-      contents: write
-      issues: write
-    uses: brainboxemb/tool.py.lib.ci/.github/workflows/reusable-release.yml@58ead6897a4ac8cafef22a3c1f834491bf61568d
-    with:
-      command: ${{ github.event.comment.body }}
-      issue_number: ${{ github.event.issue.number }}
-      stable_ref: main
-      validator_path: cadlib/release.py
+      - name: Run repository release validator
+        working-directory: source
+        shell: bash
+        env:
+          VERSION: ${{ steps.request.outputs.version }}
+          TARGET_SHA: ${{ steps.request.outputs.target_sha }}
+          NOTES_OUT: ${{ runner.temp }}/cad-library-release-notes.md
+        run: |
+          python cadlib/release.py             --version "$VERSION"             --target-sha "$TARGET_SHA"             --notes-out "$NOTES_OUT"
+
+      - name: Publish or verify exact GitHub release
+        id: publish
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PYTHONPATH: ${{ github.workspace }}/release-tool/modules/release/src
+        run: |
+          python -m cad_library_release.command publish             --repository "$GITHUB_REPOSITORY"             --version "${{ steps.request.outputs.version }}"             --target-sha "${{ steps.request.outputs.target_sha }}"             --stable-ref main             --notes-file "${{ runner.temp }}/cad-library-release-notes.md"             --github-output "$GITHUB_OUTPUT"
+
+      - name: Record release on triggering issue
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          TAG: ${{ steps.publish.outputs.tag }}
+          TARGET_SHA: ${{ steps.publish.outputs.target_sha }}
+          RELEASE_URL: ${{ steps.publish.outputs.release_url }}
+        run: |
+          printf -v body 'Published and verified `%s` at `%s`: %s'             "$TAG" "$TARGET_SHA" "$RELEASE_URL"
+          gh api -X POST             "repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/comments"             -f body="$body"             >/dev/null
