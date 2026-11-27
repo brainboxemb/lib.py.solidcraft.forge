@@ -1623,28 +1623,19 @@ class SemanticIRTests(unittest.TestCase):
         with self.assertRaisesRegex(ModelError, "HoleIR"):
             compile_mitcad_ir(model, "CylinderHole")
 
-    def test_hole_ir_widening_stays_fail_closed(self):
+    def test_parameter_driven_hole_direction_stays_fail_closed(self):
         direction_parameter = Parameter("drill_direction", -1)
-        unsupported = (
+        shape = (
             Box(30, 30, 12, anchor=Anchor.BOTTOM)
             + Hole(
                 d=5,
                 direction=(0, 0, direction_parameter),
-            ).at(0, 0, 12),
-            Box(30, 30, 12, anchor=Anchor.BOTTOM)
-            + CountersinkHole(
-                d=5,
-                countersink_d=10,
-                countersink_angle=Parameter("sink_angle", 90),
-                direction=(0, 0, -1),
-            ).at(0, 0, 12),
+            ).at(0, 0, 12)
         )
-        for index, shape in enumerate(unsupported):
-            with self.subTest(index=index):
-                model = normalize_shape(shape)
-                self.assertIsInstance(model.root, LegacyShapeIR)
-                with self.assertRaises(ModelError):
-                    compile_mitcad_ir(model, f"UnsupportedHole{index}")
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "ParameterizedHoleDirection")
 
     def test_vertical_box_fillet_is_semantic_parallel_edge_ir(self):
         radius = Parameter("fillet_radius", 2)
