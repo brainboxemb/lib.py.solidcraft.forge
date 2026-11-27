@@ -16,6 +16,7 @@ from typing import Any
 
 from .core import (
     Anchor,
+    Expression,
     Faces,
     Parameter,
     Shape,
@@ -23,6 +24,15 @@ from .core import (
     _dim_add,
     _pv as pv,
     parameters_in,
+)
+from .scalar_ir import (
+    ScalarBinaryIR,
+    ScalarExpressionIR,
+    ScalarLiteralIR,
+    ScalarParameterRefIR,
+    ScalarUnaryIR,
+    is_affine_scalar_expression,
+    scalar_parameter_names,
 )
 
 
@@ -1536,9 +1546,10 @@ def _portable_revolve(
     }
     mixed_parameters = angle_parameters & coordinate_parameters
     if mixed_parameters:
-        # #469 deliberately qualifies only one direct source Parameter reused
-        # across typed length and angle slots. Expression-tree dimensional
-        # typing remains a later compiler checkpoint.
+        # #481 extends #469 from one direct Parameter to authored affine
+        # scalar expressions whose operation tree is captured semantically.
+        # Text-only expressions remain outside the portable slice; no backend
+        # or normalizer is allowed to recover meaning by parsing their text.
         if len(mixed_parameters) != 1:
             return None
         mixed_name = next(iter(mixed_parameters))
@@ -1553,10 +1564,16 @@ def _portable_revolve(
                 for parameter in parameters_in(value)
             )
         ]
-        if any(
-            not isinstance(value, Parameter) or value.name != mixed_name
-            for value in mixed_coordinate_uses
-        ):
+        for value in mixed_coordinate_uses:
+            if isinstance(value, Parameter) and value.name == mixed_name:
+                continue
+            if (
+                isinstance(value, Expression)
+                and value.scalar_ir is not None
+                and mixed_name in scalar_parameter_names(value.scalar_ir)
+                and is_affine_scalar_expression(value.scalar_ir)
+            ):
+                continue
             return None
 
     polygon = PolygonProfileIR(
@@ -1923,6 +1940,11 @@ __all__ = [
     "ProfileIR",
     "RegionIR",
     "RevolveIR",
+    "ScalarBinaryIR",
+    "ScalarExpressionIR",
+    "ScalarLiteralIR",
+    "ScalarParameterRefIR",
+    "ScalarUnaryIR",
     "SketchIR",
     "SketchCoordinateDimensionIR",
     "SketchLengthDimensionIR",
