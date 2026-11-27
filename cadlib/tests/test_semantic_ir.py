@@ -1018,7 +1018,7 @@ class SemanticIRTests(unittest.TestCase):
         self.assertTrue(pattern["reversed"])
 
     def test_pattern_with_legacy_source_remains_legacy(self):
-        from scpf import Text2D
+        from scpf.core import Text2D
 
         with Sketch(name="LegacyText", plane="XY") as sketch:
             Text2D("A", height=8)
