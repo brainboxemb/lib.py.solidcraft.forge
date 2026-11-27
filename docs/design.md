@@ -1617,6 +1617,40 @@ Attached/support-face Sketch extrusion, Sketch pattern/mirror and general
 multi-region composition remain separately partial even though the underlying
 basic profiles are now complete.
 
+#544 moves within-component feature placement itself into the semantic compiler
+boundary. `FeaturePlacementIR` has two forms: an absolute authored XYZ point,
+or anchored placement retaining parent anchor, child anchor and two in-plane
+offsets. `BoundOffsetIR` preserves public `X.MIN/CENTER/MAX` and
+`Y.MIN/CENTER/MAX` intent plus its symbolic delta. No SolidCraft face/body id,
+native edge reference, replay binding or resolved BRep pick is stored in either
+node.
+
+The existing Hole feature now consumes this same placement node. Existing
+`.at(...)` HoleIR therefore remains the same semantic Hole history feature,
+while the stable simple TOP/BOTTOM `.attach()` / `.on()` route becomes a
+typed anchored Hole instead of falling back to legacy Shape parsing. SolidCraft
+derives the rectangular support geometry only during lowering and reproduces
+the established native Sketch-circle + cut-Extrude spelling for that anchored
+Hole path. Side-face and broader anchored Hole variants remain explicit
+fail-closed boundaries.
+
+The public native plastic feature family is represented as one
+`PlasticFeatureIR(target, placement, feature)` history node with typed
+`LipFeatureIR`, `SnapFitFeatureIR`, `BossFeatureIR` and
+`RestFeatureIR` feature specifications. Length values remain authored CAD
+dimensions; hook/direction/along vectors are fixed engine-neutral vectors.
+Absolute and anchored plastic placement share the exact same
+`FeaturePlacementIR` contract.
+
+For SolidCraft, the backend first lowers typed body history, then resolves the
+placement against the typed rectangular-body semantics. TOP/BOTTOM placement
+uses the body datum; INNER_BOTTOM derives the wall position from typed
+`ShellIR.thickness`. Bound offsets are resolved only here. This preserves the
+existing native `plastic.*` command contract without re-reading frontend
+`Shape.data`. Unsupported target/anchor forms fail closed. Mitcad remains
+intentionally unsupported for these new typed feature nodes and may catch up
+independently.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
