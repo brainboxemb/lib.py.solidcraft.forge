@@ -235,26 +235,29 @@ class ConfigurationTests(unittest.TestCase):
         )
 
     def test_component_parameter_reference_targets_published_definition_parameter(self):
-        @component(include=("fit_diameter",))
-        class Clamp:
-            fit_diameter = 20.0
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "model.py"
+            path.write_text(
+                "@component(include=('fit_diameter',))\n"
+                "class Clamp:\n"
+                "    fit_diameter = 20.0\n"
+                "    def build(self):\n"
+                "        return Cylinder(d=self.fit_diameter, h=10)\n"
+                "clamp = Clamp()\n"
+                "clamp.configure(\n"
+                "    active='Free',\n"
+                "    columns=(clamp.parameter('fit_diameter'),),\n"
+                "    rows={\n"
+                "        'Free': ('19.8 mm',),\n"
+                "        'Installed': ('20.0 mm',),\n"
+                "    },\n"
+                ")\n"
+                "clamp\n",
+                encoding="utf-8",
+            )
+            document = run_script(path)
 
-            def build(self):
-                from scpf import Cylinder
-                return Cylinder(d=self.fit_diameter, h=10)
-
-        clamp = Clamp()
-        reference = clamp.parameter("fit_diameter")
-        clamp.configure(
-            active="Free",
-            columns=(reference,),
-            rows={
-                "Free": ("19.8 mm",),
-                "Installed": ("20.0 mm",),
-            },
-        )
-
-        commands = compile_model(clamp, "ClampDocument")["commands"]
+        commands = document["commands"]
         configure = next(
             row for row in commands if row["command"] == "config.configure"
         )
@@ -309,15 +312,31 @@ class ConfigurationTests(unittest.TestCase):
             left.parameter("width"),
             right.parameter("width"),
         )
-        model = left + right
-        model.configure(
-            active="A",
-            columns=(right.parameter("width"),),
-            rows={"A": ("40 mm",), "B": ("50 mm",)},
-        )
-        commands = compile_model(model, "Couplers")["commands"]
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "model.py"
+            path.write_text(
+                "@component(include=('width',))\n"
+                "class Coupler:\n"
+                "    width = 40.0\n"
+                "    def build(self):\n"
+                "        return Box(self.width, 20, 10)\n"
+                "left = Coupler(name='left')\n"
+                "right = left.copy(name='right', placement=Placement(x=60))\n"
+                "model = left + right\n"
+                "model.configure(\n"
+                "    active='A',\n"
+                "    columns=(right.parameter('width'),),\n"
+                "    rows={'A': ('40 mm',), 'B': ('50 mm',)},\n"
+                ")\n"
+                "model\n",
+                encoding="utf-8",
+            )
+            document = run_script(path)
+
         configure = next(
-            row for row in commands if row["command"] == "config.configure"
+            row for row in document["commands"]
+            if row["command"] == "config.configure"
         )
         self.assertEqual(
             configure["params"],
