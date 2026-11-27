@@ -962,36 +962,81 @@ def _plastic_feature_commands(
     ]
 
 
+def _boolean_tool_commands(
+    model: ModelIR,
+    node: BodyIR,
+    name: str,
+    operation: str,
+    *,
+    prior: list[dict],
+) -> list[dict]:
+    """Apply one typed Boolean tool to an existing native body."""
+    if isinstance(node, PlacementIR):
+        return [
+            *prior,
+            _csg_primitive_command(node, name, operation),
+        ]
+    if isinstance(node, ExtrudeIR):
+        return _extrude_commands(
+            model,
+            node,
+            name,
+            operation_override=operation,
+            prior=prior,
+        )
+    if isinstance(node, RevolveIR):
+        return _revolve_commands(
+            model,
+            node,
+            name,
+            operation_override=operation,
+            prior=prior,
+        )
+    if (
+        isinstance(node, BooleanIR)
+        and node.operation == "join"
+        and operation in {"join", "cut"}
+    ):
+        commands = _boolean_tool_commands(
+            model,
+            node.target,
+            name,
+            operation,
+            prior=prior,
+        )
+        return _boolean_tool_commands(
+            model,
+            node.tool,
+            name,
+            operation,
+            prior=commands,
+        )
+    raise ModelError(
+        "portable SolidCraft BooleanIR has no qualified lowering for tool "
+        f"{type(node).__name__}"
+    )
+
+
 def _boolean_commands(model: ModelIR, node: BooleanIR, name: str) -> list[dict]:
     """Lower generic BooleanIR while keeping backend tool support explicit."""
     if not isinstance(node.target, BodyIR) or not isinstance(node.tool, BodyIR):
         raise ModelError("portable SolidCraft BooleanIR requires typed body operands")
 
-    commands = _body_commands(model, node.target, name)
-    if isinstance(node.tool, PlacementIR):
-        return [
-            *commands,
-            _csg_primitive_command(node.tool, name, node.operation),
+    if isinstance(node.target, PlacementIR):
+        commands = [
+            _csg_primitive_command(node.target, name, "new")
         ]
-    if isinstance(node.tool, ExtrudeIR):
-        return _extrude_commands(
-            model,
-            node.tool,
-            name,
-            operation_override=node.operation,
-            prior=commands,
-        )
-    if isinstance(node.tool, RevolveIR):
-        return _revolve_commands(
-            model,
-            node.tool,
-            name,
-            operation_override=node.operation,
-            prior=commands,
-        )
-    raise ModelError(
-        "portable SolidCraft BooleanIR has no qualified lowering for tool "
-        f"{type(node.tool).__name__}"
+    elif isinstance(node.target, BooleanIR):
+        commands = _boolean_commands(model, node.target, name)
+    else:
+        commands = _body_commands(model, node.target, name)
+
+    return _boolean_tool_commands(
+        model,
+        node.tool,
+        name,
+        node.operation,
+        prior=commands,
     )
 
 
@@ -1626,7 +1671,8 @@ def _extrude_commands(
     else:
         params["operation"] = effective_operation
         params["targets"] = [name]
-        params["name"] = sketch.name
+        if operation_override is None:
+            params["name"] = sketch.name
 
     if node.through_all:
         params["through_all"] = True
