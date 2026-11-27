@@ -18,20 +18,6 @@
       }
     },
     {
-      "command": "solid.move",
-      "params": {
-        "bodies": [
-          "LeftCoupler"
-        ],
-        "translate": [
-          4,
-          0,
-          0
-        ],
-        "name": "LeftInstalled"
-      }
-    },
-    {
       "command": "solid.box",
       "params": {
         "center": [
@@ -44,6 +30,20 @@
         "height": 12,
         "operation": "new",
         "body_name": "RightCoupler"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "LeftCoupler"
+        ],
+        "translate": [
+          4,
+          0,
+          0
+        ],
+        "name": "LeftInstalled"
       }
     },
     {
