@@ -1756,27 +1756,24 @@ def _revolve_commands(
     operation_override: str | None = None,
     prior: list[dict] | None = None,
 ) -> list[dict]:
-    """Lower semantic RevolveIR, optionally as one typed CSG tool."""
+    """Lower semantic RevolveIR from the completed typed Sketch graph."""
     sketch = node.sketch
     _principal_plane_offset(
         sketch.plane,
         label="portable SolidCraft RevolveIR",
     )
     if (
-        len(sketch.profiles) != 1
-        or not isinstance(sketch.profiles[0], PolygonProfileIR)
-        or node.region != RegionIR(outer=0)
+        sketch.support is not None
+        or sketch.rotation is not None
+        or sketch.graph is None
+        or len(sketch.graph.entities) != 1
     ):
-        raise ModelError("portable SolidCraft RevolveIR requires one polygon region")
-    if not isinstance(node.axis, AxisLineIR) or node.direction is not None:
         raise ModelError(
-            "portable SolidCraft RevolveIR requires one non-symmetric AxisLineIR"
+            "portable SolidCraft RevolveIR requires one standalone "
+            "unrotated authored Sketch profile"
         )
-
-    try:
-        _region_interior_point(sketch, node.region)
-    except ValueError as exc:
-        raise ModelError(str(exc)) from exc
+    if not isinstance(node.axis, AxisLineIR):
+        raise ModelError("portable SolidCraft RevolveIR requires AxisLineIR")
 
     sweep = pv(node.angle)
     if not isfinite(sweep) or sweep <= 0 or sweep > 360:
@@ -1784,23 +1781,10 @@ def _revolve_commands(
             "sketch revolve angle must be above 0 and at most 360 degrees"
         )
 
-    profile = sketch.profiles[0]
-    relation_points = _solidcraft_relation_polygon_points(sketch)
-    authored_points = (
-        relation_points
-        if relation_points is not None
-        else profile.points
-    )
-    ids = (
-        list(profile.segment_ids)
-        if profile.segment_ids is not None
-        else [chr(ord("a") + index) for index in range(len(authored_points))]
-    )
     if operation_override is not None and (
         operation_override not in {"join", "cut", "intersect"}
         or node.operation != "new_body"
         or node.target is not None
-        or sketch.support is not None
     ):
         raise ModelError(
             "Boolean RevolveIR tool requires one standalone new-body RevolveIR"
@@ -1811,6 +1795,9 @@ def _revolve_commands(
         "axis": _solidcraft_axis(node.axis),
         "angle": _role_command_value(model, node.angle, "angle"),
     }
+    if node.direction is not None:
+        revolve["direction"] = node.direction
+
     effective_operation = operation_override or node.operation
     base_commands = list(prior or [])
     if effective_operation == "new_body":
@@ -1836,22 +1823,51 @@ def _revolve_commands(
             f"unsupported portable SolidCraft Revolve operation {effective_operation!r}"
         )
 
+    sketch_index = _next_sketch_index(base_commands)
+    sketch_commands = [_solidcraft_sketch_create(sketch)]
+    entity = sketch.graph.entities[0]
+    if isinstance(entity, PolygonProfileIR):
+        relation_points = _solidcraft_relation_polygon_points(sketch)
+        authored_points = (
+            relation_points
+            if relation_points is not None
+            else entity.points
+        )
+        ids = (
+            list(entity.segment_ids)
+            if entity.segment_ids is not None
+            else [
+                chr(ord("a") + index)
+                for index in range(len(authored_points))
+            ]
+        )
+        sketch_commands.append(
+            _command(
+                "sketch.line",
+                points=[
+                    [
+                        _role_command_value(model, value, "length")
+                        for value in point
+                    ]
+                    for point in authored_points
+                ],
+                closed=True,
+                ids=ids,
+            )
+        )
+    else:
+        sketch_commands.extend(
+            _solidcraft_sketch_graph_commands(
+                sketch.graph,
+                sketch_index=sketch_index,
+                model=model,
+            )
+        )
+    sketch_commands.append(_command("sketch.finish"))
+
     return [
         *base_commands,
-        _solidcraft_sketch_create(sketch),
-        _command(
-            "sketch.line",
-            points=[
-                [
-                    _role_command_value(model, value, "length")
-                    for value in point
-                ]
-                for point in authored_points
-            ],
-            closed=True,
-            ids=ids,
-        ),
-        _command("sketch.finish"),
+        *sketch_commands,
         _command("solid.revolve", **revolve),
     ]
 

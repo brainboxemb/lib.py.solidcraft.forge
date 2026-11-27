@@ -1400,6 +1400,37 @@ Boolean histories may therefore be traversed on either side without encoding
 backend command order; configuration/pattern consumers resolve those paths
 before backend-local history identity is chosen.
 
+#586 completes the current working Sketch Revolve semantic family by making
+`RevolveIR` consume the already-completed semantic Sketch graph rather than a
+Polygon-only reconstruction. The feature owns one completed standalone Sketch
+result, one coplanar `AxisLineIR`, one symbolic sweep angle and optional
+symmetric direction. The existing standalone Revolve compiler contract accepts
+one Circle, Rectangle, RoundedRectangle, Polygon or closed connected profile;
+Slot, Text and Sketch-local pattern/mirror remain outside that current Revolve
+compiler contract and therefore remain visible legacy/error boundaries rather
+than being silently reclassified as supported Revolve semantics.
+
+`RevolveIR.region` is retained when one direct supported semantic profile has
+an unambiguous `RegionIR(outer=0)`. It is `None` for a closed connected
+profile because public Revolve consumes that completed Sketch chain as a whole
+and has no profile-selector argument. This avoids inventing fake region ids or
+baking backend picks into IR.
+
+The completed scalar-expression tree owns symbolic sweep meaning, so Revolve
+normalization no longer applies the historical affine mixed-role restriction.
+Principal and shifted public axes still normalize through `AxisLineIR` and
+must remain coplanar with `PlaneIR`. The current frontend limits remain
+unchanged: standalone, unrotated Sketch, one authored source profile and no
+topology-selected axis.
+
+SolidCraft lowers the semantic Sketch graph with the shared profile/chain
+lowering while preserving the existing role-aware Polygon expression spelling,
+then emits the existing native `solid.revolve` command including
+`direction="symmetric"` when authored. Mitcad intentionally retains its
+qualified non-symmetric Polygon slice and fails closed for newly typed forms. CSG is not encoded into Revolve semantics:
+#581 `BooleanIR` composes standalone Revolve bodies; the historical typed cut
+path remains only where existing suppression/history qualification requires it.
+
 #485 widens the existing `ChamferIR` rather than adding a second feature
 kind. `distance` remains the primary chamfer distance; optional `distance2`
 and `flip` carry the already-public two-distance semantics. Equal-distance

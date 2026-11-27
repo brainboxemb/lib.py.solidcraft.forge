@@ -634,6 +634,132 @@ class SemanticIRTests(unittest.TestCase):
         )
         self.assertEqual(cone_feature["def"]["operation"], "join")
 
+    def test_revolve_complete_direct_profile_grammar_is_typed(self):
+        cases = (
+            ("circle", lambda: Circle2D(d=8), CircleProfileIR),
+            ("rectangle", lambda: Rectangle2D(8, 4), RectangleProfileIR),
+            (
+                "rounded_rectangle",
+                lambda: RoundedRectangle2D(10, 6, 1),
+                RoundedRectangleProfileIR,
+            ),
+            (
+                "polygon",
+                lambda: Polygon2D(
+                    [(0, 0), (0, 4), (8, 4), (8, 0)],
+                    plane="XZ",
+                ),
+                PolygonProfileIR,
+            ),
+        )
+
+        for label, factory, profile_type in cases:
+            with self.subTest(label=label):
+                with Sketch(name=f"{label}Profile", plane="XZ") as sketch:
+                    factory()
+                shape = sketch.revolve(axis=Axis.X, angle=180)
+                model = self.assert_solidcraft_compatibility(
+                    shape,
+                    f"{label.title().replace('_', '')}Revolve",
+                )
+                self.assertIsInstance(model.root, RevolveIR)
+                self.assertIsInstance(
+                    model.root.sketch.profiles[0],
+                    profile_type,
+                )
+                self.assertEqual(model.root.region, RegionIR(outer=0))
+
+    def test_revolve_connected_profile_uses_completed_sketch_graph(self):
+        with Sketch(name="ConnectedRevolve", plane="XZ") as sketch:
+            profile = sketch.profile(start=(2, 0))
+            profile.line_to((2, 6))
+            profile.arc_through_to((8, 0), through=(8, 6))
+            profile.line_to((2, 0))
+            profile.close()
+
+        shape = sketch.revolve(axis=Axis.X, angle=120)
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ConnectedProfileRevolve",
+        )
+
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertIsNone(model.root.region)
+        self.assertIsInstance(
+            model.root.sketch.graph.entities[0],
+            SketchChainIR,
+        )
+
+    def test_revolve_symmetric_sweep_is_typed(self):
+        with Sketch(name="SymmetricRevolve", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 4), (8, 4), (8, 0)],
+                plane="XZ",
+            )
+
+        shape = sketch.revolve(axis=Axis.X, angle=140, sym=True)
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "SymmetricRevolve",
+        )
+
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(model.root.direction, "symmetric")
+        solidcraft = compile_solidcraft_ir(model, "SymmetricRevolve")
+        revolve = solidcraft["commands"][-1]
+        self.assertEqual(revolve["command"], "solid.revolve")
+        self.assertEqual(revolve["params"]["direction"], "symmetric")
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "SymmetricRevolve")
+
+    def test_revolve_does_not_type_unsupported_standalone_sketch_forms(self):
+        unsupported = []
+
+        with Sketch(name="SlotRevolve", plane="XZ") as sketch:
+            SlotCenterToCenter2D((2, 0), (10, 0), 4)
+        unsupported.append(sketch.revolve(axis=Axis.X, angle=90))
+
+        with Sketch(name="TextRevolve", plane="XZ") as sketch:
+            from scpf.core import Text2D
+            Text2D("A", height=5)
+        unsupported.append(sketch.revolve(axis=Axis.X, angle=90))
+
+        with Sketch(name="PatternRevolve", plane="XZ") as sketch:
+            source = Circle2D(d=4)
+            sketch.rectangular_pattern(
+                source,
+                count=2,
+                spacing=8,
+                direction=Axis.X,
+            )
+        unsupported.append(sketch.revolve(axis=Axis.X, angle=90))
+
+        for shape in unsupported:
+            with self.subTest(kind=shape.kind):
+                self.assertIsInstance(normalize_shape(shape).root, LegacyShapeIR)
+
+    def test_revolve_symbolic_non_affine_angle_keeps_typed_scalar_semantics(self):
+        sweep = Parameter("sweep", 30)
+        radius = Parameter("radius", 4)
+        with Sketch(name="SymbolicRevolve", plane="XZ") as sketch:
+            Rectangle2D(radius * 2, 5)
+
+        shape = sketch.revolve(
+            axis=Axis.X,
+            angle=(sweep ** 2) / 30,
+        )
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "SymbolicRevolve",
+        )
+
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertIsNotNone(model.root.angle.scalar_ir)
+        self.assertEqual(
+            {parameter.name for parameter in model.parameters},
+            {"sweep", "radius"},
+        )
+
     def test_boolean_ir_composes_typed_extrude_target_with_primitive_tool(self):
         with Sketch(name="BooleanBase", plane="XY") as base_profile:
             Rectangle2D(30, 20)
@@ -3924,7 +4050,7 @@ class SemanticIRTests(unittest.TestCase):
         with self.assertRaises(ModelError):
             compile_mitcad_ir(model, "TextOnlyMixedRole")
 
-    def test_derived_unit_mixed_role_expression_remains_legacy(self):
+    def test_derived_unit_mixed_role_expression_is_typed_but_backends_fail_closed(self):
         shared = Parameter("derived_shared", 4)
         factor = Parameter("derived_factor", 2)
         height = shared * factor
@@ -3934,7 +4060,10 @@ class SemanticIRTests(unittest.TestCase):
                 plane="XZ",
             )
         model = normalize_shape(sketch.revolve(axis=Axis.X, angle=shared))
-        self.assertIsInstance(model.root, LegacyShapeIR)
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertIsNotNone(height.scalar_ir)
+        with self.assertRaises(ModelError):
+            compile_solidcraft_ir(model, "DerivedMixedRole")
         with self.assertRaises(ModelError):
             compile_mitcad_ir(model, "DerivedMixedRole")
 
