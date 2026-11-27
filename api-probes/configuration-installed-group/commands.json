@@ -1,0 +1,92 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          -30,
+          0,
+          10
+        ],
+        "length": 24,
+        "width": 16,
+        "height": 12,
+        "operation": "new",
+        "body_name": "LeftCoupler"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "LeftCoupler"
+        ],
+        "translate": [
+          4,
+          0,
+          0
+        ],
+        "name": "LeftInstalled"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          30,
+          0,
+          10
+        ],
+        "length": 24,
+        "width": 16,
+        "height": 12,
+        "operation": "new",
+        "body_name": "RightCoupler"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "RightCoupler"
+        ],
+        "translate": [
+          -4,
+          0,
+          0
+        ],
+        "name": "RightInstalled"
+      }
+    },
+    {
+      "command": "timeline.group",
+      "params": {
+        "name": "Installed",
+        "features": [
+          "LeftInstalled",
+          "RightInstalled"
+        ]
+      },
+      "bind": {
+        "$installed_group": "group"
+      }
+    },
+    {
+      "command": "timeline.suppress",
+      "params": {
+        "groups": [
+          "$installed_group"
+        ],
+        "suppressed": true
+      }
+    },
+    {
+      "command": "timeline.inspect",
+      "params": {
+        "group": "$installed_group"
+      }
+    }
+  ]
+}
