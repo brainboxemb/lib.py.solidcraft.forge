@@ -59,7 +59,7 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
         if warning_marker not in html:
             raise RuntimeError(f"missing Forge development warning for {route or '/'}")
 
-    sections_path = source_root / "docs/verification/sections.yml"
+    sections_path = source_root / "site/source/verification/sections.yml"
     sections_data = yaml.safe_load(sections_path.read_text(encoding="utf-8")) or {}
     section_defs = sections_data.get("sections", {})
     verification_models = {}
@@ -301,7 +301,7 @@ def verify(source_root: Path, site: Path, build_scope: Path | None):
                         f"generated drawing/model PNG copied into Pages: {route}"
                     )
 
-    parity_path = source_root / "docs" / "pages-parity.json"
+    parity_path = source_root / "modules" / "pages" / "contracts" / "pages-parity.json"
     if parity_path.is_file():
         parity = json.loads(parity_path.read_text(encoding="utf-8"))
         if parity.get("schema") != 1 or not isinstance(parity.get("routes"), list):
