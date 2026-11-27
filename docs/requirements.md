@@ -149,6 +149,14 @@
 124. Mitcad v0.70.0 Cone Boolean lowering must reuse the existing principal/offset support-plane transport. A private construction plane may precede the native Cone command, but semantic feature/history references must bind the Cone command rather than the helper.
 125. Backend contract qualification must prove both an offset Cone cut and Cone join through the same `BooleanIR`; suppression/configuration lookup of `FeatureRefIR(("root", "tool"))` must resolve to the Cone feature when a helper plane precedes it.
 126. Exact pinned Mitcad v0.70.0 runtime qualification must cut a d10→0 × 20 Cone whose BOTTOM is at world Z=5 from a 30×30×30 BOTTOM Box, retaining bounds [-15,-15,0]..[15,15,30], remaining volume `27000 - 500π/3`, and saved native design/STL evidence.
+127. Public `Edges.VERTICAL` intent must normalize to an inspectable engine-neutral principal-edge selector; the first qualified form is `ParallelEdgeSetIR("Z")` and contains no SolidCraft XYZ picks or Mitcad topology names.
+128. The first `FilletIR` contract is one positive constant radius over `PlacementIR(BoxIR)` plus `ParallelEdgeSetIR("Z")`. Other Fillet base/selector/radius modes remain fail-closed.
+129. SolidCraft FilletIR lowering must derive the same four stable Box edge pick points from typed Box placement/dimensions and reproduce the accepted `solid.fillet` command spelling.
+130. Mitcad FilletIR lowering must keep semantic edge intent out of native ids. Replay must query native edges with `geometry=true`, retain only straight line edges parallel to the selected principal axis, require exactly the expected set and bind their names privately before the native Fillet command executes.
+131. Missing, malformed, duplicate-name or incomplete principal-edge topology must fail closed rather than selecting an arbitrary native edge subset.
+132. A qualified `FilletIR` body result may feed the existing `BooleanIR` as target for the bounded Cone join proof; Forge must not introduce a Fillet-specific Boolean operation or history vocabulary.
+133. The Fillet→Cone composition must preserve semantic source order `Box -> Fillet -> Cone`. Any Cone support construction plane and Mitcad edge-query/bindings remain backend transport and must not enter semantic history.
+134. Exact pinned Mitcad v0.70.0 runtime qualification must execute a 50×40×20 BOTTOM Box with R2 Fillet over all four Z-parallel edges joined to an Ø18→Ø10 × 8 Cone whose BOTTOM is at world Z=18, proving bounds [-25,-20,0]..[25,20,26], volume `39680 + 338π`, exactly four bound parallel edges and retained saved native design/STL evidence.
 
 ## SCPF native associativity
 
