@@ -1601,6 +1601,7 @@ def _extrude_commands(
     else:
         params["operation"] = node.operation
         params["targets"] = [name]
+        params["name"] = sketch.name
 
     if node.through_all:
         params["through_all"] = True
