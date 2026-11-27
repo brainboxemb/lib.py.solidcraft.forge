@@ -127,6 +127,14 @@
 102. Mitcad Cone lowering must use its native principal support plane, plane-local centre, radius, top_radius and height. When the semantic Cone base is off the origin plane, a private offset construction plane may be emitted; that helper remains backend transport only.
 103. The #477 bounded slice covers standalone/placed/translated Cone on principal X/Y/Z axes. Cone inside `BooleanIR`, Fillet composition and rotated primitive frames remain outside the qualified slice.
 104. Exact pinned Mitcad runtime qualification must execute a placed Ø18→Ø10 × 8 frustum with BOTTOM at world Z=18 and prove volume `1208π/3` plus Z bounds [18, 26].
+105. Authored scalar arithmetic needed for mixed-role dimensional lowering must retain an engine-neutral semantic tree captured when Forge operators execute; backends must not parse `Expression.expression` text to recover meaning.
+106. The first typed scalar-expression tree supports numeric literals, semantic parameter references, unary negation, addition/subtraction, multiplication by exactly one numeric literal and division by a non-zero numeric literal.
+107. Physical unit remains a property of the typed use site, not the scalar-expression node. A mixed-role parameter leaf in a length use lowers with explicit millimetre context; the same leaf in an angle use lowers with explicit degree context.
+108. Numeric literals participating in addition/subtraction inherit the typed use-site unit, while numeric multiplication/division factors remain unitless scalars.
+109. Existing three-argument `Expression(value, expression, parameters)` construction remains compatible. Expressions without semantic-tree metadata remain valid for already-qualified single-role lowering but are not newly portable for mixed-role dimensional rendering.
+110. Parameter×parameter, parameter÷parameter, numeric÷parameter, powers and general derived-unit algebra remain outside the #481 portable mixed-role slice.
+111. SolidCraft and Mitcad must lower the same semantic scalar tree independently through their central role-aware value boundary. One mixed-role source remains one unitless editable native parameter.
+112. Exact pinned Mitcad runtime qualification must execute `shared + 1` as a Sketch length while direct `shared` drives a 4-degree Revolve, producing volume `25π/9` and X bounds [0, 10].
 
 ## SCPF native associativity
 
