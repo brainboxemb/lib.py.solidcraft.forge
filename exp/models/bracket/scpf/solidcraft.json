@@ -3,14 +3,6 @@
     {
       "command": "parameters.add",
       "params": {
-        "expression": "24",
-        "name": "width",
-        "unit": "mm"
-      }
-    },
-    {
-      "command": "parameters.add",
-      "params": {
         "expression": "40",
         "name": "arm_length",
         "unit": "mm"
@@ -21,6 +13,14 @@
       "params": {
         "expression": "12",
         "name": "arm_height",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "24",
+        "name": "width",
         "unit": "mm"
       }
     },
