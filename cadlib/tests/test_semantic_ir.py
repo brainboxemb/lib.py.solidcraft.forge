@@ -15,6 +15,7 @@ from scpf import (
     Depth,
     Edges,
     Faces,
+    feature,
     FRONT,
     Hole,
     LEFT,
@@ -74,6 +75,7 @@ from scpf.ir import (
     SuppressionColumnIR,
     LegacyShapeIR,
     ModelIR,
+    NamedFeatureIR,
     ParameterIR,
     ParallelEdgeSetIR,
     PlacementIR,
@@ -123,6 +125,49 @@ class SemanticIRTests(unittest.TestCase):
         legacy = _compile_shape_legacy_with_dependencies(shape, name)[0]
         self.assertEqual(current, legacy)
         return model
+
+    def test_named_feature_identity_and_initial_state_are_semantic(self):
+        body = Box(30, 30, 10, anchor=Anchor.BOTTOM)
+        cutter = Cylinder(d=6, h=12)
+        with feature("service_bore", suppressed=True) as service_bore:
+            body = body - cutter
+
+        model = normalize_model(body)
+
+        self.assertEqual(len(model.named_features), 1)
+        named = model.named_features[0]
+        self.assertIsInstance(named, NamedFeatureIR)
+        self.assertEqual(named.name, "service_bore")
+        self.assertTrue(named.suppressed)
+        self.assertEqual(named.feature, FeatureRefIR(path=("root",)))
+
+        solidcraft = compile_solidcraft_ir(model, "NamedFeature")
+        suppress = [
+            command
+            for command in solidcraft["commands"]
+            if command["command"] == "timeline.suppress"
+        ]
+        self.assertEqual(len(suppress), 1)
+
+        configured = body.configure(
+            active="Installed",
+            columns=(service_bore,),
+            rows={
+                "Installed": (False,),
+                "Removed": (True,),
+            },
+        )
+        configured_model = normalize_model(configured)
+        self.assertEqual(
+            configured_model.configuration.columns[0].feature,
+            FeatureRefIR(path=("root",)),
+        )
+
+        with self.assertRaisesRegex(
+            ModelError,
+            "initially suppressed named features",
+        ):
+            compile_mitcad_ir(model, "NamedFeature")
 
     def test_parameterized_box_is_geometry_plus_placement_ir(self):
         length = Parameter("length", 40)
