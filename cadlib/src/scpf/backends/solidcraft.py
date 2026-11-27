@@ -39,6 +39,7 @@ from ..ir import (
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
+    PlaneIR,
     PolygonProfileIR,
     RegionIR,
     RevolveIR,
@@ -282,11 +283,45 @@ def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
     return commands
 
 
+_PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
+
+
+def _principal_plane_offset(plane: PlaneIR, *, label: str):
+    """Return one bounded principal-plane offset without baking symbols."""
+    if not isinstance(plane, PlaneIR):
+        raise ModelError(f"{label} requires PlaneIR")
+    normal = _PLANE_NORMAL_INDEX[plane.orientation]
+    for index, value in enumerate(plane.origin):
+        if index == normal:
+            continue
+        if parameters_in(value) or abs(pv(value)) > 1e-12:
+            raise ModelError(
+                f"{label} currently requires zero in-plane PlaneIR origin"
+            )
+    return plane.origin[normal]
+
+
+def _solidcraft_sketch_create(sketch) -> dict:
+    offset = _principal_plane_offset(
+        sketch.plane,
+        label="portable SolidCraft Sketch IR",
+    )
+    params = {
+        "name": sketch.name,
+        "plane": sketch.plane.orientation,
+    }
+    if parameters_in(offset) or abs(pv(offset)) > 1e-12:
+        params["offset"] = command_value(offset)
+    return _command("sketch.create", **params)
+
+
 def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
     """Lower qualified Sketch/Profile + Extrude IR without backend parsing."""
     sketch = node.sketch
-    if sketch.plane not in ("XY", "XZ", "YZ"):
-        raise ModelError("portable SolidCraft Sketch IR requires XY, XZ or YZ")
+    _principal_plane_offset(
+        sketch.plane,
+        label="portable SolidCraft Sketch IR",
+    )
     if len(node.regions) != 1:
         raise ModelError("portable SolidCraft Extrude IR requires one region")
 
@@ -299,13 +334,7 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
     except ValueError as exc:
         raise ModelError(str(exc)) from exc
 
-    commands = [
-        _command(
-            "sketch.create",
-            name=sketch.name,
-            plane=sketch.plane,
-        )
-    ]
+    commands = [_solidcraft_sketch_create(sketch)]
 
     polygon = (
         len(sketch.profiles) == 1
@@ -403,10 +432,10 @@ def _solidcraft_axis(axis: AxisLineIR):
 def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
     """Lower semantic Sketch/Profile + Revolve IR without raw Shape parsing."""
     sketch = node.sketch
-    if sketch.plane not in ("XY", "XZ", "YZ"):
-        raise ModelError(
-            "portable SolidCraft RevolveIR requires XY, XZ or YZ"
-        )
+    _principal_plane_offset(
+        sketch.plane,
+        label="portable SolidCraft RevolveIR",
+    )
     if (
         len(sketch.profiles) != 1
         or not isinstance(sketch.profiles[0], PolygonProfileIR)
@@ -460,7 +489,7 @@ def _revolve_commands(node: RevolveIR, name: str) -> list[dict]:
         )
 
     return [
-        _command("sketch.create", name=sketch.name, plane=sketch.plane),
+        _solidcraft_sketch_create(sketch),
         _command(
             "sketch.line",
             points=[
