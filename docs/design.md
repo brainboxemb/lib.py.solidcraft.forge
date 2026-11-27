@@ -924,6 +924,27 @@ transport before creating the native Extrude. Fixed-coordinate Polygon Extrude
 continues to use fixed native Sketch points without inventing redundant relation
 IR.
 
+#456 separates selected-region semantics from total Sketch profile count. A
+multi-profile concentric Circle Sketch retains every authored
+`CircleProfileIR` in `SketchIR.profiles`, while one exact-region pick resolves
+only the adjacent profile boundaries of the selected connected face. For the
+three-circle 10/8/6 example and pick radius 4.5, the semantic result is
+`RegionIR(outer=0, holes=(1,))`; profile 2 remains in the Sketch but is not a
+boundary of that annulus.
+
+Current radii are evaluated only to resolve which concentric interval contains
+the authored pick. The typed result retains profile indexes, not the pick point
+or any engine region identity. Region validation likewise checks adjacency of
+the referenced boundaries rather than requiring the Sketch to contain exactly
+two profiles. This permits unrelated circles strictly inside the selected hole
+or outside the selected outer boundary without changing region membership.
+
+Both backends draw all typed Circle profiles. SolidCraft emits an exact-region
+selector whenever a Circle Sketch has multiple profiles, including a no-hole
+innermost disk. Mitcad uses the deterministic selector derived from the same
+`RegionIR`. Neither backend re-sorts diameters or re-decides outer/hole
+membership.
+
 #389 extends that compiler boundary rather than adding a Mitcad-specific model
 path. `AxisLineIR` records only a principal semantic direction and symbolic
 XYZ origin. A subtractive public composition such as `body - profile.revolve(...)`
