@@ -8,6 +8,8 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-11-27
+
 ### Added
 
 - Add scoped `feature(name, suppressed=False)` authoring for exactly one CAD
