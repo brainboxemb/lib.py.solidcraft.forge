@@ -325,39 +325,54 @@ appear in engine-neutral configuration IR.
 ## 9. Single-feature multi-object result
 
 The `configuration-installed-single-feature` probe tests the simplest native
-representation of a global Installed transition: one real history feature acts
-on several bodies.
+history representation of Installed: one real feature acts on several bodies.
 
 The probe creates two separate coupler bodies and one `solid.move` feature
 named `Installed` whose `bodies` input contains both couplers.
 
-SolidCraft 0.49 accepts that one feature as:
+SolidCraft 0.49 accepts that one feature as one configuration suppression
+target. Two configuration semantics were tested separately.
 
-- one configuration suppression target;
-- suppressed in the Small/Large rows;
-- the target of one independently enabled Configuration Rule that drives the
-  feature unsuppressed.
+### Row-owned suppression
 
-The corrected runtime probe passed on CI run **46017873210** (run 959).
+The current direct probe stores `suppress:Installed` in the Small/Large rows
+with no Configuration Rule. That probe passed on CI run
+**46018699506** (run 971).
 
-Therefore SolidCraft can represent:
+This proves a normal configured feature column is enough when Installed is
+genuinely a value of each named row.
+
+### Independent Installed control
+
+An earlier variant kept the same single `Installed` feature suppressed in the
+rows and used one independently enabled native Configuration Rule whose
+`drive_suppression` effect targets that feature.
+
+That variant passed on runs **959** and **966**.
+
+This proves SolidCraft can also preserve:
 
 ~~~text
-one Installed control
-        |
-        v
+active row: Small | Large
+
+Installed: off | on
+    |
+    v
 one real Installed history feature
-        |
-        +--> body A
-        +--> body B
+    |
+    +--> body A
+    +--> body B
 ~~~
 
-This is the preferred direct lowering when the authored Installed transition is
-truthfully one native multi-object CAD operation.
+without changing the active row.
 
-It does not solve cases where Installed genuinely requires several different
-native history features. The timeline-folder experiment below defines that
-remaining boundary.
+The rule is a SolidCraft lowering mechanism. It does not justify public
+`ConfigRule`, `Always` or `DriveParameter` objects in Forge.
+
+The important stable conclusion is the **history** model: when the Installed
+transition is truthfully one native multi-object CAD operation, one real
+Installed feature is sufficient. The configuration lowering depends on whether
+Installed is row-owned or independently switchable.
 
 ## 10. Timeline-folder suppression result
 
