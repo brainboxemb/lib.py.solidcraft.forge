@@ -47,8 +47,11 @@ Publication is explicit from a normal release-tracking issue:
 /release vX.Y.Z <exact-40-character-main-sha>
 ```
 
-The released shared Python-library CI owns tag/release creation, idempotency and
-issue reporting. Forge does not duplicate that machinery.
+`modules/release` owns strict request parsing, stable-main validation, annotated
+tag creation, GitHub Release creation/verification, idempotency and issue
+reporting. `.github/workflows/release.yml` uses only this repository-local
+implementation; it does not checkout another Brainbox repository and does not
+call an external reusable release workflow.
 
 After publication, synchronize `main -> dev` through the merge policy. Never
 rebase the shared permanent development branch.
