@@ -93,12 +93,12 @@
         "length": 20.0,
         "width": 20.0,
         "height": 4.0,
-        "operation": "new",
         "center": [
           10.0,
           10.0,
           -2.0
         ],
+        "operation": "new",
         "body_name": "FlightcaseCorner"
       }
     },
@@ -108,12 +108,12 @@
         "length": 20.0,
         "width": 4.5,
         "height": 20.5,
-        "operation": "join",
         "center": [
           10.0,
           -1.75,
           9.75
         ],
+        "operation": "join",
         "targets": [
           "FlightcaseCorner"
         ]
@@ -125,12 +125,12 @@
         "length": 4.5,
         "width": 20.0,
         "height": 20.5,
-        "operation": "join",
         "center": [
           -1.75,
           10.0,
           9.75
         ],
+        "operation": "join",
         "targets": [
           "FlightcaseCorner"
         ]

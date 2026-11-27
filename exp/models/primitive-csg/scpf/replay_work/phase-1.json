@@ -19,12 +19,12 @@
         "length": 30,
         "width": 30,
         "height": 20,
+        "operation": "join",
         "center": [
           18.0,
           0.0,
           10.0
         ],
-        "operation": "join",
         "targets": [
           "PrimitiveCsg"
         ]
@@ -53,12 +53,12 @@
         "length": 50,
         "width": 50,
         "height": 30,
+        "operation": "intersect",
         "center": [
           0.0,
           0.0,
           15.0
         ],
-        "operation": "intersect",
         "targets": [
           "PrimitiveCsg"
         ]

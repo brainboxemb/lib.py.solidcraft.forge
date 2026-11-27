@@ -9,7 +9,7 @@
       "verification_stages": {
         "geometry": {
           "adapter": "mesh-geometry",
-          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         }
       },
@@ -23,7 +23,7 @@
       "verification_stages": {
         "geometry": {
           "adapter": "mesh-geometry",
-          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         }
       },
@@ -37,7 +37,7 @@
       "verification_stages": {
         "geometry": {
           "adapter": "mesh-geometry",
-          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         }
       },
@@ -51,7 +51,7 @@
       "verification_stages": {
         "geometry": {
           "adapter": "mesh-geometry",
-          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         }
       },
@@ -65,17 +65,17 @@
       "verification_stages": {
         "geometry": {
           "adapter": "mesh-geometry",
-          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         },
         "native": {
           "adapter": "solidcraft-model",
-          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
           "status": "pass"
         },
         "visual": {
           "adapter": "solidcraft-visual",
-          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
           "status": "pass"
         }
       },
@@ -89,7 +89,7 @@
       "verification_stages": {
         "geometry": {
           "adapter": "mesh-geometry",
-          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         }
       },

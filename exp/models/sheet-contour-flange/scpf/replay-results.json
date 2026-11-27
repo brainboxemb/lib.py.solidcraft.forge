@@ -34,6 +34,7 @@
     "rule": {
       "angle_display": "bend",
       "bend_radius": "bend_radius",
+      "bend_relief_shape": "rectangular",
       "corner_relief": "Thickness * 4.0",
       "corner_relief_shape": "notch",
       "gap": "Thickness",
@@ -47,6 +48,7 @@
     "values": {
       "angle_display": "bend",
       "bend_radius": 2.5,
+      "bend_relief_shape": "rectangular",
       "corner_relief": 10.0,
       "corner_relief_shape": "notch",
       "gap": 2.5,
@@ -158,7 +160,7 @@
       "SheetContourFlange"
     ],
     "feature": 2,
-    "ms": 4.7414629999999995,
+    "ms": 5.268326,
     "name": "ContourFlange1",
     "removed_bodies": [],
     "warning": null

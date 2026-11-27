@@ -15,7 +15,6 @@
     "components",
     "cone-boolean",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -62,7 +61,20 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "full": false,
+  "api_probes": {
+    "available": [
+      "configuration-installed-clamp",
+      "configuration-installed-current",
+      "configuration-installed-fanout",
+      "configuration-installed-feature",
+      "configuration-installed-feature-native-name",
+      "configuration-installed-group",
+      "configuration-installed-single-feature",
+      "configuration-position-suppression"
+    ],
+    "selected": []
+  },
+  "full": true,
   "library": true,
   "models": [
     {
@@ -251,17 +263,6 @@
     },
     {
       "id": "configuration-child-feature",
-      "implementations": [
-        "scpf"
-      ],
-      "primary": "scpf",
-      "purpose": [
-        "example",
-        "verification"
-      ]
-    },
-    {
-      "id": "configuration-installed-state",
       "implementations": [
         "scpf"
       ],
@@ -841,13 +842,69 @@
       ]
     }
   ],
-  "qualification_pr": 608,
-  "qualification_reused": true,
-  "qualification_run_id": 46064400747,
-  "qualified_head_sha": "33d175f5e8254cdf92636a87839427037dc46c34",
-  "qualified_source_sha": "e89c9c316b97c79587f748f55056c01e4893b36c",
   "release_only": false,
   "schema": 2,
-  "selected": [],
-  "source_sha": "2306e53764575d92e23f3e92efb34e7835ade26e"
+  "selected": [
+    "anchor-topology-mutation",
+    "anchored-holes",
+    "appearance-color",
+    "as-built-attach",
+    "assembly-decorator",
+    "assembly-owned-anchor",
+    "asymmetric-chamfer",
+    "attach-angle",
+    "attached-through-all",
+    "bracket",
+    "circle-negative-extrude",
+    "circular-feature-pattern",
+    "components",
+    "cone-boolean",
+    "configuration-child-feature",
+    "configuration-position",
+    "configuration-symbolic-math",
+    "configuration-table",
+    "corner-anchor",
+    "cylinder-subtract",
+    "eight-corner-brackets",
+    "eight-flightcase-corners",
+    "exploded-views",
+    "four-corner-l",
+    "group-hierarchy",
+    "hole-family",
+    "multi-profile-extrude",
+    "native-revolve",
+    "parameter-scope",
+    "parametric-anchor",
+    "parametric-attach",
+    "parametric-move",
+    "parametric-offset",
+    "parametric-placement-pair",
+    "parent-derived-child-size",
+    "primitive-csg",
+    "rectangular-pattern",
+    "repeated-parent-attachments",
+    "revolute-joint",
+    "rotated-copy-placement",
+    "rotated-sketch-cutter",
+    "round-top-sketch",
+    "rounded-rectangle-sketch",
+    "sample-plate-drawing",
+    "selective-profile-extrude",
+    "sheet-contour-flange",
+    "sheet-contour-flange-recess",
+    "sheet-edge-flange",
+    "sheet-fold",
+    "sheet-hem",
+    "sheet-path-flange",
+    "sheet-perforate",
+    "shifted-axis-revolve",
+    "simple-box",
+    "sketch-pattern-mirror",
+    "slot-family",
+    "top-sketch-after-chamfer",
+    "topology-face-boundary-box",
+    "topology-face-boundary-xz",
+    "xz-anchor"
+  ],
+  "source_sha": "82224b01632506576df94376166ae4e6ecf11f86"
 }

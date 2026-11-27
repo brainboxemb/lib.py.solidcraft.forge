@@ -3,8 +3,8 @@
     {
       "command": "sketch.create",
       "params": {
-        "plane": "XY",
-        "name": "Disc"
+        "name": "Disc",
+        "plane": "XY"
       }
     },
     {
@@ -24,9 +24,9 @@
     {
       "command": "solid.extrude",
       "params": {
-        "distance": 10,
         "direction": "positive",
-        "body_name": "RoundTopSketch"
+        "body_name": "RoundTopSketch",
+        "distance": 10
       }
     },
     {

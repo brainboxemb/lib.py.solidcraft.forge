@@ -10,6 +10,7 @@
     "rule": {
       "angle_display": "bend",
       "bend_radius": "1.25",
+      "bend_relief_shape": "rectangular",
       "corner_relief": "Thickness * 4.0",
       "corner_relief_shape": "notch",
       "gap": "Thickness",
@@ -23,6 +24,7 @@
     "values": {
       "angle_display": "bend",
       "bend_radius": 1.25,
+      "bend_relief_shape": "rectangular",
       "corner_relief": 5.0,
       "corner_relief_shape": "notch",
       "gap": 1.25,
@@ -180,7 +182,7 @@
       "SheetContourFlangeRecess"
     ],
     "feature": 2,
-    "ms": 20.329538,
+    "ms": 21.513168999999998,
     "name": "ContourFlange1",
     "removed_bodies": [],
     "warning": null
@@ -1122,7 +1124,7 @@
     ],
     "created_bodies": [],
     "feature": 4,
-    "ms": 43.922744,
+    "ms": 72.21722999999999,
     "name": "Broad face recess",
     "removed_bodies": [],
     "warning": null

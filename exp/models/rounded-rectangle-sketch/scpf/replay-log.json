@@ -1,7 +1,7 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "10f1ccde0d37a0f33354a3c8482faf0c88c97fc457512db20a0a7d1832b31805",
+  "replay_sha256": "fa03628566e80eb35117a227a335db92d457da56f3bf96912c7c067c9a85b254",
   "variables": {
     "$face_point_1": [
       -20.0,
@@ -171,12 +171,12 @@
       "command": "sketch.rectangle.rounded",
       "resolved_params": {
         "p0": [
-          "(-(pad_width / 2))",
-          "(-(pad_depth / 2))"
+          "-(pad_width / 2)",
+          "-(pad_depth / 2)"
         ],
         "p1": [
-          "(pad_width / 2)",
-          "(pad_depth / 2)"
+          "pad_width / 2",
+          "pad_depth / 2"
         ],
         "radius": "radius"
       }
@@ -190,21 +190,21 @@
       "index": 17,
       "command": "solid.extrude",
       "resolved_params": {
+        "direction": "positive",
         "operation": "join",
         "targets": [
           "RoundedRectangleSketch"
         ],
         "name": "Rounded pad",
-        "distance": "pad_height",
-        "direction": "positive"
+        "distance": "pad_height"
       }
     },
     {
       "index": 18,
       "command": "sketch.create",
       "resolved_params": {
-        "plane": "YZ",
-        "name": "World cut"
+        "name": "World cut",
+        "plane": "YZ"
       }
     },
     {
@@ -230,12 +230,12 @@
       "index": 21,
       "command": "solid.extrude",
       "resolved_params": {
-        "distance": "cut_length",
         "direction": "symmetric",
         "operation": "cut",
         "targets": [
           "RoundedRectangleSketch"
-        ]
+        ],
+        "distance": "cut_length"
       }
     }
   ],

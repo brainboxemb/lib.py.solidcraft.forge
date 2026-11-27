@@ -44,8 +44,8 @@
     {
       "command": "solid.extrude",
       "params": {
-        "body_name": "TopologyFaceBoundaryXz",
         "direction": "symmetric",
+        "body_name": "TopologyFaceBoundaryXz",
         "distance": 15
       }
     },
