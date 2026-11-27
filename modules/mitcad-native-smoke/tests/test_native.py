@@ -371,6 +371,86 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             self.assertAlmostEqual(mixed_body["bbox"]["min"][0], 0.0, places=5)
             self.assertAlmostEqual(mixed_body["bbox"]["max"][0], 10.0, places=5)
 
+            mixed_expression_shared = Parameter(
+                "mixed_expression_shared",
+                4,
+            )
+            mixed_expression_height = mixed_expression_shared + 1
+            with Sketch(
+                name="MixedRoleExpression",
+                plane="XZ",
+            ) as mixed_expression_profile:
+                Polygon2D(
+                    [
+                        (0, 0),
+                        (0, mixed_expression_height),
+                        (10, mixed_expression_height),
+                        (10, 0),
+                    ],
+                    plane="XZ",
+                )
+            mixed_expression_document = compile_mitcad_ir(
+                normalize_shape(
+                    mixed_expression_profile.revolve(
+                        axis=Axis.X,
+                        angle=mixed_expression_shared,
+                    )
+                ),
+                "MixedRoleExpression",
+            )
+            self.assertEqual(
+                mixed_expression_document["commands"][0],
+                {
+                    "cmd": "add_parameter",
+                    "name": "mixed_expression_shared",
+                    "unit": "",
+                    "expression": "4",
+                },
+            )
+            mixed_expression_sketch = (
+                mixed_expression_document["commands"][-2]["def"]
+            )
+            self.assertIn(
+                "(mixed_expression_shared * 1 mm) + (1 mm)",
+                [
+                    dimension["value"]
+                    for dimension in mixed_expression_sketch["dimensions"]
+                ],
+            )
+            self.assertEqual(
+                mixed_expression_document["commands"][-1]["def"]["extent"],
+                {
+                    "type": "angle",
+                    "angle": "mixed_expression_shared * 1 deg",
+                },
+            )
+
+            mixed_expression_native = run_document(
+                mixed_expression_document,
+                save=root / "out/mixed-role-expression-revolve.mitcad",
+                export=root / "out/mixed-role-expression-revolve.stl",
+                executable=str(executable),
+                work_dir=root / "mixed-role-expression-revolve-workspace",
+            )
+            self.assertEqual(len(mixed_expression_native["bodies"]), 1)
+            mixed_expression_body = mixed_expression_native["bodies"][0]
+            self.assertEqual(mixed_expression_body["kind"], "solid")
+            self.assertAlmostEqual(
+                mixed_expression_body["volume"],
+                25.0 * pi / 9.0,
+                places=3,
+            )
+            self.assertAlmostEqual(
+                mixed_expression_body["bbox"]["min"][0],
+                0.0,
+                places=5,
+            )
+            self.assertAlmostEqual(
+                mixed_expression_body["bbox"]["max"][0],
+                10.0,
+                places=5,
+            )
+
             placed_frustum_document = compile_mitcad_ir(
                 normalize_shape(
                     Cone(
@@ -1026,6 +1106,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "parameterized-polygon-revolve.stl",
                 "mixed-role-revolve.mitcad",
                 "mixed-role-revolve.stl",
+                "mixed-role-expression-revolve.mitcad",
+                "mixed-role-expression-revolve.stl",
                 "placed-frustum.mitcad",
                 "placed-frustum.stl",
                 "shifted-sphere-csg.mitcad",
@@ -1067,6 +1149,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"mixed_role_revolve_volume={mixed_body['volume']}",
                         f"mixed_role_revolve_bbox={mixed_body['bbox']}",
                         "mixed_role_parameter_units=pass",
+                        f"mixed_role_expression_volume={mixed_expression_body['volume']}",
+                        f"mixed_role_expression_bbox={mixed_expression_body['bbox']}",
+                        "mixed_role_expression_scalar_ir=pass",
                         f"placed_frustum_volume={placed_frustum_body['volume']}",
                         f"placed_frustum_bbox={placed_frustum_body['bbox']}",
                         "placed_frustum_cone_ir=pass",

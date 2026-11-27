@@ -127,6 +127,14 @@
 102. Mitcad Cone lowering must use its native principal support plane, plane-local centre, radius, top_radius and height. When the semantic Cone base is off the origin plane, a private offset construction plane may be emitted; that helper remains backend transport only.
 103. The #477 bounded slice covers standalone/placed/translated Cone on principal X/Y/Z axes. Cone inside `BooleanIR`, Fillet composition and rotated primitive frames remain outside the qualified slice.
 104. Exact pinned Mitcad runtime qualification must execute a placed Ø18→Ø10 × 8 frustum with BOTTOM at world Z=18 and prove volume `1208π/3` plus Z bounds [18, 26].
+105. Authored `Expression` values may retain an engine-neutral scalar arithmetic tree separately from their compatibility/debug expression text; Forge normalization and native backends must never recover semantic arithmetic by parsing that text.
+106. The first scalar-expression IR consists of finite numeric literals, semantic parameter references, unary negation and binary add/subtract/multiply/divide nodes; the immutable tree must be inspectable before backend lowering.
+107. Existing three-argument `Expression(value, expression, parameters)` construction remains source compatible. Expressions without scalar-tree metadata remain valid for existing single-role lowering but do not gain new mixed-role portability.
+108. Physical length/angle meaning belongs to the typed semantic use site, not to the scalar-expression node. The same scalar tree may therefore be rendered under different qualified physical roles without changing its authored arithmetic identity.
+109. A mixed-role source remains one role-aware `ParameterIR` and one editable unitless native source parameter. A mixed parameter leaf used as length lowers with explicit `mm` context and the same leaf used as angle lowers with explicit `deg` context; single-role paths retain their existing spelling.
+110. The #481 portable arithmetic subset is affine: add/subtract, unary negation, multiplication by a numeric literal and division by a non-zero numeric literal. Parameter×parameter, parameter÷parameter, numeric÷parameter, powers, text-only expressions and general derived-unit algebra remain fail-closed.
+111. The #481 mixed-role Revolve proof must normalize `shared + 1` as a typed Sketch length while direct `shared` remains the Revolve angle; SolidCraft and Mitcad must lower the same semantic scalar tree independently through their central role-aware value boundary.
+112. Exact pinned Mitcad v0.70.0 runtime qualification must execute that expression-bearing mixed-role Revolve with `shared=4`, radial height 5, X span 0..10 and angle 4 degrees, proving volume `25π/9` and X bounds [0, 10].
 
 ## SCPF native associativity
 

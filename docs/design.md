@@ -1304,6 +1304,39 @@ and Z bounds [18, 26]. Cone participation in `BooleanIR` remains separate
 because the existing `cone-boolean` owner also contains Fillet history and
 would combine two migrations.
 
+#481 adds a second, semantic channel to authored symbolic arithmetic. The
+existing `Expression.expression` text remains the compatibility/debug spelling
+used by already-qualified paths. Forge authoring operators now additionally
+capture an immutable scalar-expression tree made from literals, parameter
+references and bounded arithmetic nodes. Normalization and backends never parse
+the compatibility text to reconstruct meaning.
+
+`ParameterIR.roles` continues to summarize where one authored source parameter
+is used. Physical units are still assigned by typed semantic fields rather than
+by the scalar tree itself: Sketch coordinates/dimensions request the `length`
+role and Revolve extent requests the `angle` role. Both native backends consume
+the same scalar tree through their central role-aware value boundary. A mixed
+parameter leaf therefore becomes `name * 1 mm` in a length use and
+`name * 1 deg` in an angle use while remaining one editable native Number
+parameter. Geometry features do not perform their own expression rewriting.
+
+The first portable arithmetic subset is intentionally affine. Addition,
+subtraction and unary negation preserve the surrounding use-site role;
+multiplication/division are accepted only with a numeric scalar. A numeric
+literal that participates in addition/subtraction inherits the use-site unit,
+so the authored `shared + 1` Sketch coordinate lowers equivalently to
+`(shared * 1 mm) + (1 mm)`. Numeric scale factors remain unitless. Expressions
+without semantic-tree metadata, parameter×parameter arithmetic, inverse
+parameter division and powers stay fail-closed for mixed-role portability.
+Single-role paths bypass this renderer and keep their previously accepted
+command spelling.
+
+The runtime proof reuses the #469 mixed-role Revolve shape but changes its
+radial Sketch height to `shared + 1`. With `shared=4`, the native design has a
+5 mm radial height, 10 mm axial length and 4 degree sweep. Mitcad v0.70.0 must
+produce one solid with volume `25π/9` and X bounds [0, 10] while retaining one
+unitless editable source parameter.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
