@@ -48,6 +48,7 @@ from scpf.ir import (
     SphereIR,
     normalize_model,
     normalize_shape,
+    resolve_feature_ref,
 )
 
 
@@ -1028,6 +1029,86 @@ class SemanticIRTests(unittest.TestCase):
                 "ShiftedAxisRevolve",
             )[0],
         )
+
+    def test_boolean_feature_references_follow_semantic_history_roles(self):
+        sphere = Sphere(20)
+        extension = Box(30, 30, 20).move(x=18, z=10)
+        joined = sphere + extension
+        bore = Cylinder(d=8, h=60, axis=Axis.X)
+        cut = joined - bore
+        clip = Box(50, 50, 30).move(z=15)
+        design = cut & clip
+
+        configured_clip = Configure(
+            design,
+            active="Clipped",
+            columns=(Suppress(clip),),
+            rows={"Clipped": (False,), "Unclipped": (True,)},
+        )
+        clip_model = normalize_model(configured_clip)
+        self.assertIsInstance(clip_model.root, BooleanIR)
+        clip_ref = clip_model.configuration.columns[0].feature
+        self.assertEqual(
+            clip_ref,
+            FeatureRefIR(path=("root", "tool")),
+        )
+        clip_node = resolve_feature_ref(clip_model.root, clip_ref)
+        self.assertIsInstance(clip_node, PlacementIR)
+        self.assertIsInstance(clip_node.primitive, BoxIR)
+
+        configured_bore = Configure(
+            design,
+            active="Bored",
+            columns=(Suppress(bore),),
+            rows={"Bored": (False,), "Solid": (True,)},
+        )
+        bore_model = normalize_model(configured_bore)
+        bore_ref = bore_model.configuration.columns[0].feature
+        self.assertEqual(
+            bore_ref,
+            FeatureRefIR(path=("root", "target", "tool")),
+        )
+        bore_node = resolve_feature_ref(bore_model.root, bore_ref)
+        self.assertIsInstance(bore_node, PlacementIR)
+        self.assertIsInstance(bore_node.primitive, CylinderIR)
+
+        for reference in (clip_ref, bore_ref):
+            rendered = repr(reference).lower()
+            self.assertNotIn("uid", rendered)
+            self.assertNotIn("command", rendered)
+            self.assertNotIn("replay", rendered)
+
+    def test_boolean_feature_reference_rejects_non_member_before_lowering(self):
+        sphere = Sphere(20)
+        extension = Box(30, 30, 20).move(x=18, z=10)
+        bore = Cylinder(d=8, h=60, axis=Axis.X)
+        clip = Box(50, 50, 30).move(z=15)
+        design = ((sphere + extension) - bore) & clip
+        unrelated = Box(2, 2, 2)
+
+        configured = Configure(
+            design,
+            active="Clipped",
+            columns=(Suppress(unrelated),),
+            rows={"Clipped": (False,), "Unclipped": (True,)},
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "not a member of the typed Boolean history",
+        ):
+            normalize_model(configured)
+
+    def test_feature_ref_resolver_rejects_invalid_semantic_role(self):
+        model = normalize_shape(
+            (Sphere(20) + Box(30, 30, 20).move(x=18, z=10))
+            & Box(50, 50, 30).move(z=15)
+        )
+        with self.assertRaisesRegex(ValueError, "not valid for"):
+            resolve_feature_ref(
+                model.root,
+                FeatureRefIR(path=("root", "tool", "target")),
+            )
 
     def test_suppression_reference_must_be_the_authored_root_feature(self):
         panel = Box(40, 24, 20)
