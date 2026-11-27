@@ -285,15 +285,97 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(features[1]["corner"], [3.0, -15.0])
         self.assertEqual(features[3]["corner"], [-25.0, -25.0])
 
-    def test_unqualified_sphere_placement_stays_legacy_and_mitcad_fails_closed(self):
-        for shape in (
+    def test_sphere_placement_reuses_generic_placement_ir(self):
+        anchored = Sphere(20, anchor=Anchor.TOP)
+        anchored_model = self.assert_solidcraft_compatibility(
+            anchored,
+            "AnchoredSphere",
+        )
+        self.assertIsInstance(anchored_model.root, PlacementIR)
+        self.assertIsInstance(anchored_model.root.primitive, SphereIR)
+        self.assertEqual(anchored_model.root.point, (0, 0, 0))
+        self.assertEqual(anchored_model.root.anchor, (0, 0, 1))
+
+        anchored_mitcad = compile_mitcad_ir(
+            anchored_model,
+            "AnchoredSphere",
+        )
+        anchored_plane = anchored_mitcad["commands"][-2]
+        anchored_sphere = anchored_mitcad["commands"][-1]
+        self.assertEqual(
+            anchored_plane["def"],
+            {
+                "type": "construction_plane",
+                "definition": {
+                    "type": "offset",
+                    "plane": "xy",
+                    "distance": -20,
+                },
+            },
+        )
+        self.assertEqual(anchored_sphere["def"]["plane"], {"ref": "sphere_plane.uid"})
+        self.assertEqual(anchored_sphere["def"]["center"], [0, 0])
+        self.assertEqual(anchored_sphere["def"]["diameter"], 40)
+
+        moved = Sphere(20).move(z=10)
+        moved_model = self.assert_solidcraft_compatibility(
+            moved,
+            "MovedSphere",
+        )
+        self.assertIsInstance(moved_model.root, PlacementIR)
+        self.assertEqual(moved_model.root.point, (0, 0, 10))
+        self.assertEqual(moved_model.root.anchor, (0, 0, 0))
+        moved_mitcad = compile_mitcad_ir(moved_model, "MovedSphere")
+        self.assertEqual(
+            moved_mitcad["commands"][-2]["def"]["definition"]["distance"],
+            10,
+        )
+
+    def test_parameterized_sphere_anchor_keeps_world_point_dependencies(self):
+        radius = Parameter("sphere_radius", 10)
+        sphere_z = Parameter("sphere_z", 25)
+        shape = Sphere(radius).at(
+            3,
+            4,
+            sphere_z,
+            anchor=Anchor.TOP,
+        )
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ParameterizedSphere",
+        )
+        self.assertIsInstance(model.root, PlacementIR)
+        self.assertIs(model.root.primitive.radius, radius)
+        self.assertEqual(model.root.point[:2], (3, 4))
+        self.assertIs(model.root.point[2], sphere_z)
+        self.assertEqual(model.root.anchor, (0, 0, 1))
+
+        mitcad = compile_mitcad_ir(model, "ParameterizedSphere")
+        plane = next(
+            row
+            for row in mitcad["commands"]
+            if row.get("def", {}).get("type") == "construction_plane"
+        )
+        sphere = mitcad["commands"][-1]
+        distance = str(plane["def"]["definition"]["distance"])
+        self.assertIn("sphere_z", distance)
+        self.assertIn("sphere_radius", distance)
+        self.assertEqual(sphere["def"]["plane"], {"ref": "sphere_plane.uid"})
+        self.assertEqual(sphere["def"]["center"], [3, 4])
+        self.assertIn("sphere_radius", str(sphere["def"]["diameter"]))
+
+    def test_shifted_or_anchored_sphere_csg_remains_outside_bounded_slice(self):
+        for sphere in (
             Sphere(20, anchor=Anchor.TOP),
             Sphere(20).move(z=10),
         ):
-            model = normalize_shape(shape)
-            self.assertIsInstance(model.root, LegacyShapeIR)
-            with self.assertRaises(ModelError):
-                compile_mitcad_ir(model, "UnsupportedSphere")
+            with self.subTest(sphere=sphere):
+                model = normalize_shape(
+                    sphere + Box(10, 10, 10)
+                )
+                self.assertIsInstance(model.root, LegacyShapeIR)
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, "UnsupportedSphereCsg")
 
     def test_circle_extrude_is_separate_sketch_region_and_extrude_ir(self):
         diameter = Parameter("diameter", 20)
