@@ -103,6 +103,12 @@
 78. `RegionIR` validation must be independent of total Sketch profile count. Extra concentric profiles may exist strictly inside the selected hole or strictly outside the selected outer boundary, but no unreferenced profile may divide the interval between a region outer boundary and its hole.
 79. SolidCraft and Mitcad must lower the same typed multi-profile `RegionIR` without rediscovering outer/hole membership. Native selector points and curve/profile ids remain backend transport only.
 80. Exact pinned Mitcad runtime qualification must execute the three-circle exact annulus while retaining all three native Circle entities and extruding only the typed selected region.
+81. Standalone Sphere anchors and world placement must normalize through the existing `PlacementIR(SphereIR)` contract; Forge must not introduce a Sphere-specific placement node or native-plane identity into semantic IR.
+82. `PlacementIR.point` remains the world-space point of the selected Sphere anchor. The actual Sphere centre is derived from radius, point and anchor while retaining authored Parameter/Expression dependencies.
+83. SolidCraft and Mitcad may spell the same Sphere placement differently. SolidCraft may emit its native 3D centre directly; Mitcad may derive an XY support plane plus plane-local centre. This is backend transport, not divergent placement meaning.
+84. For a qualified standalone Sphere whose semantic centre has non-zero or symbolic Z, Mitcad must lower one backend-owned offset XY construction plane and reference it from the Sphere feature. The construction-plane uid/binding must not enter Forge IR.
+85. The #461 checkpoint does not broaden primitive Boolean CSG: shifted or non-center-anchor Sphere operands remain outside the qualified recursive CSG slice even though the same standalone PlacementIR is now representable.
+86. Exact pinned Mitcad runtime qualification must execute a parameterized top-anchor Sphere placement, retain radius/world-Z dependencies in the native support-plane/Sphere definitions and prove deterministic geometry.
 
 ## SCPF native associativity
 

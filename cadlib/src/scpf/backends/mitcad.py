@@ -16,6 +16,7 @@ from ..core import (
     _native_dependencies,
     _plain_command_value,
     _pv as pv,
+    _sphere_center_from_anchor,
     command_value,
     number_text,
     parameters_in,
@@ -234,19 +235,29 @@ def _cylinder_command(
     }
 
 
+def _sphere_center(node: PlacementIR):
+    """Derive semantic Sphere centre from PlacementIR before native transport."""
+    primitive = node.primitive
+    if not isinstance(primitive, SphereIR):
+        raise TypeError("Mitcad sphere lowering requires PlacementIR(SphereIR)")
+    _require_positive(primitive.radius, "sphere radius")
+    return _sphere_center_from_anchor(
+        primitive.radius,
+        node.point,
+        _DirectionSelector(node.anchor),
+    )
+
+
 def _sphere_command(
     node: PlacementIR,
     name: str,
     *,
     operation: str = "new_body",
 ) -> dict:
+    """Lower the already-qualified origin-plane Sphere CSG spelling."""
     primitive = node.primitive
-    if not isinstance(primitive, SphereIR):
-        raise TypeError("Mitcad sphere lowering requires PlacementIR(SphereIR)")
-    _require_positive(primitive.radius, "sphere radius")
-    if node.anchor != (0, 0, 0):
-        raise ModelError("Mitcad Sphere IR currently requires Anchor.CENTER")
-    _require_origin_plane(node.point[2], label="Sphere")
+    center = _sphere_center(node)
+    _require_origin_plane(center[2], label="Sphere CSG")
     return {
         "cmd": "add_feature",
         "name": name,
@@ -254,14 +265,49 @@ def _sphere_command(
             "type": "sphere",
             "plane": "xy",
             "center": [
-                command_value(node.point[0]),
-                command_value(node.point[1]),
+                command_value(center[0]),
+                command_value(center[1]),
             ],
             "diameter": command_value(primitive.radius * 2),
             "operation": operation,
             "participants": [],
         },
     }
+
+
+def _sphere_commands(
+    node: PlacementIR,
+    name: str,
+    *,
+    operation: str = "new_body",
+) -> list[dict]:
+    """Lower standalone Sphere placement with backend-owned support geometry."""
+    primitive = node.primitive
+    center = _sphere_center(node)
+    plane_commands, native_plane = _mitcad_offset_plane(
+        "XY",
+        center[2],
+        label="Sphere",
+        binding="sphere_plane",
+    )
+    return [
+        *plane_commands,
+        {
+            "cmd": "add_feature",
+            "name": name,
+            "def": {
+                "type": "sphere",
+                "plane": native_plane,
+                "center": [
+                    command_value(center[0]),
+                    command_value(center[1]),
+                ],
+                "diameter": command_value(primitive.radius * 2),
+                "operation": operation,
+                "participants": [],
+            },
+        },
+    ]
 
 
 def _csg_primitive_command(
@@ -379,29 +425,46 @@ def _principal_plane_offset(plane: PlaneIR, *, label: str):
     return plane.origin[normal]
 
 
-def _mitcad_sketch_plane(plane: PlaneIR):
-    """Lower PlaneIR; construction-plane identity stays backend transport."""
-    offset = _principal_plane_offset(
-        plane,
-        label="Mitcad Sketch IR",
-    )
+def _mitcad_offset_plane(
+    orientation: str,
+    offset,
+    *,
+    label: str,
+    binding: str = "plane",
+):
+    """Lower one principal offset plane; native identity stays transport only."""
+    if orientation not in ("XY", "XZ", "YZ"):
+        raise ModelError(f"Mitcad {label} requires a principal plane")
     if not parameters_in(offset) and abs(pv(offset)) <= 1e-12:
-        return [], plane.orientation.lower()
+        return [], orientation.lower()
 
     return [
         {
             "cmd": "add_feature",
-            "as": "plane",
+            "as": binding,
             "def": {
                 "type": "construction_plane",
                 "definition": {
                     "type": "offset",
-                    "plane": plane.orientation.lower(),
+                    "plane": orientation.lower(),
                     "distance": command_value(offset),
                 },
             },
         }
-    ], {"ref": "plane.uid"}
+    ], {"ref": f"{binding}.uid"}
+
+
+def _mitcad_sketch_plane(plane: PlaneIR):
+    """Lower PlaneIR through the shared principal-plane transport."""
+    offset = _principal_plane_offset(
+        plane,
+        label="Mitcad Sketch IR",
+    )
+    return _mitcad_offset_plane(
+        plane.orientation,
+        offset,
+        label="Sketch IR",
+    )
 
 
 def _extrude_commands(
@@ -1228,7 +1291,7 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
         elif isinstance(node.primitive, CylinderIR):
             geometry_commands = [_cylinder_command(node, name)]
         elif isinstance(node.primitive, SphereIR):
-            geometry_commands = [_sphere_command(node, name)]
+            geometry_commands = _sphere_commands(node, name)
         else:
             raise ModelError(
                 f"Mitcad backend does not support placed Forge IR primitive "
