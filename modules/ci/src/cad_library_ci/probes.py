@@ -83,6 +83,10 @@ def discover_api_probes(repo, project, modules):
             raise ConfigError(f"invalid or duplicate API probe: {path}")
 
         probe_root = path.parent
+        if not (probe_root / "README.md").is_file():
+            raise ConfigError(
+                f"API probe owner requires README.md: {probe_root}"
+            )
         builder = data.get("builder")
         capability, builder_needs = _builder(by_module, builder, path)
 

@@ -35,17 +35,16 @@ class ShiftedAxisRevolve:
                 origin=(self.axis_x, 0, self.axis_z),
             ),
         )
-        body = panel - pass_through
-
-        return Configure(
-            body,
+        model = panel - pass_through
+        model.configure(
             active="Cut",
-            columns=(Suppress(pass_through),),
+            columns=(pass_through,),
             rows={
                 "Cut": (False,),
                 "Suppressed": (True,),
             },
         )
+        return model
 
 
 ShiftedAxisRevolve()

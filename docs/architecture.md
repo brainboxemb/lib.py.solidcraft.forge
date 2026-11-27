@@ -44,7 +44,7 @@ experimental IR capability is already released.
 ## Configuration and API design
 
 Current cross-object API semantics live in `api.md`. New or changing public
-API contracts are designed under `design-api/` and should be accompanied by
+API contracts are designed under `design/api/` and should be accompanied by
 executable API probes when backend behavior must be observed.
 
 A reusable component owns geometry and parameters. Application-level

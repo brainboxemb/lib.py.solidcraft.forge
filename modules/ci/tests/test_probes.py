@@ -23,11 +23,19 @@ class ApiProbeTests(unittest.TestCase):
             self.modules,
         )
 
-    def test_template_smoke_probe_is_discoverable_but_explicitly_selected(self):
-        self.assertEqual([probe.id for probe in self.probes], ["configuration-installed-current"])
+    def test_baseline_probe_is_discoverable_but_selection_is_explicit(self):
+        ids = [probe.id for probe in self.probes]
+        self.assertIn("configuration-installed-current", ids)
+        self.assertEqual(ids, sorted(ids))
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertTrue(all((probe.root / "README.md").is_file()
+                            for probe in self.probes))
         self.assertEqual(select_api_probes(self.probes, ()), ())
         self.assertEqual(
-            [probe.id for probe in select_api_probes(self.probes, ("configuration-installed-current",))],
+            [probe.id for probe in select_api_probes(
+                self.probes,
+                ("configuration-installed-current",),
+            )],
             ["configuration-installed-current"],
         )
 
@@ -55,13 +63,17 @@ class ApiProbeTests(unittest.TestCase):
                 "cad_library_ci.batch._aggregate_probe",
                 return_value=True,
             ):
+                selected = select_api_probes(
+                    self.probes,
+                    ("configuration-installed-current",),
+                )
                 run_batches(
                     self.repo,
                     self.project,
                     self.modules,
                     (),
                     Path(tmp),
-                    probes=self.probes,
+                    probes=selected,
                 )
 
         self.assertEqual(invoked.call_count, 1)

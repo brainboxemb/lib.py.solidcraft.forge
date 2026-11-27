@@ -23,7 +23,7 @@ state and the current main plan.
 - `requirements.md` — stable invariants; feature details belong in API docs
   and executable tests.
 - `api.md` — current cross-object public SCPF API contract.
-- `design-api/` — API proposals under active design review. A proposal is not
+- `design/api/` — API proposals under active design review. A proposal is not
   automatically released API.
 - `development.md` — normal development, testing and API-probe workflow.
 - `release.md` — current release preparation/publication boundary.
@@ -51,7 +51,7 @@ Before adding repository material, identify its owner:
 
 - user-facing site content -> `site/`;
 - active architecture or requirements -> this directory;
-- public API proposal -> `design-api/`;
+- public API proposal -> `design/api/`;
 - versioned external evidence -> `reference/`;
 - historical context -> `legacy/`;
 - CI/Pages/runtime machine input -> the owning module or package, not `docs/`.
