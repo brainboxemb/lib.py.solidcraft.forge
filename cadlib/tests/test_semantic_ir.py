@@ -960,6 +960,47 @@ class SemanticIRTests(unittest.TestCase):
         ):
             compile_mitcad_ir(model, "ExtrudeBooleanTool")
 
+    def test_symbolic_explicit_sketch_origin_keeps_semantic_ir_and_stable_lowering(self):
+        frame_x = Parameter("frame_x", 12)
+        with Sketch(
+            name="RotatedTool",
+            plane="XY",
+            origin=(frame_x, 3, 0),
+            rotation=(0, 0, 45),
+        ) as tool_profile:
+            Polygon2D([(0, 0), (6, 0), (0, 6)])
+
+        shape = Box(30, 30, 10) - tool_profile.extrude(8)
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "SymbolicRotatedTool",
+        )
+
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertIsInstance(model.root.tool, ExtrudeIR)
+        self.assertEqual(
+            {parameter.name for parameter in model.parameters},
+            {"frame_x"},
+        )
+        self.assertEqual(
+            model.root.tool.sketch.plane.origin[0],
+            frame_x,
+        )
+
+        solidcraft = compile_solidcraft_ir(model, "SymbolicRotatedTool")
+        rotated = next(
+            command
+            for command in solidcraft["commands"]
+            if (
+                command["command"] == "sketch.create"
+                and command["params"]["name"] == "RotatedTool"
+            )
+        )
+        self.assertEqual(
+            rotated["params"]["plane"]["origin"],
+            [12.0, 3.0, 0.0],
+        )
+
     def test_boolean_ir_composes_standalone_revolve_as_typed_tool(self):
         base = Box(40, 30, 10)
         with Sketch(name="JoinRevolve", plane="XZ") as tool_profile:
