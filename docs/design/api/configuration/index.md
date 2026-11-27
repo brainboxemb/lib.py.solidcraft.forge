@@ -95,149 +95,141 @@ This distinction is central:
 The configuration API must be judged against a realistic assembly rather than
 only isolated table features.
 
-A representative HUB75 assembly needs three independent authoring concerns:
+A representative HUB75 design needs three user-visible concerns:
 
-1. **Position** — for example Front versus Service position.
-2. **Coupler size** — for example Small versus Large, affecting the couplers and
-   any base-plate dimensions derived from that choice.
-3. **Free / Installed** — one global state which can be connected to several
-   participating items at once.
+1. **Coupler size** — for example Small versus Large.
+2. **Position** — for example Normal versus Service.
+3. **Free / Installed** — a shared state that may affect more than one item.
 
-Conceptually these are three independent axes:
+The key design correction is that not every concern needs to become a separate
+configuration-choice abstraction.
+
+If Position or Installed is truthfully an authored CAD history transition, it
+should first be modelled as a named suppressible feature. Coupler size remains a
+normal configurable parameter.
+
+Conceptually:
 
 ~~~text
-HUB75 assembly
-├── position: Front | Service
-├── coupler_size: Small | Large
-└── installed: Free | Installed
+HUB75 design
+├── parameter: CouplerSize
+├── feature: ServicePosition   (suppressed by default)
+└── feature/state: Installed   (suppressed by default)
 ~~~
 
-They must not be modelled as properties of one particular Coupler instance.
-They are final-design configuration intent. Individual reusable components may
-publish parameters or state interfaces that the final design binds to these
-global choices.
+The configuration then references those already-authored model objects instead
+of inventing them inside `Configure`.
 
-A target semantic API should therefore be able to express something in this
-direction:
+A target direction is therefore closer to:
 
 ~~~python
-position = Choice("Position", default="Front", values=("Front", "Service"))
-coupler_size = Choice("Coupler size", default="Small", values=("Small", "Large"))
-installed = State("Installed", default=False)
+coupler_size = Parameter("coupler_size", 40)
 
-left = Coupler(
-    size=coupler_size,
-    free_installed=installed,
-    name="left",
-)
-right = Coupler(
-    size=coupler_size,
-    free_installed=installed,
-    name="right",
-)
+with Feature("ServicePosition", suppressed=True) as service_position:
+    # author the real service-position transition
+    ...
 
-display = Hub75Panel(
-    placement=Placement(y=position.parameter(...)),
-)
+with Feature("Installed", suppressed=True) as installed:
+    # author the real installed transition
+    ...
 
 Configure(
-    position,
-    coupler_size,
-    installed,
+    columns=(
+        Param(coupler_size),
+        Suppress(service_position),
+        Suppress(installed),
+    ),
+    rows={
+        "Small": (...),
+        "Large": (...),
+    },
 )
 ~~~
 
-The exact spelling above is **not yet normative**. The required semantics are:
+The exact `Feature(...)` spelling is still proposal-level. The required
+semantics are:
 
-- configuration declarations are final-design/top-level intent;
-- reusable components consume explicit bound inputs/interfaces;
-- several components may bind to the same global state;
-- one global Free / Installed control must not become one checkbox per child;
-- placement may be driven by configuration just like geometry parameters;
-- backend limitations must not leak into the public semantic model.
+- feature identity and default suppression belong to model authoring;
+- `Configure` is final-design/top-level intent and only references handles;
+- parameters remain top-level configurable values;
+- a real positional transition may be a suppressible feature;
+- a real Free/Installed transition may be a suppressible feature;
+- configuration must not create fake state objects merely because SolidCraft
+  has one configuration table.
 
-### Current SolidCraft 0.49 lowering pressure
+### Position: authored move versus occurrence placement
 
-SolidCraft currently exposes one row list plus independent Configuration Rules.
-That creates a useful distinction for this example.
-
-A practical current mapping can use:
-
-- the row list for one named choice, for example Coupler size:
-  `Small` / `Large`;
-- one rule checkbox for a binary Position override, for example
-  `Service position`, driving one or more placement parameters;
-- one rule checkbox for global `Installed`, driving a shared installed-state
-  dependency used by all participating components.
-
-This avoids immediately flattening all three choices into rows such as:
+The new `configuration-position-suppression` API probe establishes that
+SolidCraft 0.49 accepts a named `solid.move` history feature as an ordinary
+configuration suppression target:
 
 ~~~text
-Small / Front / Free
-Small / Front / Installed
-Small / Service / Free
-Small / Service / Installed
-Large / Front / Free
-...
+Normal  -> ServicePosition suppressed
+Service -> ServicePosition active
 ~~~
 
-That cartesian-product representation is acceptable only as a backend fallback,
-not as the Forge public model.
+This is a good fit when `ServicePosition` is genuinely an authored CAD history
+step.
 
-A SolidCraft rule has one direct effect, so a global Installed control that must
-affect several items needs one shared semantic dependency. For example, the
-rule may drive one assembly-level installed-state parameter, while all bound
-Free/Installed component interfaces derive their local motion or feature state
-from that shared value. Such transport may remain backend-private; Forge must
-not expose a fake numeric boolean merely because the SolidCraft backend uses one
-internally.
+It is **not** the same as reusable assembly occurrence placement.
+SolidCraft's `occurrence.move` stores an occurrence transform and does not
+expose that move as a timeline feature. The already-qualified
+`configuration-position` model therefore remains the current backend route
+for true occurrence placement: configuration parameters are referenced by the
+occurrence move/placement expression.
 
-The same applies to Position. A binary Front/Service choice can currently lower
-naturally to one rule driving a placement parameter. A future choice with three
-or more named positions cannot be represented as one checkbox; Forge should
-keep the multi-choice semantic intent and either lower it through rows or fail
-explicitly where the backend cannot preserve an independent selector.
+Forge must preserve this distinction. A public feature handle must only lower
+to suppression when the backend really has an authored suppressible feature.
 
-### Global Free / Installed interface
+### Global Free / Installed
 
-Free / Installed is especially important because it is a **shared state**, not a
-Coupler property.
+Free / Installed remains especially important because one user-visible state may
+need to affect several participating items.
 
-A reusable item may publish a Free/Installed interface. The final design then
-binds several such interfaces to one global state:
+The desired final-design relationship is:
 
 ~~~text
-global Installed
-├── left coupler FreeInstalled interface
-├── right coupler FreeInstalled interface
-└── any later item exposing the same interface
+global Installed intent
+├── left coupler Installed behavior
+├── right coupler Installed behavior
+└── later participating item
 ~~~
 
-Changing the one global state must update every bound participant.
+There are two cases:
 
-How that interface is spelled in Python is still open. Two viable directions
-are:
+- if the final design can truthfully author one real history feature whose
+  operation affects all participants, that one feature can be the configuration
+  target directly;
+- if separate reusable components each own their own Installed feature, Forge
+  still needs a binding/composition mechanism so one global intent can control
+  those multiple local features without exposing one checkbox per child.
 
-~~~python
-left = Coupler(free_installed=installed)
-right = Coupler(free_installed=installed)
+That second case is still open and must be qualified separately. The current
+probes prove feature suppression and exported child-feature addressing, but not
+yet one shared control driving several independent child features.
+
+### Why one SolidCraft configuration table is less problematic now
+
+SolidCraft still has one configuration row list. That remains a backend
+constraint, but it does not mean every user concern must become another row
+axis.
+
+For the HUB75 case, a useful current representation can be:
+
+~~~text
+Configuration   Coupler size   ServicePosition   Installed
+Small              40             [suppressed]   [suppressed]
+Large              60             [suppressed]   [suppressed]
 ~~~
 
-or an explicit final-design binding:
+The rows carry the size variants. The feature columns carry actual authored
+state transitions.
 
-~~~python
-Bind(
-    installed,
-    left.interface("free_installed"),
-    right.interface("free_installed"),
-)
-~~~
+This avoids automatically generating a cartesian product such as
+`Small/Service/Installed` unless the design genuinely needs those states stored
+as separate named rows.
 
-The first is more concise and resembles parameter binding. The second makes
-final-design ownership more explicit. The API should choose one only after the
-feature/state handle model is qualified.
-
-## 3. Public authoring direction
+## 4. Public authoring direction
 
 Configuration belongs to the final design result.
 
