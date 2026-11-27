@@ -555,7 +555,7 @@ class ConfigurationTests(unittest.TestCase):
         feature = model.configuration.columns[0].feature
         self.assertIsInstance(feature, DefinitionFeatureRefIR)
         self.assertEqual(feature.definition, "definition_1")
-        self.assertEqual(feature.feature.path, ("root", "tool"))
+        self.assertEqual(feature.feature.path, ("root",))
 
     def test_configuration_semantics_contain_no_native_row_or_feature_ids(self):
         width = Parameter("width", 40)
