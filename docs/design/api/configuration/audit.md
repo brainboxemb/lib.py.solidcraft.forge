@@ -203,6 +203,12 @@ portable configuration slice:
 - `ConfigurationIR`;
 - `ModelIR.configuration`.
 
+Mitcad lowering already demonstrates the intended boundary: the backend
+synthesizes a private suppression-driver parameter to implement the semantic
+suppression configuration. That driver is absent from `ConfigurationIR`.
+SolidCraft and future state lowering should follow the same ownership rule.
+
+
 That slice is intentionally bounded to one suppression-column case. Parameter
 columns, rules, child-definition references and richer configuration/state
 semantics are still separate expansion work.
