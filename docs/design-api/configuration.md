@@ -3,59 +3,95 @@
 Status: proposed  
 Tracking: #444
 
-## Purpose
+## 1. Goal and UI contract
 
-This document defines the intended public SCPF configuration authoring model
-before implementation changes are made.
+The primary goal of this API design is the user-facing CAD configuration
+experience. Public SCPF syntax and compiler structure must support that UI
+cleanly rather than exposing backend implementation concepts.
 
-The main design goal is that configuration remains intent attached to the final
-model or Assembly. It is not a wrapper type that consumer code must return, and
-it is not intrinsic state owned by a reusable `@component` class.
-
-The public authoring flow should read as:
+For the HUB75 Tube Clamp, opening the standalone model should present the
+configuration state conceptually as:
 
 ```text
-build model
-configure model
-return model
+Configuration
+
+[ ] Installed
 ```
 
-rather than:
+The checkbox is off by default.
+
+Unchecked means the free/print state:
 
 ```text
-build model
-wrap model in Configure(...)
-return wrapper
+clamp_bore = tube_d - clamp_interference
 ```
 
-Forge may still use an internal configured-design object or ConfigurationIR.
-That representation is an implementation detail and must not leak into the
-public API.
+Checked means the installed/mounted state:
 
-## Ownership
+```text
+clamp_bore = tube_d
+```
 
-Configuration belongs to the final model/document that is being authored.
+The UI must not need to show a synthetic active `Free` row plus a separate
+`Installed` rule checkbox to express this simple two-state intent.
 
-A reusable component owns:
-- geometry;
+For a higher-level model with named configurations, the Installed value belongs
+to each parent configuration row:
+
+| Configuration | Size | Installed |
+| --- | ---: | :---: |
+| Small | 60 | off |
+| Medium | 80 | on |
+| Large | 100 | on |
+
+That row-owned state is different from one global rule checkbox that remains
+orthogonal to the active row.
+
+## 2. SolidCraft API basis
+
+This proposal is currently evaluated against the Forge-pinned SolidCraft stack:
+
+- SolidCraft application/API version: **0.49.0**
+- runtime image: **ghcr.io/brainboxemb/cad-solidcraft:v0.3.6**
+- Forge consumer baseline: **v0.24.0**
+
+The retained SolidCraft 0.49 command registry is authoritative evidence for the
+currently available native command surface.
+
+Relevant native commands include:
+
+- `config.configure`
+- `config.column`
+- `config.row`
+- `config.activate`
+- `config.table`
+- `config.rule`
+- `config.rules`
+
+The retained 0.49 command contract exposes configuration columns for:
+
 - parameters;
-- explicitly exported feature references;
-- attachment/topology intent that belongs to the component itself.
+- features/suppression;
+- materials;
+- appearances.
 
-A reusable component does **not** automatically own:
-- a configuration table;
-- an active configuration row;
-- a document-level checkbox state;
-- a parent Assembly's configuration policy.
+It does **not** expose a native per-row boolean/toggle column or a native
+child-configuration-selection column in the retained command registry.
 
-The same component may therefore be used in several final models with different
-configuration policies.
+SolidCraft does expose Configuration Rules with a global `enabled` checkbox.
+That proves a global rule checkbox exists. It does not prove that a boolean value
+can be stored independently in each named configuration row.
 
-A standalone model may configure a reusable component after instantiation. A
-parent Assembly may configure its complete result after composing reusable
-children.
+This distinction is important: Forge must design the public API from the desired
+CAD meaning and then lower only to backend behavior that preserves that meaning.
+It must not redefine the public API around the limitations of SolidCraft 0.49.
 
-## Core API shape
+If a later SolidCraft version adds row-owned boolean columns or child
+configuration selection, this document should record that new native capability
+and version explicitly before Forge relies on it.
+
+## 3. Public syntax considerations
+
 
 Every final configurable design result exposes:
 
@@ -90,7 +126,7 @@ return design.configure(...)
 The first form is preferred in examples because it keeps model construction and
 document configuration visibly separate.
 
-## Parameter columns
+### Parameter columns
 
 Existing parameter configuration remains a first-class column:
 
@@ -118,7 +154,7 @@ A parent may drive one shared parameter that is passed into several reusable
 child occurrences. The configuration still belongs to the parent final model;
 the children merely consume the shared parameter.
 
-## Feature suppression columns
+### Feature suppression columns
 
 Existing explicit feature suppression remains a column:
 
@@ -143,7 +179,7 @@ Reusable-child feature references continue to use explicit Forge feature
 identity such as `occurrence.feature("panel_pin")`. Configuration must never
 expose backend feature ids.
 
-## Boolean configuration controls
+### Boolean configuration controls
 
 Forge should add a first-class boolean configuration control for states that are
 naturally presented as a checkbox.
@@ -277,7 +313,7 @@ therefore not a global rule orthogonal to the table.
 This is the key distinction from the current `ConfigRule(enabled=...)`
 contract.
 
-## Global rules versus row state
+### Global rules versus row state
 
 A global Configuration Rule and a row-owned boolean cell are different concepts
 and must not share one public abstraction.
@@ -304,7 +340,7 @@ If generic global rules remain useful for other consumers, they may stay as a
 separate advanced API. They must not be prescribed as the normal way to model
 Free/Installed child state.
 
-## Parent and child configuration composition
+## 4. Parent and child configuration composition
 
 The parent owns its final configuration.
 
@@ -339,7 +375,7 @@ Until child-configuration selection is qualified, a parent may explicitly own
 and configure a shared published child parameter, because that is already a
 real associative dependency.
 
-## Reusable component example
+### Reusable component example
 
 The reusable clamp remains configuration-neutral:
 
@@ -362,7 +398,7 @@ The standalone catalog configures the resulting occurrence. A frame Assembly
 may configure a shared parent parameter or, once supported, explicitly select a
 child configuration.
 
-## Method behavior
+## 5. Method behavior
 
 `design.configure(...)` may be called at most once for one final design
 configuration owner.
@@ -377,7 +413,7 @@ The active/default state affects the compiled initial document state, while all
 other authored states remain editable native configuration state after save and
 reopen.
 
-## Proposed signatures
+### Proposed signatures
 
 The exact Python implementation may refine type names, but the public contract
 should remain approximately:
@@ -404,7 +440,7 @@ For consistency, a `Toggle` may be accepted either as a standalone control or
 as a row-table column. Its meaning remains boolean configuration state in both
 places.
 
-## Backend-neutral compiler contract
+## 6. Translation to Forge IR
 
 Public configuration intent should normalize to engine-neutral semantic IR
 before backend lowering.
@@ -429,35 +465,26 @@ It must not contain:
 Backends may use private transport constructs when necessary, but only when they
 preserve the exact semantic behavior.
 
-## SolidCraft 0.49 capability boundary
+## 7. SolidCraft lowering boundary
 
-The retained SolidCraft 0.49 command registry currently exposes configuration
-columns for:
-- parameters;
-- features/suppression;
-- materials;
-- appearances.
+The current SolidCraft 0.49 limitation is described in section 2.
 
-It does not expose a native per-row boolean/toggle column or a child
-configuration-selection column in the retained command contract.
+Forge must not silently lower a row-owned Toggle to a global Configuration Rule.
+A backend may claim support only when saved-design behavior preserves the exact
+authored semantics.
 
-SolidCraft does expose Configuration Rules with a global `enabled` checkbox.
-That checkbox is sufficient evidence for a standalone global rule, but it does
-not prove row-owned Toggle semantics.
+For the proposed standalone Installed checkbox, Forge may investigate whether
+one native rule checkbox can faithfully represent a standalone Toggle. That is a
+backend qualification question, not a reason to expose `ConfigRule` as the
+normal public syntax.
 
-Therefore:
+For row-owned Toggle values, SolidCraft support is not accepted until two named
+rows with different boolean values survive save/reopen and row switching.
 
-1. Forge must not claim per-row Toggle support on SolidCraft 0.49 until exact
-   saved-design behavior is proven.
-2. Forge must not silently lower a row Toggle to a global Configuration Rule.
-3. If standalone Toggle can be lowered faithfully to a native rule checkbox,
-   that backend slice may be implemented and qualified separately.
-4. A Toggle used as a row column must fail explicitly on a backend that cannot
-   preserve row-specific values.
-5. A future SolidCraft version may remove this limitation; the semantic public
-   API should not change merely because backend capability improves.
+Unsupported semantics fail explicitly.
 
-## Migration from current Configure(...)
+## 8. Migration from current Configure(...)
+
 
 The current public wrapper:
 
@@ -490,7 +517,7 @@ new models should use `.configure(...)` after the method is released.
 Removal or deprecation timing must be handled through the normal Forge release
 policy; this proposal does not require an immediate breaking removal.
 
-## Acceptance criteria for implementation
+## 9. Acceptance criteria
 
 Before this proposal becomes normative public API, Forge-owned verification must
 prove:
@@ -511,7 +538,7 @@ prove:
 9. Unsupported child-configuration selection fails explicitly.
 10. No public configuration semantic depends on backend ids or command spelling.
 
-## Decision points still open
+## 10. Open design decisions
 
 This proposal intentionally leaves only a small number of naming decisions open:
 
