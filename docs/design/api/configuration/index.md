@@ -270,16 +270,14 @@ Unsupported semantics fail explicitly.
 
 ## 8. Executable probe
 
-The design is paired with:
+The design is paired with two Forge-owned API probes:
 
 ~~~text
 api-probes/configuration-installed-current/
-  probe.yml
-  scpf/probe.py
+api-probes/configuration-installed-feature/
 ~~~
 
-The probe intentionally uses the current released API and records the real
-SolidCraft 0.49 baseline:
+`configuration-installed-current` records the released baseline:
 
 ~~~text
 one configuration
@@ -287,7 +285,27 @@ one configuration
 └── Installed rule, enabled = false
 ~~~
 
-It is backend evidence, not the desired public API.
+`configuration-installed-feature` tests the alternative suggested by the
+native SolidCraft suppression UI:
+
+~~~text
+one configuration
+├── Free row      -> Installed feature suppressed
+└── Installed row -> Installed feature active
+~~~
+
+The component exports one real Forge feature named `installed`. In the probe
+that feature is the additional cutter which widens the free 9.6 mm clamp bore
+to the installed 10.0 mm bore. The final document configures that exported
+feature through `Suppress(clamp.feature("installed"))`.
+
+This probe must answer whether a real suppressible component feature gives the
+native checkbox behavior we want without inventing a generic boolean API.
+The Forge export name is component-local API identity; the probe must also
+record what label SolidCraft actually presents for the native feature column.
+
+Both probes are backend evidence. Neither by itself defines the final public
+API.
 
 ## 9. Acceptance criteria
 
