@@ -535,6 +535,15 @@ class ModelIR:
     parameters: tuple[ParameterIR, ...]
     configuration: ConfigurationIR | None = None
 
+    def __post_init__(self):
+        if (
+            self.configuration is not None
+            and not isinstance(self.configuration, ConfigurationIR)
+        ):
+            raise ValueError(
+                "ModelIR configuration must be ConfigurationIR or None"
+            )
+
 
 def _collect_parameters(value, found=None):
     """Collect named symbolic parameters in deterministic first-use order."""
@@ -1225,31 +1234,59 @@ def _normalize_configuration(configured, root: IRNode) -> ConfigurationIR:
     )
 
 
+def normalize_configured_design(configured) -> ModelIR | None:
+    """Normalize the bounded portable Configure/Suppress slice when qualified.
+
+    Returning None marks configuration authoring that is still outside the
+    multi-backend semantic IR migration. Stable SolidCraft may retain its
+    existing compatibility path for that surface; experimental backends must
+    fail closed rather than interpret it independently.
+    """
+    from .configurations import _ConfiguredDesign, _SuppressionColumn
+
+    if not isinstance(configured, _ConfiguredDesign):
+        raise TypeError(
+            "configured Forge IR normalization requires _ConfiguredDesign"
+        )
+    if not isinstance(configured.design, Shape):
+        return None
+    if configured.rules or len(configured.columns) != 1:
+        return None
+    if not isinstance(configured.columns[0], _SuppressionColumn):
+        return None
+
+    root = _normalize_node(configured.design)
+    if (
+        not isinstance(root, RevolveIR)
+        or root.operation != "cut"
+        or not isinstance(root.target, PlacementIR)
+        or not isinstance(root.target.primitive, BoxIR)
+    ):
+        return None
+
+    return ModelIR(
+        root=root,
+        parameters=_parameter_ir(configured.design),
+        configuration=_normalize_configuration(configured, root),
+    )
+
+
 def normalize_model(value) -> ModelIR:
     """Normalize one Forge authored result into backend-independent semantic IR."""
     from .configurations import _ConfiguredDesign
 
     if isinstance(value, Shape):
-        root = _normalize_node(value)
         return ModelIR(
-            root=root,
+            root=_normalize_node(value),
             parameters=_parameter_ir(value),
         )
     if isinstance(value, _ConfiguredDesign):
-        if not isinstance(value.design, Shape):
-            raise TypeError(
-                "portable ConfigurationIR currently requires a Shape design"
-            )
-        root = _normalize_node(value.design)
-        if isinstance(root, LegacyShapeIR):
+        model = normalize_configured_design(value)
+        if model is None:
             raise ValueError(
-                "portable ConfigurationIR requires a fully typed semantic root"
+                "configured design is outside the qualified portable IR slice"
             )
-        return ModelIR(
-            root=root,
-            parameters=_parameter_ir(value.design),
-            configuration=_normalize_configuration(value, root),
-        )
+        return model
     raise TypeError(
         "Forge IR normalization requires a Shape or configured Shape design"
     )
@@ -1295,6 +1332,7 @@ __all__ = [
     "_polygon_region_interior_point",
     "_region_interior_point",
     "is_portable",
+    "normalize_configured_design",
     "normalize_model",
     "normalize_shape",
 ]
