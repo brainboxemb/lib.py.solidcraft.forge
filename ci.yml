@@ -12,6 +12,17 @@ branches:
 generated:
   build_branch: build
   pages_branch: gh-pages
+qualification:
+  pull_requests:
+    docs_only:
+      prefixes:
+        - docs/
+      modules:
+        - ci
+  permanent:
+    reuse_pr_qualification:
+      branches:
+        - exp
 runtimes:
   reference:
     image: ghcr.io/brainboxemb/cad-reference:v0.3.6
