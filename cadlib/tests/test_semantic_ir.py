@@ -535,38 +535,48 @@ class SemanticIRTests(unittest.TestCase):
             {"type": "equal_distance", "distance": 1.5},
         )
 
-    def test_unqualified_polygon_extrude_forms_stay_legacy(self):
+    def test_simple_concave_polygon_region_is_typed_for_extrude(self):
         with Sketch(name="Concave", plane="XY") as sketch:
             Polygon2D(
                 [(0, 0), (20, 0), (5, 10), (20, 30), (0, 30)],
                 plane="XY",
             )
-        concave = sketch.extrude(10, sym=True)
+        shape = sketch.extrude(10, sym=True)
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, ExtrudeIR)
+        self.assertEqual(
+            compile_solidcraft_ir(model, "ConcavePolygon"),
+            _compile_shape_legacy_with_dependencies(
+                shape,
+                "ConcavePolygon",
+            )[0],
+        )
+        mitcad = compile_mitcad_ir(model, "ConcavePolygon")
+        self.assertEqual(mitcad["commands"][-1]["def"]["type"], "extrude")
 
+    def test_parameterized_polygon_extrude_stays_legacy_until_qualified(self):
         width = Parameter("polygon_width", 20)
         with Sketch(name="Parameterized", plane="XY") as sketch:
             Polygon2D(
                 [(0, 0), (width, 0), (width, 30), (0, 30)],
                 plane="XY",
             )
-        parameterized = sketch.extrude(10, sym=True)
-
-        for shape in (concave, parameterized):
-            model = normalize_shape(shape)
-            self.assertIsInstance(model.root, LegacyShapeIR)
-            self.assertEqual(
-                compile_solidcraft_ir(model, "LegacyPolygon"),
-                _compile_shape_legacy_with_dependencies(
-                    shape,
-                    "LegacyPolygon",
-                )[0],
-            )
-            with self.assertRaisesRegex(
-                ModelError,
-                "does not yet support Forge shape kind "
-                "'sketch_base_extrusion'",
-            ):
-                compile_mitcad_ir(model, "LegacyPolygon")
+        shape = sketch.extrude(10, sym=True)
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        self.assertEqual(
+            compile_solidcraft_ir(model, "LegacyPolygon"),
+            _compile_shape_legacy_with_dependencies(
+                shape,
+                "LegacyPolygon",
+            )[0],
+        )
+        with self.assertRaisesRegex(
+            ModelError,
+            "does not yet support Forge shape kind "
+            "'sketch_base_extrusion'",
+        ):
+            compile_mitcad_ir(model, "LegacyPolygon")
 
     def test_face_boundary_chamfer_keeps_semantic_selector_and_placement(self):
         shape = Box(
@@ -1083,27 +1093,30 @@ class SemanticIRTests(unittest.TestCase):
             {"type": "angle", "angle": "180 deg"},
         )
 
-    def test_unqualified_revolve_forms_remain_legacy(self):
+    def test_simple_concave_polygon_revolve_is_typed(self):
+        with Sketch(name="ConcaveRevolve", plane="XZ") as sketch:
+            Polygon2D(
+                [(0, 0), (0, 5), (5, 2), (10, 5), (10, 0)],
+                plane="XZ",
+            )
+        model = normalize_shape(sketch.revolve(axis=Axis.X))
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(
+            compile_mitcad_ir(model, "ConcaveRevolve")["commands"][-1]["def"]["type"],
+            "revolve",
+        )
+
+    def test_mixed_role_revolve_parameter_remains_legacy(self):
         shared = Parameter("shared", 4)
         with Sketch(name="MixedRole", plane="XZ") as sketch:
             Polygon2D(
                 [(0, 0), (0, shared), (10, shared), (10, 0)],
                 plane="XZ",
             )
-        mixed_role = sketch.revolve(axis=Axis.X, angle=shared)
-
-        with Sketch(name="ConcaveRevolve", plane="XZ") as sketch:
-            Polygon2D(
-                [(0, 0), (0, 5), (5, 2), (10, 5), (10, 0)],
-                plane="XZ",
-            )
-        concave = sketch.revolve(axis=Axis.X)
-
-        for shape in (mixed_role, concave):
-            model = normalize_shape(shape)
-            self.assertIsInstance(model.root, LegacyShapeIR)
-            with self.assertRaises(ModelError):
-                compile_mitcad_ir(model, "UnsupportedRevolve")
+        model = normalize_shape(sketch.revolve(axis=Axis.X, angle=shared))
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "UnsupportedRevolve")
 
     def test_unmigrated_surface_is_explicit_legacy_ir_only_for_solidcraft(self):
         shape = Cone(d=10, h=20)
