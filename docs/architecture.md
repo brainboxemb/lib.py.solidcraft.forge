@@ -57,9 +57,10 @@ in backend-focused batches. Native Mitcad qualification is not a prerequisite
 for declaring a semantic slice IR-ready.
 
 This separation is deliberate: backend transport must not pace or shape the
-semantic compiler contract. The canonical migration inventory is
+semantic compiler contract. The canonical migration inventory is main-owned
 [ir-coverage.md](ir-coverage.md), which reports IR status separately from
-SolidCraft and Mitcad status.
+SolidCraft and Mitcad status. Experimental batches reconcile that ledger after
+integration rather than maintaining a competing lane-local copy.
 
 ## Configuration and API design
 
