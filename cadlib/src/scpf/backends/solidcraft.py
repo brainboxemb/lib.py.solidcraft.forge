@@ -486,15 +486,13 @@ def _parallel_box_edge_picks(
 
 
 def _fillet_commands(node: FilletIR, name: str) -> list[dict]:
-    """Lower one constant-radius principal-edge FilletIR."""
+    """Lower one bounded constant-radius Box FilletIR."""
     if (
         not isinstance(node.base, PlacementIR)
         or not isinstance(node.base.primitive, BoxIR)
-        or not isinstance(node.edges, ParallelEdgeSetIR)
-        or node.edges.axis != "Z"
     ):
         raise ModelError(
-            "portable SolidCraft FilletIR requires a Box with Z-parallel edges"
+            "portable SolidCraft FilletIR currently requires PlacementIR(BoxIR)"
         )
 
     radius = _require_positive(node.radius, "fillet radius")
@@ -502,11 +500,28 @@ def _fillet_commands(node: FilletIR, name: str) -> list[dict]:
     if radius * 2 >= min(pv(primitive.length), pv(primitive.width)):
         raise ModelError("fillet radius exceeds rectangular base dimensions")
 
+    if isinstance(node.edges, ParallelEdgeSetIR):
+        if node.edges.axis != "Z":
+            raise ModelError(
+                "portable SolidCraft FilletIR parallel selector requires world Z"
+            )
+        topology = []
+        edges = _parallel_box_edge_picks(node.base, node.edges)
+    elif isinstance(node.edges, FaceBoundaryIR):
+        if node.edges.faces != ("top",):
+            raise ModelError(
+                "portable SolidCraft FilletIR face boundary currently requires TOP"
+            )
+        topology, edges = _face_boundary_commands(node.edges, name)
+    else:
+        raise ModelError("portable SolidCraft FilletIR has unsupported edge selector")
+
     return [
         _box_command(node.base, name),
+        *topology,
         _command(
             "solid.fillet",
-            edges=_parallel_box_edge_picks(node.base, node.edges),
+            edges=edges,
             radius=command_value(node.radius),
             body=name,
         ),
