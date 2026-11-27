@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import hashlib
 from math import isfinite
 
-from .core import Parameter, Shape, number_text
+from .core import Parameter, Shape, _FeatureHandle, number_text
 
 
 @dataclass(frozen=True)
@@ -30,6 +30,8 @@ def _configuration_column(value):
         return _ParameterColumn(value.name)
 
     from .model_objects import _ComponentFeatureReference
+    if isinstance(value, _FeatureHandle):
+        return _SuppressionColumn(value.shape)
     if isinstance(value, (Shape, _ComponentFeatureReference)):
         return _SuppressionColumn(value)
 
@@ -130,6 +132,8 @@ def _feature_prefix(root, source):
             return root
         return _feature_prefix(original, source)
     if root.kind in (
+        "exported_feature",
+        "named_feature",
         "fillet",
         "chamfer",
         "shell",
@@ -182,7 +186,6 @@ def _suppression_command_index(design, name, commands, feature):
         ]
         if not prefix_commands or len(prefix_commands) > len(geometry_indexes):
             raise ModelError("suppression source has no native history feature")
-        index = geometry_indexes[len(prefix_commands) - 1]
         actual = [
             commands[item]
             for item in geometry_indexes[:len(prefix_commands)]
@@ -194,7 +197,14 @@ def _suppression_command_index(design, name, commands, feature):
             raise ModelError(
                 "suppression source does not resolve to an exact history prefix"
             )
-        return index
+        target_offsets = [
+            offset
+            for offset, command in enumerate(prefix_commands)
+            if command["command"].startswith(("solid.", "sheet."))
+        ]
+        if not target_offsets:
+            raise ModelError("suppression source has no native history feature")
+        return geometry_indexes[target_offsets[-1]]
 
     from .assembly import (
         _as_assembly,
@@ -250,9 +260,14 @@ def _suppression_command_index(design, name, commands, feature):
             for command in prefix_commands
             if command["command"] != "parameters.add"
         ]
-        if not prefix_geometry:
+        targets = [
+            command
+            for command in prefix_geometry
+            if command["command"].startswith(("solid.", "sheet."))
+        ]
+        if not targets:
             continue
-        target = prefix_geometry[-1]
+        target = targets[-1]
         matches.extend(
             index
             for index, command in enumerate(commands)

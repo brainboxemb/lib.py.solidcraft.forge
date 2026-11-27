@@ -12,6 +12,7 @@ from typing import Any
 
 
 _PV_TRACKERS = ContextVar("scpf_pv_trackers", default=())
+_ACTIVE_FEATURE_SCOPE = ContextVar("scpf_active_feature_scope", default=None)
 
 
 def number_text(value: float) -> str:
@@ -1393,6 +1394,158 @@ def _feature_pattern_sources(root, feature, operation):
     return sources
 
 
+
+_FEATURE_TRANSPARENT_KINDS = frozenset({
+    "translated",
+    "placed3d",
+    "anchored",
+    "labeled",
+    "material_assignment",
+    "appearance_assignment",
+    "exported_feature",
+    "named_feature",
+})
+
+_FEATURE_HISTORY_CHAIN_KINDS = frozenset({
+    "union",
+    "difference",
+    "intersection",
+    "fillet",
+    "chamfer",
+    "shell",
+    "rectangular_pattern",
+    "circular_pattern",
+    "sheet_fold",
+    "sheet_edge_flange",
+    "sheet_hem",
+    "sheet_path_flange",
+    "sheet_perforate",
+})
+
+
+def _feature_history_step_count(node, created_ids):
+    """Count authored history steps on one feature scope's result spine."""
+    if not isinstance(node, Shape):
+        return 0
+    if node.kind in _FEATURE_TRANSPARENT_KINDS:
+        return _feature_history_step_count(node.data[0], created_ids)
+    if node.kind in _FEATURE_HISTORY_CHAIN_KINDS:
+        return (
+            (1 if id(node) in created_ids else 0)
+            + _feature_history_step_count(node.data[0], created_ids)
+        )
+    return 1 if id(node) in created_ids else 0
+
+
+class _FeatureHandle:
+    """Reference one named Forge-authored history feature."""
+
+    def __init__(self, name, suppressed):
+        self.name = name
+        self.suppressed = suppressed
+        self._shape = None
+
+    @property
+    def shape(self):
+        if self._shape is None:
+            raise RuntimeError("feature handle is not bound until its scope exits")
+        return self._shape
+
+
+class _FeatureScope(_FeatureHandle):
+    """Capture exactly one Forge history step and name its result."""
+
+    def __init__(self, name, suppressed):
+        if (
+            not isinstance(name, str)
+            or not name.isidentifier()
+            or name.startswith("_")
+        ):
+            raise ValueError("feature name must be a public Python identifier")
+        if not isinstance(suppressed, bool):
+            raise TypeError("feature suppressed must be True or False")
+        super().__init__(name, suppressed)
+        self._created = []
+        self._token = None
+
+    def _register(self, shape):
+        self._created.append(shape)
+
+    def __enter__(self):
+        if _ACTIVE_FEATURE_SCOPE.get() is not None:
+            raise RuntimeError("feature scopes cannot be nested")
+        self._token = _ACTIVE_FEATURE_SCOPE.set(self)
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        token = self._token
+        self._token = None
+        if token is not None:
+            _ACTIVE_FEATURE_SCOPE.reset(token)
+        if exc_type is not None:
+            return False
+
+        created = tuple(self._created)
+        terminals = [
+            shape
+            for shape in created
+            if not any(
+                other is not shape and _shape_contains(other, shape)
+                for other in created
+            )
+        ]
+        if len(terminals) != 1:
+            raise ValueError(
+                "feature scope must produce exactly one terminal Shape"
+            )
+
+        terminal = terminals[0]
+        created_ids = {id(shape) for shape in created}
+        if _feature_history_step_count(terminal, created_ids) != 1:
+            raise ValueError(
+                "feature scope must author exactly one CAD history feature"
+            )
+
+        source = Shape(
+            terminal.kind,
+            terminal.data,
+            _configuration=terminal._configuration,
+        )
+        object.__setattr__(terminal, "kind", "named_feature")
+        object.__setattr__(
+            terminal,
+            "data",
+            (source, self.name, self.suppressed),
+        )
+        self._shape = terminal
+        return False
+
+
+def feature(name, *, suppressed=False):
+    """Author and name exactly one suppressible CAD history feature.
+
+    Parameters:
+        name: Component-local public feature identity.
+        suppressed: Initial history state before any final-model configuration.
+
+    Use when:
+        A normal CAD operation should become a stable semantic feature that a
+        final model can configure directly. The scope captures exactly one
+        history operation; helper Sketch/profile construction should happen
+        outside the scope.
+
+    Example:
+        with feature("panel_pin", suppressed=True) as panel_pin:
+            body = body - cutter
+        model.configure(
+            active="Small",
+            columns=(panel_pin,),
+            rows={"Small": (True,), "Large": (False,)},
+        )
+    """
+    return _FeatureScope(name, suppressed)
+
+
 @dataclass(frozen=True)
 class Shape:
     """Store Forge geometry and feature operations before SolidCraft executes them.
@@ -1422,6 +1575,11 @@ class Shape:
         repr=False,
         compare=False,
     )
+
+    def __post_init__(self):
+        scope = _ACTIVE_FEATURE_SCOPE.get()
+        if scope is not None:
+            scope._register(self)
 
     def __getattr__(self, name):
         if name == "group":

@@ -82,6 +82,7 @@ def _is_feature_tree(shape):
         return False
     if shape.kind in (
         "exported_feature",
+        "named_feature",
         "box",
         "placed_box",
         "tapered_box",
@@ -1522,7 +1523,7 @@ def _applied_feature_prefix(root, source):
         return None
     if root is source:
         return root
-    if root.kind == "exported_feature":
+    if root.kind in ("exported_feature", "named_feature"):
         return _applied_feature_prefix(root.data[0], source)
 
     if root.kind in ("rectangular_pattern", "circular_pattern"):
@@ -1578,7 +1579,45 @@ def _native_feature_name(root, feature, model_name):
     return f"{base_name}{ordinal}"
 
 
+def _named_feature_commands(steps, feature_name, suppressed, *, start=0):
+    """Bind one native history result and apply its explicit initial state."""
+    candidates = [
+        index
+        for index in range(start, len(steps))
+        if steps[index]["command"].startswith(("solid.", "sheet."))
+    ]
+    if not candidates:
+        raise ModelError(
+            f"feature {feature_name!r} produced no suppressible solid/sheet history"
+        )
+    target = candidates[-1]
+    variable = f"$feature_{feature_name}_name"
+    if any(variable in command.get("bind", {}) for command in steps):
+        raise ModelError(f"duplicate named feature {feature_name!r}")
+
+    steps = [dict(command) for command in steps]
+    binding = dict(steps[target].get("bind", {}))
+    binding[variable] = "name"
+    steps[target]["bind"] = binding
+    steps.append(
+        _command(
+            "timeline.suppress",
+            features=[variable],
+            suppressed=suppressed,
+        )
+    )
+    return steps
+
+
 def _to_commands(shape, name):
+    if shape.kind == "named_feature":
+        source, feature_name, suppressed = shape.data
+        steps, base = _to_commands(source, name)
+        return _named_feature_commands(
+            steps,
+            feature_name,
+            suppressed,
+        ), base
     if shape.kind == "exported_feature":
         return _to_commands(shape.data[0], name)
     if shape.kind == "sketch_open_chain":
@@ -1941,13 +1980,37 @@ def _to_commands(shape, name):
         original, added = shape.data
         steps, base = _to_commands(original, name)
         feature_name = None
-        if added.kind == "exported_feature":
+        named_state = None
+        if added.kind == "named_feature":
+            added, named_name, named_suppressed = added.data
+            named_state = (named_name, named_suppressed)
+        elif added.kind == "exported_feature":
             added, _export_name = added.data
+
+        def finish(added_steps):
+            combined = steps + added_steps
+            if named_state is None:
+                return combined, base
+            named_name, named_suppressed = named_state
+            return _named_feature_commands(
+                combined,
+                named_name,
+                named_suppressed,
+                start=len(steps),
+            ), base
+
         if added.kind == "labeled":
             added, feature_name = added.data
         if added.kind == "anchored":
-            return steps + _attached_commands(
-                shape, original, added, name, feature_name=feature_name), base
+            return finish(
+                _attached_commands(
+                    shape,
+                    original,
+                    added,
+                    name,
+                    feature_name=feature_name,
+                )
+            )
         if added.kind in ("sketch_base_extrusion", "sketch_base_revolve"):
             operation = {
                 "union": "join",
@@ -1959,7 +2022,7 @@ def _to_commands(shape, name):
                 name,
                 operation=operation,
             )
-            return steps + added_steps, base
+            return finish(added_steps)
         if added.kind == "explicit_sketch_extrusion":
             face_query_index = 1 + sum(
                 command["command"] == "model.faces"
@@ -1969,25 +2032,27 @@ def _to_commands(shape, name):
                 command["command"] == "sketch.create"
                 for command in steps
             )
-            return steps + _explicit_sketch_commands(
-                shape,
-                original,
-                added,
-                name,
-                face_query_index=face_query_index,
-                sketch_index=sketch_index,
-            ), base
+            return finish(
+                _explicit_sketch_commands(
+                    shape,
+                    original,
+                    added,
+                    name,
+                    face_query_index=face_query_index,
+                    sketch_index=sketch_index,
+                )
+            )
         if added.kind == "placed3d" and added.data[0].kind in (
                 "lip", "snap_fit", "boss", "rest"):
             if shape.kind != "union":
                 raise ModelError("plastic features are added with +")
-            feature, x, y, z = added.data
-            return steps + [
-                _plastic_feature_command(feature, (x, y, z), name)
-            ], base
+            plastic, x, y, z = added.data
+            return finish([
+                _plastic_feature_command(plastic, (x, y, z), name)
+            ])
         if added.kind == "placed3d" and added.data[0].kind == "hole":
             hole, x, y, z = added.data
-            return steps + _hole_commands(hole, (x, y, z), name), base
+            return finish(_hole_commands(hole, (x, y, z), name))
         if added.kind == "hole":
             raise ModelError("Hole must be positioned with .attach() or .at()")
         if added.kind in ("lip", "snap_fit", "boss", "rest"):
@@ -2005,7 +2070,7 @@ def _to_commands(shape, name):
                 "difference": "cut",
                 "intersection": "intersect",
             }[shape.kind]
-            return steps + _csg_apply(added, name, operation), base
+            return finish(_csg_apply(added, name, operation))
         raise ModelError(f"unsupported CAD feature {added.kind}")
     raise ModelError(f"unsupported CAD solid {shape.kind}")
 
@@ -2018,7 +2083,7 @@ def compile_features(shape, name):
     # XY rectangular footprints instead list their plan dimensions first.
     root = shape
     while root.kind in (
-        "exported_feature", "fillet", "chamfer", "shell", "union", "difference",
+        "exported_feature", "named_feature", "fillet", "chamfer", "shell", "union", "difference",
         "material_assignment", "appearance_assignment",
     ):
         root = root.data[0]
