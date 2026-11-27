@@ -138,6 +138,24 @@ Release evidence for v0.24.0:
 - downstream CAD #189 may now adopt the released v0.24.0 capability instead of
   depending on an unreleased Forge branch.
 
+Normal-lane verification evidence after v0.24.0:
+- #256 / PR #410 added deterministic SolidCraft visual-state evidence for the
+  five currently capturable owners: RGB appearance, Installed / Free
+  configuration state, Front / Service configuration placement, 60 / 120
+  degree revolute pose and cut / suppressed revolve geometry;
+- the shared `solidcraft-visual` adapter now materializes persistent
+  saved-design state before measurement/snapshot and supports explicit RGB
+  regression without weakening the existing geometry policies;
+- all nine approved baselines come from SolidCraft 0.49.0 capture run
+  45916016779; exact-head PR CI 45965420591 is green;
+- PR #410 landed on permanent `dev` as
+  `3537cdeb4682f4ef4b49f5a4dab96ed996346941`; permanent dev
+  CI/build/publication run 45965985416 and Pages run 45966386680 are green;
+- #256 remains open only for `exploded-views`: #415 proves that
+  SolidCraft 0.49.0 `explode.show` is transient presentation state and
+  save/reopen snapshotting cannot capture it deterministically. Forge does not
+  add sleep/polling or Python substitute geometry for that gap.
+
 Experimental compiler evidence after the v0.23.0 cross-lane checkpoint:
 - #343 / PR #347 qualified recursive typed `BooleanIR` plus bounded `SphereIR` through native Mitcad join/cut/intersect;
 - #351 / PR #355 qualified parameter-independent `PolygonProfileIR -> RegionIR -> symmetric ExtrudeIR -> ChamferIR` composition from unchanged public SCPF source;
@@ -163,18 +181,21 @@ The historical repository remains an archived A/B/provenance reference at
 Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
 
 Normal `dev` lane:
-- **v0.24.0 is released** and synchronized back to permanent `dev`; #255 and
-  #380 are now part of the public consumer baseline;
+- **v0.24.0 is released** and synchronized back to permanent `dev`; #255,
+  #380 and the capturable #256 visual-state slice are part of the current
+  development baseline;
 - downstream CAD #189 may adopt v0.24.0 for parent/root suppression of an
   explicitly exported feature inside a reusable child component;
-- **#256 is the next selected normal-lane item**: add deterministic visual
-  state/motion evidence for `appearance-color`, `exploded-views`,
-  `configuration-installed-state`, `configuration-position`,
-  `revolute-joint` and `shifted-axis-revolve`, while retaining their
-  existing native/history/state checks as authoritative;
-- follow #256 with **#257**, adding folded-result visual geometry baselines for
-  `sheet-contour-flange`, `sheet-edge-flange`, `sheet-hem` and
-  `sheet-path-flange` without replacing native/flat-pattern evidence;
+- **#256 remains open but blocked only on #415** for deterministic headless
+  capture of transient `exploded-views` presentation; do not implement a
+  Forge-local timing/polling or substitute-geometry workaround;
+- **#257 is the active normal-lane item while #415 is blocked**: add folded
+  result visual geometry baselines for `sheet-contour-flange`,
+  `sheet-edge-flange`, `sheet-hem` and `sheet-path-flange` while
+  retaining their existing saved-design, flat-pattern and native-history
+  checks;
+- return to the remaining #256 exploded visual acceptance when #415 has a
+  supported deterministic SolidCraft capture route;
 - keep normal verification work independent from experimental Mitcad/IR work.
 
 Experimental `exp` lane:
