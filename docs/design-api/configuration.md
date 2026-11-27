@@ -517,6 +517,53 @@ new models should use `.configure(...)` after the method is released.
 Removal or deprecation timing must be handled through the normal Forge release
 policy; this proposal does not require an immediate breaking removal.
 
+## Executable API probe
+
+The design is paired with an executable Forge-owned API probe:
+
+```text
+api-probes/configuration-installed-current/
+  probe.yml
+  scpf/probe.py
+```
+
+This probe intentionally uses the **current released Forge configuration API**,
+not the proposed `Toggle` syntax. It creates the present SolidCraft 0.49
+baseline for the standalone fit state:
+
+```text
+Free row
+[ ] Installed rule
+```
+
+The rule is disabled by default. Its native effect drives `clamp_bore` from
+`tube_d-clamp_interference` to `tube_d`.
+
+The probe exists to answer two questions with executable evidence:
+
+1. what does the current native SolidCraft representation actually store and
+   render;
+2. does the proposed public API produce a cleaner UI without losing saved-design
+   behavior.
+
+During API development the branch-local `build.yml` selects this probe. Once
+the generic template workflow is available in the repository default branch,
+the same probe can also be run explicitly against `main`, `dev` or `exp`
+through the **API Probe** workflow without editing source selection.
+
+Successful probe output is retained independently from physical models under:
+
+```text
+build/<scope>/api-probes/configuration-installed-current/
+```
+
+The probe is not a model-catalogue owner and Pages must not project it as an
+Example or Verification model.
+
+A future probe using `design.configure(Toggle(...))` replaces or complements
+this current-baseline probe only after that proposed public API exists. The
+design document must not contain non-executable code and call it qualified.
+
 ## 9. Acceptance criteria
 
 Before this proposal becomes normative public API, Forge-owned verification must
