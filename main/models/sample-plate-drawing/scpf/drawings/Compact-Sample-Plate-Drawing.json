@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "f6y3z72rw4a8j",
+  "id": "1pn8r5374me1y",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "1ex8mkjb3g3ps"
+        "source": "40qm8pvafb7ch"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "6d5187j9p74df",
+      "id": "bxmbj17717b50",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,15 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "006mfphj3m159",
+          "id": "5n7fqy10p5rq1",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "b6f43fxz89n4d",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,37 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "crbc8rzbwhjc6",
+          "id": "6p1kahhg7m8ds",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "006mfphj3m159",
+          "parent": "b6f43fxz89n4d",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "fsqf7qjxmmbq7",
+          "id": "8dkmybzjq2zs6",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "006mfphj3m159",
+          "parent": "b6f43fxz89n4d",
           "side": "right"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "1jnnkdhb51e0f",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "1ex8mkjb3g3ps"
+      "id": "40qm8pvafb7ch"
     }
   ],
   "symbols": [],
