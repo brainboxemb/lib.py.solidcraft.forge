@@ -16,7 +16,9 @@ from scpf import (
     Depth,
     Edges,
     Faces,
+    FRONT,
     Hole,
+    LEFT,
     Lip,
     Parameter,
     Polygon2D,
@@ -56,6 +58,8 @@ from scpf.ir import (
     CircularPatternIR,
     ConeIR,
     CylinderIR,
+    DirectionPairEdgeSetIR,
+    ExplicitEdgePicksIR,
     ExtrudeIR,
     FaceBoundaryIR,
     FaceSetIR,
@@ -77,6 +81,7 @@ from scpf.ir import (
     PlacementIR,
     PlaneIR,
     PolygonProfileIR,
+    ProfileEdgeSetIR,
     RegionIR,
     RectangleProfileIR,
     RectangularPatternIR,
@@ -1846,6 +1851,128 @@ class SemanticIRTests(unittest.TestCase):
                 edges=(),
                 length=10,
             )
+
+    def test_shared_modify_selectors_are_semantic_and_solidcraft_compatible(self):
+        direction_shape = Box(
+            80,
+            50,
+            8,
+            anchor=Anchor.BOTTOM,
+        ).chamfer(
+            2,
+            edges=FRONT + LEFT,
+        )
+        direction_model = self.assert_solidcraft_compatibility(
+            direction_shape,
+            "DirectionChamfer",
+        )
+        self.assertIsInstance(direction_model.root, ChamferIR)
+        self.assertEqual(
+            direction_model.root.edges,
+            DirectionPairEdgeSetIR(((-1, -1, 0),)),
+        )
+
+        explicit_shape = Box(
+            80,
+            50,
+            8,
+            anchor=Anchor.BOTTOM,
+        ).fillet(
+            2,
+            edges=[(-40, -25, 0)],
+        )
+        explicit_model = self.assert_solidcraft_compatibility(
+            explicit_shape,
+            "ExplicitFillet",
+        )
+        self.assertIsInstance(explicit_model.root, FilletIR)
+        self.assertEqual(
+            explicit_model.root.edges,
+            ExplicitEdgePicksIR(((-40, -25, 0),)),
+        )
+
+        face_shape = Box(
+            80,
+            50,
+            8,
+            anchor=Anchor.BOTTOM,
+        ).chamfer(
+            1,
+            edges=Edges.from_faces(Faces.TOP, Faces.FRONT),
+        )
+        face_model = self.assert_solidcraft_compatibility(
+            face_shape,
+            "MultiFaceChamfer",
+        )
+        self.assertEqual(
+            face_model.root.edges,
+            FaceBoundaryIR(("top", "front")),
+        )
+
+        for model, name in (
+            (direction_model, "DirectionChamfer"),
+            (explicit_model, "ExplicitFillet"),
+            (face_model, "MultiFaceChamfer"),
+        ):
+            with self.subTest(name=name):
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, name)
+
+    def test_named_polygon_modify_selectors_are_semantic_and_compatible(self):
+        with Sketch(name="ProfileEdges", plane="XZ") as sketch:
+            Polygon2D(
+                [
+                    ("start", (0, 0)),
+                    ("tip", (10, 0)),
+                    ("far", (10, 8)),
+                    ("end", (0, 8)),
+                ],
+                plane="XZ",
+                world=True,
+            )
+        body = sketch.extrude(8, sym=True)
+
+        segment_model = self.assert_solidcraft_compatibility(
+            body.chamfer(
+                0.5,
+                edges=Edges.from_profile("start"),
+            ),
+            "ProfileSegmentChamfer",
+        )
+        self.assertIsInstance(segment_model.root, ChamferIR)
+        self.assertEqual(
+            segment_model.root.edges,
+            ProfileEdgeSetIR(
+                patterns=("start",),
+                kind="segments",
+                sides="both",
+            ),
+        )
+
+        vertex_model = self.assert_solidcraft_compatibility(
+            body.fillet(
+                0.5,
+                edges=Edges.from_vertices("tip", "end"),
+            ),
+            "ProfileVertexFillet",
+        )
+        self.assertIsInstance(vertex_model.root, FilletIR)
+        self.assertEqual(
+            vertex_model.root.edges,
+            ProfileEdgeSetIR(
+                patterns=("tip", "end"),
+                kind="vertices",
+                sides="axis",
+            ),
+        )
+
+        for model, name in (
+            (segment_model, "ProfileSegmentChamfer"),
+            (vertex_model, "ProfileVertexFillet"),
+        ):
+            with self.subTest(name=name):
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, name)
 
     def test_vertical_box_fillet_is_semantic_parallel_edge_ir(self):
         radius = Parameter("fillet_radius", 2)
