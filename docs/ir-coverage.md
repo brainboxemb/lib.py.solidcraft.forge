@@ -29,8 +29,8 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **16 / 20 (80%)**
-- partial: **4 / 20 (20%)**
+- complete: **17 / 20 (85%)**
+- partial: **3 / 20 (15%)**
 - legacy: **0 / 20 (0%)**
 - families with at least some typed IR: **20 / 20 (100%)**
 - physical SCPF owners on permanent `exp`: **61**
@@ -51,7 +51,7 @@ not effort or backend parity.
 | 2D profiles | complete | yes | partial | qualified slices | #534 covers public Circle/Polygon/Rectangle/RoundedRectangle/Slot closed-profile constructors; text/open connected geometry remains in the broader Sketch-entity family. |
 | Regions/profile membership | complete | yes | partial | qualified slices | #561 covers current public all-profile, exact-region and explicit Sketch-local selector intent; Mitcad support remains backend catch-up. |
 | Extrude | complete | yes | partial | qualified slices | #561 covers current public standalone/attached finite positive/negative/symmetric and through-all cut semantics over typed Sketch graphs/regions; Mitcad support remains partial. |
-| Revolve | partial | partial | partial | qualified slices | Broader profile/operation/reference forms. |
+| Revolve | complete | yes | partial | qualified slices | #586 reuses the complete Sketch graph for every current public single-source-profile Revolve form, including symmetric sweep, Text/connected/profile operations and symbolic AxisLine/angle intent; Mitcad remains a qualified subset. |
 | Boolean body operations | complete | partial | partial | qualified slices | #581 represents join/cut/intersect as recursive BodyIR × BodyIR composition in authored order. SolidCraft retains qualified primitive/Extrude/Revolve tool lowering; Mitcad remains a backend subset. |
 | Topology/reference selectors | complete | yes | partial | qualified slices | #562 types the current public face-boundary, principal-parallel, cardinal direction-pair, named Polygon segment/vertex and explicit fixed-pick selector vocabulary; Mitcad support remains a backend subset. |
 | Chamfer | complete | yes | partial | qualified slices | #562 types the complete public distance/distance2/flip contract over shared EdgeSelectionIR and typed BodyIR; backend support remains a separate dimension. |
@@ -103,5 +103,7 @@ vocabulary and moves Topology/reference selectors, Chamfer and Fillet to complet
 power and the existing public cadmath function grammar while keeping physical
 roles at typed use sites. #581 then completes Boolean body-operation semantics
 as recursive typed BodyIR composition while keeping backend lowering coverage
-independent. The migration therefore continues entirely as partial -> complete
-closure while backend catch-up remains independent.
+independent. #586 then completes current public Revolve semantics by reusing the
+completed Sketch graph, symmetric sweep and symbolic AxisLine/angle intent.
+The migration therefore continues entirely as partial -> complete closure while
+backend catch-up remains independent.
