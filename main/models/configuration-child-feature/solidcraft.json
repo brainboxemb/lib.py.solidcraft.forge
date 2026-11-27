@@ -34,7 +34,8 @@
     },
     {
       "bind": {
-        "$config_name_2": "name"
+        "$config_name_2": "name",
+        "$d1_FeatureCoupler_feature_panel_pin_name": "name"
       },
       "command": "solid.hole",
       "params": {
@@ -47,6 +48,15 @@
         "targets": [
           "FeatureCoupler"
         ]
+      }
+    },
+    {
+      "command": "timeline.suppress",
+      "params": {
+        "features": [
+          "$d1_FeatureCoupler_feature_panel_pin_name"
+        ],
+        "suppressed": true
       }
     },
     {

@@ -9,17 +9,17 @@
       "verification_stages": {
         "compact-drawing-sheet": {
           "adapter": "image-regression",
-          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         },
         "drawing-sheet": {
           "adapter": "image-regression",
-          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         },
         "native": {
           "adapter": "solidcraft-model",
-          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
           "status": "pass"
         }
       },

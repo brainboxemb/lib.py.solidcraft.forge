@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "5j3pexhmcnkb7",
+  "id": "bxwc8hzmq77dd",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "39jfth6y87zw3"
+        "source": "3f7xns8tccjgx"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "dbxjw0tgepmbg",
+      "id": "6zpn34eqqkysm",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -324,7 +324,7 @@
                         "decimals": null,
                         "unit": null
                       },
-                      "key": "properties.finish",
+                      "key": "finish",
                       "source": "component"
                     }
                   }
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "0wxw8n84aprcw",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "9308q9syvcpak",
+          "id": "4f5wzb5cjvvd6",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "0n0hsrmwvnh67",
+          "id": "2t8fj7bb6jv34",
+          "kind": "projected",
+          "label": "Above Front",
+          "notes": [],
+          "parent": "4f5wzb5cjvvd6",
+          "side": "above"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "6ez2qtdcq6219",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "9308q9syvcpak",
+          "parent": "4f5wzb5cjvvd6",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "5bns6yxd0nyjp",
-          "kind": "projected",
-          "label": "Above Front",
-          "notes": [],
-          "parent": "9308q9syvcpak",
-          "side": "above"
+          "id": "8cpwfvgznac8j",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "39jfth6y87zw3"
+      "id": "3f7xns8tccjgx"
     }
   ],
   "symbols": [],

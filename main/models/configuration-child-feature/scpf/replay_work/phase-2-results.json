@@ -1,5 +1,21 @@
 [
   {
+    "active": 1
+  },
+  {
+    "features": [
+      4
+    ],
+    "suppressed": true
+  },
+  {
+    "active": 0
+  },
+  {
+    "component": 1,
+    "occurrence": 5
+  },
+  {
     "occurrence": 2,
     "pending": false,
     "transform": [
@@ -42,7 +58,7 @@
         "name": "Default",
         "values": {
           "param:coupler_width": "40",
-          "suppress:Hole1": "false"
+          "suppress:Hole1": "true"
         }
       }
     ],
@@ -79,7 +95,7 @@
         "name": "Small",
         "values": {
           "param:coupler_width": "40",
-          "suppress:Hole1": "false"
+          "suppress:Hole1": "true"
         }
       }
     ],

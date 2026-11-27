@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "0t2arhw7afnrj",
+  "id": "cze5f5p5389t2",
   "language": "en",
   "line_group": "0.5",
   "name": "Block drawing",
@@ -22,14 +22,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "8r1zc27xenr4v"
+        "source": "2rk1z2h7p8zk8"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "cd5vax7sjy5z2",
+      "id": "dev6ewwj72pq1",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -321,7 +321,7 @@
                         "decimals": null,
                         "unit": null
                       },
-                      "key": "properties.finish",
+                      "key": "finish",
                       "source": "component"
                     }
                   }
@@ -726,15 +726,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "5ttb257y0gz6y",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "ef3b9sd0w7g1k",
+          "id": "2f3w5wxca65xb",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -742,29 +734,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "3zw59qwpbdj5v",
+          "id": "8s2cq1vzkr23q",
+          "kind": "projected",
+          "label": "Right of Front",
+          "notes": [],
+          "parent": "2f3w5wxca65xb",
+          "side": "right"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "9qzr9v33jhsns",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "ef3b9sd0w7g1k",
+          "parent": "2f3w5wxca65xb",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "fat9v5pvq3x0g",
-          "kind": "projected",
-          "label": "Right of Front",
-          "notes": [],
-          "parent": "ef3b9sd0w7g1k",
-          "side": "right"
+          "id": "annbwet17g5v9",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "8r1zc27xenr4v"
+      "id": "2rk1z2h7p8zk8"
     }
   ],
   "symbols": [],

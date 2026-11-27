@@ -5,18 +5,18 @@
   "implementation": "scpf",
   "owner": "topology-face-boundary-xz",
   "preview_status": null,
-  "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+  "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
   "schema": 2,
   "status": "pass",
   "verification_stages": {
     "native": {
       "adapter": "solidcraft-model",
-      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
       "status": "pass"
     },
     "visual": {
       "adapter": "solidcraft-visual",
-      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
       "status": "pass"
     }
   },

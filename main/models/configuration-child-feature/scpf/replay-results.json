@@ -21,7 +21,7 @@
       "FeatureCoupler"
     ],
     "feature": 3,
-    "ms": 2.509019,
+    "ms": 8.845646,
     "name": "Box1",
     "removed_bodies": [],
     "warning": null
@@ -35,10 +35,16 @@
     ],
     "created_bodies": [],
     "feature": 4,
-    "ms": 16.760181999999997,
+    "ms": 99.196691,
     "name": "Hole1",
     "removed_bodies": [],
     "warning": null
+  },
+  {
+    "features": [
+      4
+    ],
+    "suppressed": true
   },
   {
     "active": 0
@@ -90,7 +96,7 @@
         "name": "Default",
         "values": {
           "param:coupler_width": "40",
-          "suppress:Hole1": "false"
+          "suppress:Hole1": "true"
         }
       }
     ],
@@ -127,7 +133,7 @@
         "name": "Small",
         "values": {
           "param:coupler_width": "40",
-          "suppress:Hole1": "false"
+          "suppress:Hole1": "true"
         }
       }
     ],
