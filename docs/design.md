@@ -1709,6 +1709,49 @@ solid holes merely to make B-rep geometry look perforated. Mitcad remains
 unsupported for the sheet family and fails closed on these typed nodes; that
 backend gap does not force sheet semantics back into `LegacyShapeIR`.
 
+#555 removes the last fully legacy CAD semantic family by inserting an explicit
+reusable-component/assembly compiler boundary before native assembly lowering.
+The user-facing `ModelDefinition`, `ModelInstance` and `Assembly` objects
+remain the authoring layer; `normalize_assembly(...)` snapshots their CAD
+meaning into engine-neutral `AssemblyIR`.
+
+`ComponentDefinitionIR` owns one semantic definition id, the definition's
+typed `ModelIR`, published/fixed/external parameter metadata, input bindings,
+semantic custom anchors, exported feature names and symbolic local bounds.
+`OccurrenceIR` owns one semantic occurrence id, its definition reference,
+name/group and `OccurrencePlacementIR`. Position dimensions remain symbolic;
+a fixed rotation remains axis + angle intent. Python process-local occurrence
+ids never cross this boundary.
+
+Relationships are separate `RelationshipIR` nodes whose child/parent values
+are semantic occurrence ids. Rigid, planar, revolute and as-built intent retain
+their parent/child anchor references, offset/gap, angle, revolute value/limits,
+flip and authored name. `AnchorReferenceIR` distinguishes standard, named,
+explicit frame and topology references. SolidCraft derives world picks and
+native occurrence/joint ids only during lowering.
+
+Reusable definition feature identity is also explicit:
+`ComponentFeatureRefIR(definition, name)` resolves the occurrence-facing
+`occurrence.feature(name)` API back to definition identity. Two copies of the
+same reusable definition therefore reference the same semantic exported
+feature without retaining an occurrence id or SolidCraft history name.
+Configuration-table semantics remain their own partial family; this assembly
+boundary supplies the backend-neutral child-feature identity they consume.
+
+SolidCraft core assembly lowering now consumes `AssemblyIR` through the same
+backend registry used by model IR. Component geometry is lowered from each
+definition's `ModelIR` through the shared SolidCraft command boundary rather
+than recompiling raw Shape authoring in the assembly layer. A/B tests prove
+grouped copies, symbolic occurrence placement, rigid attachment and revolute
+attachment produce the same replay document as the retained stable compiler.
+
+Drawings and exploded views remain output presentation and are intentionally
+outside the core CAD-IR denominator. The SolidCraft compatibility layer may
+append that presentation from the existing authored presentation objects after
+the same AssemblyIR core has been validated. Mitcad has no AssemblyIR lowering
+yet and fails closed after normalization; backend lag does not make assembly
+semantics legacy.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
