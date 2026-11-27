@@ -840,6 +840,101 @@ class SemanticIRTests(unittest.TestCase):
             [{"$mitcad_bind": "body"}],
         )
 
+    def test_shifted_plane_revolve_cut_lowers_same_ir_to_both_backends(self):
+        axis_x = Parameter("axis_x", 8)
+        axis_z = Parameter("axis_z", 3)
+        panel = Box(80, 46, 30)
+        with Sketch(
+            name="ShiftedPassThrough",
+            plane="XY",
+            offset=axis_z,
+        ) as profile:
+            Polygon2D(
+                [
+                    (12, -5),
+                    (16, -5),
+                    (16, 5),
+                    (12, 5),
+                ],
+                plane="XY",
+            )
+        shape = panel - profile.revolve(
+            axis=AxisLine(
+                Axis.Y,
+                origin=(axis_x, 0, axis_z),
+            ),
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ShiftedPlaneRevolveCut",
+        )
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(
+            model.root.sketch.plane,
+            PlaneIR(
+                orientation="XY",
+                origin=(0, 0, axis_z),
+            ),
+        )
+
+        solidcraft = compile_solidcraft_ir(
+            model,
+            "ShiftedPlaneRevolveCut",
+        )
+        sketch_create = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "sketch.create"
+        )
+        self.assertEqual(
+            sketch_create["params"],
+            {
+                "name": "ShiftedPassThrough",
+                "plane": "XY",
+                "offset": "axis_z",
+            },
+        )
+
+        mitcad = compile_mitcad_ir(
+            model,
+            "ShiftedPlaneRevolveCut",
+        )
+        replay_commands = mitcad["replay"][0]["commands"]
+        self.assertEqual(
+            [row["def"]["type"] for row in replay_commands],
+            ["construction_plane", "sketch", "revolve"],
+        )
+        plane_command, sketch_command, revolve_command = replay_commands
+        self.assertEqual(
+            plane_command["def"],
+            {
+                "type": "construction_plane",
+                "definition": {
+                    "type": "offset",
+                    "plane": "xy",
+                    "distance": "axis_z",
+                },
+            },
+        )
+        self.assertEqual(
+            sketch_command["def"]["plane"],
+            {"ref": "plane.uid"},
+        )
+        self.assertNotIn("plane", model.root.axis.__dict__)
+        self.assertIn(
+            "axis_x",
+            [
+                dimension["value"]
+                for dimension in sketch_command["def"]["dimensions"]
+            ],
+        )
+        self.assertEqual(revolve_command["def"]["operation"], "cut")
+        self.assertEqual(
+            revolve_command["def"]["participants"],
+            [{"$mitcad_bind": "body"}],
+        )
+
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
         with Sketch(name="HalfProfile", plane="XZ") as sketch:
             Polygon2D(
