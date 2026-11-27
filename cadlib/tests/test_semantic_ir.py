@@ -1060,7 +1060,7 @@ class SemanticIRTests(unittest.TestCase):
             for row in commands
             if row["command"] == "sketch.circle.center"
         )
-        self.assertEqual(circle["center"], ["hole_x", 0])
+        self.assertEqual(circle["center"], ["(hole_x)", 0.0])
         cut = commands[-1]["params"]
         self.assertEqual(cut["direction"], "positive")
         self.assertEqual(cut["distance"], 10)
