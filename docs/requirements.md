@@ -282,6 +282,15 @@
 255. Existing text-only three-argument `Expression(value, expression, parameters)` construction remains source compatible but does not acquire invented semantic IR. Wrapping a text-only Expression in cadmath must likewise remain semantically unknown rather than parse its text.
 256. #577 completes the current public Values/parameters/scalar-expressions IR family independently from backend coverage. Existing affine SolidCraft/Mitcad lowering remains qualified; newly typed power/function or derived-unit forms may fail closed in a backend until separately qualified.
 
+257. Public Shape CSG semantics are exactly join/union (`+` and `|`), difference/cut (`-`) and intersection (`&`); Boolean IR must retain that operation plus authored left/right operand order.
+258. `BooleanIR` target and tool are generic typed `BodyIR` values. A Boolean composition must normalize whenever both authored operands already normalize to BodyIR; one LegacyShapeIR operand keeps the complete Boolean expression outside the typed boundary rather than embedding raw Shape payload in BooleanIR.
+259. Generic Boolean normalization must preserve specialized typed feature semantics that intentionally consume a CSG authoring form, including attached Extrude, Hole, Plastic features and the qualified subtractive Revolve path, before falling back to generic BooleanIR composition.
+260. FeatureRefIR traversal through Boolean history uses semantic `target` and `tool` roles and may recurse through nested BooleanIR on either side. Native command indexes, history names, BRep ids and replay bindings are forbidden from those references.
+261. SolidCraft Boolean lowering must consume typed BodyIR only. It may keep backend-specific support bounded, but already-qualified primitive CSG and standalone Sketch Extrude/Revolve tool behavior must remain document-compatible without re-reading raw Shape.data.
+262. Mitcad may retain its qualified primitive Boolean subset after #581. Unsupported typed target/tool body kinds must fail with ModelError before backend code assumes primitive-specific attributes.
+263. Material/appearance-assigned final Shapes remain invalid CSG operands at the public frontend boundary and must not be reclassified as Boolean body semantics.
+264. #581 completes the current public Boolean body-operation semantic family independently from backend coverage; any remaining Boolean limitation is a backend lowering/qualification gap or an operand-family IR gap, not missing Boolean meaning.
+
 ## SCPF native associativity
 
 1. When SolidCraft exposes a durable native reference for editable intent, Forge
