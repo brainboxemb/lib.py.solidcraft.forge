@@ -430,6 +430,8 @@ def _csg_primitive_command(
         return _box_command(node, name, operation=operation)
     if isinstance(node.primitive, CylinderIR):
         return _cylinder_command(node, name, operation=operation)
+    if isinstance(node.primitive, ConeIR):
+        return _cone_command(node, name, operation=operation)
     if isinstance(node.primitive, SphereIR):
         return _sphere_command(node, name, operation=operation)
     raise ModelError(
