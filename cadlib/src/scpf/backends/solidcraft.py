@@ -18,6 +18,7 @@ from ..core import (
     Parameter,
     _DirectionSelector,
     _dim_abs,
+    _dim_add,
     _dim_sub,
     _box_corner_from_anchor,
     _cone_base_from_anchor,
@@ -79,6 +80,7 @@ from ..ir import (
     SketchMirrorIR,
     SketchRectangularPatternIR,
     TextEntityIR,
+    TranslationIR,
     SheetBaseIR,
     SheetContourFlangeIR,
     SheetEdgeFlangeIR,
@@ -962,6 +964,51 @@ def _plastic_feature_commands(
     ]
 
 
+def _translated_body_ir(
+    node: BodyIR,
+    offset: tuple,
+) -> BodyIR:
+    """Apply one semantic translation through the current typed CSG tree."""
+    if isinstance(node, TranslationIR):
+        combined = tuple(
+            _dim_add(node.offset[index], offset[index])
+            for index in range(3)
+        )
+        return _translated_body_ir(node.body, combined)
+    if isinstance(node, PlacementIR):
+        return PlacementIR(
+            primitive=node.primitive,
+            point=tuple(
+                _dim_add(node.point[index], offset[index])
+                for index in range(3)
+            ),
+            anchor=node.anchor,
+            explicit=True,
+        )
+    if isinstance(node, BooleanIR):
+        return BooleanIR(
+            operation=node.operation,
+            target=_translated_body_ir(node.target, offset),
+            tool=_translated_body_ir(node.tool, offset),
+        )
+    raise ModelError(
+        "portable SolidCraft TranslationIR supports primitive/Boolean CSG bodies"
+    )
+
+
+def _csg_style_tool(node: BodyIR) -> bool:
+    """Return whether a tool belongs to the stable primitive CSG spelling."""
+    if isinstance(node, TranslationIR):
+        return _csg_style_tool(node.body)
+    return (
+        isinstance(node, PlacementIR)
+        or (
+            isinstance(node, BooleanIR)
+            and node.operation == "join"
+        )
+    )
+
+
 def _boolean_tool_commands(
     model: ModelIR,
     node: BodyIR,
@@ -971,6 +1018,14 @@ def _boolean_tool_commands(
     prior: list[dict],
 ) -> list[dict]:
     """Apply one typed Boolean tool to an existing native body."""
+    if isinstance(node, TranslationIR):
+        return _boolean_tool_commands(
+            model,
+            _translated_body_ir(node.body, node.offset),
+            name,
+            operation,
+            prior=prior,
+        )
     if isinstance(node, PlacementIR):
         return [
             *prior,
@@ -1023,13 +1078,7 @@ def _boolean_commands(model: ModelIR, node: BooleanIR, name: str) -> list[dict]:
         raise ModelError("portable SolidCraft BooleanIR requires typed body operands")
 
     if isinstance(node.target, PlacementIR):
-        primitive_csg_tool = (
-            isinstance(node.tool, PlacementIR)
-            or (
-                isinstance(node.tool, BooleanIR)
-                and node.tool.operation == "join"
-            )
-        )
+        primitive_csg_tool = _csg_style_tool(node.tool)
         commands = (
             [_csg_primitive_command(node.target, name, "new")]
             if primitive_csg_tool
@@ -2790,6 +2839,13 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
 
     if isinstance(node, SheetPerforateIR):
         return _sheet_perforate_commands(model, node, name)
+
+    if isinstance(node, TranslationIR):
+        return _body_commands(
+            model,
+            _translated_body_ir(node.body, node.offset),
+            name,
+        )
 
     if isinstance(node, PlacementIR):
         if isinstance(node.primitive, BoxIR):
