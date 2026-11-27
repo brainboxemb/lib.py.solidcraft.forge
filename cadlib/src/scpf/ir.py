@@ -4486,6 +4486,9 @@ def _portable_hole(
     if not isinstance(target, BodyIR):
         return None
 
+    while tool_shape.kind == "exported_feature":
+        tool_shape, _name = tool_shape.data
+
     absolute = _absolute_feature_placement(tool_shape)
     if absolute is not None:
         feature, placement = absolute
@@ -4597,6 +4600,9 @@ def _portable_plastic_feature(
 ) -> PlasticFeatureIR | None:
     if not isinstance(target, BodyIR):
         return None
+
+    while tool_shape.kind == "exported_feature":
+        tool_shape, _name = tool_shape.data
 
     placed = _absolute_feature_placement(tool_shape)
     if placed is None:
@@ -5238,6 +5244,10 @@ def _translation_ir(shape: Shape) -> TranslationIR | None:
 
 
 def _normalize_node(shape: Shape) -> IRNode:
+    if shape.kind == "exported_feature":
+        source, _name = shape.data
+        return _normalize_node(source)
+
     sheet = _portable_sheet(shape)
     if sheet is not None:
         return sheet
