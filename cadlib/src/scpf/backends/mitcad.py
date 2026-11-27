@@ -26,8 +26,10 @@ from ..ir import (
     BoxIR,
     ChamferIR,
     CircleProfileIR,
+    ConfigurationIR,
     CylinderIR,
     ExtrudeIR,
+    FeatureRefIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
@@ -36,6 +38,7 @@ from ..ir import (
     RegionIR,
     RevolveIR,
     SphereIR,
+    SuppressionColumnIR,
     _region_interior_point,
     normalize_shape,
 )
@@ -752,6 +755,7 @@ def _revolve_commands(
     name: str,
     *,
     participant=None,
+    feature_binding: str | None = None,
 ) -> list[dict]:
     """Lower semantic RevolveIR to native Mitcad Sketch + Revolve."""
     sketch = node.sketch
@@ -868,6 +872,7 @@ def _revolve_commands(
             },
         },
         {
+            **({"as": feature_binding} if feature_binding is not None else {}),
             "cmd": "add_feature",
             "name": name,
             "def": revolve_definition,
