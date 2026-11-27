@@ -1068,16 +1068,124 @@ class SemanticIRTests(unittest.TestCase):
         with self.assertRaisesRegex(ModelError, "HoleIR"):
             compile_mitcad_ir(model, "AnchoredHole")
 
-    def test_side_face_hole_remains_outside_stable_anchored_lowering(self):
+    def test_bottom_face_hole_uses_typed_anchored_placement(self):
         plate = Box(40, 30, 10, anchor=Anchor.BOTTOM)
-        shape = plate + Hole(d=4).on(
+        shape = plate + Hole(
+            d=4,
+            depth=3,
+        ).on(
             plate,
-            face=Faces.LEFT,
+            face=Faces.BOTTOM,
+            offset=(5, -4),
         )
+
         model = normalize_shape(shape)
-        self.assertIsInstance(model.root, LegacyShapeIR)
-        with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "SideHole")
+        self.assertIsInstance(model.root, HoleIR)
+        self.assertEqual(model.root.placement.mode, "anchored")
+        self.assertEqual(model.root.placement.parent_anchor, "bottom")
+        self.assertEqual(model.root.placement.child_anchor, "bottom")
+
+        commands = compile_solidcraft_ir(
+            model,
+            "BottomHole",
+        )["commands"]
+        circle = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "sketch.circle.center"
+        )
+        self.assertEqual(circle["center"], [5.0, -4.0])
+        cut = commands[-1]["params"]
+        self.assertEqual(cut["distance"], 3)
+        self.assertEqual(cut["direction"], "positive")
+        self.assertEqual(cut["name"], "Hole")
+
+    def test_backend_unsupported_anchored_holes_remain_typed(self):
+        plate = Box(40, 30, 10, anchor=Anchor.BOTTOM)
+        cases = (
+            (
+                plate + Hole(d=4).on(
+                    plate,
+                    face=Faces.LEFT,
+                ),
+                "TOP or BOTTOM",
+            ),
+            (
+                plate + CounterboreHole(
+                    d=4,
+                    counterbore_d=8,
+                    counterbore_depth=2,
+                ).attach(
+                    plate,
+                    parent=Anchor.TOP,
+                    child=Anchor.BOTTOM,
+                ),
+                "simple",
+            ),
+        )
+        for index, (shape, error) in enumerate(cases):
+            with self.subTest(index=index):
+                model = normalize_shape(shape)
+                self.assertIsInstance(model.root, HoleIR)
+                self.assertIsInstance(
+                    model.root.placement,
+                    FeaturePlacementIR,
+                )
+                with self.assertRaisesRegex(ModelError, error):
+                    compile_solidcraft_ir(
+                        model,
+                        f"UnsupportedAnchoredHole{index}",
+                    )
+                with self.assertRaisesRegex(ModelError, "HoleIR"):
+                    compile_mitcad_ir(
+                        model,
+                        f"UnsupportedAnchoredHole{index}",
+                    )
+
+    def test_countersink_angle_parameter_has_semantic_angle_role(self):
+        sink_angle = Parameter("sink_angle", 90)
+        plate = Box(40, 30, 10, anchor=Anchor.BOTTOM)
+        shape = plate + CountersinkHole(
+            d=5,
+            countersink_d=10,
+            countersink_angle=sink_angle,
+            direction=(0, 0, -1),
+        ).at(0, 0, 10)
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ParameterizedCountersink",
+        )
+        self.assertIsInstance(model.root, HoleIR)
+        self.assertIs(model.root.countersink_angle, sink_angle)
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR(
+                    "sink_angle",
+                    90,
+                    roles=("angle",),
+                ),
+            ),
+        )
+
+        commands = compile_solidcraft_ir(
+            model,
+            "ParameterizedCountersink",
+        )["commands"]
+        parameter = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "parameters.add"
+        )
+        self.assertEqual(parameter["name"], "sink_angle")
+        self.assertEqual(parameter["unit"], "deg")
+        hole = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.hole"
+        )
+        self.assertEqual(hole["cs_angle"], "sink_angle")
 
     def test_circular_hole_pattern_is_semantic_feature_history(self):
         bolts = Parameter("bolts", 6)
@@ -1515,28 +1623,19 @@ class SemanticIRTests(unittest.TestCase):
         with self.assertRaisesRegex(ModelError, "HoleIR"):
             compile_mitcad_ir(model, "CylinderHole")
 
-    def test_hole_ir_widening_stays_fail_closed(self):
+    def test_parameter_driven_hole_direction_stays_fail_closed(self):
         direction_parameter = Parameter("drill_direction", -1)
-        unsupported = (
+        shape = (
             Box(30, 30, 12, anchor=Anchor.BOTTOM)
             + Hole(
                 d=5,
                 direction=(0, 0, direction_parameter),
-            ).at(0, 0, 12),
-            Box(30, 30, 12, anchor=Anchor.BOTTOM)
-            + CountersinkHole(
-                d=5,
-                countersink_d=10,
-                countersink_angle=Parameter("sink_angle", 90),
-                direction=(0, 0, -1),
-            ).at(0, 0, 12),
+            ).at(0, 0, 12)
         )
-        for index, shape in enumerate(unsupported):
-            with self.subTest(index=index):
-                model = normalize_shape(shape)
-                self.assertIsInstance(model.root, LegacyShapeIR)
-                with self.assertRaises(ModelError):
-                    compile_mitcad_ir(model, f"UnsupportedHole{index}")
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "ParameterizedHoleDirection")
 
     def test_vertical_box_fillet_is_semantic_parallel_edge_ir(self):
         radius = Parameter("fillet_radius", 2)
