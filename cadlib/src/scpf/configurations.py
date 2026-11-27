@@ -43,7 +43,7 @@ def _configuration_column(value):
 
 _PARAMETER_LITERAL = re.compile(
     r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?"
-    r"(?:\s+[A-Za-z°%][A-Za-z0-9_°%/*^.-]*)?$"
+    r"(?:\s+[A-Za-z°%]+)?$"
 )
 
 
