@@ -41,6 +41,7 @@ from ..ir import (
     SuppressionColumnIR,
     _region_interior_point,
     normalize_shape,
+    resolve_feature_ref,
 )
 
 
@@ -299,6 +300,64 @@ def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
         )
     )
     return commands
+
+
+def _boolean_command_count(node) -> int:
+    if isinstance(node, PlacementIR):
+        return 1
+    if isinstance(node, BooleanIR):
+        return _boolean_command_count(node.target) + 1
+    raise ModelError(
+        "Mitcad Boolean feature references require typed CSG nodes"
+    )
+
+
+def _boolean_feature_command_index(
+    root: BooleanIR,
+    reference: FeatureRefIR,
+) -> int:
+    """Map semantic history roles to Mitcad's private command-array order."""
+    resolve_feature_ref(root, reference)
+    segments = reference.path[1:]
+    node = root
+    offset = 0
+
+    if not segments:
+        return _boolean_command_count(node.target)
+
+    for position, segment in enumerate(segments):
+        last = position == len(segments) - 1
+        if not isinstance(node, BooleanIR):
+            raise ModelError(
+                "Mitcad feature reference descends beyond Boolean history"
+            )
+        if segment == "tool":
+            if not last:
+                raise ModelError(
+                    "Mitcad feature reference cannot descend through a CSG tool"
+                )
+            return offset + _boolean_command_count(node.target)
+        if segment != "target":
+            raise ModelError(
+                f"unsupported Mitcad semantic feature role {segment!r}"
+            )
+
+        target = node.target
+        if isinstance(target, PlacementIR):
+            if not last:
+                raise ModelError(
+                    "Mitcad feature reference cannot descend through a primitive target"
+                )
+            return offset
+        if not isinstance(target, BooleanIR):
+            raise ModelError(
+                "Mitcad feature reference target is not typed Boolean history"
+            )
+        if last:
+            return offset + _boolean_command_count(target.target)
+        node = target
+
+    raise ModelError("Mitcad feature reference did not resolve to a command")
 
 
 _PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
@@ -986,11 +1045,11 @@ def _mitcad_configuration_commands(
     if (
         len(configuration.columns) != 1
         or not isinstance(configuration.columns[0], SuppressionColumnIR)
-        or configuration.columns[0].feature != FeatureRefIR(("root",))
     ):
         raise ModelError(
-            "Mitcad ConfigurationIR currently requires one root suppression column"
+            "Mitcad ConfigurationIR currently requires one suppression column"
         )
+    resolve_feature_ref(model.root, configuration.columns[0].feature)
     if any(len(row.cells) != 1 for row in configuration.rows):
         raise ModelError(
             "Mitcad ConfigurationIR currently requires one suppression cell per row"
@@ -1206,6 +1265,12 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
         geometry_commands = _revolve_commands(node, name)
     elif isinstance(node, BooleanIR):
         geometry_commands = _boolean_commands(node, name)
+        if model.configuration is not None:
+            reference = model.configuration.columns[0].feature
+            selected = _boolean_feature_command_index(node, reference)
+            command = dict(geometry_commands[selected])
+            command["as"] = "configured_feature"
+            geometry_commands[selected] = command
     else:
         raise ModelError(
             f"Mitcad backend does not support Forge IR node "
@@ -1216,6 +1281,18 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
         *_parameter_commands(model),
         *geometry_commands,
     ]
+    if model.configuration is not None:
+        if not isinstance(node, BooleanIR):
+            raise ModelError(
+                "Mitcad configured non-Revolve geometry is outside the qualified history slice"
+            )
+        commands.extend(
+            _mitcad_configuration_commands(
+                model,
+                model.configuration,
+                feature_binding="configured_feature",
+            )
+        )
     dependencies = _native_dependencies(commands)
     return {
         "format": FORMAT,
