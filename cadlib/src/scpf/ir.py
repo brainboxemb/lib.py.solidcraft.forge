@@ -2576,26 +2576,6 @@ class FeatureRefIR:
 
 
 @dataclass(frozen=True)
-class DefinitionFeatureRefIR:
-    """Semantic feature path inside one reusable component definition."""
-
-    definition: str
-    feature: FeatureRefIR
-
-    def __post_init__(self):
-        if not isinstance(self.definition, str) or not self.definition.startswith(
-            "definition_"
-        ):
-            raise ValueError(
-                "DefinitionFeatureRefIR definition must be semantic id"
-            )
-        if not isinstance(self.feature, FeatureRefIR):
-            raise ValueError(
-                "DefinitionFeatureRefIR feature must be FeatureRefIR"
-            )
-
-
-@dataclass(frozen=True)
 class ParameterColumnIR:
     """One configured public parameter column."""
 
@@ -2624,7 +2604,6 @@ class SuppressionColumnIR:
             self.feature,
             (
                 FeatureRefIR,
-                DefinitionFeatureRefIR,
                 ComponentFeatureRefIR,
             ),
         ):
@@ -5683,7 +5662,6 @@ def _assembly_configuration_feature_ref(
 ):
     """Resolve assembly suppression identity to semantic definition identity."""
     from .assembly_ir import ComponentFeatureRefIR
-    from .core import _shape_contains
     from .model_objects import _ComponentFeatureReference
 
     assembly = _authored_assembly(authored_design)
@@ -5739,66 +5717,9 @@ def _assembly_configuration_feature_ref(
             "exported suppression Shape is ambiguous across component definitions"
         )
 
-    matches = []
-    for key, instance in definition_instances.items():
-        definition_id = definition_ids[key]
-        definition = next(
-            item
-            for item in assembly_ir.definitions
-            if item.id == definition_id
-        )
-
-        exported_source = next(
-            (
-                exported
-                for _name, exported in instance.definition.features
-                if (
-                    exported.kind == "exported_feature"
-                    and feature is exported.data[0]
-                )
-            ),
-            None,
-        )
-        if exported_source is not None:
-            semantic = _configuration_feature_ref(
-                instance.definition.shape,
-                exported_source,
-                definition.model.root,
-            )
-            matches.append(
-                DefinitionFeatureRefIR(
-                    definition=definition_id,
-                    feature=semantic,
-                )
-            )
-            continue
-
-        if not _shape_contains(instance.definition.shape, feature):
-            continue
-        try:
-            semantic = _configuration_feature_ref(
-                instance.definition.shape,
-                feature,
-                definition.model.root,
-            )
-        except ValueError:
-            continue
-        matches.append(
-            DefinitionFeatureRefIR(
-                definition=definition_id,
-                feature=semantic,
-            )
-        )
-
-    if not matches:
-        raise ValueError(
-            "suppression Shape is not an applied feature of configured assembly"
-        )
-    if len(matches) != 1:
-        raise ValueError(
-            "suppression Shape is ambiguous across component definitions"
-        )
-    return matches[0]
+    raise ValueError(
+        "Assembly suppression Shape must be an explicitly exported component feature"
+    )
 
 
 def normalize_configured_design(
@@ -5926,7 +5847,6 @@ __all__ = [
     "ConfigurationIR",
     "ConfigurationRowIR",
     "ConfigurationRuleIR",
-    "DefinitionFeatureRefIR",
     "DriveParameterEffectIR",
     "ParameterCellIR",
     "ParameterColumnIR",
