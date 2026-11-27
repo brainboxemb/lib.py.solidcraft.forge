@@ -35,6 +35,7 @@ from scpf.ir import (
     ConeIR,
     CylinderIR,
     ExtrudeIR,
+    FaceBoundaryIR,
     FeatureRefIR,
     FilletIR,
     ConfigurationIR,
@@ -739,11 +740,114 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(cone_def["operation"], "join")
         self.assertEqual(cone_def["participants"], [])
 
-    def test_non_vertical_fillet_selection_remains_outside_bounded_slice(self):
+    def test_top_face_boundary_fillet_reuses_semantic_face_selector(self):
+        radius = Parameter("top_fillet_radius", 2)
         shape = Box(
-            50,
+            60,
             40,
-            20,
+            12,
+            anchor=Anchor.BOTTOM,
+        ).fillet(
+            radius,
+            edges=Edges.from_faces(Faces.TOP),
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "TopFaceBoundaryFillet",
+        )
+        self.assertIsInstance(model.root, FilletIR)
+        self.assertIsInstance(model.root.base, PlacementIR)
+        self.assertIsInstance(model.root.base.primitive, BoxIR)
+        self.assertIs(model.root.radius, radius)
+        self.assertEqual(
+            model.root.edges,
+            FaceBoundaryIR(("top",)),
+        )
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR(
+                    "top_fillet_radius",
+                    2,
+                    roles=("length",),
+                ),
+            ),
+        )
+
+        solidcraft = compile_solidcraft_ir(
+            model,
+            "TopFaceBoundaryFillet",
+        )
+        self.assertEqual(
+            [
+                row["command"]
+                for row in solidcraft["commands"]
+                if row["command"].startswith(("solid.", "model."))
+            ],
+            ["solid.box", "model.faces", "model.edges", "solid.fillet"],
+        )
+        fillet = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "solid.fillet"
+        )
+        self.assertEqual(fillet["params"]["edges"], "$topology_edges_1")
+        self.assertEqual(
+            fillet["params"]["radius"],
+            "top_fillet_radius",
+        )
+
+        mitcad = compile_mitcad_ir(model, "TopFaceBoundaryFillet")
+        stage = mitcad["replay"][0]
+        self.assertNotIn("bind_parallel_edges", stage)
+        self.assertEqual(
+            stage["bind_face_boundary_edges"],
+            {
+                "name": "edges",
+                "body": "body",
+                "face": {
+                    "surface": "plane",
+                    "normal": [0, 0, 1],
+                    "normal_tolerance": 1e-6,
+                },
+            },
+        )
+        fillet_def = stage["commands"][0]["def"]
+        self.assertEqual(fillet_def["type"], "fillet")
+        self.assertEqual(
+            fillet_def["edges"],
+            {"$mitcad_bind": "edges"},
+        )
+        self.assertEqual(
+            fillet_def["radius"],
+            "top_fillet_radius",
+        )
+
+    def test_other_face_boundary_fillet_selectors_remain_legacy(self):
+        for faces in (
+            (Faces.FRONT,),
+            (Faces.TOP, Faces.FRONT),
+        ):
+            with self.subTest(faces=faces):
+                shape = Box(
+                    60,
+                    40,
+                    12,
+                    anchor=Anchor.BOTTOM,
+                ).fillet(
+                    2,
+                    edges=Edges.from_faces(*faces),
+                )
+                model = normalize_shape(shape)
+                self.assertIsInstance(model.root, LegacyShapeIR)
+                with self.assertRaises(ModelError):
+                    compile_mitcad_ir(model, "UnsupportedFaceBoundaryFillet")
+
+    def test_face_boundary_fillet_over_non_box_remains_legacy(self):
+        shape = Cylinder(
+            d=30,
+            h=12,
             anchor=Anchor.BOTTOM,
         ).fillet(
             2,
@@ -752,7 +856,33 @@ class SemanticIRTests(unittest.TestCase):
         model = normalize_shape(shape)
         self.assertIsInstance(model.root, LegacyShapeIR)
         with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "UnsupportedFaceBoundaryFillet")
+            compile_mitcad_ir(model, "UnsupportedFaceBoundaryFilletBase")
+
+    def test_top_face_boundary_fillet_cone_join_remains_legacy(self):
+        filleted = Box(
+            60,
+            40,
+            12,
+            anchor=Anchor.BOTTOM,
+        ).fillet(
+            2,
+            edges=Edges.from_faces(Faces.TOP),
+        )
+        cone = Cone(
+            d=12,
+            top_d=6,
+            h=6,
+            anchor=Anchor.BOTTOM,
+        ).at(
+            0,
+            0,
+            12,
+            anchor=Anchor.BOTTOM,
+        )
+        model = normalize_shape(filleted + cone)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "UnsupportedFaceBoundaryFilletCone")
 
     def test_circle_extrude_is_separate_sketch_region_and_extrude_ir(self):
         diameter = Parameter("diameter", 20)

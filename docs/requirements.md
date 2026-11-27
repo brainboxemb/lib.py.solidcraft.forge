@@ -157,6 +157,11 @@
 132. A qualified `FilletIR` body result may feed the existing `BooleanIR` as target for the bounded Cone join proof; Forge must not introduce a Fillet-specific Boolean operation or history vocabulary.
 133. The Fillet→Cone composition must preserve semantic source order `Box -> Fillet -> Cone`. Any Cone support construction plane and Mitcad edge-query/bindings remain backend transport and must not enter semantic history.
 134. Exact pinned Mitcad v0.70.0 runtime qualification must execute a 50×40×20 BOTTOM Box with R2 Fillet over all four Z-parallel edges joined to an Ø18→Ø10 × 8 Cone whose BOTTOM is at world Z=18, proving bounds [-25,-20,0]..[25,20,26], volume `39680 + 338π`, exactly four bound parallel edges and retained saved native design/STL evidence.
+135. `FilletIR.edges` may additionally reuse `FaceBoundaryIR` only for the first bounded `("top",)` Box selector; other face orientations, multiple faces and non-Box bases remain fail-closed.
+136. SolidCraft TOP face-boundary Fillet lowering must reuse the typed face-boundary topology query/binding path and reproduce the stable `solid.fillet` command behavior for unchanged public SCPF source.
+137. Mitcad TOP face-boundary Fillet lowering must reuse replay `bind_face_boundary_edges`, not principal-edge reconstruction; native face/edge names remain private transport and no Chamfer-style `reference_face` enters Fillet semantics.
+138. The first face-boundary Fillet slice remains standalone. Existing Fillet→Cone `BooleanIR` composition remains qualified only for `ParallelEdgeSetIR("Z")`; face-boundary Fillet composition must fail closed.
+139. Exact pinned Mitcad v0.70.0 runtime qualification must execute a 60×40×12 BOTTOM Box with R2 TOP-boundary Fillet, retain one watertight solid and saved native design/STL evidence, prove bounds [-30,-20,0]..[30,20,12], and preserve the first accepted native volume 28631.38638124875 mm³ as the regression value.
 
 ## SCPF native associativity
 
