@@ -76,16 +76,13 @@
           "LeftInstalled",
           "RightInstalled"
         ]
-      },
-      "bind": {
-        "$installed_group": "group"
       }
     },
     {
       "command": "timeline.suppress",
       "params": {
         "groups": [
-          "$installed_group"
+          5
         ],
         "suppressed": true
       }
@@ -135,7 +132,7 @@
           },
           "effect": {
             "type": "drive_suppression",
-            "feature": "$installed_group",
+            "feature": 5,
             "value": false
           }
         }
