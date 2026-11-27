@@ -97,7 +97,7 @@ class VerificationSpecialProjectionTests(unittest.TestCase):
 
     def test_repository_joint_anatomy_has_no_cadcraft_sources(self):
         root = Path(__file__).resolve().parents[3]
-        joint = root / 'docs/verification/joint-anatomy'
+        joint = root / 'site/source/verification/joint-anatomy'
         self.assertFalse(list(joint.glob('*.cadcraft.json')))
         body = (joint / 'body.html').read_text(encoding='utf-8')
         self.assertNotIn('CadCraft source', body)
