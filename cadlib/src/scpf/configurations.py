@@ -314,17 +314,13 @@ def _component_parameter_name(design, reference):
 
     assembly = _as_assembly(design)
     names = _definition_names(assembly)
+    by_definition = {}
+    for instance in assembly.instances:
+        by_definition.setdefault(instance.definition.key, []).append(instance)
     matches = [
         (number, key, instances[0].definition)
         for number, (key, instances) in enumerate(
-            {
-                instance.definition.key: [
-                    item
-                    for item in assembly.instances
-                    if item.definition.key == instance.definition.key
-                ]
-                for instance in assembly.instances
-            }.items(),
+            by_definition.items(),
             start=1,
         )
         if key == reference.definition_key
