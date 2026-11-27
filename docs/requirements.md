@@ -203,6 +203,16 @@
 178. Existing concentric-Circle exact-region multi-profile behavior remains separately qualified; #534 must not broaden arbitrary multi-profile region selection merely to declare basic profile constructors complete.
 179. Mitcad may remain unsupported for the new ProfileIR variants after #534 and must fail closed on those typed profiles.
 180. Text and connected/open profile authoring belong to the broader Sketch entity family, not the basic closed-profile constructor family used for #534 completeness.
+181. Within-component native feature placement must be semantic compiler data. `FeaturePlacementIR` distinguishes absolute XYZ placement from anchored placement and anchored placement retains parent anchor, child anchor and X/Y offset intent without native topology ids.
+182. Public `X.MIN/CENTER/MAX` and `Y.MIN/CENTER/MAX` feature offsets normalize to `BoundOffsetIR(axis, reference, delta)`; the authored symbolic delta remains a length dependency and native coordinates are derived only during backend lowering.
+183. HoleIR uses the generic feature-placement contract. Existing explicit `.at(...)` Hole semantics remain absolute placement, while the stable simple non-directional TOP/BOTTOM `.attach()` / `.on()` route becomes anchored typed Hole history over its typed BodyIR target.
+184. SolidCraft anchored Hole lowering must reproduce the existing editable Sketch-circle plus cut-Extrude history rather than silently changing that stable path to `solid.hole`. Unsupported side-face or broader anchored Hole variants remain fail-closed.
+185. `PlasticFeatureIR` represents one authored plastic/mechanical history feature over typed BodyIR plus generic FeaturePlacementIR. Its typed specifications are Lip, SnapFit, Boss and Rest; Forge must not rewrite them as anonymous primitive CSG.
+186. Plastic feature dimensions and placement offsets retain authored Parameter/Expression dependencies in IR. Hook, direction and along vectors in #544 remain fixed finite non-zero semantic vectors; parameter-driven vector widening is not implied.
+187. SolidCraft resolves TOP/BOTTOM/INNER_BOTTOM plastic placement only after lowering typed body history. INNER_BOTTOM wall position must come from typed ShellIR semantics; the backend must not inspect legacy Shape.data to recover shell thickness.
+188. SolidCraft typed PlasticFeatureIR lowering must reproduce the existing `plastic.lip`, `plastic.snap_fit`, `plastic.boss` and `plastic.rest` command contracts for accepted public source.
+189. Mitcad may remain unsupported for FeaturePlacementIR consumers after #544 and must fail closed on HoleIR/PlasticFeatureIR forms it cannot lower. Mitcad support is not an IR-ready merge gate.
+190. General side-face feature placement, attached Cylinder placement, assembly occurrence placement and rotated component frames remain separate semantic layers; #544 does not conflate within-component feature placement with assembly attachment.
 
 ## SCPF native associativity
 
