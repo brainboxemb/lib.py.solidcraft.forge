@@ -517,6 +517,92 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            fillet_cone_document = compile_mitcad_ir(
+                normalize_shape(
+                    Box(
+                        50,
+                        40,
+                        20,
+                        anchor=Anchor.BOTTOM,
+                    ).fillet(
+                        2,
+                        edges=Edges.VERTICAL,
+                    )
+                    + Cone(
+                        d=18,
+                        top_d=10,
+                        h=8,
+                        anchor=Anchor.BOTTOM,
+                    ).at(
+                        0,
+                        0,
+                        18,
+                        anchor=Anchor.BOTTOM,
+                    )
+                ),
+                "FilletConeBoolean",
+            )
+            self.assertEqual(
+                [
+                    row["def"]["type"]
+                    for row in fillet_cone_document["commands"]
+                    if row["cmd"] == "add_feature"
+                ],
+                ["box"],
+            )
+            fillet_cone_stage = fillet_cone_document["replay"][0]
+            self.assertEqual(
+                fillet_cone_stage["bind_parallel_edges"],
+                {
+                    "name": "parallel_edges",
+                    "body": "body",
+                    "axis": "Z",
+                    "expected": 4,
+                },
+            )
+            self.assertEqual(
+                [
+                    row["def"]["type"]
+                    for row in fillet_cone_stage["commands"]
+                    if row["cmd"] == "add_feature"
+                ],
+                ["fillet", "construction_plane", "cone"],
+            )
+            self.assertEqual(
+                fillet_cone_stage["commands"][-1]["def"]["operation"],
+                "join",
+            )
+
+            fillet_cone_native = run_document(
+                fillet_cone_document,
+                save=root / "out/fillet-cone-boolean.mitcad",
+                export=root / "out/fillet-cone-boolean.stl",
+                executable=str(executable),
+                work_dir=root / "fillet-cone-boolean-workspace",
+            )
+            self.assertEqual(len(fillet_cone_native["bodies"]), 1)
+            fillet_cone_body = fillet_cone_native["bodies"][0]
+            self.assertEqual(fillet_cone_body["kind"], "solid")
+            self.assertEqual(
+                len(fillet_cone_native["bindings"]["parallel_edges"]),
+                4,
+            )
+            self.assertAlmostEqual(
+                fillet_cone_body["volume"],
+                39680.0 + 338.0 * pi,
+                places=3,
+            )
+            for actual, expected in zip(
+                fillet_cone_body["bbox"]["min"],
+                [-25.0, -20.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                fillet_cone_body["bbox"]["max"],
+                [25.0, 20.0, 26.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
             placed_frustum_document = compile_mitcad_ir(
                 normalize_shape(
                     Cone(
@@ -1245,6 +1331,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "mixed-role-expression-revolve.stl",
                 "asymmetric-chamfer.mitcad",
                 "asymmetric-chamfer.stl",
+                "fillet-cone-boolean.mitcad",
+                "fillet-cone-boolean.stl",
                 "placed-frustum.mitcad",
                 "placed-frustum.stl",
                 "shifted-sphere-csg.mitcad",
@@ -1295,6 +1383,10 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"asymmetric_chamfer_bbox={asymmetric_chamfer_body['bbox']}",
                         f"asymmetric_chamfer_bindings={asymmetric_chamfer_native['bindings']}",
                         "asymmetric_chamfer_two_distance_ir=pass",
+                        f"fillet_cone_boolean_volume={fillet_cone_body['volume']}",
+                        f"fillet_cone_boolean_bbox={fillet_cone_body['bbox']}",
+                        f"fillet_cone_boolean_bindings={fillet_cone_native['bindings']}",
+                        "fillet_parallel_edge_ir=pass",
                         f"placed_frustum_volume={placed_frustum_body['volume']}",
                         f"placed_frustum_bbox={placed_frustum_body['bbox']}",
                         "placed_frustum_cone_ir=pass",
