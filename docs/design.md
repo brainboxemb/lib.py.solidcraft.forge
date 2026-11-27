@@ -1496,6 +1496,54 @@ Mitcad may perform the same typed placement rewrite for its qualified primitive
 subset and otherwise fails closed. Semantic feature paths cross a translation
 through the explicit `body` role; backend command indexes remain local.
 
+#605 completes the current public configuration and feature-identity semantic
+family. Configuration is document-level intent, not another body-history
+feature. One shared `ConfigurationIR` therefore describes the table/rule
+grammar regardless of whether the configured design is one `ModelIR` or one
+`AssemblyIR`.
+
+The semantic table is heterogeneous by construction:
+
+- `ParameterColumnIR(name)` names one configured public parameter;
+- `SuppressionColumnIR(feature)` stores semantic feature identity;
+- `ConfigurationRowIR` retains authored row order and contains
+  `ParameterCellIR(expression)` for parameter columns or bool for suppression;
+- `ConfigurationRuleIR` retains id/name/enabled state and the current public
+  `AlwaysConditionIR -> DriveParameterEffectIR` grammar;
+- `ConfigurationExpressionIR` preserves the authored rule-expression text,
+  deterministic Parameter dependency names, and typed scalar IR when the
+  authored value was a Parameter/Expression with semantic scalar meaning.
+
+Shape suppression uses `FeatureRefIR`. Reusable-component suppression
+uses the public exported-feature contract and reuses #555
+`ComponentFeatureRefIR` plus semantic definition identity. A Shape object
+stored as the exported wrapper resolves to that same component-feature
+identity. Internal raw Shapes from a component `build()` are not a separate
+public definition-selector API and therefore do not acquire a speculative
+definition-local reference type. No occurrence ids, native feature ids or
+replay variables enter semantic configuration identity.
+
+A configured Shape remains `ModelIR(configuration=ConfigurationIR)` so the
+already-qualified typed suppression backend path stays source compatible.
+A configured ModelInstance/Assembly uses `ConfiguredDesignIR` around the
+existing `AssemblyIR` plus the same `ConfigurationIR`. This is a wrapper over
+two existing semantic domains, not a second configuration schema and not a
+duplicate assembly representation.
+
+The public authoring layer still owns table/rule syntax validation: row arity
+and cell kinds, duplicate columns/rule ids, valid active row and the current
+Always/DriveParameter rule grammar. Semantic normalization additionally resolves
+feature identity before any backend exists. Unknown native parameter publication
+or a backend's inability to lower a typed combination remains an explicit
+lowering error, not a reason to put backend ids into IR.
+
+#605 is the IR-completion boundary, not a claim of backend parity. Existing
+SolidCraft compatibility compilation may continue using its established
+configuration lowering while typed backend lowering catches up. Mitcad may
+support a smaller subset and fail closed. Neither backend may recover completed
+configuration meaning by parsing raw `_ConfiguredDesign`, raw Shape history or
+native browser identity inside a new typed lowering path.
+
 #485 widens the existing `ChamferIR` rather than adding a second feature
 kind. `distance` remains the primary chamfer distance; optional `distance2`
 and `flip` carry the already-public two-distance semantics. Equal-distance

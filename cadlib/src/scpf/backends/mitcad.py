@@ -1707,6 +1707,16 @@ def _contains_translation(node) -> bool:
     return False
 
 
+def _qualified_configuration_slice(configuration: ConfigurationIR) -> bool:
+    """Return whether Mitcad supports this typed configuration subset."""
+    return (
+        isinstance(configuration, ConfigurationIR)
+        and len(configuration.columns) == 1
+        and isinstance(configuration.columns[0], SuppressionColumnIR)
+        and not configuration.rules
+    )
+
+
 def compile_ir_with_dependencies(model: ModelIR, name: str):
     """Compile the qualified Forge semantic IR subset to Mitcad intent."""
     if not isinstance(model, ModelIR):
@@ -1715,6 +1725,14 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
         raise ModelError("the model name must be a valid identifier")
 
     node = model.root
+    if (
+        model.configuration is not None
+        and not _qualified_configuration_slice(model.configuration)
+    ):
+        raise ModelError(
+            "Mitcad backend does not support Forge configurations outside "
+            "the qualified single-suppression slice"
+        )
     if isinstance(node, LegacyShapeIR):
         raise ModelError(
             "Mitcad backend does not yet support Forge shape kind "

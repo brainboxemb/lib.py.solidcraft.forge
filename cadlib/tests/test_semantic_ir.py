@@ -3985,7 +3985,7 @@ class SemanticIRTests(unittest.TestCase):
         ):
             normalize_model(configured)
 
-    def test_configuration_ir_rejects_non_suppression_columns_and_rules(self):
+    def test_configuration_ir_rejects_non_public_rule_objects(self):
         panel = Box(40, 24, 20)
         with Sketch(name="PassThrough", plane="XY") as profile:
             Polygon2D(
@@ -4004,7 +4004,10 @@ class SemanticIRTests(unittest.TestCase):
             rows={"Cut": (False,), "Suppressed": (True,)},
         )
         object.__setattr__(configured, "rules", ("unsupported",))
-        with self.assertRaisesRegex(ValueError, "does not support configuration rules"):
+        with self.assertRaisesRegex(
+            ValueError,
+            "outside current public grammar",
+        ):
             normalize_model(configured)
 
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
