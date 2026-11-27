@@ -1842,6 +1842,47 @@ class SheetEdgeFlangeIR(SheetBodyIR):
     flip: bool = False
     source_kind: str = "sheet_edge_flange"
 
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetEdgeFlangeIR base must be BodyIR")
+        if (
+            not isinstance(self.edges, tuple)
+            or not self.edges
+            or any(
+                not isinstance(point, tuple)
+                or len(point) != 3
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in point
+                )
+                for point in self.edges
+            )
+        ):
+            raise ValueError("SheetEdgeFlangeIR edges must be fixed finite XYZ points")
+        if (
+            isinstance(self.height, bool)
+            or not isfinite(pv(self.height))
+            or pv(self.height) <= 0
+        ):
+            raise ValueError("SheetEdgeFlangeIR height must be positive")
+        if (
+            isinstance(self.angle, bool)
+            or not isfinite(pv(self.angle))
+            or pv(self.angle) == 0
+            or abs(pv(self.angle)) >= 180
+        ):
+            raise ValueError("SheetEdgeFlangeIR angle must be non-zero and below 180")
+        if self.height_from not in {None, "outer", "inner", "tangent"}:
+            raise ValueError("SheetEdgeFlangeIR height_from is invalid")
+        if self.position not in {
+            None, "inside", "outside", "middle", "material_outside", "tangent",
+        }:
+            raise ValueError("SheetEdgeFlangeIR position is invalid")
+        if not isinstance(self.flip, bool):
+            raise ValueError("SheetEdgeFlangeIR flip must be bool")
+
 
 @dataclass(frozen=True)
 class SheetHemIR(SheetBodyIR):
@@ -1851,6 +1892,40 @@ class SheetHemIR(SheetBodyIR):
     gap: Any | None = None
     flip: bool = False
     source_kind: str = "sheet_hem"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetHemIR base must be BodyIR")
+        if (
+            not isinstance(self.edges, tuple)
+            or not self.edges
+            or any(
+                not isinstance(point, tuple)
+                or len(point) != 3
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in point
+                )
+                for point in self.edges
+            )
+        ):
+            raise ValueError("SheetHemIR edges must be fixed finite XYZ points")
+        if (
+            isinstance(self.length, bool)
+            or not isfinite(pv(self.length))
+            or pv(self.length) <= 0
+        ):
+            raise ValueError("SheetHemIR length must be positive")
+        if self.gap is not None and (
+            isinstance(self.gap, bool)
+            or not isfinite(pv(self.gap))
+            or pv(self.gap) <= 0
+        ):
+            raise ValueError("SheetHemIR gap must be positive")
+        if not isinstance(self.flip, bool):
+            raise ValueError("SheetHemIR flip must be bool")
 
 
 @dataclass(frozen=True)
@@ -1864,6 +1939,17 @@ class SheetPathFlangeIR(SheetBodyIR):
     def __post_init__(self):
         if not isinstance(self.base, BodyIR):
             raise ValueError("SheetPathFlangeIR base must be BodyIR")
+        if (
+            not isinstance(self.edge, tuple)
+            or len(self.edge) != 3
+            or any(
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not isfinite(value)
+                for value in self.edge
+            )
+        ):
+            raise ValueError("SheetPathFlangeIR edge must be one fixed finite XYZ point")
         if not isinstance(self.path, SketchChainIR) or self.path.closed:
             raise ValueError("SheetPathFlangeIR path must be open SketchChainIR")
         if any(segment.kind != "line" for segment in self.path.segments):
