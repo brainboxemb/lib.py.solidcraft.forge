@@ -1494,8 +1494,8 @@ def _pattern_angle_parameter_names(node, found=None):
             return found
         if node.kind == "body_move":
             original, _translate, _origin, _axis, angle = node.data
-            if angle is not None:
-                found.update(param.name for param in parameters_in(angle))
+            if isinstance(angle, Parameter):
+                found.add(angle.name)
             _pattern_angle_parameter_names(original, found)
             return found
         _pattern_angle_parameter_names(node.data, found)
