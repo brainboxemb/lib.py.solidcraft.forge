@@ -12,6 +12,10 @@ The current public surface is reviewed separately in the
 semantics as authoritative; existing SolidCraft-shaped public wrappers receive
 no compatibility protection merely because they already shipped.
 
+Independent global state is specified in the
+[Configuration state semantic contract](state.md). That contract is the target
+for both future public authoring and the later engine-neutral IR extension.
+
 ## 1. Core constraint: one configuration per final design
 
 A final SolidCraft design exposes **one configuration definition**. Forge must
