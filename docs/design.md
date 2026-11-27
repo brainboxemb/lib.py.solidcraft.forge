@@ -1651,6 +1651,33 @@ existing native `plastic.*` command contract without re-reading frontend
 intentionally unsupported for these new typed feature nodes and may catch up
 independently.
 
+#550 completes the current public Hole semantic family on top of that shared
+placement boundary. Absolute `.at(...)` and anchored `.on()/attach()` Hole
+authoring now normalize to `HoleIR` independently from backend capability.
+A side-face or non-simple anchored Hole therefore remains valid typed CAD
+intent even when SolidCraft has no qualified lowering for that form; the
+backend reports the capability boundary instead of forcing the frontend back
+to `LegacyShapeIR`.
+
+Simple TOP and BOTTOM anchored Hole are SolidCraft-lowerable. TOP retains the
+existing editable Sketch-circle plus cut-Extrude history exactly. BOTTOM uses
+the same semantic support plane and drills in the positive direction for
+finite depth. Through-all remains one full body-thickness cut from the base
+plane. This also aligns implementation with the public API contract that
+already described TOP/BOTTOM as the qualified face-relative forms.
+
+Countersink angle is now a true angle-valued semantic use site. A direct
+Parameter supplied as `countersink_angle` remains in `HoleIR`, receives the
+`angle` role and lowers as a native degree parameter. The historical
+SolidCraft compatibility classifier is corrected to assign the same `deg`
+unit instead of treating that field as a millimetre dimension. Fixed drilling
+direction remains a semantic vector; parameter-driven orientation is not
+introduced as a new editable vector contract.
+
+Mitcad still rejects HoleIR explicitly. Pattern/configuration capability that
+references a Hole is tracked by those separate semantic families rather than
+being counted as missing Hole meaning.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
