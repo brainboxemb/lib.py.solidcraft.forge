@@ -2454,6 +2454,29 @@ class SemanticIRTests(unittest.TestCase):
                 with self.assertRaises(ModelError):
                     compile_mitcad_ir(model, name)
 
+        history_shape = body.fillet(
+            0.5,
+            edges=Edges.from_vertices("tip"),
+        ).chamfer(
+            0.25,
+            edges=Edges.from_profile("far"),
+        )
+        history_model = self.assert_solidcraft_compatibility(
+            history_shape,
+            "ProfileHistoryChamfer",
+        )
+        self.assertIsInstance(history_model.root, ChamferIR)
+        self.assertIsInstance(history_model.root.base, FilletIR)
+        self.assertIsInstance(history_model.root.base.base, ExtrudeIR)
+        self.assertEqual(
+            history_model.root.edges,
+            ProfileEdgeSetIR(
+                patterns=("far",),
+                kind="segments",
+                sides="both",
+            ),
+        )
+
     def test_vertical_box_fillet_is_semantic_parallel_edge_ir(self):
         radius = Parameter("fillet_radius", 2)
         shape = Box(
