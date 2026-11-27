@@ -2100,37 +2100,6 @@ def _count_parameter_names(value, found=None):
         found = set()
 
     if isinstance(value, Shape):
-        if value.kind == "sheet_base":
-            (
-                _sketch_name, _plane, origin, plane_offset, profiles, operations,
-                thickness, bend_radius, _k_factor, _rule_name,
-            ) = value.data
-            _length_parameter_names((origin, plane_offset, profiles, operations, thickness, bend_radius), found)
-            return found
-        if value.kind == "sheet_contour_flange":
-            contour, distance, thickness, bend_radius, _k_factor, _rule_name, _flip, _reverse = value.data
-            _length_parameter_names((contour, distance, thickness, bend_radius), found)
-            return found
-        if value.kind == "sheet_fold":
-            original, line, _angle, fixed, _position, _flip = value.data
-            _length_parameter_names((original, line, fixed), found)
-            return found
-        if value.kind == "sheet_edge_flange":
-            original, _edges, height, _angle, _height_from, _position, _flip = value.data
-            _length_parameter_names((original, height), found)
-            return found
-        if value.kind == "sheet_hem":
-            original, _edges, length, gap, _flip = value.data
-            _length_parameter_names((original, length, gap), found)
-            return found
-        if value.kind == "sheet_path_flange":
-            original, _edge, path, radius = value.data
-            _length_parameter_names((original, path, radius), found)
-            return found
-        if value.kind == "sheet_perforate":
-            original, diameter, pitch, margin, _pattern = value.data
-            _length_parameter_names((original, diameter, pitch, margin), found)
-            return found
         if value.kind == "rectangular_pattern":
             (
                 original,
@@ -2151,16 +2120,6 @@ def _count_parameter_names(value, found=None):
                 for parameter in parameters_in(count1, count2)
             )
             _count_parameter_names(original, found)
-            return found
-        if value.kind == "sheet_fold":
-            original, _line, angle, _fixed, _position, _flip = value.data
-            found.update(parameter.name for parameter in parameters_in(angle))
-            _angle_parameter_names(original, found)
-            return found
-        if value.kind == "sheet_edge_flange":
-            original, _edges, _height, angle, _height_from, _position, _flip = value.data
-            found.update(parameter.name for parameter in parameters_in(angle))
-            _angle_parameter_names(original, found)
             return found
         if value.kind == "circular_pattern":
             (
@@ -2203,6 +2162,16 @@ def _angle_parameter_names(value, found=None):
                 found.update(
                     parameter.name for parameter in parameters_in(angle)
                 )
+            return found
+        if value.kind == "sheet_fold":
+            original, _line, angle, _fixed, _position, _flip = value.data
+            found.update(parameter.name for parameter in parameters_in(angle))
+            _angle_parameter_names(original, found)
+            return found
+        if value.kind == "sheet_edge_flange":
+            original, _edges, _height, angle, _height_from, _position, _flip = value.data
+            found.update(parameter.name for parameter in parameters_in(angle))
+            _angle_parameter_names(original, found)
             return found
         if value.kind == "circular_pattern":
             (
@@ -2276,6 +2245,43 @@ def _length_parameter_names(value, found=None):
             direction = spec["direction"]
             if direction is not None:
                 _length_parameter_names(direction, found)
+            return found
+        if value.kind == "sheet_base":
+            (
+                _sketch_name, _plane, origin, plane_offset, profiles, operations,
+                thickness, bend_radius, _k_factor, _rule_name,
+            ) = value.data
+            _length_parameter_names(
+                (origin, plane_offset, profiles, operations, thickness, bend_radius),
+                found,
+            )
+            return found
+        if value.kind == "sheet_contour_flange":
+            contour, distance, thickness, bend_radius, _k_factor, _rule_name, _flip, _reverse = value.data
+            _length_parameter_names(
+                (contour, distance, thickness, bend_radius),
+                found,
+            )
+            return found
+        if value.kind == "sheet_fold":
+            original, line, _angle, fixed, _position, _flip = value.data
+            _length_parameter_names((original, line, fixed), found)
+            return found
+        if value.kind == "sheet_edge_flange":
+            original, _edges, height, _angle, _height_from, _position, _flip = value.data
+            _length_parameter_names((original, height), found)
+            return found
+        if value.kind == "sheet_hem":
+            original, _edges, length, gap, _flip = value.data
+            _length_parameter_names((original, length, gap), found)
+            return found
+        if value.kind == "sheet_path_flange":
+            original, _edge, path, radius = value.data
+            _length_parameter_names((original, path, radius), found)
+            return found
+        if value.kind == "sheet_perforate":
+            original, diameter, pitch, margin, _pattern = value.data
+            _length_parameter_names((original, diameter, pitch, margin), found)
             return found
         if value.kind == "rectangular_pattern":
             (
