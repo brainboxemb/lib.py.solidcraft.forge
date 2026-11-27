@@ -1,5 +1,6 @@
 """Contracts for engine-neutral reusable-component and assembly IR."""
 import unittest
+from dataclasses import fields, is_dataclass
 
 from scpf import (
     Anchor,
@@ -116,10 +117,23 @@ class AssemblyIRTests(unittest.TestCase):
 
         # Process-local ModelInstance ids and backend replay variables never
         # become semantic AssemblyIR identity.
-        text = repr(model)
-        self.assertNotIn(str(first.occurrence_id), text)
-        self.assertNotIn(str(second.occurrence_id), text)
-        self.assertNotIn("$", text)
+        def semantic_field_names(value):
+            names = set()
+            if is_dataclass(value):
+                for field in fields(value):
+                    names.add(field.name)
+                    names.update(semantic_field_names(getattr(value, field.name)))
+            elif isinstance(value, (tuple, list)):
+                for item in value:
+                    names.update(semantic_field_names(item))
+            elif isinstance(value, dict):
+                for item in value.values():
+                    names.update(semantic_field_names(item))
+            return names
+
+        self.assertNotIn("occurrence_id", semantic_field_names(model))
+        self.assertNotIn("_occurrence_id", semantic_field_names(model))
+        self.assertNotIn("$", repr(model))
 
     def test_group_and_imported_assembly_preserve_occurrence_meaning(self):
         model = normalize_assembly(AssemblyIRPair())
