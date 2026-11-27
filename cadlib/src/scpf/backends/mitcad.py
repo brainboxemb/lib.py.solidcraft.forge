@@ -14,6 +14,7 @@ from ..core import (
     Parameter,
     Shape,
     _DirectionSelector,
+    _dim_add,
     _box_corner_from_anchor,
     _cone_base_from_anchor,
     _native_dependencies,
@@ -49,6 +50,7 @@ from ..ir import (
     SketchRelationsIR,
     SphereIR,
     SuppressionColumnIR,
+    TranslationIR,
     _region_interior_point,
     normalize_shape,
     resolve_feature_ref,
@@ -1649,6 +1651,62 @@ def _chamfer_document(
         "replay": _plain_command_value(replay),
     }, dependencies
 
+def _translated_body_ir(node, offset):
+    """Materialize TranslationIR into Mitcad's existing typed CSG placements."""
+    if isinstance(node, TranslationIR):
+        combined = tuple(
+            _dim_add(node.offset[index], offset[index])
+            for index in range(3)
+        )
+        return _translated_body_ir(node.body, combined)
+    if isinstance(node, PlacementIR):
+        return PlacementIR(
+            primitive=node.primitive,
+            point=tuple(
+                _dim_add(node.point[index], offset[index])
+                for index in range(3)
+            ),
+            anchor=node.anchor,
+            explicit=True,
+        )
+    if isinstance(node, BooleanIR):
+        return BooleanIR(
+            operation=node.operation,
+            target=_translated_body_ir(node.target, offset),
+            tool=_translated_body_ir(node.tool, offset),
+        )
+    raise ModelError(
+        "Mitcad TranslationIR supports primitive/Boolean CSG bodies only"
+    )
+
+
+def _materialize_translations(node):
+    """Remove semantic TranslationIR wrappers only for native lowering."""
+    if isinstance(node, TranslationIR):
+        return _translated_body_ir(
+            _materialize_translations(node.body),
+            node.offset,
+        )
+    if isinstance(node, BooleanIR):
+        return BooleanIR(
+            operation=node.operation,
+            target=_materialize_translations(node.target),
+            tool=_materialize_translations(node.tool),
+        )
+    return node
+
+
+def _contains_translation(node) -> bool:
+    if isinstance(node, TranslationIR):
+        return True
+    if isinstance(node, BooleanIR):
+        return (
+            _contains_translation(node.target)
+            or _contains_translation(node.tool)
+        )
+    return False
+
+
 def compile_ir_with_dependencies(model: ModelIR, name: str):
     """Compile the qualified Forge semantic IR subset to Mitcad intent."""
     if not isinstance(model, ModelIR):
@@ -1662,6 +1720,12 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
             "Mitcad backend does not yet support Forge shape kind "
             f"{node.source_kind!r}; no qualified semantic IR lowering exists"
         )
+
+    if model.configuration is not None and _contains_translation(node):
+        raise ModelError(
+            "Mitcad configured TranslationIR feature identity is not qualified yet"
+        )
+    node = _materialize_translations(node)
 
     if isinstance(node, ChamferIR):
         return _chamfer_document(model, node, name)

@@ -2499,6 +2499,30 @@ class ShellIR(BodyIR):
 
 
 @dataclass(frozen=True)
+class TranslationIR(BodyIR):
+    """One semantic XYZ translation of an already-typed body."""
+
+    body: BodyIR
+    offset: tuple[Any, Any, Any]
+    source_kind: str = "translated"
+
+    def __post_init__(self):
+        if not isinstance(self.body, BodyIR):
+            raise ValueError("TranslationIR body must be typed BodyIR")
+        if (
+            not isinstance(self.offset, tuple)
+            or len(self.offset) != 3
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.offset
+            )
+        ):
+            raise ValueError(
+                "TranslationIR offset must contain three finite CAD dimensions"
+            )
+
+
+@dataclass(frozen=True)
 class BooleanIR(BodyIR):
     """Recursive CSG composition over already-typed semantic body histories."""
 
@@ -3104,6 +3128,7 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
             point=_shift_point(placement.point, delta),
             anchor=placement.anchor,
             explicit=True,
+            source_kind="translated",
         )
 
     return None
@@ -4958,6 +4983,46 @@ def _portable_sheet(shape: Shape) -> SheetBodyIR | None:
         return None
 
 
+def _translation_compatible_body(node: IRNode) -> bool:
+    """Return whether current stable body translation supports this typed tree."""
+    if isinstance(node, PlacementIR):
+        return isinstance(
+            node.primitive,
+            (BoxIR, CylinderIR, ConeIR, SphereIR),
+        )
+    if isinstance(node, TranslationIR):
+        return _translation_compatible_body(node.body)
+    if isinstance(node, BooleanIR):
+        return (
+            _translation_compatible_body(node.target)
+            and _translation_compatible_body(node.tool)
+        )
+    return False
+
+
+def _translation_ir(shape: Shape) -> TranslationIR | None:
+    """Normalize current working translated primitive/CSG body semantics."""
+    if shape.kind != "translated":
+        return None
+    child, offset = shape.data
+    body = _normalize_node(child)
+    if not _translation_compatible_body(body):
+        return None
+    if isinstance(body, TranslationIR):
+        offset = tuple(
+            _dim_add(body.offset[index], offset[index])
+            for index in range(3)
+        )
+        body = body.body
+    try:
+        return TranslationIR(
+            body=body,
+            offset=tuple(offset),
+        )
+    except (TypeError, ValueError):
+        return None
+
+
 def _normalize_node(shape: Shape) -> IRNode:
     sheet = _portable_sheet(shape)
     if sheet is not None:
@@ -4966,6 +5031,10 @@ def _normalize_node(shape: Shape) -> IRNode:
     placement = _portable_placement(shape)
     if placement is not None:
         return placement
+
+    translation = _translation_ir(shape)
+    if translation is not None:
+        return translation
 
     if shape.kind in {"union", "difference", "intersection"}:
         target_shape, tool_shape = shape.data
@@ -5058,6 +5127,9 @@ def resolve_feature_ref(root: IRNode, reference: FeatureRefIR) -> IRNode:
 
     node = root
     for segment in reference.path[1:]:
+        if isinstance(node, TranslationIR) and segment == "body":
+            node = node.body
+            continue
         if isinstance(node, BooleanIR) and segment in {"target", "tool"}:
             node = getattr(node, segment)
             continue
@@ -5205,6 +5277,19 @@ def _configuration_feature_ref(
     root: IRNode,
 ) -> FeatureRefIR:
     """Resolve authored identity to semantic IR before native ids exist."""
+    if isinstance(root, TranslationIR) and design.kind == "translated":
+        child, _offset = design.data
+        reference = _configuration_feature_ref(
+            child,
+            feature,
+            root.body,
+        )
+        translated = FeatureRefIR(
+            path=("root", "body", *reference.path[1:]),
+        )
+        resolve_feature_ref(root, translated)
+        return translated
+
     # Keep the already-qualified #424 authored Revolve-cut identity stable: the
     # source tool becomes the semantic root feature rather than a Boolean tool.
     if (
@@ -5411,6 +5496,7 @@ __all__ = [
     "SketchMirrorIR",
     "SketchRectangularPatternIR",
     "TextEntityIR",
+    "TranslationIR",
     "SheetRuleIR",
     "SheetBodyIR",
     "SheetBaseIR",

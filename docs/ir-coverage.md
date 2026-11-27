@@ -29,8 +29,8 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **18 / 20 (90%)**
-- partial: **2 / 20 (10%)**
+- complete: **19 / 20 (95%)**
+- partial: **1 / 20 (5%)**
 - legacy: **0 / 20 (0%)**
 - families with at least some typed IR: **20 / 20 (100%)**
 - physical SCPF owners on permanent `exp`: **61**
@@ -45,7 +45,7 @@ not effort or backend parity.
 | --- | --- | --- | --- | --- | --- |
 | Values, parameters, scalar expressions | complete | partial | partial | qualified slices | #577 types the complete existing public scalar grammar: literals, Parameter refs, unary/arithmetic, fixed numeric power and cadmath min/max/sqrt/abs/round/floor/atan; use-site roles stay separate. Non-affine backend lowering remains backend catch-up. |
 | Primitive solids: Box, Cylinder, Cone, Sphere | complete | yes | yes | qualified | Current public primitive meaning is typed. |
-| Placement and transforms | partial | partial | partial | qualified slices | #544 types within-component absolute/anchored FeaturePlacementIR and #555 types symbolic occurrence Placement plus fixed occurrence rotation; arbitrary primitive/body transform composition remains. |
+| Placement and transforms | complete | partial | partial | qualified slices | #598 adds TranslationIR for the remaining current-working translated primitive/Boolean CSG body surface; primitive PlacementIR, FeaturePlacementIR and assembly occurrence pose remain their existing semantic layers. No general Shape body-rotation/matrix API is currently exposed. |
 | Reference geometry: planes and axes | complete | partial | partial | qualified slices | #593 confirms the complete current public vocabulary is PlaneIR for principal Sketch planes/origins/offsets and AxisLineIR for principal/fixed-vector/shifted axes. Construction-/edge-/face-/topology-selected axes are not exposed public semantics. |
 | Sketch entities, constraints, dimensions | complete | partial | partial | qualified slices | #560 completes current public Sketch entity/operation semantics by reusing #554 SketchChainIR and adding Text plus Sketch-local rectangular-pattern/mirror source identity; support/consumer composition is tracked separately. |
 | 2D profiles | complete | yes | partial | qualified slices | #534 covers public Circle/Polygon/Rectangle/RoundedRectangle/Slot closed-profile constructors; text/open connected geometry remains in the broader Sketch-entity family. |
@@ -109,5 +109,8 @@ sweep and symbolic AxisLine/angle intent without broadening Slot/Text/pattern
 compiler behavior. #593 audits the exposed plane/axis vocabulary and confirms
 PlaneIR plus AxisLineIR already cover all current public reference geometry;
 non-exposed native datum/topology selectors are not counted as missing IR.
+#598 then completes the current working Placement/transforms surface with
+TranslationIR over typed primitive Boolean bodies while retaining PlacementIR,
+FeaturePlacementIR and assembly occurrence pose as distinct semantic layers.
 The migration therefore continues entirely as partial -> complete closure while
 backend catch-up remains independent.

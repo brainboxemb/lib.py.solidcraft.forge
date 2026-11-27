@@ -1459,6 +1459,43 @@ native id never becomes semantic IR. #593 consequently closes the family by
 reconciling the inventory and adding boundary evidence, not by introducing
 speculative DatumPlaneIR/ConstructionAxisIR nodes.
 
+#598 completes the current working body-placement/transform family without
+inventing a general affine transform system. The public body surface has three
+different semantic layers:
+
+- one primitive's absolute/anchored position is already `PlacementIR`;
+- within-component feature placement is already `FeaturePlacementIR`;
+- reusable occurrence translation/rotation is already assembly occurrence
+  placement from #555.
+
+The remaining working body transform is translation of a primitive/primitive-CSG
+result authored by `Shape.move()` or CENTER-to-CENTER `Shape.at(target)`.
+Primitive translation continues to normalize directly into `PlacementIR`.
+When the translated child is a typed primitive Boolean tree, Forge uses
+`TranslationIR(body, offset)`. The wrapper stores no native transform feature,
+matrix or command identity.
+
+The frontend contract is kept exact. Direct `Shape.move()` currently evaluates
+its XYZ arguments to finite numeric millimetres before the Shape is created, so
+#598 does not silently make it parameter-driven. CENTER alignment derives its
+delta from semantic primitive centres and may therefore retain Parameter/
+Expression length intent; that intent stays in the `TranslationIR` offset or
+the resulting primitive `PlacementIR`.
+
+Only the body forms accepted by the current stable CSG translation compiler are
+typed by this wrapper: supported primitives and recursive primitive
+join/cut/intersect trees. A translated Extrude, Fillet, Pattern or other
+feature-body remains a visible LegacyShapeIR boundary even when the generic
+`move()` method can construct such a Shape object. This distinction prevents
+IR migration from accidentally broadening working API behavior.
+
+SolidCraft materializes `TranslationIR` only during lowering by adding the
+semantic offset to each typed primitive placement in the Boolean tree, matching
+the historical CSG compiler's accumulated-offset behavior and command spelling.
+Mitcad may perform the same typed placement rewrite for its qualified primitive
+subset and otherwise fails closed. Semantic feature paths cross a translation
+through the explicit `body` role; backend command indexes remain local.
+
 #485 widens the existing `ChamferIR` rather than adding a second feature
 kind. `distance` remains the primary chamfer distance; optional `distance2`
 and `flip` carry the already-public two-distance semantics. Equal-distance

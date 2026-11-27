@@ -309,6 +309,17 @@
 279. Native construction-axis, edge-axis, face-axis and topology-selected axis selectors are not exposed by the current public SCPF API and must not be invented in semantic IR merely to anticipate future APIs. Fixed Sketch rotation remains transform/frame intent, not reference-geometry identity.
 280. #593 completes the current public Reference geometry: planes and axes semantic family independently from backend helper construction. Backend-created construction planes/axes, replay names and native ids remain transport only.
 
+281. The current public Placement/transforms semantic family distinguishes primitive absolute placement, within-component feature placement, assembly occurrence pose and translated primitive/CSG body geometry; those meanings must not be collapsed into one backend transform concept.
+282. Primitive absolute/anchor placement remains PlacementIR, within-component feature placement remains FeaturePlacementIR and occurrence translation/rotation remains Assembly occurrence placement. #598 must not replace those accepted nodes with a generic matrix type.
+283. A translated current-working primitive Boolean body is represented by TranslationIR(body, offset), where body is typed BodyIR and offset is one finite semantic XYZ length tuple. TranslationIR stores no native transform feature, matrix, replay binding or command identity.
+284. Direct Shape.move currently evaluates its offsets to finite numeric millimetres before Shape construction and #598 must preserve that contract rather than invent symbolic move input. CENTER-to-CENTER Shape.at(target) may derive Parameter/Expression deltas from semantic primitive dimensions and those length dependencies must remain typed.
+285. TranslationIR normalization is bounded to body forms supported by the current stable body-translation compiler: supported primitives and recursive primitive union/difference/intersection CSG. Moving an otherwise typed feature/body that the stable compiler cannot lower remains a visible legacy boundary until separately qualified.
+286. Nested current-working body translations may combine their XYZ offsets semantically, provided source CSG operation order and authored feature identity remain unchanged.
+287. FeatureRefIR traversal through TranslationIR uses the semantic body role. Native feature command indexes or body ids must not enter that path.
+288. SolidCraft TranslationIR lowering must reproduce the existing accumulated-offset primitive/CSG command document without reading raw Shape.data after normalization. Mitcad may materialize the same typed placement rewrite only for its supported primitive/Boolean subset and fail closed otherwise.
+289. Forge must not add Shape body rotation, scale, transform matrices or arbitrary affine APIs merely to complete the Placement/transforms IR family; those are not current public SCPF body semantics.
+290. #598 completes the current working public Placement and transforms semantic family independently from backend coverage; any future general body-transform API is a new public contract rather than missing current IR.
+
 ## SCPF native associativity
 
 1. When SolidCraft exposes a durable native reference for editable intent, Forge
