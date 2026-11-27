@@ -429,12 +429,18 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
                 "symmetric extrusion"
             )
         profile = sketch.profiles[0]
+        relation_points = _solidcraft_relation_polygon_points(sketch)
+        points = (
+            relation_points
+            if relation_points is not None
+            else profile.points
+        )
         ids = (
             list(profile.segment_ids)
             if profile.segment_ids is not None
             else [
                 chr(ord("a") + index)
-                for index in range(len(profile.points))
+                for index in range(len(points))
             ]
         )
         commands.append(
@@ -442,7 +448,7 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
                 "sketch.line",
                 points=[
                     [command_value(value) for value in point]
-                    for point in profile.points
+                    for point in points
                 ],
                 closed=True,
                 ids=ids,
