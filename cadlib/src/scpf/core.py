@@ -1420,7 +1420,6 @@ _FEATURE_HISTORY_CHAIN_KINDS = frozenset({
     "sheet_hem",
     "sheet_path_flange",
     "sheet_perforate",
-    "body_move",
 })
 
 
@@ -1660,98 +1659,6 @@ class Shape:
         if self.kind in ("fillet", "shell", "rectangular_pattern", "circular_pattern"):
             raise ValueError("move() currently supports only primitive and CSG shapes")
         return Shape("translated", (self, offsets))
-
-    def move_history(
-        self,
-        *,
-        translate=None,
-        origin=None,
-        axis=None,
-        angle=None,
-    ):
-        """Author one native Move/Copy history feature on this body.
-
-        This is deliberately separate from move(), which only translates Forge
-        geometry before CAD history is authored. move_history() produces a real
-        SolidCraft history step and can therefore be named/suppressed with
-        feature(...).
-
-        Supply translate=(x, y, z) for translation, or axis + angle for
-        rotation. Rotation defaults to the world origin unless origin= is
-        supplied. Translation and rotation may be combined in one history step.
-        """
-        if translate is None and angle is None:
-            raise ValueError(
-                "move_history() requires translate= or axis= with angle="
-            )
-
-        normalized_translate = None
-        if translate is not None:
-            if not isinstance(translate, (tuple, list)) or len(translate) != 3:
-                raise ValueError(
-                    "move_history translate must contain three coordinates"
-                )
-            if not all(isfinite(_pv(value)) for value in translate):
-                raise ValueError(
-                    "move_history translate must contain finite coordinates"
-                )
-            normalized_translate = tuple(translate)
-
-        normalized_origin = None
-        normalized_axis = None
-        if angle is not None:
-            if not isfinite(_pv(angle)):
-                raise ValueError("move_history angle must be finite")
-            if axis is None:
-                raise ValueError("move_history rotation requires axis=")
-            if isinstance(axis, Axis):
-                normalized_axis = {
-                    Axis.X: (1.0, 0.0, 0.0),
-                    Axis.Y: (0.0, 1.0, 0.0),
-                    Axis.Z: (0.0, 0.0, 1.0),
-                }[axis]
-            else:
-                if not isinstance(axis, (tuple, list)) or len(axis) != 3:
-                    raise ValueError(
-                        "move_history axis must contain three coordinates"
-                    )
-                concrete_axis = tuple(_pv(value) for value in axis)
-                if (
-                    not all(isfinite(value) for value in concrete_axis)
-                    or sum(value * value for value in concrete_axis) <= 0
-                ):
-                    raise ValueError(
-                        "move_history axis must be a finite non-zero direction"
-                    )
-                normalized_axis = tuple(axis)
-
-            if origin is None:
-                normalized_origin = (0.0, 0.0, 0.0)
-            else:
-                if not isinstance(origin, (tuple, list)) or len(origin) != 3:
-                    raise ValueError(
-                        "move_history origin must contain three coordinates"
-                    )
-                if not all(isfinite(_pv(value)) for value in origin):
-                    raise ValueError(
-                        "move_history origin must contain finite coordinates"
-                    )
-                normalized_origin = tuple(origin)
-        elif axis is not None or origin is not None:
-            raise ValueError(
-                "move_history axis/origin require angle="
-            )
-
-        return Shape(
-            "body_move",
-            (
-                self,
-                normalized_translate,
-                normalized_origin,
-                normalized_axis,
-                angle,
-            ),
-        )
 
     def taper(self, *, from_z, inset):
         """Make a box with a flat front and continuously tapered rear walls.
