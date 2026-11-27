@@ -9,6 +9,7 @@ from scpf import (
     Placement,
     assembly,
     component,
+    pv,
 )
 from scpf.assembly_ir import (
     AnchorFrameIR,
@@ -89,8 +90,14 @@ class AssemblyIRTests(unittest.TestCase):
         self.assertIn("mount", dict(definition.anchors))
         self.assertIsInstance(dict(definition.anchors)["mount"], AnchorFrameIR)
         self.assertEqual(
-            definition.bounds,
+            tuple(
+                tuple(pv(value) for value in pair)
+                for pair in definition.bounds
+            ),
             ((-20.0, 20.0), (-15.0, 15.0), (0, 10.0)),
+        )
+        self.assertTrue(
+            any(hasattr(value, "parameters") for value in definition.bounds[0])
         )
 
         first_ir, second_ir = model.occurrences
