@@ -7,6 +7,11 @@ This directory owns the design proposal for the public Forge configuration API.
 The SolidCraft-specific backend contract is documented separately in
 [SolidCraft configuration model](solidcraft.md).
 
+The current public surface is reviewed separately in the
+[Configuration API audit](audit.md). The audit treats generic CAD/compiler
+semantics as authoritative; existing SolidCraft-shaped public wrappers receive
+no compatibility protection merely because they already shipped.
+
 ## 1. Core constraint: one configuration per final design
 
 A final SolidCraft design exposes **one configuration definition**. Forge must
