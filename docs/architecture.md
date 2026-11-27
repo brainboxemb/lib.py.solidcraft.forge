@@ -41,6 +41,26 @@ independent backend lowerings. That work remains isolated until intentionally
 integrated into `dev`; normal `dev` design documents must not pretend an
 experimental IR capability is already released.
 
+### IR completion and backend completion
+
+IR completion and backend completion are separate dimensions.
+
+An **IR-ready** semantic slice has a backend-neutral CAD contract, normalizes
+public SCPF source into typed IR instead of `LegacyShapeIR`, has pure IR
+boundary tests, preserves symbolic/history/topology dependencies, and retains
+stable SolidCraft behavior through typed lowering. A backend that does not yet
+support that typed node must fail closed.
+
+A backend is tracked independently as unsupported, lowered, contract-tested or
+native-qualified. Mitcad coverage may therefore lag the IR layer and catch up
+in backend-focused batches. Native Mitcad qualification is not a prerequisite
+for declaring a semantic slice IR-ready.
+
+This separation is deliberate: backend transport must not pace or shape the
+semantic compiler contract. The canonical migration inventory is
+[ir-coverage.md](ir-coverage.md), which reports IR status separately from
+SolidCraft and Mitcad status.
+
 ## Configuration and API design
 
 Current cross-object API semantics live in `api.md`. New or changing public
