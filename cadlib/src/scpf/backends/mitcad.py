@@ -1414,8 +1414,18 @@ def _chamfer_document(
     name: str,
 ):
     _require_positive(node.distance, "chamfer distance")
+    if node.distance2 is not None:
+        _require_positive(node.distance2, "chamfer distance2")
+    if node.flip and node.distance2 is None:
+        raise ModelError("Mitcad ChamferIR flip requires distance2")
     if not node.edges.faces:
         raise ModelError("Mitcad face-boundary chamfer has no Faces values")
+
+    asymmetric = node.distance2 is not None
+    if asymmetric and node.edges.faces != ("top",):
+        raise ModelError(
+            "Mitcad asymmetric ChamferIR currently requires one TOP face boundary"
+        )
 
     face_queries = []
     for face in node.edges.faces:
@@ -1440,6 +1450,10 @@ def _chamfer_document(
             )
         base_commands = [_box_command(node.base, f"{name}Base")]
     elif isinstance(node.base, ExtrudeIR):
+        if asymmetric or node.flip:
+            raise ModelError(
+                "Mitcad asymmetric ChamferIR currently requires a BoxIR base"
+            )
         base_commands = _extrude_commands(node.base, f"{name}Base")
     else:
         raise ModelError("Mitcad ChamferIR has unsupported typed base")
@@ -1454,6 +1468,39 @@ def _chamfer_document(
     else:
         boundary["faces"] = face_queries
 
+    if asymmetric:
+        # Native v0.70.0 needs the actual selected face name to orient
+        # two-distance chamfer deterministically. This binding is replay-only
+        # backend transport; the semantic IR still contains Faces.TOP.
+        boundary["face_name"] = "reference_face"
+        size = {
+            "type": "two_distances",
+            "distance1": command_value(node.distance),
+            "distance2": command_value(node.distance2),
+        }
+        chamfer_set = {
+            "edges": {"$mitcad_bind": "edges"},
+            "size": size,
+            "reference_face": {"$mitcad_bind": "reference_face"},
+        }
+        if node.flip:
+            chamfer_set["flip"] = True
+        chamfer_def = {
+            "type": "chamfer",
+            "body": {"$mitcad_bind": "body"},
+            "sets": [chamfer_set],
+        }
+    else:
+        chamfer_def = {
+            "type": "chamfer",
+            "body": {"$mitcad_bind": "body"},
+            "edges": {"$mitcad_bind": "edges"},
+            "size": {
+                "type": "equal_distance",
+                "distance": command_value(node.distance),
+            },
+        }
+
     commands = [
         *_parameter_commands(model),
         *base_commands,
@@ -1466,15 +1513,7 @@ def _chamfer_document(
                 {
                     "cmd": "add_feature",
                     "name": name,
-                    "def": {
-                        "type": "chamfer",
-                        "body": {"$mitcad_bind": "body"},
-                        "edges": {"$mitcad_bind": "edges"},
-                        "size": {
-                            "type": "equal_distance",
-                            "distance": command_value(node.distance),
-                        },
-                    },
+                    "def": chamfer_def,
                 }
             ],
         }

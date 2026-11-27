@@ -86,6 +86,17 @@ def _validate_replay(value: Any) -> list[dict[str, Any]]:
                     f"Mitcad replay stage {index} face-boundary binding "
                     "has invalid faces queries"
                 )
+            face_name = boundary.get("face_name")
+            if face_name is not None:
+                if (
+                    not isinstance(face_name, str)
+                    or not face_name
+                    or face is None
+                ):
+                    raise MitcadHeadlessError(
+                        f"Mitcad replay stage {index} face-boundary binding "
+                        "face_name requires one named single-face query"
+                    )
         _validate_commands(
             stage.get("commands"),
             context=f"Mitcad replay stage {index}",
@@ -342,14 +353,14 @@ def _same_face_name(left: str, right: str) -> bool:
     return left.split("#", 1)[0] == right.split("#", 1)[0]
 
 
-def _bind_face_boundary_edges(
+def _resolve_face_boundary(
     session: _Session,
     handle: str,
     *,
     body_uid: str,
     face_query: dict[str, Any],
-) -> list[str]:
-    """Resolve one Forge face-boundary intent through Mitcad native topology."""
+) -> tuple[list[str], str]:
+    """Resolve one semantic face to its boundary edges and one native face name."""
     faces_result = _query(
         session,
         handle,
@@ -410,7 +421,28 @@ def _bind_face_boundary_edges(
         raise MitcadHeadlessError(
             "Mitcad selected face has no native boundary edges"
         )
-    return boundary
+
+    # Any topology name returned for this exact queried face is a valid native
+    # reference. Choose deterministically; the name remains backend transport.
+    native_face = min(names, key=lambda name: (len(name), name))
+    return boundary, native_face
+
+
+def _bind_face_boundary_edges(
+    session: _Session,
+    handle: str,
+    *,
+    body_uid: str,
+    face_query: dict[str, Any],
+) -> list[str]:
+    """Resolve one Forge face-boundary intent through Mitcad native topology."""
+    edges, _native_face = _resolve_face_boundary(
+        session,
+        handle,
+        body_uid=body_uid,
+        face_query=face_query,
+    )
+    return edges
 
 
 def _apply_commands(
@@ -666,13 +698,17 @@ def run_document(
                     )
                     combined_edges = []
                     seen_edges = set()
+                    selected_face_name = None
                     for face_query in face_queries:
-                        for edge in _bind_face_boundary_edges(
+                        edges, native_face = _resolve_face_boundary(
                             session,
                             handle,
                             body_uid=source_body,
                             face_query=face_query,
-                        ):
+                        )
+                        if boundary.get("face_name") is not None:
+                            selected_face_name = native_face
+                        for edge in edges:
                             if edge not in seen_edges:
                                 seen_edges.add(edge)
                                 combined_edges.append(edge)
@@ -681,6 +717,13 @@ def run_document(
                             "Mitcad face-boundary binding resolved no edges"
                         )
                     bindings[boundary["name"]] = combined_edges
+                    face_name_binding = boundary.get("face_name")
+                    if face_name_binding is not None:
+                        if not isinstance(selected_face_name, str):
+                            raise MitcadHeadlessError(
+                                "Mitcad face-boundary binding resolved no reference face"
+                            )
+                        bindings[face_name_binding] = selected_face_name
 
                 stage_commands = _bind_values(
                     stage["commands"],

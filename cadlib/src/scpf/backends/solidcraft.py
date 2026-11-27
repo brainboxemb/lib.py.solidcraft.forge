@@ -867,6 +867,11 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
 
     if isinstance(node, ChamferIR):
         _require_positive(node.distance, "chamfer distance")
+        if node.distance2 is not None:
+            _require_positive(node.distance2, "chamfer distance2")
+        if node.flip and node.distance2 is None:
+            raise ModelError("portable SolidCraft ChamferIR flip requires distance2")
+
         topology, edges = _face_boundary_commands(node.edges, name)
         if isinstance(node.base, PlacementIR):
             if not isinstance(node.base.primitive, BoxIR):
@@ -875,21 +880,31 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
                 )
             base_commands = [_box_command(node.base, name)]
         elif isinstance(node.base, ExtrudeIR):
+            if node.distance2 is not None or node.flip:
+                raise ModelError(
+                    "portable SolidCraft asymmetric ChamferIR requires BoxIR"
+                )
             base_commands = _extrude_commands(node.base, name)
         else:
             raise ModelError(
                 "portable SolidCraft ChamferIR has unsupported typed base"
             )
+
+        chamfer = {
+            "body": name,
+            "distance": command_value(node.distance),
+            "edges": edges,
+        }
+        if node.distance2 is not None:
+            chamfer["distance2"] = command_value(node.distance2)
+        if node.flip:
+            chamfer["flip"] = True
+
         return [
             *parameters,
             *base_commands,
             *topology,
-            _command(
-                "solid.chamfer",
-                body=name,
-                distance=command_value(node.distance),
-                edges=edges,
-            ),
+            _command("solid.chamfer", **chamfer),
         ]
 
     raise TypeError(f"not a portable Forge IR node: {type(node).__name__}")

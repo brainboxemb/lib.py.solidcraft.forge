@@ -194,6 +194,48 @@ def replay_document():
     return value
 
 
+def asymmetric_replay_document():
+    value = document()
+    value["replay"] = [
+        {
+            "bind_single_body": "body",
+            "bind_face_boundary_edges": {
+                "name": "edges",
+                "body": "body",
+                "face_name": "reference_face",
+                "face": {
+                    "surface": "plane",
+                    "normal": [0, 0, 1],
+                    "normal_tolerance": 1e-6,
+                },
+            },
+            "commands": [
+                {
+                    "cmd": "add_feature",
+                    "def": {
+                        "type": "chamfer",
+                        "body": {"$mitcad_bind": "body"},
+                        "sets": [
+                            {
+                                "edges": {"$mitcad_bind": "edges"},
+                                "size": {
+                                    "type": "two_distances",
+                                    "distance1": 0.18,
+                                    "distance2": 0.65,
+                                },
+                                "reference_face": {
+                                    "$mitcad_bind": "reference_face"
+                                },
+                            }
+                        ],
+                    },
+                }
+            ],
+        }
+    ]
+    return value
+
+
 def multi_face_replay_document():
     value = document()
     value["replay"] = [
@@ -391,6 +433,47 @@ class MitcadHeadlessTests(unittest.TestCase):
             self.assertEqual(
                 commands[1][0]["def"]["edges"],
                 result["bindings"]["edges"],
+            )
+
+    @patch("scpf.backends.mitcad_headless._Session", FakeSession)
+    def test_replay_binds_selected_native_face_for_asymmetric_chamfer(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = run_document(
+                asymmetric_replay_document(),
+                save=root / "out.mitcad",
+                work_dir=root / "workspace",
+            )
+
+            self.assertEqual(result["bindings"]["reference_face"], "F1:top")
+            self.assertEqual(
+                result["bindings"]["edges"],
+                [
+                    "E{F1:side0|F1:top}",
+                    "E{F1:side1|F1:top}",
+                    "E{F1:side2|F1:top}",
+                    "E{F1:side3|F1:top}",
+                ],
+            )
+            session = FakeSession.instances[-1]
+            commands = [
+                args["command"]
+                for name, args in session.calls
+                if name == "model_command"
+            ]
+            chamfer_set = commands[1][0]["def"]["sets"][0]
+            self.assertEqual(chamfer_set["reference_face"], "F1:top")
+            self.assertEqual(
+                chamfer_set["edges"],
+                result["bindings"]["edges"],
+            )
+            self.assertEqual(
+                chamfer_set["size"],
+                {
+                    "type": "two_distances",
+                    "distance1": 0.18,
+                    "distance2": 0.65,
+                },
             )
 
     @patch("scpf.backends.mitcad_headless._Session", FakeSession)

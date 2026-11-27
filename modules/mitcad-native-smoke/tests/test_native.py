@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT / "modules/mitcad-reference/src"))
 sys.path.insert(0, str(ROOT / "modules/verification/src"))
 
 from cad_library_mitcad_reference import capture_runtime, git_blob_sha
-from scpf import Anchor, Axis, AxisLine, Box, Circle2D, Cone, Parameter, Polygon2D, Sketch, Sphere
+from scpf import Anchor, Axis, AxisLine, Box, Circle2D, Cone, Edges, Faces, Parameter, Polygon2D, Sketch, Sphere
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.mitcad_headless import run_document, run_saved_configuration
 from scpf.ir import normalize_shape
@@ -450,6 +450,72 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 10.0,
                 places=5,
             )
+
+            asymmetric_chamfer_document = compile_mitcad_ir(
+                normalize_shape(
+                    Box(
+                        60,
+                        40,
+                        12,
+                        anchor=Anchor.BOTTOM,
+                    ).chamfer(
+                        0.18,
+                        distance2=0.65,
+                        edges=Edges.from_faces(Faces.TOP),
+                    )
+                ),
+                "AsymmetricChamfer",
+            )
+            asymmetric_stage = asymmetric_chamfer_document["replay"][0]
+            self.assertEqual(
+                asymmetric_stage["bind_face_boundary_edges"]["face_name"],
+                "reference_face",
+            )
+            asymmetric_set = (
+                asymmetric_stage["commands"][0]["def"]["sets"][0]
+            )
+            self.assertEqual(
+                asymmetric_set["size"],
+                {
+                    "type": "two_distances",
+                    "distance1": 0.18,
+                    "distance2": 0.65,
+                },
+            )
+            self.assertEqual(
+                asymmetric_set["reference_face"],
+                {"$mitcad_bind": "reference_face"},
+            )
+
+            asymmetric_chamfer_native = run_document(
+                asymmetric_chamfer_document,
+                save=root / "out/asymmetric-chamfer.mitcad",
+                export=root / "out/asymmetric-chamfer.stl",
+                executable=str(executable),
+                work_dir=root / "asymmetric-chamfer-workspace",
+            )
+            self.assertEqual(len(asymmetric_chamfer_native["bodies"]), 1)
+            asymmetric_chamfer_body = asymmetric_chamfer_native["bodies"][0]
+            self.assertEqual(asymmetric_chamfer_body["kind"], "solid")
+            self.assertEqual(
+                asymmetric_chamfer_native["bindings"]["reference_face"],
+                "F1:top",
+            )
+            self.assertAlmostEqual(
+                asymmetric_chamfer_body["volume"],
+                28788.32808,
+                places=3,
+            )
+            for actual, expected in zip(
+                asymmetric_chamfer_body["bbox"]["min"],
+                [-30.0, -20.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                asymmetric_chamfer_body["bbox"]["max"],
+                [30.0, 20.0, 12.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
 
             placed_frustum_document = compile_mitcad_ir(
                 normalize_shape(
@@ -1108,6 +1174,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "mixed-role-revolve.stl",
                 "mixed-role-expression-revolve.mitcad",
                 "mixed-role-expression-revolve.stl",
+                "asymmetric-chamfer.mitcad",
+                "asymmetric-chamfer.stl",
                 "placed-frustum.mitcad",
                 "placed-frustum.stl",
                 "shifted-sphere-csg.mitcad",
@@ -1152,6 +1220,10 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"mixed_role_expression_volume={mixed_expression_body['volume']}",
                         f"mixed_role_expression_bbox={mixed_expression_body['bbox']}",
                         "mixed_role_expression_scalar_ir=pass",
+                        f"asymmetric_chamfer_volume={asymmetric_chamfer_body['volume']}",
+                        f"asymmetric_chamfer_bbox={asymmetric_chamfer_body['bbox']}",
+                        f"asymmetric_chamfer_bindings={asymmetric_chamfer_native['bindings']}",
+                        "asymmetric_chamfer_two_distance_ir=pass",
                         f"placed_frustum_volume={placed_frustum_body['volume']}",
                         f"placed_frustum_bbox={placed_frustum_body['bbox']}",
                         "placed_frustum_cone_ir=pass",

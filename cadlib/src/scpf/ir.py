@@ -747,12 +747,20 @@ class FaceBoundaryIR:
 
 @dataclass(frozen=True)
 class ChamferIR:
-    """Equal-distance chamfer over one qualified typed body result."""
+    """One semantic chamfer over a qualified typed body result."""
 
     base: "PlacementIR | ExtrudeIR"
     distance: Any
     edges: FaceBoundaryIR
+    distance2: Any | None = None
+    flip: bool = False
     source_kind: str = "chamfer"
+
+    def __post_init__(self):
+        if not isinstance(self.flip, bool):
+            raise ValueError("ChamferIR flip must be bool")
+        if self.flip and self.distance2 is None:
+            raise ValueError("ChamferIR flip requires distance2")
 
 
 @dataclass(frozen=True)
@@ -1621,14 +1629,15 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
     else:
         return None
 
-    # #271 extends stable SolidCraft authoring with two-distance chamfer.
-    # That surface is not yet a qualified portable IR capability.
-    if distance2 is not None or flip:
+    if not isinstance(flip, bool):
+        return None
+    if flip and distance2 is None:
         return None
     if not isinstance(edges, _FaceBoundarySelection) or not edges.faces:
         return None
 
     semantic_faces = tuple(Faces(face).value for face in edges.faces)
+    asymmetric = distance2 is not None
 
     placement = _portable_placement(base)
     if placement is not None:
@@ -1637,11 +1646,17 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
             or len(semantic_faces) != 1
         ):
             return None
+        if asymmetric and semantic_faces != ("top",):
+            # #485 proves the unambiguous SolidCraft "up-most first face"
+            # orientation only for one semantic TOP boundary.
+            return None
         base_ir: PlacementIR | ExtrudeIR = placement
     else:
         extrude = _portable_extrude(base)
         if (
             extrude is None
+            or asymmetric
+            or flip
             or extrude.direction != "symmetric"
             or extrude.sketch.plane.orientation != "XZ"
             or extrude.sketch.plane.origin != (0, 0, 0)
@@ -1656,6 +1671,8 @@ def _portable_chamfer(shape: Shape) -> ChamferIR | None:
         base=base_ir,
         distance=distance,
         edges=FaceBoundaryIR(semantic_faces),
+        distance2=distance2,
+        flip=flip,
     )
 
 
