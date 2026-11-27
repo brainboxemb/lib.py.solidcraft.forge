@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 import hashlib
 from math import isfinite
+import re
 
 from .core import Parameter, Shape, _FeatureHandle, number_text
 
@@ -10,11 +11,6 @@ from .core import Parameter, Shape, _FeatureHandle, number_text
 @dataclass(frozen=True)
 class _ParameterColumn:
     name: str
-
-
-@dataclass(frozen=True)
-class _ComponentParameterColumn:
-    reference: object
 
 
 @dataclass(frozen=True)
@@ -34,19 +30,48 @@ def _configuration_column(value):
     if isinstance(value, Parameter):
         return _ParameterColumn(value.name)
 
-    from .model_objects import (
-        _ComponentFeatureReference,
-        _ComponentParameterReference,
-    )
-    if isinstance(value, _ComponentParameterReference):
-        return _ComponentParameterColumn(value)
+    from .model_objects import _ComponentFeatureReference
     if isinstance(value, _FeatureHandle):
         return _SuppressionColumn(value.shape)
     if isinstance(value, (Shape, _ComponentFeatureReference)):
         return _SuppressionColumn(value)
 
     raise TypeError(
-        "configuration columns must contain Parameter, component parameter, or authored feature handles"
+        "configuration columns must contain Parameter or authored feature handles"
+    )
+
+
+_PARAMETER_LITERAL = re.compile(
+    r"^[+-]?(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:[eE][+-]?\\d+)?"
+    r"(?:\\s+[A-Za-z°%][A-Za-z0-9_°%/*^.-]*)?$"
+)
+
+
+def _parameter_cell_value(cell):
+    """Normalize one concrete configuration parameter value.
+
+    Configuration rows select values. They do not author new relationships
+    between model parameters; those relationships belong in normal Forge model
+    expressions outside the configuration table.
+    """
+    if (
+        isinstance(cell, (int, float))
+        and not isinstance(cell, bool)
+        and isfinite(cell)
+    ):
+        return number_text(cell)
+
+    if isinstance(cell, str):
+        text = cell.strip()
+        if text and _PARAMETER_LITERAL.fullmatch(text):
+            return text
+        raise ValueError(
+            "configuration parameter cells must be literal values; "
+            "parameter coupling expressions are not supported"
+        )
+
+    raise TypeError(
+        "configuration parameter cells require a finite number or unit-bearing literal"
     )
 
 
@@ -72,12 +97,6 @@ def _configure_model(design, *, active, columns, rows):
     keys = [
         ("param", column.name)
         if isinstance(column, _ParameterColumn)
-        else (
-            "component-param",
-            column.reference.definition_key,
-            column.reference.name,
-        )
-        if isinstance(column, _ComponentParameterColumn)
         else ("feature", id(column.feature))
         for column in normalized_columns
     ]
@@ -106,18 +125,8 @@ def _configure_model(design, *, active, columns, rows):
                 if not isinstance(cell, bool):
                     raise TypeError("suppression cells must be bool")
                 converted.append("true" if cell else "false")
-            elif isinstance(cell, str) and cell.strip():
-                converted.append(cell)
-            elif (
-                isinstance(cell, (int, float))
-                and not isinstance(cell, bool)
-                and isfinite(cell)
-            ):
-                converted.append(number_text(cell))
             else:
-                raise TypeError(
-                    "parameter cells require a finite number or expression"
-                )
+                converted.append(_parameter_cell_value(cell))
         normalized_rows.append((name, tuple(converted)))
 
     if active not in rows:
@@ -307,36 +316,6 @@ def _suppression_command_index(design, name, commands, feature):
     return matches[0]
 
 
-def _component_parameter_name(design, reference):
-    """Resolve one definition-level component parameter to its native name."""
-    from .assembly import _as_assembly, _component_slug, _definition_names
-    from .compiler import ModelError
-
-    assembly = _as_assembly(design)
-    names = _definition_names(assembly)
-    by_definition = {}
-    for instance in assembly.instances:
-        by_definition.setdefault(instance.definition.key, []).append(instance)
-    matches = [
-        (number, key, instances[0].definition)
-        for number, (key, instances) in enumerate(
-            by_definition.items(),
-            start=1,
-        )
-        if key == reference.definition_key
-    ]
-    if not matches:
-        raise ModelError(
-            "component parameter reference is not part of this configured design"
-        )
-    number, key, definition = matches[0]
-    if reference.name not in {name for name, _ in definition.parameters}:
-        raise ModelError(
-            f"component definition has no published parameter {reference.name!r}"
-        )
-    return f"d{number}_{_component_slug(names[key])}_{reference.name}"
-
-
 def _configuration_commands(design, configuration, name, commands):
     """Bind configuration targets and append native table authoring."""
     from .compiler import ModelError
@@ -363,19 +342,6 @@ def _configuration_commands(design, configuration, name, commands):
                 )
             params.append(column.name)
             keys.append(f"param:{column.name}")
-            continue
-
-        if isinstance(column, _ComponentParameterColumn):
-            parameter_name = _component_parameter_name(
-                design,
-                column.reference,
-            )
-            if parameter_name not in parameter_names:
-                raise ModelError(
-                    f"unknown native configuration parameter: {parameter_name}"
-                )
-            params.append(parameter_name)
-            keys.append(f"param:{parameter_name}")
             continue
 
         index = _suppression_command_index(
