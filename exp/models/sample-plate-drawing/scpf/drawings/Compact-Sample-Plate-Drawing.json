@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "298vqfnaj63e9",
+  "id": "22k2v1nzkgrbn",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "0yba0qq4g1msc"
+        "source": "dp8rcp693tqwr"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "6mt8kyqveya0n",
+      "id": "c71c2gjwf3vpt",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "48arg6pv533ac",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "amsbqj0913mz9",
+          "id": "9eezfjckvryt2",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "0hjxdtz1q5e0s",
+          "id": "5x6335mg7ew6g",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "amsbqj0913mz9",
+          "parent": "9eezfjckvryt2",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "2gj42nwf067f9",
+          "id": "ctkss3yv6hvce",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "amsbqj0913mz9",
+          "parent": "9eezfjckvryt2",
           "side": "above"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "f210nsjsnde9z",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "0yba0qq4g1msc"
+      "id": "dp8rcp693tqwr"
     }
   ],
   "symbols": [],
