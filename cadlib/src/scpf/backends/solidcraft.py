@@ -1131,10 +1131,6 @@ def _solidcraft_sketch_create(sketch) -> dict:
         or any(parameters_in(value) or abs(pv(value)) > 1e-12 for value in in_plane)
     )
     if explicit_frame:
-        if any(parameters_in(value) for value in sketch.plane.origin):
-            raise ModelError(
-                "explicit rotated/in-plane Sketch frame currently requires fixed origin"
-            )
         from ..sketches import _sketch_plane_frame
         return _command(
             "sketch.create",
