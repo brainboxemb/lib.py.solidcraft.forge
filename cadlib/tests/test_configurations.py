@@ -234,6 +234,96 @@ class ConfigurationTests(unittest.TestCase):
             },
         )
 
+    def test_component_parameter_reference_targets_published_definition_parameter(self):
+        @component(include=("fit_diameter",))
+        class Clamp:
+            fit_diameter = 20.0
+
+            def build(self):
+                from scpf import Cylinder
+                return Cylinder(d=self.fit_diameter, h=10)
+
+        clamp = Clamp()
+        reference = clamp.parameter("fit_diameter")
+        clamp.configure(
+            active="Free",
+            columns=(reference,),
+            rows={
+                "Free": ("19.8 mm",),
+                "Installed": ("20.0 mm",),
+            },
+        )
+
+        commands = compile_model(clamp, "ClampDocument")["commands"]
+        configure = next(
+            row for row in commands if row["command"] == "config.configure"
+        )
+        self.assertEqual(
+            configure["params"],
+            {"params": ["d1_Clamp_fit_diameter"]},
+        )
+        installed = next(
+            row
+            for row in commands
+            if row["command"] == "config.row"
+            and row["params"].get("name") == "Installed"
+        )
+        self.assertEqual(
+            installed["params"]["values"],
+            {"param:d1_Clamp_fit_diameter": "20.0 mm"},
+        )
+
+    def test_component_parameter_reference_requires_explicit_publication(self):
+        @component(include=("published",))
+        class Clamp:
+            published = 20.0
+            fixed = 1.0
+
+            def build(self):
+                return Box(self.published, self.fixed, 5)
+
+        clamp = Clamp()
+        clamp.parameter("published")
+        with self.assertRaisesRegex(
+            ValueError,
+            "no published component parameter",
+        ):
+            clamp.parameter("fixed")
+        with self.assertRaisesRegex(
+            ValueError,
+            "public Python identifier",
+        ):
+            clamp.parameter("_private")
+
+    def test_copied_occurrences_share_component_parameter_reference(self):
+        @component(include=("width",))
+        class Coupler:
+            width = 40.0
+
+            def build(self):
+                return Box(self.width, 20, 10)
+
+        left = Coupler(name="left")
+        right = left.copy(name="right", placement=Placement(x=60))
+        self.assertEqual(
+            left.parameter("width"),
+            right.parameter("width"),
+        )
+        model = left + right
+        model.configure(
+            active="A",
+            columns=(right.parameter("width"),),
+            rows={"A": ("40 mm",), "B": ("50 mm",)},
+        )
+        commands = compile_model(model, "Couplers")["commands"]
+        configure = next(
+            row for row in commands if row["command"] == "config.configure"
+        )
+        self.assertEqual(
+            configure["params"],
+            {"params": ["d1_Coupler_width"]},
+        )
+
     def test_parent_configure_suppresses_exported_child_feature_by_definition(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "model.py"
