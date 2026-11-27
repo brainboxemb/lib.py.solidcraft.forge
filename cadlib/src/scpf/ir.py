@@ -5710,6 +5710,23 @@ def _assembly_configuration_feature_ref(
             "assembly suppression requires Shape or exported component feature"
         )
 
+    exported_matches = []
+    for key, instance in definition_instances.items():
+        for name, exported in instance.definition.features:
+            if feature is exported:
+                exported_matches.append(
+                    ComponentFeatureRefIR(
+                        definition=definition_ids[key],
+                        name=name,
+                    )
+                )
+    if len(exported_matches) == 1:
+        return exported_matches[0]
+    if len(exported_matches) > 1:
+        raise ValueError(
+            "exported suppression Shape is ambiguous across component definitions"
+        )
+
     matches = []
     for key, instance in definition_instances.items():
         if not _shape_contains(instance.definition.shape, feature):
