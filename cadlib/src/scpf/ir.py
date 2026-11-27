@@ -5491,6 +5491,9 @@ def _configuration_feature_ref(
     root: IRNode,
 ) -> FeatureRefIR:
     """Resolve authored identity to semantic IR before native ids exist."""
+    if feature is design and isinstance(root, BodyIR):
+        return FeatureRefIR(path=("root",))
+
     if isinstance(root, TranslationIR) and design.kind == "translated":
         child, _offset = design.data
         reference = _configuration_feature_ref(
@@ -5534,90 +5537,253 @@ def _configuration_feature_ref(
     )
 
 
-def _normalize_configuration(configured, root: IRNode) -> ConfigurationIR:
-    """Normalize the first suppression-only configuration semantic slice."""
-    from .configurations import _SuppressionColumn
+def _configuration_expression_ir(value) -> ConfigurationExpressionIR:
+    """Preserve one current-public rule expression without backend ids."""
+    from .configurations import _configuration_expression
 
-    if configured.rules:
-        raise ValueError(
-            "portable ConfigurationIR does not support configuration rules yet"
-        )
-    if not configured.columns or any(
-        not isinstance(column, _SuppressionColumn)
-        for column in configured.columns
-    ):
-        raise ValueError(
-            "portable ConfigurationIR currently supports suppression columns only"
-        )
-
-    columns = tuple(
-        SuppressionColumnIR(
-            feature=_configuration_feature_ref(
-                configured.design,
-                column.feature,
-                root,
+    scalar_ir = None
+    if isinstance(value, Parameter):
+        scalar_ir = ScalarParameterRefIR(value.name)
+    elif isinstance(value, Expression):
+        scalar_ir = value.scalar_ir
+    return ConfigurationExpressionIR(
+        text=_configuration_expression(value),
+        scalar_ir=scalar_ir,
+        parameters=tuple(
+            dict.fromkeys(
+                parameter.name for parameter in parameters_in(value)
             )
-        )
-        for column in configured.columns
+        ),
     )
+
+
+def _normalize_configuration(configured, feature_resolver) -> ConfigurationIR:
+    """Normalize complete current-public table/rule semantics."""
+    from .configurations import (
+        _AlwaysCondition,
+        _DriveParameterEffect,
+        _ParameterColumn,
+        _SuppressionColumn,
+    )
+
+    columns = []
+    for column in configured.columns:
+        if isinstance(column, _ParameterColumn):
+            columns.append(ParameterColumnIR(column.name))
+        elif isinstance(column, _SuppressionColumn):
+            columns.append(
+                SuppressionColumnIR(
+                    feature=feature_resolver(column.feature)
+                )
+            )
+        else:
+            raise ValueError(
+                "configuration column is outside current public semantics"
+            )
+
     rows = []
     for name, cells in configured.rows:
         converted = []
-        for cell in cells:
-            if cell == "true":
-                converted.append(True)
-            elif cell == "false":
-                converted.append(False)
+        for column, cell in zip(columns, cells):
+            if isinstance(column, SuppressionColumnIR):
+                if cell == "true":
+                    converted.append(True)
+                elif cell == "false":
+                    converted.append(False)
+                else:
+                    raise ValueError(
+                        "suppression configuration cell must be bool"
+                    )
             else:
-                raise ValueError(
-                    "portable suppression ConfigurationIR requires boolean cells"
-                )
+                converted.append(ParameterCellIR(cell))
         rows.append(
             ConfigurationRowIR(
                 name=name,
                 cells=tuple(converted),
             )
         )
+
+    rules = []
+    for rule in configured.rules:
+        if not isinstance(rule.condition, _AlwaysCondition):
+            raise ValueError(
+                "configuration rule condition is outside public grammar"
+            )
+        if not isinstance(rule.effect, _DriveParameterEffect):
+            raise ValueError(
+                "configuration rule effect is outside public grammar"
+            )
+        rules.append(
+            ConfigurationRuleIR(
+                id=rule.id,
+                name=rule.name,
+                enabled=rule.enabled,
+                condition=AlwaysConditionIR(),
+                effect=DriveParameterEffectIR(
+                    parameter=rule.effect.parameter.name,
+                    expression=_configuration_expression_ir(
+                        rule.effect.expression
+                    ),
+                ),
+            )
+        )
+
     return ConfigurationIR(
         active=configured.active,
-        columns=columns,
+        columns=tuple(columns),
         rows=tuple(rows),
+        rules=tuple(rules),
     )
 
 
-def normalize_configured_design(configured) -> ModelIR | None:
-    """Normalize the bounded portable Configure/Suppress slice when qualified.
+def _authored_assembly(value):
+    """Return one authored Assembly without importing backend assembly lowering."""
+    from .model_objects import Assembly, ModelInstance
 
-    Returning None marks configuration authoring that is still outside the
-    multi-backend semantic IR migration. Stable SolidCraft may retain its
-    existing compatibility path for that surface; experimental backends must
-    fail closed rather than interpret it independently.
-    """
-    from .configurations import _ConfiguredDesign, _SuppressionColumn
+    if isinstance(value, ModelInstance):
+        return Assembly((value,))
+    if isinstance(value, Assembly):
+        return value
+    raise TypeError(
+        "configured assembly target must be ModelInstance or Assembly"
+    )
+
+
+def _assembly_configuration_feature_ref(
+    authored_design,
+    assembly_ir,
+    feature,
+):
+    """Resolve assembly suppression identity to semantic definition identity."""
+    from .assembly_ir import ComponentFeatureRefIR
+    from .core import _shape_contains
+    from .model_objects import _ComponentFeatureReference
+
+    assembly = _authored_assembly(authored_design)
+    definition_ids = {}
+    definition_instances = {}
+    for instance in assembly.instances:
+        key = instance.definition.key
+        if key in definition_ids:
+            continue
+        definition_ids[key] = f"definition_{len(definition_ids) + 1}"
+        definition_instances[key] = instance
+
+    if isinstance(feature, _ComponentFeatureReference):
+        try:
+            definition_id = definition_ids[feature.definition_key]
+        except KeyError as exc:
+            raise ValueError(
+                "component feature reference is not part of configured design"
+            ) from exc
+        definition = next(
+            item
+            for item in assembly_ir.definitions
+            if item.id == definition_id
+        )
+        if feature.name not in definition.exported_features:
+            raise ValueError(
+                f"component definition has no exported feature {feature.name!r}"
+            )
+        return ComponentFeatureRefIR(
+            definition=definition_id,
+            name=feature.name,
+        )
+
+    if not isinstance(feature, Shape):
+        raise ValueError(
+            "assembly suppression requires Shape or exported component feature"
+        )
+
+    matches = []
+    for key, instance in definition_instances.items():
+        if not _shape_contains(instance.definition.shape, feature):
+            continue
+        definition_id = definition_ids[key]
+        definition = next(
+            item
+            for item in assembly_ir.definitions
+            if item.id == definition_id
+        )
+        try:
+            semantic = _configuration_feature_ref(
+                instance.definition.shape,
+                feature,
+                definition.model.root,
+            )
+        except ValueError:
+            continue
+        matches.append(
+            DefinitionFeatureRefIR(
+                definition=definition_id,
+                feature=semantic,
+            )
+        )
+
+    if not matches:
+        raise ValueError(
+            "suppression Shape is not an applied feature of configured assembly"
+        )
+    if len(matches) != 1:
+        raise ValueError(
+            "suppression Shape is ambiguous across component definitions"
+        )
+    return matches[0]
+
+
+def normalize_configured_design(
+    configured,
+) -> ModelIR | ConfiguredDesignIR | None:
+    """Normalize current-public Configure semantics over Shape or Assembly."""
+    from .configurations import _ConfiguredDesign
+    from .model_objects import Assembly, ModelInstance
 
     if not isinstance(configured, _ConfiguredDesign):
         raise TypeError(
             "configured Forge IR normalization requires _ConfiguredDesign"
         )
-    if not isinstance(configured.design, Shape):
-        return None
-    if len(configured.columns) != 1:
-        return None
-    if not isinstance(configured.columns[0], _SuppressionColumn):
-        return None
 
-    root = _normalize_node(configured.design)
-    if isinstance(root, LegacyShapeIR):
-        return None
+    if isinstance(configured.design, Shape):
+        root = _normalize_node(configured.design)
+        if isinstance(root, LegacyShapeIR):
+            return None
+        configuration = _normalize_configuration(
+            configured,
+            lambda feature: _configuration_feature_ref(
+                configured.design,
+                feature,
+                root,
+            ),
+        )
+        return ModelIR(
+            root=root,
+            parameters=_parameter_ir(configured.design),
+            configuration=configuration,
+        )
 
-    return ModelIR(
-        root=root,
-        parameters=_parameter_ir(configured.design),
-        configuration=_normalize_configuration(configured, root),
+    if isinstance(configured.design, (ModelInstance, Assembly)):
+        from .assembly_ir import normalize_assembly
+
+        assembly_ir = normalize_assembly(configured.design)
+        configuration = _normalize_configuration(
+            configured,
+            lambda feature: _assembly_configuration_feature_ref(
+                configured.design,
+                assembly_ir,
+                feature,
+            ),
+        )
+        return ConfiguredDesignIR(
+            design=assembly_ir,
+            configuration=configuration,
+        )
+
+    raise TypeError(
+        "configured design target is outside current public semantics"
     )
 
 
-def normalize_model(value) -> ModelIR:
+def normalize_model(value) -> ModelIR | ConfiguredDesignIR:
     """Normalize one Forge authored result into backend-independent semantic IR."""
     from .configurations import _ConfiguredDesign
 
@@ -5634,7 +5800,7 @@ def normalize_model(value) -> ModelIR:
             )
         return model
     raise TypeError(
-        "Forge IR normalization requires a Shape or configured Shape design"
+        "Forge IR normalization requires Shape or current-public configured design"
     )
 
 
@@ -5645,9 +5811,21 @@ def normalize_shape(shape: Shape) -> ModelIR:
     return normalize_model(shape)
 
 
-def is_portable(model: ModelIR) -> bool:
-    """Return whether this model no longer depends on LegacyShapeIR."""
-    return not isinstance(model.root, LegacyShapeIR)
+def is_portable(model: ModelIR | ConfiguredDesignIR) -> bool:
+    """Return whether one semantic design no longer depends on LegacyShapeIR."""
+    if isinstance(model, ModelIR):
+        return not isinstance(model.root, LegacyShapeIR)
+    if isinstance(model, ConfiguredDesignIR):
+        from .assembly_ir import AssemblyIR
+
+        if isinstance(model.design, ModelIR):
+            return is_portable(model.design)
+        if isinstance(model.design, AssemblyIR):
+            return all(
+                is_portable(definition.model)
+                for definition in model.design.definitions
+            )
+    return False
 
 
 __all__ = [
@@ -5672,8 +5850,16 @@ __all__ = [
     "FilletIR",
     "HoleIR",
     "LipFeatureIR",
+    "AlwaysConditionIR",
+    "ConfiguredDesignIR",
+    "ConfigurationExpressionIR",
     "ConfigurationIR",
     "ConfigurationRowIR",
+    "ConfigurationRuleIR",
+    "DefinitionFeatureRefIR",
+    "DriveParameterEffectIR",
+    "ParameterCellIR",
+    "ParameterColumnIR",
     "SuppressionColumnIR",
     "IRNode",
     "LegacyShapeIR",
