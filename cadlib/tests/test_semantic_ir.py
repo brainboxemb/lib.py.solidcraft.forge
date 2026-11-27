@@ -830,11 +830,25 @@ class SemanticIRTests(unittest.TestCase):
         self.assertNotIn("direction", hole)
         self.assertNotIn("depth", hole)
 
+    def test_hole_ir_accepts_generic_typed_body_target(self):
+        shape = (
+            Cylinder(d=30, h=12, anchor=Anchor.BOTTOM)
+            + Hole(d=5, direction=(0, 0, -1)).at(0, 0, 12)
+        )
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "CylinderHole",
+        )
+        self.assertIsInstance(model.root, HoleIR)
+        self.assertIsInstance(model.root.target, BodyIR)
+        self.assertIsInstance(model.root.target, PlacementIR)
+        self.assertIsInstance(model.root.target.primitive, CylinderIR)
+        with self.assertRaisesRegex(ModelError, "HoleIR"):
+            compile_mitcad_ir(model, "CylinderHole")
+
     def test_hole_ir_widening_stays_fail_closed(self):
         direction_parameter = Parameter("drill_direction", -1)
         unsupported = (
-            Cylinder(d=30, h=12, anchor=Anchor.BOTTOM)
-            + Hole(d=5, direction=(0, 0, -1)).at(0, 0, 12),
             Box(30, 30, 12, anchor=Anchor.BOTTOM)
             + Hole(
                 d=5,
