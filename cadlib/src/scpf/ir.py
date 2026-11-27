@@ -233,6 +233,29 @@ class SketchLengthDimensionIR:
 
 
 @dataclass(frozen=True)
+class SketchCoordinateDimensionIR:
+    """Signed Sketch-local point coordinate relative to the Sketch origin."""
+
+    point: int
+    axis: str
+    value: Any
+
+    def __post_init__(self):
+        if type(self.point) is not int or self.point < 0:
+            raise ValueError(
+                "SketchCoordinateDimensionIR point must be a non-negative index"
+            )
+        if self.axis not in {"x", "y"}:
+            raise ValueError(
+                "SketchCoordinateDimensionIR axis must be x or y"
+            )
+        if isinstance(self.value, bool) or not isfinite(pv(self.value)):
+            raise ValueError(
+                "SketchCoordinateDimensionIR value must be one finite CAD dimension"
+            )
+
+
+@dataclass(frozen=True)
 class SketchRelationsIR:
     """Explicit Sketch entity/constraint/dimension graph.
 
@@ -244,6 +267,7 @@ class SketchRelationsIR:
     lines: tuple[SketchLineIR, ...]
     constraints: tuple[SketchOrientationConstraintIR, ...] = ()
     dimensions: tuple[SketchLengthDimensionIR, ...] = ()
+    coordinate_dimensions: tuple[SketchCoordinateDimensionIR, ...] = ()
 
     def __post_init__(self):
         if (
@@ -280,6 +304,13 @@ class SketchRelationsIR:
         ):
             raise ValueError(
                 "SketchRelationsIR dimension references a missing semantic line"
+            )
+        if any(
+            dimension.point >= point_count
+            for dimension in self.coordinate_dimensions
+        ):
+            raise ValueError(
+                "SketchRelationsIR coordinate dimension references a missing semantic point"
             )
 
 
@@ -1025,6 +1056,49 @@ def _parameterized_rectangle_relations(
     )
 
 
+def _parameterized_polygon_coordinate_relations(
+    profile: PolygonProfileIR,
+) -> SketchRelationsIR | None:
+    """Normalize generic parameterized Polygon point coordinates into Sketch IR."""
+    if (
+        not isinstance(profile, PolygonProfileIR)
+        or not any(
+            parameters_in(value)
+            for point in profile.points
+            for value in point
+        )
+    ):
+        return None
+
+    values = tuple(
+        tuple(float(pv(value)) for value in point)
+        for point in profile.points
+    )
+    if any(not isfinite(value) for point in values for value in point):
+        return None
+
+    point_count = len(profile.points)
+    return SketchRelationsIR(
+        points=tuple(
+            SketchPointIR(position=tuple(point))
+            for point in profile.points
+        ),
+        lines=tuple(
+            SketchLineIR(index, (index + 1) % point_count)
+            for index in range(point_count)
+        ),
+        coordinate_dimensions=tuple(
+            SketchCoordinateDimensionIR(
+                point=index,
+                axis=axis,
+                value=point[coordinate],
+            )
+            for index, point in enumerate(profile.points)
+            for coordinate, axis in enumerate(("x", "y"))
+        ),
+    )
+
+
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     """Normalize the qualified standalone Sketch + Extrude slices."""
     if shape.kind != "sketch_base_extrusion":
@@ -1302,7 +1376,10 @@ def _portable_revolve(
         name=sketch_name,
         plane=plane_ir,
         profiles=(polygon,),
-        relations=_parameterized_rectangle_relations(polygon),
+        relations=(
+            _parameterized_rectangle_relations(polygon)
+            or _parameterized_polygon_coordinate_relations(polygon)
+        ),
     )
     region = RegionIR(outer=0)
     try:
@@ -1656,6 +1733,7 @@ __all__ = [
     "RegionIR",
     "RevolveIR",
     "SketchIR",
+    "SketchCoordinateDimensionIR",
     "SketchLengthDimensionIR",
     "SketchLineIR",
     "SketchOrientationConstraintIR",
