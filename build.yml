@@ -1,7 +1,7 @@
 schema: 1
-branch: issue/458-docs-architecture
-modules: [pages, release]
+branch: docs/444-configuration-api-structure
+modules: []
 library: true
 models: []
-api_probes: []
+api_probes: [configuration-installed-feature]
 tasks: [test]
