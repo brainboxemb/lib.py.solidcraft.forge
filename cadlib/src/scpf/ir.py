@@ -53,18 +53,18 @@ class ParameterIR:
             not isinstance(self.roles, tuple)
             or not self.roles
             or any(
-                role not in {"length", "angle", "count"}
+                role not in {"length", "angle", "count", "ratio"}
                 for role in self.roles
             )
             or len(set(self.roles)) != len(self.roles)
             or self.roles != tuple(
                 role
-                for role in ("length", "angle", "count")
+                for role in ("length", "angle", "count", "ratio")
                 if role in self.roles
             )
         ):
             raise ValueError(
-                "ParameterIR roles must be canonical length/angle/count roles"
+                "ParameterIR roles must be canonical length/angle/count/ratio roles"
             )
 
     @property
@@ -1630,6 +1630,367 @@ class CircularPatternIR(BodyIR):
 
 
 @dataclass(frozen=True)
+class SketchChainSegmentIR:
+    """One semantic segment in an authored connected Sketch chain."""
+
+    kind: str
+    start: tuple[Any, Any]
+    end: tuple[Any, Any]
+    through: tuple[Any, Any] | None = None
+    center: tuple[Any, Any] | None = None
+    clockwise: bool | None = None
+
+    def __post_init__(self):
+        if self.kind not in {
+            "line",
+            "arc_tangent",
+            "arc_three_point",
+            "arc_center_point",
+        }:
+            raise ValueError("SketchChainSegmentIR kind is unsupported")
+        for label, point in (
+            ("start", self.start),
+            ("end", self.end),
+            ("through", self.through),
+            ("center", self.center),
+        ):
+            if point is None:
+                continue
+            if (
+                not isinstance(point, tuple)
+                or len(point) != 2
+                or any(
+                    isinstance(value, bool) or not isfinite(pv(value))
+                    for value in point
+                )
+            ):
+                raise ValueError(
+                    f"SketchChainSegmentIR {label} must be a finite 2D point"
+                )
+        if self.kind == "arc_three_point":
+            if self.through is None or self.center is not None:
+                raise ValueError(
+                    "arc_three_point requires through and no center"
+                )
+        elif self.kind == "arc_center_point":
+            if self.center is None or not isinstance(self.clockwise, bool):
+                raise ValueError(
+                    "arc_center_point requires center and clockwise"
+                )
+        elif self.through is not None or self.center is not None:
+            raise ValueError(
+                "line/tangent SketchChainSegmentIR cannot carry arc control points"
+            )
+
+
+@dataclass(frozen=True)
+class SketchChainIR:
+    """Engine-neutral connected line/arc Sketch chain."""
+
+    name: str
+    plane: PlaneIR
+    segments: tuple[SketchChainSegmentIR, ...]
+    closed: bool
+    source_kind: str = "sketch_chain"
+
+    def __post_init__(self):
+        if not isinstance(self.name, str) or not self.name.strip():
+            raise ValueError("SketchChainIR name must be non-empty")
+        if not isinstance(self.plane, PlaneIR):
+            raise ValueError("SketchChainIR plane must be PlaneIR")
+        if (
+            not isinstance(self.segments, tuple)
+            or not self.segments
+            or any(
+                not isinstance(segment, SketchChainSegmentIR)
+                for segment in self.segments
+            )
+        ):
+            raise ValueError("SketchChainIR requires semantic segments")
+        if not isinstance(self.closed, bool):
+            raise ValueError("SketchChainIR closed must be bool")
+
+
+@dataclass(frozen=True)
+class SheetRuleIR:
+    """Semantic material/bend rule shared by one native sheet history."""
+
+    name: str
+    thickness: Any
+    bend_radius: Any
+    k_factor: Any
+
+    def __post_init__(self):
+        if not isinstance(self.name, str) or not self.name.strip():
+            raise ValueError("SheetRuleIR name must be non-empty")
+        for value, label in (
+            (self.thickness, "thickness"),
+            (self.bend_radius, "bend_radius"),
+        ):
+            if (
+                isinstance(value, bool)
+                or not isfinite(pv(value))
+                or pv(value) <= 0
+            ):
+                raise ValueError(f"SheetRuleIR {label} must be positive")
+        if (
+            isinstance(self.k_factor, bool)
+            or not isfinite(pv(self.k_factor))
+            or not 0 < pv(self.k_factor) < 1
+        ):
+            raise ValueError("SheetRuleIR k_factor must be between 0 and 1")
+
+
+class SheetBodyIR(BodyIR):
+    """Marker for typed native sheet-metal body/history results."""
+
+
+@dataclass(frozen=True)
+class SheetBaseIR(SheetBodyIR):
+    """Flat sheet body created from one closed semantic Sketch/profile."""
+
+    blank: SketchIR | SketchChainIR
+    rule: SheetRuleIR
+    source_kind: str = "sheet_base"
+
+    def __post_init__(self):
+        if not isinstance(self.blank, (SketchIR, SketchChainIR)):
+            raise ValueError("SheetBaseIR blank must be typed Sketch intent")
+        if isinstance(self.blank, SketchChainIR) and not self.blank.closed:
+            raise ValueError("SheetBaseIR chain blank must be closed")
+        if not isinstance(self.rule, SheetRuleIR):
+            raise ValueError("SheetBaseIR rule must be SheetRuleIR")
+
+
+@dataclass(frozen=True)
+class SheetContourFlangeIR(SheetBodyIR):
+    contour: SketchChainIR
+    distance: Any
+    rule: SheetRuleIR
+    flip: bool = False
+    reverse: bool = False
+    source_kind: str = "sheet_contour_flange"
+
+    def __post_init__(self):
+        if not isinstance(self.contour, SketchChainIR) or self.contour.closed:
+            raise ValueError("SheetContourFlangeIR contour must be open SketchChainIR")
+        if (
+            isinstance(self.distance, bool)
+            or not isfinite(pv(self.distance))
+            or pv(self.distance) <= 0
+        ):
+            raise ValueError("SheetContourFlangeIR distance must be positive")
+        if not isinstance(self.rule, SheetRuleIR):
+            raise ValueError("SheetContourFlangeIR rule must be SheetRuleIR")
+        if not isinstance(self.flip, bool) or not isinstance(self.reverse, bool):
+            raise ValueError("SheetContourFlangeIR flip/reverse must be bool")
+
+
+@dataclass(frozen=True)
+class SheetFoldIR(SheetBodyIR):
+    base: BodyIR
+    line: tuple[tuple[float, float, float], tuple[float, float, float]] | SketchChainIR
+    angle: Any
+    fixed: tuple[float, float, float] | None = None
+    position: str = "centerline"
+    flip: bool = False
+    source_kind: str = "sheet_fold"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetFoldIR base must be BodyIR")
+        if isinstance(self.line, SketchChainIR):
+            if self.line.closed or len(self.line.segments) != 1 or self.line.segments[0].kind != "line":
+                raise ValueError("SheetFoldIR Sketch line must be one open straight segment")
+        elif (
+            not isinstance(self.line, tuple)
+            or len(self.line) != 2
+            or any(
+                not isinstance(point, tuple)
+                or len(point) != 3
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in point
+                )
+                for point in self.line
+            )
+        ):
+            raise ValueError("SheetFoldIR fixed line must contain two finite XYZ points")
+        if (
+            isinstance(self.angle, bool)
+            or not isfinite(pv(self.angle))
+            or pv(self.angle) == 0
+            or abs(pv(self.angle)) >= 180
+        ):
+            raise ValueError("SheetFoldIR angle must be non-zero and below 180 degrees")
+        if self.position not in {"centerline", "start", "end", "mould"}:
+            raise ValueError("SheetFoldIR position is invalid")
+        if not isinstance(self.flip, bool):
+            raise ValueError("SheetFoldIR flip must be bool")
+
+
+@dataclass(frozen=True)
+class SheetEdgeFlangeIR(SheetBodyIR):
+    base: BodyIR
+    edges: tuple[tuple[float, float, float], ...]
+    height: Any
+    angle: Any = 90
+    height_from: str | None = None
+    position: str | None = None
+    flip: bool = False
+    source_kind: str = "sheet_edge_flange"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetEdgeFlangeIR base must be BodyIR")
+        if (
+            not isinstance(self.edges, tuple)
+            or not self.edges
+            or any(
+                not isinstance(point, tuple)
+                or len(point) != 3
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in point
+                )
+                for point in self.edges
+            )
+        ):
+            raise ValueError("SheetEdgeFlangeIR edges must be fixed finite XYZ points")
+        if (
+            isinstance(self.height, bool)
+            or not isfinite(pv(self.height))
+            or pv(self.height) <= 0
+        ):
+            raise ValueError("SheetEdgeFlangeIR height must be positive")
+        if (
+            isinstance(self.angle, bool)
+            or not isfinite(pv(self.angle))
+            or pv(self.angle) == 0
+            or abs(pv(self.angle)) >= 180
+        ):
+            raise ValueError("SheetEdgeFlangeIR angle must be non-zero and below 180")
+        if self.height_from not in {None, "outer", "inner", "tangent"}:
+            raise ValueError("SheetEdgeFlangeIR height_from is invalid")
+        if self.position not in {
+            None, "inside", "outside", "middle", "material_outside", "tangent",
+        }:
+            raise ValueError("SheetEdgeFlangeIR position is invalid")
+        if not isinstance(self.flip, bool):
+            raise ValueError("SheetEdgeFlangeIR flip must be bool")
+
+
+@dataclass(frozen=True)
+class SheetHemIR(SheetBodyIR):
+    base: BodyIR
+    edges: tuple[tuple[float, float, float], ...]
+    length: Any
+    gap: Any | None = None
+    flip: bool = False
+    source_kind: str = "sheet_hem"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetHemIR base must be BodyIR")
+        if (
+            not isinstance(self.edges, tuple)
+            or not self.edges
+            or any(
+                not isinstance(point, tuple)
+                or len(point) != 3
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in point
+                )
+                for point in self.edges
+            )
+        ):
+            raise ValueError("SheetHemIR edges must be fixed finite XYZ points")
+        if (
+            isinstance(self.length, bool)
+            or not isfinite(pv(self.length))
+            or pv(self.length) <= 0
+        ):
+            raise ValueError("SheetHemIR length must be positive")
+        if self.gap is not None and (
+            isinstance(self.gap, bool)
+            or not isfinite(pv(self.gap))
+            or pv(self.gap) <= 0
+        ):
+            raise ValueError("SheetHemIR gap must be positive")
+        if not isinstance(self.flip, bool):
+            raise ValueError("SheetHemIR flip must be bool")
+
+
+@dataclass(frozen=True)
+class SheetPathFlangeIR(SheetBodyIR):
+    base: BodyIR
+    edge: tuple[float, float, float]
+    path: SketchChainIR
+    radius: Any | None = None
+    source_kind: str = "sheet_path_flange"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetPathFlangeIR base must be BodyIR")
+        if (
+            not isinstance(self.edge, tuple)
+            or len(self.edge) != 3
+            or any(
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not isfinite(value)
+                for value in self.edge
+            )
+        ):
+            raise ValueError("SheetPathFlangeIR edge must be one fixed finite XYZ point")
+        if not isinstance(self.path, SketchChainIR) or self.path.closed:
+            raise ValueError("SheetPathFlangeIR path must be open SketchChainIR")
+        if any(segment.kind != "line" for segment in self.path.segments):
+            raise ValueError("SheetPathFlangeIR currently requires line-only path")
+        if self.radius is not None and (
+            isinstance(self.radius, bool)
+            or not isfinite(pv(self.radius))
+            or pv(self.radius) <= 0
+        ):
+            raise ValueError("SheetPathFlangeIR radius must be positive")
+
+
+@dataclass(frozen=True)
+class SheetPerforateIR(SheetBodyIR):
+    base: BodyIR
+    diameter: Any
+    pitch: Any
+    margin: Any | None = None
+    pattern: str = "staggered"
+    source_kind: str = "sheet_perforate"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetPerforateIR base must be BodyIR")
+        for value, label in (
+            (self.diameter, "diameter"),
+            (self.pitch, "pitch"),
+        ):
+            if isinstance(value, bool) or not isfinite(pv(value)) or pv(value) <= 0:
+                raise ValueError(f"SheetPerforateIR {label} must be positive")
+        if self.margin is not None and (
+            isinstance(self.margin, bool)
+            or not isfinite(pv(self.margin))
+            or pv(self.margin) <= 0
+        ):
+            raise ValueError("SheetPerforateIR margin must be positive")
+        if self.pattern not in {"staggered", "square"}:
+            raise ValueError("SheetPerforateIR pattern must be staggered or square")
+
+
+@dataclass(frozen=True)
 class ShellIR(BodyIR):
     """Uniform wall shell over one typed body result."""
 
@@ -1888,6 +2249,16 @@ def _angle_parameter_names(value, found=None):
                     parameter.name for parameter in parameters_in(angle)
                 )
             return found
+        if value.kind == "sheet_fold":
+            original, _line, angle, _fixed, _position, _flip = value.data
+            found.update(parameter.name for parameter in parameters_in(angle))
+            _angle_parameter_names(original, found)
+            return found
+        if value.kind == "sheet_edge_flange":
+            original, _edges, _height, angle, _height_from, _position, _flip = value.data
+            found.update(parameter.name for parameter in parameters_in(angle))
+            _angle_parameter_names(original, found)
+            return found
         if value.kind == "circular_pattern":
             (
                 original,
@@ -1961,6 +2332,43 @@ def _length_parameter_names(value, found=None):
             if direction is not None:
                 _length_parameter_names(direction, found)
             return found
+        if value.kind == "sheet_base":
+            (
+                _sketch_name, _plane, origin, plane_offset, profiles, operations,
+                thickness, bend_radius, _k_factor, _rule_name,
+            ) = value.data
+            _length_parameter_names(
+                (origin, plane_offset, profiles, operations, thickness, bend_radius),
+                found,
+            )
+            return found
+        if value.kind == "sheet_contour_flange":
+            contour, distance, thickness, bend_radius, _k_factor, _rule_name, _flip, _reverse = value.data
+            _length_parameter_names(
+                (contour, distance, thickness, bend_radius),
+                found,
+            )
+            return found
+        if value.kind == "sheet_fold":
+            original, line, _angle, fixed, _position, _flip = value.data
+            _length_parameter_names((original, line, fixed), found)
+            return found
+        if value.kind == "sheet_edge_flange":
+            original, _edges, height, _angle, _height_from, _position, _flip = value.data
+            _length_parameter_names((original, height), found)
+            return found
+        if value.kind == "sheet_hem":
+            original, _edges, length, gap, _flip = value.data
+            _length_parameter_names((original, length, gap), found)
+            return found
+        if value.kind == "sheet_path_flange":
+            original, _edge, path, radius = value.data
+            _length_parameter_names((original, path, radius), found)
+            return found
+        if value.kind == "sheet_perforate":
+            original, diameter, pitch, margin, _pattern = value.data
+            _length_parameter_names((original, diameter, pitch, margin), found)
+            return found
         if value.kind == "rectangular_pattern":
             (
                 original,
@@ -2021,11 +2429,36 @@ def _length_parameter_names(value, found=None):
     return found
 
 
+def _ratio_parameter_names(value, found=None):
+    """Collect dimensionless continuous sheet-rule parameters."""
+    if found is None:
+        found = set()
+
+    if isinstance(value, Shape):
+        if value.kind == "sheet_base":
+            _sketch_name, _plane, _origin, _offset, _profiles, _operations, _thickness, _radius, k_factor, _rule = value.data
+            found.update(parameter.name for parameter in parameters_in(k_factor))
+            return found
+        if value.kind == "sheet_contour_flange":
+            contour, _distance, _thickness, _radius, k_factor, _rule, _flip, _reverse = value.data
+            found.update(parameter.name for parameter in parameters_in(k_factor))
+            _ratio_parameter_names(contour, found)
+            return found
+        _ratio_parameter_names(value.data, found)
+        return found
+
+    if isinstance(value, (tuple, list)):
+        for item in value:
+            _ratio_parameter_names(item, found)
+    return found
+
+
 def _parameter_ir(shape: Shape) -> tuple[ParameterIR, ...]:
     values = _collect_parameters(shape)
     length_parameters = _length_parameter_names(shape)
     angle_parameters = _angle_parameter_names(shape)
     count_parameters = _count_parameter_names(shape)
+    ratio_parameters = _ratio_parameter_names(shape)
     return tuple(
         ParameterIR(
             name,
@@ -2036,6 +2469,7 @@ def _parameter_ir(shape: Shape) -> tuple[ParameterIR, ...]:
                     ("length", length_parameters),
                     ("angle", angle_parameters),
                     ("count", count_parameters),
+                    ("ratio", ratio_parameters),
                 )
                 if name in names
             ),
@@ -3226,7 +3660,303 @@ def _portable_shell(shape: Shape) -> ShellIR | None:
         return None
 
 
+def _sketch_chain_ir(
+    shape: Shape,
+    *,
+    closed: bool | None = None,
+    name: str | None = None,
+    plane: str | None = None,
+    offset=(0, 0),
+) -> SketchChainIR | None:
+    """Normalize authored connected Sketch paths without native curve ids."""
+    if shape.kind == "sketch_open_chain":
+        sketch_name, orientation, plane_offset, _start, segments = shape.data
+        if closed is True:
+            return None
+        plane_ir = _plane_ir(orientation, plane_offset)
+        if plane_ir is None:
+            return None
+        chain_name = sketch_name
+        is_closed = False
+        profile_offset = (0, 0)
+    elif shape.kind == "connected_profile":
+        if closed is False or name is None or plane is None:
+            return None
+        _start, segments = shape.data
+        plane_ir = _plane_ir(plane)
+        if plane_ir is None:
+            return None
+        chain_name = name
+        is_closed = True
+        profile_offset = tuple(offset)
+        if len(profile_offset) != 2:
+            return None
+    else:
+        return None
+
+    semantic = []
+    for segment in segments:
+        kind = segment[0]
+        if kind == "line":
+            _kind, start, end = segment
+            through = center = None
+            clockwise = None
+        elif kind == "arc_tangent":
+            _kind, start, end = segment
+            through = center = None
+            clockwise = None
+        elif kind == "arc_three_point":
+            _kind, start, end, through = segment
+            center = None
+            clockwise = None
+        elif kind == "arc_center_point":
+            _kind, start, end, center, clockwise = segment
+            through = None
+        else:
+            return None
+
+        def shifted(point):
+            if point is None:
+                return None
+            return tuple(
+                _dim_add(point[index], profile_offset[index])
+                for index in range(2)
+            )
+
+        try:
+            semantic.append(
+                SketchChainSegmentIR(
+                    kind=kind,
+                    start=shifted(start),
+                    end=shifted(end),
+                    through=shifted(through),
+                    center=shifted(center),
+                    clockwise=clockwise,
+                )
+            )
+        except ValueError:
+            return None
+
+    try:
+        return SketchChainIR(
+            name=chain_name,
+            plane=plane_ir,
+            segments=tuple(semantic),
+            closed=is_closed,
+        )
+    except ValueError:
+        return None
+
+
+def _sheet_rule_ir(
+    name,
+    thickness,
+    bend_radius,
+    k_factor,
+) -> SheetRuleIR | None:
+    try:
+        return SheetRuleIR(
+            name=name,
+            thickness=thickness,
+            bend_radius=bend_radius,
+            k_factor=k_factor,
+        )
+    except ValueError:
+        return None
+
+
+def _portable_sheet_base(shape: Shape) -> SheetBaseIR | None:
+    if shape.kind != "sheet_base":
+        return None
+    (
+        sketch_name,
+        plane,
+        origin,
+        plane_offset,
+        profiles,
+        operations,
+        thickness,
+        bend_radius,
+        k_factor,
+        rule_name,
+    ) = shape.data
+    if (
+        plane != "XY"
+        or origin is not None
+        or plane_offset is not None
+        or operations
+        or len(profiles) != 1
+    ):
+        return None
+
+    rule = _sheet_rule_ir(rule_name, thickness, bend_radius, k_factor)
+    if rule is None:
+        return None
+
+    profile, profile_anchor, offset = profiles[0]
+    if profile.kind == "connected_profile":
+        if profile_anchor is not None:
+            return None
+        blank = _sketch_chain_ir(
+            profile,
+            closed=True,
+            name=sketch_name,
+            plane=plane,
+            offset=offset,
+        )
+    else:
+        semantic = _profile_ir_from_shape(
+            profile,
+            profile_anchor,
+            offset,
+            plane,
+        )
+        if semantic is None:
+            return None
+        blank = SketchIR(
+            name=sketch_name,
+            plane=PlaneIR("XY"),
+            profiles=(semantic,),
+        )
+    if blank is None:
+        return None
+    try:
+        return SheetBaseIR(blank=blank, rule=rule)
+    except ValueError:
+        return None
+
+
+def _is_sheet_history(node: BodyIR) -> bool:
+    """Return whether a typed body history originates from sheet material."""
+    if isinstance(node, SheetBodyIR):
+        return True
+    if isinstance(node, (HoleIR, PlasticFeatureIR)):
+        return _is_sheet_history(node.target)
+    if isinstance(node, (ChamferIR, FilletIR, ShellIR)):
+        return _is_sheet_history(node.base)
+    if isinstance(node, (RectangularPatternIR, CircularPatternIR)):
+        return _is_sheet_history(node.base)
+    if isinstance(node, BooleanIR) and isinstance(node.target, BodyIR):
+        return _is_sheet_history(node.target)
+    return False
+
+
+def _portable_sheet(shape: Shape) -> SheetBodyIR | None:
+    base = _portable_sheet_base(shape)
+    if base is not None:
+        return base
+
+    if shape.kind == "sheet_contour_flange":
+        (
+            contour, distance, thickness, bend_radius, k_factor,
+            rule_name, flip, reverse,
+        ) = shape.data
+        chain = _sketch_chain_ir(contour, closed=False)
+        rule = _sheet_rule_ir(rule_name, thickness, bend_radius, k_factor)
+        if chain is None or rule is None:
+            return None
+        try:
+            return SheetContourFlangeIR(
+                contour=chain,
+                distance=distance,
+                rule=rule,
+                flip=flip,
+                reverse=reverse,
+            )
+        except ValueError:
+            return None
+
+    if shape.kind not in {
+        "sheet_fold",
+        "sheet_edge_flange",
+        "sheet_hem",
+        "sheet_path_flange",
+        "sheet_perforate",
+    }:
+        return None
+
+    original = shape.data[0]
+    typed_base = _portable_sheet(original)
+    if typed_base is None:
+        # Sheet history may contain another already-typed body operation, such
+        # as a Hole between the flat blank and a Fold.
+        normalized = _normalize_node(original)
+        if not isinstance(normalized, BodyIR) or not _is_sheet_history(normalized):
+            return None
+        typed_base = normalized
+
+    try:
+        if shape.kind == "sheet_fold":
+            _original, line, angle, fixed, position, flip = shape.data
+            if isinstance(line, Shape):
+                semantic_line = _sketch_chain_ir(line, closed=False)
+                if semantic_line is None:
+                    return None
+            else:
+                semantic_line = tuple(tuple(float(v) for v in point) for point in line)
+            return SheetFoldIR(
+                base=typed_base,
+                line=semantic_line,
+                angle=angle,
+                fixed=None if fixed is None else tuple(float(v) for v in fixed),
+                position=position,
+                flip=flip,
+            )
+
+        if shape.kind == "sheet_edge_flange":
+            (
+                _original, edges, height, angle,
+                height_from, position, flip,
+            ) = shape.data
+            return SheetEdgeFlangeIR(
+                base=typed_base,
+                edges=tuple(tuple(point) for point in edges),
+                height=height,
+                angle=angle,
+                height_from=height_from,
+                position=position,
+                flip=flip,
+            )
+
+        if shape.kind == "sheet_hem":
+            _original, edges, length, gap, flip = shape.data
+            return SheetHemIR(
+                base=typed_base,
+                edges=tuple(tuple(point) for point in edges),
+                length=length,
+                gap=gap,
+                flip=flip,
+            )
+
+        if shape.kind == "sheet_path_flange":
+            _original, edge, path, radius = shape.data
+            semantic_path = _sketch_chain_ir(path, closed=False)
+            if semantic_path is None:
+                return None
+            return SheetPathFlangeIR(
+                base=typed_base,
+                edge=tuple(edge),
+                path=semantic_path,
+                radius=radius,
+            )
+
+        _original, diameter, pitch, margin, pattern = shape.data
+        return SheetPerforateIR(
+            base=typed_base,
+            diameter=diameter,
+            pitch=pitch,
+            margin=margin,
+            pattern=pattern,
+        )
+    except (TypeError, ValueError):
+        return None
+
+
 def _normalize_node(shape: Shape) -> IRNode:
+    sheet = _portable_sheet(shape)
+    if sheet is not None:
+        return sheet
+
     placement = _portable_placement(shape)
     if placement is not None:
         return placement
@@ -3661,6 +4391,17 @@ __all__ = [
     "ScalarParameterRefIR",
     "ScalarUnaryIR",
     "SketchIR",
+    "SketchChainIR",
+    "SketchChainSegmentIR",
+    "SheetRuleIR",
+    "SheetBodyIR",
+    "SheetBaseIR",
+    "SheetContourFlangeIR",
+    "SheetFoldIR",
+    "SheetEdgeFlangeIR",
+    "SheetHemIR",
+    "SheetPathFlangeIR",
+    "SheetPerforateIR",
     "SketchCoordinateDimensionIR",
     "SketchLengthDimensionIR",
     "SketchLineIR",
