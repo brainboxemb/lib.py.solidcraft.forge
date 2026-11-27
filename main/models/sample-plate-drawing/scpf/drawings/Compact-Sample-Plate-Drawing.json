@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "8r7v5ncth7w2v",
+  "id": "3vgh896beqbhk",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "cexk6exq12gh0"
+        "source": "d58v8hazec97t"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "47wyjxb9msbem",
+      "id": "dwsxh2v0651cx",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,15 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "96q0hnx5b8xg2",
+          "id": "19qt5906q5z8p",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "evgq8t3c6nnrv",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,37 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "aehghqbs6erzs",
+          "id": "66n4wkc25y02w",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "96q0hnx5b8xg2",
+          "parent": "evgq8t3c6nnrv",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "d8cn5z8pdnesw",
+          "id": "e71mgam7bgz6j",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "96q0hnx5b8xg2",
+          "parent": "evgq8t3c6nnrv",
           "side": "above"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "c432apvv9y2e6",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "cexk6exq12gh0"
+      "id": "d58v8hazec97t"
     }
   ],
   "symbols": [],
