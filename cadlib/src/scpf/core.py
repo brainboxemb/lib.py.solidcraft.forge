@@ -13,8 +13,10 @@ from typing import Any
 from .scalar_ir import (
     ScalarBinaryIR,
     ScalarExpressionIR,
+    ScalarFunctionIR,
     ScalarLiteralIR,
     ScalarParameterRefIR,
+    ScalarPowerIR,
     ScalarUnaryIR,
 )
 
@@ -560,6 +562,13 @@ def _scalar_binary_ir(operation, left, right) -> ScalarExpressionIR | None:
     return ScalarBinaryIR(operation, left_ir, right_ir)
 
 
+def _scalar_power_ir(value, exponent) -> ScalarExpressionIR | None:
+    base = _scalar_ir_value(value)
+    if base is None:
+        return None
+    return ScalarPowerIR(base, exponent)
+
+
 def _scalar_negation_ir(value, *, collapse=False) -> ScalarExpressionIR | None:
     operand = _scalar_ir_value(value)
     if operand is None:
@@ -725,6 +734,7 @@ class Parameter:
             self.value ** exponent,
             f"({self.name}) ^ {number_text(exponent)}",
             (self,),
+            _scalar_power_ir(self, exponent),
         )
 
     def __neg__(self):
@@ -857,6 +867,7 @@ class Expression:
             self.value ** exponent,
             f"({self.expression}) ^ {number_text(exponent)}",
             self.parameters,
+            _scalar_power_ir(self, exponent),
         )
 
     def __neg__(self):
