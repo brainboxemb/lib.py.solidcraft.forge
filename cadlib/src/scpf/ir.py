@@ -1788,7 +1788,7 @@ class SheetContourFlangeIR(SheetBodyIR):
 
 @dataclass(frozen=True)
 class SheetFoldIR(SheetBodyIR):
-    base: SheetBodyIR
+    base: BodyIR
     line: tuple[tuple[float, float, float], tuple[float, float, float]] | SketchChainIR
     angle: Any
     fixed: tuple[float, float, float] | None = None
@@ -1797,8 +1797,8 @@ class SheetFoldIR(SheetBodyIR):
     source_kind: str = "sheet_fold"
 
     def __post_init__(self):
-        if not isinstance(self.base, SheetBodyIR):
-            raise ValueError("SheetFoldIR base must be SheetBodyIR")
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetFoldIR base must be BodyIR")
         if isinstance(self.line, SketchChainIR):
             if self.line.closed or len(self.line.segments) != 1 or self.line.segments[0].kind != "line":
                 raise ValueError("SheetFoldIR Sketch line must be one open straight segment")
@@ -1833,7 +1833,7 @@ class SheetFoldIR(SheetBodyIR):
 
 @dataclass(frozen=True)
 class SheetEdgeFlangeIR(SheetBodyIR):
-    base: SheetBodyIR
+    base: BodyIR
     edges: tuple[tuple[float, float, float], ...]
     height: Any
     angle: Any = 90
@@ -1845,7 +1845,7 @@ class SheetEdgeFlangeIR(SheetBodyIR):
 
 @dataclass(frozen=True)
 class SheetHemIR(SheetBodyIR):
-    base: SheetBodyIR
+    base: BodyIR
     edges: tuple[tuple[float, float, float], ...]
     length: Any
     gap: Any | None = None
@@ -1855,15 +1855,15 @@ class SheetHemIR(SheetBodyIR):
 
 @dataclass(frozen=True)
 class SheetPathFlangeIR(SheetBodyIR):
-    base: SheetBodyIR
+    base: BodyIR
     edge: tuple[float, float, float]
     path: SketchChainIR
     radius: Any | None = None
     source_kind: str = "sheet_path_flange"
 
     def __post_init__(self):
-        if not isinstance(self.base, SheetBodyIR):
-            raise ValueError("SheetPathFlangeIR base must be SheetBodyIR")
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetPathFlangeIR base must be BodyIR")
         if not isinstance(self.path, SketchChainIR) or self.path.closed:
             raise ValueError("SheetPathFlangeIR path must be open SketchChainIR")
         if any(segment.kind != "line" for segment in self.path.segments):
@@ -1878,7 +1878,7 @@ class SheetPathFlangeIR(SheetBodyIR):
 
 @dataclass(frozen=True)
 class SheetPerforateIR(SheetBodyIR):
-    base: SheetBodyIR
+    base: BodyIR
     diameter: Any
     pitch: Any
     margin: Any | None = None
@@ -1886,8 +1886,8 @@ class SheetPerforateIR(SheetBodyIR):
     source_kind: str = "sheet_perforate"
 
     def __post_init__(self):
-        if not isinstance(self.base, SheetBodyIR):
-            raise ValueError("SheetPerforateIR base must be SheetBodyIR")
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("SheetPerforateIR base must be BodyIR")
         for value, label in (
             (self.diameter, "diameter"),
             (self.pitch, "pitch"),
@@ -3734,6 +3734,21 @@ def _portable_sheet_base(shape: Shape) -> SheetBaseIR | None:
         return None
 
 
+def _is_sheet_history(node: BodyIR) -> bool:
+    """Return whether a typed body history originates from sheet material."""
+    if isinstance(node, SheetBodyIR):
+        return True
+    if isinstance(node, (HoleIR, PlasticFeatureIR)):
+        return _is_sheet_history(node.target)
+    if isinstance(node, (ChamferIR, FilletIR, ShellIR)):
+        return _is_sheet_history(node.base)
+    if isinstance(node, (RectangularPatternIR, CircularPatternIR)):
+        return _is_sheet_history(node.base)
+    if isinstance(node, BooleanIR) and isinstance(node.target, BodyIR):
+        return _is_sheet_history(node.target)
+    return False
+
+
 def _portable_sheet(shape: Shape) -> SheetBodyIR | None:
     base = _portable_sheet_base(shape)
     if base is not None:
@@ -3774,7 +3789,7 @@ def _portable_sheet(shape: Shape) -> SheetBodyIR | None:
         # Sheet history may contain another already-typed body operation, such
         # as a Hole between the flat blank and a Fold.
         normalized = _normalize_node(original)
-        if not isinstance(normalized, SheetBodyIR):
+        if not isinstance(normalized, BodyIR) or not _is_sheet_history(normalized):
             return None
         typed_base = normalized
 
