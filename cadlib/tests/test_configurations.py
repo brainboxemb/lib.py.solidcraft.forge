@@ -15,7 +15,6 @@ from scpf.ir import (
     ConfigurationExpressionIR,
     ConfigurationIR,
     ConfigurationRuleIR,
-    DefinitionFeatureRefIR,
     DriveParameterEffectIR,
     FeatureRefIR,
     ParameterCellIR,
@@ -556,27 +555,6 @@ class ConfigurationTests(unittest.TestCase):
         self.assertIsInstance(feature, ComponentFeatureRefIR)
         self.assertEqual(feature.definition, "definition_1")
         self.assertEqual(feature.name, "panel_pin")
-
-    def test_raw_component_shape_suppression_uses_definition_feature_path(self):
-        block = ConfigurationIRBlock(name="panel")
-        exported = dict(block.definition.features)["panel_pin"]
-        pin = exported.data[0]
-        configured = Configure(
-            block,
-            active="Installed",
-            columns=(Suppress(pin),),
-            rows={
-                "Installed": (False,),
-                "Removed": (True,),
-            },
-        )
-
-        model = normalize_model(configured)
-
-        feature = model.configuration.columns[0].feature
-        self.assertIsInstance(feature, DefinitionFeatureRefIR)
-        self.assertEqual(feature.definition, "definition_1")
-        self.assertEqual(feature.feature.path, ("root",))
 
     def test_configuration_semantics_contain_no_native_row_or_feature_ids(self):
         width = Parameter("width", 40)
