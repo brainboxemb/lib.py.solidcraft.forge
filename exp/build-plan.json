@@ -241,7 +241,8 @@
     {
       "id": "cone-boolean",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -840,13 +841,15 @@
       ]
     }
   ],
-  "qualification_pr": 507,
+  "qualification_pr": 511,
   "qualification_reused": true,
-  "qualification_run_id": 46032052104,
-  "qualified_head_sha": "baafac14f4ae9ed42ad91399d71196287f72a6f2",
-  "qualified_source_sha": "351033e1bbc886c2dd9329c87f71d18b9f5a9409",
+  "qualification_run_id": 46033877961,
+  "qualified_head_sha": "9b9791970f64c81ce0a63734ed65a54cb1f9b04b",
+  "qualified_source_sha": "3afea91a90bc81023db90d21cc7b83bb332815e7",
   "release_only": false,
   "schema": 2,
-  "selected": [],
-  "source_sha": "0f0865cb5c88d3a0b2a737e2e2df9a527b142443"
+  "selected": [
+    "cone-boolean"
+  ],
+  "source_sha": "f3a6340ae245ba15eebffd9c30270906b225a3d3"
 }
