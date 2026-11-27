@@ -20,6 +20,21 @@ verifications:
     definition: verification/solidcraft.py
     artifact: model.sc
     implementations: [scpf]
+
+  - id: visual-cut
+    module: verification
+    adapter: solidcraft-visual
+    definition: verification/visual-cut.json
+    artifact: model.sc
+    implementations: [scpf]
+
+  - id: visual-suppressed
+    module: verification
+    adapter: solidcraft-visual
+    definition: verification/visual-suppressed.json
+    artifact: model.sc
+    implementations: [scpf]
+
   - id: geometry
     module: verification
     adapter: mesh-geometry

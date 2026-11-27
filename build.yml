@@ -1,6 +1,7 @@
 schema: 1
-branch: issue/605-complete-configuration-ir
-modules: [ci]
-models: []
+branch: resolve/615-dev-exp
+modules: all
+models: all
 library: true
+api_probes: []
 tasks: [test]
