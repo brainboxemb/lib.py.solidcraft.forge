@@ -2384,18 +2384,23 @@ def _portable_configuration_commands(
     return commands
 
 
-def compile_ir_with_dependencies(model: ModelIR, name: str):
-    """Lower one normalized Forge model to SolidCraft native intent."""
+def compile_ir_commands_with_dependencies(model: ModelIR, name: str):
+    """Lower one ModelIR to a flat native command sequence.
+
+    This is the shared SolidCraft boundary used both for a standalone design
+    and for one reusable component definition inside AssemblyIR. Replay
+    wrapping belongs to the enclosing design, so native occurrence/component
+    transport never needs to enter semantic ModelIR.
+    """
     if not isinstance(model, ModelIR):
         raise TypeError("SolidCraft backend requires Forge ModelIR")
     if not name or not name.isidentifier():
         raise ModelError("the model name must be a valid identifier")
 
     if isinstance(model.root, LegacyShapeIR):
-        return _compile_shape_legacy_with_dependencies(
-            model.root.shape,
-            name,
-        )
+        from ..compiler import _compile_model_commands
+        commands = _compile_model_commands(model.root.shape, name)
+        return commands, _native_dependencies(commands)
 
     commands = _portable_commands(model, name)
     if model.configuration is not None:
@@ -2404,17 +2409,30 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
             model.configuration,
             commands,
         )
+    return commands, _native_dependencies(commands)
+
+
+def compile_ir_with_dependencies(model: ModelIR, name: str):
+    """Lower one normalized Forge model to SolidCraft native intent."""
+    commands, dependencies = compile_ir_commands_with_dependencies(
+        model,
+        name,
+    )
     plain = _plain_command_value(commands)
     document = (
         replay_document(plain)
         if any("bind" in command for command in plain)
         else {"commands": plain}
     )
-    return document, _native_dependencies(commands)
+    return document, dependencies
 
 
 def compile_ir(model: ModelIR, name: str) -> dict:
     return compile_ir_with_dependencies(model, name)[0]
 
 
-__all__ = ["compile_ir", "compile_ir_with_dependencies"]
+__all__ = [
+    "compile_ir",
+    "compile_ir_with_dependencies",
+    "compile_ir_commands_with_dependencies",
+]
