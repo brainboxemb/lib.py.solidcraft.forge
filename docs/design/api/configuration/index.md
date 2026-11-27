@@ -137,63 +137,45 @@ with the same history structure in both cases.
 
 ## 4. Global Installed behavior
 
-The final HUB75-style model needs one user-visible Installed choice:
+The final HUB75-style model can represent Installed directly as one configured
+feature-suppression target.
+
+The preferred shape is:
 
 ~~~text
-Size:
-    Small | Large
+one authored feature: Installed
+    ├── affects left coupler
+    ├── affects right coupler
+    └── may affect other participating geometry
 
-Installed:
-    off | on
+final model configuration
+    ├── coupler size
+    └── Suppress: Installed
 ~~~
 
-Installed is independent from the active Small/Large row.
+No `State`, `Toggle`, `Bind`, `ConfigRule`, `Always`,
+`DriveParameter` or `drive_suppression` layer is required for this example.
 
-When it changes, every participating Installed transition follows:
+The configuration table itself stores the suppression value for the Installed
+feature.
+
+## 5. Configuration suppression
+
+Feature suppression is a normal configuration column.
+
+For example:
 
 ~~~text
-Installed = off
-├── left coupler Installed suppressed
-├── right coupler Installed suppressed
-└── later participating Installed behavior free/suppressed
-
-Installed = on
-├── left coupler Installed active
-├── right coupler Installed active
-└── later participating Installed behavior installed/active
+Configuration   Coupler size   Suppress: Installed
+Small              40 mm              [x]
+Large              60 mm              [x]
 ~~~
 
-This requirement does **not** by itself justify a public `State`,
-`Toggle`, `Bind`, `ConfigRule` or `DriveParameter` object.
+The checkbox is stored per configuration row, exactly like the other row
+values. A user can edit the suppression checkbox directly in SolidCraft.
 
-It is final-model configuration intent.
-
-## 5. Row suppression is different
-
-A normal suppression column in a configuration table is row-owned:
-
-~~~text
-Small -> Installed feature suppressed
-Large -> Installed feature active
-~~~
-
-That is not the same as:
-
-~~~text
-active row = Small
-Installed = off | on
-~~~
-
-If both size and Installed were flattened into rows, the model would require:
-
-~~~text
-Small / Free
-Small / Installed
-Large / Free
-Large / Installed
-~~~
-
-The HUB75 requirement explicitly avoids that Cartesian expansion.
+There is no need to synthesize separate Free/Installed rows merely to expose
+the suppression value.
 
 ## 6. SolidCraft 0.49 evidence
 
@@ -210,9 +192,9 @@ history feature.
 The `configuration-installed-single-feature` probe uses one native
 `solid.move` feature named `Installed` with two bodies as participants.
 
-SolidCraft accepts that one history feature as the configured suppression target
-and one independent Installed rule can switch it without changing the
-Small/Large row. The corrected probe passed on run **959**.
+SolidCraft accepts that one history feature directly as the configured
+suppression target. The rule-free direct configuration probe passed on run
+**971**.
 
 So when the mechanical Installed transition is truthfully one native operation,
 the preferred backend shape is simply:
@@ -227,7 +209,7 @@ one Installed history feature
         +--> body B
 ~~~
 
-No grouping or shared driver is needed for that case.
+No grouping, rule or shared driver is needed for that case.
 
 ### A timeline folder can contain several Installed features
 
@@ -262,26 +244,6 @@ target is not a configured feature.
 
 Therefore Forge must **not** assume that a scoped/nested Installed feature group
 can lower directly to one SolidCraft configuration checkbox.
-
-### Several genuinely different native features need another backend mechanism
-
-The `configuration-installed-fanout` probe proves one working SolidCraft 0.49
-fallback:
-
-~~~text
-Installed native rule
-        |
-        v
-private shared driver
-        |
-        +--> Installed behavior A
-        +--> Installed behavior B
-~~~
-
-Small/Large remain normal rows.
-
-That is backend evidence only. A private driver parameter and SolidCraft
-Configuration Rule are not public Forge model intent.
 
 ## 7. Position behavior
 
@@ -370,12 +332,11 @@ The acceptance behavior is:
 2. Small/Large remain the only size rows;
 3. each coupler always contains its Installed history transition;
 4. initial Free/Installed can select suppression at Forge build time;
-5. the saved final model exposes one Installed control;
-6. that one control affects every participating Installed transition;
-7. toggling Installed does not change the active size row;
-8. save/reopen preserves both active size and Installed behavior;
-9. no SolidCraft rule object or private driver appears in public Forge
-   authoring.
+5. the saved final model exposes one `Suppress: Installed` configuration column;
+6. that one feature affects every participating Installed geometry operation;
+7. the configuration stores the Installed suppression value directly;
+8. save/reopen preserves active configuration and suppression value;
+9. no SolidCraft rule object or private driver is involved.
 
 ## 11. Open questions
 
@@ -384,10 +345,10 @@ Still open:
 - exact `with feature(...)` API and whether one scope represents exactly one
   CAD history feature or may represent a semantic group of several operations;
 - how a reusable component exports the authored Installed feature identity;
-- exact `model.configure(...)` syntax for the one global Installed intent;
+- exact `model.configure(...)` syntax for the Installed suppression target;
 - whether `Param(...)` and `Suppress(...)` remain useful public wrappers;
-- the best SolidCraft lowering for the global Installed intent given that
-  timeline folders are not configuration targets.
+- whether the final Forge syntax needs an explicit `Suppress(...)` wrapper or
+  can accept an authored feature handle directly.
 
 Not open:
 
@@ -396,5 +357,5 @@ Not open:
 - real Installed behavior should be authored as real history, not removed by
   Python branching;
 - a private `_installed` value selects initial build/default suppression only;
-- one global Installed control must not require Small/Large Cartesian rows;
-- SolidCraft-specific rule mechanics are not the target public Forge API.
+- Installed is represented directly by configured feature suppression;
+- SolidCraft-specific rule mechanics are not needed for this example.
