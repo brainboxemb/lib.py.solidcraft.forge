@@ -8,6 +8,20 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+### Added
+
+- Add scoped `feature(name, suppressed=False)` authoring for exactly one CAD
+  history operation, with stable reusable-component identity, optional initial
+  native suppression and direct use as a final-model configuration target.
+
+### Changed
+
+- Separate parameter-driven Free/Installed state from real history-feature
+  suppression in the configuration contract and qualification evidence.
+- Require consumer-level API acceptance to remain faithful to the motivating
+  use case instead of treating a deliberately synthetic backend probe as
+  sufficient consumer proof.
+
 ## [0.25.0] - 2026-11-27
 
 ### Changed
