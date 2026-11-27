@@ -1752,6 +1752,39 @@ the same AssemblyIR core has been validated. Mitcad has no AssemblyIR lowering
 yet and fails closed after normalization; backend lag does not make assembly
 semantics legacy.
 
+#560 completes the support-independent public Sketch entity/operation graph
+without duplicating #554's connected-chain model. `SketchChainIR` remains the
+single semantic line/arc chain representation; its support plane may be absent
+when a chain is authored inside an attached Sketch whose support belongs to the
+next compiler layer. Standalone Sheet Metal chains continue to require a typed
+`PlaneIR`.
+
+`SketchEntityGraphIR` groups semantic closed entities, reusable open chains
+and ordered Sketch operations independently from Sketch support and solid
+consumers. `TextEntityIR` retains editable text, font, insertion point and
+symbolic height. Existing Circle/Polygon/Rectangle/RoundedRectangle/Slot
+profile IR is reused directly, while connected line/arc profiles and open
+line/tangent-arc paths reuse `SketchChainIR`.
+
+Sketch-native rectangular pattern and mirror resolve authored Python source
+membership into Sketch-local `SketchEntityRefIR(kind, index)` while object
+identity is still available. `SketchRectangularPatternIR` retains
+count/spacing/directions/alignment/reversal semantics and
+`SketchMirrorIR` retains local X/Y mirror-axis intent. Counts use the
+unitless `count` Parameter role; spacings remain lengths. Native curve ids,
+replay variables and command indexes are not stored in the graph.
+
+SolidCraft and Sheet Metal share one `SketchChainIR` geometry lowerer.
+The general graph lowerer derives private `$sketch_*` bindings only while
+lowering and reproduces the existing Text, connected/open-chain,
+rectangular-pattern and mirror command contracts. The existing SolidCraft
+limitation that pattern/mirror cannot consume a connected profile remains an
+explicit backend capability error; it does not make the semantic graph legacy.
+
+This batch deliberately stops before support and consuming solid features.
+#561 composes this completed entity graph with attached/rotated Sketch support,
+RegionIR and Extrude semantics.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
