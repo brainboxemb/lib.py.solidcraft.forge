@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scpf import Anchor, Box, Hole, Parameter, compile_model, component
+from scpf import Anchor, Box, Hole, Parameter, Placement, compile_model, component
 from scpf.compiler import ModelError
 from scpf.replay import resolve_value, validate_replay_document, variables_in
 from scpf.configurations import _row_variable
@@ -133,7 +133,7 @@ class ConfigurationTests(unittest.TestCase):
             )
 
         body = Box(width, 30, 5)
-        with self.assertRaisesRegex(TypeError, "Parameter or authored feature"):
+        with self.assertRaisesRegex(TypeError, "Parameter.*authored feature"):
             body.configure(
                 active="A",
                 columns=("width",),
