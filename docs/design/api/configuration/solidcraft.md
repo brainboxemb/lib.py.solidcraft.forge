@@ -279,9 +279,10 @@ when the state is already a real suppressible feature. Generic state remains a
 separate problem only where no truthful history feature exists.
 
 For a higher-level design where one global Installed intent must drive several
-independent child-owned Installed features, a composition/binding mechanism is
-still required. The current probes do not yet prove that one native SolidCraft
-control can fan out to several separate child feature suppressions.
+independent child-owned Installed features, the direct SolidCraft route is now
+known: a timeline folder can group and suppress several contiguous features,
+but that folder is **not** a configuration feature target. The detailed result
+is recorded below.
 
 ## 8. Global state fan-out result
 
@@ -321,7 +322,61 @@ mechanism.
 The private driver parameter is likewise not public model intent and must not
 appear in engine-neutral configuration IR.
 
-## 9. Configuration-only parameter dependencies
+## 9. Timeline-folder suppression result
+
+The `configuration-installed-group` probe tests the most direct mapping for
+the desired model-level Installed behavior:
+
+~~~text
+Installed
+├── LeftInstalled
+└── RightInstalled
+~~~
+
+SolidCraft 0.49 accepts this as one timeline folder when the two history
+features form one contiguous run. The positive baseline passed on CI run
+**46016413339** (run 943), and the saved design contains:
+
+~~~text
+Installed folder id 5
+├── feature 3: LeftInstalled
+└── feature 4: RightInstalled
+~~~
+
+SolidCraft can also suppress that folder as one manual history operation through
+`timeline.suppress(groups=[5])`.
+
+The configuration boundary is different. Two focused runtime attempts establish
+that the folder is not a native configuration target:
+
+- run **46016605146** (run 944) used folder id 5 as one
+  `drive_suppression` target; SolidCraft rejected it because the rule target
+  is not configured;
+- run **46016766466** (run 945) tried
+  `config.configure(features=["Installed"])`; SolidCraft rejected it with
+  `no feature 'Installed'`.
+
+Therefore SolidCraft 0.49 treats timeline folders and configuration features as
+different kinds of object:
+
+~~~text
+timeline folder
+    -> may contain several contiguous history features
+    -> may be manually suppressed as a group
+    -> cannot be a configuration feature target
+
+configuration feature target
+    -> one actual history feature
+~~~
+
+This closes the direct “one configuration checkbox suppresses one folder of
+many Installed features” route for SolidCraft 0.49.
+
+The previously qualified shared-driver fan-out remains a working SolidCraft
+backend pattern for one independent Installed control affecting several
+operations. That transport must not dictate the Forge authoring API.
+
+## 10. Configuration-only parameter dependencies
 
 The executable probe exposed another SolidCraft/Forge boundary.
 
@@ -346,7 +401,7 @@ That workaround must **not** become public API policy. A parameter referenced by
 configuration is a real semantic dependency and Forge IR/compiler state must
 retain it even when ordinary geometry does not otherwise read it.
 
-## 10. Backend qualification questions
+## 11. Backend qualification questions
 
 For each proposed Forge configuration capability, qualify these questions
 against the saved SolidCraft design:
