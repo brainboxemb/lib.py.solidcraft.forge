@@ -7,10 +7,43 @@ from scpf import (
     Always, Anchor, Box, ConfigRule, Configure, DriveParameter, Hole, Param,
     Parameter, Suppress, compile_model, component,
 )
+from scpf.assembly_ir import AssemblyIR, ComponentFeatureRefIR
 from scpf.compiler import ModelError
+from scpf.ir import (
+    AlwaysConditionIR,
+    ConfiguredDesignIR,
+    ConfigurationExpressionIR,
+    ConfigurationIR,
+    ConfigurationRuleIR,
+    DefinitionFeatureRefIR,
+    DriveParameterEffectIR,
+    FeatureRefIR,
+    ParameterCellIR,
+    ParameterColumnIR,
+    SuppressionColumnIR,
+    normalize_model,
+)
 from scpf.replay import resolve_value, validate_replay_document, variables_in
 from scpf.configurations import _row_variable
 from scpf.runner import run_script
+
+
+@component(include=("width",))
+class ConfigurationIRBlock:
+    width = 40.0
+
+    def build(self):
+        body = Box(
+            self.width,
+            30,
+            10,
+            anchor=Anchor.BOTTOM,
+        )
+        pin = Hole(
+            d=5,
+            direction=(0, 0, -1),
+        ).at(0, 0, 10).export_feature("panel_pin")
+        return body - pin
 
 
 class ConfigurationTests(unittest.TestCase):
@@ -391,6 +424,155 @@ class ConfigurationTests(unittest.TestCase):
                 "suppress:$config_name_2": "false",
             },
         )
+
+    def test_complete_shape_configuration_ir_is_heterogeneous_and_ordered(self):
+        width = Parameter("width", 40)
+        tube = Parameter("tube", 8)
+        hole = Hole(
+            d=tube,
+            direction=(0, 0, -1),
+        ).at(0, 0, 10)
+        design = Box(width, 30, 10, anchor=Anchor.BOTTOM) - hole
+        configured = Configure(
+            design,
+            active="Compact",
+            columns=(
+                Param(width),
+                Suppress(hole),
+            ),
+            rows={
+                "Default": (40, False),
+                "Compact": ("width / 2", True),
+            },
+            rules=(
+                ConfigRule(
+                    "literal",
+                    "Literal width",
+                    condition=Always(),
+                    effect=DriveParameter(width, 42),
+                ),
+                ConfigRule(
+                    "text",
+                    "Text width",
+                    condition=Always(),
+                    effect=DriveParameter(width, "width + 1 mm"),
+                ),
+                ConfigRule(
+                    "scalar",
+                    "Scalar width",
+                    condition=Always(),
+                    effect=DriveParameter(width, width / 2),
+                ),
+            ),
+        )
+
+        model = normalize_model(configured)
+
+        self.assertIsInstance(model.configuration, ConfigurationIR)
+        self.assertEqual(model.configuration.active, "Compact")
+        self.assertEqual(
+            [type(column) for column in model.configuration.columns],
+            [ParameterColumnIR, SuppressionColumnIR],
+        )
+        self.assertEqual(model.configuration.columns[0].name, "width")
+        self.assertIsInstance(
+            model.configuration.columns[1].feature,
+            FeatureRefIR,
+        )
+        self.assertEqual(
+            [row.name for row in model.configuration.rows],
+            ["Default", "Compact"],
+        )
+        self.assertEqual(
+            model.configuration.rows[0].cells,
+            (ParameterCellIR("40"), False),
+        )
+        self.assertEqual(
+            model.configuration.rows[1].cells,
+            (ParameterCellIR("width / 2"), True),
+        )
+        self.assertEqual(
+            [rule.id for rule in model.configuration.rules],
+            ["literal", "text", "scalar"],
+        )
+        for rule in model.configuration.rules:
+            self.assertIsInstance(rule, ConfigurationRuleIR)
+            self.assertIsInstance(rule.condition, AlwaysConditionIR)
+            self.assertIsInstance(rule.effect, DriveParameterEffectIR)
+            self.assertEqual(rule.effect.parameter, "width")
+            self.assertIsInstance(
+                rule.effect.expression,
+                ConfigurationExpressionIR,
+            )
+        scalar = model.configuration.rules[2].effect.expression
+        self.assertIsNotNone(scalar.scalar_ir)
+        self.assertEqual(scalar.parameters, ("width",))
+
+    def test_component_feature_configuration_uses_definition_identity(self):
+        block = ConfigurationIRBlock(name="panel")
+        configured = Configure(
+            block,
+            active="Installed",
+            columns=(
+                Param("width"),
+                Suppress(block.feature("panel_pin")),
+            ),
+            rows={
+                "Installed": (40, False),
+                "Removed": (40, True),
+            },
+        )
+
+        model = normalize_model(configured)
+
+        self.assertIsInstance(model, ConfiguredDesignIR)
+        self.assertIsInstance(model.design, AssemblyIR)
+        self.assertEqual(len(model.design.definitions), 1)
+        self.assertEqual(
+            model.configuration.columns[0],
+            ParameterColumnIR("width"),
+        )
+        feature = model.configuration.columns[1].feature
+        self.assertIsInstance(feature, ComponentFeatureRefIR)
+        self.assertEqual(feature.definition, "definition_1")
+        self.assertEqual(feature.name, "panel_pin")
+
+    def test_raw_component_shape_suppression_uses_definition_feature_path(self):
+        block = ConfigurationIRBlock(name="panel")
+        pin = dict(block.definition.features)["panel_pin"]
+        configured = Configure(
+            block,
+            active="Installed",
+            columns=(Suppress(pin),),
+            rows={
+                "Installed": (False,),
+                "Removed": (True,),
+            },
+        )
+
+        model = normalize_model(configured)
+
+        feature = model.configuration.columns[0].feature
+        self.assertIsInstance(feature, DefinitionFeatureRefIR)
+        self.assertEqual(feature.definition, "definition_1")
+        self.assertEqual(feature.feature.path, ("root", "tool"))
+
+    def test_configuration_semantics_contain_no_native_row_or_feature_ids(self):
+        width = Parameter("width", 40)
+        hole = Hole(d=5, direction=(0, 0, -1)).at(0, 0, 10)
+        configured = Configure(
+            Box(width, 30, 10, anchor=Anchor.BOTTOM) - hole,
+            active="Default",
+            columns=(Param(width), Suppress(hole)),
+            rows={"Default": (40, False)},
+        )
+
+        model = normalize_model(configured)
+        semantic = repr(model.configuration)
+
+        self.assertNotIn("$config_", semantic)
+        self.assertNotIn("feature_id", semantic)
+        self.assertNotIn("row_id", semantic)
 
     def test_component_feature_reference_requires_explicit_export(self):
         @component
