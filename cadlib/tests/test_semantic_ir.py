@@ -970,7 +970,11 @@ class SemanticIRTests(unittest.TestCase):
             "FlippedAsymmetricChamfer",
         )
         chamfer_set = mitcad["replay"][0]["commands"][0]["def"]["sets"][0]
-        self.assertEqual(chamfer_set["distance2"] if "distance2" in chamfer_set else None, None)
+        self.assertNotIn("distance2", chamfer_set)
+        self.assertEqual(
+            chamfer_set["reference_face"],
+            {"$mitcad_bind": "reference_face"},
+        )
         self.assertTrue(chamfer_set["flip"])
         self.assertEqual(
             chamfer_set["size"],
