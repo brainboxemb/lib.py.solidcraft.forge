@@ -3444,8 +3444,55 @@ def _extrude_regions(
     profile_picks,
     exact_regions,
 ) -> tuple[RegionIR, ...] | None:
-    """Normalize public all-region or point-selected region intent."""
+    """Normalize public all-region or point-selected region intent.
+
+    Existing directly-resolvable profile families retain stronger semantic
+    boundary membership. Selector RegionIR is reserved for the general Sketch
+    entity/operation graph where static membership cannot be known beforehand.
+    """
     if profile_picks is not None:
+        if not isinstance(profile_picks, (tuple, list)):
+            return None
+
+        # Preserve the already-qualified concentric-circle membership model.
+        if (
+            exact_regions
+            and sketch.graph is not None
+            and not sketch.graph.operations
+            and sketch.profiles
+            and all(
+                isinstance(profile, CircleProfileIR)
+                for profile in sketch.profiles
+            )
+            and len(sketch.profiles) == len(sketch.graph.entities)
+        ):
+            try:
+                return tuple(
+                    _concentric_circle_region_from_pick(sketch, point)
+                    for point in profile_picks
+                )
+            except ValueError:
+                return None
+
+        # Preserve the already-qualified exact single-polygon membership model.
+        if (
+            exact_regions
+            and sketch.graph is not None
+            and not sketch.graph.operations
+            and len(sketch.profiles) == 1
+            and isinstance(sketch.profiles[0], PolygonProfileIR)
+            and len(profile_picks) == 1
+        ):
+            try:
+                return (
+                    _polygon_region_from_exact_pick(
+                        sketch,
+                        profile_picks[0],
+                    ),
+                )
+            except ValueError:
+                return None
+
         try:
             return tuple(
                 RegionIR(
