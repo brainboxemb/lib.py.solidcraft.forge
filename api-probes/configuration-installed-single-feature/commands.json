@@ -89,25 +89,7 @@
         "name": "Large",
         "values": {
           "param:spacing": "100 mm",
-          "suppress:Installed": "true"
-        }
-      }
-    },
-    {
-      "command": "config.rule",
-      "params": {
-        "rule": {
-          "id": "installed",
-          "name": "Installed",
-          "enabled": false,
-          "condition": {
-            "type": "always"
-          },
-          "effect": {
-            "type": "drive_suppression",
-            "feature": 3,
-            "value": false
-          }
+          "suppress:Installed": "false"
         }
       }
     },
