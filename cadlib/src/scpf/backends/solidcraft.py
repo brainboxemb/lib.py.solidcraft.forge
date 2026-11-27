@@ -44,6 +44,7 @@ from ..ir import (
     CircleProfileIR,
     CircularPatternIR,
     ConfigurationIR,
+    ConnectedProfileIR,
     ConeIR,
     CylinderIR,
     ExtrudeIR,
@@ -66,12 +67,18 @@ from ..ir import (
     RectangularPatternIR,
     RevolveIR,
     RoundedRectangleProfileIR,
+    SketchEntityGraphIR,
+    SketchEntityRefIR,
+    SketchMirrorIR,
+    SketchRectangularPatternIR,
     SketchRelationsIR,
+    SketchSegmentIR,
     ShellIR,
     SlotProfileIR,
     SnapFitFeatureIR,
     SphereIR,
     RestFeatureIR,
+    TextEntityIR,
     SuppressionColumnIR,
     _region_interior_point,
     resolve_feature_ref,
@@ -1092,6 +1099,102 @@ def _solidcraft_dimension_sum(left, right):
     )
 
 
+def _solidcraft_connected_profile_commands(
+    profile: ConnectedProfileIR,
+) -> list[dict]:
+    """Lower semantic connected line/arc profile geometry."""
+    commands = []
+    for segment in profile.segments:
+        if segment.kind == "line":
+            commands.append(
+                _command(
+                    "sketch.line",
+                    points=[
+                        [command_value(value) for value in segment.start],
+                        [command_value(value) for value in segment.end],
+                    ],
+                    connect=True,
+                )
+            )
+            continue
+        if segment.kind == "arc_three_point":
+            commands.append(
+                _command(
+                    "sketch.arc.three_point",
+                    start=[command_value(value) for value in segment.start],
+                    end=[command_value(value) for value in segment.end],
+                    through=[
+                        command_value(value)
+                        for value in segment.through
+                    ],
+                    connect=True,
+                )
+            )
+            continue
+        if segment.kind == "arc_center_point":
+            commands.append(
+                _command(
+                    "sketch.arc.center_point",
+                    center=[
+                        command_value(value)
+                        for value in segment.center
+                    ],
+                    start=[command_value(value) for value in segment.start],
+                    end=[command_value(value) for value in segment.end],
+                    clockwise=segment.clockwise,
+                    connect=True,
+                )
+            )
+            continue
+        raise ModelError(
+            f"unsupported connected profile segment {segment.kind!r}"
+        )
+    return commands
+
+
+def _solidcraft_open_chain_commands(chain) -> list[dict]:
+    """Lower support-independent open-chain entities without Sketch support."""
+    commands = []
+    previous_line_id = None
+    line_count = 0
+    for segment in chain.segments:
+        if segment.kind == "line":
+            line_count += 1
+            line_id = f"l{line_count}"
+            commands.append(
+                _command(
+                    "sketch.line",
+                    points=[
+                        [command_value(value) for value in segment.start],
+                        [command_value(value) for value in segment.end],
+                    ],
+                    ids=[line_id],
+                    connect=True,
+                )
+            )
+            previous_line_id = line_id
+            continue
+        if segment.kind == "arc_tangent":
+            if previous_line_id is None:
+                raise ModelError(
+                    "open Sketch tangent arc requires a preceding line"
+                )
+            commands.append(
+                _command(
+                    "sketch.arc.tangent",
+                    start=f"{previous_line_id}.end",
+                    curve=previous_line_id,
+                    end=[command_value(value) for value in segment.end],
+                )
+            )
+            previous_line_id = None
+            continue
+        raise ModelError(
+            f"unsupported open Sketch segment {segment.kind!r}"
+        )
+    return commands
+
+
 def _solidcraft_profile_commands(
     sketch: SketchIR,
     profile: ProfileIR,
@@ -1164,6 +1267,9 @@ def _solidcraft_profile_commands(
                 ids=ids,
             )
         ]
+
+    if isinstance(profile, ConnectedProfileIR):
+        return _solidcraft_connected_profile_commands(profile)
 
     if not isinstance(profile, SlotProfileIR):
         raise ModelError(
@@ -1380,6 +1486,146 @@ def _solidcraft_profile_commands(
         raise ModelError(
             f"unsupported SlotProfileIR construction {profile.construction!r}"
         )
+    return commands
+
+
+def _solidcraft_sketch_graph_commands(
+    graph: SketchEntityGraphIR,
+    *,
+    sketch_index: int = 1,
+) -> list[dict]:
+    """Lower support-independent Sketch entities/operations.
+
+    Sketch creation/support and consuming solid features deliberately remain
+    outside this helper; #561 composes those layers.
+    """
+    if not isinstance(graph, SketchEntityGraphIR):
+        raise TypeError("Sketch graph lowering requires SketchEntityGraphIR")
+    if type(sketch_index) is not int or sketch_index < 1:
+        raise ModelError("Sketch graph index must be a positive integer")
+
+    commands = []
+    referenced_entities = {
+        operation.source.index
+        for operation in graph.operations
+        if operation.source.kind == "entity"
+    }
+
+    def entity_variable(index):
+        return f"$sketch_{sketch_index}_profile_{index + 1}"
+
+    def operation_variable(index):
+        return f"$sketch_{sketch_index}_operation_{index + 1}"
+
+    def source_variable(reference: SketchEntityRefIR):
+        if reference.kind == "entity":
+            entity = graph.entities[reference.index]
+            if isinstance(entity, ConnectedProfileIR):
+                raise ModelError(
+                    "sketch pattern/mirror does not yet support connected profiles"
+                )
+            return entity_variable(reference.index)
+        return operation_variable(reference.index)
+
+    for index, entity in enumerate(graph.entities):
+        if isinstance(entity, TextEntityIR):
+            _require_positive(entity.height, "sketch text height")
+            rows = [
+                _command(
+                    "sketch.text",
+                    text=entity.text,
+                    at=[
+                        command_value(value)
+                        for value in entity.position
+                    ],
+                    height=command_value(entity.height),
+                    font=entity.font,
+                )
+            ]
+        elif isinstance(entity, ConnectedProfileIR):
+            rows = _solidcraft_connected_profile_commands(entity)
+        else:
+            dummy = SketchIR(
+                name="Graph",
+                plane=PlaneIR("XY"),
+                profiles=(entity,),
+            )
+            rows = _solidcraft_profile_commands(
+                dummy,
+                entity,
+                profile_index=index + 1,
+            )
+
+        if index in referenced_entities:
+            if isinstance(entity, ConnectedProfileIR):
+                raise ModelError(
+                    "sketch pattern/mirror does not yet support connected profiles"
+                )
+            if not rows:
+                raise ModelError(
+                    "Sketch semantic entity produced no SolidCraft curves"
+                )
+            rows[0].setdefault("bind", {})[
+                entity_variable(index)
+            ] = "curves"
+        commands.extend(rows)
+
+    for index, operation in enumerate(graph.operations):
+        variable = operation_variable(index)
+        source = source_variable(operation.source)
+        if isinstance(operation, SketchRectangularPatternIR):
+            params = {
+                "entities": source,
+                "count": command_value(operation.count),
+                "spacing": command_value(operation.spacing),
+                "dir": list(operation.direction),
+            }
+            has_second_direction = (
+                pv(operation.count2) != 1
+                or bool(parameters_in(operation.count2))
+            )
+            if has_second_direction:
+                params["count2"] = command_value(operation.count2)
+                if operation.spacing2 is not None:
+                    params["spacing2"] = command_value(
+                        operation.spacing2
+                    )
+                if operation.direction2 is not None:
+                    params["dir2"] = list(operation.direction2)
+            if operation.alignment != "right":
+                params["alignment"] = operation.alignment
+            if (
+                has_second_direction
+                and operation.alignment2 != "right"
+            ):
+                params["alignment2"] = operation.alignment2
+            if operation.reversed:
+                params["reversed"] = True
+            if has_second_direction and operation.reversed2:
+                params["reversed2"] = True
+            row = _command(
+                "sketch.pattern.rectangular",
+                **params,
+            )
+            row["bind"] = {
+                variable: {
+                    "field": "curves",
+                    "prepend": source,
+                }
+            }
+        elif isinstance(operation, SketchMirrorIR):
+            row = _command(
+                "sketch.mirror",
+                entities=source,
+                line=operation.axis,
+            )
+            row["bind"] = {variable: "curves"}
+        else:
+            raise ModelError(
+                f"unsupported Sketch operation IR {type(operation).__name__}"
+            )
+        commands.append(row)
+
     return commands
 
 
