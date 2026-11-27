@@ -1215,7 +1215,7 @@ class HoleIR(BodyIR):
     counterbore_diameter: Any | None = None
     counterbore_depth: Any | None = None
     countersink_diameter: Any | None = None
-    countersink_angle: float | None = None
+    countersink_angle: Any | None = None
     thread: str | None = None
     hand: str = "right"
     thread_depth: Any | None = None
@@ -1304,9 +1304,8 @@ class HoleIR(BodyIR):
             if (
                 self.countersink_angle is None
                 or isinstance(self.countersink_angle, bool)
-                or not isinstance(self.countersink_angle, (int, float))
-                or not isfinite(self.countersink_angle)
-                or not 0 < self.countersink_angle < 180
+                or not isfinite(pv(self.countersink_angle))
+                or not 0 < pv(self.countersink_angle) < 180
             ):
                 raise ValueError(
                     "HoleIR countersink angle must be fixed between 0 and 180 degrees"
@@ -1882,6 +1881,13 @@ def _angle_parameter_names(value, found=None):
         found = set()
 
     if isinstance(value, Shape):
+        if value.kind == "hole":
+            angle = _hole_spec(value)["countersink_angle"]
+            if angle is not None:
+                found.update(
+                    parameter.name for parameter in parameters_in(angle)
+                )
+            return found
         if value.kind == "circular_pattern":
             (
                 original,
@@ -1932,6 +1938,29 @@ def _length_parameter_names(value, found=None):
         found = set()
 
     if isinstance(value, Shape):
+        if value.kind == "hole":
+            spec = _hole_spec(value)
+            for field in (
+                "diameter",
+                "depth",
+                "counterbore_diameter",
+                "counterbore_depth",
+                "countersink_diameter",
+                "thread_depth",
+            ):
+                candidate = spec[field]
+                if candidate is not None and candidate is not Depth.THROUGH_ALL:
+                    _length_parameter_names(candidate, found)
+            ease_out = spec["ease_out"]
+            if ease_out is not None and not isinstance(ease_out, str):
+                _length_parameter_names(ease_out, found)
+            # Parameter-driven direction is outside typed Hole semantics in
+            # #550. Retain its compatibility role while such a model remains
+            # on LegacyShapeIR instead of misclassifying countersink angle.
+            direction = spec["direction"]
+            if direction is not None:
+                _length_parameter_names(direction, found)
+            return found
         if value.kind == "rectangular_pattern":
             (
                 original,
@@ -2876,12 +2905,12 @@ def _hole_ir_from_feature(
         semantic_direction = None
 
     countersink_angle = spec["countersink_angle"]
-    if countersink_angle is not None and parameters_in(countersink_angle):
-        return None
     if countersink_angle is not None:
         try:
-            countersink_angle = float(pv(countersink_angle))
+            angle_value = pv(countersink_angle)
         except (TypeError, ValueError):
+            return None
+        if not isfinite(angle_value) or not 0 < angle_value < 180:
             return None
 
     depth = spec["depth"]
@@ -2936,17 +2965,9 @@ def _portable_hole(
     if feature.kind != "hole":
         return None
 
-    # Preserve the stable anchored Hole contract exactly. More general Hole
-    # variants remain typed through absolute placement until their anchored
-    # lowering is separately qualified.
-    spec = _hole_spec(feature)
-    if (
-        placement.parent_anchor != Anchor.TOP.value
-        or placement.child_anchor != Anchor.BOTTOM.value
-        or spec["type"] != "simple"
-        or spec["direction"] is not None
-    ):
-        return None
+    # Placement semantics are backend-neutral. Backend support for a
+    # particular anchor/variant is checked during lowering, not by forcing
+    # valid authored Hole intent back through LegacyShapeIR.
     return _hole_ir_from_feature(target, feature, placement)
 
 
