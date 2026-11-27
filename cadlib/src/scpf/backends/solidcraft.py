@@ -1918,6 +1918,7 @@ _AUTO_TYPED_HISTORY_FEATURE_NAMES = {
     "solid.cylinder": "Cylinder",
     "solid.cone": "Cone",
     "solid.revolve": "Revolve",
+    "solid.extrude": "Extrude",
     "solid.hole": "Hole",
 }
 
