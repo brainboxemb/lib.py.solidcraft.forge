@@ -4,7 +4,7 @@ API probes are small executable experiments used to answer one specific API or
 backend question before that behavior becomes public API or permanent
 qualification.
 
-Each probe owner should contain:
+Each probe owner must contain:
 
 - `probe.yml` — probe id, builder and source;
 - the smallest executable source needed for the question;
