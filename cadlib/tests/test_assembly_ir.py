@@ -12,6 +12,11 @@ from scpf import (
     component,
     pv,
 )
+from scpf.assembly import (
+    _compile_assembly_legacy_with_dependencies,
+    compile_assembly,
+    compile_assembly_ir,
+)
 from scpf.assembly_ir import (
     AnchorFrameIR,
     AssemblyAnchorIR,
@@ -241,6 +246,48 @@ class AssemblyIRTests(unittest.TestCase):
         )
         self.assertEqual(model.anchors[0].reference.kind, "named")
         self.assertEqual(model.anchors[0].reference.value, "mount")
+
+    def test_solidcraft_core_assembly_ir_matches_stable_legacy_documents(self):
+        spacing = Parameter("assembly_spacing", 70)
+        first = AssemblyIRBlock(name="left")
+        moved = first.copy(
+            name="right",
+            placement=Placement(x=spacing),
+        )
+        grouped = (first + moved).group("Pair")
+
+        rigid = AssemblyIRBlock(name="rigid").attach(
+            first,
+            parent=Anchor.RIGHT,
+            child=Anchor.LEFT,
+            gap=4,
+        )
+        revolute = AssemblyIRBlock(name="hinge").attach(
+            first,
+            parent="mount",
+            child="mount",
+            kind="revolute",
+            value=35,
+            limits=(0, 120),
+            name="Hinge",
+        )
+
+        for value, name in (
+            (grouped, "TypedGroupedPair"),
+            (first + rigid, "TypedRigidPair"),
+            (first + revolute, "TypedRevolutePair"),
+        ):
+            with self.subTest(name=name):
+                current = compile_assembly(value, name)
+                legacy = _compile_assembly_legacy_with_dependencies(
+                    value,
+                    name,
+                )[0]
+                self.assertEqual(current, legacy)
+                self.assertEqual(
+                    compile_assembly_ir(normalize_assembly(value), name),
+                    current,
+                )
 
     def test_semantic_ir_validates_missing_relationship_targets(self):
         definition = ComponentDefinitionIR(
