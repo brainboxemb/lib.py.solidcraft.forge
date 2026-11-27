@@ -30,9 +30,9 @@ Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
 - complete: **7 / 20 (35%)**
-- partial: **11 / 20 (55%)**
-- legacy: **2 / 20 (10%)**
-- families with at least some typed IR: **18 / 20 (90%)**
+- partial: **12 / 20 (60%)**
+- legacy: **1 / 20 (5%)**
+- families with at least some typed IR: **19 / 20 (95%)**
 - physical SCPF owners on permanent `exp`: **61**
 - owners with current end-to-end `scpf-mitcad` evidence: **10 / 61 (16.4%)**
 
@@ -43,11 +43,11 @@ not effort or backend parity.
 
 | Semantic family | IR | SolidCraft typed | Mitcad | Native Mitcad | Main remaining gap |
 | --- | --- | --- | --- | --- | --- |
-| Values, parameters, scalar expressions | partial | partial | partial | qualified slices | Length/angle plus unitless count roles are typed; #550 adds Hole countersink-angle use-site typing and #560 applies count-vs-length roles to Sketch patterns; broader symbolic/cadmath dimensional expression semantics remain. |
+| Values, parameters, scalar expressions | partial | partial | partial | qualified slices | Length/angle, #533 unitless count and #554 continuous ratio roles are typed; broader symbolic/cadmath dimensional expression semantics remain. |
 | Primitive solids: Box, Cylinder, Cone, Sphere | complete | yes | yes | qualified | Current public primitive meaning is typed. |
 | Placement and transforms | partial | partial | partial | qualified slices | #544 adds semantic absolute/anchored FeaturePlacementIR plus BoundOffsetIR for within-component features; rotated primitive/component frames and broader transforms remain. |
 | Reference geometry: planes and axes | partial | partial | partial | qualified slices | PlaneIR plus principal/vector AxisLineIR are typed; broader datum/reference semantics remain. |
-| Sketch entities, constraints, dimensions | complete | partial | partial | qualified slices | #560 types current public closed/open line/arc geometry, Text, Sketch-local source identity, rectangular pattern and mirror on top of existing point/line/constraint/dimension IR; support/consumer composition is tracked separately. |
+| Sketch entities, constraints, dimensions | partial | partial | partial | qualified slices | #554 adds connected line/arc SketchChainIR for sheet paths/blanks; broader public Sketch operations/constraints still remain. |
 | 2D profiles | complete | yes | partial | qualified slices | #534 covers public Circle/Polygon/Rectangle/RoundedRectangle/Slot closed-profile constructors; text/open connected geometry remains in the broader Sketch-entity family. |
 | Regions/profile membership | partial | partial | partial | qualified slices | General region composition. |
 | Extrude | partial | partial | partial | qualified slices | Attached/rotated/broader profile and operation forms. |
@@ -61,7 +61,7 @@ not effort or backend parity.
 | Native feature patterns | complete | yes | unsupported | no | #533 covers current public rectangular/circular feature-pattern controls with semantic FeatureRefIR source identity; models still depend on their source features being typed. |
 | Shell | complete | yes | unsupported | no | #532 covers the current public shell operation through ShellIR + cardinal FaceSetIR over typed body history; a legacy base is a dependency boundary, not missing Shell semantics. |
 | Plastic features: Lip, SnapFit, Boss, Rest | complete | yes | unsupported | no | #544 types all current public Lip/SnapFit/Boss/Rest feature meaning plus absolute/anchored placement; unsupported backend/anchor forms remain backend limitations, not missing feature semantics. |
-| Sheet metal | legacy | legacy stable | unsupported | no | Sheet rule/body/features form a separate large semantic layer. |
+| Sheet metal | complete | yes | unsupported | no | #554 types the current public sheet rule, base/contour creation, fold, edge flange, hem, path flange and manufacturing perforation history; Mitcad remains a backend gap only. |
 | Assemblies, occurrences, relationships | legacy | legacy stable | unsupported | no | Coherent assembly/relationship IR. |
 
 ## Outside the core CAD-IR denominator
@@ -87,8 +87,9 @@ Mitcad may consume several newly IR-ready capabilities later in one
 backend-focused batch with backend tests and native qualification. #532 added generic BodyIR history and ShellIR; #533 completed native feature
 PatternIR; #534 completes the public basic closed-profile constructor family;
 #544 adds generic within-component FeaturePlacementIR and completes the public
-Plastic feature family; #550 completes the current public Hole semantic family;
-#560 completes the support-independent public Sketch entity/operation graph.
-Remaining legacy families are Sheet metal and Assemblies; #561 next composes
-that Sketch graph with support, RegionIR and Extrude semantics before backend
-catch-up becomes the pacing item.
+Plastic feature family; #550 completes the current public Hole semantic family,
+including BOTTOM placement and degree-typed countersink parameters. #554 then
+completes current public Sheet metal semantics through SheetRuleIR,
+SketchChainIR and typed sheet history. Assemblies/occurrences/relationships are
+now the only fully legacy family; after that family gains typed semantics the
+migration can focus entirely on partial -> complete closure.

@@ -44,7 +44,6 @@ from ..ir import (
     CircleProfileIR,
     CircularPatternIR,
     ConfigurationIR,
-    ConnectedProfileIR,
     ConeIR,
     CylinderIR,
     ExtrudeIR,
@@ -67,18 +66,21 @@ from ..ir import (
     RectangularPatternIR,
     RevolveIR,
     RoundedRectangleProfileIR,
-    SketchEntityGraphIR,
-    SketchEntityRefIR,
-    SketchMirrorIR,
-    SketchRectangularPatternIR,
     SketchRelationsIR,
-    SketchSegmentIR,
+    SketchChainIR,
+    SheetBaseIR,
+    SheetContourFlangeIR,
+    SheetEdgeFlangeIR,
+    SheetFoldIR,
+    SheetHemIR,
+    SheetPathFlangeIR,
+    SheetPerforateIR,
+    SheetRuleIR,
     ShellIR,
     SlotProfileIR,
     SnapFitFeatureIR,
     SphereIR,
     RestFeatureIR,
-    TextEntityIR,
     SuppressionColumnIR,
     _region_interior_point,
     resolve_feature_ref,
@@ -140,6 +142,7 @@ def _role_scalar_expression_text(
         "length": "mm",
         "angle": "deg",
         "count": "",
+        "ratio": "",
     }.get(role)
     if unit is None:
         raise ModelError(f"unsupported Forge parameter role {role!r}")
@@ -218,7 +221,7 @@ def _role_scalar_expression_text(
 
 def _role_command_value(model: ModelIR, value, role: str):
     """Spell one typed use of a mixed-role source parameter or expression."""
-    if role not in {"length", "angle", "count"}:
+    if role not in {"length", "angle", "count", "ratio"}:
         raise ModelError(f"unsupported Forge parameter role {role!r}")
 
     mixed_names = {
@@ -1099,102 +1102,6 @@ def _solidcraft_dimension_sum(left, right):
     )
 
 
-def _solidcraft_connected_profile_commands(
-    profile: ConnectedProfileIR,
-) -> list[dict]:
-    """Lower semantic connected line/arc profile geometry."""
-    commands = []
-    for segment in profile.segments:
-        if segment.kind == "line":
-            commands.append(
-                _command(
-                    "sketch.line",
-                    points=[
-                        [command_value(value) for value in segment.start],
-                        [command_value(value) for value in segment.end],
-                    ],
-                    connect=True,
-                )
-            )
-            continue
-        if segment.kind == "arc_three_point":
-            commands.append(
-                _command(
-                    "sketch.arc.three_point",
-                    start=[command_value(value) for value in segment.start],
-                    end=[command_value(value) for value in segment.end],
-                    through=[
-                        command_value(value)
-                        for value in segment.through
-                    ],
-                    connect=True,
-                )
-            )
-            continue
-        if segment.kind == "arc_center_point":
-            commands.append(
-                _command(
-                    "sketch.arc.center_point",
-                    center=[
-                        command_value(value)
-                        for value in segment.center
-                    ],
-                    start=[command_value(value) for value in segment.start],
-                    end=[command_value(value) for value in segment.end],
-                    clockwise=segment.clockwise,
-                    connect=True,
-                )
-            )
-            continue
-        raise ModelError(
-            f"unsupported connected profile segment {segment.kind!r}"
-        )
-    return commands
-
-
-def _solidcraft_open_chain_commands(chain) -> list[dict]:
-    """Lower support-independent open-chain entities without Sketch support."""
-    commands = []
-    previous_line_id = None
-    line_count = 0
-    for segment in chain.segments:
-        if segment.kind == "line":
-            line_count += 1
-            line_id = f"l{line_count}"
-            commands.append(
-                _command(
-                    "sketch.line",
-                    points=[
-                        [command_value(value) for value in segment.start],
-                        [command_value(value) for value in segment.end],
-                    ],
-                    ids=[line_id],
-                    connect=True,
-                )
-            )
-            previous_line_id = line_id
-            continue
-        if segment.kind == "arc_tangent":
-            if previous_line_id is None:
-                raise ModelError(
-                    "open Sketch tangent arc requires a preceding line"
-                )
-            commands.append(
-                _command(
-                    "sketch.arc.tangent",
-                    start=f"{previous_line_id}.end",
-                    curve=previous_line_id,
-                    end=[command_value(value) for value in segment.end],
-                )
-            )
-            previous_line_id = None
-            continue
-        raise ModelError(
-            f"unsupported open Sketch segment {segment.kind!r}"
-        )
-    return commands
-
-
 def _solidcraft_profile_commands(
     sketch: SketchIR,
     profile: ProfileIR,
@@ -1267,9 +1174,6 @@ def _solidcraft_profile_commands(
                 ids=ids,
             )
         ]
-
-    if isinstance(profile, ConnectedProfileIR):
-        return _solidcraft_connected_profile_commands(profile)
 
     if not isinstance(profile, SlotProfileIR):
         raise ModelError(
@@ -1486,146 +1390,6 @@ def _solidcraft_profile_commands(
         raise ModelError(
             f"unsupported SlotProfileIR construction {profile.construction!r}"
         )
-    return commands
-
-
-def _solidcraft_sketch_graph_commands(
-    graph: SketchEntityGraphIR,
-    *,
-    sketch_index: int = 1,
-) -> list[dict]:
-    """Lower support-independent Sketch entities/operations.
-
-    Sketch creation/support and consuming solid features deliberately remain
-    outside this helper; #561 composes those layers.
-    """
-    if not isinstance(graph, SketchEntityGraphIR):
-        raise TypeError("Sketch graph lowering requires SketchEntityGraphIR")
-    if type(sketch_index) is not int or sketch_index < 1:
-        raise ModelError("Sketch graph index must be a positive integer")
-
-    commands = []
-    referenced_entities = {
-        operation.source.index
-        for operation in graph.operations
-        if operation.source.kind == "entity"
-    }
-
-    def entity_variable(index):
-        return f"$sketch_{sketch_index}_profile_{index + 1}"
-
-    def operation_variable(index):
-        return f"$sketch_{sketch_index}_operation_{index + 1}"
-
-    def source_variable(reference: SketchEntityRefIR):
-        if reference.kind == "entity":
-            entity = graph.entities[reference.index]
-            if isinstance(entity, ConnectedProfileIR):
-                raise ModelError(
-                    "sketch pattern/mirror does not yet support connected profiles"
-                )
-            return entity_variable(reference.index)
-        return operation_variable(reference.index)
-
-    for index, entity in enumerate(graph.entities):
-        if isinstance(entity, TextEntityIR):
-            _require_positive(entity.height, "sketch text height")
-            rows = [
-                _command(
-                    "sketch.text",
-                    text=entity.text,
-                    at=[
-                        command_value(value)
-                        for value in entity.position
-                    ],
-                    height=command_value(entity.height),
-                    font=entity.font,
-                )
-            ]
-        elif isinstance(entity, ConnectedProfileIR):
-            rows = _solidcraft_connected_profile_commands(entity)
-        else:
-            dummy = SketchIR(
-                name="Graph",
-                plane=PlaneIR("XY"),
-                profiles=(entity,),
-            )
-            rows = _solidcraft_profile_commands(
-                dummy,
-                entity,
-                profile_index=index + 1,
-            )
-
-        if index in referenced_entities:
-            if isinstance(entity, ConnectedProfileIR):
-                raise ModelError(
-                    "sketch pattern/mirror does not yet support connected profiles"
-                )
-            if not rows:
-                raise ModelError(
-                    "Sketch semantic entity produced no SolidCraft curves"
-                )
-            rows[0].setdefault("bind", {})[
-                entity_variable(index)
-            ] = "curves"
-        commands.extend(rows)
-
-    for index, operation in enumerate(graph.operations):
-        variable = operation_variable(index)
-        source = source_variable(operation.source)
-        if isinstance(operation, SketchRectangularPatternIR):
-            params = {
-                "entities": source,
-                "count": command_value(operation.count),
-                "spacing": command_value(operation.spacing),
-                "dir": list(operation.direction),
-            }
-            has_second_direction = (
-                pv(operation.count2) != 1
-                or bool(parameters_in(operation.count2))
-            )
-            if has_second_direction:
-                params["count2"] = command_value(operation.count2)
-                if operation.spacing2 is not None:
-                    params["spacing2"] = command_value(
-                        operation.spacing2
-                    )
-                if operation.direction2 is not None:
-                    params["dir2"] = list(operation.direction2)
-            if operation.alignment != "right":
-                params["alignment"] = operation.alignment
-            if (
-                has_second_direction
-                and operation.alignment2 != "right"
-            ):
-                params["alignment2"] = operation.alignment2
-            if operation.reversed:
-                params["reversed"] = True
-            if has_second_direction and operation.reversed2:
-                params["reversed2"] = True
-            row = _command(
-                "sketch.pattern.rectangular",
-                **params,
-            )
-            row["bind"] = {
-                variable: {
-                    "field": "curves",
-                    "prepend": source,
-                }
-            }
-        elif isinstance(operation, SketchMirrorIR):
-            row = _command(
-                "sketch.mirror",
-                entities=source,
-                line=operation.axis,
-            )
-            row["bind"] = {variable: "curves"}
-        else:
-            raise ModelError(
-                f"unsupported Sketch operation IR {type(operation).__name__}"
-            )
-        commands.append(row)
-
     return commands
 
 
@@ -2044,8 +1808,334 @@ def _circular_pattern_commands(
     ]
 
 
+def _sheet_rule_command(model: ModelIR, rule: SheetRuleIR) -> dict:
+    if not isinstance(rule, SheetRuleIR):
+        raise ModelError("typed sheet body requires SheetRuleIR")
+    _require_positive(rule.thickness, "sheet metal thickness")
+    _require_positive(rule.bend_radius, "sheet metal bend radius")
+    k = pv(rule.k_factor)
+    if not isfinite(k) or not 0 < k < 1:
+        raise ModelError("sheet metal k_factor must be between 0 and 1")
+    return _command(
+        "sheet.manage_rules",
+        name=rule.name,
+        thickness=_role_command_value(model, rule.thickness, "length"),
+        k_factor=_role_command_value(model, rule.k_factor, "ratio"),
+        bend_radius=_role_command_value(model, rule.bend_radius, "length"),
+        active=True,
+    )
+
+
+def _sheet_chain_commands(
+    model: ModelIR,
+    chain: SketchChainIR,
+    *,
+    bind_curves: bool = False,
+) -> tuple[list[dict], str | None]:
+    """Lower semantic connected Sketch intent without frontend Shape payloads."""
+    if not isinstance(chain, SketchChainIR):
+        raise ModelError("sheet Sketch path requires SketchChainIR")
+    commands = [_solidcraft_sketch_create(chain)]
+    curve_variable = None
+    curve_count = 0
+    previous_line_id = None
+    line_count = 0
+
+    def point(value):
+        return [
+            _role_command_value(model, value[0], "length"),
+            _role_command_value(model, value[1], "length"),
+        ]
+
+    def append_curve(command):
+        nonlocal curve_variable, curve_count
+        if bind_curves:
+            curve_count += 1
+            next_variable = f"$contour_curves_{curve_count}"
+            binding = (
+                "curves"
+                if curve_variable is None
+                else {"field": "curves", "prepend": curve_variable}
+            )
+            command["bind"] = {next_variable: binding}
+            curve_variable = next_variable
+        commands.append(command)
+
+    for segment in chain.segments:
+        if segment.kind == "line":
+            line_count += 1
+            line_id = f"l{line_count}"
+            params = {
+                "points": [point(segment.start), point(segment.end)],
+                "connect": True,
+            }
+            if not chain.closed:
+                params["ids"] = [line_id]
+            append_curve(_command("sketch.line", **params))
+            previous_line_id = line_id
+            continue
+
+        if segment.kind == "arc_tangent":
+            if previous_line_id is None:
+                raise ModelError(
+                    "semantic tangent Sketch arc requires preceding line"
+                )
+            append_curve(
+                _command(
+                    "sketch.arc.tangent",
+                    start=f"{previous_line_id}.end",
+                    curve=previous_line_id,
+                    end=point(segment.end),
+                )
+            )
+            previous_line_id = None
+            continue
+
+        if segment.kind == "arc_three_point":
+            append_curve(
+                _command(
+                    "sketch.arc.three_point",
+                    start=point(segment.start),
+                    end=point(segment.end),
+                    through=point(segment.through),
+                    connect=True,
+                )
+            )
+            previous_line_id = None
+            continue
+
+        if segment.kind == "arc_center_point":
+            append_curve(
+                _command(
+                    "sketch.arc.center_point",
+                    center=point(segment.center),
+                    start=point(segment.start),
+                    end=point(segment.end),
+                    clockwise=segment.clockwise,
+                    connect=True,
+                )
+            )
+            previous_line_id = None
+            continue
+
+        raise ModelError(
+            f"unsupported semantic Sketch chain segment {segment.kind!r}"
+        )
+
+    commands.append(_command("sketch.finish"))
+    if bind_curves and curve_variable is None:
+        raise ModelError("semantic open Sketch chain has no curves to consume")
+    return commands, curve_variable
+
+
+def _sheet_base_commands(
+    model: ModelIR,
+    node: SheetBaseIR,
+    name: str,
+) -> list[dict]:
+    rule = _sheet_rule_command(model, node.rule)
+    blank = node.blank
+    if isinstance(blank, SketchChainIR):
+        if not blank.closed:
+            raise ModelError("sheet base chain must be closed")
+        sketch, _curves = _sheet_chain_commands(model, blank)
+        sketch_name = blank.name
+    else:
+        if len(blank.profiles) != 1:
+            raise ModelError("typed sheet base requires one closed profile")
+        sketch = [_solidcraft_sketch_create(blank)]
+        sketch.extend(
+            _solidcraft_profile_commands(
+                blank,
+                blank.profiles[0],
+                profile_index=1,
+            )
+        )
+        sketch.append(_command("sketch.finish"))
+        sketch_name = blank.name
+    return [
+        rule,
+        *sketch,
+        _command(
+            "sheet.flange",
+            type="base",
+            sketch=sketch_name,
+            rule=node.rule.name,
+            body_name=name,
+        ),
+    ]
+
+
+def _sheet_contour_commands(
+    model: ModelIR,
+    node: SheetContourFlangeIR,
+    name: str,
+) -> list[dict]:
+    rule = _sheet_rule_command(model, node.rule)
+    sketch, curves = _sheet_chain_commands(
+        model,
+        node.contour,
+        bind_curves=True,
+    )
+    params = {
+        "type": "contour",
+        "sketch": node.contour.name,
+        "curves": curves,
+        "distance": _role_command_value(model, node.distance, "length"),
+        "rule": node.rule.name,
+        "body_name": name,
+    }
+    if node.flip:
+        params["flip"] = True
+    if node.reverse:
+        params["reverse"] = True
+    return [rule, *sketch, _command("sheet.flange", **params)]
+
+
+def _sheet_fold_commands(
+    model: ModelIR,
+    node: SheetFoldIR,
+    name: str,
+) -> list[dict]:
+    commands = _body_commands(model, node.base, name)
+    params = {
+        "angle": _role_command_value(model, node.angle, "angle"),
+        "position": node.position,
+        "flip": node.flip,
+        "body": name,
+    }
+    if isinstance(node.line, SketchChainIR):
+        sketch, _curves = _sheet_chain_commands(model, node.line)
+        commands.extend(sketch)
+        params["sketch"] = node.line.name
+        params["curve"] = "l1"
+    else:
+        params["points"] = [
+            [command_value(value) for value in point]
+            for point in node.line
+        ]
+    if node.fixed is not None:
+        params["fixed"] = [command_value(value) for value in node.fixed]
+    return [*commands, _command("sheet.fold", **params)]
+
+
+def _sheet_edge_flange_commands(
+    model: ModelIR,
+    node: SheetEdgeFlangeIR,
+    name: str,
+) -> list[dict]:
+    commands = _body_commands(model, node.base, name)
+    params = {
+        "type": "edge",
+        "edges": [
+            [command_value(value) for value in point]
+            for point in node.edges
+        ],
+        "height": _role_command_value(model, node.height, "length"),
+        "angle": _role_command_value(model, node.angle, "angle"),
+        "body": name,
+    }
+    if node.height_from is not None:
+        params["height_from"] = node.height_from
+    if node.position is not None:
+        params["position"] = node.position
+    if node.flip:
+        params["flip"] = True
+    return [*commands, _command("sheet.flange", **params)]
+
+
+def _sheet_hem_commands(
+    model: ModelIR,
+    node: SheetHemIR,
+    name: str,
+) -> list[dict]:
+    commands = _body_commands(model, node.base, name)
+    params = {
+        "edges": [
+            [command_value(value) for value in point]
+            for point in node.edges
+        ],
+        "length": _role_command_value(model, node.length, "length"),
+        "body": name,
+    }
+    if node.gap is not None:
+        params["gap"] = _role_command_value(model, node.gap, "length")
+    if node.flip:
+        params["flip"] = True
+    return [*commands, _command("sheet.hem", **params)]
+
+
+def _sheet_path_flange_commands(
+    model: ModelIR,
+    node: SheetPathFlangeIR,
+    name: str,
+) -> list[dict]:
+    commands = _body_commands(model, node.base, name)
+    sketch, curves = _sheet_chain_commands(
+        model,
+        node.path,
+        bind_curves=True,
+    )
+    params = {
+        "edge": [command_value(value) for value in node.edge],
+        "sketch": node.path.name,
+        "curves": curves,
+        "body": name,
+    }
+    if node.radius is not None:
+        params["radius"] = _role_command_value(
+            model,
+            node.radius,
+            "length",
+        )
+    return [
+        *commands,
+        *sketch,
+        _command("sheet.path_flange", **params),
+    ]
+
+
+def _sheet_perforate_commands(
+    model: ModelIR,
+    node: SheetPerforateIR,
+    name: str,
+) -> list[dict]:
+    commands = _body_commands(model, node.base, name)
+    params = {
+        "diameter": _role_command_value(model, node.diameter, "length"),
+        "pitch": _role_command_value(model, node.pitch, "length"),
+        "body": name,
+    }
+    if node.margin is not None:
+        params["margin"] = _role_command_value(model, node.margin, "length")
+    if node.pattern != "staggered":
+        params["pattern"] = node.pattern
+    return [*commands, _command("sheet.perforate", **params)]
+
+
 def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
     """Lower one typed semantic body history without re-reading Shape.data."""
+    if isinstance(node, SheetBaseIR):
+        return _sheet_base_commands(model, node, name)
+
+    if isinstance(node, SheetContourFlangeIR):
+        return _sheet_contour_commands(model, node, name)
+
+    if isinstance(node, SheetFoldIR):
+        return _sheet_fold_commands(model, node, name)
+
+    if isinstance(node, SheetEdgeFlangeIR):
+        return _sheet_edge_flange_commands(model, node, name)
+
+    if isinstance(node, SheetHemIR):
+        return _sheet_hem_commands(model, node, name)
+
+    if isinstance(node, SheetPathFlangeIR):
+        return _sheet_path_flange_commands(model, node, name)
+
+    if isinstance(node, SheetPerforateIR):
+        return _sheet_perforate_commands(model, node, name)
+
     if isinstance(node, PlacementIR):
         if isinstance(node.primitive, BoxIR):
             return [_box_command(node, name)]
