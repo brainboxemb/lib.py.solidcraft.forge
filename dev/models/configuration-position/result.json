@@ -9,17 +9,17 @@
       "verification_stages": {
         "native": {
           "adapter": "solidcraft-model",
-          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
           "status": "pass"
         },
         "visual-front": {
           "adapter": "solidcraft-visual",
-          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
           "status": "pass"
         },
         "visual-service": {
           "adapter": "solidcraft-visual",
-          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+          "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
           "status": "pass"
         }
       },

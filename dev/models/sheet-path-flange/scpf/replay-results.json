@@ -46,6 +46,7 @@
     "rule": {
       "angle_display": "bend",
       "bend_radius": "bend_radius",
+      "bend_relief_shape": "rectangular",
       "corner_relief": "Thickness * 4.0",
       "corner_relief_shape": "notch",
       "gap": "Thickness",
@@ -59,6 +60,7 @@
     "values": {
       "angle_display": "bend",
       "bend_radius": 2.0,
+      "bend_relief_shape": "rectangular",
       "corner_relief": 8.0,
       "corner_relief_shape": "notch",
       "gap": 2.0,
@@ -146,7 +148,7 @@
       "SheetPathFlange"
     ],
     "feature": 2,
-    "ms": 1.384539,
+    "ms": 1.7907419999999998,
     "name": "BaseFlange1",
     "removed_bodies": [],
     "warning": null
@@ -198,7 +200,7 @@
     ],
     "created_bodies": [],
     "feature": 4,
-    "ms": 7.22013,
+    "ms": 10.670625,
     "name": "PathFlange1",
     "removed_bodies": [],
     "warning": null

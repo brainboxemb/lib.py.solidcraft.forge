@@ -5,13 +5,13 @@
   "implementation": "scpf",
   "owner": "exploded-views",
   "preview_status": null,
-  "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+  "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
   "schema": 2,
   "status": "pass",
   "verification_stages": {
     "native": {
       "adapter": "solidcraft-model",
-      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6",
+      "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
       "status": "pass"
     }
   },

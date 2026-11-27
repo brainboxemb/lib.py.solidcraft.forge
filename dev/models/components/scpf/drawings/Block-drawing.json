@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "8rmsw8vsz4kcz",
+  "id": "dc1zaxsqqkb7f",
   "language": "en",
   "line_group": "0.5",
   "name": "Block drawing",
@@ -22,14 +22,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "fwkjv823jbc7k"
+        "source": "325kp1s4vpa4k"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "9h802cb1tk9bs",
+      "id": "6ax76bgyhjsst",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -321,7 +321,7 @@
                         "decimals": null,
                         "unit": null
                       },
-                      "key": "properties.finish",
+                      "key": "finish",
                       "source": "component"
                     }
                   }
@@ -726,7 +726,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "5tfev5pn60cft",
+          "id": "1f0ra7hkx6jdz",
           "kind": "base",
           "label": "Iso front right",
           "notes": []
@@ -734,7 +734,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "bvwyd68yeqb5q",
+          "id": "ctgzs3fdh081k",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -742,29 +742,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "4gbjdzep1t9en",
+          "id": "1tg020qvr1hrb",
           "kind": "projected",
-          "label": "Right of Front",
+          "label": "Above Front",
           "notes": [],
-          "parent": "bvwyd68yeqb5q",
-          "side": "right"
+          "parent": "ctgzs3fdh081k",
+          "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "aa5qdtj8v0eem",
+          "id": "5bxevmgkhbwpv",
           "kind": "projected",
-          "label": "Above Front",
+          "label": "Right of Front",
           "notes": [],
-          "parent": "bvwyd68yeqb5q",
-          "side": "above"
+          "parent": "ctgzs3fdh081k",
+          "side": "right"
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "fwkjv823jbc7k"
+      "id": "325kp1s4vpa4k"
     }
   ],
   "symbols": [],

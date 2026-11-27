@@ -10,6 +10,7 @@
     "rule": {
       "angle_display": "bend",
       "bend_radius": "1.25",
+      "bend_relief_shape": "rectangular",
       "corner_relief": "Thickness * 4.0",
       "corner_relief_shape": "notch",
       "gap": "Thickness",
@@ -23,6 +24,7 @@
     "values": {
       "angle_display": "bend",
       "bend_radius": 1.25,
+      "bend_relief_shape": "rectangular",
       "corner_relief": 5.0,
       "corner_relief_shape": "notch",
       "gap": 1.25,
