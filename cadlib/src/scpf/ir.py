@@ -1320,7 +1320,7 @@ def normalize_configured_design(configured) -> ModelIR | None:
         )
     if not isinstance(configured.design, Shape):
         return None
-    if configured.rules or len(configured.columns) != 1:
+    if len(configured.columns) != 1:
         return None
     if not isinstance(configured.columns[0], _SuppressionColumn):
         return None
