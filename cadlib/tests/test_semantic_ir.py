@@ -36,12 +36,14 @@ from scpf.ir import (
     CylinderIR,
     ExtrudeIR,
     FeatureRefIR,
+    FilletIR,
     ConfigurationIR,
     ConfigurationRowIR,
     SuppressionColumnIR,
     LegacyShapeIR,
     ModelIR,
     ParameterIR,
+    ParallelEdgeSetIR,
     PlacementIR,
     PlaneIR,
     PolygonProfileIR,
@@ -581,6 +583,176 @@ class SemanticIRTests(unittest.TestCase):
             if row.get("def", {}).get("type") == "cone"
         )
         self.assertEqual(cone_feature["def"]["operation"], "join")
+
+    def test_vertical_box_fillet_is_semantic_parallel_edge_ir(self):
+        radius = Parameter("fillet_radius", 2)
+        shape = Box(
+            50,
+            40,
+            20,
+            anchor=Anchor.BOTTOM,
+        ).fillet(
+            radius,
+            edges=Edges.VERTICAL,
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "VerticalBoxFillet",
+        )
+        self.assertIsInstance(model.root, FilletIR)
+        self.assertIsInstance(model.root.base, PlacementIR)
+        self.assertIsInstance(model.root.base.primitive, BoxIR)
+        self.assertIs(model.root.radius, radius)
+        self.assertEqual(model.root.edges, ParallelEdgeSetIR("Z"))
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR(
+                    "fillet_radius",
+                    2,
+                    roles=("length",),
+                ),
+            ),
+        )
+
+        solidcraft = compile_solidcraft_ir(model, "VerticalBoxFillet")
+        fillet = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "solid.fillet"
+        )
+        self.assertEqual(
+            fillet["params"]["edges"],
+            [
+                [-25.0, -20.0, 10.0],
+                [25.0, -20.0, 10.0],
+                [25.0, 20.0, 10.0],
+                [-25.0, 20.0, 10.0],
+            ],
+        )
+        self.assertEqual(fillet["params"]["radius"], "fillet_radius")
+        self.assertEqual(fillet["params"]["body"], "VerticalBoxFillet")
+
+        mitcad = compile_mitcad_ir(model, "VerticalBoxFillet")
+        self.assertEqual(
+            [
+                row["def"]["type"]
+                for row in mitcad["commands"]
+                if row["cmd"] == "add_feature"
+            ],
+            ["box"],
+        )
+        self.assertEqual(len(mitcad["replay"]), 1)
+        stage = mitcad["replay"][0]
+        self.assertEqual(
+            stage["bind_parallel_edges"],
+            {
+                "name": "parallel_edges",
+                "body": "body",
+                "axis": "Z",
+                "expected": 4,
+            },
+        )
+        fillet_def = stage["commands"][0]["def"]
+        self.assertEqual(fillet_def["type"], "fillet")
+        self.assertEqual(
+            fillet_def["edges"],
+            {"$mitcad_bind": "parallel_edges"},
+        )
+        self.assertEqual(fillet_def["radius"], "fillet_radius")
+
+    def test_fillet_cone_join_preserves_semantic_feature_order(self):
+        filleted = Box(
+            50,
+            40,
+            20,
+            anchor=Anchor.BOTTOM,
+        ).fillet(
+            2,
+            edges=Edges.VERTICAL,
+        )
+        cone = Cone(
+            d=18,
+            top_d=10,
+            h=8,
+            anchor=Anchor.BOTTOM,
+        ).at(
+            0,
+            0,
+            18,
+            anchor=Anchor.BOTTOM,
+        )
+        shape = filleted + cone
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "FilletConeJoin",
+        )
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(model.root.operation, "join")
+        self.assertIsInstance(model.root.target, FilletIR)
+        self.assertEqual(
+            model.root.target.edges,
+            ParallelEdgeSetIR("Z"),
+        )
+        self.assertIsInstance(model.root.tool, PlacementIR)
+        self.assertIsInstance(model.root.tool.primitive, ConeIR)
+
+        solidcraft = compile_solidcraft_ir(model, "FilletConeJoin")
+        geometry = [
+            row
+            for row in solidcraft["commands"]
+            if row["command"].startswith("solid.")
+        ]
+        self.assertEqual(
+            [row["command"] for row in geometry],
+            ["solid.box", "solid.fillet", "solid.cone"],
+        )
+        self.assertEqual(geometry[-1]["params"]["operation"], "join")
+        self.assertEqual(
+            geometry[-1]["params"]["targets"],
+            ["FilletConeJoin"],
+        )
+
+        mitcad = compile_mitcad_ir(model, "FilletConeJoin")
+        self.assertEqual(
+            [
+                row["def"]["type"]
+                for row in mitcad["commands"]
+                if row["cmd"] == "add_feature"
+            ],
+            ["box"],
+        )
+        stage = mitcad["replay"][0]
+        self.assertEqual(stage["bind_parallel_edges"]["axis"], "Z")
+        self.assertEqual(stage["bind_parallel_edges"]["expected"], 4)
+        self.assertEqual(
+            [
+                row["def"]["type"]
+                for row in stage["commands"]
+                if row["cmd"] == "add_feature"
+            ],
+            ["fillet", "construction_plane", "cone"],
+        )
+        cone_def = stage["commands"][-1]["def"]
+        self.assertEqual(cone_def["operation"], "join")
+        self.assertEqual(cone_def["participants"], [])
+
+    def test_non_vertical_fillet_selection_remains_outside_bounded_slice(self):
+        shape = Box(
+            50,
+            40,
+            20,
+            anchor=Anchor.BOTTOM,
+        ).fillet(
+            2,
+            edges=Edges.from_faces(Faces.TOP),
+        )
+        model = normalize_shape(shape)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "UnsupportedFaceBoundaryFillet")
 
     def test_circle_extrude_is_separate_sketch_region_and_extrude_ir(self):
         diameter = Parameter("diameter", 20)

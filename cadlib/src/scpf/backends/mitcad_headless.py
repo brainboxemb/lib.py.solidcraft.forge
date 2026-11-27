@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from math import isfinite, sqrt
 from pathlib import Path
 import shutil
 import subprocess
@@ -97,6 +98,34 @@ def _validate_replay(value: Any) -> list[dict[str, Any]]:
                         f"Mitcad replay stage {index} face-boundary binding "
                         "face_name requires one named single-face query"
                     )
+        parallel = stage.get("bind_parallel_edges")
+        if parallel is not None:
+            if not isinstance(parallel, dict):
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} parallel-edge binding "
+                    "must be an object"
+                )
+            if (
+                not isinstance(parallel.get("name"), str)
+                or not parallel["name"]
+                or not isinstance(parallel.get("body"), str)
+                or not parallel["body"]
+            ):
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} parallel-edge binding "
+                    "requires name and body"
+                )
+            if parallel.get("axis") not in {"X", "Y", "Z"}:
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} parallel-edge binding "
+                    "axis must be X, Y or Z"
+                )
+            expected = parallel.get("expected")
+            if type(expected) is not int or expected <= 0:
+                raise MitcadHeadlessError(
+                    f"Mitcad replay stage {index} parallel-edge binding "
+                    "expected must be a positive integer"
+                )
         _validate_commands(
             stage.get("commands"),
             context=f"Mitcad replay stage {index}",
@@ -445,6 +474,88 @@ def _bind_face_boundary_edges(
     return edges
 
 
+def _bind_parallel_edges(
+    session: _Session,
+    handle: str,
+    *,
+    body_uid: str,
+    axis: str,
+    expected: int,
+) -> list[str]:
+    """Resolve semantic principal straight edges from native edge geometry."""
+    if axis not in {"X", "Y", "Z"}:
+        raise MitcadHeadlessError(
+            f"unsupported Mitcad parallel-edge axis: {axis!r}"
+        )
+    result = _query(
+        session,
+        handle,
+        {
+            "query": "edges",
+            "body": body_uid,
+            "geometry": True,
+        },
+    )
+    if not isinstance(result, list):
+        raise MitcadHeadlessError(
+            "Mitcad parallel-edge query returned no edge list"
+        )
+
+    axis_index = {"X": 0, "Y": 1, "Z": 2}[axis]
+    selected: list[str] = []
+    seen = set()
+    for row in result:
+        if not isinstance(row, dict) or row.get("curve") != "line":
+            continue
+        name = row.get("name")
+        start = row.get("start")
+        end = row.get("end")
+        if (
+            not isinstance(name, str)
+            or not name
+            or not isinstance(start, list)
+            or not isinstance(end, list)
+            or len(start) != 3
+            or len(end) != 3
+            or any(
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not isfinite(value)
+                for value in [*start, *end]
+            )
+        ):
+            continue
+
+        vector = [end[i] - start[i] for i in range(3)]
+        length = sqrt(sum(value * value for value in vector))
+        if length <= 1e-9:
+            continue
+        transverse = sqrt(
+            sum(
+                value * value
+                for index, value in enumerate(vector)
+                if index != axis_index
+            )
+        )
+        tolerance = max(1e-8, length * 1e-8)
+        if (
+            abs(vector[axis_index]) <= tolerance
+            or transverse > tolerance
+        ):
+            continue
+        if name not in seen:
+            seen.add(name)
+            selected.append(name)
+
+    if len(selected) != expected:
+        raise MitcadHeadlessError(
+            "Mitcad parallel-edge binding requires exactly "
+            f"{expected} native {axis}-parallel line edges, got "
+            f"{len(selected)}"
+        )
+    return sorted(selected)
+
+
 def _apply_commands(
     session: _Session,
     handle: str,
@@ -724,6 +835,23 @@ def run_document(
                                 "Mitcad face-boundary binding resolved no reference face"
                             )
                         bindings[face_name_binding] = selected_face_name
+
+                parallel = stage.get("bind_parallel_edges")
+                if parallel is not None:
+                    source_binding = parallel["body"]
+                    source_body = bindings.get(source_binding)
+                    if not isinstance(source_body, str) or not source_body:
+                        raise MitcadHeadlessError(
+                            "Mitcad parallel-edge binding refers to unknown "
+                            f"body binding: {source_binding!r}"
+                        )
+                    bindings[parallel["name"]] = _bind_parallel_edges(
+                        session,
+                        handle,
+                        body_uid=source_body,
+                        axis=parallel["axis"],
+                        expected=parallel["expected"],
+                    )
 
                 stage_commands = _bind_values(
                     stage["commands"],

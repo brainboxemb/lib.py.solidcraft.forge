@@ -1401,6 +1401,44 @@ mapping tests prove a suppressible Cone tool binds the native Cone feature even
 when its helper precedes it. The existing `cone-boolean` owner remains outside
 this checkpoint because it also contains Fillet history.
 
+#504 fills that remaining Fillet boundary without making native topology part of
+Forge semantics. Public `Edges.VERTICAL` becomes
+`ParallelEdgeSetIR(axis="Z")`: a statement about straight world-Z-parallel
+edges, not four precomputed XYZ pick points and not a list of Mitcad edge
+names. The first `FilletIR` is deliberately bounded to one
+`PlacementIR(BoxIR)`, one positive constant/parameter radius and that semantic
+parallel-edge set.
+
+SolidCraft independently derives the accepted four Box edge pick points from
+the typed Box corner, length, width and height, then emits the existing
+`solid.fillet` command. This keeps stable command compatibility while making
+the IR independent of SolidCraft's point-pick transport.
+
+Mitcad cannot consume that semantic selector directly. Its replay stage first
+binds the single current body, queries native edges with `geometry=true`, and
+examines only native line geometry. Start/end vectors are compared against the
+semantic principal axis with a tight relative tolerance; names are retained
+only for the exact matching line edges. The first Box/Z slice requires exactly
+four unique matches. Missing or extra matches fail closed. Native names and
+endpoint geometry live only in replay bindings and never enter
+`ParallelEdgeSetIR` or `FilletIR`.
+
+The feature result then composes through the already-existing `BooleanIR`.
+The bounded first composition is `FilletIR -> BooleanIR(join ConeIR)`, so
+SolidCraft spells Box → `solid.fillet` → `solid.cone(operation="join")`.
+Mitcad creates the Box, resolves/binds four Z-parallel native edges, creates one
+native Fillet, then reuses the helper-aware Cone command group. A private Cone
+support plane may occur between Fillet and Cone but is not a semantic history
+node.
+
+The exact runtime proof is the existing `cone-boolean` geometry contract:
+50×40×20 BOTTOM Box, R2 on the four vertical edges, joined with an
+Ø18→Ø10 × 8 Cone whose BOTTOM is at Z=18. The filleted Box volume is
+`39680 + 80π`; only the Cone portion above the Box contributes another
+`258π`, giving `39680 + 338π ≈ 40741.85831691335 mm³`. Bounds remain
+[-25,-20,0]..[25,20,26]. Model-owner `scpf-mitcad` attachment remains a
+separate catalogue checkpoint after the compiler/runtime contract is accepted.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are

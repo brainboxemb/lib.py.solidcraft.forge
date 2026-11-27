@@ -111,22 +111,46 @@ class FakeSession:
                     },
                 }
             if query["query"] == "edges":
+                edges = [
+                    {"name": "E{F1:bottom|F1:side0}", "curve": "line", "length": 40},
+                    {"name": "E{F1:bottom|F1:side1}", "curve": "line", "length": 30},
+                    {"name": "E{F1:bottom|F1:side2}", "curve": "line", "length": 40},
+                    {"name": "E{F1:bottom|F1:side3}", "curve": "line", "length": 30},
+                    {"name": "E{F1:side0|F1:top}", "curve": "line", "length": 40},
+                    {"name": "E{F1:side1|F1:top}", "curve": "line", "length": 30},
+                    {"name": "E{F1:side2|F1:top}", "curve": "line", "length": 40},
+                    {"name": "E{F1:side3|F1:top}", "curve": "line", "length": 30},
+                    {"name": "E{F1:side0|F1:side1}", "curve": "line", "length": 10},
+                    {"name": "E{F1:side1|F1:side2}", "curve": "line", "length": 10},
+                    {"name": "E{F1:side2|F1:side3}", "curve": "line", "length": 10},
+                    {"name": "E{F1:side3|F1:side0}", "curve": "line", "length": 10},
+                ]
+                if query.get("geometry"):
+                    geometry = {
+                        "E{F1:bottom|F1:side0}": ([0, 0, 0], [40, 0, 0]),
+                        "E{F1:bottom|F1:side1}": ([40, 0, 0], [40, 30, 0]),
+                        "E{F1:bottom|F1:side2}": ([40, 30, 0], [0, 30, 0]),
+                        "E{F1:bottom|F1:side3}": ([0, 30, 0], [0, 0, 0]),
+                        "E{F1:side0|F1:top}": ([0, 0, 10], [40, 0, 10]),
+                        "E{F1:side1|F1:top}": ([40, 0, 10], [40, 30, 10]),
+                        "E{F1:side2|F1:top}": ([40, 30, 10], [0, 30, 10]),
+                        "E{F1:side3|F1:top}": ([0, 30, 10], [0, 0, 10]),
+                        "E{F1:side0|F1:side1}": ([40, 0, 0], [40, 0, 10]),
+                        "E{F1:side1|F1:side2}": ([40, 30, 0], [40, 30, 10]),
+                        "E{F1:side2|F1:side3}": ([0, 30, 0], [0, 30, 10]),
+                        "E{F1:side3|F1:side0}": ([0, 0, 0], [0, 0, 10]),
+                    }
+                    edges = [
+                        {
+                            **edge,
+                            "start": geometry[edge["name"]][0],
+                            "end": geometry[edge["name"]][1],
+                        }
+                        for edge in edges
+                    ]
                 return {
                     "document": "D1",
-                    "result": [
-                        {"name": "E{F1:bottom|F1:side0}", "curve": "line", "length": 40},
-                        {"name": "E{F1:bottom|F1:side1}", "curve": "line", "length": 30},
-                        {"name": "E{F1:bottom|F1:side2}", "curve": "line", "length": 40},
-                        {"name": "E{F1:bottom|F1:side3}", "curve": "line", "length": 30},
-                        {"name": "E{F1:side0|F1:top}", "curve": "line", "length": 40},
-                        {"name": "E{F1:side1|F1:top}", "curve": "line", "length": 30},
-                        {"name": "E{F1:side2|F1:top}", "curve": "line", "length": 40},
-                        {"name": "E{F1:side3|F1:top}", "curve": "line", "length": 30},
-                        {"name": "E{F1:side0|F1:side1}", "curve": "line", "length": 10},
-                        {"name": "E{F1:side1|F1:side2}", "curve": "line", "length": 10},
-                        {"name": "E{F1:side2|F1:side3}", "curve": "line", "length": 10},
-                        {"name": "E{F1:side3|F1:side0}", "curve": "line", "length": 10},
-                    ],
+                    "result": edges,
                 }
             raise AssertionError(query)
         if name == "document_save":
@@ -234,6 +258,50 @@ def asymmetric_replay_document():
         }
     ]
     return value
+
+
+def parallel_edge_replay_document():
+    value = document()
+    value["replay"] = [
+        {
+            "bind_single_body": "body",
+            "bind_parallel_edges": {
+                "name": "parallel_edges",
+                "body": "body",
+                "axis": "Z",
+                "expected": 4,
+            },
+            "commands": [
+                {
+                    "cmd": "add_feature",
+                    "def": {
+                        "type": "fillet",
+                        "body": {"$mitcad_bind": "body"},
+                        "edges": {"$mitcad_bind": "parallel_edges"},
+                        "radius": 2,
+                    },
+                }
+            ],
+        }
+    ]
+    return value
+
+
+class MissingParallelEdgeSession(FakeSession):
+    def tool(self, name, arguments):
+        result = super().tool(name, arguments)
+        if (
+            name == "model_query"
+            and arguments["query"]["query"] == "edges"
+            and arguments["query"].get("geometry")
+        ):
+            result = dict(result)
+            result["result"] = [
+                edge
+                for edge in result["result"]
+                if edge["name"] != "E{F1:side3|F1:side0}"
+            ]
+        return result
 
 
 def multi_face_replay_document():
@@ -475,6 +543,61 @@ class MitcadHeadlessTests(unittest.TestCase):
                     "distance2": 0.65,
                 },
             )
+
+    @patch("scpf.backends.mitcad_headless._Session", FakeSession)
+    def test_replay_binds_exact_principal_parallel_edges_from_geometry(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = run_document(
+                parallel_edge_replay_document(),
+                save=root / "out.mitcad",
+                work_dir=root / "workspace",
+            )
+
+            self.assertEqual(
+                result["bindings"]["parallel_edges"],
+                [
+                    "E{F1:side0|F1:side1}",
+                    "E{F1:side1|F1:side2}",
+                    "E{F1:side2|F1:side3}",
+                    "E{F1:side3|F1:side0}",
+                ],
+            )
+            session = FakeSession.instances[-1]
+            edge_query = next(
+                args["query"]
+                for name, args in session.calls
+                if name == "model_query"
+                and args["query"]["query"] == "edges"
+                and args["query"].get("geometry")
+            )
+            self.assertTrue(edge_query["geometry"])
+            commands = [
+                args["command"]
+                for name, args in session.calls
+                if name == "model_command"
+            ]
+            self.assertEqual(
+                commands[1][0]["def"]["edges"],
+                result["bindings"]["parallel_edges"],
+            )
+
+    @patch(
+        "scpf.backends.mitcad_headless._Session",
+        MissingParallelEdgeSession,
+    )
+    def test_replay_rejects_incomplete_parallel_edge_set(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with self.assertRaisesRegex(
+                MitcadHeadlessError,
+                "requires exactly 4 native Z-parallel line edges, got 3",
+            ):
+                run_document(
+                    parallel_edge_replay_document(),
+                    save=root / "out.mitcad",
+                    work_dir=root / "workspace",
+                )
 
     @patch("scpf.backends.mitcad_headless._Session", FakeSession)
     def test_replay_combines_multiple_face_boundaries_for_one_feature(self):

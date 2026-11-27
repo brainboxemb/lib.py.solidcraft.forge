@@ -36,10 +36,12 @@ from ..ir import (
     CylinderIR,
     ExtrudeIR,
     FeatureRefIR,
+    FilletIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
     PlaneIR,
+    ParallelEdgeSetIR,
     PolygonProfileIR,
     RegionIR,
     RevolveIR,
@@ -1416,6 +1418,81 @@ def _revolve_cut_document(
 
 
 
+def _fillet_document(
+    model: ModelIR,
+    node: FilletIR,
+    name: str,
+    *,
+    tool: PlacementIR | None = None,
+):
+    """Lower semantic Fillet through replay-bound native principal edges."""
+    if (
+        not isinstance(node.base, PlacementIR)
+        or not isinstance(node.base.primitive, BoxIR)
+        or not isinstance(node.edges, ParallelEdgeSetIR)
+        or node.edges.axis != "Z"
+    ):
+        raise ModelError(
+            "Mitcad FilletIR currently requires Z-parallel Box edges"
+        )
+    _require_positive(node.radius, "fillet radius")
+    if model.configuration is not None:
+        raise ModelError(
+            "Mitcad FilletIR configuration is outside the qualified slice"
+        )
+
+    commands = [
+        *_parameter_commands(model),
+        _box_command(node.base, f"{name}Base"),
+    ]
+    replay_commands = [
+        {
+            "cmd": "add_feature",
+            "name": f"{name}Fillet" if tool is not None else name,
+            "def": {
+                "type": "fillet",
+                "body": {"$mitcad_bind": "body"},
+                "edges": {"$mitcad_bind": "parallel_edges"},
+                "radius": command_value(node.radius),
+            },
+        }
+    ]
+
+    if tool is not None:
+        if not isinstance(tool.primitive, ConeIR):
+            raise ModelError(
+                "Mitcad FilletIR Boolean composition currently requires ConeIR"
+            )
+        tool_commands, _feature_index = _csg_primitive_commands(
+            tool,
+            f"{name}Join",
+            "join",
+            path=("root", "tool"),
+        )
+        replay_commands.extend(tool_commands)
+
+    replay = [
+        {
+            "bind_single_body": "body",
+            "bind_parallel_edges": {
+                "name": "parallel_edges",
+                "body": "body",
+                "axis": node.edges.axis,
+                "expected": 4,
+            },
+            "commands": replay_commands,
+        }
+    ]
+    dependencies = _native_dependencies((commands, replay))
+    return {
+        "format": FORMAT,
+        "version": VERSION,
+        "backend": "mitcad",
+        "commands": _plain_command_value(commands),
+        "replay": _plain_command_value(replay),
+    }, dependencies
+
+
 def _chamfer_document(
     model: ModelIR,
     node: ChamferIR,
@@ -1551,6 +1628,26 @@ def compile_ir_with_dependencies(model: ModelIR, name: str):
 
     if isinstance(node, ChamferIR):
         return _chamfer_document(model, node, name)
+    if isinstance(node, FilletIR):
+        return _fillet_document(model, node, name)
+    if (
+        isinstance(node, BooleanIR)
+        and isinstance(node.target, FilletIR)
+    ):
+        if (
+            node.operation != "join"
+            or not isinstance(node.tool, PlacementIR)
+            or not isinstance(node.tool.primitive, ConeIR)
+        ):
+            raise ModelError(
+                "Mitcad FilletIR Boolean composition currently requires Cone join"
+            )
+        return _fillet_document(
+            model,
+            node.target,
+            name,
+            tool=node.tool,
+        )
     if isinstance(node, RevolveIR) and node.operation == "cut":
         return _revolve_cut_document(model, node, name)
 

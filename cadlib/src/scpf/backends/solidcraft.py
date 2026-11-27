@@ -40,10 +40,12 @@ from ..ir import (
     ExtrudeIR,
     FaceBoundaryIR,
     FeatureRefIR,
+    FilletIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
     PlaneIR,
+    ParallelEdgeSetIR,
     PolygonProfileIR,
     RegionIR,
     RevolveIR,
@@ -440,11 +442,84 @@ def _csg_primitive_command(
     )
 
 
+def _parallel_box_edge_picks(
+    node: PlacementIR,
+    selection: ParallelEdgeSetIR,
+) -> list[list[float]]:
+    """Lower semantic principal Box edges to stable SolidCraft pick points."""
+    if (
+        not isinstance(node, PlacementIR)
+        or not isinstance(node.primitive, BoxIR)
+        or not isinstance(selection, ParallelEdgeSetIR)
+        or selection.axis != "Z"
+    ):
+        raise ModelError(
+            "portable SolidCraft parallel-edge selection currently requires "
+            "Z-parallel edges of PlacementIR(BoxIR)"
+        )
+
+    primitive = node.primitive
+    corner = _box_corner_from_anchor(
+        primitive.length,
+        primitive.width,
+        primitive.height,
+        node.point,
+        _DirectionSelector(node.anchor),
+    )
+    x, y, z = (pv(value) for value in corner)
+    length = pv(primitive.length)
+    width = pv(primitive.width)
+    height = pv(primitive.height)
+    if not all(
+        isfinite(value)
+        for value in (x, y, z, length, width, height)
+    ):
+        raise ModelError("portable SolidCraft FilletIR Box geometry must be finite")
+
+    mid_z = z + height / 2.0
+    return [
+        [x, y, mid_z],
+        [x + length, y, mid_z],
+        [x + length, y + width, mid_z],
+        [x, y + width, mid_z],
+    ]
+
+
+def _fillet_commands(node: FilletIR, name: str) -> list[dict]:
+    """Lower one constant-radius principal-edge FilletIR."""
+    if (
+        not isinstance(node.base, PlacementIR)
+        or not isinstance(node.base.primitive, BoxIR)
+        or not isinstance(node.edges, ParallelEdgeSetIR)
+        or node.edges.axis != "Z"
+    ):
+        raise ModelError(
+            "portable SolidCraft FilletIR requires a Box with Z-parallel edges"
+        )
+
+    radius = _require_positive(node.radius, "fillet radius")
+    primitive = node.base.primitive
+    if radius * 2 >= min(pv(primitive.length), pv(primitive.width)):
+        raise ModelError("fillet radius exceeds rectangular base dimensions")
+
+    return [
+        _box_command(node.base, name),
+        _command(
+            "solid.fillet",
+            edges=_parallel_box_edge_picks(node.base, node.edges),
+            radius=command_value(node.radius),
+            body=name,
+        ),
+    ]
+
+
 def _boolean_commands(node: BooleanIR, name: str) -> list[dict]:
     """Flatten one bounded left-associated semantic CSG tree in source order."""
     commands = []
     if isinstance(node.target, BooleanIR):
         commands.extend(_boolean_commands(node.target, name))
+    elif isinstance(node.target, FilletIR):
+        commands.extend(_fillet_commands(node.target, name))
     elif isinstance(node.target, PlacementIR):
         commands.append(_csg_primitive_command(node.target, name, "new"))
     else:
@@ -850,6 +925,12 @@ def _portable_commands(model: ModelIR, name: str) -> list[dict]:
             *_boolean_commands(node, name),
         ]
 
+    if isinstance(node, FilletIR):
+        return [
+            *parameters,
+            *_fillet_commands(node, name),
+        ]
+
     if isinstance(node, RevolveIR):
         base_commands = []
         if node.operation == "cut":
@@ -916,6 +997,8 @@ def _boolean_command_count(node) -> int:
     """Return SolidCraft geometry command count for one typed Boolean subtree."""
     if isinstance(node, PlacementIR):
         return 1
+    if isinstance(node, FilletIR):
+        return 2
     if isinstance(node, BooleanIR):
         return _boolean_command_count(node.target) + 1
     raise ModelError(
@@ -962,6 +1045,12 @@ def _boolean_feature_command_index(
                     "SolidCraft feature reference cannot descend through a primitive target"
                 )
             return offset
+        if isinstance(target, FilletIR):
+            if not last:
+                raise ModelError(
+                    "SolidCraft feature reference cannot descend through a Fillet target"
+                )
+            return offset + 1
         if not isinstance(target, BooleanIR):
             raise ModelError(
                 "SolidCraft feature reference target is not typed Boolean history"
