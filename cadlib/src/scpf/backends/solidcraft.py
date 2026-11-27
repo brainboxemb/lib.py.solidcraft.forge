@@ -2015,26 +2015,34 @@ def _rectangular_edge_picks(
     return picks
 
 
+def _profile_source_extrude(base: BodyIR) -> ExtrudeIR | None:
+    """Find the authored profile source through stable modifier history."""
+    while isinstance(base, (FilletIR, ChamferIR, ShellIR)):
+        base = base.base
+    return base if isinstance(base, ExtrudeIR) else None
+
+
 def _profile_edge_picks(
     base: BodyIR,
     selection: ProfileEdgeSetIR,
 ) -> list[list[float]]:
     """Derive named Polygon-extrusion edge picks from semantic profile intent."""
+    source = _profile_source_extrude(base)
     if (
-        not isinstance(base, ExtrudeIR)
-        or base.operation != "new_body"
-        or base.through_all
-        or base.distance is None
-        or base.sketch.support is not None
-        or base.sketch.plane.orientation != "XZ"
-        or len(base.sketch.profiles) != 1
-        or not isinstance(base.sketch.profiles[0], PolygonProfileIR)
+        source is None
+        or source.operation != "new_body"
+        or source.through_all
+        or source.distance is None
+        or source.sketch.support is not None
+        or source.sketch.plane.orientation != "XZ"
+        or len(source.sketch.profiles) != 1
+        or not isinstance(source.sketch.profiles[0], PolygonProfileIR)
     ):
         raise ModelError(
             "named profile edges require a standalone XZ polygon extrusion"
         )
 
-    profile = base.sketch.profiles[0]
+    profile = source.sketch.profiles[0]
     names = profile.segment_ids
     if names is None:
         raise ModelError(
@@ -2054,15 +2062,15 @@ def _profile_edge_picks(
             for pattern in selection.patterns
         )
     ]
-    plane_y = base.sketch.plane.origin[1]
-    thickness = base.distance
-    if base.direction == "symmetric":
+    plane_y = source.sketch.plane.origin[1]
+    thickness = source.distance
+    if source.direction == "symmetric":
         start_y = _combine(plane_y, -half(thickness))
         end_y = _combine(plane_y, half(thickness))
-    elif base.direction == "positive":
+    elif source.direction == "positive":
         start_y = plane_y
         end_y = _combine(plane_y, thickness)
-    elif base.direction == "negative":
+    elif source.direction == "negative":
         start_y = plane_y
         end_y = _combine(plane_y, -thickness)
     else:
