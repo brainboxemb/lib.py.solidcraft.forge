@@ -7,6 +7,7 @@ from scpf import (
     AxisLine,
     Box,
     Circle2D,
+    Configure,
     Cone,
     Cylinder,
     Edges,
@@ -15,6 +16,7 @@ from scpf import (
     Polygon2D,
     Sketch,
     Sphere,
+    Suppress,
 )
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.solidcraft import compile_ir as compile_solidcraft_ir
@@ -30,6 +32,10 @@ from scpf.ir import (
     CircleProfileIR,
     CylinderIR,
     ExtrudeIR,
+    FeatureRefIR,
+    ConfigurationIR,
+    ConfigurationRowIR,
+    SuppressionColumnIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
@@ -39,6 +45,7 @@ from scpf.ir import (
     RevolveIR,
     SketchIR,
     SphereIR,
+    normalize_model,
     normalize_shape,
 )
 
@@ -934,6 +941,121 @@ class SemanticIRTests(unittest.TestCase):
             revolve_command["def"]["participants"],
             [{"$mitcad_bind": "body"}],
         )
+
+    def test_suppression_configuration_is_semantic_ir_before_lowering(self):
+        axis_x = Parameter("axis_x", 8)
+        axis_z = Parameter("axis_z", 3)
+        panel = Box(40, 24, 20)
+        with Sketch(
+            name="Stepped pass through",
+            plane="XY",
+            offset=axis_z,
+        ) as profile:
+            Polygon2D(
+                [
+                    (axis_x, -12),
+                    (axis_x + 2.25, -12),
+                    (axis_x + 2.25, -9),
+                    (axis_x + 1.85, -9),
+                    (axis_x + 1.85, 9),
+                    (axis_x + 2.25, 9),
+                    (axis_x + 2.25, 12),
+                    (axis_x, 12),
+                ],
+                plane="XY",
+            )
+
+        pass_through = profile.revolve(
+            axis=AxisLine(
+                Axis.Y,
+                origin=(axis_x, 0, axis_z),
+            ),
+        )
+        body = panel - pass_through
+        configured = Configure(
+            body,
+            active="Cut",
+            columns=(Suppress(pass_through),),
+            rows={
+                "Cut": (False,),
+                "Suppressed": (True,),
+            },
+        )
+
+        model = normalize_model(configured)
+
+        self.assertIsInstance(model.root, RevolveIR)
+        self.assertEqual(model.root.operation, "cut")
+        self.assertNotIsInstance(model.root, LegacyShapeIR)
+        self.assertEqual(
+            [parameter.name for parameter in model.parameters],
+            ["axis_z", "axis_x"],
+        )
+        self.assertEqual(
+            model.configuration,
+            ConfigurationIR(
+                active="Cut",
+                columns=(
+                    SuppressionColumnIR(
+                        feature=FeatureRefIR(path=("root",)),
+                    ),
+                ),
+                rows=(
+                    ConfigurationRowIR(name="Cut", cells=(False,)),
+                    ConfigurationRowIR(name="Suppressed", cells=(True,)),
+                ),
+            ),
+        )
+        self.assertNotIn("uid", repr(model.configuration).lower())
+        self.assertNotIn("command", repr(model.configuration).lower())
+        self.assertNotIn("replay", repr(model.configuration).lower())
+
+    def test_suppression_reference_must_be_the_authored_root_feature(self):
+        panel = Box(40, 24, 20)
+        with Sketch(name="PassThrough", plane="XY") as profile:
+            Polygon2D(
+                [(8, -5), (10, -5), (10, 5), (8, 5)],
+                plane="XY",
+            )
+        pass_through = profile.revolve(
+            axis=AxisLine(Axis.Y, origin=(8, 0, 0)),
+        )
+        body = panel - pass_through
+        unrelated = Box(2, 2, 2)
+        configured = Configure(
+            body,
+            active="Cut",
+            columns=(Suppress(unrelated),),
+            rows={"Cut": (False,), "Suppressed": (True,)},
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "not the authored root Revolve feature",
+        ):
+            normalize_model(configured)
+
+    def test_configuration_ir_rejects_non_suppression_columns_and_rules(self):
+        panel = Box(40, 24, 20)
+        with Sketch(name="PassThrough", plane="XY") as profile:
+            Polygon2D(
+                [(8, -5), (10, -5), (10, 5), (8, 5)],
+                plane="XY",
+            )
+        pass_through = profile.revolve(
+            axis=AxisLine(Axis.Y, origin=(8, 0, 0)),
+        )
+        body = panel - pass_through
+
+        configured = Configure(
+            body,
+            active="Cut",
+            columns=(Suppress(pass_through),),
+            rows={"Cut": (False,), "Suppressed": (True,)},
+        )
+        object.__setattr__(configured, "rules", ("unsupported",))
+        with self.assertRaisesRegex(ValueError, "does not support configuration rules"):
+            normalize_model(configured)
 
     def test_revolve_fixed_partial_angle_keeps_degree_semantics(self):
         with Sketch(name="HalfProfile", plane="XZ") as sketch:
