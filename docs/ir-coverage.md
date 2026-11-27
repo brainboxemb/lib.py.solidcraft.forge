@@ -88,7 +88,8 @@ For an IR PR:
 3. prove accepted/rejected boundaries with pure IR tests;
 4. preserve stable behavior through typed SolidCraft lowering;
 5. make unsupported backends fail closed;
-6. update this ledger.
+6. merge the IR batch to permanent `exp`, then reconcile this main-owned
+   ledger from the accepted result.
 
 Mitcad work may then consume several newly IR-ready families in one
 backend-focused batch, with backend contract tests and native qualification.
