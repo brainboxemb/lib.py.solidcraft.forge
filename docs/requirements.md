@@ -16,6 +16,9 @@ docstrings and executable tests.
 5. Reusable components do not acquire application-level policy merely because a
    standalone catalogue/document wants particular presentation or
    configuration controls.
+6. Public API acceptance must remain faithful to the motivating consumer
+   semantics. A synthetic backend probe may qualify a mechanism, but cannot by
+   itself close a richer consumer use case that it deliberately does not model.
 
 ## Ownership
 
@@ -46,6 +49,8 @@ docstrings and executable tests.
    structural contracts.
 2. Model-specific expectations stay with the physical owner.
 3. Pages projects retained verification evidence only.
+4. Backend-mechanism evidence and consumer-level API evidence are separate
+   gates when the public contract depends on both.
 
 ## Development and release
 

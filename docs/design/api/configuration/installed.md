@@ -1,97 +1,89 @@
-# Installed configuration example
+# Free / Installed configuration
 
-Status: qualified backend pattern; Forge API migration in progress  
-Tracking: #444
+Status: consumer contract correction under #506  
+Tracking: #444, #506
 
-This document records the concrete Installed pattern that drives the current
-configuration API cleanup.
+`Free` and `Installed` are useful physical-state row names, but they do not
+imply one particular implementation mechanism.
 
-## Desired model
+Choose the configuration target from the model's real CAD intent.
 
-A final model contains reusable couplers and ordinary size configurations.
+## Parameter state
+
+The retained HUB75 tube clamp is parameter-driven:
 
 ~~~text
-final model
-├── Small / Large configuration rows
-├── left Coupler
-├── right Coupler
-└── Coupler definition feature: installed
+Free       clamp_bore = tube_d - clamp_interference
+Installed  clamp_bore = tube_d
 ~~~
 
-The Coupler definition owns its real Installed history transition.
-
-Copies of that Coupler reuse the same component definition and therefore the
-same authored feature identity.
-
-## Forge authoring
-
-The final configuration should read approximately:
+The public authoring remains an ordinary Parameter column:
 
 ~~~python
-model = panel + left + right
-
-model.configure(
-    active="Small",
-    columns=(
-        self.coupler_size,
-        right.feature("installed"),
-    ),
+clamp.configure(
+    active="Free",
+    columns=(self.clamp_bore,),
     rows={
-        "Small": ("40 mm", True),
-        "Large": ("60 mm", True),
+        "Free": ("tube_d-clamp_interference",),
+        "Installed": ("tube_d",),
     },
 )
-
-return model
 ~~~
 
-The boolean cells are suppression values:
+This is not a reason to add a Forge flex/deformation API. The consumer owns its
+parametric geometry.
 
-~~~text
-True  -> Installed feature suppressed
-False -> Installed feature active
-~~~
+## Feature state
 
-There is no public rule object and no synthetic boolean State object.
+Use feature suppression only when the model genuinely has one history operation
+whose presence changes by configuration.
 
-## SolidCraft result
-
-SolidCraft receives a normal configuration with:
-
-~~~text
-parameter column: coupler_size
-feature column:   Suppress: Installed
-~~~
-
-The existing UI displays such a feature column as:
-
-~~~text
-Suppress: <feature name>
-~~~
-
-or its localized equivalent.
-
-## Qualification
-
-The `configuration-installed-single-feature` probe proves that one native
-feature can affect more than one body and can be configured directly as a
-suppression target without `config.rule`.
-
-The direct rule-free probe passed in run 971.
-
-## Separate concern: initial suppression
-
-A reusable component may later need to say that an authored feature starts
-suppressed even before a final configuration is attached.
-
-That is a feature-history authoring concern, not a reason to expand the
-configuration API.
-
-A scoped syntax such as:
+Author that operation with stable semantic identity:
 
 ~~~python
-with feature("Installed", suppressed=True):
-    ...
+with feature("installed", suppressed=True):
+    body = body - installed_cut
 ~~~
 
-remains proposal-level until its native history semantics are qualified.
+A reusable occurrence then exposes the same definition-level identity:
+
+~~~python
+clamp.feature("installed")
+~~~
+
+and the final model may use it directly:
+
+~~~python
+model.configure(
+    active="Free",
+    columns=(clamp.feature("installed"),),
+    rows={
+        "Free": (True,),
+        "Installed": (False,),
+    },
+)
+~~~
+
+The boolean is native suppression data:
+
+~~~text
+True   -> feature suppressed
+False  -> feature active
+~~~
+
+No public Configuration Rule or synthetic boolean State object is required.
+
+## Consumer proof versus backend proof
+
+The synthetic `configuration-installed-feature` probe deliberately uses a
+simple extra cut. It proves native identity, initial suppression and saved-row
+switching only.
+
+It is not a mechanical model of a flexible clamp and must not be cited as one.
+
+The consumer-level named-feature proof is the real stepped shifted-axis
+panel-pin pass-through used by the HUB75 frame-coupler family: one revolve
+history feature, Small/Medium suppressed, Large enabled.
+
+The standalone HUB75 tube clamp remains the separate parameter-driven consumer
+described above.

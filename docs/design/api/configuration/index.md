@@ -1,50 +1,143 @@
 # Configuration API design
 
-Status: implementation in progress  
-Tracking: #444
+Status: v0.25 consumer-acceptance repair in progress  
+Tracking: #444, #506
 
 Forge configuration belongs to the **final model**.
 
-The public flow is:
+The public operation is deliberately small:
 
 ~~~python
-model = panel + left + right
-
 model.configure(
     active="Small",
-    columns=(
-        self.coupler_size,
-        right.feature("installed"),
-    ),
-    rows={
-        "Small": ("40 mm", True),
-        "Large": ("60 mm", True),
-    },
+    columns=(...),
+    rows={...},
 )
-
-return model
 ~~~
 
 There is no public configuration wrapper object.
 
-## Public semantics
+## Two configuration target types
 
 A configuration column is an existing semantic handle:
 
 - a `Parameter` means a parameter-value column;
-- an authored Shape/component feature handle means feature suppression.
+- an authored Shape/feature handle means native feature suppression.
 
-Forge therefore does not need public wrappers such as:
+Do not turn a parameter-driven consumer state into a synthetic suppression
+feature, and do not replace a real history toggle with a fake boolean parameter.
 
-~~~text
-Param(...)
-Suppress(...)
+### Parameter-driven state
+
+The retained HUB75 tube-clamp source is the concrete consumer example:
+
+~~~python
+clamp.configure(
+    active="Free",
+    columns=(self.clamp_bore,),
+    rows={
+        "Free": ("tube_d-clamp_interference",),
+        "Installed": ("tube_d",),
+    },
+)
 ~~~
 
-and configuration itself does not need:
+The clamp geometry remains the consumer's ordinary parametric model. Forge does
+not add a flex/deformation API.
+
+### Named history feature
+
+When the consumer really owns one history operation that rows must suppress,
+name that operation directly:
+
+~~~python
+with feature("panel_pin", suppressed=True):
+    body = body - Hole(d=5).at(0, 0, self.HEIGHT)
+
+return body
+~~~
+
+For a reusable component, the scope name becomes component-definition identity.
+The final model refers to it with:
+
+~~~python
+coupler.feature("panel_pin")
+~~~
+
+and configures it normally:
+
+~~~python
+model.configure(
+    active="Medium",
+    columns=(
+        self.coupler_width,
+        right.feature("panel_pin"),
+    ),
+    rows={
+        "Small": ("30 mm", True),
+        "Medium": ("40 mm", True),
+        "Large": ("40 mm", False),
+    },
+)
+~~~
+
+The boolean cells are suppression values: `True` suppresses the feature and
+`False` enables it.
+
+## `feature(...)` scope contract
+
+`feature(name, suppressed=False)` gives exactly **one authored CAD history
+operation** stable Forge identity.
+
+Rules:
+
+- helper Sketch/profile construction belongs outside the scope;
+- the scope must finish with exactly one terminal Shape;
+- that result must represent exactly one CAD history operation;
+- scopes do not nest;
+- `suppressed=True` sets the initial native history state;
+- `suppressed=False` leaves the newly authored feature active;
+- a reusable component automatically exposes the scoped name through
+  `occurrence.feature(name)`;
+- the name is Forge identity, not a SolidCraft history id or browser label.
+
+For a direct final Shape, the context handle may itself be used as the
+configuration column:
+
+~~~python
+with feature("panel_pin_pass_through") as pass_through:
+    model = panel - profile.revolve(axis=axis)
+
+model.configure(
+    active="Cut",
+    columns=(pass_through,),
+    rows={
+        "Cut": (False,),
+        "Suppressed": (True,),
+    },
+)
+~~~
+
+`Shape.export_feature(name)` remains the lower-level compatibility path for an
+already-authored feature Shape. New consumer code that needs a named initial
+history state should prefer the scoped `feature(...)` contract.
+
+## Final-model ownership
+
+Configuration is attached only after the model has been composed. A reusable
+component owns its geometry, parameters and named history features; it does not
+own application/document row selection.
+
+This keeps reusable geometry separate from final-model presentation and state.
+
+## Removed configuration vocabulary
+
+The v0.25 API does not expose:
 
 ~~~text
 Configure(...)
+Param(...)
+Suppress(...)
 ConfigRule(...)
 Always()
 DriveParameter(...)
@@ -53,119 +146,28 @@ Toggle(...)
 Bind(...)
 ~~~
 
-The backend may use native machinery internally, but that is not Forge
-authoring vocabulary.
+Backend-native mechanisms may still exist internally, but they are not public
+Forge authoring vocabulary.
 
-## Reusable component features
+## Evidence boundary
 
-Reusable components deliberately export history features that a final model may
-configure.
+Backend probes and consumer probes are different evidence.
 
-Current qualified authoring:
+A small probe may intentionally use synthetic geometry to isolate native
+suppression, replay binding or saved-row behavior. That probe proves only that
+mechanism. The motivating public API is not accepted until a consumer-faithful
+case proves the actual semantic use.
 
-~~~python
-@component(include=("width",))
-class Coupler:
-    width = 40.0
+For #506:
 
-    def build(self):
-        body = Box(self.width, 20, 10)
-        installed = (
-            Hole(d=5)
-            .at(0, 0, 10)
-            .export_feature("installed")
-        )
-        return body - installed
-~~~
+- `configuration-installed-feature` remains focused backend evidence;
+- `configuration-child-feature` proves reusable child feature identity;
+- `shifted-axis-revolve` proves one real stepped panel-pin-style history cut;
+- the retained HUB75 clamp source remains parameter configuration and is not
+  rewritten as a suppression feature.
 
-The final model refers to that identity with:
+## Compiler boundary
 
-~~~python
-coupler.feature("installed")
-~~~
-
-Feature identity belongs to the component **definition**. Copies of the same
-definition therefore share the same authored feature identity in the native
-component history.
-
-The exact future syntax for naming a feature and setting its initial
-suppression outside a configuration row remains a separate feature-authoring
-question. It must not block or complicate the configuration API.
-
-## Configuration rows
-
-Rows store values for the declared columns.
-
-For example:
-
-~~~text
-Configuration   Coupler size   Suppress: Installed
-Small              40 mm               [x]
-Large              60 mm               [x]
-~~~
-
-SolidCraft exposes the feature column as a normal suppression checkbox.
-
-The suppression value is configuration data. No Configuration Rule is required.
-
-## Final-model ownership
-
-Configuration is attached only after the model has been composed:
-
-~~~python
-model = left + right
-model.configure(...)
-return model
-~~~
-
-A reusable component cannot own the final document configuration.
-
-This keeps reusable geometry separate from application/model presentation.
-
-## Current implementation direction
-
-The normal `dev` API is being changed to:
-
-- `Shape.configure(...)`;
-- `ModelInstance.configure(...)`;
-- `Assembly.configure(...)`;
-- direct `Parameter` columns;
-- direct Shape/component-feature suppression columns.
-
-The former public helper surface is being removed.
-
-## Generic compiler boundary
-
-This API work does not redesign the `exp` IR.
-
-The architecture remains:
-
-~~~text
-Forge authoring intent
-        |
-        v
-generic semantic compiler boundary
-        |
-        +--> SolidCraft lowering
-        +--> Mitcad lowering
-~~~
-
-The `exp` lane owns typed IR evolution. This `dev` work supplies clean
-semantics and backend evidence without exposing SolidCraft command vocabulary
-as public Forge API.
-
-## Remaining feature-authoring work
-
-Configuration itself is now small.
-
-The remaining separate question is how Forge should author a named history
-feature with an initial suppression state, for example conceptually:
-
-~~~python
-with feature("Installed", suppressed=True):
-    ...
-~~~
-
-That syntax is not part of the configuration API until its history semantics
-are proven. The existing `export_feature(...)` path remains the qualified
-feature-identity mechanism in the meantime.
+The normal `dev` API remains semantic and backend-neutral. Experimental typed
+IR evolution stays on `exp`; SolidCraft command vocabulary does not become
+public Forge API merely because the normal backend uses it internally.

@@ -1,7 +1,10 @@
 schema: 1
-branch: issue/503-local-release-publication
-modules: [release]
-library: false
-models: []
-api_probes: []
+branch: issue/506-named-feature-authoring
+modules: []
+library: true
+models:
+  - configuration-child-feature
+  - shifted-axis-revolve
+api_probes:
+  - configuration-installed-feature
 tasks: [test]

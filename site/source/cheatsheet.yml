@@ -268,42 +268,38 @@ groups:
 
   - heading: Configuration tables
     items:
-      - title: "Configure(design, active=..., columns=..., rows=...)"
-        description: "Author one editable native SolidCraft configuration table."
+      - title: "model.configure(active=..., columns=..., rows=...)"
+        description: "Attach one editable native configuration table to the completed Shape, component occurrence or Assembly."
         snippet: |
-          Configure(design, active="Medium",
-              columns=(Param(self.width), Suppress(hole)),
+          model.configure(
+              active="Medium",
+              columns=(self.width, child.feature("panel_pin")),
               rows={"Medium": ("80 mm", True),
                     "Large": ("100 mm", False)})
-        example: configuration-table
-      - title: "Shape.export_feature(...) + Occurrence.feature(...)"
-        description: "Let a parent configuration suppress one exact authored feature inside a reusable child definition."
+        example: configuration-child-feature
+      - title: "feature(name, suppressed=...)"
+        description: "Give exactly one authored CAD history operation stable Forge identity and an optional initial suppressed state."
         snippet: |
-          @component
-          class Coupler:
-              def build(self):
-                  body = Box(40, 24, 12, anchor=Anchor.BOTTOM)
-                  cut = Hole(d=5).at(0, 0, 12).export_feature("panel_pin")
-                  return body - cut
-
-          coupler = Coupler()
-          Configure(coupler, active="Small",
-              columns=(Suppress(coupler.feature("panel_pin")),),
+          with feature("panel_pin", suppressed=True):
+              body = body - Hole(d=5).at(0, 0, 12)
+        example: configuration-child-feature
+      - title: "occurrence.feature(name)"
+        description: "Reference one definition-level named child feature directly from the final configuration."
+        snippet: |
+          model.configure(
+              active="Small",
+              columns=(coupler.feature("panel_pin"),),
               rows={"Small": (True,), "Large": (False,)})
         example: configuration-child-feature
-      - title: "ConfigRule(..., condition=Always(), effect=DriveParameter(...))"
-        description: "Keep an Installed/Free physical state independent from Small/Medium/Large rows."
+      - title: "Free / Installed via Parameter"
+        description: "Use a normal Parameter column when physical state is genuinely a dimension/expression change; do not invent a suppression feature."
         snippet: |
-          Configure(design, active="Medium",
-              columns=(Param(self.width), Param(self.fit_diameter)),
-              rows={"Small": ("60 mm", "20.4 mm"),
-                    "Medium": ("80 mm", "20.4 mm"),
-                    "Large": ("100 mm", "20.4 mm")},
-              rules=(ConfigRule(
-                  "installed", "Installed",
-                  condition=Always(),
-                  effect=DriveParameter(self.fit_diameter, self.tube_d)),))
-        example: configuration-installed-state
+          clamp.configure(
+              active="Free",
+              columns=(self.clamp_bore,),
+              rows={"Free": ("tube_d-clamp_interference",),
+                    "Installed": ("tube_d",)})
+        example: configuration-table
 
   - heading: Symbolic CAD math
     items:

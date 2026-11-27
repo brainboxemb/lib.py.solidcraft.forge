@@ -27,16 +27,21 @@ target. No `Param(...)` wrapper is needed.
 
 ### authored feature handles
 
-A Shape that represents an already-applied history feature, or an explicitly
-exported component feature reference, is already an unambiguous suppression
-target. No `Suppress(...)` wrapper is needed.
+A Shape that represents an already-applied history feature, a handle returned
+by `feature(...)`, or a named reusable-component feature reference is already
+an unambiguous suppression target. No `Suppress(...)` wrapper is needed.
 
-### component feature export/reference
+### named feature authoring/reference
 
-`Shape.export_feature(name)` and `occurrence.feature(name)` currently provide
-the qualified stable feature identity across reusable component definitions.
+`feature(name, suppressed=False)` is the primary consumer authoring contract
+when one real CAD history operation needs stable semantic identity or an
+explicit initial suppressed state.
 
-Their exact future spelling may improve, but the semantic capability remains.
+A reusable component automatically exposes that definition-level identity
+through `occurrence.feature(name)`.
+
+`Shape.export_feature(name)` remains the lower-level compatibility path for an
+already-authored feature Shape.
 
 ## Remove
 
@@ -85,7 +90,8 @@ semantic requirement that direct parameters, feature identity and
 
 The direct `configuration-installed-single-feature` probe proves that
 SolidCraft can configure one real feature through ordinary feature suppression
-without a Configuration Rule.
+without a Configuration Rule. It is backend evidence only; a deliberately
+synthetic probe cannot close a richer motivating consumer use case.
 
 The `configuration-installed-group` experiment proves the opposite boundary:
 a timeline folder may group/suppress multiple features manually, but SolidCraft
@@ -99,8 +105,9 @@ For configuration, the credible public surface is now:
 
 ~~~text
 Parameter
+feature(name, suppressed=...)
 authored feature handle
-component feature export/reference
+occurrence.feature(name)
 model.configure(...)
 ~~~
 
