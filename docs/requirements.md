@@ -97,6 +97,12 @@
 72. SolidCraft and Mitcad must consume the attached Sketch relation graph for a parameterized Polygon Extrude. Direct backend reconstruction of parameter dependencies from `PolygonProfileIR` is forbidden once relations are present.
 73. Fixed-coordinate Polygon Extrude remains valid without a relation graph. The #451 checkpoint does not broaden direction/operation/region scope beyond the existing symmetric single-region new-body contract.
 74. Exact pinned Mitcad runtime qualification must execute a parameterized rectangle Extrude, preserve its native parameter-driven Sketch dimension and prove deterministic solid geometry.
+75. For a qualified multi-profile Circle Sketch, `RegionIR` describes only the boundary profiles of the selected connected region; unrelated profiles present in `SketchIR.profiles` are not implicitly region holes or members.
+76. The first 3+ profile exact-region slice is bounded to distinct, origin-centered concentric `CircleProfileIR` loops and one authored exact-region pick. Current finite positive radii may resolve the pick interval, but `RegionIR` retains only semantic profile indexes.
+77. For concentric circles, the immediate enclosing profile is the selected region outer boundary and the immediate smaller profile, when present, is its single hole. A pick on a profile boundary or outside every profile is invalid for this typed slice.
+78. `RegionIR` validation must be independent of total Sketch profile count. Extra concentric profiles may exist strictly inside the selected hole or strictly outside the selected outer boundary, but no unreferenced profile may divide the interval between a region outer boundary and its hole.
+79. SolidCraft and Mitcad must lower the same typed multi-profile `RegionIR` without rediscovering outer/hole membership. Native selector points and curve/profile ids remain backend transport only.
+80. Exact pinned Mitcad runtime qualification must execute the three-circle exact annulus while retaining all three native Circle entities and extruding only the typed selected region.
 
 ## SCPF native associativity
 
