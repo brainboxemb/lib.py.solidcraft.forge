@@ -561,29 +561,47 @@ class SemanticIRTests(unittest.TestCase):
         mitcad = compile_mitcad_ir(model, "ConcavePolygon")
         self.assertEqual(mitcad["commands"][-1]["def"]["type"], "extrude")
 
-    def test_parameterized_polygon_extrude_stays_legacy_until_qualified(self):
+    def test_parameterized_polygon_extrude_reuses_sketch_relations(self):
         width = Parameter("polygon_width", 20)
         with Sketch(name="Parameterized", plane="XY") as sketch:
             Polygon2D(
-                [(0, 0), (width, 0), (width, 30), (0, 30)],
+                [(0, 0), (0, 30), (width, 30), (width, 0)],
                 plane="XY",
             )
         shape = sketch.extrude(10, sym=True)
-        model = normalize_shape(shape)
-        self.assertIsInstance(model.root, LegacyShapeIR)
-        self.assertEqual(
-            compile_solidcraft_ir(model, "LegacyPolygon"),
-            _compile_shape_legacy_with_dependencies(
-                shape,
-                "LegacyPolygon",
-            )[0],
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ParameterizedPolygon",
         )
-        with self.assertRaisesRegex(
-            ModelError,
-            "does not yet support Forge shape kind "
-            "'sketch_base_extrusion'",
-        ):
-            compile_mitcad_ir(model, "LegacyPolygon")
+        self.assertIsInstance(model.root, ExtrudeIR)
+
+        relations = model.root.sketch.relations
+        self.assertIsInstance(relations, SketchRelationsIR)
+        self.assertEqual(
+            [constraint.orientation for constraint in relations.constraints],
+            ["vertical", "horizontal", "vertical", "horizontal"],
+        )
+        self.assertEqual(
+            [dimension.line for dimension in relations.dimensions],
+            [0, 1],
+        )
+        self.assertEqual(relations.dimensions[0].value, 30)
+        self.assertIs(relations.dimensions[1].value, width)
+        self.assertEqual(relations.coordinate_dimensions, ())
+
+        mitcad = compile_mitcad_ir(model, "ParameterizedPolygon")
+        sketch_def = mitcad["commands"][-2]["def"]
+        self.assertEqual(
+            [constraint["type"] for constraint in sketch_def["constraints"]],
+            ["vertical", "horizontal", "vertical", "horizontal"],
+        )
+        self.assertEqual(
+            [dimension["type"] for dimension in sketch_def["dimensions"]],
+            ["length", "length"],
+        )
+        self.assertEqual(sketch_def["dimensions"][0]["value"], 30)
+        self.assertEqual(sketch_def["dimensions"][1]["value"], "polygon_width")
+        self.assertEqual(mitcad["commands"][-1]["def"]["type"], "extrude")
 
     def test_face_boundary_chamfer_keeps_semantic_selector_and_placement(self):
         shape = Box(
