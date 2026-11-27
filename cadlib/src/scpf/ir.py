@@ -2576,6 +2576,27 @@ class FeatureRefIR:
 
 
 @dataclass(frozen=True)
+class NamedFeatureIR:
+    """Public semantic name/state for one exact authored history feature."""
+
+    name: str
+    feature: FeatureRefIR
+    suppressed: bool = False
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.name, str)
+            or not self.name.isidentifier()
+            or self.name.startswith("_")
+        ):
+            raise ValueError("NamedFeatureIR name must be public identity")
+        if not isinstance(self.feature, FeatureRefIR):
+            raise ValueError("NamedFeatureIR feature must be FeatureRefIR")
+        if not isinstance(self.suppressed, bool):
+            raise ValueError("NamedFeatureIR suppressed must be bool")
+
+
+@dataclass(frozen=True)
 class ParameterColumnIR:
     """One configured public parameter column."""
 
@@ -2734,7 +2755,7 @@ class ConfigurationRowIR:
 
 @dataclass(frozen=True)
 class ConfigurationIR:
-    """Complete current-public configuration table and rule semantics."""
+    """Current public final-model configuration table semantics."""
 
     active: str
     columns: tuple[ConfigurationColumnIR, ...]
@@ -2823,6 +2844,7 @@ class ModelIR:
     root: IRNode
     parameters: tuple[ParameterIR, ...]
     configuration: ConfigurationIR | None = None
+    named_features: tuple[NamedFeatureIR, ...] = ()
 
     def __post_init__(self):
         if (
@@ -2832,6 +2854,17 @@ class ModelIR:
             raise ValueError(
                 "ModelIR configuration must be ConfigurationIR or None"
             )
+        if (
+            not isinstance(self.named_features, tuple)
+            or any(
+                not isinstance(feature, NamedFeatureIR)
+                for feature in self.named_features
+            )
+        ):
+            raise ValueError("ModelIR named_features must be NamedFeatureIR")
+        names = [feature.name for feature in self.named_features]
+        if len(set(names)) != len(names):
+            raise ValueError("ModelIR named feature names must be unique")
 
 
 @dataclass(frozen=True)
@@ -5226,6 +5259,9 @@ def _normalize_node(shape: Shape) -> IRNode:
     if shape.kind == "exported_feature":
         source, _name = shape.data
         return _normalize_node(source)
+    if shape.kind == "named_feature":
+        source, _name, _suppressed = shape.data
+        return _normalize_node(source)
 
     sheet = _portable_sheet(shape)
     if sheet is not None:
@@ -5373,6 +5409,15 @@ def _pattern_authored_feature_ref(
     if design is feature:
         return FeatureRefIR(path=path)
 
+    if design.kind in {"exported_feature", "named_feature"}:
+        source = design.data[0]
+        return _pattern_authored_feature_ref(
+            source,
+            root,
+            feature,
+            path=path,
+        )
+
     if (
         isinstance(root, (HoleIR, PlasticFeatureIR, BooleanIR))
         and design.kind in {"union", "difference", "intersection"}
@@ -5444,6 +5489,15 @@ def _boolean_authored_feature_ref(
     path: tuple[str, ...] = ("root",),
 ) -> FeatureRefIR | None:
     """Map authored CSG object identity to typed semantic history roles."""
+    if design is feature:
+        return FeatureRefIR(path=path)
+    if design.kind in {"exported_feature", "named_feature"}:
+        return _boolean_authored_feature_ref(
+            design.data[0],
+            root,
+            feature,
+            path=path,
+        )
     if design.kind not in {"union", "difference", "intersection"}:
         return None
 
@@ -5559,14 +5613,15 @@ def _configuration_expression_ir(value) -> ConfigurationExpressionIR:
 
 
 def _normalize_configuration(configured, feature_resolver) -> ConfigurationIR:
-    """Normalize complete current-public table/rule semantics."""
+    """Normalize the v0.26 final-model configuration table semantics."""
     from .configurations import (
-        _AlwaysCondition,
-        _ConfigurationRule,
-        _DriveParameterEffect,
+        _Configuration,
         _ParameterColumn,
         _SuppressionColumn,
     )
+
+    if not isinstance(configured, _Configuration):
+        raise TypeError("configuration normalization requires _Configuration")
 
     columns = []
     for column in configured.columns:
@@ -5605,40 +5660,11 @@ def _normalize_configuration(configured, feature_resolver) -> ConfigurationIR:
             )
         )
 
-    rules = []
-    for rule in configured.rules:
-        if not isinstance(rule, _ConfigurationRule):
-            raise ValueError(
-                "configuration rule is outside current public grammar"
-            )
-        if not isinstance(rule.condition, _AlwaysCondition):
-            raise ValueError(
-                "configuration rule condition is outside public grammar"
-            )
-        if not isinstance(rule.effect, _DriveParameterEffect):
-            raise ValueError(
-                "configuration rule effect is outside public grammar"
-            )
-        rules.append(
-            ConfigurationRuleIR(
-                id=rule.id,
-                name=rule.name,
-                enabled=rule.enabled,
-                condition=AlwaysConditionIR(),
-                effect=DriveParameterEffectIR(
-                    parameter=rule.effect.parameter.name,
-                    expression=_configuration_expression_ir(
-                        rule.effect.expression
-                    ),
-                ),
-            )
-        )
-
     return ConfigurationIR(
         active=configured.active,
         columns=tuple(columns),
         rows=tuple(rows),
-        rules=tuple(rules),
+        rules=(),
     )
 
 
@@ -5722,44 +5748,80 @@ def _assembly_configuration_feature_ref(
     )
 
 
+def _named_feature_ir(design: Shape, root: IRNode) -> tuple[NamedFeatureIR, ...]:
+    """Collect public feature() identity/state without backend-native names."""
+    found = []
+
+    def visit(value):
+        if isinstance(value, Shape):
+            if value.kind == "named_feature":
+                _source, name, suppressed = value.data
+                reference = _configuration_feature_ref(
+                    design,
+                    value,
+                    root,
+                )
+                found.append(
+                    NamedFeatureIR(
+                        name=name,
+                        feature=reference,
+                        suppressed=suppressed,
+                    )
+                )
+                visit(value.data[0])
+                return
+            visit(value.data)
+            return
+        if isinstance(value, (tuple, list)):
+            for item in value:
+                visit(item)
+
+    visit(design)
+    return tuple(found)
+
+
 def normalize_configured_design(
-    configured,
-) -> ModelIR | ConfiguredDesignIR | None:
-    """Normalize current-public Configure semantics over Shape or Assembly."""
-    from .configurations import _ConfiguredDesign
+    design,
+) -> ModelIR | ConfiguredDesignIR:
+    """Normalize v0.26 final-model configuration over Shape or Assembly."""
+    from .configurations import _Configuration
     from .model_objects import Assembly, ModelInstance
 
-    if not isinstance(configured, _ConfiguredDesign):
+    configured = getattr(design, "_configuration", None)
+    if not isinstance(configured, _Configuration):
         raise TypeError(
-            "configured Forge IR normalization requires _ConfiguredDesign"
+            "configured Forge IR normalization requires final-model configuration"
         )
 
-    if isinstance(configured.design, Shape):
-        root = _normalize_node(configured.design)
+    if isinstance(design, Shape):
+        root = _normalize_node(design)
         if isinstance(root, LegacyShapeIR):
-            return None
+            raise ValueError(
+                "configured design is outside the qualified portable IR slice"
+            )
         configuration = _normalize_configuration(
             configured,
             lambda feature: _configuration_feature_ref(
-                configured.design,
+                design,
                 feature,
                 root,
             ),
         )
         return ModelIR(
             root=root,
-            parameters=_parameter_ir(configured.design),
+            parameters=_parameter_ir(design),
             configuration=configuration,
+            named_features=_named_feature_ir(design, root),
         )
 
-    if isinstance(configured.design, (ModelInstance, Assembly)):
+    if isinstance(design, (ModelInstance, Assembly)):
         from .assembly_ir import normalize_assembly
 
-        assembly_ir = normalize_assembly(configured.design)
+        assembly_ir = normalize_assembly(design)
         configuration = _normalize_configuration(
             configured,
             lambda feature: _assembly_configuration_feature_ref(
-                configured.design,
+                design,
                 assembly_ir,
                 feature,
             ),
@@ -5775,25 +5837,28 @@ def normalize_configured_design(
 
 
 def normalize_model(value) -> ModelIR | ConfiguredDesignIR:
-    """Normalize one Forge authored result into backend-independent semantic IR."""
-    from .configurations import _ConfiguredDesign
+    """Normalize one current Forge result into backend-independent semantic IR."""
+    from .model_objects import Assembly, ModelInstance
 
     if isinstance(value, Shape):
+        if getattr(value, "_configuration", None) is not None:
+            return normalize_configured_design(value)
+        root = _normalize_node(value)
         return ModelIR(
-            root=_normalize_node(value),
+            root=root,
             parameters=_parameter_ir(value),
+            named_features=(
+                _named_feature_ir(value, root)
+                if isinstance(root, BodyIR)
+                else ()
+            ),
         )
-    if isinstance(value, _ConfiguredDesign):
-        model = normalize_configured_design(value)
-        if model is None:
-            raise ValueError(
-                "configured design is outside the qualified portable IR slice"
-            )
-        return model
+    if isinstance(value, (ModelInstance, Assembly)):
+        if getattr(value, "_configuration", None) is not None:
+            return normalize_configured_design(value)
     raise TypeError(
-        "Forge IR normalization requires Shape or current-public configured design"
+        "Forge IR normalization requires Shape or configured ModelInstance/Assembly"
     )
-
 
 def normalize_shape(shape: Shape) -> ModelIR:
     """Normalize one Forge Shape into backend-independent semantic IR."""
@@ -5854,6 +5919,7 @@ __all__ = [
     "IRNode",
     "LegacyShapeIR",
     "ModelIR",
+    "NamedFeatureIR",
     "ParameterIR",
     "ParallelEdgeSetIR",
     "DirectionPairEdgeSetIR",
