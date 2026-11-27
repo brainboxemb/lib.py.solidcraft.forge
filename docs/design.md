@@ -1372,6 +1372,35 @@ bounds remain unchanged. The removed top-perimeter wedge is
 28788.32808 mm³. A separate backend contract test proves `flip=True` changes
 side ordering without changing the authored distances.
 
+#496 proves that a portable primitive remains generic when it enters feature
+composition. `ConeIR` already owns principal-axis frustum geometry and
+`PlacementIR` already owns its world-space anchor point; recursive `BooleanIR`
+therefore widens its bounded primitive operand set from Box/Cylinder/Sphere to
+Box/Cylinder/Sphere/Cone without introducing `ConeBooleanIR` or another CSG
+path.
+
+SolidCraft lowers the Cone operand with the same `_cone_command` used by the
+standalone #477 slice. The Boolean layer supplies only `new`, `join`, `cut` or
+`intersect`, so the emitted `solid.cone` remains compatible with stable Forge
+CSG spelling and keeps the existing Boolean source order.
+
+Mitcad uses the same helper-aware command group introduced for shifted Sphere.
+`_cone_commands` may emit a backend-private principal offset construction plane
+before one native Cone feature. `_boolean_command_plan` records the feature
+index returned by that command group, so `FeatureRefIR(("root", "tool"))`
+continues to mean the authored Cone tool rather than the support plane. The
+helper binding is derived deterministically from the semantic path (for example
+`csg_plane_root_tool`) but remains transport only.
+
+The runtime proof cuts a fully internal d10→0 × 20 Cone from a 30×30×30
+bottom-anchored Box. The Cone BOTTOM is at world Z=5, so Mitcad must emit an
+offset XY support plane at 5 mm followed by one native Cone with `operation=cut`.
+The outer Box bounds remain [-15,-15,0]..[15,15,30] and the remaining volume is
+`27000 - 500π/3`. A separate backend test exercises `join`; configuration
+mapping tests prove a suppressible Cone tool binds the native Cone feature even
+when its helper precedes it. The existing `cone-boolean` owner remains outside
+this checkpoint because it also contains Fillet history.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
