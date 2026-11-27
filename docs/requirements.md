@@ -257,6 +257,15 @@
 231. `SketchRectangularPatternIR` retains authored count/spacing/directions/alignment/reversal semantics and `SketchMirrorIR` retains local X/Y mirror-axis intent. Sketch pattern counts use the unitless/count Parameter role while spacings remain length-valued.
 232. SolidCraft and Sheet Metal must share the same SketchChainIR geometry lowering contract. SolidCraft may translate semantic Sketch entity refs to private `$sketch_*` bindings during lowering; existing backend limitations such as connected-profile pattern/mirror input fail closed without invalidating the typed graph.
 233. #560 completes the current public support-independent Sketch entity/operation semantic surface. Sketch support/reference frames, RegionIR composition and consuming Extrude/Revolve/Sheet Metal placement remain separate layers owned by later batches.
+234. Attached Sketch support is semantic `SketchSupportIR(target, parent)`; native face ids, body ids and backend support-plane references are forbidden from that node.
+235. `SketchIR` may retain one fixed finite XYZ rotation beside principal `PlaneIR` support. Backend-specific frame objects are derived only during lowering.
+236. `RegionIR` represents either compiler-resolved closed-profile membership or one authored fixed Sketch-local selector with exact/non-exact intent. It must not contain native curve/profile/region ids.
+237. General public `Sketch.extrude(..., profiles=..., exact_regions=...)` selection remains semantic even when Forge cannot reduce the selector to profile indexes before lowering; backends consume the same selector intent rather than re-reading raw Sketch authoring.
+238. `ExtrudeIR` owns semantic operation (`new_body`, `join`, `cut`), target BodyIR where applicable, positive/negative/symmetric finite extent and through-all cut intent. Attached join/cut support must reference the same semantic target as the Extrude.
+239. SolidCraft lowering of #561 accepted forms must remain document-compatible with the stable Sketch/Extrude compiler, including TOP face support, rectangular Box/Shell BOTTOM/CENTER/INNER_BOTTOM support, explicit world frames and exact-region/profile picks.
+240. Backend-derived Sketch origins, native face queries and profile picks are lowering transport only and must not be added to SketchSupportIR, SketchIR, RegionIR or ExtrudeIR.
+241. Mitcad may remain unsupported for newly typed support/frame/region/Extrude forms and must fail closed after frontend normalization rather than forcing valid public semantics back to LegacyShapeIR.
+242. #561 completes the current public Regions/profile-membership and Extrude semantic families; remaining placement/reference, Revolve and topology/modify gaps are tracked independently.
 
 ## SCPF native associativity
 

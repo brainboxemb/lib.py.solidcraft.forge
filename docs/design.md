@@ -1785,6 +1785,41 @@ This batch deliberately stops before support and consuming solid features.
 #561 composes this completed entity graph with attached/rotated Sketch support,
 RegionIR and Extrude semantics.
 
+#561 closes that consumer layer without putting native support ids or region ids
+into Forge IR. `SketchSupportIR` carries one semantic typed body target plus
+the authored parent anchor when a Sketch is attached. A standalone/world-frame
+Sketch keeps its principal `PlaneIR` and may additionally retain one fixed XYZ
+rotation. The frontend therefore records support/frame meaning once; SolidCraft
+may later derive a face query, principal offset plane or explicit native frame
+from that semantic data.
+
+Attached `Sketch(on=target, parent=...)` extrusion stays one authored body
+feature. `ExtrudeIR` now carries its semantic target, operation
+(`new_body`, `join`, or `cut`), finite direction/distance or through-all
+cut intent, and the same completed `SketchEntityGraphIR`. Attached support is
+required to reference the same typed target as the extrusion, so backend
+lowering cannot silently re-parent the Sketch.
+
+`RegionIR` now has two semantic representations. Where Forge can prove closed
+profile membership directly (for example the already-qualified concentric-circle
+and simple-polygon cases), it retains compiler-local boundary indexes. For the
+general public `profiles=[(u,v), ...]` selection contract, it retains the
+authored fixed Sketch-local selector and whether exact-region resolution was
+requested. Neither representation contains a SolidCraft profile id, curve id
+or Mitcad region id.
+
+SolidCraft lowering preserves the stable Sketch/Extrude document. TOP attached
+support is resolved through the native face-query path; BOTTOM/CENTER and
+INNER_BOTTOM derive their support plane from typed rectangular Box/Shell
+history. Explicit rotated/world frames use the existing native sketch-frame
+form. Backend-local Sketch-origin offsets and native profile picks are derived
+only while lowering. Mitcad may remain fail-closed for support/frame/region
+forms it does not yet implement.
+
+This batch completes the current public Region/profile-selection and Extrude
+semantic families. Broader datum/transform semantics, Revolve widening and
+modify-feature topology remain separate partial families.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are

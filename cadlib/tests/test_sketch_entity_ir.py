@@ -14,10 +14,12 @@ from scpf import (
 from scpf.backends.solidcraft import (
     _sketch_chain_geometry_commands,
     _solidcraft_sketch_graph_commands,
+    compile_ir as compile_solidcraft_ir,
 )
 from scpf.compiler import ModelError, _compile_shape_legacy_with_dependencies
 from scpf.core import Text2D
 from scpf.ir import (
+    ExtrudeIR,
     LegacyShapeIR,
     ParameterIR,
     SketchChainIR,
@@ -185,7 +187,14 @@ class SketchEntityIRTests(unittest.TestCase):
         cut = sketch.extrude(Depth.THROUGH_ALL)
         shape = board - cut
         normalized = normalize_shape(shape)
-        self.assertIsInstance(normalized.root, LegacyShapeIR)
+        self.assertIsInstance(normalized.root, ExtrudeIR)
+        self.assertTrue(normalized.root.through_all)
+        self.assertEqual(normalized.root.operation, "cut")
+        self.assertIs(normalized.root.sketch.graph, normalized.root.sketch.graph)
+        self.assertEqual(
+            normalized.root.sketch.graph.operations,
+            graph.operations,
+        )
         self.assertEqual(
             normalized.parameters,
             (
@@ -194,19 +203,13 @@ class SketchEntityIRTests(unittest.TestCase):
             ),
         )
 
-        legacy = _compile_shape_legacy_with_dependencies(
+        legacy_document = _compile_shape_legacy_with_dependencies(
             shape,
             "PatternBoard",
-        )[0]["commands"]
-        expected = [
-            row
-            for row in legacy
-            if row["command"].startswith("sketch.")
-            and row["command"] not in {"sketch.create", "sketch.finish"}
-        ]
+        )[0]
         self.assertEqual(
-            _solidcraft_sketch_graph_commands(graph),
-            expected,
+            compile_solidcraft_ir(normalized, "PatternBoard"),
+            legacy_document,
         )
 
     def test_connected_profile_pattern_is_typed_but_backend_fails_closed(self):

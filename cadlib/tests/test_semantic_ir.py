@@ -86,6 +86,7 @@ from scpf.ir import (
     ScalarLiteralIR,
     ScalarParameterRefIR,
     SketchIR,
+    TextEntityIR,
     SketchCoordinateDimensionIR,
     SketchLengthDimensionIR,
     SketchLineIR,
@@ -1363,10 +1364,10 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(pattern["alignment"], "left")
         self.assertTrue(pattern["reversed"])
 
-    def test_pattern_with_legacy_source_remains_legacy(self):
+    def test_pattern_with_text_extrude_source_is_typed_history(self):
         from scpf.core import Text2D
 
-        with Sketch(name="LegacyText", plane="XY") as sketch:
+        with Sketch(name="TypedText", plane="XY") as sketch:
             Text2D("A", height=8)
         source = sketch.extrude(5)
         body = source.rectangular_pattern(
@@ -1376,9 +1377,23 @@ class SemanticIRTests(unittest.TestCase):
             direction=Axis.X,
         )
         model = normalize_shape(body)
-        self.assertIsInstance(model.root, LegacyShapeIR)
+        self.assertIsInstance(model.root, RectangularPatternIR)
+        self.assertIsInstance(model.root.base, ExtrudeIR)
+        self.assertIsInstance(
+            model.root.base.sketch.graph.entities[0],
+            TextEntityIR,
+        )
+        pattern = next(
+            row["params"]
+            for row in compile_solidcraft_ir(
+                model,
+                "TypedTextPattern",
+            )["commands"]
+            if row["command"] == "solid.pattern.rectangular"
+        )
+        self.assertEqual(pattern["features"], ["Extrude1"])
         with self.assertRaises(ModelError):
-            compile_mitcad_ir(model, "LegacyPatternSource")
+            compile_mitcad_ir(model, "TypedTextPattern")
 
     def test_shell_is_semantic_body_history_with_face_set(self):
         wall = Parameter("wall", 2)
