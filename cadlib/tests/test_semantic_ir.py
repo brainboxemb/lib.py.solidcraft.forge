@@ -727,6 +727,32 @@ class SemanticIRTests(unittest.TestCase):
         self.assertIsInstance(model.root.tool, ExtrudeIR)
         self.assertNotIsInstance(model.root, LegacyShapeIR)
 
+    def test_boolean_feature_ref_recurses_through_typed_tool_history(self):
+        base = Box(30, 30, 10)
+        first = Cylinder(d=6, h=12)
+        second = Cylinder(d=4, h=12).move(x=8)
+        tool = first + second
+        design = base - tool
+
+        configured = Configure(
+            design,
+            active="Cut",
+            columns=(Suppress(second),),
+            rows={"Cut": (False,), "Keep": (True,)},
+        )
+        model = normalize_model(configured)
+
+        self.assertIsInstance(model.root, BooleanIR)
+        reference = model.configuration.columns[0].feature
+        self.assertEqual(
+            reference,
+            FeatureRefIR(path=("root", "tool", "tool")),
+        )
+        resolved = resolve_feature_ref(model.root, reference)
+        self.assertIsInstance(resolved, PlacementIR)
+        self.assertIsInstance(resolved.primitive, CylinderIR)
+
+
     def test_boolean_ir_rejects_non_body_operands_at_node_boundary(self):
         placed = normalize_shape(Box(10, 10, 10)).root
         legacy = LegacyShapeIR(
