@@ -22,7 +22,7 @@ sys.path.insert(0, str(ROOT / "modules/mitcad-reference/src"))
 sys.path.insert(0, str(ROOT / "modules/verification/src"))
 
 from cad_library_mitcad_reference import capture_runtime, git_blob_sha
-from scpf import Axis, AxisLine, Box, Circle2D, Parameter, Polygon2D, Sketch
+from scpf import Anchor, Axis, AxisLine, Box, Circle2D, Parameter, Polygon2D, Sketch, Sphere
 from scpf.backends.mitcad import compile_ir as compile_mitcad_ir
 from scpf.backends.mitcad_headless import run_document, run_saved_configuration
 from scpf.ir import normalize_shape
@@ -305,6 +305,66 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             for actual, expected in zip(
                 polygon_body["bbox"]["max"],
                 [10.0, 5.0, 5.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
+            sphere_radius = Parameter("sphere_radius", 10)
+            sphere_top_z = Parameter("sphere_top_z", 25)
+            placed_sphere_document = compile_mitcad_ir(
+                normalize_shape(
+                    Sphere(sphere_radius).at(
+                        3,
+                        4,
+                        sphere_top_z,
+                        anchor=Anchor.TOP,
+                    )
+                ),
+                "PlacedSphere",
+            )
+            placed_sphere_plane = next(
+                row
+                for row in placed_sphere_document["commands"]
+                if row.get("def", {}).get("type") == "construction_plane"
+            )
+            placed_sphere_def = placed_sphere_document["commands"][-1]["def"]
+            plane_distance = str(
+                placed_sphere_plane["def"]["definition"]["distance"]
+            )
+            self.assertIn("sphere_top_z", plane_distance)
+            self.assertIn("sphere_radius", plane_distance)
+            self.assertEqual(
+                placed_sphere_def["plane"],
+                {"ref": "sphere_plane.uid"},
+            )
+            self.assertEqual(placed_sphere_def["center"], [3, 4])
+            self.assertIn(
+                "sphere_radius",
+                str(placed_sphere_def["diameter"]),
+            )
+
+            placed_sphere_native = run_document(
+                placed_sphere_document,
+                save=root / "out/placed-sphere.mitcad",
+                export=root / "out/placed-sphere.stl",
+                executable=str(executable),
+                work_dir=root / "placed-sphere-workspace",
+            )
+            self.assertEqual(len(placed_sphere_native["bodies"]), 1)
+            placed_sphere_body = placed_sphere_native["bodies"][0]
+            self.assertEqual(placed_sphere_body["kind"], "solid")
+            self.assertAlmostEqual(
+                placed_sphere_body["volume"],
+                4000.0 * pi / 3.0,
+                places=3,
+            )
+            for actual, expected in zip(
+                placed_sphere_body["bbox"]["min"],
+                [-7.0, -6.0, 5.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                placed_sphere_body["bbox"]["max"],
+                [13.0, 14.0, 25.0],
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
@@ -796,6 +856,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "topology-face-boundary-box.stl",
                 "parameterized-polygon-revolve.mitcad",
                 "parameterized-polygon-revolve.stl",
+                "placed-sphere.mitcad",
+                "placed-sphere.stl",
                 "three-circle-exact-region.mitcad",
                 "three-circle-exact-region.stl",
                 "parameterized-polygon-extrude.mitcad",
@@ -828,6 +890,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"parameterized_polygon_revolve_volume={polygon_body['volume']}",
                         f"parameterized_polygon_revolve_bbox={polygon_body['bbox']}",
                         "parameterized_polygon_coordinate_relations=pass",
+                        f"placed_sphere_volume={placed_sphere_body['volume']}",
+                        f"placed_sphere_bbox={placed_sphere_body['bbox']}",
+                        "placed_sphere_parameterized_anchor=pass",
                         f"three_circle_exact_region_volume={three_circle_body['volume']}",
                         f"three_circle_exact_region_bbox={three_circle_body['bbox']}",
                         "three_circle_exact_region_membership=pass",
