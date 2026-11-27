@@ -444,6 +444,144 @@ class SemanticIRTests(unittest.TestCase):
         self.assertEqual(configured_feature["def"]["operation"], "cut")
         self.assertNotEqual(helper, configured_feature)
 
+    def test_offset_cone_csg_reuses_boolean_ir_and_backend_lowering(self):
+        cone = Cone(
+            d=10,
+            top_d=0,
+            h=20,
+            anchor=Anchor.BOTTOM,
+        ).at(
+            0,
+            0,
+            5,
+            anchor=Anchor.BOTTOM,
+        )
+        shape = Box(30, 30, 30, anchor=Anchor.BOTTOM) - cone
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "OffsetConeCut",
+        )
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertIsInstance(model.root.tool, PlacementIR)
+        self.assertIsInstance(model.root.tool.primitive, ConeIR)
+        self.assertEqual(model.root.tool.point, (0, 0, 5))
+        self.assertEqual(model.root.tool.anchor, (0, 0, -1))
+
+        solidcraft = compile_solidcraft_ir(model, "OffsetConeCut")
+        geometry = [
+            row
+            for row in solidcraft["commands"]
+            if row["command"] in {"solid.box", "solid.cone"}
+        ]
+        self.assertEqual(
+            [row["command"] for row in geometry],
+            ["solid.box", "solid.cone"],
+        )
+        self.assertEqual(geometry[0]["params"]["operation"], "new")
+        self.assertEqual(geometry[1]["params"]["operation"], "cut")
+        self.assertEqual(geometry[1]["params"]["base"], [0, 0, 5])
+        self.assertEqual(geometry[1]["params"]["targets"], ["OffsetConeCut"])
+
+        mitcad = compile_mitcad_ir(model, "OffsetConeCut")
+        features = [
+            row
+            for row in mitcad["commands"]
+            if row["cmd"] == "add_feature"
+        ]
+        self.assertEqual(
+            [row["def"]["type"] for row in features],
+            ["box", "construction_plane", "cone"],
+        )
+        self.assertEqual(features[1]["as"], "csg_plane_root_tool")
+        self.assertEqual(
+            features[1]["def"]["definition"]["distance"],
+            5,
+        )
+        self.assertEqual(
+            features[2]["def"]["plane"],
+            {"ref": "csg_plane_root_tool.uid"},
+        )
+        self.assertEqual(features[2]["def"]["operation"], "cut")
+
+    def test_offset_cone_configuration_binds_feature_not_helper(self):
+        cone = Cone(
+            d=10,
+            top_d=0,
+            h=20,
+            anchor=Anchor.BOTTOM,
+        ).at(
+            0,
+            0,
+            5,
+            anchor=Anchor.BOTTOM,
+        )
+        body = Box(30, 30, 30, anchor=Anchor.BOTTOM) - cone
+        configured = Configure(
+            body,
+            active="Cut",
+            columns=(Suppress(cone),),
+            rows={
+                "Cut": (False,),
+                "Uncut": (True,),
+            },
+        )
+
+        model = normalize_model(configured)
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertEqual(
+            model.configuration.columns[0].feature,
+            FeatureRefIR(path=("root", "tool")),
+        )
+
+        mitcad = compile_mitcad_ir(model, "ConfiguredConeCut")
+        helper = next(
+            row
+            for row in mitcad["commands"]
+            if row.get("as") == "csg_plane_root_tool"
+        )
+        self.assertEqual(helper["def"]["type"], "construction_plane")
+        configured_feature = next(
+            row
+            for row in mitcad["commands"]
+            if row.get("as") == "configured_feature"
+        )
+        self.assertEqual(configured_feature["def"]["type"], "cone")
+        self.assertEqual(configured_feature["def"]["operation"], "cut")
+        self.assertNotEqual(helper, configured_feature)
+
+    def test_cone_boolean_join_uses_existing_operation_semantics(self):
+        cone = Cone(
+            d=8,
+            top_d=2,
+            h=10,
+            anchor=Anchor.BOTTOM,
+        )
+        shape = Box(20, 20, 10, anchor=Anchor.BOTTOM) + cone
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "ConeJoin",
+        )
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertIsInstance(model.root.tool.primitive, ConeIR)
+
+        solidcraft = compile_solidcraft_ir(model, "ConeJoin")
+        cone_command = next(
+            row
+            for row in solidcraft["commands"]
+            if row["command"] == "solid.cone"
+        )
+        self.assertEqual(cone_command["params"]["operation"], "join")
+
+        mitcad = compile_mitcad_ir(model, "ConeJoin")
+        cone_feature = next(
+            row
+            for row in mitcad["commands"]
+            if row.get("def", {}).get("type") == "cone"
+        )
+        self.assertEqual(cone_feature["def"]["operation"], "join")
+
     def test_circle_extrude_is_separate_sketch_region_and_extrude_ir(self):
         diameter = Parameter("diameter", 20)
         height = Parameter("height", 30)
