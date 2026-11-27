@@ -196,6 +196,60 @@ def run_reopen_boundaries(
             "saved": final.exists(),
         }
 
+    # Phase 6 contains both the contour-flange creation and the read-only
+    # model.faces query. Split once inside that phase to prove whether reopening
+    # the freshly created sheet body itself is sufficient.
+    if (
+        len(native_chunks) >= 7
+        and len(native_chunks[5]) == 2
+        and native_chunks[5][0]["command"] == "sheet.flange"
+        and native_chunks[5][1]["command"] == "model.faces"
+    ):
+        case = boundary_root / "after-sheet-flange"
+        case.mkdir(parents=True, exist_ok=True)
+        checkpoint = case / "checkpoint.sc"
+        final = case / "final.sc"
+        prefix_commands = [
+            *[
+                command
+                for chunk in native_chunks[:5]
+                for command in chunk
+            ],
+            native_chunks[5][0],
+        ]
+        suffix_commands = [
+            native_chunks[5][1],
+            *[
+                command
+                for chunk in native_chunks[6:]
+                for command in chunk
+            ],
+        ]
+        prefix = _run_cli_document(
+            cli,
+            prefix_commands,
+            case / "prefix.json",
+            checkpoint,
+        )
+        if prefix.returncode != 0:
+            results["after_sheet_flange"] = {
+                "status": "prefix-fail",
+                "stderr": prefix.stderr,
+            }
+        else:
+            suffix = _run_cli_document(
+                cli,
+                suffix_commands,
+                case / "suffix.json",
+                final,
+                input_design=checkpoint,
+            )
+            results["after_sheet_flange"] = {
+                "status": "pass" if suffix.returncode == 0 else "fail",
+                "stderr": suffix.stderr,
+                "saved": final.exists(),
+            }
+
     return results
 
 
