@@ -320,6 +320,19 @@
 289. Forge must not add Shape body rotation, scale, transform matrices or arbitrary affine APIs merely to complete the Placement/transforms IR family; those are not current public SCPF body semantics.
 290. #598 completes the current working public Placement and transforms semantic family independently from backend coverage; any future general body-transform API is a new public contract rather than missing current IR.
 
+291. The current public configuration semantic contract applies to Shape, ModelInstance and Assembly targets and uses one shared ConfigurationIR table/rule schema independent from backend-native configuration identity.
+292. ConfigurationIR columns are ordered heterogeneous ParameterColumnIR or SuppressionColumnIR values. ParameterColumnIR stores the configured public parameter name; SuppressionColumnIR stores semantic feature identity only.
+293. Shape suppression identity is FeatureRefIR. Exported reusable-component suppression identity is the existing ComponentFeatureRefIR definition/name pair from AssemblyIR. A raw Shape suppression target that resolves uniquely inside an Assembly definition uses DefinitionFeatureRefIR(definition, feature) rather than occurrence/native ids.
+294. ConfigurationRowIR preserves authored row order and name. Each parameter-column cell is ParameterCellIR containing the already-normalized non-empty public expression/value text; each suppression-column cell is bool. Active configuration names one declared row.
+295. The current public configuration-rule grammar is exactly ConfigRule(id,name,enabled, condition=Always(), effect=DriveParameter(...)). Semantic IR represents that grammar through ConfigurationRuleIR, AlwaysConditionIR and DriveParameterEffectIR and must not invent additional condition/effect types.
+296. ConfigurationExpressionIR preserves the authored DriveParameter expression text plus deterministic Parameter dependency names. Parameter/Expression inputs retain typed scalar_ir when available; opaque authored string input remains public configuration-expression text and is not parsed into invented CAD semantics.
+297. ConfigurationIR must validate that every rule target is also a ParameterColumnIR and retain unique authored rule ids/order. Frontend validation for duplicate columns, row arity/cell types, active row and public rule grammar remains source compatible.
+298. A configured Shape may remain ModelIR(configuration=ConfigurationIR). A configured ModelInstance or Assembly is represented by ConfiguredDesignIR containing the existing AssemblyIR plus the same ConfigurationIR; configuration semantics must not duplicate AssemblyIR definitions/occurrences.
+299. Semantic configuration identity must contain no native configuration row ids, replay variable names, browser labels, native feature ids, command indexes or occurrence process ids.
+300. Feature identity resolution for suppression must happen during semantic normalization. Missing/non-member or ambiguous raw component Shape features are semantic errors; exported component feature references must belong to a definition present in the configured AssemblyIR.
+301. Backend lowering completeness is independent from configuration IR completeness. Existing SolidCraft compatibility behavior may remain qualified separately, and Mitcad may fail closed for unsupported typed configuration combinations; new typed backend paths must not recover semantics by rereading raw _ConfiguredDesign or raw Shape/component authoring objects.
+302. #605 completes the current public Feature identity/suppression/configuration semantic family and therefore the tracked 20-family IR migration. 20/20 semantic completeness does not imply Mitcad parity or native lowering support for every typed combination.
+
 ## SCPF native associativity
 
 1. When SolidCraft exposes a durable native reference for editable intent, Forge
