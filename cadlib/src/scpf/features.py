@@ -96,13 +96,12 @@ def _is_feature_tree(shape):
         "sheet_path_flange",
         "sheet_perforate",
         "sheet_fold",
-        "body_move",
     ):
         return True
     if shape.kind in (
         "fillet", "chamfer", "shell", "union", "difference", "intersection",
         "material_assignment", "appearance_assignment",
-        "rectangular_pattern", "circular_pattern", "body_move",
+        "rectangular_pattern", "circular_pattern",
     ):
         return True
     return False
@@ -463,29 +462,6 @@ def _vector(values, label):
     if concrete == [0, 0, 0]:
         raise ModelError(f"{label} cannot be the zero vector")
     return concrete
-
-
-def _body_move_command(
-    name,
-    *,
-    translate=None,
-    origin=None,
-    axis=None,
-    angle=None,
-):
-    """Lower one real SolidCraft Move/Copy history feature."""
-    params = {"bodies": [name]}
-    if translate is not None:
-        params["translate"] = [
-            command_value(value) for value in translate
-        ]
-    if angle is not None:
-        params["origin"] = [
-            command_value(value) for value in origin
-        ]
-        params["axis"] = _vector(axis, "body move axis")
-        params["angle"] = command_value(angle)
-    return _command("solid.move", **params)
 
 
 def _plastic_feature_command(feature, position, name):
@@ -1312,14 +1288,6 @@ def _non_count_parameter_names(node, found=None):
             _non_count_parameter_names(original, found)
             _non_count_parameter_names((axis, alignment, reversed), found)
             return found
-        if node.kind == "body_move":
-            original, translate, origin, axis, _angle = node.data
-            _non_count_parameter_names(original, found)
-            _non_count_parameter_names(
-                (translate, origin, axis),
-                found,
-            )
-            return found
         if node.kind == "sketch_base_revolve":
             (
                 sketch_name,
@@ -1492,12 +1460,6 @@ def _pattern_angle_parameter_names(node, found=None):
             found.update(param.name for param in parameters_in(angle))
             _pattern_angle_parameter_names(original, found)
             return found
-        if node.kind == "body_move":
-            original, _translate, _origin, _axis, angle = node.data
-            if isinstance(angle, Parameter):
-                found.add(angle.name)
-            _pattern_angle_parameter_names(original, found)
-            return found
         _pattern_angle_parameter_names(node.data, found)
     elif isinstance(node, (tuple, list)):
         for item in node:
@@ -1645,7 +1607,6 @@ def _named_feature_parent(shape):
         "sheet_hem",
         "sheet_path_flange",
         "sheet_perforate",
-        "body_move",
     ):
         return shape.data[0]
     return None
@@ -1704,19 +1665,6 @@ def _to_commands(shape, name):
         return _to_commands(shape.data[0], name)
     if shape.kind == "sketch_open_chain":
         return compile_open_chain(shape)
-
-    if shape.kind == "body_move":
-        original, translate, origin, axis, angle = shape.data
-        steps, base = _to_commands(original, name)
-        return steps + [
-            _body_move_command(
-                name,
-                translate=translate,
-                origin=origin,
-                axis=axis,
-                angle=angle,
-            )
-        ], base
 
     if shape.kind == "sheet_contour_flange":
         (
@@ -2074,32 +2022,6 @@ def _to_commands(shape, name):
     if shape.kind in ("union", "difference", "intersection"):
         original, added = shape.data
         steps, base = _to_commands(original, name)
-
-        moved_child = None
-        if shape.kind == "union":
-            if added.kind == "body_move":
-                moved_child = added
-            elif (
-                added.kind == "named_feature"
-                and added.data[0].kind == "body_move"
-            ):
-                moved_child = added
-        if moved_child is not None:
-            move_index = 1 + sum(
-                command["command"] == "solid.combine"
-                for command in steps
-            )
-            tool_name = f"{name} MoveTool{move_index}"
-            moved_steps, _ = _to_commands(moved_child, tool_name)
-            return steps + moved_steps + [
-                _command(
-                    "solid.combine",
-                    target=name,
-                    tools=[tool_name],
-                    operation="join",
-                )
-            ], base
-
         feature_name = None
         named_state = None
         if added.kind == "named_feature":
@@ -2205,7 +2127,7 @@ def compile_features(shape, name):
     root = shape
     while root.kind in (
         "exported_feature", "named_feature", "fillet", "chamfer", "shell", "union", "difference",
-        "material_assignment", "appearance_assignment", "body_move",
+        "material_assignment", "appearance_assignment",
     ):
         root = root.data[0]
     if root.kind == "sketch_base_extrusion":
