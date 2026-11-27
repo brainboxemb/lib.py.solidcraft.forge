@@ -1,0 +1,172 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "expression": "40",
+        "name": "coupler_width",
+        "unit": "mm"
+      }
+    },
+    {
+      "bind": {
+        "$left": "occurrence"
+      },
+      "command": "component.create",
+      "params": {
+        "grounded": true,
+        "name": "FeatureCoupler"
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "body_name": "FeatureCoupler",
+        "corner": [
+          "-coupler_width / 2",
+          -12.0,
+          0
+        ],
+        "height": 12.0,
+        "length": "coupler_width",
+        "width": 24.0
+      }
+    },
+    {
+      "bind": {
+        "$config_name_2": "name"
+      },
+      "command": "solid.hole",
+      "params": {
+        "diameter": 5,
+        "position": [
+          0.0,
+          0.0,
+          12.0
+        ],
+        "targets": [
+          "FeatureCoupler"
+        ]
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "bind": {
+        "$right": "occurrence"
+      },
+      "command": "occurrence.copy",
+      "params": {
+        "component": "FeatureCoupler",
+        "translate": [
+          50.0,
+          0.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "command": "occurrence.move",
+      "params": {
+        "move_grounded": true,
+        "occurrence": "$left",
+        "translate": [
+          -50,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "$config_name_2"
+        ],
+        "params": [
+          "coupler_width"
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$config_row_5263293fc202": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Small"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Small"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Small",
+        "values": {
+          "param:coupler_width": "30 mm",
+          "suppress:$config_name_2": "true"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_8e588cd18774": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Medium"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Medium",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:$config_name_2": "true"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_ab80540d98d2": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Large"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Large",
+        "values": {
+          "param:coupler_width": "40 mm",
+          "suppress:$config_name_2": "false"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "$config_row_8e588cd18774"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ],
+  "format": "scpf-replay",
+  "version": 2
+}

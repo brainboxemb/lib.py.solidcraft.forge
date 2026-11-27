@@ -1,0 +1,64 @@
+{
+  "commands": [
+    {
+      "command": "parameters.add",
+      "params": {
+        "name": "coupler_width",
+        "expression": "40",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "component.create",
+      "params": {
+        "name": "FeatureCoupler",
+        "grounded": true
+      }
+    },
+    {
+      "command": "solid.box",
+      "params": {
+        "length": "coupler_width",
+        "width": 24.0,
+        "height": 12.0,
+        "corner": [
+          "-coupler_width / 2",
+          -12.0,
+          0
+        ],
+        "body_name": "FeatureCoupler"
+      }
+    },
+    {
+      "command": "solid.hole",
+      "params": {
+        "position": [
+          0.0,
+          0.0,
+          12.0
+        ],
+        "targets": [
+          "FeatureCoupler"
+        ],
+        "diameter": 5
+      }
+    },
+    {
+      "command": "component.activate",
+      "params": {
+        "component": "root"
+      }
+    },
+    {
+      "command": "occurrence.copy",
+      "params": {
+        "component": "FeatureCoupler",
+        "translate": [
+          50.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  ]
+}

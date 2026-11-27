@@ -1,0 +1,513 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "9445c2a0f50b11ca70d7a55b8b3d707f205817f8d48e67e782876f02698bf1c7",
+          "size": 2395
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "FeatureCoupler",
+                "max": [
+                  -30.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  -70.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -30.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  -70.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FeatureCoupler (FeatureCoupler:2)",
+                "max": [
+                  70.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  30.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  70.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  30.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "coupler_width": 40.0
+          },
+          "expected": {
+            "coupler_width": 40.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/small/model.sc",
+          "sha256": "ace75f185c50ca53bad2e6f858aee05d136cd0f15c6c81b620f70e426d3b26f5",
+          "size": 4610
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/small/measurements.json",
+          "sha256": "4809a6eba31525cd9bf7f002fffda0df26c2ce7c2abd053bc794c62f3911100e",
+          "size": 2383
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "FeatureCoupler",
+                "max": [
+                  -35.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  -65.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -35.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  -65.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            },
+            {
+              "actual": {
+                "label": "FeatureCoupler (FeatureCoupler:2)",
+                "max": [
+                  65.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  35.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  65.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  35.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "parameters": {
+          "actual": {
+            "coupler_width": 30.0
+          },
+          "expected": {
+            "coupler_width": 30.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_small",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/large/model.sc",
+          "sha256": "95699c858aba6a277ac3dbf20012539d00f21bf69f3c2ce1f889e136934719a1",
+          "size": 7887
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/large/measurements.json",
+          "sha256": "f701998228f4f89d36fda178154f3fce6bcde40e5bc367800616909387b7014d",
+          "size": 2539
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 2,
+          "expected": 2,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 2,
+          "expected_count": 2,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "FeatureCoupler",
+                "max": [
+                  -30.0,
+                  12.0,
+                  12.000000000000002
+                ],
+                "min": [
+                  -70.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  -30.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  -70.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 1.7763568394002505e-15
+            },
+            {
+              "actual": {
+                "label": "FeatureCoupler (FeatureCoupler:2)",
+                "max": [
+                  70.0,
+                  12.0,
+                  12.000000000000002
+                ],
+                "min": [
+                  30.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  70.0,
+                  12.0,
+                  12.0
+                ],
+                "min": [
+                  30.0,
+                  -12.0,
+                  0.0
+                ]
+              },
+              "max_delta": 1.7763568394002505e-15
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.001,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 235.61944901923198,
+                "baseline": 11519.999999999996,
+                "mutated": 11284.380550980764
+              },
+              "expected": {
+                "absolute_delta_gt": 1.0
+              },
+              "label": "SolidCraft saved design change child-feature-geometry",
+              "pass": true
+            },
+            "id": "child-feature-geometry",
+            "path": [
+              "bodies",
+              0,
+              "volume_mm3"
+            ]
+          }
+        ],
+        "parameters": {
+          "actual": {
+            "coupler_width": 40.0
+          },
+          "expected": {
+            "coupler_width": 40.0
+          },
+          "label": "SolidCraft parameters",
+          "pass": true
+        }
+      },
+      "id": "saved_design_large",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "inspections/table/results.json",
+          "sha256": "8d1b27deaa47584bcdd46be252a63c89993d328f8e133f020d59d94b250f48f5",
+          "size": 1040
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "checks": [
+          {
+            "comparison": {
+              "actual": 3,
+              "expected": 3,
+              "label": "SolidCraft inspection check rows",
+              "pass": true
+            },
+            "id": "rows",
+            "path": [
+              0,
+              "rows"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": 2,
+              "expected": 2,
+              "label": "SolidCraft inspection check columns",
+              "pass": true
+            },
+            "id": "columns",
+            "path": [
+              0,
+              "columns"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "Medium",
+              "expected": "Medium",
+              "label": "SolidCraft inspection check active",
+              "pass": true
+            },
+            "id": "active",
+            "path": [
+              0,
+              "active"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": true,
+              "expected": true,
+              "label": "SolidCraft inspection check matches",
+              "pass": true
+            },
+            "id": "matches",
+            "path": [
+              0,
+              "matches"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "30 mm",
+              "expected": "30 mm",
+              "label": "SolidCraft inspection check small-width",
+              "pass": true
+            },
+            "id": "small-width",
+            "path": [
+              0,
+              "rows",
+              0,
+              "values",
+              "param:coupler_width"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "40 mm",
+              "expected": "40 mm",
+              "label": "SolidCraft inspection check medium-width",
+              "pass": true
+            },
+            "id": "medium-width",
+            "path": [
+              0,
+              "rows",
+              1,
+              "values",
+              "param:coupler_width"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "40 mm",
+              "expected": "40 mm",
+              "label": "SolidCraft inspection check large-width",
+              "pass": true
+            },
+            "id": "large-width",
+            "path": [
+              0,
+              "rows",
+              2,
+              "values",
+              "param:coupler_width"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "true",
+              "expected": "true",
+              "label": "SolidCraft inspection check small-suppression",
+              "pass": true
+            },
+            "id": "small-suppression",
+            "path": [
+              0,
+              "rows",
+              0,
+              "values",
+              "suppress:Hole1"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "true",
+              "expected": "true",
+              "label": "SolidCraft inspection check medium-suppression",
+              "pass": true
+            },
+            "id": "medium-suppression",
+            "path": [
+              0,
+              "rows",
+              1,
+              "values",
+              "suppress:Hole1"
+            ]
+          },
+          {
+            "comparison": {
+              "actual": "false",
+              "expected": "false",
+              "label": "SolidCraft inspection check large-suppression",
+              "pass": true
+            },
+            "id": "large-suppression",
+            "path": [
+              0,
+              "rows",
+              2,
+              "values",
+              "suppress:Hole1"
+            ]
+          }
+        ]
+      },
+      "id": "inspection_table",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/configuration-child-feature/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "configuration-child-feature"
+}

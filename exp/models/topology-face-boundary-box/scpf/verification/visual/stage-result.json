@@ -1,0 +1,10 @@
+{
+  "adapter": "solidcraft-visual",
+  "id": "topology-face-boundary-box--scpf",
+  "implementation": "scpf",
+  "owner": "topology-face-boundary-box",
+  "schema": 1,
+  "stage_id": "visual",
+  "status": "pass",
+  "verification_runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.6"
+}
