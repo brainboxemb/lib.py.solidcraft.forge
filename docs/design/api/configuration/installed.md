@@ -148,10 +148,35 @@ Therefore a Forge `with feature("Installed", ...)` scope must not be assumed
 to lower directly to one SolidCraft configuration target when it contains
 several native history features.
 
-## 5. Working SolidCraft fallback already proved
+## 5. Preferred SolidCraft lowering when possible
 
-The earlier `configuration-installed-fanout` probe proves one SolidCraft 0.49
-mechanism that does provide one independent Installed control:
+The `configuration-installed-single-feature` probe proves a simpler native
+route when Installed can truthfully be authored as one multi-object history
+operation:
+
+~~~text
+one Installed control
+        |
+        v
+one real Installed feature
+        |
+        +--> left body
+        +--> right body
+~~~
+
+The corrected probe passed on CI run **46017873210** (run 959).
+
+For example, one native `solid.move` feature can move several bodies in the
+same history step. SolidCraft can configure and suppress that one feature
+directly.
+
+This should be preferred over invented driver parameters when the actual CAD
+operation is genuinely one feature.
+
+## 6. Fallback when several native features are genuinely required
+
+The earlier `configuration-installed-fanout` probe proves another SolidCraft
+0.49 mechanism:
 
 ~~~text
 Installed native rule
@@ -165,22 +190,15 @@ private shared driver
 
 That shared driver is backend transport. It is not public Forge model intent.
 
+The direct timeline-folder experiment does **not** replace this fallback:
+SolidCraft 0.49 cannot use a folder containing several native features as one
+configuration suppression target.
+
 The public authoring problem and the SolidCraft lowering problem therefore stay
-separate:
-
-~~~text
-Forge authoring:
-    real named Installed features + final-model Installed intent
-
-SolidCraft 0.49 lowering:
-    use a supported native mechanism that preserves one global control
-~~~
-
-If SolidCraft later supports configuration suppression of timeline folders or a
-multi-feature suppression target, the lowering may become simpler without
+separate. A later backend may gain a simpler multi-feature mechanism without
 changing the Forge authoring model.
 
-## 6. Open API work
+## 7. Open API work
 
 The remaining API work is deliberately narrow:
 
