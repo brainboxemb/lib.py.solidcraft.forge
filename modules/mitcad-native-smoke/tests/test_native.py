@@ -603,6 +603,75 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             ):
                 self.assertAlmostEqual(actual, expected, places=5)
 
+            top_face_fillet_document = compile_mitcad_ir(
+                normalize_shape(
+                    Box(
+                        60,
+                        40,
+                        12,
+                        anchor=Anchor.BOTTOM,
+                    ).fillet(
+                        2,
+                        edges=Edges.from_faces(Faces.TOP),
+                    )
+                ),
+                "TopFaceBoundaryFillet",
+            )
+            self.assertEqual(
+                [
+                    row["def"]["type"]
+                    for row in top_face_fillet_document["commands"]
+                    if row["cmd"] == "add_feature"
+                ],
+                ["box"],
+            )
+            top_face_fillet_stage = top_face_fillet_document["replay"][0]
+            self.assertNotIn(
+                "bind_parallel_edges",
+                top_face_fillet_stage,
+            )
+            self.assertEqual(
+                top_face_fillet_stage["bind_face_boundary_edges"],
+                {
+                    "name": "edges",
+                    "body": "body",
+                    "face": {
+                        "surface": "plane",
+                        "normal": [0, 0, 1],
+                        "normal_tolerance": 1e-6,
+                    },
+                },
+            )
+
+            top_face_fillet_native = run_document(
+                top_face_fillet_document,
+                save=root / "out/top-face-boundary-fillet.mitcad",
+                export=root / "out/top-face-boundary-fillet.stl",
+                executable=str(executable),
+                work_dir=root / "top-face-boundary-fillet-workspace",
+            )
+            self.assertEqual(len(top_face_fillet_native["bodies"]), 1)
+            top_face_fillet_body = top_face_fillet_native["bodies"][0]
+            self.assertEqual(top_face_fillet_body["kind"], "solid")
+            self.assertEqual(
+                len(top_face_fillet_native["bindings"]["edges"]),
+                4,
+            )
+            print(
+                "top_face_boundary_fillet_volume="
+                f"{top_face_fillet_body['volume']}"
+            )
+            for actual, expected in zip(
+                top_face_fillet_body["bbox"]["min"],
+                [-30.0, -20.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                top_face_fillet_body["bbox"]["max"],
+                [30.0, 20.0, 12.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
             placed_frustum_document = compile_mitcad_ir(
                 normalize_shape(
                     Cone(
@@ -1333,6 +1402,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "asymmetric-chamfer.stl",
                 "fillet-cone-boolean.mitcad",
                 "fillet-cone-boolean.stl",
+                "top-face-boundary-fillet.mitcad",
+                "top-face-boundary-fillet.stl",
                 "placed-frustum.mitcad",
                 "placed-frustum.stl",
                 "shifted-sphere-csg.mitcad",
@@ -1387,6 +1458,10 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"fillet_cone_boolean_bbox={fillet_cone_body['bbox']}",
                         f"fillet_cone_boolean_bindings={fillet_cone_native['bindings']}",
                         "fillet_parallel_edge_ir=pass",
+                        f"top_face_boundary_fillet_volume={top_face_fillet_body['volume']}",
+                        f"top_face_boundary_fillet_bbox={top_face_fillet_body['bbox']}",
+                        f"top_face_boundary_fillet_bindings={top_face_fillet_native['bindings']}",
+                        "fillet_face_boundary_ir=pass",
                         f"placed_frustum_volume={placed_frustum_body['volume']}",
                         f"placed_frustum_bbox={placed_frustum_body['bbox']}",
                         "placed_frustum_cone_ir=pass",

@@ -1439,6 +1439,29 @@ The exact runtime proof is the existing `cone-boolean` geometry contract:
 [-25,-20,0]..[25,20,26]. Model-owner `scpf-mitcad` attachment remains a
 separate catalogue checkpoint after the compiler/runtime contract is accepted.
 
+#514 reuses the already-qualified semantic face-boundary selector rather than
+adding another Fillet-specific topology vocabulary. The bounded extension is
+exactly `FilletIR(..., edges=FaceBoundaryIR(("top",)))` over one
+`PlacementIR(BoxIR)`. Public authoring remains the existing
+`Edges.from_faces(Faces.TOP)`; FRONT/BACK/LEFT/RIGHT/BOTTOM and multi-face
+Fillet selections remain outside the slice.
+
+SolidCraft lowers that selector through the same semantic TOP-face query and
+complete-boundary binding used by typed Chamfer, then emits the existing
+`solid.fillet` spelling. Mitcad reuses the existing replay
+`bind_face_boundary_edges` contract and passes only the resulting private
+native edge names to one Fillet feature. Fillet does not need Chamfer's
+two-distance `reference_face`; native face/edge ids remain backend transport.
+
+This first face-boundary Fillet remains standalone. The existing
+Fillet→Cone `BooleanIR` widening is intentionally restricted to
+`ParallelEdgeSetIR("Z")`, so adding TOP-boundary Fillet does not implicitly
+qualify a new composition path. Exact Mitcad v0.70.0 qualification uses a
+60×40×12 BOTTOM Box with R2 TOP-boundary Fillet, unchanged
+[-30,-20,0]..[30,20,12] bounds, and freezes the exact native volume observed by
+the first accepted runtime pass rather than deriving a guessed regression
+value.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are

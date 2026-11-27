@@ -35,6 +35,7 @@ from ..ir import (
     ConeIR,
     CylinderIR,
     ExtrudeIR,
+    FaceBoundaryIR,
     FeatureRefIR,
     FilletIR,
     LegacyShapeIR,
@@ -1425,16 +1426,45 @@ def _fillet_document(
     *,
     tool: PlacementIR | None = None,
 ):
-    """Lower semantic Fillet through replay-bound native principal edges."""
+    """Lower semantic Fillet through replay-bound native topology."""
     if (
         not isinstance(node.base, PlacementIR)
         or not isinstance(node.base.primitive, BoxIR)
-        or not isinstance(node.edges, ParallelEdgeSetIR)
-        or node.edges.axis != "Z"
     ):
-        raise ModelError(
-            "Mitcad FilletIR currently requires Z-parallel Box edges"
-        )
+        raise ModelError("Mitcad FilletIR currently requires a Box base")
+
+    if isinstance(node.edges, ParallelEdgeSetIR):
+        if node.edges.axis != "Z":
+            raise ModelError(
+                "Mitcad FilletIR parallel edges currently require Z"
+            )
+        edge_binding_name = "parallel_edges"
+        edge_binding_key = "bind_parallel_edges"
+        edge_binding = {
+            "name": edge_binding_name,
+            "body": "body",
+            "axis": node.edges.axis,
+            "expected": 4,
+        }
+    elif isinstance(node.edges, FaceBoundaryIR):
+        if node.edges.faces != ("top",):
+            raise ModelError(
+                "Mitcad FilletIR face boundary currently requires TOP"
+            )
+        edge_binding_name = "edges"
+        edge_binding_key = "bind_face_boundary_edges"
+        edge_binding = {
+            "name": edge_binding_name,
+            "body": "body",
+            "face": {
+                "surface": "plane",
+                "normal": _FACE_NORMALS["top"],
+                "normal_tolerance": 1e-6,
+            },
+        }
+    else:
+        raise ModelError("Mitcad FilletIR has unsupported edge semantics")
+
     _require_positive(node.radius, "fillet radius")
     if model.configuration is not None:
         raise ModelError(
@@ -1452,13 +1482,17 @@ def _fillet_document(
             "def": {
                 "type": "fillet",
                 "body": {"$mitcad_bind": "body"},
-                "edges": {"$mitcad_bind": "parallel_edges"},
+                "edges": {"$mitcad_bind": edge_binding_name},
                 "radius": command_value(node.radius),
             },
         }
     ]
 
     if tool is not None:
+        if not isinstance(node.edges, ParallelEdgeSetIR):
+            raise ModelError(
+                "Mitcad face-boundary FilletIR remains standalone"
+            )
         if not isinstance(tool.primitive, ConeIR):
             raise ModelError(
                 "Mitcad FilletIR Boolean composition currently requires ConeIR"
@@ -1471,18 +1505,12 @@ def _fillet_document(
         )
         replay_commands.extend(tool_commands)
 
-    replay = [
-        {
-            "bind_single_body": "body",
-            "bind_parallel_edges": {
-                "name": "parallel_edges",
-                "body": "body",
-                "axis": node.edges.axis,
-                "expected": 4,
-            },
-            "commands": replay_commands,
-        }
-    ]
+    replay_stage = {
+        "bind_single_body": "body",
+        edge_binding_key: edge_binding,
+        "commands": replay_commands,
+    }
+    replay = [replay_stage]
     dependencies = _native_dependencies((commands, replay))
     return {
         "format": FORMAT,
