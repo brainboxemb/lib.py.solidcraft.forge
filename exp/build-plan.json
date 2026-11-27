@@ -63,7 +63,7 @@
     "xz-anchor"
   ],
   "full": false,
-  "library": false,
+  "library": true,
   "models": [
     {
       "id": "anchor-topology-mutation",
@@ -840,13 +840,15 @@
       ]
     }
   ],
-  "qualification_pr": 466,
+  "qualification_pr": 470,
   "qualification_reused": true,
-  "qualification_run_id": 46008529263,
-  "qualified_head_sha": "69f7811c758f2e1e0a8e1fe5e75bb7bead75b11d",
-  "qualified_source_sha": "24340a4df8c912c68fbff35e78dbc09a008fcbcf",
+  "qualification_run_id": 46011497993,
+  "qualified_head_sha": "ea230f66d3d25d355082e124fa73521dd29f0ad7",
+  "qualified_source_sha": "3ec86f81d5a8d4c93dfc9e6e6cbe77db5e2ea87f",
   "release_only": false,
   "schema": 2,
-  "selected": [],
-  "source_sha": "fffe35dcc22ec5d144d59d4ea19ff5f89e437655"
+  "selected": [
+    "native-revolve"
+  ],
+  "source_sha": "744c49c6600ed557b4d15f871d41935975398fd0"
 }
