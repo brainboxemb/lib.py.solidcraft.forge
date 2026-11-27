@@ -274,6 +274,23 @@
     },
     {
       "kind": "callable",
+      "name": "Occurrence.feature",
+      "summary": "Reference one feature explicitly exported by the reusable component definition.",
+      "guide": "guide/geometry/#configuration-tables",
+      "reference": "reference/Occurrence.feature/",
+      "use_when": "Pass a child-owned authored feature to parent/root Suppress(...) while keeping native history identity internal.",
+      "limits": "The reference is definition-level, not occurrence-level. Every occurrence reusing the same component definition resolves the same exported feature; missing exports fail explicitly.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Component-local Forge export name declared with Shape.export_feature(...)."
+        }
+      ],
+      "example": "Suppress(coupler.feature(\"panel_pin\"))",
+      "signature": "Occurrence.feature(self, name)"
+    },
+    {
+      "kind": "callable",
       "name": "Occurrence.attach",
       "summary": "Create a rigid, planar or explicit native revolute relationship from this occurrence to another component.",
       "guide": "guide/assembly-basics/#relationship",
@@ -1229,6 +1246,23 @@
       ],
       "example": "flange.circular_pattern(bolt_cut, count=6, axis=Axis.Z)",
       "signature": "Shape.circular_pattern(self, feature, *, count, axis=<Axis.Z: 'Z'>, angle=None, origin=None, alignment='right', reversed=False)"
+    },
+    {
+      "kind": "callable",
+      "name": "Shape.export_feature",
+      "summary": "Export one exact Forge-authored feature through a reusable component definition.",
+      "guide": "guide/geometry/#configuration-tables",
+      "reference": "reference/Shape.export_feature/",
+      "use_when": "A parent configuration must suppress a feature authored inside a reusable child without exposing SolidCraft history ids.",
+      "limits": "The name is component-local Forge identity. Export an already-authored suppressible feature that is part of the final child Shape; this does not make whole-component presence a feature-suppression operation.",
+      "parameters": [
+        {
+          "name": "name",
+          "description": "Public component-local Forge export name."
+        }
+      ],
+      "example": "panel_pin = Hole(d=5).at(0, 0, 12).export_feature(\"panel_pin\")",
+      "signature": "Shape.export_feature(self, name)"
     },
     {
       "kind": "callable",
@@ -2605,18 +2639,18 @@
     {
       "kind": "function",
       "name": "Suppress",
-      "summary": "Select one applied Forge feature for native suppression.",
+      "summary": "Select one exact Forge-authored feature for native suppression.",
       "guide": "guide/geometry/",
       "reference": "reference/Suppress/",
-      "use_when": "Define editable native configuration rows rather than Python-only variants.",
-      "limits": "Configuration intent is authored generically and must lower to a native editable SolidCraft table; unsupported intent fails explicitly.",
+      "use_when": "Define editable native configuration rows for a directly applied Shape or for an explicitly exported feature inside a reusable child definition.",
+      "limits": "Direct features use their exact Forge Shape object. Reusable-child features must first be exported with Shape.export_feature(name) and referenced through Occurrence.feature(name). Callers never supply SolidCraft history ids.",
       "parameters": [
         {
           "name": "feature",
-          "description": "Exact applied feature Shape."
+          "description": "Exact applied feature Shape or definition-level component feature reference."
         }
       ],
-      "example": "Suppress(hole)"
+      "example": "Suppress(hole)  # or Suppress(coupler.feature(\"panel_pin\"))"
     }
   ]
 }

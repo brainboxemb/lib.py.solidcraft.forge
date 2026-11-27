@@ -276,6 +276,21 @@ groups:
               rows={"Medium": ("80 mm", True),
                     "Large": ("100 mm", False)})
         example: configuration-table
+      - title: "Shape.export_feature(...) + Occurrence.feature(...)"
+        description: "Let a parent configuration suppress one exact authored feature inside a reusable child definition."
+        snippet: |
+          @component
+          class Coupler:
+              def build(self):
+                  body = Box(40, 24, 12, anchor=Anchor.BOTTOM)
+                  cut = Hole(d=5).at(0, 0, 12).export_feature("panel_pin")
+                  return body - cut
+
+          coupler = Coupler()
+          Configure(coupler, active="Small",
+              columns=(Suppress(coupler.feature("panel_pin")),),
+              rows={"Small": (True,), "Large": (False,)})
+        example: configuration-child-feature
       - title: "ConfigRule(..., condition=Always(), effect=DriveParameter(...))"
         description: "Keep an Installed/Free physical state independent from Small/Medium/Large rows."
         snippet: |

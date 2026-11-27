@@ -17,5 +17,12 @@ verifications:
     artifact: model.sc
     implementations: [scpf]
 
+  - id: visual
+    module: verification
+    adapter: solidcraft-visual
+    definition: verification/visual.json
+    artifact: model.sc
+    implementations: [scpf]
+
 dependencies: []
 needs: [cadlib]
