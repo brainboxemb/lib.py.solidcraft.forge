@@ -29,10 +29,10 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **1 / 20 (5%)**
-- partial: **15 / 20 (75%)**
-- legacy: **4 / 20 (20%)**
-- families with at least some typed IR: **16 / 20 (80%)**
+- complete: **3 / 20 (15%)**
+- partial: **14 / 20 (70%)**
+- legacy: **3 / 20 (15%)**
+- families with at least some typed IR: **17 / 20 (85%)**
 - physical SCPF owners on permanent `exp`: **61**
 - owners with current end-to-end `scpf-mitcad` evidence: **10 / 61 (16.4%)**
 
@@ -43,10 +43,10 @@ not effort or backend parity.
 
 | Semantic family | IR | SolidCraft typed | Mitcad | Native Mitcad | Main remaining gap |
 | --- | --- | --- | --- | --- | --- |
-| Values, parameters, scalar expressions | partial | partial | partial | qualified slices | Broader symbolic/cadmath dimensional expression semantics. |
+| Values, parameters, scalar expressions | partial | partial | partial | qualified slices | Length/angle plus #533 unitless count roles are typed; broader symbolic/cadmath dimensional expression semantics remain. |
 | Primitive solids: Box, Cylinder, Cone, Sphere | complete | yes | yes | qualified | Current public primitive meaning is typed. |
 | Placement and transforms | partial | partial | partial | qualified slices | Rotated primitive frames and broader transform composition. |
-| Reference geometry: planes and axes | partial | partial | partial | qualified slices | Broader datum/reference semantics. |
+| Reference geometry: planes and axes | partial | partial | partial | qualified slices | PlaneIR plus principal/vector AxisLineIR are typed; broader datum/reference semantics remain. |
 | Sketch entities, constraints, dimensions | partial | partial | partial | qualified slices | Full public Sketch surface. |
 | 2D profiles | partial | partial | partial | qualified slices | Rectangle/RoundedRectangle/Slot families are not fully generic profile IR. |
 | Regions/profile membership | partial | partial | partial | qualified slices | General region composition. |
@@ -58,8 +58,8 @@ not effort or backend parity.
 | Fillet | partial | partial | partial | qualified slices | Broader bases/selectors/variable forms. |
 | Feature identity, suppression, configuration | partial | partial | partial | qualified slices | General feature/config composition. |
 | Hole family | partial | yes | unsupported | no | Explicit `.at(...)` Hole-family intent is typed and #532 allows any already-typed BodyIR target; attached/on, pattern/config composition and parameter-driven direction/angle remain. |
-| Native feature patterns | legacy | legacy stable | unsupported | no | Semantic source-feature and pattern IR. |
-| Shell | partial | yes | unsupported | no | #532 adds ShellIR over any already-typed BodyIR with semantic cardinal FaceSetIR; legacy targets remain outside typed history. |
+| Native feature patterns | complete | yes | unsupported | no | #533 covers current public rectangular/circular feature-pattern controls with semantic FeatureRefIR source identity; models still depend on their source features being typed. |
+| Shell | complete | yes | unsupported | no | #532 covers the current public shell operation through ShellIR + cardinal FaceSetIR over typed body history; a legacy base is a dependency boundary, not missing Shell semantics. |
 | Plastic features: Lip, SnapFit, Boss, Rest | legacy | legacy stable | unsupported | no | Generic mechanical feature/history semantics. |
 | Sheet metal | legacy | legacy stable | unsupported | no | Sheet rule/body/features form a separate large semantic layer. |
 | Assemblies, occurrences, relationships | legacy | legacy stable | unsupported | no | Coherent assembly/relationship IR. |
@@ -84,6 +84,6 @@ For an IR batch:
 6. update this inventory.
 
 Mitcad may consume several newly IR-ready capabilities later in one
-backend-focused batch with backend tests and native qualification. #532 adds the
-generic BodyIR history contract and ShellIR; the next selected wave items are
-#533 native feature PatternIR and #534 basic 2D ProfileIR completion.
+backend-focused batch with backend tests and native qualification. #532 added the generic BodyIR history contract and ShellIR; #533 completes the
+current native feature Pattern family. The next selected wave item is #534
+basic 2D ProfileIR completion.

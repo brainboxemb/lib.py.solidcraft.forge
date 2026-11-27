@@ -38,6 +38,7 @@ from scpf.ir import (
     BoxIR,
     ChamferIR,
     CircleProfileIR,
+    CircularPatternIR,
     ConeIR,
     CylinderIR,
     ExtrudeIR,
@@ -57,6 +58,7 @@ from scpf.ir import (
     PlaneIR,
     PolygonProfileIR,
     RegionIR,
+    RectangularPatternIR,
     RevolveIR,
     ScalarBinaryIR,
     ScalarLiteralIR,
@@ -593,6 +595,190 @@ class SemanticIRTests(unittest.TestCase):
             if row.get("def", {}).get("type") == "cone"
         )
         self.assertEqual(cone_feature["def"]["operation"], "join")
+
+    def test_circular_hole_pattern_is_semantic_feature_history(self):
+        bolts = Parameter("bolts", 6)
+        pcd = Parameter("pcd", 60)
+        plate = Box(100, 100, 6, anchor=Anchor.BOTTOM)
+        source = Hole(
+            d=8,
+            direction=(0, 0, -1),
+        ).at(pcd / 2, 0, 6)
+        plate = plate + source
+        shape = plate.circular_pattern(
+            source,
+            count=bolts,
+            axis=Axis.Z,
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "CircularHolePattern",
+        )
+        self.assertIsInstance(model.root, CircularPatternIR)
+        self.assertIsInstance(model.root.base, HoleIR)
+        self.assertEqual(
+            model.root.sources,
+            (FeatureRefIR(("root",)),),
+        )
+        self.assertIs(
+            resolve_feature_ref(
+                model.root.base,
+                model.root.sources[0],
+            ),
+            model.root.base,
+        )
+        self.assertEqual(model.root.axis, AxisLineIR("Z"))
+        self.assertIs(model.root.count, bolts)
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR("pcd", 60, roles=("length",)),
+                ParameterIR("bolts", 6, roles=("count",)),
+            ),
+        )
+
+        pattern = next(
+            row["params"]
+            for row in compile_solidcraft_ir(
+                model,
+                "CircularHolePattern",
+            )["commands"]
+            if row["command"] == "solid.pattern.circular"
+        )
+        self.assertEqual(
+            pattern,
+            {
+                "features": ["Hole1"],
+                "axis": "Z",
+                "count": "bolts",
+                "alignment": "right",
+                "reversed": False,
+            },
+        )
+        with self.assertRaisesRegex(ModelError, "CircularPatternIR"):
+            compile_mitcad_ir(model, "CircularHolePattern")
+
+    def test_rectangular_hole_pattern_keeps_two_direction_semantics(self):
+        columns = Parameter("columns", 3)
+        pitch = Parameter("pitch", 20)
+        plate = Box(100, 80, 6, anchor=Anchor.BOTTOM)
+        source = Hole(
+            d=6,
+            direction=(0, 0, -1),
+        ).at(-20, -14, 6)
+        plate = plate + source
+        shape = plate.rectangular_pattern(
+            source,
+            count=columns,
+            spacing=pitch,
+            direction=Axis.X,
+            count2=2,
+            spacing2=28,
+            direction2=Axis.Y,
+            alignment="center",
+            alignment2="left",
+            reversed=True,
+            reversed2=True,
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "RectangularHolePattern",
+        )
+        self.assertIsInstance(model.root, RectangularPatternIR)
+        self.assertEqual(model.root.direction1, (1.0, 0.0, 0.0))
+        self.assertEqual(model.root.direction2, (0.0, 1.0, 0.0))
+        self.assertEqual(model.root.alignment1, "center")
+        self.assertEqual(model.root.alignment2, "left")
+        self.assertTrue(model.root.reversed1)
+        self.assertTrue(model.root.reversed2)
+        self.assertEqual(
+            model.parameters,
+            (
+                ParameterIR("columns", 3, roles=("count",)),
+                ParameterIR("pitch", 20, roles=("length",)),
+            ),
+        )
+
+        pattern = next(
+            row["params"]
+            for row in compile_solidcraft_ir(
+                model,
+                "RectangularHolePattern",
+            )["commands"]
+            if row["command"] == "solid.pattern.rectangular"
+        )
+        self.assertEqual(pattern["features"], ["Hole1"])
+        self.assertEqual(pattern["count1"], "columns")
+        self.assertEqual(pattern["spacing1"], "pitch")
+        self.assertEqual(pattern["alignment"], "center")
+        self.assertTrue(pattern["reversed"])
+        self.assertEqual(pattern["count2"], 2)
+        self.assertEqual(pattern["spacing2"], 28)
+        self.assertEqual(pattern["alignment2"], "left")
+        self.assertTrue(pattern["reversed2"])
+
+    def test_circular_pattern_preserves_shifted_custom_axis_and_angle(self):
+        sweep = Parameter("pattern_sweep", 180)
+        plate = Box(80, 80, 6, anchor=Anchor.BOTTOM)
+        source = Hole(
+            d=5,
+            direction=(0, 0, -1),
+        ).at(15, 0, 6)
+        plate = plate + source
+        shape = plate.circular_pattern(
+            source,
+            count=4,
+            axis=AxisLine((0, 1, 1), origin=(5, 0, 0)),
+            angle=sweep,
+            alignment="left",
+            reversed=True,
+        )
+
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "CustomAxisPattern",
+        )
+        self.assertIsInstance(model.root, CircularPatternIR)
+        self.assertEqual(model.root.axis.direction, (0.0, 1.0, 1.0))
+        self.assertEqual(model.root.axis.origin, (5, 0, 0))
+        self.assertEqual(
+            model.parameters,
+            (ParameterIR("pattern_sweep", 180, roles=("angle",)),),
+        )
+        pattern = next(
+            row["params"]
+            for row in compile_solidcraft_ir(
+                model,
+                "CustomAxisPattern",
+            )["commands"]
+            if row["command"] == "solid.pattern.circular"
+        )
+        self.assertEqual(
+            pattern["axis"],
+            {"origin": [5, 0, 0], "dir": [0.0, 1.0, 1.0]},
+        )
+        self.assertEqual(pattern["angle"], "pattern_sweep")
+        self.assertEqual(pattern["alignment"], "left")
+        self.assertTrue(pattern["reversed"])
+
+    def test_pattern_with_legacy_source_remains_legacy(self):
+        from scpf import RoundedRectangle2D
+
+        with Sketch(name="Rounded", plane="XY") as sketch:
+            RoundedRectangle2D(40, 20, 3)
+        source = sketch.extrude(5)
+        body = source.rectangular_pattern(
+            source,
+            count=2,
+            spacing=30,
+            direction=Axis.X,
+        )
+        model = normalize_shape(body)
+        self.assertIsInstance(model.root, LegacyShapeIR)
+        with self.assertRaises(ModelError):
+            compile_mitcad_ir(model, "LegacyPatternSource")
 
     def test_shell_is_semantic_body_history_with_face_set(self):
         wall = Parameter("wall", 2)

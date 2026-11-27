@@ -51,14 +51,19 @@ class ParameterIR:
         if (
             not isinstance(self.roles, tuple)
             or not self.roles
-            or any(role not in {"length", "angle"} for role in self.roles)
+            or any(
+                role not in {"length", "angle", "count"}
+                for role in self.roles
+            )
             or len(set(self.roles)) != len(self.roles)
             or self.roles != tuple(
-                role for role in ("length", "angle") if role in self.roles
+                role
+                for role in ("length", "angle", "count")
+                if role in self.roles
             )
         ):
             raise ValueError(
-                "ParameterIR roles must be canonical length/angle roles"
+                "ParameterIR roles must be canonical length/angle/count roles"
             )
 
     @property
@@ -697,15 +702,39 @@ class ExtrudeIR(BodyIR):
 
 @dataclass(frozen=True)
 class AxisLineIR:
-    """Engine-neutral principal-direction axis through a semantic XYZ point."""
+    """Engine-neutral fixed-direction axis through a semantic XYZ point."""
 
-    direction: str
+    direction: "str | tuple[float, float, float]"
     origin: tuple[Any, Any, Any] = (0, 0, 0)
     source_kind: str = "axis_line"
 
     def __post_init__(self):
-        if self.direction not in {"X", "Y", "Z"}:
-            raise ValueError("AxisLineIR direction must be X, Y or Z")
+        direction = self.direction
+        if isinstance(direction, str):
+            if direction not in {"X", "Y", "Z"}:
+                raise ValueError(
+                    "AxisLineIR string direction must be X, Y or Z"
+                )
+        elif (
+            not isinstance(direction, tuple)
+            or len(direction) != 3
+            or any(
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not isfinite(value)
+                for value in direction
+            )
+            or all(value == 0 for value in direction)
+        ):
+            raise ValueError(
+                "AxisLineIR vector direction must be one fixed finite non-zero XYZ tuple"
+            )
+        else:
+            object.__setattr__(
+                self,
+                "direction",
+                tuple(float(value) for value in direction),
+            )
         if (
             not isinstance(self.origin, tuple)
             or len(self.origin) != 3
@@ -990,6 +1019,132 @@ class HoleIR(BodyIR):
                 )
 
 
+def _positive_pattern_count(value, label: str):
+    if isinstance(value, bool):
+        raise ValueError(f"{label} must be a positive integer or Parameter")
+    number = pv(value)
+    if not isfinite(number) or number < 1 or not float(number).is_integer():
+        raise ValueError(f"{label} must evaluate to a positive integer")
+
+
+@dataclass(frozen=True)
+class RectangularPatternIR(BodyIR):
+    """Native-history rectangular repetition of semantic authored features."""
+
+    base: BodyIR
+    sources: tuple["FeatureRefIR", ...]
+    direction1: tuple[float, float, float]
+    count1: Any
+    spacing1: Any
+    direction2: tuple[float, float, float] | None = None
+    count2: Any | None = None
+    spacing2: Any | None = None
+    alignment1: str = "right"
+    alignment2: str = "right"
+    reversed1: bool = False
+    reversed2: bool = False
+    source_kind: str = "rectangular_pattern"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("RectangularPatternIR base must be BodyIR")
+        if (
+            not isinstance(self.sources, tuple)
+            or not self.sources
+            or any(not isinstance(ref, FeatureRefIR) for ref in self.sources)
+        ):
+            raise ValueError(
+                "RectangularPatternIR requires semantic FeatureRefIR sources"
+            )
+        for name, direction in (
+            ("direction1", self.direction1),
+            ("direction2", self.direction2),
+        ):
+            if direction is None:
+                continue
+            if (
+                not isinstance(direction, tuple)
+                or len(direction) != 3
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in direction
+                )
+                or all(value == 0 for value in direction)
+            ):
+                raise ValueError(
+                    f"RectangularPatternIR {name} must be fixed non-zero XYZ"
+                )
+        _positive_pattern_count(self.count1, "rectangular count1")
+        if (
+            isinstance(self.spacing1, bool)
+            or not isfinite(pv(self.spacing1))
+            or pv(self.spacing1) <= 0
+        ):
+            raise ValueError("RectangularPatternIR spacing1 must be positive")
+        second = self.direction2 is not None
+        if second != (self.count2 is not None and self.spacing2 is not None):
+            raise ValueError(
+                "RectangularPatternIR second direction requires direction/count/spacing"
+            )
+        if second:
+            _positive_pattern_count(self.count2, "rectangular count2")
+            if (
+                isinstance(self.spacing2, bool)
+                or not isfinite(pv(self.spacing2))
+                or pv(self.spacing2) <= 0
+            ):
+                raise ValueError("RectangularPatternIR spacing2 must be positive")
+        if self.alignment1 not in {"left", "center", "right"}:
+            raise ValueError("RectangularPatternIR alignment1 is invalid")
+        if self.alignment2 not in {"left", "center", "right"}:
+            raise ValueError("RectangularPatternIR alignment2 is invalid")
+        if not isinstance(self.reversed1, bool) or not isinstance(
+            self.reversed2, bool
+        ):
+            raise ValueError("RectangularPatternIR reversed flags must be bool")
+
+
+@dataclass(frozen=True)
+class CircularPatternIR(BodyIR):
+    """Native-history circular repetition around one semantic axis line."""
+
+    base: BodyIR
+    sources: tuple["FeatureRefIR", ...]
+    axis: AxisLineIR
+    count: Any
+    angle: Any | None = None
+    alignment: str = "right"
+    reversed: bool = False
+    source_kind: str = "circular_pattern"
+
+    def __post_init__(self):
+        if not isinstance(self.base, BodyIR):
+            raise ValueError("CircularPatternIR base must be BodyIR")
+        if (
+            not isinstance(self.sources, tuple)
+            or not self.sources
+            or any(not isinstance(ref, FeatureRefIR) for ref in self.sources)
+        ):
+            raise ValueError(
+                "CircularPatternIR requires semantic FeatureRefIR sources"
+            )
+        if not isinstance(self.axis, AxisLineIR):
+            raise ValueError("CircularPatternIR axis must be AxisLineIR")
+        _positive_pattern_count(self.count, "circular count")
+        if self.angle is not None:
+            angle = pv(self.angle)
+            if not isfinite(angle) or not 0 < angle <= 360:
+                raise ValueError(
+                    "CircularPatternIR angle must be above 0 and at most 360"
+                )
+        if self.alignment not in {"left", "center", "right"}:
+            raise ValueError("CircularPatternIR alignment is invalid")
+        if not isinstance(self.reversed, bool):
+            raise ValueError("CircularPatternIR reversed must be bool")
+
+
 @dataclass(frozen=True)
 class ShellIR(BodyIR):
     """Uniform wall shell over one typed body result."""
@@ -1180,12 +1335,84 @@ def _collect_parameters(value, found=None):
     return found
 
 
+def _count_parameter_names(value, found=None):
+    """Collect direct Parameters used as unitless native feature counts."""
+    if found is None:
+        found = set()
+
+    if isinstance(value, Shape):
+        if value.kind == "rectangular_pattern":
+            (
+                original,
+                _sources,
+                _dir1,
+                count1,
+                _spacing1,
+                _dir2,
+                count2,
+                _spacing2,
+                _alignment1,
+                _alignment2,
+                _reversed1,
+                _reversed2,
+            ) = value.data
+            found.update(
+                parameter.name
+                for parameter in parameters_in(count1, count2)
+            )
+            _count_parameter_names(original, found)
+            return found
+        if value.kind == "circular_pattern":
+            (
+                original,
+                _sources,
+                _axis,
+                count,
+                _angle,
+                _alignment,
+                _reversed,
+            ) = value.data
+            found.update(
+                parameter.name for parameter in parameters_in(count)
+            )
+            _count_parameter_names(original, found)
+            return found
+        _count_parameter_names(value.data, found)
+        return found
+
+    if isinstance(value, dict):
+        for item in value.values():
+            _count_parameter_names(item, found)
+        return found
+
+    if isinstance(value, (tuple, list)):
+        for item in value:
+            _count_parameter_names(item, found)
+    return found
+
+
 def _angle_parameter_names(value, found=None):
     """Collect parameters whose qualified semantic role is an angle."""
     if found is None:
         found = set()
 
     if isinstance(value, Shape):
+        if value.kind == "circular_pattern":
+            (
+                original,
+                _sources,
+                _axis,
+                _count,
+                angle,
+                _alignment,
+                _reversed,
+            ) = value.data
+            if angle is not None:
+                found.update(
+                    parameter.name for parameter in parameters_in(angle)
+                )
+            _angle_parameter_names(original, found)
+            return found
         if value.kind == "sketch_base_revolve":
             (
                 _sketch_name,
@@ -1220,6 +1447,41 @@ def _length_parameter_names(value, found=None):
         found = set()
 
     if isinstance(value, Shape):
+        if value.kind == "rectangular_pattern":
+            (
+                original,
+                _sources,
+                _dir1,
+                _count1,
+                spacing1,
+                _dir2,
+                _count2,
+                spacing2,
+                _alignment1,
+                _alignment2,
+                _reversed1,
+                _reversed2,
+            ) = value.data
+            _length_parameter_names(original, found)
+            _length_parameter_names(spacing1, found)
+            if spacing2 is not None:
+                _length_parameter_names(spacing2, found)
+            return found
+        if value.kind == "circular_pattern":
+            (
+                original,
+                _sources,
+                axis,
+                _count,
+                _angle,
+                _alignment,
+                _reversed,
+            ) = value.data
+            _length_parameter_names(original, found)
+            if not isinstance(axis, str):
+                origin, _direction = axis
+                _length_parameter_names(origin, found)
+            return found
         if value.kind == "sketch_base_revolve":
             # The Revolve sweep is the only currently-qualified angle-valued
             # Shape payload. Every other symbolic value in this payload retains
@@ -1249,6 +1511,7 @@ def _parameter_ir(shape: Shape) -> tuple[ParameterIR, ...]:
     values = _collect_parameters(shape)
     length_parameters = _length_parameter_names(shape)
     angle_parameters = _angle_parameter_names(shape)
+    count_parameters = _count_parameter_names(shape)
     return tuple(
         ParameterIR(
             name,
@@ -1258,6 +1521,7 @@ def _parameter_ir(shape: Shape) -> tuple[ParameterIR, ...]:
                 for role, names in (
                     ("length", length_parameters),
                     ("angle", angle_parameters),
+                    ("count", count_parameters),
                 )
                 if name in names
             ),
@@ -2030,6 +2294,124 @@ def _portable_hole(
         return None
 
 
+def _pattern_axis_ir(axis_spec) -> AxisLineIR | None:
+    if isinstance(axis_spec, str):
+        try:
+            return AxisLineIR(direction=axis_spec)
+        except ValueError:
+            return None
+    if (
+        not isinstance(axis_spec, (tuple, list))
+        or len(axis_spec) != 2
+    ):
+        return None
+    origin, direction = axis_spec
+    if (
+        not isinstance(origin, (tuple, list))
+        or len(origin) != 3
+        or not isinstance(direction, (tuple, list))
+        or len(direction) != 3
+        or any(parameters_in(value) for value in direction)
+    ):
+        return None
+    try:
+        return AxisLineIR(
+            direction=tuple(float(pv(value)) for value in direction),
+            origin=tuple(origin),
+        )
+    except (TypeError, ValueError):
+        return None
+
+
+def _portable_pattern(shape: Shape) -> BodyIR | None:
+    if shape.kind == "rectangular_pattern":
+        (
+            original,
+            sources,
+            direction1,
+            count1,
+            spacing1,
+            direction2,
+            count2,
+            spacing2,
+            alignment1,
+            alignment2,
+            reversed1,
+            reversed2,
+        ) = shape.data
+        base = _normalize_node(original)
+        if not isinstance(base, BodyIR):
+            return None
+        try:
+            refs = tuple(
+                _pattern_authored_feature_ref(original, base, source)
+                for source in sources
+            )
+            if any(ref is None for ref in refs):
+                return None
+            node = RectangularPatternIR(
+                base=base,
+                sources=refs,
+                direction1=tuple(float(value) for value in direction1),
+                count1=count1,
+                spacing1=spacing1,
+                direction2=(
+                    tuple(float(value) for value in direction2)
+                    if direction2 is not None
+                    else None
+                ),
+                count2=count2,
+                spacing2=spacing2,
+                alignment1=alignment1,
+                alignment2=alignment2,
+                reversed1=reversed1,
+                reversed2=reversed2,
+            )
+            for ref in refs:
+                resolve_feature_ref(base, ref)
+            return node
+        except (TypeError, ValueError):
+            return None
+
+    if shape.kind == "circular_pattern":
+        (
+            original,
+            sources,
+            axis_spec,
+            count,
+            angle,
+            alignment,
+            reversed,
+        ) = shape.data
+        base = _normalize_node(original)
+        axis = _pattern_axis_ir(axis_spec)
+        if not isinstance(base, BodyIR) or axis is None:
+            return None
+        try:
+            refs = tuple(
+                _pattern_authored_feature_ref(original, base, source)
+                for source in sources
+            )
+            if any(ref is None for ref in refs):
+                return None
+            node = CircularPatternIR(
+                base=base,
+                sources=refs,
+                axis=axis,
+                count=count,
+                angle=angle,
+                alignment=alignment,
+                reversed=reversed,
+            )
+            for ref in refs:
+                resolve_feature_ref(base, ref)
+            return node
+        except (TypeError, ValueError):
+            return None
+
+    return None
+
+
 def _portable_shell(shape: Shape) -> ShellIR | None:
     """Normalize shell intent over any already typed body history."""
     if shape.kind != "shell" or len(shape.data) != 3:
@@ -2129,6 +2511,10 @@ def _normalize_node(shape: Shape) -> IRNode:
     if chamfer is not None:
         return chamfer
 
+    pattern = _portable_pattern(shape)
+    if pattern is not None:
+        return pattern
+
     shell = _portable_shell(shape)
     if shell is not None:
         return shell
@@ -2145,13 +2531,105 @@ def resolve_feature_ref(root: IRNode, reference: FeatureRefIR) -> IRNode:
 
     node = root
     for segment in reference.path[1:]:
-        if not isinstance(node, BooleanIR) or segment not in {"target", "tool"}:
-            raise ValueError(
-                f"FeatureRefIR path segment {segment!r} is not valid for "
-                f"{type(node).__name__}"
-            )
-        node = getattr(node, segment)
+        if isinstance(node, BooleanIR) and segment in {"target", "tool"}:
+            node = getattr(node, segment)
+            continue
+        if isinstance(node, HoleIR) and segment == "target":
+            node = node.target
+            continue
+        if isinstance(node, (ChamferIR, FilletIR, ShellIR)) and segment == "base":
+            node = node.base
+            continue
+        if (
+            isinstance(node, RevolveIR)
+            and segment == "target"
+            and node.target is not None
+        ):
+            node = node.target
+            continue
+        if isinstance(
+            node,
+            (RectangularPatternIR, CircularPatternIR),
+        ) and segment == "base":
+            node = node.base
+            continue
+        raise ValueError(
+            f"FeatureRefIR path segment {segment!r} is not valid for "
+            f"{type(node).__name__}"
+        )
     return node
+
+
+def _pattern_authored_feature_ref(
+    design: Shape,
+    root: BodyIR,
+    feature: Shape,
+    *,
+    path: tuple[str, ...] = ("root",),
+) -> FeatureRefIR | None:
+    """Map exact authored source identity to semantic body-history roles."""
+    if design is feature:
+        return FeatureRefIR(path=path)
+
+    if (
+        isinstance(root, (HoleIR, BooleanIR))
+        and design.kind in {"union", "difference", "intersection"}
+    ):
+        target_shape, tool_shape = design.data
+        if feature is tool_shape:
+            return FeatureRefIR(path=path)
+        target = root.target
+        if isinstance(target, BodyIR):
+            return _pattern_authored_feature_ref(
+                target_shape,
+                target,
+                feature,
+                path=(*path, "target"),
+            )
+        return None
+
+    if (
+        isinstance(root, (ChamferIR, FilletIR, ShellIR))
+        and design.kind in {"chamfer", "fillet", "shell"}
+    ):
+        base_shape = design.data[0]
+        return _pattern_authored_feature_ref(
+            base_shape,
+            root.base,
+            feature,
+            path=(*path, "base"),
+        )
+
+    if (
+        isinstance(root, RevolveIR)
+        and root.operation == "cut"
+        and design.kind == "difference"
+    ):
+        target_shape, tool_shape = design.data
+        if feature is tool_shape:
+            return FeatureRefIR(path=path)
+        if isinstance(root.target, BodyIR):
+            return _pattern_authored_feature_ref(
+                target_shape,
+                root.target,
+                feature,
+                path=(*path, "target"),
+            )
+        return None
+
+    if (
+        isinstance(root, (RectangularPatternIR, CircularPatternIR))
+        and design.kind in {"rectangular_pattern", "circular_pattern"}
+    ):
+        original = design.data[0]
+        return _pattern_authored_feature_ref(
+            original,
+            root.base,
+            feature,
+            path=(*path, "base"),
+        )
+
+    return None
 
 
 def _boolean_authored_feature_ref(
@@ -2346,6 +2824,7 @@ __all__ = [
     "BoxIR",
     "ChamferIR",
     "CircleProfileIR",
+    "CircularPatternIR",
     "CylinderIR",
     "ConeIR",
     "ExtrudeIR",
@@ -2367,6 +2846,7 @@ __all__ = [
     "PrimitiveIR",
     "ProfileIR",
     "RegionIR",
+    "RectangularPatternIR",
     "RevolveIR",
     "ScalarBinaryIR",
     "ScalarExpressionIR",

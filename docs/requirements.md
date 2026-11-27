@@ -184,6 +184,16 @@
 159. Nested topology queries in typed SolidCraft history must allocate deterministic non-conflicting replay variables from prior typed commands so stable source order remains observable.
 160. Mitcad may remain unsupported for ShellIR and newly widened HoleIR histories and must fail closed rather than reinterpret source Shape payloads.
 161. #532 does not itself widen vertical Fillet selector semantics or the existing Chamfer/Revolve/Boolean normalization boundaries merely because those result nodes implement BodyIR.
+162. Native feature rectangular/circular patterns must be semantic BodyIR history nodes whose source features are engine-neutral `FeatureRefIR` paths into the typed pre-pattern body; native feature names/ordinals must not enter IR.
+163. Pattern normalization may proceed only when every requested authored source feature resolves to typed semantic body history. A still-legacy source feature keeps the containing model legacy rather than manufacturing a native name in frontend normalization.
+164. `ParameterIR` must distinguish the unitless semantic `count` role from length and angle, preserving direct symbolic pattern counts without assigning them millimetres or degrees.
+165. Rectangular PatternIR must preserve one or two fixed direction vectors, positive integer/direct-Parameter counts, positive symbolic spacings, both alignments and both reversal flags.
+166. Circular PatternIR must preserve one `AxisLineIR`, positive integer/direct-Parameter count, optional fixed/direct-Parameter sweep angle, alignment and reversal.
+167. Generic `AxisLineIR` may represent either a principal X/Y/Z direction or one fixed finite non-zero XYZ vector with symbolic origin; existing Revolve normalization remains bounded to its separately qualified principal/in-plane semantics.
+168. SolidCraft PatternIR lowering must derive native source-feature identity privately from the referenced typed history prefix and reproduce the stable `solid.pattern.rectangular` / `solid.pattern.circular` command document.
+169. Mitcad may remain unsupported for PatternIR after #533 and must fail closed on those typed nodes.
+170. Sketch-level rectangular pattern and mirror remain separate Sketch/Profile IR work and are not part of the native feature Pattern family.
+171. Pattern-family completeness is judged on its own public controls once represented in IR; missing typed semantics in an unrelated source-feature dependency do not make PatternIR itself partial.
 
 ## SCPF native associativity
 
