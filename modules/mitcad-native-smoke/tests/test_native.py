@@ -371,6 +371,61 @@ class MitcadNativeSmokeTests(unittest.TestCase):
             self.assertAlmostEqual(mixed_body["bbox"]["min"][0], 0.0, places=5)
             self.assertAlmostEqual(mixed_body["bbox"]["max"][0], 10.0, places=5)
 
+            shifted_sphere_csg_document = compile_mitcad_ir(
+                normalize_shape(
+                    Box(30, 30, 30, anchor=Anchor.BOTTOM)
+                    - Sphere(5).move(z=15)
+                ),
+                "ShiftedSphereCsg",
+            )
+            shifted_csg_features = [
+                row
+                for row in shifted_sphere_csg_document["commands"]
+                if row["cmd"] == "add_feature"
+            ]
+            self.assertEqual(
+                [row["def"]["type"] for row in shifted_csg_features],
+                ["box", "construction_plane", "sphere"],
+            )
+            self.assertEqual(
+                shifted_csg_features[1]["as"],
+                "csg_plane_root_tool",
+            )
+            self.assertEqual(
+                shifted_csg_features[2]["def"]["plane"],
+                {"ref": "csg_plane_root_tool.uid"},
+            )
+            self.assertEqual(
+                shifted_csg_features[2]["def"]["operation"],
+                "cut",
+            )
+
+            shifted_sphere_csg_native = run_document(
+                shifted_sphere_csg_document,
+                save=root / "out/shifted-sphere-csg.mitcad",
+                export=root / "out/shifted-sphere-csg.stl",
+                executable=str(executable),
+                work_dir=root / "shifted-sphere-csg-workspace",
+            )
+            self.assertEqual(len(shifted_sphere_csg_native["bodies"]), 1)
+            shifted_sphere_csg_body = shifted_sphere_csg_native["bodies"][0]
+            self.assertEqual(shifted_sphere_csg_body["kind"], "solid")
+            self.assertAlmostEqual(
+                shifted_sphere_csg_body["volume"],
+                27000.0 - 500.0 * pi / 3.0,
+                places=3,
+            )
+            for actual, expected in zip(
+                shifted_sphere_csg_body["bbox"]["min"],
+                [-15.0, -15.0, 0.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+            for actual, expected in zip(
+                shifted_sphere_csg_body["bbox"]["max"],
+                [15.0, 15.0, 30.0],
+            ):
+                self.assertAlmostEqual(actual, expected, places=5)
+
             sphere_radius = Parameter("sphere_radius", 10)
             sphere_top_z = Parameter("sphere_top_z", 25)
             placed_sphere_document = compile_mitcad_ir(
@@ -921,6 +976,8 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                 "parameterized-polygon-revolve.stl",
                 "mixed-role-revolve.mitcad",
                 "mixed-role-revolve.stl",
+                "shifted-sphere-csg.mitcad",
+                "shifted-sphere-csg.stl",
                 "placed-sphere.mitcad",
                 "placed-sphere.stl",
                 "three-circle-exact-region.mitcad",
@@ -958,6 +1015,9 @@ class MitcadNativeSmokeTests(unittest.TestCase):
                         f"mixed_role_revolve_volume={mixed_body['volume']}",
                         f"mixed_role_revolve_bbox={mixed_body['bbox']}",
                         "mixed_role_parameter_units=pass",
+                        f"shifted_sphere_csg_volume={shifted_sphere_csg_body['volume']}",
+                        f"shifted_sphere_csg_bbox={shifted_sphere_csg_body['bbox']}",
+                        "shifted_sphere_csg_helper_mapping=pass",
                         f"placed_sphere_volume={placed_sphere_body['volume']}",
                         f"placed_sphere_bbox={placed_sphere_body['bbox']}",
                         "placed_sphere_parameterized_anchor=pass",
