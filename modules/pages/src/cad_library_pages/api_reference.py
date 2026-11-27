@@ -139,7 +139,7 @@ def _prepare_api_design_contract(source_root: Path, site: Path) -> None:
 
 def prepare_api_reference(source_root: Path, site: Path) -> None:
     _prepare_api_design_contract(source_root, site)
-    manifest_path = source_root / "docs" / "api-reference.json"
+    manifest_path = source_root / "site" / "source" / "api-reference.json"
     if not manifest_path.is_file():
         return
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
