@@ -1688,7 +1688,7 @@ class SketchChainIR:
     """Engine-neutral connected line/arc Sketch chain."""
 
     name: str
-    plane: PlaneIR
+    plane: PlaneIR | None
     segments: tuple[SketchChainSegmentIR, ...]
     closed: bool
     source_kind: str = "sketch_chain"
@@ -1696,8 +1696,8 @@ class SketchChainIR:
     def __post_init__(self):
         if not isinstance(self.name, str) or not self.name.strip():
             raise ValueError("SketchChainIR name must be non-empty")
-        if not isinstance(self.plane, PlaneIR):
-            raise ValueError("SketchChainIR plane must be PlaneIR")
+        if self.plane is not None and not isinstance(self.plane, PlaneIR):
+            raise ValueError("SketchChainIR plane must be PlaneIR or None")
         if (
             not isinstance(self.segments, tuple)
             or not self.segments
@@ -1709,6 +1709,228 @@ class SketchChainIR:
             raise ValueError("SketchChainIR requires semantic segments")
         if not isinstance(self.closed, bool):
             raise ValueError("SketchChainIR closed must be bool")
+
+
+@dataclass(frozen=True)
+class TextEntityIR:
+    """Editable Sketch text independent of support/native ids."""
+
+    text: str
+    height: Any
+    font: str
+    position: tuple[Any, Any] = (0, 0)
+    source_kind: str = "text"
+
+    def __post_init__(self):
+        if not isinstance(self.text, str) or not self.text.strip():
+            raise ValueError("TextEntityIR text must be non-empty")
+        if not isinstance(self.font, str) or not self.font.strip():
+            raise ValueError("TextEntityIR font must be non-empty")
+        if (
+            isinstance(self.height, bool)
+            or not isfinite(pv(self.height))
+            or pv(self.height) <= 0
+        ):
+            raise ValueError("TextEntityIR height must be positive")
+        if (
+            not isinstance(self.position, tuple)
+            or len(self.position) != 2
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.position
+            )
+        ):
+            raise ValueError(
+                "TextEntityIR position must contain two finite CAD dimensions"
+            )
+
+
+SketchGraphEntityIR = ProfileIR | SketchChainIR | TextEntityIR
+
+
+@dataclass(frozen=True)
+class SketchEntityRefIR:
+    """Sketch-local semantic source reference for pattern/mirror operations."""
+
+    kind: str
+    index: int
+
+    def __post_init__(self):
+        if self.kind not in {"entity", "operation"}:
+            raise ValueError("SketchEntityRefIR kind must be entity or operation")
+        if type(self.index) is not int or self.index < 0:
+            raise ValueError("SketchEntityRefIR index must be non-negative")
+
+
+@dataclass(frozen=True)
+class SketchRectangularPatternIR:
+    """Native Sketch rectangular-pattern meaning over one semantic source."""
+
+    source: SketchEntityRefIR
+    count: Any
+    spacing: Any
+    direction: tuple[float, float]
+    count2: Any = 1
+    spacing2: Any | None = None
+    direction2: tuple[float, float] | None = None
+    alignment: str = "right"
+    alignment2: str = "right"
+    reversed: bool = False
+    reversed2: bool = False
+    source_kind: str = "sketch_pattern_rectangular"
+
+    def __post_init__(self):
+        if not isinstance(self.source, SketchEntityRefIR):
+            raise ValueError(
+                "SketchRectangularPatternIR source must be SketchEntityRefIR"
+            )
+        for value, label in ((self.count, "count"), (self.count2, "count2")):
+            concrete = pv(value)
+            if (
+                isinstance(value, bool)
+                or not isfinite(concrete)
+                or not 1 <= concrete <= 500
+                or not float(concrete).is_integer()
+            ):
+                raise ValueError(
+                    f"SketchRectangularPatternIR {label} must be 1..500"
+                )
+        if pv(self.count) * pv(self.count2) > 500:
+            raise ValueError(
+                "SketchRectangularPatternIR supports at most 500 instances"
+            )
+        for value, label in (
+            (self.spacing, "spacing"),
+            (self.spacing2, "spacing2"),
+        ):
+            if value is not None and (
+                isinstance(value, bool) or not isfinite(pv(value))
+            ):
+                raise ValueError(
+                    f"SketchRectangularPatternIR {label} must be finite"
+                )
+        for vector, label, optional in (
+            (self.direction, "direction", False),
+            (self.direction2, "direction2", True),
+        ):
+            if vector is None and optional:
+                continue
+            if (
+                not isinstance(vector, tuple)
+                or len(vector) != 2
+                or any(
+                    isinstance(component, bool)
+                    or not isinstance(component, (int, float))
+                    or not isfinite(component)
+                    for component in vector
+                )
+                or sum(component * component for component in vector) <= 0
+            ):
+                raise ValueError(
+                    f"SketchRectangularPatternIR {label} must be a fixed non-zero 2D vector"
+                )
+        if self.alignment not in {"left", "center", "right"}:
+            raise ValueError("SketchRectangularPatternIR alignment is invalid")
+        if self.alignment2 not in {"left", "center", "right"}:
+            raise ValueError("SketchRectangularPatternIR alignment2 is invalid")
+        if not isinstance(self.reversed, bool) or not isinstance(
+            self.reversed2, bool
+        ):
+            raise ValueError(
+                "SketchRectangularPatternIR reversed flags must be bool"
+            )
+
+
+@dataclass(frozen=True)
+class SketchMirrorIR:
+    """Mirror one semantic Sketch source over a local origin axis."""
+
+    source: SketchEntityRefIR
+    axis: str
+    source_kind: str = "sketch_mirror"
+
+    def __post_init__(self):
+        if not isinstance(self.source, SketchEntityRefIR):
+            raise ValueError("SketchMirrorIR source must be SketchEntityRefIR")
+        if self.axis not in {"x", "y"}:
+            raise ValueError("SketchMirrorIR axis must be x or y")
+
+
+SketchOperationIR = SketchRectangularPatternIR | SketchMirrorIR
+
+
+@dataclass(frozen=True)
+class SketchEntityGraphIR:
+    """Support-independent semantic contents authored inside one Sketch."""
+
+    entities: tuple[SketchGraphEntityIR, ...]
+    open_chains: tuple[SketchChainIR, ...] = ()
+    operations: tuple[SketchOperationIR, ...] = ()
+    source_kind: str = "sketch_entity_graph"
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.entities, tuple)
+            or any(
+                not isinstance(
+                    entity,
+                    (
+                        CircleProfileIR,
+                        RectangleProfileIR,
+                        RoundedRectangleProfileIR,
+                        SlotProfileIR,
+                        PolygonProfileIR,
+                        SketchChainIR,
+                        TextEntityIR,
+                    ),
+                )
+                for entity in self.entities
+            )
+        ):
+            raise ValueError(
+                "SketchEntityGraphIR entities contain unsupported semantic nodes"
+            )
+        if any(
+            isinstance(entity, SketchChainIR) and not entity.closed
+            for entity in self.entities
+        ):
+            raise ValueError(
+                "SketchEntityGraphIR entities require closed SketchChainIR"
+            )
+        if (
+            not isinstance(self.open_chains, tuple)
+            or any(
+                not isinstance(chain, SketchChainIR) or chain.closed
+                for chain in self.open_chains
+            )
+        ):
+            raise ValueError(
+                "SketchEntityGraphIR open_chains require open SketchChainIR"
+            )
+        if (
+            not isinstance(self.operations, tuple)
+            or any(
+                not isinstance(
+                    operation,
+                    (SketchRectangularPatternIR, SketchMirrorIR),
+                )
+                for operation in self.operations
+            )
+        ):
+            raise ValueError(
+                "SketchEntityGraphIR operations contain unsupported nodes"
+            )
+        for index, operation in enumerate(self.operations):
+            source = operation.source
+            if source.kind == "entity":
+                if source.index >= len(self.entities):
+                    raise ValueError(
+                        "Sketch operation references missing semantic entity"
+                    )
+            elif source.index >= index:
+                raise ValueError(
+                    "Sketch operation must reference an earlier operation"
+                )
 
 
 @dataclass(frozen=True)
@@ -2207,6 +2429,26 @@ def _count_parameter_names(value, found=None):
             )
             _count_parameter_names(original, found)
             return found
+        if value.kind == "sketch_pattern_rectangular":
+            (
+                source,
+                count,
+                _spacing,
+                _direction,
+                count2,
+                _spacing2,
+                _direction2,
+                _alignment,
+                _alignment2,
+                _reversed,
+                _reversed2,
+            ) = value.data
+            found.update(
+                parameter.name
+                for parameter in parameters_in(count, count2)
+            )
+            _count_parameter_names(source, found)
+            return found
         if value.kind == "circular_pattern":
             (
                 original,
@@ -2386,6 +2628,25 @@ def _length_parameter_names(value, found=None):
             ) = value.data
             _length_parameter_names(original, found)
             _length_parameter_names(spacing1, found)
+            if spacing2 is not None:
+                _length_parameter_names(spacing2, found)
+            return found
+        if value.kind == "sketch_pattern_rectangular":
+            (
+                source,
+                _count,
+                spacing,
+                _direction,
+                _count2,
+                spacing2,
+                _direction2,
+                _alignment,
+                _alignment2,
+                _reversed,
+                _reversed2,
+            ) = value.data
+            _length_parameter_names(source, found)
+            _length_parameter_names(spacing, found)
             if spacing2 is not None:
                 _length_parameter_names(spacing2, found)
             return found
@@ -3680,11 +3941,11 @@ def _sketch_chain_ir(
         is_closed = False
         profile_offset = (0, 0)
     elif shape.kind == "connected_profile":
-        if closed is False or name is None or plane is None:
+        if closed is False or name is None:
             return None
         _start, segments = shape.data
-        plane_ir = _plane_ir(plane)
-        if plane_ir is None:
+        plane_ir = _plane_ir(plane) if plane is not None else None
+        if plane is not None and plane_ir is None:
             return None
         chain_name = name
         is_closed = True
@@ -3746,6 +4007,152 @@ def _sketch_chain_ir(
         )
     except ValueError:
         return None
+
+
+def _sketch_graph_profile_ir(
+    sketch,
+    profile: Shape,
+    profile_anchor,
+    offset,
+) -> SketchGraphEntityIR | None:
+    if profile.kind == "text":
+        if profile_anchor is not None:
+            return None
+        text, height, font = profile.data
+        try:
+            return TextEntityIR(
+                text=text,
+                height=height,
+                font=font,
+                position=tuple(offset),
+            )
+        except (TypeError, ValueError):
+            return None
+
+    if profile.kind == "connected_profile":
+        if profile_anchor is not None:
+            return None
+        return _sketch_chain_ir(
+            profile,
+            closed=True,
+            name=sketch.name,
+            plane=sketch.plane,
+            offset=offset,
+        )
+
+    semantic_plane = sketch.plane
+    if semantic_plane is None and profile.kind == "polygon":
+        semantic_plane = profile.data[1]
+    if semantic_plane is None:
+        semantic_plane = "XY"
+    return _profile_ir_from_shape(
+        profile,
+        profile_anchor,
+        offset,
+        semantic_plane,
+    )
+
+
+def normalize_sketch_entities(sketch) -> SketchEntityGraphIR:
+    """Normalize public Sketch contents independently from support/consumers."""
+    from .explicit_sketch import Sketch
+
+    if not isinstance(sketch, Sketch):
+        raise TypeError("Sketch entity normalization requires a Sketch")
+    if not sketch._closed or sketch._token is not None:
+        raise ValueError(
+            "Sketch entity normalization requires a completed Sketch scope"
+        )
+
+    entities = []
+    references = {}
+    for index, (profile, profile_anchor, offset) in enumerate(
+        sketch._profiles
+    ):
+        semantic = _sketch_graph_profile_ir(
+            sketch,
+            profile,
+            profile_anchor,
+            offset,
+        )
+        if semantic is None:
+            raise ValueError(
+                f"Sketch entity {profile.kind!r} is outside semantic graph IR"
+            )
+        entities.append(semantic)
+        references[id(profile)] = SketchEntityRefIR("entity", index)
+
+    open_chains = []
+    for chain in sketch._chains:
+        semantic = _sketch_chain_ir(chain, closed=False)
+        if semantic is None:
+            raise ValueError(
+                "Sketch open chain is outside semantic SketchChainIR"
+            )
+        open_chains.append(semantic)
+
+    operations = []
+    for index, operation in enumerate(sketch._operations):
+        source = operation.data[0]
+        source_ref = references.get(id(source))
+        if source_ref is None:
+            raise ValueError(
+                "Sketch operation source has no semantic graph identity"
+            )
+
+        if operation.kind == "sketch_pattern_rectangular":
+            (
+                _source,
+                count,
+                spacing,
+                direction,
+                count2,
+                spacing2,
+                direction2,
+                alignment,
+                alignment2,
+                reversed1,
+                reversed2,
+            ) = operation.data
+            semantic = SketchRectangularPatternIR(
+                source=source_ref,
+                count=count,
+                spacing=spacing,
+                direction=tuple(direction),
+                count2=count2,
+                spacing2=spacing2,
+                direction2=(
+                    tuple(direction2)
+                    if direction2 is not None
+                    else None
+                ),
+                alignment=alignment,
+                alignment2=alignment2,
+                reversed=reversed1,
+                reversed2=reversed2,
+            )
+        elif operation.kind == "sketch_mirror":
+            _source, axis = operation.data
+            semantic = SketchMirrorIR(
+                source=source_ref,
+                axis=axis,
+            )
+        else:
+            raise ValueError(
+                f"unsupported Sketch operation {operation.kind!r}"
+            )
+
+        operations.append(semantic)
+        references[id(operation)] = SketchEntityRefIR(
+            "operation",
+            index,
+        )
+
+    return SketchEntityGraphIR(
+        entities=tuple(entities),
+        open_chains=tuple(open_chains),
+        operations=tuple(operations),
+    )
 
 
 def _sheet_rule_ir(
@@ -4393,6 +4800,12 @@ __all__ = [
     "SketchIR",
     "SketchChainIR",
     "SketchChainSegmentIR",
+    "SketchEntityGraphIR",
+    "SketchEntityRefIR",
+    "SketchGraphEntityIR",
+    "SketchMirrorIR",
+    "SketchRectangularPatternIR",
+    "TextEntityIR",
     "SheetRuleIR",
     "SheetBodyIR",
     "SheetBaseIR",
@@ -4419,5 +4832,6 @@ __all__ = [
     "normalize_configured_design",
     "normalize_model",
     "normalize_shape",
+    "normalize_sketch_entities",
     "resolve_feature_ref",
 ]
