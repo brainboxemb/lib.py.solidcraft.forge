@@ -1381,6 +1381,25 @@ knowledge it was not given. Such text remains valid on existing compatibility
 paths and has no `scalar_ir`. #577 adds no public unit syntax and no backend
 expression strings or storage-unit conventions to semantic IR.
 
+#581 completes Boolean body-operation semantics as recursive typed body
+composition. `BooleanIR(operation, target, tool)` accepts any already-typed
+`BodyIR` on both sides and retains authored left/right order for join, cut and
+intersect. A Boolean does not reinterpret either operand: feature-specific
+meaning remains in the operand's own typed history, and a LegacyShapeIR operand
+keeps the complete CSG expression on the visible legacy boundary.
+
+Backend coverage remains independent. SolidCraft reuses the central typed body
+lowering for the target and preserves its already-supported native CSG spellings
+for primitive, standalone Extrude and standalone Revolve tools. Mitcad keeps its
+qualified primitive CSG subset and rejects newly typed unsupported body tools
+explicitly. No backend command id, replay binding or raw Shape payload is added
+to BooleanIR to obtain that behavior.
+
+Semantic feature paths continue to use `target` and `tool` roles. Nested
+Boolean histories may therefore be traversed on either side without encoding
+backend command order; configuration/pattern consumers resolve those paths
+before backend-local history identity is chosen.
+
 #485 widens the existing `ChamferIR` rather than adding a second feature
 kind. `distance` remains the primary chamfer distance; optional `distance2`
 and `flip` carry the already-public two-distance semantics. Equal-distance
