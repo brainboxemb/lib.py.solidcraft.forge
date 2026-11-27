@@ -491,7 +491,7 @@ def _extrude_commands(node: ExtrudeIR, name: str) -> list[dict]:
         "direction": node.direction,
         "distance": command_value(node.distance),
     }
-    if region.holes:
+    if len(sketch.profiles) > 1:
         extrude["profiles"] = [{"point": [pick[0], pick[1]]}]
         extrude["exact_regions"] = True
     commands.append(_command("solid.extrude", **extrude))

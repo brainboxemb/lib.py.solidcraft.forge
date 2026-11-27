@@ -356,58 +356,133 @@ class RegionIR:
             raise ValueError("RegionIR hole profile indexes must be unique")
 
 
+def _circle_profile_radii(sketch: SketchIR) -> tuple[float, ...]:
+    """Validate the bounded concentric Circle profile family and return radii."""
+    if not sketch.profiles:
+        raise ValueError("qualified circle region requires CircleProfileIR profiles")
+
+    radii = []
+    for profile in sketch.profiles:
+        if not isinstance(profile, CircleProfileIR):
+            raise ValueError(
+                "qualified circle region requires CircleProfileIR profiles"
+            )
+        if tuple(profile.center) != (0, 0):
+            raise ValueError(
+                "qualified circle region currently requires origin centers"
+            )
+        diameter = pv(profile.diameter)
+        if not isfinite(diameter) or diameter <= 0:
+            raise ValueError(
+                "qualified circle region diameters must be positive"
+            )
+        radii.append(diameter / 2.0)
+
+    epsilon = 1e-12
+    ordered = sorted(radii)
+    if any(
+        abs(right - left) <= epsilon
+        for left, right in zip(ordered, ordered[1:])
+    ):
+        raise ValueError(
+            "qualified concentric circle region requires distinct diameters"
+        )
+    return tuple(radii)
+
+
+def _concentric_circle_region_from_pick(
+    sketch: SketchIR,
+    pick,
+) -> RegionIR:
+    """Resolve one authored exact-region pick to adjacent semantic boundaries."""
+    if (
+        not isinstance(pick, (tuple, list))
+        or len(pick) != 2
+    ):
+        raise ValueError("circle exact-region pick must be one 2D point")
+    try:
+        coordinates = tuple(float(pv(value)) for value in pick)
+    except (TypeError, ValueError):
+        raise ValueError("circle exact-region pick must be finite") from None
+    if any(not isfinite(value) for value in coordinates):
+        raise ValueError("circle exact-region pick must be finite")
+
+    radii = _circle_profile_radii(sketch)
+    pick_radius = hypot(*coordinates)
+    epsilon = 1e-12
+    if any(abs(radius - pick_radius) <= epsilon for radius in radii):
+        raise ValueError("circle exact-region pick lies on a profile boundary")
+
+    enclosing = [
+        (radius, index)
+        for index, radius in enumerate(radii)
+        if radius > pick_radius
+    ]
+    if not enclosing:
+        raise ValueError("circle exact-region pick lies outside every profile")
+    outer_radius, outer_index = min(enclosing)
+
+    inner = [
+        (radius, index)
+        for index, radius in enumerate(radii)
+        if radius < pick_radius
+    ]
+    if not inner:
+        return RegionIR(outer=outer_index)
+
+    _inner_radius, inner_index = max(inner)
+    return RegionIR(outer=outer_index, holes=(inner_index,))
+
+
 def _circle_region_interior_point(
     sketch: SketchIR,
     region: RegionIR,
 ) -> tuple[float, float]:
-    """Return one deterministic interior point for the qualified circle region.
+    """Return one deterministic selector inside a typed concentric circle region.
 
-    The point is derived from semantic profile geometry and is never retained
-    as RegionIR intent. Native backends may use it only as a transport selector
-    when their command API requires one.
+    RegionIR owns only the immediate boundary profiles of the selected connected
+    region. Other concentric profiles may remain in the Sketch without becoming
+    region members.
     """
     indexes = (region.outer,) + region.holes
     if any(index >= len(sketch.profiles) for index in indexes):
         raise ValueError("circle region references a missing sketch profile")
+    if len(region.holes) > 1:
+        raise ValueError(
+            "qualified concentric circle region supports at most one hole"
+        )
 
-    outer = sketch.profiles[region.outer]
-    if not isinstance(outer, CircleProfileIR):
-        raise ValueError("qualified circle region requires CircleProfileIR profiles")
-    if tuple(outer.center) != (0, 0):
-        raise ValueError("qualified circle region currently requires origin centers")
-
-    outer_diameter = pv(outer.diameter)
-    if not isfinite(outer_diameter) or outer_diameter <= 0:
-        raise ValueError("qualified circle region outer diameter must be positive")
+    radii = _circle_profile_radii(sketch)
+    outer_radius = radii[region.outer]
+    epsilon = 1e-12
 
     if not region.holes:
-        if len(sketch.profiles) != 1:
+        if any(
+            index != region.outer and radius < outer_radius - epsilon
+            for index, radius in enumerate(radii)
+        ):
             raise ValueError(
-                "qualified circle region without holes requires one sketch profile"
+                "qualified no-hole circle region must use the innermost profile"
             )
         return (0.0, 0.0)
 
-    if len(region.holes) != 1 or len(sketch.profiles) != 2:
-        raise ValueError(
-            "qualified annular circle region requires exactly two profiles"
-        )
-
-    inner = sketch.profiles[region.holes[0]]
-    if not isinstance(inner, CircleProfileIR):
-        raise ValueError("qualified circle region requires CircleProfileIR profiles")
-    if tuple(inner.center) != tuple(outer.center):
-        raise ValueError("qualified annular circle region requires concentric profiles")
-
-    inner_diameter = pv(inner.diameter)
-    if not isfinite(inner_diameter) or inner_diameter <= 0:
-        raise ValueError("qualified circle region inner diameter must be positive")
-    if outer_diameter <= inner_diameter:
+    inner_index = region.holes[0]
+    inner_radius = radii[inner_index]
+    if outer_radius <= inner_radius + epsilon:
         raise ValueError(
             "qualified annular circle region requires outer diameter above inner"
         )
+    if any(
+        index not in (region.outer, inner_index)
+        and inner_radius + epsilon < radius < outer_radius - epsilon
+        for index, radius in enumerate(radii)
+    ):
+        raise ValueError(
+            "qualified annular circle region boundaries must be adjacent profiles"
+        )
 
-    # Midway between the two radii is strictly inside the annular region.
-    return ((outer_diameter + inner_diameter) / 4.0, 0.0)
+    # Midway between the two radii is strictly inside the selected annulus.
+    return ((outer_radius + inner_radius) / 2.0, 0.0)
 
 
 def _polygon_region_interior_point(
@@ -1169,10 +1244,10 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
             direction=direction,
         )
 
-    # Circle and annular slices qualified by #282/#320.
+    # Circle exact-region slices qualified by #282/#320/#456.
     if direction not in ("positive", "negative"):
         return None
-    if len(profiles) not in (1, 2):
+    if not profiles:
         return None
 
     semantic_profiles = []
@@ -1195,31 +1270,22 @@ def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     if len(semantic_profiles) == 1:
         if profile_picks is not None or exact_regions:
             return None
-        regions = (RegionIR(outer=0),)
-    else:
-        if not exact_regions or profile_picks is None or len(profile_picks) != 1:
-            return None
-
-        diameters = tuple(pv(profile.diameter) for profile in semantic_profiles)
-        if (
-            any(not isfinite(value) or value <= 0 for value in diameters)
-            or diameters[0] == diameters[1]
-        ):
-            return None
-
-        outer_index = 0 if diameters[0] > diameters[1] else 1
-        inner_index = 1 - outer_index
-        region = RegionIR(outer=outer_index, holes=(inner_index,))
-
+        region = RegionIR(outer=0)
         try:
             _circle_region_interior_point(sketch, region)
         except ValueError:
             return None
-
-        pick_radius = hypot(*profile_picks[0])
-        inner_radius = diameters[inner_index] / 2.0
-        outer_radius = diameters[outer_index] / 2.0
-        if not inner_radius < pick_radius < outer_radius:
+        regions = (region,)
+    else:
+        if not exact_regions or profile_picks is None or len(profile_picks) != 1:
+            return None
+        try:
+            region = _concentric_circle_region_from_pick(
+                sketch,
+                profile_picks[0],
+            )
+            _circle_region_interior_point(sketch, region)
+        except ValueError:
             return None
         regions = (region,)
 
