@@ -15,7 +15,6 @@
     "components",
     "cone-boolean",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -63,11 +62,18 @@
   ],
   "api_probes": {
     "available": [
-      "configuration-installed-current"
+      "configuration-installed-clamp",
+      "configuration-installed-current",
+      "configuration-installed-fanout",
+      "configuration-installed-feature",
+      "configuration-installed-feature-native-name",
+      "configuration-installed-group",
+      "configuration-installed-single-feature",
+      "configuration-position-suppression"
     ],
     "selected": []
   },
-  "full": false,
+  "full": true,
   "library": true,
   "models": [
     {
@@ -254,17 +260,6 @@
     },
     {
       "id": "configuration-child-feature",
-      "implementations": [
-        "scpf"
-      ],
-      "primary": "scpf",
-      "purpose": [
-        "example",
-        "verification"
-      ]
-    },
-    {
-      "id": "configuration-installed-state",
       "implementations": [
         "scpf"
       ],
@@ -844,7 +839,6 @@
     "components",
     "cone-boolean",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -890,5 +884,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "0cb3cb6aa506572926cc1dbe6d901f7dfdbe5f68"
+  "source_sha": "a0570f6d11b9dea934cbff878955678ffad464e8"
 }
