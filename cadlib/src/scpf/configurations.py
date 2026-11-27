@@ -13,6 +13,11 @@ class _ParameterColumn:
 
 
 @dataclass(frozen=True)
+class _ComponentParameterColumn:
+    reference: object
+
+
+@dataclass(frozen=True)
 class _SuppressionColumn:
     feature: object
 
@@ -29,14 +34,19 @@ def _configuration_column(value):
     if isinstance(value, Parameter):
         return _ParameterColumn(value.name)
 
-    from .model_objects import _ComponentFeatureReference
+    from .model_objects import (
+        _ComponentFeatureReference,
+        _ComponentParameterReference,
+    )
+    if isinstance(value, _ComponentParameterReference):
+        return _ComponentParameterColumn(value)
     if isinstance(value, _FeatureHandle):
         return _SuppressionColumn(value.shape)
     if isinstance(value, (Shape, _ComponentFeatureReference)):
         return _SuppressionColumn(value)
 
     raise TypeError(
-        "configuration columns must contain Parameter or authored feature handles"
+        "configuration columns must contain Parameter, component parameter, or authored feature handles"
     )
 
 
@@ -62,6 +72,12 @@ def _configure_model(design, *, active, columns, rows):
     keys = [
         ("param", column.name)
         if isinstance(column, _ParameterColumn)
+        else (
+            "component-param",
+            column.reference.definition_key,
+            column.reference.name,
+        )
+        if isinstance(column, _ComponentParameterColumn)
         else ("feature", id(column.feature))
         for column in normalized_columns
     ]
@@ -291,6 +307,40 @@ def _suppression_command_index(design, name, commands, feature):
     return matches[0]
 
 
+def _component_parameter_name(design, reference):
+    """Resolve one definition-level component parameter to its native name."""
+    from .assembly import _as_assembly, _component_slug, _definition_names
+    from .compiler import ModelError
+
+    assembly = _as_assembly(design)
+    names = _definition_names(assembly)
+    matches = [
+        (number, key, instances[0].definition)
+        for number, (key, instances) in enumerate(
+            {
+                instance.definition.key: [
+                    item
+                    for item in assembly.instances
+                    if item.definition.key == instance.definition.key
+                ]
+                for instance in assembly.instances
+            }.items(),
+            start=1,
+        )
+        if key == reference.definition_key
+    ]
+    if not matches:
+        raise ModelError(
+            "component parameter reference is not part of this configured design"
+        )
+    number, key, definition = matches[0]
+    if reference.name not in {name for name, _ in definition.parameters}:
+        raise ModelError(
+            f"component definition has no published parameter {reference.name!r}"
+        )
+    return f"d{number}_{_component_slug(names[key])}_{reference.name}"
+
+
 def _configuration_commands(design, configuration, name, commands):
     """Bind configuration targets and append native table authoring."""
     from .compiler import ModelError
@@ -317,6 +367,19 @@ def _configuration_commands(design, configuration, name, commands):
                 )
             params.append(column.name)
             keys.append(f"param:{column.name}")
+            continue
+
+        if isinstance(column, _ComponentParameterColumn):
+            parameter_name = _component_parameter_name(
+                design,
+                column.reference,
+            )
+            if parameter_name not in parameter_names:
+                raise ModelError(
+                    f"unknown native configuration parameter: {parameter_name}"
+                )
+            params.append(parameter_name)
+            keys.append(f"param:{parameter_name}")
             continue
 
         index = _suppression_command_index(
