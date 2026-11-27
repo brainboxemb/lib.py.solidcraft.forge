@@ -3875,6 +3875,23 @@ def _axis_line_in_sketch_plane(axis: AxisLineIR, plane: PlaneIR) -> bool:
     )
 
 
+def _contains_untyped_expression(value) -> bool:
+    """Return whether authored intent contains compatibility-only expression text."""
+    if isinstance(value, Expression):
+        return value.scalar_ir is None
+    if isinstance(value, Shape):
+        return _contains_untyped_expression(value.data)
+    if isinstance(value, dict):
+        return any(
+            _contains_untyped_expression(key)
+            or _contains_untyped_expression(item)
+            for key, item in value.items()
+        )
+    if isinstance(value, (tuple, list)):
+        return any(_contains_untyped_expression(item) for item in value)
+    return False
+
+
 def _portable_revolve(
     shape: Shape,
     *,
@@ -3900,6 +3917,12 @@ def _portable_revolve(
 
     if origin is not None or rotation is not None or len(profiles) != 1:
         return None
+    if operations:
+        return None
+    if _contains_untyped_expression(
+        (profiles, angle, axis, plane_offset)
+    ):
+        return None
     if direction not in (None, "symmetric"):
         return None
     if operation not in {"new_body", "cut"}:
@@ -3918,7 +3941,23 @@ def _portable_revolve(
         operations,
         rotation,
     )
-    if sketch is None or sketch.support is not None:
+    if (
+        sketch is None
+        or sketch.support is not None
+        or sketch.graph is None
+        or len(sketch.graph.entities) != 1
+        or sketch.graph.operations
+        or not isinstance(
+            sketch.graph.entities[0],
+            (
+                CircleProfileIR,
+                RectangleProfileIR,
+                RoundedRectangleProfileIR,
+                PolygonProfileIR,
+                SketchChainIR,
+            ),
+        )
+    ):
         return None
 
     axis_ir = _axis_line_ir(axis)
@@ -3928,10 +3967,9 @@ def _portable_revolve(
     ):
         return None
 
-    # A direct semantic closed profile can retain the historical explicit
-    # region identity. Text, connected-profile and operation-derived Sketch
-    # results intentionally use region=None: public Revolve consumes the
-    # completed Sketch result as a whole and has no profile-selector argument.
+    # A direct supported closed profile retains one explicit semantic region.
+    # A connected profile is a completed Sketch-chain result; public Revolve
+    # consumes that result as a whole and has no profile-selector argument.
     region = None
     if (
         sketch.graph is not None
