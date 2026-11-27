@@ -530,6 +530,63 @@ def _plain_command_value(value):
 
 
 @dataclass(frozen=True)
+class _ScalarLiteral:
+    """Engine-neutral numeric leaf captured from authored CAD arithmetic."""
+
+    value: float
+
+
+@dataclass(frozen=True)
+class _ScalarParameterRef:
+    """Engine-neutral reference to one authored Forge Parameter."""
+
+    name: str
+
+
+@dataclass(frozen=True)
+class _ScalarUnary:
+    """Engine-neutral unary scalar arithmetic."""
+
+    op: str
+    operand: Any
+
+
+@dataclass(frozen=True)
+class _ScalarBinary:
+    """Engine-neutral binary scalar arithmetic."""
+
+    op: str
+    left: Any
+    right: Any
+
+
+def _scalar_node(value):
+    """Return semantic scalar metadata for authored arithmetic when known."""
+    if isinstance(value, Parameter):
+        return _ScalarParameterRef(value.name)
+    if isinstance(value, Expression):
+        return value.semantic
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return _ScalarLiteral(value)
+    return None
+
+
+def _scalar_binary(op, left, right):
+    left_node = _scalar_node(left)
+    right_node = _scalar_node(right)
+    if left_node is None or right_node is None:
+        return None
+    return _ScalarBinary(op, left_node, right_node)
+
+
+def _scalar_unary(op, value):
+    operand = _scalar_node(value)
+    if operand is None:
+        return None
+    return _ScalarUnary(op, operand)
+
+
+@dataclass(frozen=True)
 class Parameter:
     """Represent one named editable Forge CAD dimension.
 
@@ -579,6 +636,7 @@ class Parameter:
                 self.value / other,
                 f"{self.name} / {number_text(other)}",
                 (self,),
+                _scalar_binary("div", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             divisor = _pv(other)
@@ -588,6 +646,7 @@ class Parameter:
                 self.value / divisor,
                 f"({self.name}) / ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary("div", self, other),
             )
         return NotImplemented
 
@@ -599,6 +658,7 @@ class Parameter:
                 other / self.value,
                 f"{number_text(other)} / ({self.name})",
                 (self,),
+                _scalar_binary("div", other, self),
             )
         return NotImplemented
 
@@ -608,12 +668,14 @@ class Parameter:
                 self.value * other,
                 f"{self.name} * {number_text(other)}",
                 (self,),
+                _scalar_binary("mul", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value * _pv(other),
                 f"({self.name}) * ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary("mul", self, other),
             )
         return NotImplemented
 
@@ -621,13 +683,18 @@ class Parameter:
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
-            return Expression(self.value + other,
-                              f"{self.name} + {number_text(other)} mm", (self,))
+            return Expression(
+                self.value + other,
+                f"{self.name} + {number_text(other)} mm",
+                (self,),
+                _scalar_binary("add", self, other),
+            )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value + _pv(other),
                 f"{self.name} + ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary("add", self, other),
             )
         return NotImplemented
 
@@ -639,12 +706,14 @@ class Parameter:
                 self.value - other,
                 f"{self.name} - {number_text(other)} mm",
                 (self,),
+                _scalar_binary("sub", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value - _pv(other),
-                f"{self.name} - ({command_value(other)})",
+                f"({self.name}) - ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary("sub", self, other),
             )
         return NotImplemented
 
@@ -654,6 +723,7 @@ class Parameter:
                 other - self.value,
                 f"{number_text(other)} mm - ({self.name})",
                 (self,),
+                _scalar_binary("sub", other, self),
             )
         return NotImplemented
 
@@ -671,7 +741,12 @@ class Parameter:
         )
 
     def __neg__(self):
-        return Expression(-self.value, f"-({self.name})", (self,))
+        return Expression(
+            -self.value,
+            f"-({self.name})",
+            (self,),
+            _scalar_unary("neg", self),
+        )
 
 
 @dataclass(frozen=True)
@@ -679,6 +754,7 @@ class Expression:
     value: float
     expression: str
     parameters: tuple[Parameter, ...]
+    semantic: Any = None
 
     def __mul__(self, other):
         if isinstance(other, (float, int)) and not isinstance(other, bool):
@@ -686,12 +762,14 @@ class Expression:
                 self.value * other,
                 f"({self.expression}) * {number_text(other)}",
                 self.parameters,
+                _scalar_binary("mul", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value * _pv(other),
                 f"({self.expression}) * ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary("mul", self, other),
             )
         return NotImplemented
 
@@ -705,6 +783,7 @@ class Expression:
                 self.value / other,
                 f"({self.expression}) / {number_text(other)}",
                 self.parameters,
+                _scalar_binary("div", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             divisor = _pv(other)
@@ -714,6 +793,7 @@ class Expression:
                 self.value / divisor,
                 f"({self.expression}) / ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary("div", self, other),
             )
         return NotImplemented
 
@@ -725,19 +805,24 @@ class Expression:
                 other / self.value,
                 f"{number_text(other)} / ({self.expression})",
                 self.parameters,
+                _scalar_binary("div", other, self),
             )
         return NotImplemented
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
-            return Expression(self.value + other,
-                              f"{self.expression} + {number_text(other)} mm",
-                              self.parameters)
+            return Expression(
+                self.value + other,
+                f"{self.expression} + {number_text(other)} mm",
+                self.parameters,
+                _scalar_binary("add", self, other),
+            )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value + _pv(other),
                 f"({self.expression}) + ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary("add", self, other),
             )
         return NotImplemented
 
@@ -749,12 +834,14 @@ class Expression:
                 self.value - other,
                 f"({self.expression}) - {number_text(other)} mm",
                 self.parameters,
+                _scalar_binary("sub", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value - _pv(other),
                 f"({self.expression}) - ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary("sub", self, other),
             )
         return NotImplemented
 
@@ -764,6 +851,7 @@ class Expression:
                 other - self.value,
                 f"{number_text(other)} mm - ({self.expression})",
                 self.parameters,
+                _scalar_binary("sub", other, self),
             )
         return NotImplemented
 
@@ -786,13 +874,24 @@ class Expression:
         # a negative signed distance back to its positive native magnitude keeps
         # the original symbolic expression instead of producing -(-(h)).
         if self.expression.startswith("-(") and self.expression.endswith(")"):
+            semantic = (
+                self.semantic.operand
+                if isinstance(self.semantic, _ScalarUnary)
+                and self.semantic.op == "neg"
+                else None
+            )
             return Expression(
                 -self.value,
                 self.expression[2:-1],
                 self.parameters,
+                semantic,
             )
-        return Expression(-self.value, f"-({self.expression})", self.parameters)
-
+        return Expression(
+            -self.value,
+            f"-({self.expression})",
+            self.parameters,
+            _scalar_unary("neg", self),
+        )
 
 def _scaled_direction(direction, distance):
     """Return one cardinal direction scaled by a CAD dimension."""
