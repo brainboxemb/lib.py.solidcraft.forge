@@ -29,8 +29,8 @@ Backend status never upgrades an incomplete IR family.
 Current conservative family-level inventory:
 
 - IR-relevant semantic families: **20**
-- complete: **14 / 20 (70%)**
-- partial: **6 / 20 (30%)**
+- complete: **15 / 20 (75%)**
+- partial: **5 / 20 (25%)**
 - legacy: **0 / 20 (0%)**
 - families with at least some typed IR: **20 / 20 (100%)**
 - physical SCPF owners on permanent `exp`: **61**
@@ -43,7 +43,7 @@ not effort or backend parity.
 
 | Semantic family | IR | SolidCraft typed | Mitcad | Native Mitcad | Main remaining gap |
 | --- | --- | --- | --- | --- | --- |
-| Values, parameters, scalar expressions | partial | partial | partial | qualified slices | Length/angle, unitless count and #554 continuous ratio roles are typed; #560 applies count-vs-length roles to Sketch patterns; broader symbolic/cadmath dimensional expression semantics remain. |
+| Values, parameters, scalar expressions | complete | partial | partial | qualified slices | #577 types the complete existing public scalar grammar: literals, Parameter refs, unary/arithmetic, fixed numeric power and cadmath min/max/sqrt/abs/round/floor/atan; use-site roles stay separate. Non-affine backend lowering remains backend catch-up. |
 | Primitive solids: Box, Cylinder, Cone, Sphere | complete | yes | yes | qualified | Current public primitive meaning is typed. |
 | Placement and transforms | partial | partial | partial | qualified slices | #544 types within-component absolute/anchored FeaturePlacementIR and #555 types symbolic occurrence Placement plus fixed occurrence rotation; arbitrary primitive/body transform composition remains. |
 | Reference geometry: planes and axes | partial | partial | partial | qualified slices | PlaneIR plus principal/vector AxisLineIR are typed; broader datum/reference semantics remain. |
@@ -99,6 +99,7 @@ with semantic Sketch support/frame intent, general RegionIR selector semantics
 and the current public standalone/attached Extrude contract, moving Regions and
 Extrude to complete. #562 then completes the shared public edge-selector
 vocabulary and moves Topology/reference selectors, Chamfer and Fillet to complete.
-The migration therefore
-continues entirely as partial -> complete closure while backend catch-up remains
-independent.
+#577 then completes Values/parameters/scalar expressions by typing fixed numeric
+power and the existing public cadmath function grammar while keeping physical
+roles at typed use sites. The migration therefore continues entirely as
+partial -> complete closure while backend catch-up remains independent.
