@@ -453,13 +453,378 @@ class PolygonProfileIR:
                 )
 
 
+@dataclass(frozen=True)
+class SketchSegmentIR:
+    """One connected Sketch-local line/arc segment."""
+
+    kind: str
+    start: tuple[Any, Any]
+    end: tuple[Any, Any]
+    through: tuple[Any, Any] | None = None
+    center: tuple[Any, Any] | None = None
+    clockwise: bool | None = None
+
+    def __post_init__(self):
+        if self.kind not in {
+            "line",
+            "arc_three_point",
+            "arc_center_point",
+            "arc_tangent",
+        }:
+            raise ValueError("SketchSegmentIR kind is unsupported")
+
+        for label, point in (
+            ("start", self.start),
+            ("end", self.end),
+            ("through", self.through),
+            ("center", self.center),
+        ):
+            if point is None:
+                continue
+            if (
+                not isinstance(point, tuple)
+                or len(point) != 2
+                or any(
+                    isinstance(value, bool) or not isfinite(pv(value))
+                    for value in point
+                )
+            ):
+                raise ValueError(
+                    f"SketchSegmentIR {label} must be a finite 2D point"
+                )
+
+        if self.kind == "line":
+            if self.through is not None or self.center is not None:
+                raise ValueError("line SketchSegmentIR cannot carry arc points")
+            if self.clockwise is not None:
+                raise ValueError("line SketchSegmentIR cannot carry clockwise")
+        elif self.kind == "arc_three_point":
+            if self.through is None or self.center is not None:
+                raise ValueError(
+                    "arc_three_point SketchSegmentIR requires through only"
+                )
+            if self.clockwise is not None:
+                raise ValueError(
+                    "arc_three_point SketchSegmentIR cannot carry clockwise"
+                )
+        elif self.kind == "arc_center_point":
+            if self.center is None or self.through is not None:
+                raise ValueError(
+                    "arc_center_point SketchSegmentIR requires center only"
+                )
+            if not isinstance(self.clockwise, bool):
+                raise ValueError(
+                    "arc_center_point SketchSegmentIR requires bool clockwise"
+                )
+        else:
+            if self.through is not None or self.center is not None:
+                raise ValueError(
+                    "arc_tangent SketchSegmentIR cannot carry arc helper points"
+                )
+            if self.clockwise is not None:
+                raise ValueError(
+                    "arc_tangent SketchSegmentIR cannot carry clockwise"
+                )
+
+
+@dataclass(frozen=True)
+class ConnectedProfileIR:
+    """One closed connected line/arc profile in Sketch-local coordinates."""
+
+    start: tuple[Any, Any]
+    segments: tuple[SketchSegmentIR, ...]
+    source_kind: str = "connected_profile"
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.start, tuple)
+            or len(self.start) != 2
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.start
+            )
+        ):
+            raise ValueError(
+                "ConnectedProfileIR start must be one finite 2D point"
+            )
+        if (
+            not isinstance(self.segments, tuple)
+            or len(self.segments) < 2
+            or any(
+                not isinstance(segment, SketchSegmentIR)
+                or segment.kind == "arc_tangent"
+                for segment in self.segments
+            )
+        ):
+            raise ValueError(
+                "ConnectedProfileIR requires two or more closed-profile segments"
+            )
+
+
 ProfileIR = (
     CircleProfileIR
     | RectangleProfileIR
     | RoundedRectangleProfileIR
     | SlotProfileIR
     | PolygonProfileIR
+    | ConnectedProfileIR
 )
+
+
+@dataclass(frozen=True)
+class TextEntityIR:
+    """Editable Sketch text with semantic insertion point and height."""
+
+    text: str
+    height: Any
+    font: str
+    position: tuple[Any, Any] = (0, 0)
+    source_kind: str = "text"
+
+    def __post_init__(self):
+        if not isinstance(self.text, str) or not self.text.strip():
+            raise ValueError("TextEntityIR text must be non-empty")
+        if not isinstance(self.font, str) or not self.font.strip():
+            raise ValueError("TextEntityIR font must be non-empty")
+        if (
+            isinstance(self.height, bool)
+            or not isfinite(pv(self.height))
+            or pv(self.height) <= 0
+        ):
+            raise ValueError("TextEntityIR height must be positive")
+        if (
+            not isinstance(self.position, tuple)
+            or len(self.position) != 2
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.position
+            )
+        ):
+            raise ValueError(
+                "TextEntityIR position must contain two finite CAD dimensions"
+            )
+
+
+SketchEntityIR = ProfileIR | TextEntityIR
+
+
+@dataclass(frozen=True)
+class OpenChainIR:
+    """One reusable open line/tangent-arc Sketch chain."""
+
+    start: tuple[Any, Any]
+    segments: tuple[SketchSegmentIR, ...]
+    source_kind: str = "open_chain"
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.start, tuple)
+            or len(self.start) != 2
+            or any(
+                isinstance(value, bool) or not isfinite(pv(value))
+                for value in self.start
+            )
+        ):
+            raise ValueError("OpenChainIR start must be one finite 2D point")
+        if (
+            not isinstance(self.segments, tuple)
+            or not self.segments
+            or any(
+                not isinstance(segment, SketchSegmentIR)
+                or segment.kind not in {"line", "arc_tangent"}
+                for segment in self.segments
+            )
+        ):
+            raise ValueError(
+                "OpenChainIR requires line/tangent-arc segments"
+            )
+
+
+@dataclass(frozen=True)
+class SketchEntityRefIR:
+    """Sketch-local semantic source reference for pattern/mirror operations."""
+
+    kind: str
+    index: int
+
+    def __post_init__(self):
+        if self.kind not in {"entity", "operation"}:
+            raise ValueError(
+                "SketchEntityRefIR kind must be entity or operation"
+            )
+        if type(self.index) is not int or self.index < 0:
+            raise ValueError(
+                "SketchEntityRefIR index must be non-negative"
+            )
+
+
+@dataclass(frozen=True)
+class SketchRectangularPatternIR:
+    """Native Sketch rectangular-pattern meaning over one semantic source."""
+
+    source: SketchEntityRefIR
+    count: Any
+    spacing: Any
+    direction: tuple[float, float]
+    count2: Any = 1
+    spacing2: Any | None = None
+    direction2: tuple[float, float] | None = None
+    alignment: str = "right"
+    alignment2: str = "right"
+    reversed: bool = False
+    reversed2: bool = False
+    source_kind: str = "sketch_pattern_rectangular"
+
+    def __post_init__(self):
+        if not isinstance(self.source, SketchEntityRefIR):
+            raise ValueError(
+                "SketchRectangularPatternIR source must be SketchEntityRefIR"
+            )
+        for value, label in ((self.count, "count"), (self.count2, "count2")):
+            concrete = pv(value)
+            if (
+                isinstance(value, bool)
+                or not isfinite(concrete)
+                or not 1 <= concrete <= 500
+                or not float(concrete).is_integer()
+            ):
+                raise ValueError(
+                    f"SketchRectangularPatternIR {label} must be 1..500"
+                )
+        if pv(self.count) * pv(self.count2) > 500:
+            raise ValueError(
+                "SketchRectangularPatternIR supports at most 500 instances"
+            )
+        for value, label in (
+            (self.spacing, "spacing"),
+            (self.spacing2, "spacing2"),
+        ):
+            if value is not None and (
+                isinstance(value, bool) or not isfinite(pv(value))
+            ):
+                raise ValueError(
+                    f"SketchRectangularPatternIR {label} must be finite"
+                )
+        for vector, label, optional in (
+            (self.direction, "direction", False),
+            (self.direction2, "direction2", True),
+        ):
+            if vector is None and optional:
+                continue
+            if (
+                not isinstance(vector, tuple)
+                or len(vector) != 2
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not isfinite(value)
+                    for value in vector
+                )
+                or sum(value * value for value in vector) <= 0
+            ):
+                raise ValueError(
+                    f"SketchRectangularPatternIR {label} must be a fixed non-zero 2D vector"
+                )
+        if self.alignment not in {"left", "center", "right"}:
+            raise ValueError(
+                "SketchRectangularPatternIR alignment is invalid"
+            )
+        if self.alignment2 not in {"left", "center", "right"}:
+            raise ValueError(
+                "SketchRectangularPatternIR alignment2 is invalid"
+            )
+        if not isinstance(self.reversed, bool) or not isinstance(
+            self.reversed2,
+            bool,
+        ):
+            raise ValueError(
+                "SketchRectangularPatternIR reversed flags must be bool"
+            )
+
+
+@dataclass(frozen=True)
+class SketchMirrorIR:
+    """Mirror one semantic Sketch source over a local origin axis."""
+
+    source: SketchEntityRefIR
+    axis: str
+    source_kind: str = "sketch_mirror"
+
+    def __post_init__(self):
+        if not isinstance(self.source, SketchEntityRefIR):
+            raise ValueError("SketchMirrorIR source must be SketchEntityRefIR")
+        if self.axis not in {"x", "y"}:
+            raise ValueError("SketchMirrorIR axis must be x or y")
+
+
+SketchOperationIR = SketchRectangularPatternIR | SketchMirrorIR
+
+
+@dataclass(frozen=True)
+class SketchEntityGraphIR:
+    """Support-independent semantic contents authored inside one Sketch."""
+
+    entities: tuple[SketchEntityIR, ...]
+    open_chains: tuple[OpenChainIR, ...] = ()
+    operations: tuple[SketchOperationIR, ...] = ()
+    source_kind: str = "sketch_entity_graph"
+
+    def __post_init__(self):
+        if (
+            not isinstance(self.entities, tuple)
+            or any(
+                not isinstance(
+                    entity,
+                    (
+                        CircleProfileIR,
+                        RectangleProfileIR,
+                        RoundedRectangleProfileIR,
+                        SlotProfileIR,
+                        PolygonProfileIR,
+                        ConnectedProfileIR,
+                        TextEntityIR,
+                    ),
+                )
+                for entity in self.entities
+            )
+        ):
+            raise ValueError(
+                "SketchEntityGraphIR entities contain unsupported semantic nodes"
+            )
+        if (
+            not isinstance(self.open_chains, tuple)
+            or any(
+                not isinstance(chain, OpenChainIR)
+                for chain in self.open_chains
+            )
+        ):
+            raise ValueError(
+                "SketchEntityGraphIR open_chains must contain OpenChainIR"
+            )
+        if (
+            not isinstance(self.operations, tuple)
+            or any(
+                not isinstance(
+                    operation,
+                    (SketchRectangularPatternIR, SketchMirrorIR),
+                )
+                for operation in self.operations
+            )
+        ):
+            raise ValueError(
+                "SketchEntityGraphIR operations contain unsupported nodes"
+            )
+        for index, operation in enumerate(self.operations):
+            source = operation.source
+            if source.kind == "entity":
+                if source.index >= len(self.entities):
+                    raise ValueError(
+                        "Sketch operation references missing semantic entity"
+                    )
+            elif source.index >= index:
+                raise ValueError(
+                    "Sketch operation must reference an earlier operation"
+                )
 
 
 @dataclass(frozen=True)
