@@ -27,8 +27,8 @@ class ApiReferenceProjectionTests(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
             self._write_source(root)
-            docs = root / 'docs'
-            docs.mkdir()
+            source = root / 'site/source'
+            source.mkdir(parents=True)
             manifest = {
                 'schema': 2,
                 'references': [
@@ -40,7 +40,7 @@ class ApiReferenceProjectionTests(unittest.TestCase):
                     ]},
                 ],
             }
-            (docs / 'api-reference.json').write_text(json.dumps(manifest), encoding='utf-8')
+            (source / 'api-reference.json').write_text(json.dumps(manifest), encoding='utf-8')
             site = root / 'site'
 
             prepare_api_reference(root, site)
@@ -62,7 +62,7 @@ class ApiReferenceProjectionTests(unittest.TestCase):
     def test_all_public_callables_have_use_when_and_limits(self):
         root = Path(__file__).resolve().parents[3]
         manifest = json.loads(
-            (root / 'docs/api-reference.json').read_text(encoding='utf-8')
+            (root / 'site/source/api-reference.json').read_text(encoding='utf-8')
         )
         callables = [
             row for row in manifest['references']
@@ -83,9 +83,9 @@ class ApiReferenceProjectionTests(unittest.TestCase):
         with TemporaryDirectory() as tmp:
             root = Path(tmp)
             self._write_source(root)
-            docs = root / 'docs'
-            docs.mkdir()
-            (docs / 'api-reference.json').write_text(
+            source = root / 'site/source'
+            source.mkdir(parents=True)
+            (source / 'api-reference.json').write_text(
                 json.dumps({'schema': 2, 'references': [
                     {'kind': 'callable', 'name': 'Shape', 'summary': 'Shape.'}
                 ]}),

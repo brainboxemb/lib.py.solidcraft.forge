@@ -93,8 +93,8 @@ def load_visual_policy(path: Path) -> dict[str, Any]:
     expected_views = value.get("expected_views")
     if expected_views is None:
         expected_views = list(views)
-    if not isinstance(expected_views, list) or not expected_views:
-        raise ValueError("visual policy requires at least one expected-shape view")
+    if not isinstance(expected_views, list):
+        raise ValueError("expected_views must be a list")
     normalized_expected_views = []
     for name in expected_views:
         if not isinstance(name, str) or name not in VIEWS:
@@ -125,6 +125,10 @@ def load_visual_policy(path: Path) -> dict[str, Any]:
     regression = value.get("regression")
     if not isinstance(regression, dict):
         raise ValueError("visual policy requires regression settings")
+    mode = regression.get("mode", "grayscale")
+    if mode not in ("grayscale", "rgb"):
+        raise ValueError("visual regression mode must be grayscale or rgb")
+    regression["mode"] = mode
     _positive_int(regression.get("width"), "regression width")
     _positive_int(regression.get("height"), "regression height")
     threshold = _positive_int(
@@ -146,9 +150,40 @@ def load_visual_policy(path: Path) -> dict[str, Any]:
     if not isinstance(provenance, dict) or provenance.get("approval") != "approved":
         raise ValueError("visual baselines must have explicit approved provenance")
 
-    boxes = value.get("expected_boxes")
-    if not isinstance(boxes, list) or not boxes:
-        raise ValueError("visual policy requires expected_boxes")
+    state = value.get("state")
+    if state is not None:
+        if not isinstance(state, dict):
+            raise ValueError("visual state must be an object")
+        state_id = state.get("id")
+        if (
+            not isinstance(state_id, str)
+            or not state_id
+            or any(
+                not (character.islower() or character.isdigit() or character in "_-")
+                for character in state_id
+            )
+            or not state_id[0].isalnum()
+        ):
+            raise ValueError(
+                "visual state id must use lowercase letters, digits, _ or -"
+            )
+        command = state.get("command")
+        if not isinstance(command, str) or not command.strip():
+            raise ValueError("visual state command must be a non-empty relative path")
+        command_path = (path.parent / command).resolve()
+        policy_root = path.parent.resolve()
+        if command_path != policy_root and policy_root not in command_path.parents:
+            raise ValueError("visual state command must stay inside the policy directory")
+        if not command_path.is_file():
+            raise ValueError(
+                f"visual state command does not exist: {command_path}"
+            )
+
+    boxes = value.get("expected_boxes", [])
+    if not isinstance(boxes, list):
+        raise ValueError("expected_boxes must be a list")
+    if expected_views and not boxes:
+        raise ValueError("visual policy requires expected_boxes for expected_views")
     for index, box in enumerate(boxes):
         if not isinstance(box, dict):
             raise ValueError(f"expected_boxes[{index}] must be an object")
@@ -245,7 +280,7 @@ def _expected_boxes(policy: Mapping[str, Any]):
             maximum=_xyz(row["maximum"], "expected box maximum"),
             label=row.get("label"),
         )
-        for row in policy["expected_boxes"]
+        for row in policy.get("expected_boxes", [])
     )
 
 
@@ -607,6 +642,7 @@ def run_visual_verification(
                 goal_reference=goal_reference,
                 overlay_path=overlay_path,
                 overlay_reference=overlay_reference,
+                comparison_mode=regression["mode"],
             )
             evidence = visual.to_evidence()
             status = _view_status(
@@ -647,6 +683,7 @@ def run_visual_verification(
         "schema_version": 1,
         "status": semantic["status"],
         "baseline_provenance": policy["baseline_provenance"],
+        "state": policy.get("state"),
         "views": views,
         "semantic": semantic,
     }
@@ -666,7 +703,7 @@ def run_solidcraft_visual_verification_file(
 ) -> dict[str, Any]:
     """Run one model-local visual policy and emit a standard stage report."""
 
-    from .solidcraft import evaluate_solidcraft_model
+    from .solidcraft import evaluate_solidcraft_model, mutate_solidcraft_model
     from ..evidence import artifact_record
 
     model_path = Path(model_path).resolve()
@@ -674,10 +711,25 @@ def run_solidcraft_visual_verification_file(
     policy_path = Path(policy_path).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    policy = load_visual_policy(policy_path)
+    rendered_model = model_path
+    state_model = None
+    state = policy.get("state")
+    if state is not None:
+        state_root = output_dir / "state" / state["id"]
+        state_root.mkdir(parents=True, exist_ok=True)
+        state_model = state_root / "model.sc"
+        mutate_solidcraft_model(
+            model_path,
+            policy_path.parent / state["command"],
+            state_model,
+        )
+        rendered_model = state_model
+
     measurements = output_dir / "measurements.json"
-    evaluate_solidcraft_model(model_path, measurements)
+    evaluate_solidcraft_model(rendered_model, measurements)
     legacy = run_visual_verification(
-        model_path,
+        rendered_model,
         measurements,
         policy_path,
         output_dir,
@@ -685,7 +737,7 @@ def run_solidcraft_visual_verification_file(
 
     checks = []
     states = []
-    for row in legacy["views"]:
+    for view_index, row in enumerate(legacy["views"]):
         state = row["status"]
         status = "pass" if state == "pass" else "error" if state == "error" else "fail"
         states.append(status)
@@ -699,6 +751,8 @@ def run_solidcraft_visual_verification_file(
         }
 
         artifacts = []
+        if view_index == 0 and state_model is not None and state_model.is_file():
+            artifacts.append(artifact_record(state_model, output_dir))
         for reference in (
             row.get("camera"),
             row["evidence"].get("actual_image"),
@@ -741,6 +795,12 @@ def run_solidcraft_visual_verification_file(
             "baseline_provenance": legacy["baseline_provenance"],
             "visual_report": "visual.json",
             "measurements": "measurements.json",
+            "state": legacy.get("state"),
+            "rendered_model": (
+                str(state_model.relative_to(output_dir))
+                if state_model is not None
+                else None
+            ),
         },
         "checks": checks,
     }

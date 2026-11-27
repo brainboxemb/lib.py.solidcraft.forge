@@ -17,7 +17,7 @@ def _applicable_stages(model, implementation):
     )
 
 
-def runtime_order(models):
+def runtime_order(models, probes=()):
     roles = set()
     dependencies = {}
 
@@ -41,6 +41,9 @@ def runtime_order(models):
                 for stage in stages:
                     if stage.runtime != impl.preview_runtime:
                         dependencies[impl.preview_runtime].add(stage.runtime)
+
+    for probe in probes:
+        require(probe.runtime)
 
     ordered = []
     while dependencies:
@@ -68,6 +71,21 @@ def _build_record(repo, runtimes, model, impl):
         "engine_python": impl.engine_python,
         "build_runtime": impl.runtime,
         "build_image": runtimes[impl.runtime]["image"],
+    }
+
+
+def _probe_build_record(repo, runtimes, probe):
+    return {
+        "task_id": f"api-probe--{probe.id}",
+        "owner": probe.id,
+        "output_root": "api-probes",
+        "implementation": "probe",
+        "builder": probe.builder,
+        "build_entry": probe.build_entry,
+        "source": "/repo/" + probe.source.relative_to(repo).as_posix(),
+        "engine_python": probe.engine_python,
+        "build_runtime": probe.runtime,
+        "build_image": runtimes[probe.runtime]["image"],
     }
 
 
@@ -257,8 +275,49 @@ def _aggregate_model(output, model):
     return passed
 
 
-def run_batches(repo, project, modules, models, output):
-    if not models:
+def _aggregate_probe(output, probe):
+    root = output / "api-probes" / probe.id
+    implementation = root / "probe"
+    build = _load_json(
+        implementation / "build.json",
+        {
+            "id": f"api-probe--{probe.id}",
+            "owner": probe.id,
+            "implementation": "probe",
+            "builder": probe.builder,
+            "build_status": "error",
+        },
+    )
+    passed = build.get("build_status") == "pass"
+    result = {
+        "schema": 1,
+        "id": probe.id,
+        "builder": probe.builder,
+        "runtime": build.get("runtime"),
+        "build_status": build.get("build_status"),
+        "status": "pass" if passed else "fail",
+    }
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "result.json").write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    if passed and implementation.is_dir():
+        for source in implementation.iterdir():
+            if source.name == "build.json":
+                continue
+            target = root / source.name
+            if target.exists():
+                shutil.rmtree(target) if target.is_dir() else target.unlink()
+            if source.is_dir():
+                shutil.copytree(source, target)
+            else:
+                shutil.copy2(source, target)
+    return passed
+
+
+def run_batches(repo, project, modules, models, output, *, probes=()):
+    if not models and not probes:
         return
 
     runtimes = mapping(repo / "ci.yml").get("runtimes", {})
@@ -267,7 +326,7 @@ def run_batches(repo, project, modules, models, output):
     output.mkdir(parents=True, exist_ok=True)
     failed = False
 
-    for role in runtime_order(models):
+    for role in runtime_order(models, probes):
         runtime = runtimes.get(role, {})
         image = runtime.get("image")
         if (
@@ -282,6 +341,11 @@ def run_batches(repo, project, modules, models, output):
             for model in models
             for impl in model.implementations
             if impl.runtime == role
+        ]
+        probe_builds = [
+            probe
+            for probe in probes
+            if probe.runtime == role
         ]
         verify_rows = [
             (model, impl, stage)
@@ -313,13 +377,26 @@ def run_batches(repo, project, modules, models, output):
                 path = by_id[dependency].root.relative_to(repo)
                 source_paths.add(f"/repo/{path.as_posix()}/src")
 
+        for probe in probe_builds:
+            if probe.needs_cadlib:
+                source_paths.add("/repo/cadlib/src")
+            for dependency in probe.module_dependencies:
+                path = by_id[dependency].root.relative_to(repo)
+                source_paths.add(f"/repo/{path.as_posix()}/src")
+
         manifest = {
             "schema": 4,
             "runtime": role,
             "image": image,
             "build_items": [
-                _build_record(repo, runtimes, model, impl)
-                for model, impl in build_pairs
+                *[
+                    _build_record(repo, runtimes, model, impl)
+                    for model, impl in build_pairs
+                ],
+                *[
+                    _probe_build_record(repo, runtimes, probe)
+                    for probe in probe_builds
+                ],
             ],
             "verify_items": [
                 _verify_record(repo, runtimes, model, impl, stage)
@@ -361,6 +438,8 @@ def run_batches(repo, project, modules, models, output):
 
     for model in models:
         failed |= not _aggregate_model(output, model)
+    for probe in probes:
+        failed |= not _aggregate_probe(output, probe)
 
     if failed:
         raise RuntimeError("one or more CAD runtime batches failed")

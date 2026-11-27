@@ -1,0 +1,74 @@
+name: API Probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Source ref to probe (for example main, dev, exp or a branch)
+        required: true
+        default: dev
+        type: string
+      probes:
+        description: Comma-separated API probe ids, or all
+        required: true
+        default: smoke
+        type: string
+
+concurrency:
+  group: api-probe-${{ inputs.source_ref }}-${{ inputs.probes }}
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: api-probe
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out requested source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_ref }}
+          fetch-depth: 0
+
+      - name: Resolve exact source
+        id: source
+        shell: bash
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Install CI runtime dependencies
+        run: python -m pip install PyYAML==6.0.2
+
+      - name: Run selected API probes
+        env:
+          PYTHONPATH: modules/ci/src
+        run: >-
+          python -m cad_library_ci.probe_run
+          --output build/api-probe-qualification
+          --probes "${{ inputs.probes }}"
+
+      - name: Upload API probe evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: api-probe-${{ steps.source.outputs.sha }}
+          path: build/api-probe-qualification/
+          if-no-files-found: error
+
+      - name: Publish permanent-ref API probe evidence
+        if: >-
+          inputs.source_ref == 'main' ||
+          inputs.source_ref == 'dev' ||
+          inputs.source_ref == 'exp'
+        env:
+          PYTHONPATH: modules/build/src
+        run: >-
+          python -m cad_library_build.probe_publish
+          --candidate build/api-probe-qualification
+          --source-ref "${{ inputs.source_ref }}"
+          --source-sha "${{ steps.source.outputs.sha }}"
