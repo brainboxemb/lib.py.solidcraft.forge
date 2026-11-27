@@ -13,7 +13,6 @@ from typing import Any
 from .scalar_ir import (
     ScalarBinaryIR,
     ScalarExpressionIR,
-    ScalarFunctionIR,
     ScalarLiteralIR,
     ScalarParameterRefIR,
     ScalarPowerIR,
