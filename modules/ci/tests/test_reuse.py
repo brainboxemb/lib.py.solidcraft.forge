@@ -167,6 +167,7 @@ class ReuseQualificationTests(unittest.TestCase):
                 "roots:\n"
                 "  modules: modules\n"
                 "  models: models\n"
+                "  api_probes: api-probes\n"
                 "  output: build\n"
                 "qualification:\n"
                 "  permanent:\n"
@@ -234,6 +235,7 @@ class ReuseQualificationTests(unittest.TestCase):
                 "roots:\n"
                 "  modules: modules\n"
                 "  models: models\n"
+                "  api_probes: api-probes\n"
                 "  output: build\n"
             )
             result = materialize(
@@ -274,6 +276,7 @@ class ReuseQualificationTests(unittest.TestCase):
                 "roots:\n"
                 "  modules: modules\n"
                 "  models: models\n"
+                "  api_probes: api-probes\n"
                 "  output: build\n"
                 "qualification:\n"
                 "  permanent:\n"
@@ -337,6 +340,7 @@ class ReuseQualificationTests(unittest.TestCase):
                 "roots:\n"
                 "  modules: modules\n"
                 "  models: models\n"
+                "  api_probes: api-probes\n"
                 "  output: build\n"
                 "qualification:\n"
                 "  permanent:\n"
