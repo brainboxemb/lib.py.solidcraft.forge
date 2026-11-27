@@ -579,6 +579,83 @@ def _parameterized_rectangle_sketch(profile: PolygonProfileIR):
     return entities, constraints, dimensions
 
 
+def _parameterized_polygon_sketch(profile: PolygonProfileIR):
+    """Transport a symbolic simple polygon through native point dimensions.
+
+    Current point positions seed the solver only. Every authored X/Y value is
+    retained as a native driving dimension from one fixed sketch origin, so
+    Forge Parameters/Expressions remain editable dependencies in the saved
+    Mitcad design.
+    """
+    values = tuple(
+        tuple(float(pv(value)) for value in point)
+        for point in profile.points
+    )
+    if any(not isfinite(value) for point in values for value in point):
+        raise ModelError(
+            "Mitcad parameterized PolygonProfileIR requires finite current values"
+        )
+
+    entities = [
+        {
+            "id": "p1",
+            "type": "point",
+            "at": [0.0, 0.0],
+            "fixed": True,
+        }
+    ]
+    point_ids = []
+    for index, value in enumerate(values, start=2):
+        uid = f"p{index}"
+        point_ids.append(uid)
+        entities.append(
+            {
+                "id": uid,
+                "type": "point",
+                "at": list(value),
+            }
+        )
+
+    first_curve = len(point_ids) + 2
+    for offset, start_id in enumerate(point_ids):
+        entities.append(
+            {
+                "id": f"c{first_curve + offset}",
+                "type": "line",
+                "start": start_id,
+                "end": point_ids[(offset + 1) % len(point_ids)],
+            }
+        )
+
+    dimensions = []
+    relation = first_curve + len(point_ids)
+    for index, (point_id, authored) in enumerate(
+        zip(point_ids, profile.points)
+    ):
+        dimensions.extend(
+            [
+                {
+                    "id": f"k{relation + 2 * index}",
+                    "type": "horizontal_distance",
+                    "a": "p1",
+                    "b": point_id,
+                    "signed": True,
+                    "value": command_value(authored[0]),
+                },
+                {
+                    "id": f"k{relation + 2 * index + 1}",
+                    "type": "vertical_distance",
+                    "a": "p1",
+                    "b": point_id,
+                    "signed": True,
+                    "value": command_value(authored[1]),
+                },
+            ]
+        )
+
+    return entities, [], dimensions
+
+
 def _next_sketch_entity_number(entities: list[dict]) -> int:
     numbers = []
     for entity in entities:
@@ -805,7 +882,14 @@ def _revolve_commands(
         for value in point
     )
     if parameterized:
-        entities, constraints, dimensions = _parameterized_rectangle_sketch(profile)
+        try:
+            entities, constraints, dimensions = _parameterized_rectangle_sketch(
+                profile
+            )
+        except ModelError:
+            entities, constraints, dimensions = _parameterized_polygon_sketch(
+                profile
+            )
     else:
         point_ids = []
         entities = []
