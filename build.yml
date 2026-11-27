@@ -1,6 +1,6 @@
 schema: 1
-branch: issue/433-nested-feature-history
+branch: issue/440-sketch-relations-ir
 modules: [ci, builder-scpf-mitcad, mitcad-native-smoke]
-models: [primitive-csg]
+models: [native-revolve]
 library: true
 tasks: [test]
