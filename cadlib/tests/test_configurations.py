@@ -314,14 +314,12 @@ class ConfigurationTests(unittest.TestCase):
     def test_reusable_component_cannot_own_configuration(self):
         @component
         class BadComponent:
-            width = 40.0
-
             def build(self):
-                body = Box(self.width, 20, 10)
+                body = Box(40, 20, 10)
                 body.configure(
                     active="A",
-                    columns=(self.width,),
-                    rows={"A": ("40 mm",)},
+                    columns=(body,),
+                    rows={"A": (True,)},
                 )
                 return body
 
