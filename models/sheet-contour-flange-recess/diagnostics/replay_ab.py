@@ -20,6 +20,7 @@ import subprocess
 
 from scpf.headless import HeadlessReplayError, run_document
 from scpf.live import LiveError, new_design, send_document
+from scpf.replay import replay_chunks
 from scpf.runner import run_script
 
 
@@ -71,6 +72,133 @@ def run_native(cli: str, document: dict, output: Path) -> dict:
     }
 
 
+def _run_cli_document(
+    cli: str,
+    commands: list[dict],
+    script: Path,
+    save: Path,
+    *,
+    input_design: Path | None = None,
+) -> subprocess.CompletedProcess:
+    """Run one already-resolved native command segment."""
+    script.write_text(
+        json.dumps({"commands": commands}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    argv = [
+        cli,
+        "run",
+        str(script),
+        "--param-check",
+        "strict",
+        "--save",
+        str(save),
+    ]
+    if input_design is not None:
+        argv.extend(["--in", str(input_design)])
+    return subprocess.run(argv, text=True, capture_output=True)
+
+
+def run_reopen_boundaries(
+    cli: str,
+    document: dict,
+    replay_log_data: dict,
+    output: Path,
+) -> dict:
+    """Test one save/reopen after each native replay-chunk boundary.
+
+    The normal phased replay saves after every replay chunk. This matrix keeps
+    every other chunk in one process and inserts exactly one save/reopen, so it
+    identifies the first semantic boundary that changes SolidCraft's result.
+    Transport-only context restore commands are injected only at the start of
+    the reopened suffix.
+    """
+    authored_chunks = replay_chunks(document["commands"])
+    resolved = resolved_document(replay_log_data)["commands"]
+
+    native_chunks = []
+    offset = 0
+    for chunk in authored_chunks:
+        end = offset + len(chunk)
+        native_chunks.append(resolved[offset:end])
+        offset = end
+    if offset != len(resolved):
+        raise RuntimeError("replay chunk lengths do not match resolved log")
+
+    phase_dir = output / "phases"
+    transports = []
+    for phase_number, native_chunk in enumerate(native_chunks, start=1):
+        phase = json.loads(
+            (phase_dir / f"phase-{phase_number}.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        phase_commands = phase["commands"]
+        transport_count = len(phase_commands) - len(native_chunk)
+        if transport_count < 0:
+            raise RuntimeError(
+                f"phase {phase_number} is shorter than its authored chunk"
+            )
+        transports.append(phase_commands[:transport_count])
+
+    boundary_root = output / "reopen-boundaries"
+    boundary_root.mkdir(parents=True, exist_ok=True)
+    results = {}
+
+    for boundary in range(1, len(native_chunks)):
+        case = boundary_root / f"after-phase-{boundary}"
+        case.mkdir(parents=True, exist_ok=True)
+        checkpoint = case / "checkpoint.sc"
+        final = case / "final.sc"
+
+        prefix_commands = [
+            command
+            for chunk in native_chunks[:boundary]
+            for command in chunk
+        ]
+        suffix_commands = [
+            *transports[boundary],
+            *[
+                command
+                for chunk in native_chunks[boundary:]
+                for command in chunk
+            ],
+        ]
+
+        prefix = _run_cli_document(
+            cli,
+            prefix_commands,
+            case / "prefix.json",
+            checkpoint,
+        )
+        if prefix.returncode != 0:
+            results[str(boundary)] = {
+                "status": "prefix-fail",
+                "after_phase": boundary,
+                "stderr": prefix.stderr,
+            }
+            continue
+
+        suffix = _run_cli_document(
+            cli,
+            suffix_commands,
+            case / "suffix.json",
+            final,
+            input_design=checkpoint,
+        )
+        results[str(boundary)] = {
+            "status": "pass" if suffix.returncode == 0 else "fail",
+            "after_phase": boundary,
+            "transport": [
+                command["command"] for command in transports[boundary]
+            ],
+            "stderr": suffix.stderr,
+            "saved": final.exists(),
+        }
+
+    return results
+
+
 def run_live(document: dict, connect: str) -> dict:
     """Replay the unchanged document in a fresh design in the running GUI."""
     try:
@@ -120,6 +248,7 @@ def main(argv=None) -> int:
         "fixture": "sheet-contour-flange-recess",
         "phased_headless": {},
         "single_process_headless": {},
+        "reopen_boundaries": {},
         "live": {"status": "not-run"},
     }
 
@@ -157,6 +286,12 @@ def main(argv=None) -> int:
         "status": "pass" if single["returncode"] == 0 else "fail",
         **single,
     }
+    summary["reopen_boundaries"] = run_reopen_boundaries(
+        args.solidcraft_cli,
+        document,
+        log,
+        output,
+    )
 
     if args.connect is not None:
         summary["live"] = run_live(document, args.connect)
