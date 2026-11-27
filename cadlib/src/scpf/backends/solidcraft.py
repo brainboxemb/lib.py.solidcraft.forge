@@ -1825,13 +1825,44 @@ def _revolve_commands(
 
     sketch_index = _next_sketch_index(base_commands)
     sketch_commands = [_solidcraft_sketch_create(sketch)]
-    sketch_commands.extend(
-        _solidcraft_sketch_graph_commands(
-            sketch.graph,
-            sketch_index=sketch_index,
-            model=model,
+    entity = sketch.graph.entities[0]
+    if isinstance(entity, PolygonProfileIR):
+        relation_points = _solidcraft_relation_polygon_points(sketch)
+        authored_points = (
+            relation_points
+            if relation_points is not None
+            else entity.points
         )
-    )
+        ids = (
+            list(entity.segment_ids)
+            if entity.segment_ids is not None
+            else [
+                chr(ord("a") + index)
+                for index in range(len(authored_points))
+            ]
+        )
+        sketch_commands.append(
+            _command(
+                "sketch.line",
+                points=[
+                    [
+                        _role_command_value(model, value, "length")
+                        for value in point
+                    ]
+                    for point in authored_points
+                ],
+                closed=True,
+                ids=ids,
+            )
+        )
+    else:
+        sketch_commands.extend(
+            _solidcraft_sketch_graph_commands(
+                sketch.graph,
+                sketch_index=sketch_index,
+                model=model,
+            )
+        )
     sketch_commands.append(_command("sketch.finish"))
 
     return [
