@@ -315,6 +315,20 @@ Therefore SolidCraft 0.49 already has the backend capability needed for a
 human-readable Installed feature checkbox. The remaining gap is Forge feature
 naming/lowering, not a missing SolidCraft boolean widget.
 
+The runnable clamp probe deliberately uses a simplified extra cutter only to
+prove the configuration mechanism. It is **not** the intended mechanical model
+of a flexible clamp. In a real clamp, switching from Free to Installed should
+preserve the actual mechanism: for example the split clamp arms/halves should
+move or deform to the installed position rather than simply replacing the bore
+with a larger cylindrical cut.
+
+The API consequence is that `Installed` should be understood as a real authored
+CAD feature/state whose suppression controls the installed transformation. The
+feature may drive movement, placement or other real model history; it does not
+have to be a literal cutter. The important part is that the state is represented
+truthfully in CAD history and can therefore use SolidCraft's native
+feature-suppression checkbox.
+
 For this Tube Clamp use case, a generic `Toggle` should **not** be introduced
 merely to obtain a checkbox if `Installed` can be represented truthfully as a
 real suppressible CAD feature. A generic boolean configuration semantic remains
