@@ -2389,7 +2389,7 @@ class SemanticIRTests(unittest.TestCase):
         with self.assertRaises(ModelError):
             compile_mitcad_ir(model, "CylinderFaceBoundaryFillet")
 
-    def test_top_face_boundary_fillet_cone_join_remains_legacy(self):
+    def test_top_face_boundary_fillet_cone_join_is_typed_boolean(self):
         filleted = Box(
             60,
             40,
@@ -2410,8 +2410,14 @@ class SemanticIRTests(unittest.TestCase):
             12,
             anchor=Anchor.BOTTOM,
         )
-        model = normalize_shape(filleted + cone)
-        self.assertIsInstance(model.root, LegacyShapeIR)
+        shape = filleted + cone
+        model = self.assert_solidcraft_compatibility(
+            shape,
+            "FaceBoundaryFilletCone",
+        )
+        self.assertIsInstance(model.root, BooleanIR)
+        self.assertIsInstance(model.root.target, FilletIR)
+        self.assertIsInstance(model.root.tool, PlacementIR)
         with self.assertRaises(ModelError):
             compile_mitcad_ir(model, "UnsupportedFaceBoundaryFilletCone")
 
