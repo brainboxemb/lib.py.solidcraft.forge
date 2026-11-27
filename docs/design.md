@@ -1222,6 +1222,27 @@ SolidCraft and Mitcad consume the same SCPF source; the generic mesh contract
 moves its bore probe to that off-centre axis. This proves placement semantics
 survive frontend → IR → two independent native lowerings.
 
+#461 extends that same `PlacementIR` contract to standalone Sphere placement
+instead of adding a Sphere-specific IR node. The semantic point remains the
+world-space point of the selected Sphere anchor; the actual centre is derived
+from that point, the anchor vector and `SphereIR.radius`. A top-anchor Sphere
+at world Z therefore retains a symbolic centre-Z expression such as
+`sphere_top_z - sphere_radius` rather than baking its current value.
+
+SolidCraft already lowers this meaning directly to its native 3D Sphere centre.
+Mitcad v0.70.0 represents a Sphere by a support `GeomRef` plane plus a
+plane-local centre. Forge therefore reuses the backend's principal offset-plane
+transport: a zero centre-Z stays on origin XY, while a non-zero or symbolic
+centre-Z emits one private offset `construction_plane` and references its
+returned uid from the Sphere feature. That helper feature and binding are
+lowering transport only and never enter `PlacementIR`.
+
+The recursive primitive-CSG qualification remains deliberately narrower.
+Only the already-proven centered-origin Sphere may participate there; shifted
+or tangent-anchor Sphere operands stay outside the bounded Boolean slice until
+a separate history/transport checkpoint qualifies helper support geometry
+inside CSG feature ordering.
+
 ### Experimental Sketch/Profile + Extrude IR (#282)
 
 Standalone sketch geometry, region membership and the consuming feature are
