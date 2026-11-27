@@ -26,10 +26,8 @@ from ..ir import (
     BoxIR,
     ChamferIR,
     CircleProfileIR,
-    ConfigurationIR,
     CylinderIR,
     ExtrudeIR,
-    FeatureRefIR,
     LegacyShapeIR,
     ModelIR,
     PlacementIR,
@@ -38,7 +36,6 @@ from ..ir import (
     RegionIR,
     RevolveIR,
     SphereIR,
-    SuppressionColumnIR,
     _region_interior_point,
     normalize_shape,
 )
@@ -750,7 +747,252 @@ def _mitcad_revolve_axis(
     )
 
 
-undefined_plain_command_value(replay),
+def _revolve_commands(
+    node: RevolveIR,
+    name: str,
+    *,
+    participant=None,
+) -> list[dict]:
+    """Lower semantic RevolveIR to native Mitcad Sketch + Revolve."""
+    sketch = node.sketch
+    plane_commands, native_plane = _mitcad_sketch_plane(sketch.plane)
+    if (
+        len(sketch.profiles) != 1
+        or not isinstance(sketch.profiles[0], PolygonProfileIR)
+        or node.region != RegionIR(outer=0)
+    ):
+        raise ModelError("Mitcad RevolveIR requires one polygon region")
+    if not isinstance(node.axis, AxisLineIR) or node.direction is not None:
+        raise ModelError(
+            "Mitcad RevolveIR requires one non-symmetric AxisLineIR"
+        )
+    if node.operation == "new_body":
+        if node.target is not None or participant is not None:
+            raise ModelError("new-body Mitcad RevolveIR must not have a target")
+    elif node.operation == "cut":
+        if (
+            not isinstance(node.target, PlacementIR)
+            or not isinstance(node.target.primitive, BoxIR)
+            or participant is None
+        ):
+            raise ModelError(
+                "Mitcad Revolve cut currently requires one bound Box participant"
+            )
+    else:
+        raise ModelError(
+            f"unsupported Mitcad Revolve operation {node.operation!r}"
+        )
+
+    try:
+        pick = _region_interior_point(sketch, node.region)
+    except ValueError as exc:
+        raise ModelError(str(exc)) from exc
+
+    sweep = pv(node.angle)
+    if not isfinite(sweep) or sweep <= 0 or sweep > 360:
+        raise ModelError(
+            "sketch revolve angle must be above 0 and at most 360 degrees"
+        )
+
+    profile = sketch.profiles[0]
+    parameterized = any(
+        parameters_in(value)
+        for point in profile.points
+        for value in point
+    )
+    if parameterized:
+        entities, constraints, dimensions = _parameterized_rectangle_sketch(profile)
+    else:
+        point_ids = []
+        entities = []
+        for index, point in enumerate(profile.points, start=1):
+            point_id = f"p{index}"
+            point_ids.append(point_id)
+            entities.append({
+                "id": point_id,
+                "type": "point",
+                "at": [pv(value) for value in point],
+                "fixed": True,
+            })
+        first_curve = len(point_ids) + 1
+        for offset, start_id in enumerate(point_ids):
+            end_id = point_ids[(offset + 1) % len(point_ids)]
+            entities.append({
+                "id": f"c{first_curve + offset}",
+                "type": "line",
+                "start": start_id,
+                "end": end_id,
+            })
+        constraints = []
+        dimensions = []
+
+    native_axis = _mitcad_revolve_axis(
+        node,
+        entities,
+        constraints,
+        dimensions,
+    )
+
+    if parameters_in(node.angle):
+        extent = {"type": "angle", "angle": command_value(node.angle)}
+    elif abs(sweep - 360.0) <= 1e-12:
+        extent = {"type": "full"}
+    else:
+        extent = {"type": "angle", "angle": f"{number_text(sweep)} deg"}
+
+    revolve_definition = {
+        "type": "revolve",
+        "profiles": [{
+            "sketch": {"ref": "sk.uid"},
+            "point": [pick[0], pick[1]],
+        }],
+        "axis": native_axis,
+        "extent": extent,
+        "operation": node.operation,
+    }
+    if node.operation == "cut":
+        revolve_definition["participants"] = [participant]
+
+    return [
+        *plane_commands,
+        {
+            "cmd": "add_feature",
+            "as": "sk",
+            "name": sketch.name,
+            "def": {
+                "type": "sketch",
+                "plane": native_plane,
+                "entities": entities,
+                "constraints": constraints,
+                "dimensions": dimensions,
+            },
+        },
+        {
+            "cmd": "add_feature",
+            "name": name,
+            "def": revolve_definition,
+        },
+    ]
+
+
+def _revolve_cut_document(
+    model: ModelIR,
+    node: RevolveIR,
+    name: str,
+):
+    """Bind the existing target body at runtime before one native Revolve cut."""
+    if (
+        node.operation != "cut"
+        or not isinstance(node.target, PlacementIR)
+        or not isinstance(node.target.primitive, BoxIR)
+    ):
+        raise ModelError(
+            "Mitcad Revolve cut currently requires one typed Box target"
+        )
+
+    commands = [
+        *_parameter_commands(model),
+        _box_command(node.target, f"{name}Base"),
+    ]
+    replay = [
+        {
+            "bind_single_body": "body",
+            "commands": _revolve_commands(
+                node,
+                name,
+                participant={"$mitcad_bind": "body"},
+            ),
+        }
+    ]
+    dependencies = _native_dependencies((commands, replay))
+    return {
+        "format": FORMAT,
+        "version": VERSION,
+        "backend": "mitcad",
+        "commands": _plain_command_value(commands),
+        "replay": _plain_command_value(replay),
+    }, dependencies
+
+
+
+def _chamfer_document(
+    model: ModelIR,
+    node: ChamferIR,
+    name: str,
+):
+    _require_positive(node.distance, "chamfer distance")
+    if not node.edges.faces:
+        raise ModelError("Mitcad face-boundary chamfer has no Faces values")
+
+    face_queries = []
+    for face in node.edges.faces:
+        try:
+            normal = _FACE_NORMALS[face]
+        except KeyError as exc:
+            raise ModelError(
+                f"Mitcad backend does not support Forge face {face!r}"
+            ) from exc
+        face_queries.append(
+            {
+                "surface": "plane",
+                "normal": normal,
+                "normal_tolerance": 1e-6,
+            }
+        )
+
+    if isinstance(node.base, PlacementIR):
+        if not isinstance(node.base.primitive, BoxIR):
+            raise ModelError(
+                "Mitcad ChamferIR placement base currently requires BoxIR"
+            )
+        base_commands = [_box_command(node.base, f"{name}Base")]
+    elif isinstance(node.base, ExtrudeIR):
+        base_commands = _extrude_commands(node.base, f"{name}Base")
+    else:
+        raise ModelError("Mitcad ChamferIR has unsupported typed base")
+
+    boundary = {
+        "name": "edges",
+        "body": "body",
+    }
+    if len(face_queries) == 1:
+        # Keep the already-qualified v1 transport spelling stable.
+        boundary["face"] = face_queries[0]
+    else:
+        boundary["faces"] = face_queries
+
+    commands = [
+        *_parameter_commands(model),
+        *base_commands,
+    ]
+    replay = [
+        {
+            "bind_single_body": "body",
+            "bind_face_boundary_edges": boundary,
+            "commands": [
+                {
+                    "cmd": "add_feature",
+                    "name": name,
+                    "def": {
+                        "type": "chamfer",
+                        "body": {"$mitcad_bind": "body"},
+                        "edges": {"$mitcad_bind": "edges"},
+                        "size": {
+                            "type": "equal_distance",
+                            "distance": command_value(node.distance),
+                        },
+                    },
+                }
+            ],
+        }
+    ]
+    dependencies = _native_dependencies((commands, replay))
+    return {
+        "format": FORMAT,
+        "version": VERSION,
+        "backend": "mitcad",
+        "commands": _plain_command_value(commands),
+        "replay": _plain_command_value(replay),
     }, dependencies
 
 def compile_ir_with_dependencies(model: ModelIR, name: str):
