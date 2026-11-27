@@ -1,7 +1,8 @@
 schema: 1
-branch: issue/503-release-contract-test
-modules: [ci]
-library: false
-models: []
+branch: issue/538-solidcraft-0.50-runtime
+modules:
+  - solidcraft-reference
+library: true
+models: all
 api_probes: []
 tasks: [test]

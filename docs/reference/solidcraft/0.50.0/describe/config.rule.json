@@ -1,0 +1,629 @@
+[
+  {
+    "id": "config.rule",
+    "input": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "Add, replace, delete or move the configuration table's rules, which drive parameters and\nsuppressions from conditions, in the order they run. Give `rule`, `rules`, or `id` with\n`delete` or `index`. Every row is then checked against the rules; if one fails, nothing\nchanges. One undo step.",
+      "properties": {
+        "delete": {
+          "default": null,
+          "description": "With `id`: delete the rule. Default: false (move it to `index`).",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "default": null,
+          "description": "Without `rule` or `rules`: the rule to delete or move, by id.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "index": {
+          "description": "With `id` and without `delete`: where to move the rule, from 0 (it runs first); less than\nthe number of rules.",
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "rule": {
+          "additionalProperties": false,
+          "description": "A rule to add, or to replace the rule with its id.",
+          "properties": {
+            "condition": {
+              "description": "When the rule applies, by `type`: `always`; `all` or `any` of `conditions` (1 to 64); `not` (`condition`); `parameter`, a parameter compared (`operator`) with an `expression`; or `suppression`, whether a feature (`feature`, by id) is suppressed (`value`). At most 64 conditions, 8 deep.",
+              "properties": {
+                "condition": {
+                  "type": "object"
+                },
+                "conditions": {
+                  "items": {
+                    "type": "object"
+                  },
+                  "maxItems": 64,
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "expression": {
+                  "description": "An expression the parameter is compared with.",
+                  "maxLength": 4096,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "feature": {
+                  "description": "A feature, by id.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "operator": {
+                  "enum": [
+                    "eq",
+                    "ne",
+                    "lt",
+                    "le",
+                    "gt",
+                    "ge"
+                  ]
+                },
+                "parameter": {
+                  "description": "A parameter, by name.",
+                  "maxLength": 64,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": {
+                  "enum": [
+                    "always",
+                    "all",
+                    "any",
+                    "not",
+                    "parameter",
+                    "suppression"
+                  ]
+                },
+                "value": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "type": "object"
+            },
+            "effect": {
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "expression": {
+                      "description": "The parameter's value.",
+                      "maxLength": 4096,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "parameter": {
+                      "description": "A parameter, by name.",
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "drive_parameter"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "parameter",
+                    "expression"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "feature": {
+                      "description": "A feature, by id.",
+                      "minimum": 0,
+                      "type": "integer"
+                    },
+                    "type": {
+                      "enum": [
+                        "drive_suppression"
+                      ]
+                    },
+                    "value": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "feature",
+                    "value"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "maximum": {
+                      "description": "The highest value.",
+                      "maxLength": 4096,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "minimum": {
+                      "description": "The lowest value.",
+                      "maxLength": 4096,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "parameter": {
+                      "description": "A parameter, by name.",
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "parameter_range"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "parameter",
+                    "minimum",
+                    "maximum"
+                  ],
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "expressions": {
+                      "items": {
+                        "description": "An allowed value.",
+                        "maxLength": 4096,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "maxItems": 128,
+                      "minItems": 1,
+                      "type": "array"
+                    },
+                    "parameter": {
+                      "description": "A parameter, by name.",
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "type": {
+                      "enum": [
+                        "allow_parameter_values"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "parameter",
+                    "expressions"
+                  ],
+                  "type": "object"
+                }
+              ],
+              "description": "What the rule does when its condition holds, by `type`: `drive_parameter` sets a parameter to an `expression`; `drive_suppression` suppresses a feature (`value` true) or not; `parameter_range` keeps a parameter from `minimum` to `maximum`; `allow_parameter_values` allows only the values of `expressions` (1 to 128)."
+            },
+            "enabled": {
+              "description": "Whether the rule runs. Default: true.",
+              "type": "boolean"
+            },
+            "id": {
+              "description": "The rule's id: 1 to 64 characters, not only spaces. A rule with an id the table has replaces it.",
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            "length_unit": {
+              "description": "The unit of plain numbers in the rule's length expressions. Default: the replaced rule's, or the design's unit.",
+              "enum": [
+                "mm",
+                "cm",
+                "m",
+                "in",
+                "ft"
+              ]
+            },
+            "name": {
+              "description": "A name to show: 1 to 128 characters, not only spaces.",
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "condition",
+            "effect"
+          ],
+          "type": "object"
+        },
+        "rules": {
+          "description": "Without `rule`: rules to add or replace together, the rows then checked once with all of\nthem in place (rules that only hold together can be added). At most 2048.",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "condition": {
+                "description": "When the rule applies, by `type`: `always`; `all` or `any` of `conditions` (1 to 64); `not` (`condition`); `parameter`, a parameter compared (`operator`) with an `expression`; or `suppression`, whether a feature (`feature`, by id) is suppressed (`value`). At most 64 conditions, 8 deep.",
+                "properties": {
+                  "condition": {
+                    "type": "object"
+                  },
+                  "conditions": {
+                    "items": {
+                      "type": "object"
+                    },
+                    "maxItems": 64,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  "expression": {
+                    "description": "An expression the parameter is compared with.",
+                    "maxLength": 4096,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "feature": {
+                    "description": "A feature, by id.",
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  "operator": {
+                    "enum": [
+                      "eq",
+                      "ne",
+                      "lt",
+                      "le",
+                      "gt",
+                      "ge"
+                    ]
+                  },
+                  "parameter": {
+                    "description": "A parameter, by name.",
+                    "maxLength": 64,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "type": {
+                    "enum": [
+                      "always",
+                      "all",
+                      "any",
+                      "not",
+                      "parameter",
+                      "suppression"
+                    ]
+                  },
+                  "value": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "type": "object"
+              },
+              "effect": {
+                "anyOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "expression": {
+                        "description": "The parameter's value.",
+                        "maxLength": 4096,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "parameter": {
+                        "description": "A parameter, by name.",
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": {
+                        "enum": [
+                          "drive_parameter"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "parameter",
+                      "expression"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "feature": {
+                        "description": "A feature, by id.",
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "type": {
+                        "enum": [
+                          "drive_suppression"
+                        ]
+                      },
+                      "value": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "feature",
+                      "value"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "maximum": {
+                        "description": "The highest value.",
+                        "maxLength": 4096,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "minimum": {
+                        "description": "The lowest value.",
+                        "maxLength": 4096,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "parameter": {
+                        "description": "A parameter, by name.",
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": {
+                        "enum": [
+                          "parameter_range"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "parameter",
+                      "minimum",
+                      "maximum"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "expressions": {
+                        "items": {
+                          "description": "An allowed value.",
+                          "maxLength": 4096,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "maxItems": 128,
+                        "minItems": 1,
+                        "type": "array"
+                      },
+                      "parameter": {
+                        "description": "A parameter, by name.",
+                        "maxLength": 64,
+                        "minLength": 1,
+                        "type": "string"
+                      },
+                      "type": {
+                        "enum": [
+                          "allow_parameter_values"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "parameter",
+                      "expressions"
+                    ],
+                    "type": "object"
+                  }
+                ],
+                "description": "What the rule does when its condition holds, by `type`: `drive_parameter` sets a parameter to an `expression`; `drive_suppression` suppresses a feature (`value` true) or not; `parameter_range` keeps a parameter from `minimum` to `maximum`; `allow_parameter_values` allows only the values of `expressions` (1 to 128)."
+              },
+              "enabled": {
+                "description": "Whether the rule runs. Default: true.",
+                "type": "boolean"
+              },
+              "id": {
+                "description": "The rule's id: 1 to 64 characters, not only spaces. A rule with an id the table has replaces it.",
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "length_unit": {
+                "description": "The unit of plain numbers in the rule's length expressions. Default: the replaced rule's, or the design's unit.",
+                "enum": [
+                  "mm",
+                  "cm",
+                  "m",
+                  "in",
+                  "ft"
+                ]
+              },
+              "name": {
+                "description": "A name to show: 1 to 128 characters, not only spaces.",
+                "maxLength": 128,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "condition",
+              "effect"
+            ],
+            "type": "object"
+          },
+          "maxItems": 2048,
+          "type": "array"
+        }
+      },
+      "title": "ConfigRuleParams",
+      "type": "object"
+    },
+    "label": "Configuration Rule",
+    "output": {
+      "$defs": {
+        "ConfigTableRow": {
+          "description": "One row of the table.",
+          "properties": {
+            "finished_sketch": {
+              "description": "Name of the sketch finished before this edit started.",
+              "type": "string"
+            },
+            "id": {
+              "description": "Its fixed id: a rename keeps it.",
+              "format": "uint64",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "values": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "Its cell for each column, by column key.",
+              "type": "object"
+            }
+          },
+          "required": [
+            "id",
+            "name",
+            "values"
+          ],
+          "type": "object"
+        },
+        "ConfigTarget": {
+          "description": "One column of the table.",
+          "properties": {
+            "finished_sketch": {
+              "description": "Name of the sketch finished before this edit started.",
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            },
+            "label": {
+              "description": "What to show for it, such as `Component: Bracket`.",
+              "type": "string"
+            },
+            "target": {
+              "description": "What it drives, as the design file saves it."
+            }
+          },
+          "required": [
+            "key",
+            "label",
+            "target"
+          ],
+          "type": "object"
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "description": "What `config.table` and `config.rules` return.",
+      "properties": {
+        "active": {
+          "description": "The active row's name, or `null`.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "columns": {
+          "description": "Each column's key: `param:<name>`, `suppress:<feature>`, or a material or appearance\ncolumn's.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "finished_sketch": {
+          "description": "Name of the sketch finished before this edit started.",
+          "type": "string"
+        },
+        "matches": {
+          "description": "Whether the design still has the active row's values.",
+          "type": "boolean"
+        },
+        "param_warnings": {
+          "description": "In the warn parameter-check mode: what the call's parameters got wrong.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "rows": {
+          "description": "The rows, in order.",
+          "items": {
+            "$ref": "#/$defs/ConfigTableRow"
+          },
+          "type": "array"
+        },
+        "rules": {
+          "description": "The rules, in the order they run: `{id, name, enabled, condition, effect}` each.",
+          "items": true,
+          "type": "array"
+        },
+        "style_error": {
+          "description": "Why the style columns' state couldn't be worked out.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "style_status": {
+          "description": "Each style column's state, when it could be worked out.",
+          "items": true,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "targets": {
+          "description": "Each column: its key, a label to show, and what it drives.",
+          "items": {
+            "$ref": "#/$defs/ConfigTarget"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "columns",
+        "targets",
+        "rows",
+        "rules",
+        "active",
+        "matches",
+        "style_status",
+        "style_error"
+      ],
+      "title": "ConfigTableReply",
+      "type": "object"
+    },
+    "params": "rule?: {id,name,enabled,condition,effect}; rules?: [rule\u2026] (added or replaced together, then the rows checked once); id? + delete?; id? + index? (ordered move)"
+  }
+]

@@ -59,9 +59,9 @@ implementation source and verification checks already-built artifacts.
 Forge uses the runtime roles declared in root `ci.yml`. At the current dev
 baseline these are:
 
-- `reference`: `ghcr.io/brainboxemb/cad-reference:v0.3.6`;
-- `solidcraft`: `ghcr.io/brainboxemb/cad-solidcraft:v0.3.6`, SolidCraft
-  `0.49.0`.
+- `reference`: `ghcr.io/brainboxemb/cad-reference:v0.3.8`;
+- `solidcraft`: `ghcr.io/brainboxemb/cad-solidcraft:v0.3.8`, SolidCraft
+  `0.50.0`.
 
 Treat `ci.yml` and `cadlib/src/scpf/version.py` as the machine-readable
 sources when these pins change.
