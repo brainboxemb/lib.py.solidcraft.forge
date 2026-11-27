@@ -507,10 +507,10 @@ class SemanticIRTests(unittest.TestCase):
 
         solidcraft = compile_solidcraft_ir(model, "InnerDisk")
         self.assertEqual(
-            solidcraft[-1]["params"]["profiles"],
+            solidcraft["commands"][-1]["params"]["profiles"],
             [{"point": [0.0, 0.0]}],
         )
-        self.assertTrue(solidcraft[-1]["params"]["exact_regions"])
+        self.assertTrue(solidcraft["commands"][-1]["params"]["exact_regions"])
 
         mitcad = compile_mitcad_ir(model, "InnerDisk")
         self.assertEqual(
