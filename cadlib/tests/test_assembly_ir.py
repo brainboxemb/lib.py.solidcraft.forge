@@ -6,6 +6,7 @@ from scpf import (
     Anchor,
     AnchorFrame,
     Box,
+    Hole,
     Parameter,
     Placement,
     assembly,
@@ -22,9 +23,11 @@ from scpf.assembly_ir import (
     AssemblyAnchorIR,
     AssemblyIR,
     ComponentDefinitionIR,
+    ComponentFeatureRefIR,
     OccurrenceIR,
     OccurrencePlacementIR,
     RelationshipIR,
+    component_feature_ref,
     normalize_assembly,
 )
 from scpf.ir import BoxIR, PlacementIR
@@ -52,6 +55,17 @@ class AssemblyIRBlock:
                 x=(0, 0, 1),
             )
         }
+
+
+@component
+class AssemblyIRFeatureBlock:
+    def build(self):
+        body = Box(40, 30, 10, anchor=Anchor.BOTTOM)
+        pin = Hole(
+            d=5,
+            direction=(0, 0, -1),
+        ).at(0, 0, 10).export_feature("panel_pin")
+        return body - pin
 
 
 @assembly
@@ -220,6 +234,43 @@ class AssemblyIRTests(unittest.TestCase):
         self.assertEqual(as_built_ir.kind, "rigid")
         self.assertIsNone(as_built_ir.parent_anchor)
         self.assertIsNone(as_built_ir.child_anchor)
+
+    def test_exported_component_feature_identity_is_definition_level(self):
+        first = AssemblyIRFeatureBlock(name="first")
+        second = first.copy(
+            name="second",
+            placement=Placement(x=60),
+        )
+        model = normalize_assembly(first + second)
+
+        self.assertEqual(
+            model.definitions[0].exported_features,
+            ("panel_pin",),
+        )
+        first_ref = component_feature_ref(
+            model,
+            "occurrence_1",
+            "panel_pin",
+        )
+        second_ref = component_feature_ref(
+            model,
+            "occurrence_2",
+            "panel_pin",
+        )
+        self.assertEqual(
+            first_ref,
+            ComponentFeatureRefIR(
+                definition="definition_1",
+                name="panel_pin",
+            ),
+        )
+        self.assertEqual(second_ref, first_ref)
+        with self.assertRaises(ValueError):
+            component_feature_ref(
+                model,
+                "occurrence_1",
+                "missing",
+            )
 
     def test_assembly_owned_anchor_uses_semantic_occurrence_reference(self):
         base = AssemblyIRBlock(name="base")
