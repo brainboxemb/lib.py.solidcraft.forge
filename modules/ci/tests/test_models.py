@@ -27,7 +27,6 @@ EXPECTED_IDS = {
     "cylinder-subtract",
     "components",
     "configuration-child-feature",
-    "configuration-installed-state",
     "configuration-position",
     "configuration-symbolic-math",
     "configuration-table",
@@ -161,7 +160,6 @@ class ModelTests(unittest.TestCase):
             "components",
             "sample-plate-drawing",
             "configuration-child-feature",
-            "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
             "configuration-table",
@@ -178,7 +176,6 @@ class ModelTests(unittest.TestCase):
             "components",
             "sample-plate-drawing",
             "configuration-child-feature",
-            "configuration-installed-state",
             "configuration-position",
             "configuration-symbolic-math",
             "configuration-table",
@@ -479,7 +476,17 @@ class ModelTests(unittest.TestCase):
                             }
                             | VISUAL_SCPF_ONLY_IDS
                             | MITCAD_FOCUSED_VISUAL_IDS
-                            else [("scpf", "native")]
+                            else (
+                                [
+                                    ("scpf", "native"),
+                                    *[
+                                        ("scpf", stage)
+                                        for stage in STATE_VISUAL_STAGES[model.id]
+                                    ],
+                                ]
+                                if model.id in STATE_VISUAL_STAGES
+                                else [("scpf", "native")]
+                            )
                         )
                     )
                     if model.id in SCPF_ONLY_IDS
