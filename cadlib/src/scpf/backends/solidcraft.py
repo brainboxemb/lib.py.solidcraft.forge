@@ -2848,6 +2848,8 @@ def _body_commands(model: ModelIR, node: BodyIR, name: str) -> list[dict]:
         )
 
     if isinstance(node, PlacementIR):
+        if node.source_kind == "translated":
+            return [_csg_primitive_command(node, name, "new")]
         if isinstance(node.primitive, BoxIR):
             return [_box_command(node, name)]
         if isinstance(node.primitive, CylinderIR):
