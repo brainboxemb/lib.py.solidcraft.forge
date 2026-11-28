@@ -892,9 +892,6 @@ def _region_interior_point(
         return _circle_region_interior_point(sketch, region)
     return _basic_profile_region_interior_point(sketch, region)
 
-
-@dataclass(frozen=True)
-
 class SketchChainSegmentIR:
     """One semantic segment in an authored connected Sketch chain."""
 
@@ -1196,6 +1193,3 @@ class SketchEntityGraphIR:
                 raise ValueError(
                     "Sketch operation must reference an earlier operation"
                 )
-
-
-@dataclass(frozen=True)

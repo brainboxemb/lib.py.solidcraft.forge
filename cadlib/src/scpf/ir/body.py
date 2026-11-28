@@ -86,6 +86,3 @@ class LegacyShapeIR:
 
 
 IRNode = BodyIR | LegacyShapeIR
-
-
-@dataclass(frozen=True)

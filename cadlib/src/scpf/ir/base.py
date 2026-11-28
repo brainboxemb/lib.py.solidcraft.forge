@@ -200,6 +200,3 @@ class PlacementIR(BodyIR):
     anchor: tuple[int, int, int]
     explicit: bool = False
     source_kind: str = "placement"
-
-
-@dataclass(frozen=True)

@@ -288,6 +288,3 @@ class SheetPerforateIR(SheetBodyIR):
             raise ValueError("SheetPerforateIR margin must be positive")
         if self.pattern not in {"staggered", "square"}:
             raise ValueError("SheetPerforateIR pattern must be staggered or square")
-
-
-@dataclass(frozen=True)

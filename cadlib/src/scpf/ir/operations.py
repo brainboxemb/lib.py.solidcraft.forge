@@ -354,6 +354,3 @@ class ChamferIR(BodyIR):
             raise ValueError("ChamferIR flip must be bool")
         if self.flip and self.distance2 is None:
             raise ValueError("ChamferIR flip requires distance2")
-
-
-@dataclass(frozen=True)

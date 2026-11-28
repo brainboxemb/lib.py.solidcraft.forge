@@ -438,6 +438,3 @@ class CircularPatternIR(BodyIR):
             raise ValueError("CircularPatternIR alignment is invalid")
         if not isinstance(self.reversed, bool):
             raise ValueError("CircularPatternIR reversed must be bool")
-
-
-@dataclass(frozen=True)
