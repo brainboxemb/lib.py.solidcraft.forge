@@ -36,6 +36,24 @@ Unsupported intent fails explicitly. Do not silently substitute Python variants,
 numeric flags, duplicated bodies or approximate geometry when that changes the
 public semantics.
 
+Frontend ownership follows the public authoring boundary physically:
+
+- `scpf.frontend.scalars` owns symbolic dimensions, parameters and scalar
+  expression helpers;
+- `scpf.frontend.selectors` owns anchors, directions, axes and topology
+  selectors;
+- `scpf.frontend.shape` owns Shape, feature scopes and feature-tree helpers;
+- profile, primitive and hole/plastic constructors are owned by
+  `scpf.frontend.profiles`, `scpf.frontend.primitives` and
+  `scpf.frontend.features`;
+- `scpf.core` remains a compatibility facade for existing public and internal
+  imports and must not regain unrelated implementation ownership.
+
+The dependency direction is scalars -> selectors -> Shape -> constructor
+domains. A few convenience operations that need a lower constructor helper use
+small local imports rather than establishing an eager reciprocal module
+dependency.
+
 Compiler ownership follows the semantic boundary physically:
 
 - `scpf.compiler` is a stable facade with small backend-neutral dispatch,
