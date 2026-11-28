@@ -278,12 +278,45 @@ def Box(length, width, thickness, *, anchor=Anchor.CENTER):
 
 
 def Sphere(radius, *, anchor=Anchor.CENTER):
-    """Create a sphere centred on the origin unless another anchor is given."""
+    """Create a sphere centred on the origin unless another anchor is given.
+
+    Parameters:
+        radius: Sphere radius in mm.
+        anchor: Sphere datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.
+
+    Use when:
+        Model a spherical primitive, optionally with a tangent-point anchor.
+
+    Limits:
+        Cardinal anchors select points on the sphere's world-aligned bounds.
+        Sphere has no separate orientation axis; use at() for placement.
+
+    Example:
+        Sphere(12, anchor=Anchor.BOTTOM)
+    """
     return SpherePrimitive(radius, anchor)
 
 
 def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
-    """Create a cylindrical solid centred around the origin by default."""
+    """Create a cylindrical solid centred around the origin by default.
+
+    Parameters:
+        d: Cylinder diameter in mm.
+        h: Cylinder length along the selected axis, in mm.
+        axis: Cylinder axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z.
+        anchor: Cylinder datum placed at model coordinate (0, 0, 0) before later placement. Defaults to Anchor.CENTER.
+
+    Use when:
+        Model a cylinder along Axis.X, Axis.Y or Axis.Z. Use BOTTOM for a
+        Z-axis base, LEFT for an X-axis base or FRONT for a Y-axis base.
+
+    Limits:
+        Anchors refer to world XYZ bounds after choosing the cylinder axis.
+        at() places the selected anchor at the requested coordinate.
+
+    Example:
+        Cylinder(d=8, h=20, axis=Axis.X, anchor=Anchor.LEFT)
+    """
     return CylinderPrimitive(
         diameter=d,
         height=h,
@@ -293,7 +326,27 @@ def Cylinder(*, d, h, axis=Axis.Z, anchor=Anchor.CENTER):
 
 
 def Cone(*, d, top_d=0, h, axis=Axis.Z, anchor=Anchor.CENTER):
-    """Create a native cone or tapered cylinder (frustum)."""
+    """Create a native cone or tapered cylinder (frustum).
+
+    Parameters:
+        d: Diameter at the base end, in mm.
+        top_d: Diameter at the other end, in mm. Defaults to 0 for a full cone.
+        h: Length along the selected axis, in mm.
+        axis: Cone axis. Use Axis.X, Axis.Y or Axis.Z. Defaults to Axis.Z.
+        anchor: CENTER or one of the two axial end datums.
+
+    Use when:
+        Model a cone, tapered pin or lightly conical cylinder directly with
+        SolidCraft's native solid.cone feature.
+
+    Limits:
+        Because the two end radii may differ, transverse tangent anchors are
+        intentionally not exposed. Use CENTER or the selected axis' two end
+        anchors: LEFT/RIGHT for X, FRONT/BACK for Y, BOTTOM/TOP for Z.
+
+    Example:
+        Cone(d=20, top_d=20.2, h=20, anchor=Anchor.BOTTOM)
+    """
     return ConePrimitive(
         diameter=d,
         top_diameter=top_d,
