@@ -730,6 +730,10 @@ class Sketch:
             raise ValueError("sketch move_points must be authored inside the Sketch scope")
         if not self._profiles:
             raise ValueError("sketch move_points requires an already-authored profile")
+        if self._operations:
+            raise ValueError(
+                "sketch move_points must be the only Sketch edit operation"
+            )
         items = moves.items() if isinstance(moves, dict) else moves
         try:
             items = tuple(items)
