@@ -1416,6 +1416,11 @@ def _non_count_parameter_names(node, found=None):
             _non_count_parameter_names(original, found)
             _non_count_parameter_names((line, fixed, position, flip), found)
             return found
+        if node.kind == "solid_transform":
+            original, translate, _axis, _angle, origin = node.data
+            _non_count_parameter_names(original, found)
+            _non_count_parameter_names((translate, origin), found)
+            return found
         if node.kind == "sketch_pattern_rectangular":
             (
                 source, _count1, spacing1, dir1,
