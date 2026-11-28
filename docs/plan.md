@@ -208,30 +208,27 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### #640 — integrate the qualified experimental compiler checkpoint into dev
+### #647 — stabilize qualified integrated compiler on main for v0.27.0
 
-The direct permanent integration checkpoint is selected now:
+The experimental compiler checkpoint is now accepted on the normal lane:
 
-- source `exp`: `72e01a8db8b522b97b9f33a63eb08f6ce4153a68`;
-- target `dev`: `5d04bd44a40b1e5724ca28578484535439ce3826`;
-- Forge permanent-exp CI for the source checkpoint is green;
-- current public semantic IR is 20/20 complete; backend coverage remains an
-  independent fail-closed dimension;
-- the complete real CAD catalog has now been requalified again through CAD
-  #294 / evidence PR #297 against this exact Forge SHA on the newer CAD
-  exp/test infrastructure;
-- CAD #294 rebuilt all 43 active model variants at exact candidate source
-  `0c841c581331a5deba6a9136a11e22a227d9527a`, retained Forge v0.26.0 as
-  released baseline plus exact `qualification_ref`, and published a green
-  rolling `/test/` review;
-- representative basic/component/assembly previews are normal and A/B visual
-  review confirms the HUB75 coupler reference-hole/tick patterns are absent by
-  default while required structural geometry remains;
-- integrate only through PR #641 and repository-local `/merge`; never
-  integrate `exp -> main`;
-- after integration require permanent `dev` qualification/build evidence,
-  then reconcile this main-owned plan before considering any separate
-  `dev -> main` stabilization.
+- exact qualified product tree: `111c020ea66944a761123c68de9bf369562a45d4`;
+- permanent `dev`: `da6c007715e446879f08685bedc7f5fc16245c57`;
+- exact-head restoration PR #645 CI `46142524425` is green;
+- permanent `dev` qualification/build/publication `46142873629` is green;
+- permanent history synchronization PR #646 completed `dev -> exp` with zero changed files;
+- permanent `exp` run `46143716168` is green and reused the tree-identical qualification;
+- CAD #294 / evidence PR #297 rebuilt all 43 active catalog variants against the exact compiler candidate and published a green rolling `/test/` review;
+- semantic IR coverage remains 20/20 complete for the current public SCPF surface; backend coverage remains an independent fail-closed dimension.
+
+Next stable checkpoint:
+
+- promote exact permanent `dev -> main` under #647 with no source edits;
+- integrate only through repository-local `/merge`;
+- preserve main-owned governance history;
+- require full permanent stable qualification/build/publication green;
+- only then create a separate metadata-only v0.27.0 release issue/branch from the exact qualified stable main head;
+- v0.27.0 release notes must describe only the accepted compiler/IR/backend integration and must not resurrect the reverted configuration or body-Move/Copy experiments.
 
 ### Independent normal and experimental lanes
 
