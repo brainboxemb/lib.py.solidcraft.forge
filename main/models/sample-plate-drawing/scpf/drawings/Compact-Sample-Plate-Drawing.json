@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "cpp2e39sxjqs2",
+  "id": "0emt845bwx53m",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "7b7dzabmfac31"
+        "source": "fevtqx5b49j58"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "awmvfhx4mvqbt",
+      "id": "9q1zgaea2xy4y",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,15 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "am5g8h2k1shf4",
+          "id": "5drxdzc6sfcvd",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "7he8hgfsdgfd7",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,37 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "8jncrrkavp37m",
+          "id": "chfkr0hanqg78",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "am5g8h2k1shf4",
+          "parent": "7he8hgfsdgfd7",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "c8bqbv60cyje7",
+          "id": "f95qxcs32g908",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "am5g8h2k1shf4",
+          "parent": "7he8hgfsdgfd7",
           "side": "right"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "da3t9yn2bppxs",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "7b7dzabmfac31"
+      "id": "fevtqx5b49j58"
     }
   ],
   "symbols": [],
