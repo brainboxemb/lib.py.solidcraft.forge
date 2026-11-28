@@ -6,21 +6,14 @@ from dataclasses import dataclass
 from math import isfinite
 
 from ..scalar_ir import (
-    ScalarBinaryIR,
-    ScalarExpressionIR,
-    ScalarLiteralIR,
-    ScalarParameterRefIR,
-    ScalarPowerIR,
-    ScalarUnaryIR,
+    ScalarBinaryIR, ScalarExpressionIR, ScalarLiteralIR,
+    ScalarParameterRefIR, ScalarPowerIR, ScalarUnaryIR,
 )
 
 _PV_TRACKERS = ContextVar("scpf_pv_trackers", default=())
 
 def number_text(value: float) -> str:
     return format(value, "g")
-
-
-@dataclass(frozen=True)
 
 class _NativeExpression(str):
     """Internal SolidCraft expression plus the parameters it depends on."""
@@ -101,9 +94,6 @@ def _scalar_negation_ir(value, *, collapse=False) -> ScalarExpressionIR | None:
     ):
         return operand.operand
     return ScalarUnaryIR("negate", operand)
-
-
-@dataclass(frozen=True)
 
 @dataclass(frozen=True)
 class Parameter:
@@ -267,9 +257,6 @@ class Parameter:
             (self,),
             _scalar_negation_ir(self),
         )
-
-
-@dataclass(frozen=True)
 
 @dataclass(frozen=True)
 class Expression:
@@ -589,9 +576,6 @@ def _pv(dim) -> float:
     if isinstance(dim, (int, float)):
         return float(dim)
     raise TypeError(f"expected a CAD dimension, got {type(dim).__name__}")
-
-
-@contextmanager
 
 @contextmanager
 def _track_pv_reads(parameters):
