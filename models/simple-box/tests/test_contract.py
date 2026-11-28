@@ -11,19 +11,6 @@ MODEL = ROOT / "models/simple-box/scpf/model.py"
 
 
 class SimpleBoxCommandTests(unittest.TestCase):
-    def test_same_source_lowers_to_native_mitcad_box(self):
-        document = run_script(MODEL, backend="mitcad")
-        self.assertEqual(document["format"], "scpf-mitcad")
-        self.assertEqual(
-            [row["cmd"] for row in document["commands"]],
-            ["add_parameter", "add_parameter", "add_parameter", "add_feature"],
-        )
-        box = document["commands"][-1]
-        self.assertEqual(box["name"], "SimpleBox")
-        self.assertEqual(box["def"]["type"], "box")
-        self.assertEqual(box["def"]["corner"], ["-(length / 2)", "-(width / 2)"])
-        self.assertEqual(box["def"]["height"], "height")
-
     def test_box_lowers_directly_to_native_solid_box(self):
         """Keep the representative simple-box lowering contract explicit."""
 

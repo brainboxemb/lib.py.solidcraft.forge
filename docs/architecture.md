@@ -51,19 +51,6 @@ A reusable component owns geometry and parameters. Application-level
 configuration presentation belongs to the final model/document or higher-level
 assembly unless the public API explicitly defines otherwise.
 
-The current v0.26 configuration API attaches one ordered table to the final
-Shape, ModelInstance or Assembly through `.configure(...)`. Semantic IR keeps
-that table as `ConfigurationIR`; retired wrapper/rule authoring is not a
-second frontend contract. Scoped `feature(name, suppressed=...)` authoring
-adds stable semantic identity/state to one existing history operation and is
-represented separately as `NamedFeatureIR(name, FeatureRefIR, suppressed)`
-rather than as backend-native browser identity or as a new geometry node.
-
-Normal and experimental lanes must periodically reconcile the current public
-frontend before experimental integration. A completed IR inventory is only
-meaningful against the current released/public API; backend coverage may lag
-and must fail closed rather than preserve an obsolete frontend privately.
-
 ## Build and verification
 
 Central CI schedules owners and runtime roles; builders execute one explicit

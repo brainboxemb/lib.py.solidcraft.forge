@@ -74,54 +74,14 @@ def setup_svg(bodies):
     return "".join(parts)
 
 
-def _command_row(command, *, suffix=""):
-    if not isinstance(command, dict):
-        raise ValueError("command sequence entries must be objects")
-    name = command.get("command") or command.get("cmd") or "Command"
-    if suffix:
-        name = f"{name} · {suffix}"
-    return {
-        "name": str(name),
-        "json": json.dumps(command, ensure_ascii=False, indent=2),
-    }
-
-
 def command_sequence(path):
     payload = json.loads(path.read_text(encoding="utf-8"))
     commands = payload.get("commands", []) if isinstance(payload, dict) else payload
     if not isinstance(commands, list):
         raise ValueError(f"invalid command sequence: {path}")
-
-    rows = [_command_row(command) for command in commands]
-    if isinstance(payload, dict) and payload.get("format") == "scpf-mitcad":
-        replay = payload.get("replay", [])
-        if not isinstance(replay, list):
-            raise ValueError(f"invalid Mitcad replay sequence: {path}")
-        for index, stage in enumerate(replay, 1):
-            if not isinstance(stage, dict):
-                raise ValueError(f"invalid Mitcad replay stage: {path}")
-            bindings = {
-                key: value
-                for key, value in stage.items()
-                if key != "commands"
-            }
-            if bindings:
-                rows.append({
-                    "name": f"replay stage {index} bindings",
-                    "json": json.dumps(
-                        bindings,
-                        ensure_ascii=False,
-                        indent=2,
-                    ),
-                })
-            stage_commands = stage.get("commands", [])
-            if not isinstance(stage_commands, list):
-                raise ValueError(f"invalid Mitcad replay commands: {path}")
-            rows.extend(
-                _command_row(command, suffix=f"replay {index}")
-                for command in stage_commands
-            )
-    return rows
+    return [{"name": str(command.get("command", "Command")),
+             "json": json.dumps(command, ensure_ascii=False, indent=2)}
+            for command in commands]
 
 
 def _value(value):
@@ -176,13 +136,8 @@ def implementation_evidence(root, blob_url, raw_url, state):
             "drawings": []}
     if (root / "model.png").is_file():
         data["previewurl"] = f"{raw_url}/model.png"
-    for name, label in (
-        ("model.stl", "STL"),
-        ("model.step", "STEP"),
-        ("model.sc", "Native model"),
-        ("model.mitcad", "Mitcad model"),
-        ("result.json", "Build result"),
-    ):
+    for name, label in (("model.stl", "STL"), ("model.step", "STEP"), ("model.sc", "Native model"),
+                        ("result.json", "Build result")):
         if (root / name).is_file():
             data["files"].append({"label": label, "url": f"{blob_url}/{name}"})
     drawings = root / "drawings"
@@ -207,12 +162,10 @@ def implementation_evidence(root, blob_url, raw_url, state):
                     ),
                 })
 
-    for command_name in ("solidcraft.json", "mitcad.json"):
-        path = root / command_name
-        if path.is_file():
-            data["commands"] = command_sequence(path)
-            data["commandurl"] = f"{blob_url}/{command_name}"
-            break
+    path = root / "solidcraft.json"
+    if path.is_file():
+        data["commands"] = command_sequence(path)
+        data["commandurl"] = f"{blob_url}/solidcraft.json"
     reports = sorted((root / "verification").glob("*/verification.json"))
     legacy = root / "verification/verification.json"
     if not reports and legacy.is_file():

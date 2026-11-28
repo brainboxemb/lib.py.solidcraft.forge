@@ -11,72 +11,10 @@ from cad_library_ci.config import ConfigError
 PROJECT = SimpleNamespace(
     stable_branch="main",
     development_branch="dev",
-    docs_only_prefixes=(),
-    docs_only_modules=(),
-)
-
-DOC_PROJECT = SimpleNamespace(
-    stable_branch="main",
-    development_branch="dev",
-    docs_only_prefixes=("docs/",),
-    docs_only_modules=("ci",),
 )
 
 
 class ReleaseSelectionTests(unittest.TestCase):
-    @patch.dict(
-        os.environ,
-        {
-            "GITHUB_EVENT_NAME": "pull_request",
-            "GITHUB_BASE_REF": "main",
-        },
-        clear=True,
-    )
-    @patch("cad_library_ci.__main__.changed_paths_from_base")
-    def test_docs_only_pr_uses_lightweight_configured_selection(self, changed):
-        changed.return_value = ("docs/plan.md", "docs/manual.md")
-        plan, paths, full, release_only = selection(
-            Path("."),
-            DOC_PROJECT,
-            "docs/465-plan",
-            (),
-        )
-        self.assertEqual(plan.modules, ("ci",))
-        self.assertEqual(plan.models, ())
-        self.assertFalse(plan.library)
-        self.assertEqual(paths, changed.return_value)
-        self.assertFalse(full)
-        self.assertFalse(release_only)
-
-    @patch.dict(
-        os.environ,
-        {
-            "GITHUB_EVENT_NAME": "pull_request",
-            "GITHUB_BASE_REF": "main",
-        },
-        clear=True,
-    )
-    @patch("cad_library_ci.__main__.load_build", return_value=None)
-    @patch("cad_library_ci.__main__.changed_paths_from_base")
-    def test_mixed_docs_and_source_pr_falls_back_to_normal_selection(
-        self,
-        changed,
-        _load_build,
-    ):
-        changed.return_value = ("docs/plan.md", "cadlib/src/demo.py")
-        plan, paths, full, release_only = selection(
-            Path("."),
-            DOC_PROJECT,
-            "issue/465-mixed",
-            (),
-        )
-        self.assertIsNone(plan.modules)
-        self.assertIsNone(plan.models)
-        self.assertTrue(plan.library)
-        self.assertIsNone(paths)
-        self.assertTrue(full)
-        self.assertFalse(release_only)
-
     @patch.dict(os.environ, {"GITHUB_EVENT_NAME": "workflow_dispatch", "GITHUB_SHA": "old-event-sha", "CAD_SOURCE_SHA": "current-checked-out-sha"}, clear=True)
     @patch("cad_library_ci.__main__.changed_paths_from_parent")
     def test_stable_dispatch_prefers_checked_out_source_sha(self, changed):

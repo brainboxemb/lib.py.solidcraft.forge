@@ -1,4 +1,4 @@
-"""Execute a trusted SCPF model and compile it through Forge semantic IR.
+"""Execute a trusted SCPF model and compile it to native SolidCraft commands.
 
 A script may end with an explicit model call such as Plate(). If the file
 instead defines exactly one public class with build(), that class is used as
@@ -21,6 +21,7 @@ import warnings
 from . import core, cadmath
 from .compiler import ModelError, _compile_model_with_dependencies
 from .core import Expression, Parameter, Shape, command_value, parameters_in, _pv as pv
+from .assembly import _compile_assembly_with_dependencies
 from .model_objects import (
     Assembly,
     DrawingDimension,
@@ -32,9 +33,6 @@ from .model_objects import (
     Placement,
 )
 from .explicit_sketch import Sketch
-from .backends import get_backend
-from .ir import normalize_model, normalize_shape
-from .assembly_ir import normalize_assembly
 
 
 class ModelParameterWarning(UserWarning):
@@ -64,7 +62,6 @@ def _warn_missing_model_parameters(
     *,
     context="model",
     pv_parameters=(),
-    backend_name="SolidCraft",
 ):
     """Warn from actual emitted dependencies and explicit user pv() reads."""
     native = set(dependencies)
@@ -75,13 +72,13 @@ def _warn_missing_model_parameters(
             if name in native:
                 detail = (
                     "remains a native dependency, but pv() also consumes its "
-                    f"current Python value. Changing the {backend_name} "
-                    "parameter may therefore update only part of the model."
+                    "current Python value. Changing the SolidCraft parameter "
+                    "may therefore update only part of the model."
                 )
             else:
                 detail = (
-                    f"has no native {backend_name} dependency and pv() "
-                    "consumes its current Python value."
+                    "has no native SolidCraft dependency and pv() consumes its "
+                    "current Python value."
                 )
             warnings.warn(
                 f"{context} parameter {name!r} {detail} Preserve the symbolic "
@@ -92,7 +89,7 @@ def _warn_missing_model_parameters(
             )
         elif name not in native:
             warnings.warn(
-                f"{context} parameter {name!r} has no native {backend_name} "
+                f"{context} parameter {name!r} has no native SolidCraft "
                 "dependency; publishing a parameter alone does not make model "
                 "geometry or placement associative. Preserve the symbolic "
                 f"value, or rename it to _{name} if it is intentionally "
@@ -872,47 +869,11 @@ def _model_import_context(path: Path):
         sys.dont_write_bytecode = original_dont_write_bytecode
 
 
-def _compile_assembly_result(value, name, backend_adapter):
-    """Normalize core assembly semantics before backend selection/lowering."""
-    assembly = Assembly((value,)) if isinstance(value, ModelInstance) else value
-    if not isinstance(assembly, Assembly):
-        raise TypeError("assembly result must contain reusable model instances")
-
-    model = normalize_assembly(assembly)
-    if backend_adapter.compile_assembly is None:
-        raise ModelError(
-            f"{backend_adapter.display_name} backend does not support "
-            "Forge AssemblyIR in its qualified capability set"
-        )
-
-    has_presentation = bool(
-        assembly.drawings
-        or assembly.exploded_views
-        or assembly.exploded_display_set
-    )
-    if has_presentation:
-        if backend_adapter.id != "solidcraft":
-            raise ModelError(
-                f"{backend_adapter.display_name} backend does not support "
-                "Forge assembly presentation state"
-            )
-        # Drawings/exploded views are output presentation, explicitly outside
-        # the core CAD-IR denominator. The SolidCraft compatibility layer
-        # appends that presentation after validating the same AssemblyIR core.
-        from .assembly import _compile_assembly_with_dependencies
-        return _compile_assembly_with_dependencies(assembly, name)
-
-    return backend_adapter.compile_assembly(model, name)
-
-
-def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
+def run_script(path: str | Path) -> dict:
     """Execute a trusted SCPF model source file and return its command document.
 
     Parameters:
         path: Path to the trusted Python model source file.
-        backend: Native lowering backend. Model evaluation and Forge IR
-            normalization are backend-independent. "solidcraft" is the stable
-            default; "mitcad" is experimental and intentionally incomplete.
 
     Use when:
         Programmatic tooling needs the same model-loading/root-selection and
@@ -926,8 +887,6 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
     Example:
         document = run_script("models/panel/scpf/model.py")
     """
-    backend_adapter = get_backend(backend)
-
     path = Path(path).resolve()
     syntax = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
@@ -1145,41 +1104,13 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
             )
 
     if isinstance(result, Shape):
-        configuration = getattr(result, "_configuration", None)
-        if configuration is not None and backend_adapter.id == "solidcraft":
-            document, dependencies = _compile_model_with_dependencies(
-                result, name
-            )
-        else:
-            model_ir = normalize_model(result)
-            document, dependencies = backend_adapter.compile_ir(
-                model_ir,
-                name,
-            )
+        document, dependencies = _compile_model_with_dependencies(
+            result, name
+        )
     elif isinstance(result, (ModelInstance, Assembly)):
-        configuration = getattr(result, "_configuration", None)
-        if configuration is not None and backend_adapter.id == "solidcraft":
-            from .assembly import _compile_assembly_with_dependencies
-            document, dependencies = _compile_assembly_with_dependencies(
-                result, name
-            )
-        elif configuration is not None:
-            model_ir = normalize_model(result)
-            if not hasattr(model_ir, "design"):
-                raise ModelError(
-                    f"{backend_adapter.display_name} backend could not normalize "
-                    "configured assembly semantics"
-                )
-            raise ModelError(
-                f"{backend_adapter.display_name} backend does not support "
-                "configured AssemblyIR in its qualified capability set"
-            )
-        else:
-            document, dependencies = _compile_assembly_result(
-                result,
-                name,
-                backend_adapter,
-            )
+        document, dependencies = _compile_assembly_with_dependencies(
+            result, name
+        )
     else:
         raise TypeError(f"{name}() must produce CAD geometry or an assembly")
 
@@ -1189,6 +1120,5 @@ def run_script(path: str | Path, *, backend: str = "solidcraft") -> dict:
             dependencies,
             context=name,
             pv_parameters=built.pv_parameters,
-            backend_name=backend_adapter.display_name,
         )
     return document
