@@ -39,6 +39,14 @@ from ..sketch import (
 )
 from .profiles import _extrude_regions, _profile_ir_from_shape
 
+_PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
+_PLANE_AXES = {
+    "XY": {"X", "Y"},
+    "XZ": {"X", "Z"},
+    "YZ": {"Y", "Z"},
+}
+
+
 def _plane_ir(orientation: str, offset=None) -> PlaneIR | None:
     """Normalize one principal standalone Sketch plane without native ids."""
     if orientation not in _PLANE_NORMAL_INDEX:
