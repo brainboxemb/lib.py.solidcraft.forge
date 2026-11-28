@@ -1,6 +1,9 @@
 """Headless replay transport tests."""
 
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 from scpf.headless import (
     HeadlessReplayError,
@@ -8,8 +11,205 @@ from scpf.headless import (
     _active_drawing_after,
     _active_sketch_after,
     _phase_commands,
+    run_document,
 )
 from scpf.replay import apply_bindings, validate_replay_document
+
+
+class ScriptedSolidCraftTransport:
+    """Strict test transport: return only responses declared by the test."""
+
+    def __init__(self, *phases):
+        self._phases = list(phases)
+        self.calls = []
+
+    def run_phase(
+        self,
+        commands,
+        *,
+        phase_index,
+        previous,
+        save,
+        export,
+        work,
+    ):
+        if not self._phases:
+            raise AssertionError(
+                f"unexpected SolidCraft replay phase {phase_index}: {commands!r}"
+            )
+        script = self._phases.pop(0)
+        expected = [step["command"] for step in script]
+        actual = [item["command"] for item in commands]
+        if actual != expected:
+            raise AssertionError(
+                f"unexpected SolidCraft commands in phase {phase_index}: "
+                f"expected {expected!r}, got {actual!r}"
+            )
+        for item, step in zip(commands, script):
+            if "params" in step and item.get("params", {}) != step["params"]:
+                raise AssertionError(
+                    f"unexpected params for {item['command']}: "
+                    f"expected {step['params']!r}, "
+                    f"got {item.get('params', {})!r}"
+                )
+        self.calls.append({
+            "phase_index": phase_index,
+            "commands": commands,
+            "previous": previous,
+            "save": save,
+            "export": export,
+            "work": work,
+        })
+        return [step.get("result", {}) for step in script]
+
+    def assert_complete(self):
+        if self._phases:
+            raise AssertionError(
+                f"{len(self._phases)} scripted SolidCraft phase(s) were unused"
+            )
+
+
+class HeadlessTransportInjectionTests(unittest.TestCase):
+    def test_scripted_transport_replays_bindings_and_restores_context(self):
+        document = {
+            "format": "scpf-replay",
+            "version": 2,
+            "commands": [
+                {
+                    "command": "component.create",
+                    "params": {"name": "Panel"},
+                },
+                {
+                    "command": "sketch.create",
+                    "params": {"name": "Top"},
+                },
+                {
+                    "command": "model.faces",
+                    "params": {"body": "Panel"},
+                    "bind": {
+                        "$top_point": {
+                            "field": "faces",
+                            "where": {"plane_normal": [0, 0, 1]},
+                            "max": "area",
+                            "select": "point",
+                        },
+                    },
+                },
+                {
+                    "command": "sketch.circle.center",
+                    "params": {
+                        "center": "$top_point",
+                        "diameter": 4,
+                    },
+                },
+            ],
+        }
+        transport = ScriptedSolidCraftTransport(
+            [
+                {
+                    "command": "component.create",
+                    "result": {"component": 1},
+                },
+                {
+                    "command": "sketch.create",
+                    "result": {"sketch": 7},
+                },
+                {
+                    "command": "model.faces",
+                    "result": {
+                        "faces": [{
+                            "index": 5,
+                            "name": "F5",
+                            "area": 1200.0,
+                            "point": [0.0, 0.0, 10.0],
+                            "plane_normal": [0.0, 0.0, 1.0],
+                        }],
+                    },
+                },
+            ],
+            [
+                {
+                    "command": "component.activate",
+                    "params": {"component": "Panel"},
+                },
+                {
+                    "command": "sketch.edit",
+                    "params": {"sketch": 7},
+                },
+                {
+                    "command": "sketch.circle.center",
+                    "params": {
+                        "center": [0.0, 0.0, 10.0],
+                        "diameter": 4,
+                    },
+                    "result": {"curves": ["circle1"]},
+                },
+            ],
+        )
+
+        with tempfile.TemporaryDirectory(prefix="scpf-scripted-") as tmp:
+            with patch("scpf.headless.subprocess.run") as subprocess_run:
+                result = run_document(
+                    document,
+                    save=Path(tmp) / "model.sc",
+                    work_dir=Path(tmp) / "work",
+                    _transport=transport,
+                )
+
+        subprocess_run.assert_not_called()
+        transport.assert_complete()
+        self.assertEqual(result["completed"], 4)
+        self.assertEqual(result["variables"]["$top_point"], [0.0, 0.0, 10.0])
+        self.assertEqual(len(result["results"]), 4)
+        self.assertEqual(
+            [row["command"] for row in transport.calls[1]["commands"]],
+            ["component.activate", "sketch.edit", "sketch.circle.center"],
+        )
+
+    def test_scripted_transport_fails_closed_on_unexpected_command(self):
+        transport = ScriptedSolidCraftTransport([
+            {"command": "solid.box", "result": {}},
+        ])
+        document = {
+            "commands": [{
+                "command": "solid.cylinder",
+                "params": {"diameter": 4, "height": 8},
+            }],
+        }
+
+        with tempfile.TemporaryDirectory(prefix="scpf-scripted-") as tmp:
+            with self.assertRaisesRegex(
+                AssertionError,
+                "unexpected SolidCraft commands",
+            ):
+                run_document(
+                    document,
+                    save=Path(tmp) / "model.sc",
+                    _transport=transport,
+                )
+
+    def test_scripted_transport_result_cardinality_is_still_validated(self):
+        class MissingResultTransport:
+            def run_phase(self, commands, **kwargs):
+                return []
+
+        document = {
+            "commands": [{
+                "command": "solid.box",
+                "params": {"length": 1, "width": 1, "height": 1},
+            }],
+        }
+
+        with tempfile.TemporaryDirectory(prefix="scpf-scripted-") as tmp:
+            with self.assertRaisesRegex(
+                HeadlessReplayError,
+                "one result per native phase command",
+            ):
+                run_document(
+                    document,
+                    save=Path(tmp) / "model.sc",
+                    _transport=MissingResultTransport(),
+                )
 
 
 class HeadlessSketchReplayTests(unittest.TestCase):
