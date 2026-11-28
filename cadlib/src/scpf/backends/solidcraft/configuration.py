@@ -282,7 +282,7 @@ def _portable_configuration_commands(
     name: str,
 ) -> list[dict]:
     """Lower semantic suppression rows without source-object/native-id lookup."""
-    from ..configurations import _row_variable
+    from ...configurations import _row_variable
 
     commands = [dict(command) for command in commands]
     index = _configured_feature_command_index(
