@@ -64,27 +64,29 @@ Redundant around an existing `Parameter` handle.
 
 Redundant when a feature handle is already typed by the object itself.
 
-### `ConfigRule(...)`, `Always()`, `DriveParameter(...)`, `rules=`
+### broad rule authoring remains under review
 
-These expose one SolidCraft mechanism rather than generic Forge CAD intent.
+The earlier audit treated all Configuration Rule authoring as unnecessary.
+Issue #669 disproves that for one concrete semantic requirement: an independent
+Installed checkbox must remain orthogonal to the configuration row axis while
+driving suppression of one authored history feature.
 
-The old `configuration-installed-state` qualification model depended on this
-surface and is removed rather than preserved as compatibility-driven design.
+SolidCraft 0.50 provides that behavior natively through a rule `enabled`
+checkbox plus `drive_suppression`.
 
-## Do not introduce
+Do not restore the retired broad rule API blindly. The public Forge surface must
+express the semantic independent feature-state switch without exposing native
+feature ids or raw rule dictionaries. The exact spelling is decided by #669.
 
-The current use case does not justify separate public:
+## Independent feature state
 
-~~~text
-State
-Toggle
-Bind
-FeatureGroup
-~~~
+Issue #669 is the concrete CAD requirement that the earlier audit was missing.
+A physical Installed state is independent of the row axis and therefore cannot
+be represented truthfully by adding `Free` / `Installed` rows.
 
-Do not add another abstraction until a concrete CAD model demonstrates a
-semantic requirement that direct parameters, feature identity and
-`model.configure(...)` cannot express.
+The required public concept is one independent switch over one semantic authored
+feature. Its SolidCraft lowering may use a native Configuration Rule, but the
+public API must not expose raw SolidCraft rule vocabulary merely for transport.
 
 ## Backend evidence
 
