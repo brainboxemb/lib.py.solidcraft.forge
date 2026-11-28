@@ -208,86 +208,23 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-No active release or integration checkpoint is selected after the completed v0.27.0 publication.
+### #656 — modularize semantic IR definitions and tests by domain
 
-### Independent normal and experimental lanes
+The v0.27.0 semantic compiler is released and consumer-qualified. Improve its
+maintainability without changing semantics, public imports or backend behavior:
 
-Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
+- replace the monolithic `cadlib/src/scpf/ir.py` with a domain-oriented
+  `scpf/ir/` package;
+- preserve `from scpf.ir import ...` as the stable compatibility façade;
+- separate IR definitions/validation/normalization by semantic ownership;
+- split the monolithic `cadlib/tests/test_semantic_ir.py` into matching
+  domain test modules;
+- keep the 20/20 semantic coverage ledger unchanged;
+- do not redesign compiler orchestration or backend lowering in this change;
+- require full Forge qualification before integration.
 
-Normal `dev` lane:
-- **v0.24.0 is released**; #444 / PR #464 is additionally qualified on
-  permanent `dev` as `a0570f6d11b9dea934cbff878955678ffad464e8` with
-  permanent build/publication run 46023012718 green;
-- #488 / PR #489 is the immediate normal-lane checkpoint: stabilize that exact
-  qualified product to `main`, then prepare a metadata-only Forge release
-  from the exact qualified stable main head;
-- do not migrate the downstream CAD model to the new `model.configure(...)`
-  API until that Forge tag is published;
-- #255, #380, the capturable #256 visual-state slice and #257 folded
-  sheet-metal visual evidence remain part of the current development baseline;
-- downstream CAD #189 may adopt v0.24.0 for parent/root suppression of an
-  explicitly exported feature inside a reusable child component;
-- **#256 remains open but blocked only on #415** for deterministic headless
-  capture of transient `exploded-views` presentation; do not implement a
-  Forge-local timing/polling or substitute-geometry workaround;
-- **#73 investigation is complete on the Forge side**: PR #436 retained one
-  owner-local A/B diagnostic on permanent `dev` as
-  `72f19f177a89d2468de6f7058c17dffede172798`; exact-head PR CI
-  45977349093 is green;
-- #73 reproduces identically on SolidCraft 0.49.0 and 0.50.0: phased headless
-  replay passes, while fully resolved single-process CLI replay and live GUI
-  replay both reject the same broad-face cut as reaching bend `F2/l3`;
-- boundary minimization proves that save/reopen before the contour flange does
-  not help, while save/reopen immediately after `sheet.flange` makes the
-  unchanged cut succeed; `model.faces`, replay-variable binding and live
-  `edit.checkpoint` are therefore not the cause;
-- keep #73 open only as tracking for this external SolidCraft in-memory
-  sheet-state divergence; do not add a Forge save/reopen, `plane.fixed`,
-  physical-hole or other model-local workaround;
-- SolidCraft 0.50 adoption is separate runtime-baseline work: 0.50 does not fix
-  #73, but #73 by itself is not a reason to block an otherwise qualified 0.50
-  baseline;
-- with #73 isolated and #256 blocked on #415, do not invent another verification
-  issue merely to keep the normal lane busy; select further normal work from
-  existing consumer demand and the migrated backlog;
-- return to the remaining #256 exploded visual acceptance when #415 has a
-  supported deterministic SolidCraft capture route;
-- keep normal verification work independent from experimental Mitcad/IR work.
-
-Experimental `exp` lane:
-- #393 remains the compiler control gate: SCPF is one frontend, typed engine-neutral Forge CAD IR is the compiler contract, and SolidCraft/Mitcad are independent lowerings rather than source interpreters;
-- #389, #417, #424, #433, #440, #447, #451, #456, #461, #469, #473, #477, #481, #485, #496, #504 and #514 are complete architecture checkpoints: typed reference geometry includes symbolic `AxisLineIR` and `PlaneIR`; authored Revolve operation/target intent remains semantic; final design state carries bounded `ConfigurationIR`; `FeatureRefIR` traverses typed nested Boolean history; `SketchIR` carries explicit entity/constraint/dimension semantics; `RegionIR` describes exact region membership; Sphere/Cone reuse generic `PlacementIR`; role-aware `ParameterIR` and affine scalar-expression IR retain authored dependencies; equal/two-distance `ChamferIR` is typed; Cone composes through recursive `BooleanIR`; `Edges.VERTICAL` has engine-neutral `ParallelEdgeSetIR("Z")` feeding bounded constant-radius `FilletIR`; and that same `FilletIR` now reuses existing `FaceBoundaryIR(("top",))` topology semantics for the qualified Box/TOP slice;
-- #510 / PR #511 completed the physical-owner checkpoint on permanent `exp`: PR CI 46033877961 built and verified both `cone-boolean` implementations from the exact same `scpf/model.py`, while permanent exp CI 46034222870 reused that qualification and skipped duplicate CAD execution;
-- durable owner evidence remains green end-to-end: `cone-boolean--scpf` native/visual/geometry pass; `cone-boolean--scpf-mitcad` build/geometry/preview pass; shared mesh bounds are [-25,-20,0]..[25,20,26] with volume `39680 + 338π`; the Mitcad implementation retains the normal native document/STL/preview/build evidence through the catalogue path;
-- #514 / PR #516 then completed TOP face-boundary Fillet on permanent `exp`: final PR CI 46036833118 is green and permanent exp CI 46037065727 reused the tree-identical PR qualification, skipped duplicate selected CAD execution, published the build scope and dispatched Pages;
-- the #514 semantic contract is bounded to `PlacementIR(BoxIR)` plus one positive radius and exactly `FaceBoundaryIR(("top",))`; public `Edges.VERTICAL` remains `ParallelEdgeSetIR("Z")`;
-- SolidCraft reuses the typed TOP-face `model.faces` / boundary `model.edges` path before stable `solid.fillet`; Mitcad reuses private `bind_face_boundary_edges` transport rather than principal-edge reconstruction, with no native face/edge identity entering semantic IR;
-- exact pinned Mitcad v0.70.0 produced one watertight 60×40×12 BOTTOM Box with R2 TOP-boundary Fillet, bounds [-30,-20,0]..[30,20,12] and frozen native volume 28631.38638124875 mm³;
-- TOP face-boundary Fillet remains standalone: the already-qualified Fillet→Cone `BooleanIR` path is still restricted to `ParallelEdgeSetIR("Z")`; FRONT/BACK/LEFT/RIGHT/BOTTOM face-boundary Fillet, multiple selected faces, directional-pair/explicit/vertex/profile selectors, Fillet over Extrude/Boolean bases, variable/chord/asymmetric/curvature Fillet, asymmetric non-TOP Chamfer, text-only/derived-unit mixed-role expressions, axial primitive support-plane widening, rotated primitive frames and new public unit syntax remain outside the qualified slices;
-- #525 changes the pacing rule for the experimental compiler: IR completion and backend completion are separate dimensions. A semantic slice may become IR-ready on permanent `exp` after backend-neutral contract definition, typed normalization, pure IR boundary tests and stable typed SolidCraft compatibility; Mitcad may explicitly fail closed and catch up later;
-- #525 also owns the experimental IR coverage ledger on `exp`, keeping complete/partial/legacy semantic status separate from SolidCraft/Mitcad backend status and physical-owner dual-backend evidence;
-- #519 / PR #531 completed the first IR-first batch on permanent `exp`: explicit `Hole`, `CounterboreHole`, `CountersinkHole` and `ThreadedHole` now normalize to recursive semantic `HoleIR` over the bounded Box/Hole history; SolidCraft typed lowering remains legacy-document compatible while Mitcad intentionally fails closed;
-- #519 PR CI 46042668913 is green (58 focused + 298 library tests), and permanent exp CI 46042807284 reused the tree-identical PR qualification instead of repeating selected execution; the coverage ledger therefore moves Hole from legacy to partial and reports 15/20 semantic families with at least some typed IR;
-- #532 / PR #537 completed generic typed `BodyIR` history + `ShellIR`; #533 / PR #540 completed semantic native feature `PatternIR`; #534 / PR #542 completed the public basic closed-profile family with `RectangleProfileIR`, `RoundedRectangleProfileIR` and `SlotProfileIR`, plus Circle/Polygon offset and finite positive/negative/symmetric Extrude widening;
-- final #534 PR CI 46046742176 is green (58 focused + 310 library tests), while permanent exp CI 46046851212 reused that tree-identical qualification and skipped duplicate selected execution; the experimental ledger now reports 4/20 semantic families complete and 17/20 with at least some typed IR;
-- #544 / PR #547 completed semantic within-component placement on permanent `exp`: `FeaturePlacementIR` now owns absolute/anchored placement, `BoundOffsetIR` owns X/Y bound-relative offsets, `PlasticFeatureIR` completes Lip/SnapFit/Boss/Rest semantics, and the stable simple TOP anchored Hole route is typed without native topology ids in IR;
-- final #544 PR CI 46048555351 is green (58 focused + 314 library tests), while permanent exp CI 46048695905 reused that tree-identical qualification and skipped duplicate selected execution; the ledger now reports 5/20 semantic families complete, 18/20 with typed IR and 2/20 fully legacy;
-- #550 / PR #556 completed the current public Hole semantic family on permanent `exp`: absolute and anchored Hole intent remains typed independent from backend support, simple BOTTOM joins TOP as a typed SolidCraft lowering, countersink-angle Parameters are semantic degree-valued uses, and unsupported anchored variants remain typed/fail-closed; the ledger now reports 6/20 complete, 12 partial and 2 legacy families;
-- #554 / PR #565 completed the current public Sheet metal semantic family on permanent `exp`, including shared `SketchChainIR`, typed sheet rules/history and manufacturing perforation semantics; #555 / PR #567 then completed reusable definitions, occurrences, symbolic pose/grouping, assembly anchors and rigid/planar/revolute/as-built relationships through `AssemblyIR`;
-- #560 / PR #566 completed the current public support-independent Sketch entity/operation graph; #561 / PR #570 completed semantic Sketch support/frame intent, Regions/profile membership and current public Extrude semantics; #562 / PR #572 completed the shared public topology/reference-selector vocabulary;
-- #574 / PR #575 reconciled the #562 semantic boundary against the actual public modifier API: current public Chamfer and Fillet are complete over typed `BodyIR` plus the shared typed edge-selection vocabulary; backend/body lowering limits remain backend coverage rather than missing modifier IR;
-- #577 / PR #579 completes the current public Values/parameters/scalar-expressions family: literals, named parameters, unary/arithmetic, fixed numeric power and the existing `cadmath.min/max/sqrt/abs/round/floor/atan` grammar now retain typed backend-neutral scalar IR; physical roles remain use-site semantics and unsupported non-affine backend forms remain fail-closed;
-- #581 / PR #583 completes the current public Boolean body-operation family: join/cut/intersect now compose recursive typed `BodyIR × BodyIR` histories in authored order, including semantic target/tool FeatureRefIR traversal; SolidCraft preserves qualified native CSG contracts while unsupported backend forms remain explicit backend gaps;
-- #586 / PR #589 completes the current working standalone Revolve family: Circle/Rectangle/RoundedRectangle/Polygon/closed connected-profile Sketch results reuse the completed Sketch graph; symmetric sweep, coplanar principal/AxisLine intent and typed symbolic angles remain semantic IR; Slot/Text/pattern Revolve behavior is deliberately not invented because the current standalone compiler rejects those forms;
-- #593 / PR #596 audits and completes the current public Reference geometry family without inventing future datum APIs: `PlaneIR` covers principal Sketch planes plus semantic origin/offset, while `AxisLineIR` covers principal/fixed-vector axes and shifted fixed/symbolic origins; construction-/edge-/face-/topology-selected axes remain explicitly outside the public surface;
-- #598 / PR #601 completes the current working Placement/transforms family: primitive placement, anchored feature placement and assembly occurrence pose retain their existing semantic layers, while translated primitive/primitive-CSG bodies now use `TranslationIR(body, offset)`; direct `Shape.move()` remains finite numeric and CENTER alignment may retain semantic length deltas; no general body-rotation/matrix API is invented;
-- #605 / PR #608 completes the current public Feature identity / suppression / configuration family: one heterogeneous `ConfigurationIR` retains ordered parameter/suppression columns, rows, active state and the current rule grammar; Shape-design suppression uses semantic `FeatureRefIR`, while reusable-component suppression stays on the existing public exported-feature contract and `ComponentFeatureRefIR`; configured ModelInstance/Assembly targets reuse `AssemblyIR` through `ConfiguredDesignIR` without native configuration or browser identity in semantic IR;
-- permanent `exp` therefore reports **20/20 complete, 0 partial, 0 legacy** and 20/20 families with typed IR. Final #608 PR CI 46064400747 and permanent exp CI 46064505896 are green on the integrated semantic boundary;
-- #605 is the tracked IR-completion boundary, not a backend-parity claim. SolidCraft/Mitcad lowering coverage may remain narrower and must fail closed where unsupported; select backend catch-up from demonstrated compiler/consumer value rather than reopening completed semantic families;
-- keep one issue/branch/PR per batch, but do not require Mitcad lowering/native qualification to advance to the next IR batch; unsupported backend paths remain fail-closed and Mitcad catches up separately;
-- permanent `exp` must continue to reuse heavy green PR qualification when the reviewed PR-merge tree equals the permanent tree; Pages remains asynchronous publication evidence and is not an IR/compiler closure gate;
-- `LegacyShapeIR` remains a visible migration boundary for stable SolidCraft compatibility, never a second interpreter; experimental backends continue to fail closed on unmigrated semantics;
-- do not perform `exp -> dev` unless a separately qualified integration checkpoint explicitly selects it.
+Compiler/lowering modularization is an explicit follow-up after the IR boundary
+is clean.
 
 ## Later
 
