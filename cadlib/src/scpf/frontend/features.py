@@ -2,16 +2,9 @@
 
 from math import isfinite
 
-from ..core import (
-    Anchor,
-    Depth,
-    Shape,
-    _AxisRef,
-    _pv,
-    feature,
-    left,
-    right,
-)
+from .selectors import Anchor, Depth, _AxisRef
+from .scalars import _pv, left, right
+from .shape import Shape, feature
 
 _HOLE_FIELDS = (
     "type",
