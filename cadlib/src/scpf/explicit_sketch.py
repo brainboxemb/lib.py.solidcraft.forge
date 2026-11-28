@@ -707,6 +707,66 @@ class Sketch:
         self._operations.append(operation)
         return operation
 
+    def move_points(self, moves):
+        """Move several existing connected-profile points in one native solve.
+
+        Source and target values are fixed sketch-local (x, y) points. Forge
+        resolves the source points to native curve-point references; callers
+        never provide SolidCraft ids. This edits the Sketch itself and does
+        not create a separate timeline feature.
+        """
+        if self._closed or self._token is None:
+            raise ValueError(
+                "sketch move_points must be authored inside the Sketch scope"
+            )
+        if not self._profiles:
+            raise ValueError(
+                "sketch move_points requires an already-authored profile"
+            )
+        if self._operations:
+            raise ValueError(
+                "sketch move_points must be the only Sketch edit operation"
+            )
+        items = moves.items() if isinstance(moves, dict) else moves
+        try:
+            items = tuple(items)
+        except TypeError as exc:
+            raise TypeError(
+                "sketch move_points requires source/target pairs"
+            ) from exc
+        if not items:
+            raise ValueError("sketch move_points requires at least one move")
+
+        normalized = []
+        for item in items:
+            if not isinstance(item, (tuple, list)) or len(item) != 2:
+                raise TypeError(
+                    "each sketch move must be a (source, target) pair"
+                )
+            source, target = item
+
+            def point2(value, label):
+                if not isinstance(value, (tuple, list)) or len(value) != 2:
+                    raise ValueError(f"{label} must be an XY point")
+                if any(
+                    isinstance(component, bool)
+                    or not isinstance(component, (int, float))
+                    or not isfinite(float(component))
+                    for component in value
+                ):
+                    raise ValueError(
+                        f"{label} must contain fixed finite numbers"
+                    )
+                return (float(value[0]), float(value[1]))
+
+            normalized.append((
+                point2(source, "sketch move source"),
+                point2(target, "sketch move target"),
+            ))
+
+        operation = Shape("sketch_move_points", (tuple(normalized),))
+        self._operations.append(operation)
+        return operation
     def mirror(self, source, *, axis):
         """Mirror a profile or earlier Sketch result over the sketch X or Y axis.
 
