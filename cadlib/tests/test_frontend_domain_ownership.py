@@ -19,6 +19,8 @@ class FrontendDomainOwnershipTests(unittest.TestCase):
             shape.feature: "scpf.frontend.shape",
             profiles.Rectangle2D: "scpf.frontend.profiles",
             primitives.Box: "scpf.frontend.primitives",
+            primitives.Primitive: "scpf.frontend.primitives",
+            primitives.BoxPrimitive: "scpf.frontend.primitives",
             features.Hole: "scpf.frontend.features",
         }
         for implementation, module in expected.items():

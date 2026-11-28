@@ -17,6 +17,7 @@ from .core import (
     number_text,
 )
 from .compiler import ModelError, _command, _require_positive
+from .frontend.primitives import BoxPrimitive
 
 
 CSG_PRIMITIVE_KINDS = frozenset(("box", "sphere", "cylinder", "cone"))
@@ -143,8 +144,11 @@ def _csg_primitive(shape, body_name, operation, *, offset=(0, 0, 0)):
 def _csg_apply(shape, name, operation, offset=(0, 0, 0)):
     if shape.kind == "placed_box":
         box, x, y, z, anchor = shape.data
-        length, width, height, _ = box.data
-        placed = Shape("box", (length, width, height, anchor))
+        if isinstance(box, BoxPrimitive):
+            placed = box._with_anchor(anchor)
+        else:
+            length, width, height, _ = box.data
+            placed = Shape("box", (length, width, height, anchor))
         return _csg_apply(
             placed,
             name,
@@ -173,8 +177,11 @@ def _csg_apply(shape, name, operation, offset=(0, 0, 0)):
 def _csg_new(shape, name, offset=(0, 0, 0)):
     if shape.kind == "placed_box":
         box, x, y, z, anchor = shape.data
-        length, width, height, _ = box.data
-        placed = Shape("box", (length, width, height, anchor))
+        if isinstance(box, BoxPrimitive):
+            placed = box._with_anchor(anchor)
+        else:
+            length, width, height, _ = box.data
+            placed = Shape("box", (length, width, height, anchor))
         return _csg_new(
             placed,
             name,
