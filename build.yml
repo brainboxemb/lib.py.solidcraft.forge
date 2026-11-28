@@ -1,8 +1,8 @@
 schema: 1
 branch: issue/669-state-edit-verification
 
-modules: []
-models: []
+modules: all
+models: all
 library: true
 api_probes:
   - configuration-clamp-curve-edit
