@@ -1,14 +1,8 @@
 """Public primitive authoring constructors and placement helpers."""
 
-from ..core import (
-    Anchor,
-    Axis,
-    Shape,
-    _dim_add,
-    _direction_selector,
-    feature,
-    half,
-)
+from .selectors import Anchor, Axis, _direction_selector
+from .scalars import _dim_add, half
+from .shape import Shape, feature
 
 def _box_corner_from_anchor(length, width, height, point, anchor):
     """Return the native Box corner when one box anchor is placed at point."""
