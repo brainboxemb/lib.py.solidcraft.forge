@@ -1,0 +1,62 @@
+{
+  "backend": "mitcad",
+  "commands": [
+    {
+      "cmd": "add_feature",
+      "def": {
+        "corner": [
+          -30.0,
+          -20.0
+        ],
+        "height": 12,
+        "length": 60,
+        "operation": "new_body",
+        "participants": [],
+        "plane": "xy",
+        "symmetric": false,
+        "type": "box",
+        "width": 40
+      },
+      "name": "TopologyFaceBoundaryBoxBase"
+    }
+  ],
+  "format": "scpf-mitcad",
+  "replay": [
+    {
+      "bind_face_boundary_edges": {
+        "body": "body",
+        "face": {
+          "normal": [
+            0,
+            0,
+            1
+          ],
+          "normal_tolerance": 1e-06,
+          "surface": "plane"
+        },
+        "name": "edges"
+      },
+      "bind_single_body": "body",
+      "commands": [
+        {
+          "cmd": "add_feature",
+          "def": {
+            "body": {
+              "$mitcad_bind": "body"
+            },
+            "edges": {
+              "$mitcad_bind": "edges"
+            },
+            "size": {
+              "distance": 2,
+              "type": "equal_distance"
+            },
+            "type": "chamfer"
+          },
+          "name": "TopologyFaceBoundaryBox"
+        }
+      ]
+    }
+  ],
+  "version": 1
+}

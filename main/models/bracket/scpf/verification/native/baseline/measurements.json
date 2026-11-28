@@ -46,15 +46,6 @@
     {
       "comment": "",
       "error": null,
-      "expression": "24",
-      "model": false,
-      "name": "width",
-      "unit": "mm",
-      "value": 24.0
-    },
-    {
-      "comment": "",
-      "error": null,
       "expression": "40",
       "model": false,
       "name": "arm_length",
@@ -69,6 +60,15 @@
       "name": "arm_height",
       "unit": "mm",
       "value": 12.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "24",
+      "model": false,
+      "name": "width",
+      "unit": "mm",
+      "value": 24.0
     }
   ],
   "sketches": [
@@ -87,7 +87,7 @@
     {
       "error": null,
       "id": 1,
-      "ms": 0.168638,
+      "ms": 0.194584,
       "name": "Profile",
       "rolled_back": false,
       "suppressed": false,
@@ -97,7 +97,7 @@
     {
       "error": null,
       "id": 2,
-      "ms": 9.664401,
+      "ms": 8.081668,
       "name": "Extrude1",
       "rolled_back": false,
       "suppressed": false,

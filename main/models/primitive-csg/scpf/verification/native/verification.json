@@ -5,8 +5,8 @@
         {
           "kind": "file",
           "path": "baseline/measurements.json",
-          "sha256": "12e4727be25c557d20de9fc2d8e8cef3bd949c2f95edb64f6b2c923fb08302fc",
-          "size": 2014
+          "sha256": "b8770c267814afc6874afb9e8981b144bd627dadb44c2f4fdd3ada9b0070552e",
+          "size": 2026
         }
       ],
       "error": null,
@@ -76,6 +76,163 @@
         ]
       },
       "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/unclipped/model.sc",
+          "sha256": "bd6397a80e34683904105c95e5aed6437381f74a113906f15509dd9747d8fcba",
+          "size": 46923
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/unclipped/measurements.json",
+          "sha256": "1c35c301042fe882307f10ffb492dd94e5101ef2c017229a9644903e1b19268f",
+          "size": 2009
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "changes": [
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 19.999999999999996,
+                "baseline": -2.4919302732406834e-15,
+                "mutated": -20.0
+              },
+              "expected": {
+                "absolute_delta_gt": 10.0
+              },
+              "label": "SolidCraft saved design change clip-plane-release",
+              "pass": true
+            },
+            "id": "clip-plane-release",
+            "path": [
+              "bodies",
+              0,
+              "bbox",
+              "min",
+              2
+            ]
+          },
+          {
+            "comparison": {
+              "actual": {
+                "absolute_delta": 20434.308606885395,
+                "baseline": 22776.917079141946,
+                "mutated": 43211.22568602734
+              },
+              "expected": {
+                "absolute_delta_gt": 100.0
+              },
+              "label": "SolidCraft saved design change clip-volume-release",
+              "pass": true
+            },
+            "id": "clip-volume-release",
+            "path": [
+              "bodies",
+              0,
+              "volume_mm3"
+            ]
+          }
+        ]
+      },
+      "id": "saved_design_unclipped",
+      "reason": null,
+      "status": "pass"
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "saved_designs/restore-clipped/model.sc",
+          "sha256": "ab0b04b725ca22361735fa977568888bb1d621626af9b59672f33d639c54c692",
+          "size": 68034
+        },
+        {
+          "kind": "file",
+          "path": "saved_designs/restore-clipped/measurements.json",
+          "sha256": "b8770c267814afc6874afb9e8981b144bd627dadb44c2f4fdd3ada9b0070552e",
+          "size": 2026
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "PrimitiveCsg",
+                "max": [
+                  25.000000000000004,
+                  20.0,
+                  20.0
+                ],
+                "min": [
+                  -19.595917942265448,
+                  -20.0,
+                  -2.4919302732406834e-15
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  25.0,
+                  20.0,
+                  20.0
+                ],
+                "min": [
+                  -19.595917942265423,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "max_delta": 2.4868995751603507e-14
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 1,
+                "sphere": 1
+              },
+              "expected": {
+                "cylinder": 1,
+                "sphere": 1
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole"
+          }
+        ]
+      },
+      "id": "saved_design_restore-clipped",
       "reason": null,
       "status": "pass"
     }

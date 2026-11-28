@@ -7,6 +7,11 @@
       "preview_status": null,
       "status": "pass",
       "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
+          "status": "pass"
+        },
         "native": {
           "adapter": "solidcraft-model",
           "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
@@ -15,6 +20,20 @@
         "visual": {
           "adapter": "solidcraft-visual",
           "runtime": "ghcr.io/brainboxemb/cad-solidcraft:v0.3.8",
+          "status": "pass"
+        }
+      },
+      "verification_status": "pass"
+    },
+    "scpf-mitcad": {
+      "build_status": "pass",
+      "builder": "builder-scpf-mitcad",
+      "preview_status": "pass",
+      "status": "pass",
+      "verification_stages": {
+        "geometry": {
+          "adapter": "mesh-geometry",
+          "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
           "status": "pass"
         }
       },

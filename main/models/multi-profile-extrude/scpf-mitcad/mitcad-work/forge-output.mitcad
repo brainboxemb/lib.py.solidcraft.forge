@@ -1,0 +1,115 @@
+{
+  "format": "mitcad",
+  "version": 2,
+  "units": {
+    "length": "mm",
+    "angle": "deg"
+  },
+  "parameters": [
+    {
+      "name": "outer_diameter",
+      "expression": "10 mm",
+      "unit": "mm",
+      "value": 10.0,
+      "comment": ""
+    },
+    {
+      "name": "inner_diameter",
+      "expression": "8 mm",
+      "unit": "mm",
+      "value": 8.0,
+      "comment": ""
+    },
+    {
+      "name": "length",
+      "expression": "30 mm",
+      "unit": "mm",
+      "value": 30.0,
+      "comment": ""
+    }
+  ],
+  "components": [
+    {
+      "uid": "C1",
+      "name": "Component1"
+    }
+  ],
+  "occurrences": [
+    {
+      "uid": "O1",
+      "component": "C1",
+      "parent": "C0",
+      "number": 1
+    }
+  ],
+  "active_component": "C1",
+  "features": [
+    {
+      "uid": "F1",
+      "name": "Tube profile",
+      "component": "C1",
+      "type": "sketch",
+      "plane": "xy",
+      "entities": [
+        {
+          "id": "p1",
+          "type": "point",
+          "at": [
+            0.0,
+            0.0
+          ],
+          "fixed": true
+        },
+        {
+          "id": "c2",
+          "type": "circle",
+          "center": "p1",
+          "radius": 5.0
+        },
+        {
+          "id": "c3",
+          "type": "circle",
+          "center": "p1",
+          "radius": 4.0
+        }
+      ],
+      "dimensions": [
+        {
+          "id": "k1",
+          "type": "diameter",
+          "curve": "c2",
+          "value": "outer_diameter"
+        },
+        {
+          "id": "k2",
+          "type": "diameter",
+          "curve": "c3",
+          "value": "inner_diameter"
+        }
+      ]
+    },
+    {
+      "uid": "F2",
+      "name": "MultiProfileExtrude",
+      "component": "C1",
+      "type": "extrude",
+      "profiles": [
+        {
+          "sketch": "F1",
+          "region": "r{c2}"
+        }
+      ],
+      "extent": {
+        "type": "distance",
+        "distance": "length"
+      },
+      "operation": "new_body"
+    }
+  ],
+  "bodies": [
+    {
+      "uid": "F2.b0",
+      "name": "Body1"
+    }
+  ]
+}

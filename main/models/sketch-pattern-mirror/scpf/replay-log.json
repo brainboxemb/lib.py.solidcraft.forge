@@ -1,7 +1,7 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "972b509b3569d44c50cf9529a4640ab287478d9e2f52e77f4881dd8b8574dc0f",
+  "replay_sha256": "9288536ad843f2b6421f1999c3272e5f675620d2d4d3f6f9ca4516dc9f37f37b",
   "variables": {
     "$face_point_1": [
       -64.22205101855957,
@@ -175,8 +175,8 @@
       "command": "sketch.circle.center",
       "resolved_params": {
         "center": [
-          -60.0,
-          -45.0
+          -60,
+          -45
         ],
         "diameter": "hole_diameter"
       },
@@ -239,13 +239,13 @@
       "index": 12,
       "command": "solid.extrude",
       "resolved_params": {
+        "direction": "negative",
         "operation": "cut",
         "targets": [
           "SketchPatternMirror"
         ],
         "name": "Dog holes",
-        "through_all": true,
-        "direction": "negative"
+        "through_all": true
       }
     },
     {
@@ -429,13 +429,13 @@
       "index": 21,
       "command": "solid.extrude",
       "resolved_params": {
+        "direction": "negative",
         "operation": "cut",
         "targets": [
           "SketchPatternMirror"
         ],
         "name": "Clamp slots",
-        "through_all": true,
-        "direction": "negative"
+        "through_all": true
       }
     }
   ],

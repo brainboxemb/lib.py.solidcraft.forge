@@ -77,8 +77,8 @@
       "index": 6,
       "command": "sketch.create",
       "resolved_params": {
-        "plane": "XZ",
-        "name": "Contour"
+        "name": "Contour",
+        "plane": "XZ"
       }
     },
     {
@@ -95,10 +95,10 @@
             0
           ]
         ],
+        "connect": true,
         "ids": [
           "l1"
-        ],
-        "connect": true
+        ]
       },
       "bindings": {
         "$contour_curves_1": [
@@ -138,10 +138,10 @@
             "end_height"
           ]
         ],
+        "connect": true,
         "ids": [
           "l2"
-        ],
-        "connect": true
+        ]
       },
       "bindings": {
         "$contour_curves_3": [

@@ -1,0 +1,121 @@
+[
+  {
+    "active": "Default",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Default",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  },
+  {
+    "active": "Clipped",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  },
+  {
+    "active": "Clipped",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  },
+  {
+    "active": "Clipped",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Unclipped",
+        "values": {
+          "suppress:Box2": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  }
+]

@@ -115,8 +115,8 @@
       "index": 8,
       "command": "sketch.create",
       "resolved_params": {
-        "plane": "XY",
-        "name": "d2_LProfile__Profile"
+        "name": "d2_LProfile__Profile",
+        "plane": "XY"
       }
     },
     {
@@ -169,9 +169,9 @@
       "index": 11,
       "command": "solid.extrude",
       "resolved_params": {
-        "distance": 16.0,
         "direction": "positive",
-        "body_name": "LProfile"
+        "body_name": "LProfile",
+        "distance": 16.0
       }
     },
     {
