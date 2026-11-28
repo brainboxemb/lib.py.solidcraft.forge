@@ -8,9 +8,6 @@ implementations:
     builder: builder-scpf
     source: scpf/model.py
     preview: false
-  - id: scpf-mitcad
-    builder: builder-scpf-mitcad
-    source: scpf/model.py
 
 verifications:
   - id: native
@@ -20,22 +17,12 @@ verifications:
     artifact: model.sc
     implementations: [scpf]
 
-  - id: geometry
-    module: verification
-    adapter: mesh-geometry
-    definition: verification/geometry.json
-    artifact: model.stl
-
   - id: visual
     module: verification
     adapter: solidcraft-visual
     definition: verification/visual.json
     artifact: model.sc
     implementations: [scpf]
-
-preview:
-  module: preview
-  adapter: mesh
 
 dependencies: []
 needs: [cadlib]

@@ -165,58 +165,6 @@ class ModelPagesTests(unittest.TestCase):
             self.assertIn('"/models/box/"', content)
             self.assertEqual(list(site.rglob("*.stl")), [])
 
-    def test_shared_backend_source_is_projected_once_for_presentation(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            config = root / "site/config/_default"
-            config.mkdir(parents=True)
-            (config / "hugo.toml").write_text(
-                '[params]\ncadSourceRepository = "owner/repo"\n'
-            )
-            sections = root / "site/source/verification"
-            sections.mkdir(parents=True)
-            (sections / "sections.yml").write_text(
-                "schema: 1\nsections:\n"
-                "  fundamentals:\n"
-                "    priority: 10\n"
-                "    label: Basic\n"
-                "    description: Basic cases.\n"
-            )
-            owner = root / "models/box"
-            source = owner / "scpf/model.py"
-            source.parent.mkdir(parents=True)
-            source.write_text("Box(1, 2, 3)\n", encoding="utf-8")
-            (owner / "model.yml").write_text(
-                "title: box\npurpose: verification\n"
-                "section: fundamentals\n"
-            )
-            (owner / "ci.yml").write_text(
-                "id: box\nprimary: scpf\nimplementations:\n"
-                "  - id: scpf\n    builder: builder-scpf\n"
-                "    source: scpf/model.py\n"
-                "  - id: scpf-mitcad\n"
-                "    builder: builder-scpf-mitcad\n"
-                "    source: scpf/model.py\n"
-            )
-
-            site = root / "staged-site"
-            prepare_models(root, site, None)
-            content = (
-                site / "content/verification/box/index.md"
-            ).read_text()
-            projected = json.loads(content.split("\n\n", 1)[0])
-            by_id = {
-                row["id"]: row
-                for row in projected["params"]["sources"]
-            }
-            self.assertFalse(by_id["scpf"]["sharedsource"])
-            self.assertTrue(by_id["scpf-mitcad"]["sharedsource"])
-            self.assertEqual(
-                by_id["scpf"]["content"],
-                by_id["scpf-mitcad"]["content"],
-            )
-
-
     def test_unknown_verification_section_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

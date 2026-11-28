@@ -1,6 +1,0 @@
-schema: 1
-id: builder-scpf-mitcad
-kind: python
-builder:
-  runtime: mitcad
-  entrypoint: cad_library_builder_scpf_mitcad:build

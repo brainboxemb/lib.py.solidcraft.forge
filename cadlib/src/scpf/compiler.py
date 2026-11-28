@@ -1,9 +1,7 @@
-"""Stable SolidCraft compiler API over Forge semantic IR.
+"""Compile SCPF model intent to native SolidCraft JSON command documents.
 
-Public callers still pass Forge Shape values. They are normalized to the same
-engine-neutral semantic IR used by other native backends before SolidCraft
-lowering begins. The legacy command compiler remains private transition support
-for stable Forge surface that has not yet migrated to typed IR nodes.
+The compiler only describes operations. Native SolidCraft performs all
+actual BRep booleans, sketches, fillets and geometric verification.
 """
 from math import isfinite
 
@@ -83,8 +81,8 @@ def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
     )
 
 
-def _compile_shape_legacy_with_dependencies(shape: Shape, name: str):
-    """Compile one not-yet-migrated Shape through the stable legacy lowering."""
+def _compile_model_with_dependencies(shape: Shape, name: str):
+    """Compile one Shape and retain actual native parameter dependencies."""
     from .configurations import _configuration_commands
 
     commands = _compile_model_commands(shape, name)
@@ -105,24 +103,8 @@ def _compile_shape_legacy_with_dependencies(shape: Shape, name: str):
     return document, _native_dependencies(commands)
 
 
-def _compile_model_with_dependencies(shape: Shape, name: str):
-    """Compile current public Shape intent through the SolidCraft boundary.
-
-    Unconfigured geometry normalizes to semantic ModelIR. The broad v0.26
-    final-model configuration table retains the stable SolidCraft compatibility
-    lowering until typed backend coverage is complete; no retired frontend
-    wrapper is reconstructed.
-    """
-    if getattr(shape, "_configuration", None) is not None:
-        return _compile_shape_legacy_with_dependencies(shape, name)
-
-    from .backends.solidcraft import compile_ir_with_dependencies
-    from .ir import normalize_shape
-    return compile_ir_with_dependencies(normalize_shape(shape), name)
-
-
 def compile_model(shape: Shape, name: str) -> dict:
-    """Compile one Shape through Forge semantic IR to SolidCraft commands.
+    """Compile one Shape tree to a native SolidCraft command document.
 
     Parameters:
         shape: Final Shape tree to compile.

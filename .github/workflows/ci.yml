@@ -6,22 +6,6 @@ on:
   push:
     branches: [dev, main, exp]
   workflow_dispatch:
-    inputs:
-      qualification_pr:
-        description: Merged PR number whose green qualification may be reused.
-        required: false
-        type: string
-        default: ""
-      qualification_head_sha:
-        description: Exact reviewed PR head SHA bound by merge policy.
-        required: false
-        type: string
-        default: ""
-      qualification_run_id:
-        description: Exact green PR CI run id bound by merge policy.
-        required: false
-        type: string
-        default: ""
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -83,7 +67,6 @@ jobs:
     permissions:
       contents: write
       actions: write
-      pull-requests: read
     steps:
       - name: Check out source
         uses: actions/checkout@v7
@@ -103,31 +86,7 @@ jobs:
       - name: Install CI runtime dependencies
         run: python -m pip install PyYAML==6.0.2
 
-      - name: Reuse tree-identical PR qualification when configured
-        id: reuse
-        env:
-          GH_TOKEN: ${{ github.token }}
-          PYTHONPATH: modules/ci/src
-        run: >-
-          python -m cad_library_ci.reuse
-          --repository "${{ github.repository }}"
-          --branch "${{ github.ref_name }}"
-          --source-sha "${{ steps.source.outputs.sha }}"
-          --qualification-pr "${{ github.event.inputs.qualification_pr || '' }}"
-          --qualification-head-sha "${{ github.event.inputs.qualification_head_sha || '' }}"
-          --qualification-run-id "${{ github.event.inputs.qualification_run_id || '' }}"
-          --candidate build/qualification
-          --github-output "$GITHUB_OUTPUT"
-
-      - name: Report reused PR qualification
-        if: steps.reuse.outputs.reuse == 'true'
-        run: >-
-          echo "Reusing green PR #${{ steps.reuse.outputs.pr_number }}
-          run ${{ steps.reuse.outputs.run_id }}
-          from ${{ steps.reuse.outputs.qualified_source_sha }}"
-
       - name: Run selected project items
-        if: steps.reuse.outputs.reuse != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           CAD_SOURCE_SHA: ${{ steps.source.outputs.sha }}
