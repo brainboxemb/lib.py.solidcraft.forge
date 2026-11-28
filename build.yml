@@ -5,7 +5,6 @@ modules: []
 models: []
 library: false
 api_probes:
-  - configuration-post-extrude-sketch-edit
-  - configuration-post-extrude-offset-face
-  - configuration-installed-single-row
+  - configuration-clamp-curve-edit
+  - configuration-position-transform-suppression
 tasks: [test]
