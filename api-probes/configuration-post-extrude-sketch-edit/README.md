@@ -51,3 +51,23 @@ wrapped as one later `feature("installed")`.
 
 This decides whether Forge can model Installed as a semantic Sketch-edit feature
 or must use a real post-Extrude direct-geometry history operation instead.
+
+
+## Result
+
+Qualified on PR #670, run 46166188263, against SolidCraft 0.50.0 / runtime v0.3.8.
+
+The saved design contains only:
+
+~~~text
+1  FreeProfile   sketch
+2  ClampExtrude  extrude
+~~~
+
+There is no third feature for the later edit. The persisted points in
+`FreeProfile` contain the moved X=12 coordinates, proving that
+`sketch.edit` / `sketch.move_points` rewrites the upstream Sketch and then
+rebuilds its dependents.
+
+Therefore this operation is **not** an independently suppressible Installed
+history step.
