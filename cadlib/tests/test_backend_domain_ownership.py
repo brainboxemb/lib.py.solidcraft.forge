@@ -33,7 +33,7 @@ class BackendDomainOwnershipTests(unittest.TestCase):
         commands = document["commands"]
         self.assertTrue(commands)
         self.assertEqual(commands[-1]["command"], "solid.box")
-        self.assertEqual(commands[-1]["params"]["name"], "Panel")
+        self.assertEqual(commands[-1]["params"]["body_name"], "Panel")
 
     def test_mitcad_primitive_ir_lowers_without_runtime(self):
         document = compile_mitcad_ir(
