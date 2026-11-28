@@ -3,7 +3,7 @@ branch: issue/669-post-extrude-geometry-suppression
 
 modules: []
 models: []
-library: false
+library: true
 api_probes:
   - configuration-clamp-curve-edit
   - configuration-position-transform-suppression
