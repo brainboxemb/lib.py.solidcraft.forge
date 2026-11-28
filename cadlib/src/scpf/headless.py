@@ -19,6 +19,71 @@ class HeadlessReplayError(RuntimeError):
     """A replay could not be completed by solidcraft-cli."""
 
 
+class _SolidCraftCliReplayTransport:
+    """Production replay transport backed by fresh solidcraft-cli processes."""
+
+    def __init__(self, *, executable="solidcraft-cli", env=None):
+        self.executable = executable
+        self.env = env
+
+    def run_phase(
+        self,
+        commands,
+        *,
+        phase_index,
+        previous,
+        save,
+        export,
+        work,
+    ):
+        """Execute one native command batch and return its result rows."""
+        script = work / f"phase-{phase_index}.json"
+        result_path = work / f"phase-{phase_index}-results.json"
+        script.write_text(
+            json.dumps({"commands": commands}, indent=2) + "\n",
+            encoding="utf-8",
+        )
+
+        command = [
+            self.executable,
+            "run",
+            str(script),
+            "--param-check",
+            "strict",
+            "--results",
+            "--json-out",
+            str(result_path),
+            "--save",
+            str(save),
+        ]
+        if previous is not None:
+            command.extend(["--in", str(previous)])
+        if export is not None:
+            command.extend(["--out", str(export)])
+
+        try:
+            subprocess.run(
+                command,
+                check=True,
+                text=True,
+                capture_output=True,
+                env=self.env if self.env is not None else os.environ.copy(),
+            )
+        except (OSError, subprocess.CalledProcessError) as exc:
+            stderr = getattr(exc, "stderr", "") or ""
+            raise HeadlessReplayError(
+                f"solidcraft-cli replay phase {phase_index} failed: "
+                f"{stderr.strip() or exc}"
+            ) from exc
+
+        try:
+            return json.loads(result_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise HeadlessReplayError(
+                f"cannot read replay results for phase {phase_index}"
+            ) from exc
+
+
 def _phase_commands(
     chunk,
     variables,
@@ -159,6 +224,7 @@ def run_document(
     executable="solidcraft-cli",
     env=None,
     work_dir=None,
+    _transport=None,
 ):
     """Execute one replay document in fresh solidcraft-cli processes.
 
@@ -186,6 +252,12 @@ def run_document(
     if replay_log_out is not None:
         replay_log_out = Path(replay_log_out)
         replay_log_out.parent.mkdir(parents=True, exist_ok=True)
+
+    transport = (
+        _transport
+        if _transport is not None
+        else _SolidCraftCliReplayTransport(executable=executable, env=env)
+    )
 
     variables = {}
     entries = []
@@ -225,53 +297,16 @@ def run_document(
                 ]
                 transport_prefix = 0
                 replay_native = native
-            script = work / f"phase-{phase_index}.json"
-            result_path = work / f"phase-{phase_index}-results.json"
             last = phase_index == len(chunks)
             phase_save = save if last else work / f"phase-{phase_index}.sc"
-            script.write_text(
-                json.dumps({"commands": native}, indent=2) + "\n",
-                encoding="utf-8",
+            results = transport.run_phase(
+                native,
+                phase_index=phase_index,
+                previous=previous,
+                save=phase_save,
+                export=export if last else None,
+                work=work,
             )
-
-            command = [
-                executable,
-                "run",
-                str(script),
-                "--param-check",
-                "strict",
-                "--results",
-                "--json-out",
-                str(result_path),
-                "--save",
-                str(phase_save),
-            ]
-            if previous is not None:
-                command.extend(["--in", str(previous)])
-            if last and export is not None:
-                command.extend(["--out", str(export)])
-
-            try:
-                completed = subprocess.run(
-                    command,
-                    check=True,
-                    text=True,
-                    capture_output=True,
-                    env=env if env is not None else os.environ.copy(),
-                )
-            except (OSError, subprocess.CalledProcessError) as exc:
-                stderr = getattr(exc, "stderr", "") or ""
-                raise HeadlessReplayError(
-                    f"solidcraft-cli replay phase {phase_index} failed: "
-                    f"{stderr.strip() or exc}"
-                ) from exc
-
-            try:
-                results = json.loads(result_path.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError) as exc:
-                raise HeadlessReplayError(
-                    f"cannot read replay results for phase {phase_index}"
-                ) from exc
             if not isinstance(results, list):
                 raise HeadlessReplayError(
                     f"replay phase {phase_index} did not return a result list"
