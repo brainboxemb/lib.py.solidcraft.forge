@@ -82,7 +82,7 @@
   </section>
   {{ end }}{{ end }}
   <section class="cad-section" id="reference-code">
-    <h2 class="cad-section-title">Reference code</h2>
+    <h2 class="cad-section-title">Reference code and alternate backends</h2>
     {{ range .Params.sources }}{{ if ne .id $primary }}
       {{ partial "cad/reference-row.html" . }}
     {{ end }}{{ end }}
@@ -117,7 +117,7 @@
       {{ with .Resources.Get "setup.svg" }}<figure class="cad-reference"><strong>Expected setup</strong><a href="{{ .RelPermalink }}"><img src="{{ .RelPermalink }}" alt="{{ $.Title }} expected setup diagram"></a></figure>{{ end }}
       {{ range .Params.sources }}
       {{ $source := . }}
-      {{ with .previewurl }}<figure class="cad-reference"><strong>{{ $source.id }} — {{ if $source.native }}native snapshot{{ else }}model preview{{ end }}</strong><a href="{{ . }}"><img src="{{ . }}" alt="{{ $source.id }} published preview"></a></figure>{{ end }}
+      {{ with .previewurl }}<figure class="cad-reference"><strong>{{ $source.id }} — {{ if $source.native }}native snapshot{{ else if eq $source.builder "builder-scpf-mitcad" }}Mitcad STL result{{ else }}model preview{{ end }}</strong><a href="{{ . }}"><img src="{{ . }}" alt="{{ $source.id }} published preview"></a></figure>{{ end }}
       {{ range .images }}<figure class="cad-reference"><strong>{{ $source.id }} — {{ .label }}</strong><a href="{{ .url }}"><img src="{{ .url }}" alt="{{ .label }}"></a></figure>{{ end }}
       {{ end }}
     </div>

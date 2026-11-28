@@ -1265,6 +1265,23 @@ def _non_count_parameter_names(node, found=None):
     if found is None:
         found = set()
     if isinstance(node, Shape):
+        if node.kind == "hole":
+            spec = _hole_spec(node)
+            for field in (
+                "diameter",
+                "depth",
+                "direction",
+                "counterbore_diameter",
+                "counterbore_depth",
+                "countersink_diameter",
+                "thread_depth",
+                "ease_out",
+            ):
+                candidate = spec[field]
+                if candidate is Depth.THROUGH_ALL or isinstance(candidate, str):
+                    continue
+                _non_count_parameter_names(candidate, found)
+            return found
         if node.kind == "rectangular_pattern":
             (
                 original, _sources,
@@ -1427,6 +1444,11 @@ def _pattern_angle_parameter_names(node, found=None):
     if found is None:
         found = set()
     if isinstance(node, Shape):
+        if node.kind == "hole":
+            angle = _hole_spec(node)["countersink_angle"]
+            if angle is not None:
+                found.update(param.name for param in parameters_in(angle))
+            return found
         if node.kind == "sketch_base_revolve":
             (
                 _sketch_name,
@@ -2022,6 +2044,7 @@ def _to_commands(shape, name):
     if shape.kind in ("union", "difference", "intersection"):
         original, added = shape.data
         steps, base = _to_commands(original, name)
+
         feature_name = None
         named_state = None
         if added.kind == "named_feature":

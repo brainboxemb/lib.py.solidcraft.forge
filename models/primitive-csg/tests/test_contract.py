@@ -20,8 +20,19 @@ class PrimitiveCsgCommandTests(unittest.TestCase):
         )["commands"]
 
         self.assertEqual(
-            [command["command"] for command in commands],
+            [command["command"] for command in commands[:4]],
             ["solid.sphere", "solid.box", "solid.cylinder", "solid.box"],
+        )
+        self.assertEqual(
+            [command["command"] for command in commands[4:]],
+            [
+                "config.configure",
+                "config.row",
+                "config.row",
+                "config.row",
+                "config.activate",
+                "config.table",
+            ],
         )
 
         sphere = commands[0]["params"]
@@ -43,6 +54,19 @@ class PrimitiveCsgCommandTests(unittest.TestCase):
 
         self.assertEqual(clipped_box["operation"], "intersect")
         self.assertEqual(clipped_box["center"], [0.0, 0.0, 15.0])
+        self.assertEqual(
+            commands[3]["bind"],
+            {"$config_name_1": "name"},
+        )
+        active_row = commands[-2]["params"]["row"]
+        self.assertTrue(active_row.startswith("$config_row_"))
+        self.assertTrue(
+            any(
+                active_row in command.get("bind", {})
+                for command in commands
+                if command["command"] == "config.row"
+            )
+        )
 
     def test_explicit_primitive_anchors_choose_native_datums(self):
         bottom = compile_model(
