@@ -208,13 +208,20 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-No active work selected.
+#659 — modularize compiler and backend lowering ownership by semantic domain.
+
+The completed #656 IR package is the ownership map. Keep public SCPF authoring
+and the stable `scpf.ir` facade unchanged while splitting compiler orchestration
+and SolidCraft/Mitcad lowering into domain-owned modules. Backend contract tests
+must prove semantic IR -> backend lowering -> native command/document shape
+without requiring a CAD runtime.
 
 ## Next
 
-#659 is the explicit follow-up candidate for compiler/backend lowering
-modularization. Do not start it automatically: select it deliberately after
-reviewing the completed #656 IR ownership structure.
+After #659, add a separate scripted SolidCraft replay transport test boundary so
+`scpf.headless` replay/binding behavior can be exercised without launching
+SolidCraft. That fake must return only explicitly scripted command responses and
+must not emulate geometry, topology or final CAD inspection.
 
 #656 is complete on permanent `dev` through PR #658. Full exact-head
 qualification run 46148453889 and permanent dev qualification/build/publication
