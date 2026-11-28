@@ -8,6 +8,26 @@ by `scpf.version.TESTED_SOLIDCRAFT_VERSION`.
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-11-28
+
+### Added
+
+- Add engine-neutral typed semantic IR for the complete current public SCPF CAD-semantic surface, with all 20 tracked semantic families represented without a legacy-only family.
+- Add independent backend lowering for SolidCraft and bounded Mitcad support, including Mitcad v0.70.0 reference/native smoke tooling and qualified dual-backend owner slices.
+- Add explicit coverage evidence that reports semantic IR completion, backend support and physical-owner multi-engine evidence as separate dimensions.
+
+### Changed
+
+- Lower supported SolidCraft compilation through typed semantic IR while preserving the public `scpf` authoring/package contract and qualified SolidCraft behavior.
+- Keep unsupported backend paths fail-closed instead of silently interpreting backend-native or raw Shape data.
+- Reuse reviewed tree-identical qualification evidence on permanent compiler lanes without weakening exact-head publication checks.
+
+### Qualification
+
+- Requalify the complete real CAD catalog against the exact integrated compiler candidate before normal-lane and stable promotion: all 43 active model variants rebuilt successfully and the rolling `/test/` review published green.
+- Retain immutable runtime v0.3.8 and SolidCraft 0.50.0 as the qualified SolidCraft baseline.
+
+
 ## [0.26.0] - 2026-11-27
 
 ### Added
