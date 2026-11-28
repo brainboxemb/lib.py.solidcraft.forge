@@ -2,7 +2,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from scpf import Box, Cylinder, compile_model, feature, run_script
+from scpf import Axis, Box, Cylinder, compile_model, feature, run_script
 
 
 class NamedFeatureTests(unittest.TestCase):
@@ -59,6 +59,83 @@ class NamedFeatureTests(unittest.TestCase):
             row["params"].get("values") == {"suppress:$config_name_1": "false"}
             for row in rows
         ))
+
+    def test_compound_transform_is_one_suppressible_history_feature(self):
+        body = Box(40, 12, 10)
+        with feature("installed_position", suppressed=True) as installed:
+            body = body.transform(
+                translate=(30, 20, 5),
+                axis=Axis.Z,
+                angle=30,
+                origin=(0, 0, 0),
+            )
+
+        body.configure(
+            active="Normal",
+            columns=(installed,),
+            rows={"Normal": (True,)},
+        )
+        commands = compile_model(body, "Panel")["commands"]
+
+        moves = [
+            command
+            for command in commands
+            if command["command"] == "solid.move"
+        ]
+        self.assertEqual(len(moves), 1)
+        move = moves[0]
+        self.assertEqual(
+            move["params"],
+            {
+                "bodies": ["Panel"],
+                "translate": [30, 20, 5],
+                "axis": [0.0, 0.0, 1.0],
+                "angle": "30 deg",
+                "origin": [0, 0, 0],
+            },
+        )
+        self.assertEqual(
+            move["bind"]["$feature_installed_position_name"],
+            "name",
+        )
+        self.assertEqual(move["bind"]["$config_name_1"], "name")
+
+        suppression = [
+            command
+            for command in commands
+            if command["command"] == "timeline.suppress"
+        ]
+        self.assertEqual(len(suppression), 1)
+        self.assertEqual(
+            suppression[0]["params"],
+            {
+                "features": ["$feature_installed_position_name"],
+                "suppressed": True,
+            },
+        )
+
+        rows = [
+            command["params"]
+            for command in commands
+            if command["command"] == "config.row"
+        ]
+        self.assertEqual(
+            [
+                row["values"]
+                for row in rows
+                if row.get("name") == "$config_row_1"
+            ],
+            [{"suppress:$config_name_1": "true"}],
+        )
+
+    def test_transform_requires_real_finite_rigid_motion(self):
+        body = Box(10, 10, 10)
+        with self.assertRaisesRegex(ValueError, "non-zero"):
+            body.transform()
+        with self.assertRaisesRegex(ValueError, "Axis.X"):
+            body.transform(translate=(1, 0, 0), axis="Q")
+        with self.assertRaisesRegex(ValueError, "XYZ"):
+            body.transform(translate=(1, 2))
 
     def test_scope_requires_public_name_boolean_state_and_one_history_step(self):
         with self.assertRaisesRegex(ValueError, "public Python identifier"):
