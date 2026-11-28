@@ -109,6 +109,16 @@ from ...scalar_ir import (
 from .common import _require_positive, _command, _role_command_value
 from .sketch import _solidcraft_axis
 
+_AUTO_TYPED_HISTORY_FEATURE_NAMES = {
+    "solid.box": "Box",
+    "solid.sphere": "Sphere",
+    "solid.cylinder": "Cylinder",
+    "solid.cone": "Cone",
+    "solid.revolve": "Revolve",
+    "solid.extrude": "Extrude",
+    "solid.hole": "Hole",
+}
+
 
 def _body_commands(*args, **kwargs):
     from .dispatch import body_commands
