@@ -61,6 +61,81 @@ def _hole_feature(
     thread_depth=None,
     modeled=False,
     ease_out=None,
+):
+    """Build one validated native Hole-family feature description."""
+    if d is not None and _pv(d) <= 0:
+        raise ValueError("hole diameter must be positive")
+    if depth is not Depth.THROUGH_ALL and _pv(depth) <= 0:
+        raise ValueError("hole depth must be positive or Depth.THROUGH_ALL")
+    direction = _validate_hole_direction(direction)
+
+    if hole_type == "simple":
+        if d is None:
+            raise ValueError("Hole requires d")
+    elif hole_type == "counterbore":
+        if d is None:
+            raise ValueError("CounterboreHole requires d")
+        if counterbore_d is None or counterbore_depth is None:
+            raise ValueError(
+                "CounterboreHole requires counterbore_d and counterbore_depth"
+            )
+        if _pv(counterbore_d) <= _pv(d):
+            raise ValueError(
+                "counterbore diameter must be larger than hole diameter"
+            )
+        if _pv(counterbore_depth) <= 0:
+            raise ValueError("counterbore depth must be positive")
+    elif hole_type == "countersink":
+        if d is None:
+            raise ValueError("CountersinkHole requires d")
+        if countersink_d is None:
+            raise ValueError("CountersinkHole requires countersink_d")
+        if _pv(countersink_d) <= _pv(d):
+            raise ValueError(
+                "countersink diameter must be larger than hole diameter"
+            )
+        angle = _pv(countersink_angle)
+        if not isfinite(angle) or angle <= 0 or angle >= 180:
+            raise ValueError(
+                "countersink angle must be between 0 and 180 degrees"
+            )
+    elif hole_type == "threaded":
+        if not isinstance(thread, str) or not thread.strip():
+            raise ValueError("ThreadedHole requires a thread designation")
+        if hand not in ("right", "left"):
+            raise ValueError("thread hand must be 'right' or 'left'")
+        if thread_depth is not None and _pv(thread_depth) <= 0:
+            raise ValueError("thread depth must be positive")
+        if ease_out is not None:
+            if isinstance(ease_out, str):
+                if ease_out not in ("standard", "short"):
+                    raise ValueError(
+                        "thread ease_out must be 'standard', 'short', or a positive length"
+                    )
+            elif _pv(ease_out) <= 0:
+                raise ValueError("thread ease_out length must be positive")
+        modeled = bool(modeled)
+    else:
+        raise ValueError(f"unsupported hole type: {hole_type}")
+
+    return Shape(
+        "hole",
+        (
+            hole_type,
+            d,
+            depth,
+            direction,
+            counterbore_d,
+            counterbore_depth,
+            countersink_d,
+            countersink_angle,
+            thread,
+            hand,
+            thread_depth,
+            modeled,
+            ease_out,
+        ),
+    )
 
 def Hole(*, d, depth=Depth.THROUGH_ALL, direction=None):
     """Create a simple cylindrical hole feature.
@@ -95,6 +170,38 @@ def CounterboreHole(
     counterbore_depth,
     depth=Depth.THROUGH_ALL,
     direction=None,
+):
+    """Create a hole with a cylindrical recess at its entry face.
+
+    Parameters:
+        d: Finished main-hole diameter in mm.
+        counterbore_d: Diameter of the cylindrical recess in mm.
+        counterbore_depth: Depth of the recess from the entry face in mm.
+        depth: Main-hole depth in mm, or Depth.THROUGH_ALL. Defaults to through all.
+        direction: Optional non-zero XYZ direction vector from the entry point into the material.
+
+    Use when:
+        Seat a cylindrical screw head or other part below the entry surface.
+
+    Limits:
+        counterbore_d must be larger than d. counterbore_depth and finite
+        depth values must be positive. Position this native feature with at().
+
+    Example:
+        CounterboreHole(
+            d=6,
+            counterbore_d=12,
+            counterbore_depth=4,
+        ).at(0, 0, 12)
+    """
+    return _hole_feature(
+        "counterbore",
+        d=d,
+        depth=depth,
+        direction=direction,
+        counterbore_d=counterbore_d,
+        counterbore_depth=counterbore_depth,
+    )
 
 def CountersinkHole(
     *,
@@ -103,6 +210,39 @@ def CountersinkHole(
     countersink_angle=90,
     depth=Depth.THROUGH_ALL,
     direction=None,
+):
+    """Create a hole with a conical countersink at its entry face.
+
+    Parameters:
+        d: Finished main-hole diameter in mm.
+        countersink_d: Diameter of the countersink at the entry face in mm.
+        countersink_angle: Included countersink angle in degrees. Defaults to 90.
+        depth: Main-hole depth in mm, or Depth.THROUGH_ALL. Defaults to through all.
+        direction: Optional non-zero XYZ direction vector from the entry point into the material.
+
+    Use when:
+        Seat a countersunk fastener or specify a hole whose conical entry is
+        part of the hole feature itself.
+
+    Limits:
+        countersink_d must be larger than d. countersink_angle must be between
+        0 and 180 degrees. Position this native feature with at().
+
+    Example:
+        CountersinkHole(
+            d=6,
+            countersink_d=12,
+            countersink_angle=90,
+        ).at(0, 0, 12)
+    """
+    return _hole_feature(
+        "countersink",
+        d=d,
+        depth=depth,
+        direction=direction,
+        countersink_d=countersink_d,
+        countersink_angle=countersink_angle,
+    )
 
 def ThreadedHole(
     *,
@@ -114,6 +254,47 @@ def ThreadedHole(
     thread_depth=None,
     modeled=False,
     ease_out=None,
+):
+    """Create a tapped hole with native thread intent.
+
+    Parameters:
+        thread: Thread designation such as "M6" or "1/4-20 UNC".
+        depth: Drill depth in mm, or Depth.THROUGH_ALL. Defaults to through all.
+        d: Optional explicit tap-drill diameter in mm. When omitted, SolidCraft selects the drill from the thread designation.
+        direction: Optional non-zero XYZ direction vector from the entry point into the material.
+        hand: Thread hand, "right" or "left". Defaults to "right".
+        thread_depth: Optional positive threaded length in mm, independent of drill depth.
+        modeled: Whether SolidCraft cuts modeled thread geometry. Defaults to False.
+        ease_out: Optional modeled-thread runout: "standard", "short", or a positive length.
+
+    Use when:
+        Preserve tapped-hole manufacturing intent instead of representing the
+        result as an ordinary cylindrical subtraction.
+
+    Limits:
+        The thread designation must be supported by SolidCraft. modeled=True
+        creates actual thread geometry and can be substantially heavier than
+        cosmetic/native thread metadata. Position this native feature with at().
+
+    Example:
+        ThreadedHole(
+            thread="M6",
+            d=5,
+            thread_depth=10,
+            modeled=True,
+        ).at(0, 0, 12)
+    """
+    return _hole_feature(
+        "threaded",
+        d=d,
+        depth=depth,
+        direction=direction,
+        thread=thread,
+        hand=hand,
+        thread_depth=thread_depth,
+        modeled=modeled,
+        ease_out=ease_out,
+    )
 
 def Lip(*, width, height):
     """Create a plastic enclosure lip feature.
