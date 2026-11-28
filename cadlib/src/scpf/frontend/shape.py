@@ -6,15 +6,209 @@ from math import isfinite
 from typing import Any
 
 from .scalars import (
-    Parameter, Expression, _pv, _dim_add, _dim_sub,
-    half, left, right, front, back,
+    Parameter, Expression, _pv, _dim_add, _dim_sub, _dim_abs,
+    half, midpoint, up, down, left, right, front, back,
+    command_value, parameters_in,
 )
 from .selectors import (
-    Anchor, Axis, AxisLine, Edges, Faces, _BoundOffset,
-    _direction_selector, _feature_edge_selection, _pattern_direction,
+    _DirectionSelector, Anchor, _direction_selector, _selector_rank,
+    _selector_anchor, AnchorFrame, AnchorTopology, Depth, Axis, Edges,
+    _ProfileEdgeSelection, _feature_edge_selection, Faces,
+    _FaceBoundarySelection, _BoundOffset, _AxisRef, _pattern_direction, AxisLine,
 )
 
 _ACTIVE_FEATURE_SCOPE = ContextVar("scpf_active_feature_scope", default=None)
+_FEATURE_TRANSPARENT_KINDS = frozenset({
+    "translated", "placed3d", "anchored", "labeled",
+    "material_assignment", "appearance_assignment", "exported_feature",
+    "named_feature",
+})
+_FEATURE_HISTORY_CHAIN_KINDS = frozenset({
+    "union", "difference", "intersection", "fillet", "chamfer", "shell",
+    "rectangular_pattern", "circular_pattern", "sheet_fold",
+    "sheet_edge_flange", "sheet_hem", "sheet_path_flange", "sheet_perforate",
+})
+
+
+def _primitive_center_from_anchor(*args, **kwargs):
+    from .primitives import _primitive_center_from_anchor as implementation
+    return implementation(*args, **kwargs)
+
+
+def _cone_base_from_anchor(*args, **kwargs):
+    from .primitives import _cone_base_from_anchor as implementation
+    return implementation(*args, **kwargs)
+
+
+def _sphere_center_from_anchor(*args, **kwargs):
+    from .primitives import _sphere_center_from_anchor as implementation
+    return implementation(*args, **kwargs)
+
+def _shape_center(shape):
+    """Return the nominal CENTER anchor of a direct CSG shape.
+
+    Boolean composites are accepted only when both operands have the same
+    center. This keeps CENTER alignment deterministic without inventing a
+    general bounding-box/geometry solver in Forge.
+    """
+    if not isinstance(shape, Shape):
+        raise TypeError("align() target must be a Shape")
+
+    if shape.kind == "box":
+        length, width, height, anchor = shape.data
+        dimensions = (length, width, height)
+        return tuple(
+            half(dimension) if side < 0
+            else -half(dimension) if side > 0
+            else 0
+            for dimension, side in zip(dimensions, anchor.vector)
+        )
+
+    if shape.kind == "sphere":
+        radius, anchor = shape.data
+        return _sphere_center_from_anchor(radius, (0, 0, 0), anchor)
+
+    if shape.kind == "cylinder":
+        height, diameter, axis, anchor = shape.data
+        extents = {
+            "X": (height, diameter, diameter),
+            "Y": (diameter, height, diameter),
+            "Z": (diameter, diameter, height),
+        }[axis]
+        return _primitive_center_from_anchor(extents, (0, 0, 0), anchor)
+
+    if shape.kind == "cone":
+        height, _diameter, _top_diameter, axis, anchor = shape.data
+        base = _cone_base_from_anchor(height, axis, (0, 0, 0), anchor)
+        index = {"X": 0, "Y": 1, "Z": 2}[axis]
+        center = list(base)
+        center[index] = _dim_add(center[index], half(height))
+        return tuple(center)
+
+    if shape.kind == "translated":
+        child, delta = shape.data
+        center = _shape_center(child)
+        return tuple(_dim_add(center[i], delta[i]) for i in range(3))
+
+    if shape.kind == "placed3d":
+        child, x, y, z = shape.data
+        if child.kind != "cylinder":
+            raise ValueError("CENTER alignment only supports placed Cylinder CSG shapes")
+        center = _shape_center(child)
+        base = (x, y, z)
+        return tuple(_dim_add(base[i], center[i]) for i in range(3))
+
+    if shape.kind in ("intersection", "union"):
+        left, right = shape.data
+        left_center = _shape_center(left)
+        right_center = _shape_center(right)
+        if left_center != right_center:
+            raise ValueError(
+                "CENTER alignment of a CSG composite requires operands "
+                "with the same center"
+            )
+        return left_center
+
+    raise ValueError(
+        "CENTER alignment currently supports direct Box, Sphere, Cylinder, Cone "
+        "and centered CSG composites"
+    )
+
+def _pattern_count(value, label):
+    """Validate a native pattern count and keep direct parameters unitless."""
+    if isinstance(value, Parameter):
+        numeric = value.value
+        if numeric < 1 or not float(numeric).is_integer():
+            raise ValueError(f"{label} must currently evaluate to a positive integer")
+        return value
+    if isinstance(value, Expression):
+        raise TypeError(
+            f"{label} expressions are not supported yet; use a direct model "
+            "parameter or a fixed integer"
+        )
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ValueError(f"{label} must be a positive integer or direct Parameter")
+    return value
+
+def _pattern_angle(value, label):
+    """Validate an optional circular-pattern angle in degrees."""
+    if value is None:
+        return None
+    if isinstance(value, Parameter):
+        numeric = value.value
+    elif isinstance(value, Expression):
+        raise TypeError(
+            f"{label} expressions are not supported yet; use a direct model "
+            "parameter or a fixed number of degrees"
+        )
+    elif isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f"{label} must be a number of degrees or direct Parameter")
+    else:
+        numeric = value
+    if not isfinite(numeric) or not 0 < numeric <= 360:
+        raise ValueError(f"{label} must be above 0 and at most 360 degrees")
+    return value
+
+def _circular_pattern_axis(axis, origin):
+    """Validate one fixed circular-pattern axis."""
+    if isinstance(axis, AxisLine):
+        if origin is not None:
+            raise ValueError(
+                "circular_pattern origin must be omitted when axis is AxisLine"
+            )
+        return (axis.origin, axis.direction)
+
+    try:
+        principal = Axis(axis)
+    except (TypeError, ValueError):
+        principal = None
+    if principal is not None and origin is None:
+        return principal.value
+
+    direction = _pattern_direction(axis, "circular_pattern axis")
+    if origin is None:
+        origin = (0, 0, 0)
+    if not isinstance(origin, (tuple, list)) or len(origin) != 3:
+        raise ValueError("circular_pattern origin must be an XYZ point")
+    for coordinate in origin:
+        if isinstance(coordinate, bool) or not isfinite(_pv(coordinate)):
+            raise ValueError(
+                "circular_pattern origin must contain finite numeric dimensions"
+            )
+    return (tuple(origin), direction)
+
+def _shape_contains(root, needle):
+    """Return whether the exact source Shape is already in a feature tree."""
+    if root is needle:
+        return True
+    if isinstance(root, Shape):
+        return _shape_contains(root.data, needle)
+    if isinstance(root, (tuple, list)):
+        return any(_shape_contains(item, needle) for item in root)
+    return False
+
+def _feature_pattern_sources(root, feature, operation):
+    """Validate shared source-feature rules for native feature patterns.
+
+    Forge keeps the source Shape itself here. Lowering resolves that exact
+    already-applied Shape to its native SolidCraft history-feature identity;
+    callers never pass native feature-name strings.
+    """
+    if isinstance(feature, Shape):
+        sources = (feature,)
+    elif isinstance(feature, (tuple, list)) and feature:
+        if not all(isinstance(item, Shape) for item in feature):
+            raise TypeError(f"{operation} feature list must contain Shapes")
+        sources = tuple(feature)
+    else:
+        raise TypeError(f"{operation} requires a source feature Shape")
+
+    if any(not _shape_contains(root, source) for source in sources):
+        raise ValueError(
+            f"{operation} source feature must already be applied to this Shape"
+        )
+    return sources
+
 def _feature_history_step_count(node, created_ids):
     """Count authored history steps on one feature scope's result spine."""
     if not isinstance(node, Shape):
@@ -133,9 +327,6 @@ def feature(name, *, suppressed=False):
         )
     """
     return _FeatureScope(name, suppressed)
-
-
-@dataclass(frozen=True)
 
 @dataclass(frozen=True)
 class Shape:
