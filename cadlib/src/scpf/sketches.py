@@ -444,6 +444,7 @@ def compile_standalone_sketch(
             )
         profile_meta.append(current_meta)
 
+    deferred_move_commands = []
     if move_operations:
         profile = profiles[0][0]
         _start, segments = profile.data
@@ -498,7 +499,7 @@ def compile_standalone_sketch(
 
         for operation in move_operations:
             (moves,) = operation.data
-            sketch.append(_command(
+            deferred_move_commands.append(_command(
                 "sketch.move_points",
                 moves=[
                     {
@@ -521,6 +522,8 @@ def compile_standalone_sketch(
                 plane_offset if plane_offset is not None else 0
             ),
         }
+    if deferred_move_commands:
+        meta["_post_extrude_sketch_edits"] = tuple(deferred_move_commands)
     return sketch, meta
 
 
@@ -629,7 +632,12 @@ def compile_base(shape, name, *, operation="new"):
         extrude.update(
             _extrude_profile_params(profile_picks, exact_regions)
         )
+        post_edits = meta.pop("_post_extrude_sketch_edits", ())
         sketch.append(_command("solid.extrude", **extrude))
+        if post_edits:
+            sketch.append(_command("sketch.edit", sketch=sketch_name))
+            sketch.extend(post_edits)
+            sketch.append(_command("sketch.finish"))
         return sketch, meta
 
     if shape.kind == "sketch_base_revolve":
@@ -659,6 +667,10 @@ def compile_base(shape, name, *, operation="new"):
             operations,
             rotation,
         )
+        if meta.pop("_post_extrude_sketch_edits", ()):
+            raise ModelError(
+                "sketch move_points is currently qualified only with Sketch.extrude()"
+            )
         if isinstance(axis, str):
             native_axis = axis
         else:
