@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "a6dgetq8m7pj4",
+  "id": "74ptgqq6c8mxg",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "fsw07qtg1wq8x"
+        "source": "agh9an5ekkhb9"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "fk4tk8pyhs3mm",
+      "id": "1q17cq7k6fzsw",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "94ntj4j2cfbk7",
+          "id": "3z8a3q5gncacp",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,27 +532,27 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "4zz501vkk5jd7",
-          "kind": "projected",
-          "label": "Above Front",
-          "notes": [],
-          "parent": "94ntj4j2cfbk7",
-          "side": "above"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "cc7s61dv05h9g",
+          "id": "dcvcc09a9m3px",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "94ntj4j2cfbk7",
+          "parent": "3z8a3q5gncacp",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "b7dyq3fcw6t2w",
+          "id": "eh2htf85fp21q",
+          "kind": "projected",
+          "label": "Above Front",
+          "notes": [],
+          "parent": "3z8a3q5gncacp",
+          "side": "above"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "cvzr6g64dj4tk",
           "kind": "base",
           "label": "Iso front right",
           "notes": []
@@ -562,7 +562,7 @@
   ],
   "sources": [
     {
-      "id": "fsw07qtg1wq8x"
+      "id": "agh9an5ekkhb9"
     }
   ],
   "symbols": [],
