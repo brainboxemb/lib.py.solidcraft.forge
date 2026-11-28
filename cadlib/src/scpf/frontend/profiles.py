@@ -1,5 +1,7 @@
 """Public 2D profile authoring constructors."""
 
+from math import isfinite
+
 from ..core import (
     Edges,
     Expression,
