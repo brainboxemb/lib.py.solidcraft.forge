@@ -155,7 +155,7 @@ def _solidcraft_sketch_create(sketch) -> dict:
         or any(parameters_in(value) or abs(pv(value)) > 1e-12 for value in in_plane)
     )
     if explicit_frame:
-        from ..sketches import _sketch_plane_frame
+        from ...sketches import _sketch_plane_frame
         return _command(
             "sketch.create",
             plane=_sketch_plane_frame(
