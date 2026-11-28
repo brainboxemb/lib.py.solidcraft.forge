@@ -208,6 +208,31 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
+### #640 — integrate the qualified experimental compiler checkpoint into dev
+
+The direct permanent integration checkpoint is selected now:
+
+- source `exp`: `72e01a8db8b522b97b9f33a63eb08f6ce4153a68`;
+- target `dev`: `5d04bd44a40b1e5724ca28578484535439ce3826`;
+- Forge permanent-exp CI for the source checkpoint is green;
+- current public semantic IR is 20/20 complete; backend coverage remains an
+  independent fail-closed dimension;
+- the complete real CAD catalog has now been requalified again through CAD
+  #294 / evidence PR #297 against this exact Forge SHA on the newer CAD
+  exp/test infrastructure;
+- CAD #294 rebuilt all 43 active model variants at exact candidate source
+  `0c841c581331a5deba6a9136a11e22a227d9527a`, retained Forge v0.26.0 as
+  released baseline plus exact `qualification_ref`, and published a green
+  rolling `/test/` review;
+- representative basic/component/assembly previews are normal and A/B visual
+  review confirms the HUB75 coupler reference-hole/tick patterns are absent by
+  default while required structural geometry remains;
+- integrate only through PR #641 and repository-local `/merge`; never
+  integrate `exp -> main`;
+- after integration require permanent `dev` qualification/build evidence,
+  then reconcile this main-owned plan before considering any separate
+  `dev -> main` stabilization.
+
 ### Independent normal and experimental lanes
 
 Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
