@@ -44,13 +44,15 @@ than interpreting frontend objects or private Shape payloads.
 Semantic IR has explicit physical ownership below `cadlib/src/scpf/ir/`:
 
 - `base.py`: parameters, primitive geometry and placement nodes;
-- `sketch.py`: profiles, sketch relations/entities and regions;
+- `profiles.py`: closed profile and region nodes;
+- `sketch.py`: sketch frames, relations, chains and entity graphs;
 - `operations.py`: extrude/revolve, topology selectors and modifiers;
 - `features.py`: holes, plastic features and feature patterns;
 - `sheet_metal.py`: sheet rules and sheet history nodes;
 - `body.py`: generic body-history composition and legacy boundary;
 - `configuration.py`: semantic feature identity, configurations and model IR;
-- `normalizers/`: matching frontend-to-IR normalization domains;
+- `normalizers/`: matching values, placement, profiles, sketch, operations,
+  features, sheet-metal, body-history and configuration normalization domains;
 - `normalize.py`: top-level model/shape dispatch only;
 - `__init__.py`: stable `scpf.ir` compatibility exports.
 
