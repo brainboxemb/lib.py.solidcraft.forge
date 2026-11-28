@@ -36,10 +36,30 @@ Unsupported intent fails explicitly. Do not silently substitute Python variants,
 numeric flags, duplicated bodies or approximate geometry when that changes the
 public semantics.
 
-The experimental `exp` line may advance a more generic engine-neutral IR and
-independent backend lowerings. That work remains isolated until intentionally
-integrated into `dev`; normal `dev` design documents must not pretend an
-experimental IR capability is already released.
+Forge v0.27.0 evaluates the public SCPF frontend into typed engine-neutral
+semantic IR before backend lowering. SolidCraft and Mitcad consume that same
+semantic contract independently; unsupported backend paths fail closed rather
+than interpreting frontend objects or private Shape payloads.
+
+Semantic IR has explicit physical ownership below `cadlib/src/scpf/ir/`:
+
+- `base.py`: parameters, primitive geometry and placement nodes;
+- `sketch.py`: profiles, sketch relations/entities and regions;
+- `operations.py`: extrude/revolve, topology selectors and modifiers;
+- `features.py`: holes, plastic features and feature patterns;
+- `sheet_metal.py`: sheet rules and sheet history nodes;
+- `body.py`: generic body-history composition and legacy boundary;
+- `configuration.py`: semantic feature identity, configurations and model IR;
+- `normalizers/`: matching frontend-to-IR normalization domains;
+- `normalize.py`: top-level model/shape dispatch only;
+- `__init__.py`: stable `scpf.ir` compatibility exports.
+
+These modules are ownership boundaries, not additional public APIs. External
+callers and backends continue to import the stable `scpf.ir` façade. Do not
+recreate a second frontend or duplicate semantic definitions in backend code.
+
+The semantic test suite mirrors these domains under `cadlib/tests/ir/`.
+Backend-specific qualification remains in its backend test modules.
 
 ## Configuration and API design
 
@@ -51,7 +71,7 @@ A reusable component owns geometry and parameters. Application-level
 configuration presentation belongs to the final model/document or higher-level
 assembly unless the public API explicitly defines otherwise.
 
-The current v0.26 configuration API attaches one ordered table to the final
+The current v0.27 configuration API attaches one ordered table to the final
 Shape, ModelInstance or Assembly through `.configure(...)`. Semantic IR keeps
 that table as `ConfigurationIR`; retired wrapper/rule authoring is not a
 second frontend contract. Scoped `feature(name, suppressed=...)` authoring
