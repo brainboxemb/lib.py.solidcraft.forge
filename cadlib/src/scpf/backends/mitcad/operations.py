@@ -62,6 +62,7 @@ from ...scalar_ir import (
 
 from .common import _parameter_commands, _role_command_value
 from .primitives import _box_command, _csg_primitive_commands
+from .configuration import _mitcad_configuration_commands
 from .sketch import (
     _mitcad_sketch_plane,
     _sketch_relations_transport,
