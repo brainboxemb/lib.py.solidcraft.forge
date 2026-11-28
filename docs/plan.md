@@ -208,23 +208,18 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### #656 — modularize semantic IR definitions and tests by domain
+No active work selected.
 
-The v0.27.0 semantic compiler is released and consumer-qualified. Improve its
-maintainability without changing semantics, public imports or backend behavior:
+## Next
 
-- replace the monolithic `cadlib/src/scpf/ir.py` with a domain-oriented
-  `scpf/ir/` package;
-- preserve `from scpf.ir import ...` as the stable compatibility façade;
-- separate IR definitions/validation/normalization by semantic ownership;
-- split the monolithic `cadlib/tests/test_semantic_ir.py` into matching
-  domain test modules;
-- keep the 20/20 semantic coverage ledger unchanged;
-- do not redesign compiler orchestration or backend lowering in this change;
-- require full Forge qualification before integration.
+#659 is the explicit follow-up candidate for compiler/backend lowering
+modularization. Do not start it automatically: select it deliberately after
+reviewing the completed #656 IR ownership structure.
 
-Compiler/lowering modularization is an explicit follow-up after the IR boundary
-is clean.
+#656 is complete on permanent `dev` through PR #658. Full exact-head
+qualification run 46148453889 and permanent dev qualification/build/publication
+run 46148915657 are green. The stable `scpf.ir` facade is preserved while
+semantic nodes, normalizers and tests are physically owned by domain.
 
 ## Later
 
