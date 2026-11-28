@@ -15,16 +15,96 @@ from ..scalar_ir import (
     ScalarPowerIR,
     ScalarUnaryIR,
 )
-from .base import *
-from .profiles import *
-from .sketch import *
-from .operations import *
-from .configuration import *
-from .features import *
-from .sheet_metal import *
-from .body import *
-from .normalizers.profiles import _polygon_region_interior_point, _region_interior_point
+from .base import (
+    BodyIR,
+    BoundOffsetIR,
+    BoxIR,
+    ConeIR,
+    CylinderIR,
+    FeaturePlacementIR,
+    ParameterIR,
+    PlacementIR,
+    PrimitiveIR,
+    SphereIR,
+)
+from .profiles import (
+    CircleProfileIR,
+    PolygonProfileIR,
+    ProfileIR,
+    RectangleProfileIR,
+    RegionIR,
+    RoundedRectangleProfileIR,
+    SlotProfileIR,
+)
+from .sketch import (
+    PlaneIR,
+    SketchChainIR,
+    SketchChainSegmentIR,
+    SketchCoordinateDimensionIR,
+    SketchEntityGraphIR,
+    SketchEntityRefIR,
+    SketchGraphEntityIR,
+    SketchIR,
+    SketchLengthDimensionIR,
+    SketchLineIR,
+    SketchMirrorIR,
+    SketchOrientationConstraintIR,
+    SketchPointIR,
+    SketchRectangularPatternIR,
+    SketchRelationsIR,
+    SketchSupportIR,
+    TextEntityIR,
+)
+from .operations import (
+    AxisLineIR,
+    ChamferIR,
+    DirectionPairEdgeSetIR,
+    EdgeSelectionIR,
+    ExplicitEdgePicksIR,
+    ExtrudeIR,
+    FaceBoundaryIR,
+    FaceSetIR,
+    FilletIR,
+    ParallelEdgeSetIR,
+    ProfileEdgeSetIR,
+    RevolveIR,
+)
+from .features import (
+    BossFeatureIR,
+    CircularPatternIR,
+    HoleIR,
+    LipFeatureIR,
+    PlasticFeatureIR,
+    PlasticFeatureSpecIR,
+    RectangularPatternIR,
+    RestFeatureIR,
+    SnapFitFeatureIR,
+)
+from .sheet_metal import (
+    SheetBaseIR,
+    SheetBodyIR,
+    SheetContourFlangeIR,
+    SheetEdgeFlangeIR,
+    SheetFoldIR,
+    SheetHemIR,
+    SheetPathFlangeIR,
+    SheetPerforateIR,
+    SheetRuleIR,
+)
+from .body import BooleanIR, IRNode, LegacyShapeIR, ShellIR, TranslationIR
+from .configuration import (
+    ConfiguredDesignIR,
+    ConfigurationIR,
+    ConfigurationRowIR,
+    FeatureRefIR,
+    ModelIR,
+    NamedFeatureIR,
+    ParameterCellIR,
+    ParameterColumnIR,
+    SuppressionColumnIR,
+)
 from .normalizers.configuration import normalize_configured_design, resolve_feature_ref
+from .normalizers.profiles import _polygon_region_interior_point, _region_interior_point
 from .normalizers.sketch import normalize_sketch_entities
 from .normalize import is_portable, normalize_model, normalize_shape
 
@@ -120,5 +200,5 @@ __all__ = [
     "normalize_model",
     "normalize_shape",
     "normalize_sketch_entities",
-    "resolve_feature_ref"
+    "resolve_feature_ref",
 ]
