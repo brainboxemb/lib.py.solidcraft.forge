@@ -43,6 +43,32 @@ from ...sketches import (
     _polygon_profile_command,
     _sketch_plane_frame,
 )
+from .detect import _is_pure_csg_tree
+from .topology import (
+    _face_boundary_edge_commands,
+    _face_name_commands,
+    _resolve_feature_edges,
+    _fillet_command,
+    _chamfer_command,
+    _shell_command,
+)
+from .features import (
+    _hole_commands,
+    _plastic_feature_command,
+    _attached_commands,
+)
+from .sketch import _explicit_sketch_commands
+from .parameters import (
+    _pattern_count_parameter_names,
+    _non_count_parameter_names,
+    _pattern_angle_parameter_names,
+    _sheet_dimensionless_parameter_names,
+)
+from .history import (
+    _native_feature_name,
+    _named_feature_parent,
+    _named_feature_commands,
+)
 
 
 def _to_commands(shape, name):
