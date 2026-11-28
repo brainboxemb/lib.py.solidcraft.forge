@@ -1,4 +1,4 @@
-"""Sketch, profile, region and extrude normalization.
+"""Sketch frame, relation, graph and extrude normalization.
 
 Private normalization module behind :mod:`scpf.ir`.
 """
@@ -10,14 +10,16 @@ from ...core import Anchor, Depth, Shape, _dim_add, _pv as pv, parameters_in
 from ..base import BodyIR
 from ..body import IRNode
 from ..operations import ExtrudeIR
-from ..sketch import (
+from ..profiles import (
     CircleProfileIR,
-    PlaneIR,
     PolygonProfileIR,
     ProfileIR,
     RectangleProfileIR,
-    RegionIR,
     RoundedRectangleProfileIR,
+    SlotProfileIR,
+)
+from ..sketch import (
+    PlaneIR,
     SketchChainIR,
     SketchChainSegmentIR,
     SketchCoordinateDimensionIR,
@@ -33,19 +35,9 @@ from ..sketch import (
     SketchRectangularPatternIR,
     SketchRelationsIR,
     SketchSupportIR,
-    SlotProfileIR,
     TextEntityIR,
-    _circle_profile_radii,
-    _concentric_circle_region_from_pick,
-    _region_interior_point,
 )
-
-_PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
-_PLANE_AXES = {
-    "XY": {"X", "Y"},
-    "XZ": {"X", "Z"},
-    "YZ": {"Y", "Z"},
-}
+from .profiles import _extrude_regions, _profile_ir_from_shape
 
 def _plane_ir(orientation: str, offset=None) -> PlaneIR | None:
     """Normalize one principal standalone Sketch plane without native ids."""
@@ -193,123 +185,6 @@ def _parameterized_polygon_coordinate_relations(
             for coordinate, axis in enumerate(("x", "y"))
         ),
     )
-
-
-def _profile_ir_from_shape(
-    profile: Shape,
-    profile_anchor,
-    offset,
-    plane: str,
-) -> ProfileIR | None:
-    try:
-        offset = tuple(offset)
-        if len(offset) != 2:
-            return None
-
-        if profile.kind == "circle":
-            if profile_anchor is not Anchor.CENTER:
-                return None
-            (diameter,) = profile.data
-            return CircleProfileIR(
-                diameter=diameter,
-                center=offset,
-            )
-
-        if profile.kind == "rectangle":
-            if profile_anchor is not Anchor.CENTER:
-                return None
-            width, depth = profile.data
-            return RectangleProfileIR(
-                width=width,
-                depth=depth,
-                center=offset,
-            )
-
-        if profile.kind == "rounded_rectangle":
-            if profile_anchor is not Anchor.CENTER:
-                return None
-            width, depth, radius = profile.data
-            return RoundedRectangleProfileIR(
-                width=width,
-                depth=depth,
-                radius=radius,
-                center=offset,
-            )
-
-        if profile.kind == "polygon":
-            if profile_anchor is not None:
-                return None
-            points, profile_plane, ids = profile.data
-            if profile_plane != plane:
-                return None
-            shifted = tuple(
-                tuple(
-                    _dim_add(value, offset[index])
-                    for index, value in enumerate(point)
-                )
-                for point in points
-            )
-            return PolygonProfileIR(
-                points=shifted,
-                segment_ids=tuple(ids) if ids is not None else None,
-            )
-
-        if profile_anchor is not None:
-            return None
-
-        if profile.kind == "slot_center_to_center":
-            p0, p1, width = profile.data
-            return SlotProfileIR(
-                construction="center_to_center",
-                points=(tuple(p0), tuple(p1)),
-                width=width,
-                offset=offset,
-            )
-        if profile.kind == "slot_overall":
-            p0, p1, width = profile.data
-            return SlotProfileIR(
-                construction="overall",
-                points=(tuple(p0), tuple(p1)),
-                width=width,
-                offset=offset,
-            )
-        if profile.kind == "slot_center_point":
-            center, end, width = profile.data
-            return SlotProfileIR(
-                construction="center_point",
-                points=(tuple(center), tuple(end)),
-                width=width,
-                offset=offset,
-            )
-        if profile.kind == "slot_arc_three_point":
-            start, through, end, width = profile.data
-            return SlotProfileIR(
-                construction="arc_three_point",
-                points=(tuple(start), tuple(through), tuple(end)),
-                width=width,
-                offset=offset,
-            )
-        if profile.kind == "slot_arc_center":
-            center, start, end, sweep, width = profile.data
-            if end is not None:
-                return SlotProfileIR(
-                    construction="arc_center_end",
-                    points=(tuple(center), tuple(start), tuple(end)),
-                    width=width,
-                    offset=offset,
-                )
-            return SlotProfileIR(
-                construction="arc_center_sweep",
-                points=(tuple(center), tuple(start)),
-                width=width,
-                sweep=float(sweep),
-                offset=offset,
-            )
-    except (TypeError, ValueError):
-        return None
-
-    return None
-
 
 def _sketch_graph_from_payload(
     sketch_name,
@@ -480,114 +355,6 @@ def _sketch_ir_from_payload(
         )
     except (TypeError, ValueError):
         return None
-
-
-def _extrude_regions(
-    sketch: SketchIR,
-    profile_picks,
-    exact_regions,
-) -> tuple[RegionIR, ...] | None:
-    """Normalize public all-region or point-selected region intent.
-
-    Existing directly-resolvable concentric/polygon families retain stronger
-    semantic boundary membership. General picks remain authored selector intent.
-    """
-    if profile_picks is not None:
-        if not isinstance(profile_picks, (tuple, list)):
-            return None
-
-        # A single explicitly selected profile remains explicit selector intent
-        # so the native command preserves its authored profiles=[...] spelling.
-        if len(sketch.profiles) == 1:
-            try:
-                return tuple(
-                    RegionIR(
-                        selector=tuple(float(value) for value in point),
-                        exact=exact_regions,
-                    )
-                    for point in profile_picks
-                )
-            except (TypeError, ValueError):
-                return None
-
-        # Preserve the already-qualified stronger membership model only when
-        # the source really is the bounded concentric-circle family.
-        concentric = (
-            exact_regions
-            and sketch.graph is not None
-            and not sketch.graph.operations
-            and sketch.profiles
-            and all(
-                isinstance(profile, CircleProfileIR)
-                for profile in sketch.profiles
-            )
-            and len(sketch.profiles) == len(sketch.graph.entities)
-        )
-        if concentric:
-            try:
-                _circle_profile_radii(sketch)
-            except ValueError:
-                concentric = False
-
-        if concentric:
-            try:
-                return tuple(
-                    _concentric_circle_region_from_pick(sketch, point)
-                    for point in profile_picks
-                )
-            except ValueError:
-                return None
-
-        # Preserve exact single-polygon membership for the older qualified
-        # profile contract (normally reached above only if graph/profile
-        # composition changes later).
-        if (
-            exact_regions
-            and sketch.graph is not None
-            and not sketch.graph.operations
-            and len(sketch.profiles) == 1
-            and isinstance(sketch.profiles[0], PolygonProfileIR)
-            and len(profile_picks) == 1
-        ):
-            try:
-                return (
-                    _polygon_region_from_exact_pick(
-                        sketch,
-                        profile_picks[0],
-                    ),
-                )
-            except ValueError:
-                return None
-
-        try:
-            return tuple(
-                RegionIR(
-                    selector=tuple(float(value) for value in point),
-                    exact=exact_regions,
-                )
-                for point in profile_picks
-            )
-        except (TypeError, ValueError):
-            return None
-
-    if exact_regions:
-        return None
-
-    if (
-        sketch.graph is not None
-        and not sketch.graph.operations
-        and len(sketch.profiles) == 1
-        and len(sketch.graph.entities) == 1
-        and not isinstance(sketch.graph.entities[0], TextEntityIR)
-    ):
-        try:
-            region = RegionIR(outer=0)
-            _region_interior_point(sketch, region)
-            return (region,)
-        except ValueError:
-            pass
-    return ()
-
 
 def _portable_extrude(shape: Shape) -> ExtrudeIR | None:
     """Normalize standalone Sketch + Extrude semantics."""
@@ -866,7 +633,7 @@ def _sketch_graph_profile_ir(
 
 def normalize_sketch_entities(sketch) -> SketchEntityGraphIR:
     """Normalize public Sketch contents independently from support/consumers."""
-    from ...explicit_sketch import Sketch
+    from .explicit_sketch import Sketch
 
     if not isinstance(sketch, Sketch):
         raise TypeError("Sketch entity normalization requires a Sketch")

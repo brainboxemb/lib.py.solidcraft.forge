@@ -31,16 +31,15 @@ from ..operations import (
     ProfileEdgeSetIR,
     RevolveIR,
 )
-from ..sketch import (
+from ..profiles import (
     CircleProfileIR,
-    PlaneIR,
     PolygonProfileIR,
     RectangleProfileIR,
     RegionIR,
     RoundedRectangleProfileIR,
-    SketchChainIR,
-    _region_interior_point,
 )
+from ..sketch import PlaneIR, SketchChainIR
+from .profiles import _region_interior_point
 from .body import _normalize_node
 from .sketch import _PLANE_AXES, _PLANE_NORMAL_INDEX, _same_semantic_dimension, _sketch_ir_from_payload
 

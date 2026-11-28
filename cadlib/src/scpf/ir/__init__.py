@@ -16,13 +16,14 @@ from ..scalar_ir import (
     ScalarUnaryIR,
 )
 from .base import *
+from .profiles import *
 from .sketch import *
 from .operations import *
 from .configuration import *
 from .features import *
 from .sheet_metal import *
 from .body import *
-from .sketch import _polygon_region_interior_point, _region_interior_point
+from .normalizers.profiles import _polygon_region_interior_point, _region_interior_point
 from .normalizers.configuration import normalize_configured_design, resolve_feature_ref
 from .normalizers.sketch import normalize_sketch_entities
 from .normalize import is_portable, normalize_model, normalize_shape

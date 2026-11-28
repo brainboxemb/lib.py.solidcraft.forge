@@ -10,7 +10,8 @@ from typing import Any
 
 from ..core import _pv as pv
 from .base import BodyIR, PlacementIR
-from .sketch import RegionIR, SketchIR
+from .profiles import RegionIR
+from .sketch import SketchIR
 
 @dataclass(frozen=True)
 class ExtrudeIR(BodyIR):

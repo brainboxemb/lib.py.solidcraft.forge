@@ -22,7 +22,8 @@ from ..sheet_metal import (
 )
 from ..sketch import PlaneIR, SketchIR
 from .body import _normalize_node
-from .sketch import _profile_ir_from_shape, _sketch_chain_ir
+from .profiles import _profile_ir_from_shape
+from .sketch import _sketch_chain_ir
 
 def _sheet_rule_ir(
     name,
