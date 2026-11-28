@@ -146,6 +146,7 @@ def _feature_prefix(root, source):
         "sheet_hem",
         "sheet_path_flange",
         "sheet_perforate",
+        "solid_transform",
     ):
         return _feature_prefix(root.data[0], source)
     return None
