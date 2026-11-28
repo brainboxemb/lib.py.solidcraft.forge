@@ -40,6 +40,13 @@ from ..sketch import (
     _region_interior_point,
 )
 
+_PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
+_PLANE_AXES = {
+    "XY": {"X", "Y"},
+    "XZ": {"X", "Z"},
+    "YZ": {"Y", "Z"},
+}
+
 def _plane_ir(orientation: str, offset=None) -> PlaneIR | None:
     """Normalize one principal standalone Sketch plane without native ids."""
     if orientation not in _PLANE_NORMAL_INDEX:
