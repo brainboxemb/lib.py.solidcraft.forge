@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "3d914rjhncx8t",
+  "id": "9dy1gd3qdkh70",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "ea1mvdkpeg221"
+        "source": "ee1cwqwesaj9n"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "51ybjmxyy309t",
+      "id": "9mfwzspmcmdvz",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "05t7fxg147sj8",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "7r42p7t4vtt13",
+          "id": "2jrdcjfaf6qtf",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "abjywrc7rn4gc",
+          "id": "58jrjnyrxccmc",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "7r42p7t4vtt13",
+          "parent": "2jrdcjfaf6qtf",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "bzggm65xanhnh",
+          "id": "5v4ek0xxdmyge",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "7r42p7t4vtt13",
+          "parent": "2jrdcjfaf6qtf",
           "side": "above"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "cm5nscdtch6g6",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "ea1mvdkpeg221"
+      "id": "ee1cwqwesaj9n"
     }
   ],
   "symbols": [],

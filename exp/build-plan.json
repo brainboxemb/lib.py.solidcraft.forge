@@ -74,7 +74,7 @@
     ],
     "selected": []
   },
-  "full": false,
+  "full": true,
   "library": true,
   "models": [
     {
@@ -842,6 +842,11 @@
       ]
     }
   ],
+  "qualification_pr": 646,
+  "qualification_reused": true,
+  "qualification_run_id": 46143281147,
+  "qualified_head_sha": "da6c007715e446879f08685bedc7f5fc16245c57",
+  "qualified_source_sha": "184a200bc38466a1f765254e5d7754579af60187",
   "release_only": false,
   "schema": 2,
   "selected": [
@@ -906,5 +911,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "72e01a8db8b522b97b9f33a63eb08f6ce4153a68"
+  "source_sha": "ea0607741332a65d0a036bbc2a5e7cea8d6a5255"
 }
