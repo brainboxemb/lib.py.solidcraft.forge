@@ -22,6 +22,9 @@ class ProjectConfig:
     models_root: Path
     api_probes_root: Path
     output_root: Path
+    docs_only_prefixes: tuple[str, ...] = ()
+    docs_only_modules: tuple[str, ...] = ()
+    reuse_pr_branches: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -66,6 +69,34 @@ def _ids(value, field):
     raise ConfigError(f"{field} must be all or a list of ids")
 
 
+def _prefixes(value, field):
+    if value is None:
+        return ()
+    if not isinstance(value, list) or not value:
+        raise ConfigError(f"{field} must be a non-empty list of repository prefixes")
+    result = []
+    for item in value:
+        if not isinstance(item, str) or not item or item.startswith("/"):
+            raise ConfigError(f"{field} must contain relative repository prefixes")
+        path = Path(item.rstrip("/"))
+        if not path.parts or ".." in path.parts:
+            raise ConfigError(f"{field} must remain inside repository")
+        normalized = item.replace("\\", "/")
+        if normalized not in result:
+            result.append(normalized)
+    return tuple(result)
+
+
+def _branch_list(value, field):
+    if value is None:
+        return ()
+    if not isinstance(value, list) or not all(
+        isinstance(item, str) and item for item in value
+    ):
+        raise ConfigError(f"{field} must be a list of branch names")
+    return tuple(dict.fromkeys(value))
+
+
 def load_project(repo):
     data = mapping(repo / "ci.yml")
     branches, roots = data.get("branches"), data.get("roots")
@@ -74,6 +105,38 @@ def load_project(repo):
     stable, dev = branches.get("stable"), branches.get("development")
     if not all(isinstance(x, str) and x for x in (stable, dev)) or stable == dev:
         raise ConfigError("invalid source branches")
+
+    qualification = data.get("qualification", {})
+    if not isinstance(qualification, dict):
+        raise ConfigError("qualification must be a mapping")
+    pull_requests = qualification.get("pull_requests", {})
+    permanent = qualification.get("permanent", {})
+    if not isinstance(pull_requests, dict) or not isinstance(permanent, dict):
+        raise ConfigError("qualification pull_requests/permanent must be mappings")
+
+    docs_only = pull_requests.get("docs_only", {})
+    reuse = permanent.get("reuse_pr_qualification", {})
+    if not isinstance(docs_only, dict) or not isinstance(reuse, dict):
+        raise ConfigError("qualification policies must be mappings")
+
+    docs_modules = docs_only.get("modules", [])
+    if not isinstance(docs_modules, list) or not all(
+        isinstance(item, str) and _ID.fullmatch(item) for item in docs_modules
+    ):
+        raise ConfigError("docs-only modules must be a list of ids")
+
+    reuse_branches = _branch_list(
+        reuse.get("branches"),
+        "reuse_pr_qualification branches",
+    )
+    allowed_branches = {stable, dev, "exp"}
+    unexpected = sorted(set(reuse_branches) - allowed_branches)
+    if unexpected:
+        raise ConfigError(
+            "reuse_pr_qualification branches must be permanent source branches: "
+            + ", ".join(unexpected)
+        )
+
     return ProjectConfig(
         stable,
         dev,
@@ -81,6 +144,9 @@ def load_project(repo):
         _relative(roots.get("models")),
         _relative(roots.get("api_probes")),
         _relative(roots.get("output")),
+        _prefixes(docs_only.get("prefixes"), "docs-only prefixes"),
+        tuple(dict.fromkeys(docs_modules)),
+        reuse_branches,
     )
 
 

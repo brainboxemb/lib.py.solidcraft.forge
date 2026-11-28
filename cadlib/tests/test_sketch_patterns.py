@@ -298,16 +298,29 @@ class SketchPatternMirrorTests(unittest.TestCase):
                 )
                 self.assertIsNotNone(local)
 
-    def test_standalone_pattern_is_rejected_at_compile_time(self):
+    def test_standalone_pattern_extrudes_through_typed_sketch_graph(self):
         with Sketch(name="Standalone", plane="XY") as sketch:
             seed = Circle2D(d=8)
             sketch.rectangular_pattern(seed, count=2, spacing=20)
 
-        with self.assertRaisesRegex(
-            ValueError,
-            "currently requires an attached Sketch",
-        ):
-            compile_model(sketch.extrude(5), "StandalonePattern")
+        commands = compile_model(
+            sketch.extrude(5),
+            "StandalonePattern",
+        )["commands"]
+        self.assertEqual(
+            [row["command"] for row in commands].count(
+                "sketch.pattern.rectangular"
+            ),
+            1,
+        )
+        extrude = next(
+            row["params"]
+            for row in commands
+            if row["command"] == "solid.extrude"
+        )
+        self.assertEqual(extrude["body_name"], "StandalonePattern")
+        self.assertEqual(extrude["distance"], 5)
+        self.assertEqual(extrude["direction"], "positive")
 
 
 if __name__ == "__main__":

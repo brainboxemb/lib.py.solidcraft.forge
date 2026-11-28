@@ -1,8 +1,7 @@
 schema: 1
-branch: issue/538-solidcraft-0.50-runtime
-modules:
-  - solidcraft-reference
-library: true
+branch: resolve/636-dev-exp
+modules: all
 models: all
+library: true
 api_probes: []
 tasks: [test]

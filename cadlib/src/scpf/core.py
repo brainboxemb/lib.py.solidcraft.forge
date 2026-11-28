@@ -10,6 +10,15 @@ from enum import Enum
 from math import isfinite
 from typing import Any
 
+from .scalar_ir import (
+    ScalarBinaryIR,
+    ScalarExpressionIR,
+    ScalarLiteralIR,
+    ScalarParameterRefIR,
+    ScalarPowerIR,
+    ScalarUnaryIR,
+)
+
 
 _PV_TRACKERS = ContextVar("scpf_pv_trackers", default=())
 _ACTIVE_FEATURE_SCOPE = ContextVar("scpf_active_feature_scope", default=None)
@@ -530,12 +539,55 @@ def _plain_command_value(value):
     return value
 
 
+def _scalar_ir_value(value) -> ScalarExpressionIR | None:
+    """Return authored scalar semantics without parsing compatibility text."""
+    if isinstance(value, Parameter):
+        return ScalarParameterRefIR(value.name)
+    if isinstance(value, Expression):
+        return value.scalar_ir
+    if (
+        isinstance(value, (int, float))
+        and not isinstance(value, bool)
+        and isfinite(value)
+    ):
+        return ScalarLiteralIR(value)
+    return None
+
+
+def _scalar_binary_ir(operation, left, right) -> ScalarExpressionIR | None:
+    left_ir = _scalar_ir_value(left)
+    right_ir = _scalar_ir_value(right)
+    if left_ir is None or right_ir is None:
+        return None
+    return ScalarBinaryIR(operation, left_ir, right_ir)
+
+
+def _scalar_power_ir(value, exponent) -> ScalarExpressionIR | None:
+    base = _scalar_ir_value(value)
+    if base is None:
+        return None
+    return ScalarPowerIR(base, exponent)
+
+
+def _scalar_negation_ir(value, *, collapse=False) -> ScalarExpressionIR | None:
+    operand = _scalar_ir_value(value)
+    if operand is None:
+        return None
+    if (
+        collapse
+        and isinstance(operand, ScalarUnaryIR)
+        and operand.operation == "negate"
+    ):
+        return operand.operand
+    return ScalarUnaryIR("negate", operand)
+
+
 @dataclass(frozen=True)
 class Parameter:
-    """Represent one named editable CAD dimension.
+    """Represent one named editable Forge CAD dimension.
 
     Parameters:
-        name: SolidCraft parameter name. It must be a valid Python identifier.
+        name: CAD parameter name. It must be a valid Python identifier.
         value: Current numeric value of the parameter.
 
     Use when:
@@ -580,6 +632,7 @@ class Parameter:
                 self.value / other,
                 f"{self.name} / {number_text(other)}",
                 (self,),
+                _scalar_binary_ir("divide", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             divisor = _pv(other)
@@ -589,6 +642,7 @@ class Parameter:
                 self.value / divisor,
                 f"({self.name}) / ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary_ir("divide", self, other),
             )
         return NotImplemented
 
@@ -600,6 +654,7 @@ class Parameter:
                 other / self.value,
                 f"{number_text(other)} / ({self.name})",
                 (self,),
+                _scalar_binary_ir("divide", other, self),
             )
         return NotImplemented
 
@@ -609,12 +664,14 @@ class Parameter:
                 self.value * other,
                 f"{self.name} * {number_text(other)}",
                 (self,),
+                _scalar_binary_ir("multiply", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value * _pv(other),
                 f"({self.name}) * ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary_ir("multiply", self, other),
             )
         return NotImplemented
 
@@ -622,13 +679,18 @@ class Parameter:
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
-            return Expression(self.value + other,
-                              f"{self.name} + {number_text(other)} mm", (self,))
+            return Expression(
+                self.value + other,
+                f"{self.name} + {number_text(other)} mm",
+                (self,),
+                _scalar_binary_ir("add", self, other),
+            )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value + _pv(other),
                 f"{self.name} + ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary_ir("add", self, other),
             )
         return NotImplemented
 
@@ -640,12 +702,14 @@ class Parameter:
                 self.value - other,
                 f"{self.name} - {number_text(other)} mm",
                 (self,),
+                _scalar_binary_ir("subtract", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value - _pv(other),
                 f"{self.name} - ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary_ir("subtract", self, other),
             )
         return NotImplemented
 
@@ -655,6 +719,7 @@ class Parameter:
                 other - self.value,
                 f"{number_text(other)} mm - ({self.name})",
                 (self,),
+                _scalar_binary_ir("subtract", other, self),
             )
         return NotImplemented
 
@@ -669,10 +734,16 @@ class Parameter:
             self.value ** exponent,
             f"({self.name}) ^ {number_text(exponent)}",
             (self,),
+            _scalar_power_ir(self, exponent),
         )
 
     def __neg__(self):
-        return Expression(-self.value, f"-({self.name})", (self,))
+        return Expression(
+            -self.value,
+            f"-({self.name})",
+            (self,),
+            _scalar_negation_ir(self),
+        )
 
 
 @dataclass(frozen=True)
@@ -680,6 +751,11 @@ class Expression:
     value: float
     expression: str
     parameters: tuple[Parameter, ...]
+    scalar_ir: ScalarExpressionIR | None = field(
+        default=None,
+        repr=False,
+        compare=False,
+    )
 
     def __mul__(self, other):
         if isinstance(other, (float, int)) and not isinstance(other, bool):
@@ -687,12 +763,14 @@ class Expression:
                 self.value * other,
                 f"({self.expression}) * {number_text(other)}",
                 self.parameters,
+                _scalar_binary_ir("multiply", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value * _pv(other),
                 f"({self.expression}) * ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary_ir("multiply", self, other),
             )
         return NotImplemented
 
@@ -706,6 +784,7 @@ class Expression:
                 self.value / other,
                 f"({self.expression}) / {number_text(other)}",
                 self.parameters,
+                _scalar_binary_ir("divide", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             divisor = _pv(other)
@@ -715,6 +794,7 @@ class Expression:
                 self.value / divisor,
                 f"({self.expression}) / ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary_ir("divide", self, other),
             )
         return NotImplemented
 
@@ -726,19 +806,24 @@ class Expression:
                 other / self.value,
                 f"{number_text(other)} / ({self.expression})",
                 self.parameters,
+                _scalar_binary_ir("divide", other, self),
             )
         return NotImplemented
 
     def __add__(self, other):
         if isinstance(other, (int, float)):
-            return Expression(self.value + other,
-                              f"{self.expression} + {number_text(other)} mm",
-                              self.parameters)
+            return Expression(
+                self.value + other,
+                f"{self.expression} + {number_text(other)} mm",
+                self.parameters,
+                _scalar_binary_ir("add", self, other),
+            )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value + _pv(other),
                 f"({self.expression}) + ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary_ir("add", self, other),
             )
         return NotImplemented
 
@@ -750,12 +835,14 @@ class Expression:
                 self.value - other,
                 f"({self.expression}) - {number_text(other)} mm",
                 self.parameters,
+                _scalar_binary_ir("subtract", self, other),
             )
         if isinstance(other, (Parameter, Expression)):
             return Expression(
                 self.value - _pv(other),
                 f"({self.expression}) - ({command_value(other)})",
                 parameters_in(self, other),
+                _scalar_binary_ir("subtract", self, other),
             )
         return NotImplemented
 
@@ -765,6 +852,7 @@ class Expression:
                 other - self.value,
                 f"{number_text(other)} mm - ({self.expression})",
                 self.parameters,
+                _scalar_binary_ir("subtract", other, self),
             )
         return NotImplemented
 
@@ -779,6 +867,7 @@ class Expression:
             self.value ** exponent,
             f"({self.expression}) ^ {number_text(exponent)}",
             self.parameters,
+            _scalar_power_ir(self, exponent),
         )
 
     def __neg__(self):
@@ -786,13 +875,23 @@ class Expression:
         # Collapse the exact outer negation form emitted by Forge so converting
         # a negative signed distance back to its positive native magnitude keeps
         # the original symbolic expression instead of producing -(-(h)).
-        if self.expression.startswith("-(") and self.expression.endswith(")"):
+        collapse = (
+            self.expression.startswith("-(")
+            and self.expression.endswith(")")
+        )
+        if collapse:
             return Expression(
                 -self.value,
                 self.expression[2:-1],
                 self.parameters,
+                _scalar_negation_ir(self, collapse=True),
             )
-        return Expression(-self.value, f"-({self.expression})", self.parameters)
+        return Expression(
+            -self.value,
+            f"-({self.expression})",
+            self.parameters,
+            _scalar_negation_ir(self),
+        )
 
 
 def _scaled_direction(direction, distance):
@@ -999,7 +1098,8 @@ def pv(dim) -> float:
     Limits:
         Calling pv() intentionally removes the symbolic dependency at that
         point. Geometry and placement should normally keep Parameter/Expression
-        objects symbolic so SolidCraft remains editable and associative.
+        objects symbolic so backend lowering can preserve editable native CAD
+        dependencies.
 
     Example:
         if pv(clearance) < 0:
@@ -1548,7 +1648,7 @@ def feature(name, *, suppressed=False):
 
 @dataclass(frozen=True)
 class Shape:
-    """Store Forge geometry and feature operations before SolidCraft executes them.
+    """Store Forge authoring geometry and feature intent before IR normalization.
 
     Parameters:
         kind: Forge node type. Public constructors set this; normal model code should not invent kind values.
@@ -1560,9 +1660,11 @@ class Shape:
         with the supported Shape methods/operators.
 
     Limits:
-        Shape is only Forge's description of the model. SolidCraft owns the final
-        BRep and feature history; users normally do not instantiate
-        Shape(kind, data) directly.
+        Shape is Forge's frontend authoring representation, not a native CAD
+        BRep. The runner normalizes final Shape intent into semantic ModelIR
+        before backend lowering; the selected native CAD engine owns final BRep
+        and feature history. Users normally do not instantiate Shape(kind, data)
+        directly.
 
     Example:
         body = Box(80, 50, 12)
