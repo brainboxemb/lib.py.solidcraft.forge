@@ -176,6 +176,10 @@ def _to_commands(shape, name):
             profiles,
             operations,
         )
+        if meta.pop("_post_extrude_sketch_edits", ()):
+            raise ModelError(
+                "sketch move_points is currently qualified only with Sketch.extrude()"
+            )
         rule = _command(
             "sheet.manage_rules",
             name=rule_name,
