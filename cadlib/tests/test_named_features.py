@@ -123,7 +123,7 @@ class NamedFeatureTests(unittest.TestCase):
             [
                 row["values"]
                 for row in rows
-                if row.get("name") == "$config_row_1"
+                if row.get("name") == "Normal" and "values" in row
             ],
             [{"suppress:$config_name_1": "true"}],
         )
