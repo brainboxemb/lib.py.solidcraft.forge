@@ -1,7 +1,8 @@
 schema: 1
-branch: resolve/636-dev-exp
-modules: all
-models: all
+branch: issue/656-ir-modularization
+modules:
+  - cadlib
+models: []
 library: true
 api_probes: []
 tasks: [test]
