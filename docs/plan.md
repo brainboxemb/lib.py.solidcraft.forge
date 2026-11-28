@@ -208,24 +208,21 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-#674 — replace tagged primitive frontend nodes with typed reusable Shape objects.
-
-The current Box/Sphere/Cylinder/Cone constructors return generic
-`Shape(kind, data)` nodes and primitive semantics are rediscovered through
-string-kind switches in frontend behavior, semantic-IR placement normalization
-and legacy CSG lowering. Introduce a typed `Primitive` Shape abstraction with
-named primitive state while preserving the existing public constructor spelling
-and keeping `kind/data` only as a temporary compatibility view for untouched
-legacy paths. Frontend objects must remain backend-neutral.
+No new structural implementation is selected after #674. The normal `dev`
+frontend now has typed reusable primitive Shape objects for Box, Sphere,
+Cylinder and Cone; `Shape.kind/data` is compatibility-only for remaining
+legacy paths rather than the source of new primitive/IR semantics.
 
 ## Next
 
 #610 remains blocked on `brainboxemb/template.cad.library#119`; do not invent
 a Forge-local plan/log contract before the template contract is accepted.
 
-After #674, reassess `assembly.py`, `model_objects.py` and `runner.py`
-independently. Select further structural work only where a concrete ownership or
-testability boundary exists.
+Before selecting more file-splitting work, reassess the remaining tagged-Shape
+compatibility paths (including older placement/sketch/compiler helpers) and
+`assembly.py`, `model_objects.py` and `runner.py` independently. Create a
+new issue only where there is a concrete semantic ownership or testability
+boundary.
 
 #666 is complete on permanent `dev` through PR #668, merge
 `ee9816d1f6c8c13ecaf603ae76e17c9161678ae5`. Exact-head full qualification
