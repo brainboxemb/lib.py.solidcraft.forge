@@ -3,7 +3,16 @@
 import builtins
 import math
 
-from .core import Expression, Parameter, _pv, command_value, number_text, parameters_in
+from .core import (
+    Expression,
+    Parameter,
+    _pv,
+    _scalar_ir_value,
+    command_value,
+    number_text,
+    parameters_in,
+)
+from .scalar_ir import ScalarFunctionIR
 
 
 def _validated(value):
@@ -30,10 +39,17 @@ def _result(name, values, current):
     parameters = parameters_in(*values)
     if not parameters:
         return current
+    scalar_arguments = tuple(_scalar_ir_value(value) for value in values)
+    scalar_ir = (
+        ScalarFunctionIR(name, scalar_arguments)
+        if all(value is not None for value in scalar_arguments)
+        else None
+    )
     return Expression(
         float(current),
         f"{name}(" + ",".join(_text(value) for value in values) + ")",
         parameters,
+        scalar_ir,
     )
 
 

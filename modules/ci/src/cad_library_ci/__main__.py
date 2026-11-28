@@ -62,6 +62,33 @@ def _validated_release_paths(paths):
     return tuple(paths)
 
 
+def _path_below_prefix(path, prefix):
+    normalized = prefix.rstrip("/")
+    return path == normalized or path.startswith(normalized + "/")
+
+
+def _docs_only_plan(repo, project, branch, base):
+    if not project.docs_only_prefixes:
+        return None
+    paths = changed_paths_from_base(repo, base, "HEAD")
+    if not paths or not all(
+        any(_path_below_prefix(path, prefix) for prefix in project.docs_only_prefixes)
+        for path in paths
+    ):
+        return None
+    return (
+        BuildSelection(
+            branch,
+            project.docs_only_modules,
+            (),
+            library=False,
+        ),
+        paths,
+        False,
+        False,
+    )
+
+
 def selection(repo, project, branch, modules):
     event = os.environ.get("GITHUB_EVENT_NAME", "")
     base = os.environ.get("GITHUB_BASE_REF", "")
@@ -82,6 +109,11 @@ def selection(repo, project, branch, modules):
             changed_paths_from_base(repo, base, "HEAD")
         )
         return _release_plan(branch), None, False, True
+
+    if event == "pull_request":
+        docs_only = _docs_only_plan(repo, project, branch, base)
+        if docs_only is not None:
+            return docs_only
 
     if branch == project.stable_branch:
         if event in {"push", "workflow_dispatch"}:
