@@ -6,14 +6,14 @@
     "$block_occurrence_1": 2,
     "$component_1": 1,
     "$block_occurrence_2": 4,
-    "$drawing_1": "3bj7s6sy3sx6z",
-    "$drawing_1_source": "85x946t0m796f",
-    "$drawing_1_sheet": "b2enzjzh6qjfn",
+    "$drawing_1": "0egq425zzshp8",
+    "$drawing_1_source": "82qx07yr1x3g2",
+    "$drawing_1_sheet": "64k7g8pc9qe7m",
     "$drawing_1_orientation": "landscape",
-    "$drawing_1_front": "1fk5aqxty69se",
-    "$drawing_1_top": "bxn90bh4k1pjp",
-    "$drawing_1_right": "cy82p8rm891xp",
-    "$drawing_1_iso": "ajj218t4rw200"
+    "$drawing_1_front": "6jnxv55cd16jb",
+    "$drawing_1_top": "34xyy5h9fvbde",
+    "$drawing_1_right": "918znk6z53km3",
+    "$drawing_1_iso": "8k8txjjt01bh3"
   },
   "commands": [
     {
@@ -74,19 +74,19 @@
         "first_sheet_name": "Sheet 1"
       },
       "bindings": {
-        "$drawing_1": "3bj7s6sy3sx6z",
-        "$drawing_1_source": "85x946t0m796f",
-        "$drawing_1_sheet": "b2enzjzh6qjfn"
+        "$drawing_1": "0egq425zzshp8",
+        "$drawing_1_source": "82qx07yr1x3g2",
+        "$drawing_1_sheet": "64k7g8pc9qe7m"
       }
     },
     {
       "index": 5,
       "command": "drawing.sheet.set",
       "resolved_params": {
-        "sheet": "b2enzjzh6qjfn",
+        "sheet": "64k7g8pc9qe7m",
         "orientation": "landscape",
         "documents": {
-          "source": "85x946t0m796f",
+          "source": "82qx07yr1x3g2",
           "component": 1
         }
       }
@@ -103,22 +103,22 @@
       "index": 7,
       "command": "drawing.view.standard",
       "resolved_params": {
-        "sheet": "b2enzjzh6qjfn",
+        "sheet": "64k7g8pc9qe7m",
         "iso": true,
         "gap_mm": 20.0
       },
       "bindings": {
-        "$drawing_1_front": "1fk5aqxty69se",
-        "$drawing_1_top": "bxn90bh4k1pjp",
-        "$drawing_1_right": "cy82p8rm891xp",
-        "$drawing_1_iso": "ajj218t4rw200"
+        "$drawing_1_front": "6jnxv55cd16jb",
+        "$drawing_1_top": "34xyy5h9fvbde",
+        "$drawing_1_right": "918znk6z53km3",
+        "$drawing_1_iso": "8k8txjjt01bh3"
       }
     },
     {
       "index": 8,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "1fk5aqxty69se",
+        "view": "6jnxv55cd16jb",
         "set": {
           "source": {
             "occurrences": [
@@ -134,7 +134,7 @@
       "index": 9,
       "command": "drawing.view.edit",
       "resolved_params": {
-        "view": "ajj218t4rw200",
+        "view": "8k8txjjt01bh3",
         "set": {
           "source": {
             "occurrences": [
