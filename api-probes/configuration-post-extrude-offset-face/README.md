@@ -55,3 +55,25 @@ a true geometry modifier.
 If this passes while the Sketch-edit probe shows no later feature, Forge should
 keep configuration unchanged and focus the next API design on the smallest
 generic post-Extrude geometry operation required by the clamp.
+
+
+## Result
+
+Qualified on PR #670, run 46166188263, against SolidCraft 0.50.0 / runtime v0.3.8.
+
+The saved design contains:
+
+~~~text
+1  FreeProfile   sketch
+2  ClampExtrude  extrude
+3  Installed     offset_face
+~~~
+
+The saved configuration targets feature 3 directly. `Free` stores it
+suppressed and `Installed` stores it active; the probe switches to Installed
+and back to Free successfully.
+
+This proves the required **history/configuration pattern** for a real
+post-Extrude geometry edit.
+
+It does not approve Offset Face as the HUB75 geometry operation.
