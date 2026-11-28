@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "7kw2fb9s8mmcm",
+  "id": "26y9575780s8z",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "08acv624w489k"
+        "source": "ac0ypjyp4hz30"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "0rxd324chp8z4",
+      "id": "5kab4x5q6fqxj",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,15 +524,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "35hsfpn97byp5",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "6dt6y577gp4cb",
+          "id": "abcmjt4wjmsbx",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -540,29 +532,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "1d6sgyzxr0xse",
+          "id": "a0dbydmgy6p0y",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "6dt6y577gp4cb",
+          "parent": "abcmjt4wjmsbx",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "8jfs6x083yhs9",
+          "id": "affbwcynf8kcm",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "6dt6y577gp4cb",
+          "parent": "abcmjt4wjmsbx",
           "side": "right"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "carr3hkdfv06f",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "08acv624w489k"
+      "id": "ac0ypjyp4hz30"
     }
   ],
   "symbols": [],
