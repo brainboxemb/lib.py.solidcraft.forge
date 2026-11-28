@@ -208,27 +208,27 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### #647 — stabilize qualified integrated compiler on main for v0.27.0
+### #650 — release Forge v0.27.0 integrated semantic compiler
 
-The experimental compiler checkpoint is now accepted on the normal lane:
+Stable product promotion is complete:
 
-- exact qualified product tree: `111c020ea66944a761123c68de9bf369562a45d4`;
-- permanent `dev`: `da6c007715e446879f08685bedc7f5fc16245c57`;
-- exact-head restoration PR #645 CI `46142524425` is green;
-- permanent `dev` qualification/build/publication `46142873629` is green;
-- permanent history synchronization PR #646 completed `dev -> exp` with zero changed files;
-- permanent `exp` run `46143716168` is green and reused the tree-identical qualification;
-- CAD #294 / evidence PR #297 rebuilt all 43 active catalog variants against the exact compiler candidate and published a green rolling `/test/` review;
-- semantic IR coverage remains 20/20 complete for the current public SCPF surface; backend coverage remains an independent fail-closed dimension.
+- #647 / PR #649 integrated exact qualified `dev -> main` through repository `/merge`;
+- stable product head `19a96ed8811c59bada2a9bad83e224f2fa283808`;
+- full permanent stable qualification/build/publication run `46144487961` is green;
+- latest published release remains v0.26.0;
+- there are no active foundational release blockers.
 
-Next stable checkpoint:
+Release v0.27.0 as metadata only:
 
-- promote exact permanent `dev -> main` under #647 with no source edits;
-- integrate only through repository-local `/merge`;
-- preserve main-owned governance history;
-- require full permanent stable qualification/build/publication green;
-- only then create a separate metadata-only v0.27.0 release issue/branch from the exact qualified stable main head;
-- v0.27.0 release notes must describe only the accepted compiler/IR/backend integration and must not resurrect the reverted configuration or body-Move/Copy experiments.
+- create `release/v0.27.0` from the exact qualified current stable main head after this governance reconciliation itself is green on main;
+- change only `CHANGELOG.md` and `cadlib/pyproject.toml:project.version`;
+- retain a fresh empty `## [Unreleased]` section;
+- release notes cover only the accepted integrated semantic compiler: 20/20 typed IR families, independent SolidCraft/Mitcad backend boundaries, Mitcad qualification tooling, fail-closed unsupported backend paths and the full real-CAD consumer qualification;
+- do not resurrect the reverted configuration or body-Move/Copy v0.27 notes;
+- release PR -> main only through `/merge`;
+- require release-only stable CI green and retained full stable product evidence;
+- publish only with `/release v0.27.0 <exact-current-main-sha>` on #650;
+- after publication synchronize stable-only metadata `main -> dev`, then `dev -> exp` if required.
 
 ### Independent normal and experimental lanes
 
