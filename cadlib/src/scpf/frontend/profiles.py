@@ -2,17 +2,9 @@
 
 from math import isfinite
 
-from ..core import (
-    Edges,
-    Expression,
-    Parameter,
-    Shape,
-    _pv,
-    feature,
-    half,
-    left,
-    right,
-)
+from .selectors import Edges
+from .scalars import Expression, Parameter, _pv, half, left, right
+from .shape import Shape, feature
 
 def Text2D(text, *, height=6.0, font="DejaVu Sans Bold"):
     """Editable sketch lettering (height is capital height, in mm)."""
