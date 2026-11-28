@@ -7,19 +7,9 @@ from .scalars import _pv, left, right
 from .shape import Shape, feature
 
 _HOLE_FIELDS = (
-    "type",
-    "diameter",
-    "depth",
-    "direction",
-    "counterbore_diameter",
-    "counterbore_depth",
-    "countersink_diameter",
-    "countersink_angle",
-    "thread",
-    "hand",
-    "thread_depth",
-    "modeled",
-    "ease_out",
+    "type", "diameter", "depth", "direction", "counterbore_diameter",
+    "counterbore_depth", "countersink_diameter", "countersink_angle",
+    "thread", "hand", "thread_depth", "modeled", "ease_out",
 )
 
 def _hole_spec(feature):
