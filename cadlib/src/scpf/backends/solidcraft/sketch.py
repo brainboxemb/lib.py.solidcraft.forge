@@ -120,6 +120,12 @@ _FACE_NORMALS = {
 _PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
 
 
+def _next_face_query_index(commands: list[dict]) -> int:
+    """Late bridge to face-query numbering without a sketch/operations cycle."""
+    from .operations import _next_face_query_index as implementation
+    return implementation(commands)
+
+
 def _principal_plane_offset(plane: PlaneIR, *, label: str):
     """Return one bounded principal-plane offset without baking symbols."""
     if not isinstance(plane, PlaneIR):
