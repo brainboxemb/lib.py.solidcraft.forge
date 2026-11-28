@@ -12,6 +12,7 @@ from ..core import _pv as pv
 from .base import BodyIR, PlacementIR
 from .sketch import RegionIR, SketchIR
 
+@dataclass(frozen=True)
 class ExtrudeIR(BodyIR):
     """One authored extrusion over semantic Sketch region selection."""
 

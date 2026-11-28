@@ -11,6 +11,7 @@ from ..core import Shape
 from .base import ParameterIR
 from .body import IRNode
 
+@dataclass(frozen=True)
 class FeatureRefIR:
     """Engine-neutral semantic reference to one normalized authored feature."""
 

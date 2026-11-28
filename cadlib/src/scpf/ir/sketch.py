@@ -11,6 +11,7 @@ from typing import Any
 from ..core import Anchor, _dim_add, _pv as pv
 from .base import BodyIR
 
+@dataclass(frozen=True)
 class CircleProfileIR:
     """One closed circular 2D profile inside a semantic Sketch."""
 
@@ -892,6 +893,7 @@ def _region_interior_point(
         return _circle_region_interior_point(sketch, region)
     return _basic_profile_region_interior_point(sketch, region)
 
+@dataclass(frozen=True)
 class SketchChainSegmentIR:
     """One semantic segment in an authored connected Sketch chain."""
 

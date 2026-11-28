@@ -10,6 +10,7 @@ from typing import Any
 
 from ..core import Anchor, _pv as pv
 
+@dataclass(frozen=True)
 class ParameterIR:
     """One named editable Forge parameter with semantic use roles."""
 

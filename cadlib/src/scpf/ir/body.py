@@ -12,6 +12,7 @@ from ..core import Shape, _pv as pv
 from .base import BodyIR
 from .operations import FaceSetIR
 
+@dataclass(frozen=True)
 class ShellIR(BodyIR):
     """Uniform wall shell over one typed body result."""
 

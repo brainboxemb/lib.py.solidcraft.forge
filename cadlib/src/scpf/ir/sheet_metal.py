@@ -12,6 +12,7 @@ from ..core import _pv as pv
 from .base import BodyIR
 from .sketch import SketchChainIR, SketchIR
 
+@dataclass(frozen=True)
 class SheetRuleIR:
     """Semantic material/bend rule shared by one native sheet history."""
 

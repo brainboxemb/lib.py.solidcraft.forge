@@ -13,6 +13,7 @@ from .base import BodyIR, FeaturePlacementIR
 from .configuration import FeatureRefIR
 from .operations import AxisLineIR
 
+@dataclass(frozen=True)
 class HoleIR(BodyIR):
     """One semantic Hole-family history feature over generic feature placement."""
 
