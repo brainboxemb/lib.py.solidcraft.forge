@@ -76,12 +76,12 @@
         "length": "base_width / 2",
         "width": "base_depth / 2",
         "height": 6.0,
-        "operation": "new",
         "corner": [
           "-((base_width / 2) / 2)",
           "-((base_depth / 2) / 2)",
           20.0
         ],
+        "operation": "new",
         "body_name": "DerivedChild"
       }
     },

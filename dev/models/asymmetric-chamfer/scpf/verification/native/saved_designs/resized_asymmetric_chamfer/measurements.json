@@ -46,15 +46,6 @@
     {
       "comment": "",
       "error": null,
-      "expression": "24 mm",
-      "model": false,
-      "name": "depth",
-      "unit": "mm",
-      "value": 24.0
-    },
-    {
-      "comment": "",
-      "error": null,
       "expression": "50 mm",
       "model": false,
       "name": "width",
@@ -69,6 +60,15 @@
       "name": "height",
       "unit": "mm",
       "value": 12.0
+    },
+    {
+      "comment": "",
+      "error": null,
+      "expression": "24 mm",
+      "model": false,
+      "name": "depth",
+      "unit": "mm",
+      "value": 24.0
     },
     {
       "comment": "",
@@ -105,7 +105,7 @@
     {
       "error": null,
       "id": 1,
-      "ms": 0.132833,
+      "ms": 0.136929,
       "name": "Chamfer profile",
       "rolled_back": false,
       "suppressed": false,
@@ -115,7 +115,7 @@
     {
       "error": null,
       "id": 2,
-      "ms": 7.092439,
+      "ms": 5.877815,
       "name": "Extrude1",
       "rolled_back": false,
       "suppressed": false,
@@ -125,7 +125,7 @@
     {
       "error": null,
       "id": 3,
-      "ms": 10.141638,
+      "ms": 8.275474999999998,
       "name": "Chamfer1",
       "rolled_back": false,
       "suppressed": false,

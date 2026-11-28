@@ -1,0 +1,250 @@
+[
+  {
+    "bodies": [
+      "PrimitiveCsg"
+    ],
+    "changed_bodies": [],
+    "created_bodies": [
+      "PrimitiveCsg"
+    ],
+    "feature": 1,
+    "ms": 3.992891,
+    "name": "Sphere1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "PrimitiveCsg"
+    ],
+    "changed_bodies": [
+      "PrimitiveCsg"
+    ],
+    "created_bodies": [],
+    "feature": 2,
+    "ms": 36.972599,
+    "name": "Box1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "PrimitiveCsg"
+    ],
+    "changed_bodies": [
+      "PrimitiveCsg"
+    ],
+    "created_bodies": [],
+    "feature": 3,
+    "ms": 184.58865699999998,
+    "name": "Cylinder1",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "bodies": [
+      "PrimitiveCsg"
+    ],
+    "changed_bodies": [
+      "PrimitiveCsg"
+    ],
+    "created_bodies": [],
+    "feature": 4,
+    "ms": 120.403154,
+    "name": "Box2",
+    "removed_bodies": [],
+    "warning": null
+  },
+  {
+    "active": "Default",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Default",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  },
+  {
+    "active": "Clipped",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  },
+  {
+    "active": "Clipped",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  },
+  {
+    "active": "Clipped",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Unclipped",
+        "values": {
+          "suppress:Box2": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  },
+  {
+    "active": "Clipped",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "errors": [],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Unclipped",
+        "values": {
+          "suppress:Box2": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "styles": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ],
+    "trace": []
+  },
+  {
+    "active": "Clipped",
+    "columns": [
+      "suppress:Box2"
+    ],
+    "matches": true,
+    "rows": [
+      {
+        "id": 5,
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      },
+      {
+        "id": 6,
+        "name": "Unclipped",
+        "values": {
+          "suppress:Box2": "true"
+        }
+      }
+    ],
+    "rules": [],
+    "style_error": null,
+    "style_status": [],
+    "targets": [
+      {
+        "key": "suppress:Box2",
+        "label": "suppress:Box2",
+        "target": {
+          "suppress": 4
+        }
+      }
+    ]
+  }
+]

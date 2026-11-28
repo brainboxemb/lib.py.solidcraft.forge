@@ -1,0 +1,100 @@
+{
+  "bodies": [
+    {
+      "area_mm2": 5306.854625995472,
+      "bbox": {
+        "max": [
+          25.000000000000004,
+          20.0,
+          20.0
+        ],
+        "min": [
+          -19.595917942265448,
+          -20.0,
+          -2.4919302732406834e-15
+        ]
+      },
+      "center_of_mass": [
+        5.475764284501978,
+        -4.311645568265784e-16,
+        9.250190477086516
+      ],
+      "closed": true,
+      "density_g_cm3": 1.29,
+      "edges": 23,
+      "face_types": {
+        "cylinder": 1,
+        "plane": 7,
+        "sphere": 1
+      },
+      "faces": 9,
+      "kernel": {
+        "edges": 26,
+        "faces": 10,
+        "shells": 1,
+        "vertices": 18
+      },
+      "mass_g": 29.382223032093112,
+      "material": "Default",
+      "measured_by": "smlib",
+      "name": "PrimitiveCsg",
+      "notes": [],
+      "vertices": 16,
+      "volume_mm3": 22776.917079141946
+    }
+  ],
+  "body_count": 1,
+  "params": [],
+  "sketches": [],
+  "timeline": [
+    {
+      "error": null,
+      "id": 1,
+      "ms": 3.992891,
+      "name": "Sphere1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "SphereFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 2,
+      "ms": 36.972599,
+      "name": "Box1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 3,
+      "ms": 184.58865699999998,
+      "name": "Cylinder1",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "CylinderFeature",
+      "warning": null
+    },
+    {
+      "error": null,
+      "id": 4,
+      "ms": 120.403154,
+      "name": "Box2",
+      "rolled_back": false,
+      "suppressed": false,
+      "type": "BoxFeature",
+      "warning": null
+    }
+  ],
+  "total": {
+    "area_mm2": 5306.854625995472,
+    "edges": 23,
+    "faces": 9,
+    "mass_g": 29.382223032093112,
+    "open_bodies_skipped": 0,
+    "vertices": 16,
+    "volume_mm3": 22776.917079141946
+  }
+}

@@ -1,278 +1,71 @@
 {
   "checks": [
     {
-      "artifacts": [
-        {
-          "kind": "file",
-          "path": "baseline/measurements.json",
-          "sha256": "7c5acf9f2f29c1f7f4a861b2de06f83834d018fde2980b71ea1a6c6286bd299e",
-          "size": 2660
-        }
-      ],
+      "artifacts": [],
       "error": null,
       "evidence": {
-        "body_count": {
-          "actual": 1,
-          "expected": 1,
-          "label": "SolidCraft body count",
-          "pass": true
+        "bounds": {
+          "actual_max": [
+            20.0,
+            12.0,
+            10.0
+          ],
+          "actual_min": [
+            -20.0,
+            -12.0,
+            -10.0
+          ],
+          "expected_max": [
+            20.0,
+            12.0,
+            10.0
+          ],
+          "expected_min": [
+            -20.0,
+            -12.0,
+            -10.0
+          ],
+          "max_delta_mm": 0.0,
+          "pass": true,
+          "tolerance_mm": 0.3
         },
-        "parameters": {
-          "actual": {
-            "axis_x": 8.0,
-            "axis_z": 3.0
-          },
-          "expected": {
-            "axis_x": 8.0,
-            "axis_z": 3.0
-          },
-          "label": "SolidCraft parameters",
-          "pass": true
-        }
-      },
-      "id": "baseline",
-      "reason": null,
-      "status": "pass"
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "file",
-          "path": "saved_designs/suppressed/model.sc",
-          "sha256": "862d95cfe286734b82569359a8b2482e7554439a3925930e200c6f4d8c18c059",
-          "size": 5469
-        },
-        {
-          "kind": "file",
-          "path": "saved_designs/suppressed/measurements.json",
-          "sha256": "429b34f627eac2815e67a056475cff7a843b4c76c065a9c5c035630dc29a1602",
-          "size": 2573
-        }
-      ],
-      "error": null,
-      "evidence": {
-        "body_count": {
-          "actual": 1,
-          "expected": 1,
-          "label": "SolidCraft body count",
-          "pass": true
-        },
-        "changes": [
+        "surface_distance_probes": [
           {
-            "comparison": {
-              "actual": {
-                "absolute_delta": 288.96369227718606,
-                "baseline": 18911.036307722818,
-                "mutated": 19200.000000000004
-              },
-              "expected": {
-                "absolute_delta_gt": 10.0
-              },
-              "label": "SolidCraft saved design change whole-revolve-cut",
-              "pass": true
-            },
-            "id": "whole-revolve-cut",
-            "path": [
-              "bodies",
-              0,
-              "volume_mm3"
-            ]
+            "actual_mm": 1.8412752410550917,
+            "delta_mm": 0.008724758944908428,
+            "expected_mm": 1.85,
+            "label": "center of stepped through cut",
+            "pass": true,
+            "point": [
+              8.0,
+              0.0,
+              3.0
+            ],
+            "tolerance_mm": 0.3
           }
         ],
-        "parameters": {
-          "actual": {
-            "axis_x": 8.0,
-            "axis_z": 3.0
-          },
-          "expected": {
-            "axis_x": 8.0,
-            "axis_z": 3.0
-          },
-          "label": "SolidCraft parameters",
+        "volume": {
+          "actual_mm3": 18911.941856175334,
+          "delta_mm3": 0.9055484525233624,
+          "expected_mm3": 18911.03630772281,
+          "pass": true,
+          "tolerance_mm3": 6.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
           "pass": true
         }
       },
-      "id": "saved_design_suppressed",
-      "reason": null,
-      "status": "pass"
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "file",
-          "path": "inspections/table/results.json",
-          "sha256": "bb157b080081f9d6453c494968dc89494e58fd6495d83d93fa012a35831ec52d",
-          "size": 615
-        }
-      ],
-      "error": null,
-      "evidence": {
-        "checks": [
-          {
-            "comparison": {
-              "actual": 2,
-              "expected": 2,
-              "label": "SolidCraft inspection check rows",
-              "pass": true
-            },
-            "id": "rows",
-            "path": [
-              0,
-              "rows"
-            ]
-          },
-          {
-            "comparison": {
-              "actual": 1,
-              "expected": 1,
-              "label": "SolidCraft inspection check columns",
-              "pass": true
-            },
-            "id": "columns",
-            "path": [
-              0,
-              "columns"
-            ]
-          },
-          {
-            "comparison": {
-              "actual": "Cut",
-              "expected": "Cut",
-              "label": "SolidCraft inspection check active",
-              "pass": true
-            },
-            "id": "active",
-            "path": [
-              0,
-              "active"
-            ]
-          },
-          {
-            "comparison": {
-              "actual": true,
-              "expected": true,
-              "label": "SolidCraft inspection check matches",
-              "pass": true
-            },
-            "id": "matches",
-            "path": [
-              0,
-              "matches"
-            ]
-          }
-        ]
-      },
-      "id": "inspection_table",
-      "reason": null,
-      "status": "pass"
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "file",
-          "path": "inspections/revolve-axis/results.json",
-          "sha256": "6bb1eb7f57015b5bc7045189e0961129fc050e5dee5e519a85febf26aaa0dbaf",
-          "size": 798
-        }
-      ],
-      "error": null,
-      "evidence": {
-        "checks": [
-          {
-            "comparison": {
-              "actual": "axis_x",
-              "expected": "axis_x",
-              "label": "SolidCraft inspection check axis-x",
-              "pass": true
-            },
-            "id": "axis-x",
-            "path": [
-              0,
-              "definition",
-              "axis",
-              "origin",
-              0
-            ]
-          },
-          {
-            "comparison": {
-              "actual": "axis_z",
-              "expected": "axis_z",
-              "label": "SolidCraft inspection check axis-z",
-              "pass": true
-            },
-            "id": "axis-z",
-            "path": [
-              0,
-              "definition",
-              "axis",
-              "origin",
-              2
-            ]
-          },
-          {
-            "comparison": {
-              "actual": [
-                0.0,
-                1.0,
-                0.0
-              ],
-              "expected": [
-                0.0,
-                1.0,
-                0.0
-              ],
-              "label": "SolidCraft inspection check axis-dir",
-              "pass": true
-            },
-            "id": "axis-dir",
-            "path": [
-              0,
-              "definition",
-              "axis",
-              "dir"
-            ]
-          },
-          {
-            "comparison": {
-              "actual": "line",
-              "expected": "line",
-              "label": "SolidCraft inspection check axis-type",
-              "pass": true
-            },
-            "id": "axis-type",
-            "path": [
-              0,
-              "definition",
-              "axis",
-              "type"
-            ]
-          },
-          {
-            "comparison": {
-              "actual": "cut",
-              "expected": "cut",
-              "label": "SolidCraft inspection check operation",
-              "pass": true
-            },
-            "id": "operation",
-            "path": [
-              0,
-              "definition",
-              "operation"
-            ]
-          }
-        ]
-      },
-      "id": "inspection_revolve-axis",
+      "id": "geometry",
       "reason": null,
       "status": "pass"
     }
   ],
-  "input": "/output/models/shifted-axis-revolve/scpf/model.sc",
+  "input": "/output/models/shifted-axis-revolve/scpf/model.stl",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,
   "status": "pass",
-  "verification_id": "shifted-axis-revolve"
+  "verification_id": "shifted-axis-revolve-scpf-geometry"
 }

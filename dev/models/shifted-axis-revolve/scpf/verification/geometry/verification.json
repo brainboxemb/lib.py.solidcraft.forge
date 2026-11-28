@@ -1,0 +1,71 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            20.0,
+            12.0,
+            10.0
+          ],
+          "actual_min": [
+            -20.0,
+            -12.0,
+            -10.0
+          ],
+          "expected_max": [
+            20.0,
+            12.0,
+            10.0
+          ],
+          "expected_min": [
+            -20.0,
+            -12.0,
+            -10.0
+          ],
+          "max_delta_mm": 0.0,
+          "pass": true,
+          "tolerance_mm": 0.3
+        },
+        "surface_distance_probes": [
+          {
+            "actual_mm": 1.8412752410550917,
+            "delta_mm": 0.008724758944908428,
+            "expected_mm": 1.85,
+            "label": "center of stepped through cut",
+            "pass": true,
+            "point": [
+              8.0,
+              0.0,
+              3.0
+            ],
+            "tolerance_mm": 0.3
+          }
+        ],
+        "volume": {
+          "actual_mm3": 18911.941856175334,
+          "delta_mm3": 0.9055484525233624,
+          "expected_mm3": 18911.03630772281,
+          "pass": true,
+          "tolerance_mm3": 6.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/shifted-axis-revolve/scpf/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "shifted-axis-revolve-scpf-geometry"
+}

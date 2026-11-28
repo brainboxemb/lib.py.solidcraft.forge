@@ -1,0 +1,153 @@
+{
+  "backend": "mitcad",
+  "commands": [
+    {
+      "cmd": "add_parameter",
+      "name": "radius",
+      "unit": "mm",
+      "value": 4.0
+    },
+    {
+      "cmd": "add_parameter",
+      "name": "length",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "cmd": "add_parameter",
+      "expression": "360 deg",
+      "name": "sweep",
+      "unit": "deg"
+    },
+    {
+      "as": "sk",
+      "cmd": "add_feature",
+      "def": {
+        "constraints": [
+          {
+            "id": "k9",
+            "line": "c5",
+            "type": "vertical"
+          },
+          {
+            "id": "k10",
+            "line": "c6",
+            "type": "horizontal"
+          },
+          {
+            "id": "k11",
+            "line": "c7",
+            "type": "vertical"
+          },
+          {
+            "id": "k12",
+            "line": "c8",
+            "type": "horizontal"
+          }
+        ],
+        "dimensions": [
+          {
+            "id": "k13",
+            "line": "c5",
+            "type": "length",
+            "value": "radius"
+          },
+          {
+            "id": "k14",
+            "line": "c6",
+            "type": "length",
+            "value": "length"
+          }
+        ],
+        "entities": [
+          {
+            "at": [
+              0.0,
+              0.0
+            ],
+            "fixed": true,
+            "id": "p1",
+            "type": "point"
+          },
+          {
+            "at": [
+              0.0,
+              4.0
+            ],
+            "id": "p2",
+            "type": "point"
+          },
+          {
+            "at": [
+              10.0,
+              4.0
+            ],
+            "id": "p3",
+            "type": "point"
+          },
+          {
+            "at": [
+              10.0,
+              0.0
+            ],
+            "id": "p4",
+            "type": "point"
+          },
+          {
+            "end": "p2",
+            "id": "c5",
+            "start": "p1",
+            "type": "line"
+          },
+          {
+            "end": "p3",
+            "id": "c6",
+            "start": "p2",
+            "type": "line"
+          },
+          {
+            "end": "p4",
+            "id": "c7",
+            "start": "p3",
+            "type": "line"
+          },
+          {
+            "end": "p1",
+            "id": "c8",
+            "start": "p4",
+            "type": "line"
+          }
+        ],
+        "plane": "xz",
+        "type": "sketch"
+      },
+      "name": "RadialProfile"
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "axis": "x",
+        "extent": {
+          "angle": "sweep",
+          "type": "angle"
+        },
+        "operation": "new_body",
+        "profiles": [
+          {
+            "point": [
+              5.0,
+              2.0
+            ],
+            "sketch": {
+              "ref": "sk.uid"
+            }
+          }
+        ],
+        "type": "revolve"
+      },
+      "name": "NativeRevolve"
+    }
+  ],
+  "format": "scpf-mitcad",
+  "version": 1
+}

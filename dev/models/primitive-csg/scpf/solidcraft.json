@@ -48,6 +48,9 @@
       }
     },
     {
+      "bind": {
+        "$config_name_1": "name"
+      },
       "command": "solid.box",
       "params": {
         "center": [
@@ -63,6 +66,69 @@
         ],
         "width": 50
       }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "$config_name_1"
+        ]
+      }
+    },
+    {
+      "bind": {
+        "$config_row_2c7bf046bc77": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Clipped"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Clipped"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Clipped",
+        "values": {
+          "suppress:$config_name_1": "false"
+        }
+      }
+    },
+    {
+      "bind": {
+        "$config_row_661b265be040": {
+          "field": "rows",
+          "select": "id",
+          "where": {
+            "name": "Unclipped"
+          }
+        }
+      },
+      "command": "config.row",
+      "params": {
+        "name": "Unclipped",
+        "values": {
+          "suppress:$config_name_1": "true"
+        }
+      }
+    },
+    {
+      "command": "config.activate",
+      "params": {
+        "row": "$config_row_2c7bf046bc77"
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
     }
-  ]
+  ],
+  "format": "scpf-replay",
+  "version": 2
 }

@@ -1,0 +1,615 @@
+{
+  "format": "mitcad",
+  "version": 2,
+  "units": {
+    "length": "mm",
+    "angle": "deg"
+  },
+  "parameters": [
+    {
+      "name": "axis_z",
+      "expression": "3 mm",
+      "unit": "mm",
+      "value": 3.0,
+      "comment": ""
+    },
+    {
+      "name": "axis_x",
+      "expression": "8 mm",
+      "unit": "mm",
+      "value": 8.0,
+      "comment": ""
+    },
+    {
+      "name": "relief_d",
+      "expression": "4.5 mm",
+      "unit": "mm",
+      "value": 4.5,
+      "comment": ""
+    },
+    {
+      "name": "core_d",
+      "expression": "3.7 mm",
+      "unit": "mm",
+      "value": 3.7,
+      "comment": ""
+    },
+    {
+      "name": "d1",
+      "expression": "40 mm",
+      "unit": "mm",
+      "value": 40.0,
+      "comment": "ShiftedAxisRevolveBase length",
+      "owner": "F1"
+    },
+    {
+      "name": "d2",
+      "expression": "24 mm",
+      "unit": "mm",
+      "value": 24.0,
+      "comment": "ShiftedAxisRevolveBase width",
+      "owner": "F1"
+    },
+    {
+      "name": "d3",
+      "expression": "20 mm",
+      "unit": "mm",
+      "value": 20.0,
+      "comment": "ShiftedAxisRevolveBase height",
+      "owner": "F1"
+    },
+    {
+      "name": "d4",
+      "expression": "-12 mm",
+      "unit": "mm",
+      "value": -12.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d5",
+      "expression": "axis_x + (relief_d / 2)",
+      "unit": "mm",
+      "value": 10.25,
+      "comment": "Stepped pass through horizontal_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d6",
+      "expression": "-12 mm",
+      "unit": "mm",
+      "value": -12.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d7",
+      "expression": "axis_x + (relief_d / 2)",
+      "unit": "mm",
+      "value": 10.25,
+      "comment": "Stepped pass through horizontal_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d8",
+      "expression": "-9 mm",
+      "unit": "mm",
+      "value": -9.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d9",
+      "expression": "axis_x + (core_d / 2)",
+      "unit": "mm",
+      "value": 9.85,
+      "comment": "Stepped pass through horizontal_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d10",
+      "expression": "-9 mm",
+      "unit": "mm",
+      "value": -9.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d11",
+      "expression": "axis_x + (core_d / 2)",
+      "unit": "mm",
+      "value": 9.85,
+      "comment": "Stepped pass through horizontal_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d12",
+      "expression": "9 mm",
+      "unit": "mm",
+      "value": 9.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d13",
+      "expression": "axis_x + (relief_d / 2)",
+      "unit": "mm",
+      "value": 10.25,
+      "comment": "Stepped pass through horizontal_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d14",
+      "expression": "9 mm",
+      "unit": "mm",
+      "value": 9.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d15",
+      "expression": "axis_x + (relief_d / 2)",
+      "unit": "mm",
+      "value": 10.25,
+      "comment": "Stepped pass through horizontal_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d16",
+      "expression": "12 mm",
+      "unit": "mm",
+      "value": 12.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d17",
+      "expression": "12 mm",
+      "unit": "mm",
+      "value": 12.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d18",
+      "expression": "-1 mm",
+      "unit": "mm",
+      "value": -1.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d19",
+      "expression": "1 mm",
+      "unit": "mm",
+      "value": 1.0,
+      "comment": "Stepped pass through vertical_distance",
+      "owner": "F3"
+    },
+    {
+      "name": "__forge_suppress_root",
+      "expression": "0",
+      "unit": "",
+      "value": 0.0,
+      "comment": ""
+    }
+  ],
+  "components": [
+    {
+      "uid": "C1",
+      "name": "Component1"
+    }
+  ],
+  "occurrences": [
+    {
+      "uid": "O1",
+      "component": "C1",
+      "parent": "C0",
+      "number": 1
+    }
+  ],
+  "active_component": "C1",
+  "features": [
+    {
+      "uid": "F1",
+      "name": "ShiftedAxisRevolveBase",
+      "component": "C1",
+      "type": "box",
+      "plane": "xy",
+      "corner": [
+        -20.0,
+        -12.0
+      ],
+      "length": "d1",
+      "width": "d2",
+      "height": "d3",
+      "symmetric": true,
+      "operation": "new_body"
+    },
+    {
+      "uid": "F2",
+      "name": "Plane1",
+      "component": "C1",
+      "type": "construction_plane",
+      "definition": {
+        "type": "offset",
+        "plane": "xy",
+        "distance": "axis_z"
+      }
+    },
+    {
+      "uid": "F3",
+      "name": "Stepped pass through",
+      "component": "C1",
+      "type": "sketch",
+      "plane": "F2",
+      "entities": [
+        {
+          "id": "p1",
+          "type": "point",
+          "at": [
+            0.0,
+            0.0
+          ],
+          "fixed": true
+        },
+        {
+          "id": "p2",
+          "type": "point",
+          "at": [
+            8.0,
+            -12.0
+          ]
+        },
+        {
+          "id": "p3",
+          "type": "point",
+          "at": [
+            10.25,
+            -12.0
+          ]
+        },
+        {
+          "id": "p4",
+          "type": "point",
+          "at": [
+            10.25,
+            -9.0
+          ]
+        },
+        {
+          "id": "p5",
+          "type": "point",
+          "at": [
+            9.85,
+            -9.0
+          ]
+        },
+        {
+          "id": "p6",
+          "type": "point",
+          "at": [
+            9.85,
+            9.0
+          ]
+        },
+        {
+          "id": "p7",
+          "type": "point",
+          "at": [
+            10.25,
+            9.0
+          ]
+        },
+        {
+          "id": "p8",
+          "type": "point",
+          "at": [
+            10.25,
+            12.0
+          ]
+        },
+        {
+          "id": "p9",
+          "type": "point",
+          "at": [
+            8.0,
+            12.0
+          ]
+        },
+        {
+          "id": "c10",
+          "type": "line",
+          "start": "p2",
+          "end": "p3"
+        },
+        {
+          "id": "c11",
+          "type": "line",
+          "start": "p3",
+          "end": "p4"
+        },
+        {
+          "id": "c12",
+          "type": "line",
+          "start": "p4",
+          "end": "p5"
+        },
+        {
+          "id": "c13",
+          "type": "line",
+          "start": "p5",
+          "end": "p6"
+        },
+        {
+          "id": "c14",
+          "type": "line",
+          "start": "p6",
+          "end": "p7"
+        },
+        {
+          "id": "c15",
+          "type": "line",
+          "start": "p7",
+          "end": "p8"
+        },
+        {
+          "id": "c16",
+          "type": "line",
+          "start": "p8",
+          "end": "p9"
+        },
+        {
+          "id": "c17",
+          "type": "line",
+          "start": "p9",
+          "end": "p2"
+        },
+        {
+          "id": "p18",
+          "type": "point",
+          "at": [
+            0.0,
+            0.0
+          ],
+          "fixed": true
+        },
+        {
+          "id": "p19",
+          "type": "point",
+          "at": [
+            8.0,
+            -1.0
+          ]
+        },
+        {
+          "id": "p20",
+          "type": "point",
+          "at": [
+            8.0,
+            1.0
+          ]
+        },
+        {
+          "id": "c21",
+          "type": "line",
+          "start": "p19",
+          "end": "p20",
+          "construction": true
+        }
+      ],
+      "constraints": [
+        {
+          "id": "k34",
+          "type": "vertical",
+          "line": "c21"
+        }
+      ],
+      "dimensions": [
+        {
+          "id": "k18",
+          "type": "horizontal_distance",
+          "a": "p1",
+          "b": "p2",
+          "signed": true,
+          "value": "axis_x"
+        },
+        {
+          "id": "k19",
+          "type": "vertical_distance",
+          "a": "p1",
+          "b": "p2",
+          "signed": true,
+          "value": "d4"
+        },
+        {
+          "id": "k20",
+          "type": "horizontal_distance",
+          "a": "p1",
+          "b": "p3",
+          "signed": true,
+          "value": "d5"
+        },
+        {
+          "id": "k21",
+          "type": "vertical_distance",
+          "a": "p1",
+          "b": "p3",
+          "signed": true,
+          "value": "d6"
+        },
+        {
+          "id": "k22",
+          "type": "horizontal_distance",
+          "a": "p1",
+          "b": "p4",
+          "signed": true,
+          "value": "d7"
+        },
+        {
+          "id": "k23",
+          "type": "vertical_distance",
+          "a": "p1",
+          "b": "p4",
+          "signed": true,
+          "value": "d8"
+        },
+        {
+          "id": "k24",
+          "type": "horizontal_distance",
+          "a": "p1",
+          "b": "p5",
+          "signed": true,
+          "value": "d9"
+        },
+        {
+          "id": "k25",
+          "type": "vertical_distance",
+          "a": "p1",
+          "b": "p5",
+          "signed": true,
+          "value": "d10"
+        },
+        {
+          "id": "k26",
+          "type": "horizontal_distance",
+          "a": "p1",
+          "b": "p6",
+          "signed": true,
+          "value": "d11"
+        },
+        {
+          "id": "k27",
+          "type": "vertical_distance",
+          "a": "p1",
+          "b": "p6",
+          "signed": true,
+          "value": "d12"
+        },
+        {
+          "id": "k28",
+          "type": "horizontal_distance",
+          "a": "p1",
+          "b": "p7",
+          "signed": true,
+          "value": "d13"
+        },
+        {
+          "id": "k29",
+          "type": "vertical_distance",
+          "a": "p1",
+          "b": "p7",
+          "signed": true,
+          "value": "d14"
+        },
+        {
+          "id": "k30",
+          "type": "horizontal_distance",
+          "a": "p1",
+          "b": "p8",
+          "signed": true,
+          "value": "d15"
+        },
+        {
+          "id": "k31",
+          "type": "vertical_distance",
+          "a": "p1",
+          "b": "p8",
+          "signed": true,
+          "value": "d16"
+        },
+        {
+          "id": "k32",
+          "type": "horizontal_distance",
+          "a": "p1",
+          "b": "p9",
+          "signed": true,
+          "value": "axis_x"
+        },
+        {
+          "id": "k33",
+          "type": "vertical_distance",
+          "a": "p1",
+          "b": "p9",
+          "signed": true,
+          "value": "d17"
+        },
+        {
+          "id": "k35",
+          "type": "horizontal_distance",
+          "a": "p18",
+          "b": "p19",
+          "signed": true,
+          "value": "axis_x"
+        },
+        {
+          "id": "k36",
+          "type": "vertical_distance",
+          "a": "p18",
+          "b": "p19",
+          "signed": true,
+          "value": "d18"
+        },
+        {
+          "id": "k37",
+          "type": "vertical_distance",
+          "a": "p18",
+          "b": "p20",
+          "signed": true,
+          "value": "d19"
+        }
+      ]
+    },
+    {
+      "uid": "F4",
+      "name": "ShiftedAxisRevolve",
+      "suppressed_when": "__forge_suppress_root > 0",
+      "component": "C1",
+      "type": "revolve",
+      "profiles": [
+        {
+          "sketch": "F3",
+          "region": "r{c10[c17,c11],c11[c10,c12],c12[c11,c13],c13[c12,c14],c14[c13,c15],c15[c14,c16],c16[c15,c17],c17[c16,c10]}"
+        }
+      ],
+      "axis": {
+        "curve": "c21",
+        "sketch": "F3"
+      },
+      "extent": {
+        "type": "full"
+      },
+      "operation": "cut",
+      "participants": [
+        "F1.b0"
+      ]
+    }
+  ],
+  "bodies": [
+    {
+      "uid": "F1.b0",
+      "name": "Body1"
+    }
+  ],
+  "configurations": {
+    "closed": true,
+    "parameters": [
+      "__forge_suppress_root"
+    ],
+    "default": "Cut",
+    "rows": [
+      {
+        "name": "Cut",
+        "values": {
+          "__forge_suppress_root": "0"
+        }
+      },
+      {
+        "name": "Suppressed",
+        "values": {
+          "__forge_suppress_root": "1"
+        }
+      }
+    ]
+  }
+}

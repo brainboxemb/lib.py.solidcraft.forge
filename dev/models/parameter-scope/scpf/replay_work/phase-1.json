@@ -21,12 +21,12 @@
         "length": "d1_Panel_width",
         "width": 20.0,
         "height": 10.0,
-        "operation": "new",
         "corner": [
           "-(d1_Panel_width / 2)",
           -10.0,
           0.0
         ],
+        "operation": "new",
         "body_name": "Panel"
       }
     },
@@ -57,12 +57,12 @@
         "length": "d2_Panel_2_width",
         "width": 20.0,
         "height": 10.0,
-        "operation": "new",
         "corner": [
           "-(d2_Panel_2_width / 2) + 100 mm",
           -10.0,
           0.0
         ],
+        "operation": "new",
         "body_name": "Panel_2"
       }
     },
@@ -93,12 +93,12 @@
         "length": "shared_width",
         "width": 20.0,
         "height": 10.0,
-        "operation": "new",
         "corner": [
           "-(shared_width / 2) + 220 mm",
           -10.0,
           0.0
         ],
+        "operation": "new",
         "body_name": "Panel_3"
       }
     },
@@ -132,12 +132,12 @@
         "length": "shared_width / 2",
         "width": 20.0,
         "height": 10.0,
-        "operation": "new",
         "corner": [
           "-((shared_width / 2) / 2) + 460 mm",
           -10.0,
           0.0
         ],
+        "operation": "new",
         "body_name": "Panel_4"
       }
     },
