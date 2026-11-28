@@ -169,21 +169,6 @@ def _suppression_command_index(design, name, commands, feature):
     from .compiler import ModelError, _compile_model_commands
 
     if isinstance(design, Shape):
-        if isinstance(feature, Shape) and feature.kind == "named_feature":
-            feature_name = feature.data[1]
-            semantic_variable = f"$feature_{feature_name}_name"
-            semantic_matches = [
-                index
-                for index, command in enumerate(commands)
-                if semantic_variable in command.get("bind", {})
-            ]
-            if len(semantic_matches) == 1:
-                return semantic_matches[0]
-            if len(semantic_matches) > 1:
-                raise ModelError(
-                    "named suppression feature resolves ambiguously"
-                )
-
         prefix = _feature_prefix(design, feature)
         if prefix is None:
             raise ModelError(
@@ -256,22 +241,6 @@ def _suppression_command_index(design, name, commands, feature):
                 ) from exc
         elif not _shape_contains(definition.shape, source):
             continue
-
-        if isinstance(source, Shape) and source.kind == "named_feature":
-            semantic_name = source.data[1]
-            semantic_variable = (
-                f"$d{definition_number}_"
-                f"{_component_slug(names[key])}_"
-                f"feature_{semantic_name}_name"
-            )
-            semantic_matches = [
-                index
-                for index, command in enumerate(commands)
-                if semantic_variable in command.get("bind", {})
-            ]
-            if semantic_matches:
-                matches.extend(semantic_matches)
-                continue
 
         prefix = _feature_prefix(definition.shape, source)
         if prefix is None:
