@@ -83,7 +83,7 @@
       "SamplePlate"
     ],
     "feature": 4,
-    "ms": 8.879980000000002,
+    "ms": 8.977949,
     "name": "Extrude1",
     "removed_bodies": [],
     "warning": null
@@ -97,7 +97,7 @@
     ],
     "created_bodies": [],
     "feature": 5,
-    "ms": 40.549632,
+    "ms": 41.446239000000006,
     "name": "Fillet1",
     "removed_bodies": [],
     "warning": null
@@ -399,7 +399,7 @@
     ],
     "created_bodies": [],
     "feature": 7,
-    "ms": 62.066213000000005,
+    "ms": 63.170950000000005,
     "name": "Holes",
     "removed_bodies": [],
     "warning": null
@@ -413,7 +413,7 @@
     ],
     "created_bodies": [],
     "feature": 8,
-    "ms": 62.833940000000005,
+    "ms": 63.54481800000001,
     "name": "RectangularPattern1",
     "removed_bodies": [],
     "warning": null
@@ -427,7 +427,7 @@
     ],
     "created_bodies": [],
     "feature": 9,
-    "ms": 50.146144,
+    "ms": 49.76762,
     "name": "Cylinder1",
     "removed_bodies": [],
     "warning": null
@@ -482,7 +482,7 @@
     ],
     "created_bodies": [],
     "feature": 11,
-    "ms": 60.606741,
+    "ms": 60.606707,
     "name": "Bore",
     "removed_bodies": [],
     "warning": null
@@ -494,7 +494,7 @@
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "3k6t2r18r24r4",
+    "id": "dd6cpbjy4v1mn",
     "language": "en",
     "line_group": "0.5",
     "name": "Sample Plate Drawing",
@@ -518,7 +518,7 @@
           "count": false,
           "print": false
         },
-        "id": "9qpaszpnhvb08",
+        "id": "7zn27mm1cs7fs",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -1216,7 +1216,7 @@
     ],
     "sources": [
       {
-        "id": "c7q0j8ztc2ae7"
+        "id": "91qkmtnapj3kc"
       }
     ],
     "symbols": [],
@@ -1230,7 +1230,7 @@
   {
     "sheets": [
       {
-        "id": "9qpaszpnhvb08",
+        "id": "7zn27mm1cs7fs",
         "name": "Sheet 1"
       }
     ]
@@ -1239,7 +1239,7 @@
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "3k6t2r18r24r4",
+    "id": "dd6cpbjy4v1mn",
     "language": "en",
     "line_group": "0.5",
     "name": "Sample Plate Drawing",
@@ -1259,14 +1259,14 @@
       {
         "documents": {
           "component": 1,
-          "source": "c7q0j8ztc2ae7"
+          "source": "91qkmtnapj3kc"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "9qpaszpnhvb08",
+        "id": "7zn27mm1cs7fs",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -1981,7 +1981,7 @@
     ],
     "sources": [
       {
-        "id": "c7q0j8ztc2ae7"
+        "id": "91qkmtnapj3kc"
       }
     ],
     "symbols": [],
@@ -2010,7 +2010,7 @@
   },
   {
     "next": "1",
-    "row": "1t47w9gv2b444",
+    "row": "ckxcfxewp2syj",
     "rows": [
       {
         "checker": "CI",
@@ -2019,12 +2019,12 @@
         "designer": "Forge",
         "hidden": false,
         "revision": "A",
-        "row": "1t47w9gv2b444"
+        "row": "ckxcfxewp2syj"
       }
     ]
   },
   {
-    "iso": "8ayj5xv078twq",
+    "iso": "1cje9p048sr1p",
     "outside": [
       {
         "boundary_mm": {
@@ -2037,7 +2037,7 @@
             58.6327526665666
           ]
         },
-        "view": "cy8bv6a1bd0gr"
+        "view": "bhddq7sfya9ap"
       },
       {
         "boundary_mm": {
@@ -2050,26 +2050,26 @@
             58.6327526665666
           ]
         },
-        "view": "7746z1xfwrv0v"
+        "view": "61sm412314p8m"
       }
     ],
-    "right": "7746z1xfwrv0v",
+    "right": "61sm412314p8m",
     "scale": {
       "factor": 1.0,
       "fitted": false,
       "text": "1:1"
     },
-    "sheet": "9qpaszpnhvb08",
-    "top": "06bya4t2jjjja",
-    "view": "cy8bv6a1bd0gr"
+    "sheet": "7zn27mm1cs7fs",
+    "top": "20p2tvezspeck",
+    "view": "bhddq7sfya9ap"
   },
   {
     "changed": [
       "source"
     ],
     "followers": [
-      "06bya4t2jjjja",
-      "7746z1xfwrv0v"
+      "20p2tvezspeck",
+      "61sm412314p8m"
     ],
     "outside": [
       {
@@ -2083,7 +2083,7 @@
             58.6327526665666
           ]
         },
-        "view": "cy8bv6a1bd0gr"
+        "view": "bhddq7sfya9ap"
       },
       {
         "boundary_mm": {
@@ -2096,24 +2096,24 @@
             58.6327526665666
           ]
         },
-        "view": "7746z1xfwrv0v"
+        "view": "61sm412314p8m"
       }
     ],
-    "view": "cy8bv6a1bd0gr"
+    "view": "bhddq7sfya9ap"
   },
   {
     "changed": [
       "source"
     ],
     "followers": [],
-    "view": "8ayj5xv078twq"
+    "view": "1cje9p048sr1p"
   },
   {
     "changed": [
       "place"
     ],
     "followers": [],
-    "view": "cy8bv6a1bd0gr"
+    "view": "bhddq7sfya9ap"
   },
   {
     "changed": [
@@ -2121,7 +2121,7 @@
       "label"
     ],
     "followers": [],
-    "view": "06bya4t2jjjja"
+    "view": "20p2tvezspeck"
   },
   {
     "changed": [
@@ -2129,7 +2129,7 @@
       "label"
     ],
     "followers": [],
-    "view": "7746z1xfwrv0v"
+    "view": "61sm412314p8m"
   },
   {
     "changed": [
@@ -2137,10 +2137,10 @@
       "place"
     ],
     "followers": [],
-    "view": "8ayj5xv078twq"
+    "view": "1cje9p048sr1p"
   },
   {
-    "dimension": "7dtnrp2kspb72",
+    "dimension": "0atb7szyycg1k",
     "exact": true,
     "foreshortened": false,
     "layout": {
@@ -2224,7 +2224,7 @@
     "measured_text": "80",
     "record": {
       "decimals": 0,
-      "id": "7dtnrp2kspb72",
+      "id": "0atb7szyycg1k",
       "kind": {
         "faces": {
           "a": {
@@ -2248,15 +2248,15 @@
       },
       "offset_mm": 12.0,
       "text": "centred",
-      "view": "cy8bv6a1bd0gr"
+      "view": "bhddq7sfya9ap"
     },
     "status": "ok",
     "text": "80",
     "value": 80.0,
-    "view": "cy8bv6a1bd0gr"
+    "view": "bhddq7sfya9ap"
   },
   {
-    "dimension": "d3hx82y5dj09s",
+    "dimension": "d5my23a1bsmex",
     "exact": true,
     "foreshortened": false,
     "layout": {
@@ -2350,7 +2350,7 @@
     "measured_text": "8",
     "record": {
       "decimals": 0,
-      "id": "d3hx82y5dj09s",
+      "id": "d5my23a1bsmex",
       "kind": {
         "faces": {
           "a": {
@@ -2374,15 +2374,15 @@
       },
       "offset_mm": 10.0,
       "text": "centred",
-      "view": "cy8bv6a1bd0gr"
+      "view": "bhddq7sfya9ap"
     },
     "status": "ok",
     "text": "8",
     "value": 8.0,
-    "view": "cy8bv6a1bd0gr"
+    "view": "bhddq7sfya9ap"
   },
   {
-    "dimension": "22rmgcxjkv7np",
+    "dimension": "6nxcwg6ckswr3",
     "exact": true,
     "foreshortened": false,
     "layout": {
@@ -2466,7 +2466,7 @@
     "measured_text": "80",
     "record": {
       "decimals": 0,
-      "id": "22rmgcxjkv7np",
+      "id": "6nxcwg6ckswr3",
       "kind": {
         "faces": {
           "a": {
@@ -2490,15 +2490,15 @@
       },
       "offset_mm": 12.0,
       "text": "centred",
-      "view": "06bya4t2jjjja"
+      "view": "20p2tvezspeck"
     },
     "status": "ok",
     "text": "80",
     "value": 80.0,
-    "view": "06bya4t2jjjja"
+    "view": "20p2tvezspeck"
   },
   {
-    "dimension": "dyb4nzma29zqm",
+    "dimension": "8cx55chpwa5a7",
     "exact": true,
     "foreshortened": false,
     "layout": {
@@ -2582,7 +2582,7 @@
     "measured_text": "50",
     "record": {
       "decimals": 0,
-      "id": "dyb4nzma29zqm",
+      "id": "8cx55chpwa5a7",
       "kind": {
         "faces": {
           "a": {
@@ -2606,15 +2606,15 @@
       },
       "offset_mm": 10.0,
       "text": "centred",
-      "view": "06bya4t2jjjja"
+      "view": "20p2tvezspeck"
     },
     "status": "ok",
     "text": "50",
     "value": 50.0,
-    "view": "06bya4t2jjjja"
+    "view": "20p2tvezspeck"
   },
   {
-    "dimension": "0xkq20mggxdbg",
+    "dimension": "exes78ztjbdpd",
     "exact": true,
     "foreshortened": false,
     "layout": {
@@ -2677,7 +2677,7 @@
     "measured_text": "\u00d88",
     "record": {
       "decimals": 0,
-      "id": "0xkq20mggxdbg",
+      "id": "exes78ztjbdpd",
       "kind": {
         "radial": {
           "diameter": true,
@@ -2699,15 +2699,15 @@
           26.0
         ]
       },
-      "view": "06bya4t2jjjja"
+      "view": "20p2tvezspeck"
     },
     "status": "ok",
     "text": "2\u00d7 \u00d88 THRU",
     "value": 7.999999999999997,
-    "view": "06bya4t2jjjja"
+    "view": "20p2tvezspeck"
   },
   {
-    "dimension": "67n1ac2yk02dy",
+    "dimension": "43gm7j3ckx15w",
     "exact": true,
     "foreshortened": false,
     "layout": {
@@ -2770,7 +2770,7 @@
     "measured_text": "\u00d824",
     "record": {
       "decimals": 0,
-      "id": "67n1ac2yk02dy",
+      "id": "43gm7j3ckx15w",
       "kind": {
         "radial": {
           "diameter": true,
@@ -2791,21 +2791,21 @@
           7.0
         ]
       },
-      "view": "06bya4t2jjjja"
+      "view": "20p2tvezspeck"
     },
     "status": "ok",
     "text": "\u00d824",
     "value": 24.000000000000004,
-    "view": "06bya4t2jjjja"
+    "view": "20p2tvezspeck"
   },
   {
     "align": "left",
     "exact": true,
-    "note": "5vk4zd6j8en3p",
+    "note": "5kked5jyazqyz",
     "record": {
       "align": "left",
       "anchor": {
-        "sheet": "9qpaszpnhvb08"
+        "sheet": "7zn27mm1cs7fs"
       },
       "at": [
         156.0,
@@ -2817,7 +2817,7 @@
           "text": "NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES."
         }
       ],
-      "id": "5vk4zd6j8en3p"
+      "id": "5kked5jyazqyz"
     },
     "status": "ok",
     "text": "NOTES\n1. ALL DIMENSIONS IN MM.\n2. BREAK SHARP EDGES."
@@ -2974,15 +2974,15 @@
         "value": "shaded"
       }
     },
-    "sheet": "9qpaszpnhvb08",
-    "source": "c7q0j8ztc2ae7",
-    "view": "8ayj5xv078twq"
+    "sheet": "7zn27mm1cs7fs",
+    "source": "91qkmtnapj3kc",
+    "view": "1cje9p048sr1p"
   },
   {
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "3k6t2r18r24r4",
+    "id": "dd6cpbjy4v1mn",
     "language": "en",
     "line_group": "0.5",
     "name": "Sample Plate Drawing",
@@ -3009,7 +3009,7 @@
           "designer": "Forge",
           "hidden": false,
           "revision": "A",
-          "row": "1t47w9gv2b444"
+          "row": "ckxcfxewp2syj"
         }
       ],
       "tags": []
@@ -3018,19 +3018,19 @@
       {
         "documents": {
           "component": 1,
-          "source": "c7q0j8ztc2ae7"
+          "source": "91qkmtnapj3kc"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "9qpaszpnhvb08",
+        "id": "7zn27mm1cs7fs",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
         "notes": [
-          "5vk4zd6j8en3p"
+          "5kked5jyazqyz"
         ],
         "orientation": "landscape",
         "revision_tags": [],
@@ -3741,7 +3741,7 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "8ayj5xv078twq",
+            "id": "1cje9p048sr1p",
             "kind": "base",
             "label": "Iso front right",
             "notes": []
@@ -3749,10 +3749,10 @@
           {
             "balloons": [],
             "dimensions": [
-              "7dtnrp2kspb72",
-              "d3hx82y5dj09s"
+              "0atb7szyycg1k",
+              "d5my23a1bsmex"
             ],
-            "id": "cy8bv6a1bd0gr",
+            "id": "bhddq7sfya9ap",
             "kind": "base",
             "label": "Front",
             "notes": []
@@ -3760,26 +3760,26 @@
           {
             "balloons": [],
             "dimensions": [
-              "0xkq20mggxdbg",
-              "22rmgcxjkv7np",
-              "67n1ac2yk02dy",
-              "dyb4nzma29zqm"
+              "43gm7j3ckx15w",
+              "6nxcwg6ckswr3",
+              "8cx55chpwa5a7",
+              "exes78ztjbdpd"
             ],
-            "id": "06bya4t2jjjja",
+            "id": "20p2tvezspeck",
             "kind": "projected",
             "label": "Above Front",
             "notes": [],
-            "parent": "cy8bv6a1bd0gr",
+            "parent": "bhddq7sfya9ap",
             "side": "above"
           },
           {
             "balloons": [],
             "dimensions": [],
-            "id": "7746z1xfwrv0v",
+            "id": "61sm412314p8m",
             "kind": "projected",
             "label": "Right of Front",
             "notes": [],
-            "parent": "cy8bv6a1bd0gr",
+            "parent": "bhddq7sfya9ap",
             "side": "right"
           }
         ]
@@ -3787,7 +3787,7 @@
     ],
     "sources": [
       {
-        "id": "c7q0j8ztc2ae7"
+        "id": "91qkmtnapj3kc"
       }
     ],
     "symbols": [],
@@ -3799,13 +3799,13 @@
     }
   },
   {
-    "closed": "3k6t2r18r24r4"
+    "closed": "dd6cpbjy4v1mn"
   },
   {
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "71bm0a8gzyjw0",
+    "id": "cxpatrf4hqj12",
     "language": "en",
     "line_group": "0.5",
     "name": "Compact Sample Plate Drawing",
@@ -3829,7 +3829,7 @@
           "count": false,
           "print": false
         },
-        "id": "8bx4hahn3dxad",
+        "id": "84yvkx6bv0sas",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -4527,7 +4527,7 @@
     ],
     "sources": [
       {
-        "id": "axkeraf3y1aq3"
+        "id": "1aqwqwf7znnep"
       }
     ],
     "symbols": [],
@@ -4544,7 +4544,7 @@
     ],
     "sheets": [
       {
-        "id": "8bx4hahn3dxad",
+        "id": "84yvkx6bv0sas",
         "name": "Sheet 1"
       }
     ]
@@ -4553,7 +4553,7 @@
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "71bm0a8gzyjw0",
+    "id": "cxpatrf4hqj12",
     "language": "en",
     "line_group": "0.5",
     "name": "Compact Sample Plate Drawing",
@@ -4573,14 +4573,14 @@
       {
         "documents": {
           "component": 1,
-          "source": "axkeraf3y1aq3"
+          "source": "1aqwqwf7znnep"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "8bx4hahn3dxad",
+        "id": "84yvkx6bv0sas",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -5073,7 +5073,7 @@
     ],
     "sources": [
       {
-        "id": "axkeraf3y1aq3"
+        "id": "1aqwqwf7znnep"
       }
     ],
     "symbols": [],
@@ -5095,7 +5095,7 @@
     }
   },
   {
-    "iso": "cqb52640y86t2",
+    "iso": "29ygnzk7vkvne",
     "outside": [
       {
         "boundary_mm": {
@@ -5108,7 +5108,7 @@
             58.6327526665666
           ]
         },
-        "view": "6tngj1r54n64w"
+        "view": "bbaynzhwbz79b"
       },
       {
         "boundary_mm": {
@@ -5121,26 +5121,26 @@
             58.6327526665666
           ]
         },
-        "view": "dpaf0hq0a1ew5"
+        "view": "5xy4b87z2r45s"
       }
     ],
-    "right": "dpaf0hq0a1ew5",
+    "right": "5xy4b87z2r45s",
     "scale": {
       "factor": 1.0,
       "fitted": false,
       "text": "1:1"
     },
-    "sheet": "8bx4hahn3dxad",
-    "top": "2wge8ypcp9214",
-    "view": "6tngj1r54n64w"
+    "sheet": "84yvkx6bv0sas",
+    "top": "dam31edsaeb7s",
+    "view": "bbaynzhwbz79b"
   },
   {
     "changed": [
       "source"
     ],
     "followers": [
-      "2wge8ypcp9214",
-      "dpaf0hq0a1ew5"
+      "5xy4b87z2r45s",
+      "dam31edsaeb7s"
     ],
     "outside": [
       {
@@ -5154,7 +5154,7 @@
             58.6327526665666
           ]
         },
-        "view": "6tngj1r54n64w"
+        "view": "bbaynzhwbz79b"
       },
       {
         "boundary_mm": {
@@ -5167,24 +5167,24 @@
             58.6327526665666
           ]
         },
-        "view": "dpaf0hq0a1ew5"
+        "view": "5xy4b87z2r45s"
       }
     ],
-    "view": "6tngj1r54n64w"
+    "view": "bbaynzhwbz79b"
   },
   {
     "changed": [
       "source"
     ],
     "followers": [],
-    "view": "cqb52640y86t2"
+    "view": "29ygnzk7vkvne"
   },
   {
     "changed": [
       "place"
     ],
     "followers": [],
-    "view": "6tngj1r54n64w"
+    "view": "bbaynzhwbz79b"
   },
   {
     "changed": [
@@ -5192,7 +5192,7 @@
       "label"
     ],
     "followers": [],
-    "view": "2wge8ypcp9214"
+    "view": "dam31edsaeb7s"
   },
   {
     "changed": [
@@ -5200,7 +5200,7 @@
       "label"
     ],
     "followers": [],
-    "view": "dpaf0hq0a1ew5"
+    "view": "5xy4b87z2r45s"
   },
   {
     "changed": [
@@ -5208,7 +5208,7 @@
       "place"
     ],
     "followers": [],
-    "view": "cqb52640y86t2"
+    "view": "29ygnzk7vkvne"
   },
   {
     "balloons": [],
@@ -5362,15 +5362,15 @@
         "value": "shaded"
       }
     },
-    "sheet": "8bx4hahn3dxad",
-    "source": "axkeraf3y1aq3",
-    "view": "cqb52640y86t2"
+    "sheet": "84yvkx6bv0sas",
+    "source": "1aqwqwf7znnep",
+    "view": "29ygnzk7vkvne"
   },
   {
     "font": "",
     "font_fallbacks": [],
     "font_note": null,
-    "id": "71bm0a8gzyjw0",
+    "id": "cxpatrf4hqj12",
     "language": "en",
     "line_group": "0.5",
     "name": "Compact Sample Plate Drawing",
@@ -5393,14 +5393,14 @@
       {
         "documents": {
           "component": 1,
-          "source": "axkeraf3y1aq3"
+          "source": "1aqwqwf7znnep"
         },
         "dpi": 300.0,
         "excluded": {
           "count": false,
           "print": false
         },
-        "id": "8bx4hahn3dxad",
+        "id": "84yvkx6bv0sas",
         "images": [],
         "line_group": null,
         "name": "Sheet 1",
@@ -5892,7 +5892,15 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "6tngj1r54n64w",
+            "id": "29ygnzk7vkvne",
+            "kind": "base",
+            "label": "Iso front right",
+            "notes": []
+          },
+          {
+            "balloons": [],
+            "dimensions": [],
+            "id": "bbaynzhwbz79b",
             "kind": "base",
             "label": "Front",
             "notes": []
@@ -5900,37 +5908,29 @@
           {
             "balloons": [],
             "dimensions": [],
-            "id": "2wge8ypcp9214",
-            "kind": "projected",
-            "label": "Above Front",
-            "notes": [],
-            "parent": "6tngj1r54n64w",
-            "side": "above"
-          },
-          {
-            "balloons": [],
-            "dimensions": [],
-            "id": "dpaf0hq0a1ew5",
+            "id": "5xy4b87z2r45s",
             "kind": "projected",
             "label": "Right of Front",
             "notes": [],
-            "parent": "6tngj1r54n64w",
+            "parent": "bbaynzhwbz79b",
             "side": "right"
           },
           {
             "balloons": [],
             "dimensions": [],
-            "id": "cqb52640y86t2",
-            "kind": "base",
-            "label": "Iso front right",
-            "notes": []
+            "id": "dam31edsaeb7s",
+            "kind": "projected",
+            "label": "Above Front",
+            "notes": [],
+            "parent": "bbaynzhwbz79b",
+            "side": "above"
           }
         ]
       }
     ],
     "sources": [
       {
-        "id": "axkeraf3y1aq3"
+        "id": "1aqwqwf7znnep"
       }
     ],
     "symbols": [],
@@ -5942,6 +5942,6 @@
     }
   },
   {
-    "closed": "71bm0a8gzyjw0"
+    "closed": "cxpatrf4hqj12"
   }
 ]
