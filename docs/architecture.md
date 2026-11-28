@@ -36,6 +36,28 @@ Unsupported intent fails explicitly. Do not silently substitute Python variants,
 numeric flags, duplicated bodies or approximate geometry when that changes the
 public semantics.
 
+Compiler ownership follows the semantic boundary physically:
+
+- `scpf.compiler` is a stable facade with small backend-neutral dispatch,
+  validation/errors and private legacy compatibility lowering;
+- `scpf.backends.solidcraft` and `scpf.backends.mitcad` are stable backend
+  facades whose implementation modules own primitives, sketches, operations,
+  features/configuration and other backend-specific semantic domains;
+- backend dispatch modules select a domain lowering but do not reinterpret
+  frontend-private `Shape.data` in place of semantic IR.
+
+Testing is layered deliberately:
+
+1. frontend/normalizer tests prove public authoring -> semantic IR;
+2. backend contract tests prove semantic IR -> native command/document shape
+   without launching a CAD runtime;
+3. replay/transport tests prove command sequencing, binding and transport
+   behavior and may use explicitly scripted responses;
+4. native, geometry, topology and visual qualification use the real CAD engine.
+
+A scripted transport fake may return fixture responses for commands such as
+topology queries, but it never derives geometry or claims model correctness.
+
 Forge v0.27.0 evaluates the public SCPF frontend into typed engine-neutral
 semantic IR before backend lowering. SolidCraft and Mitcad consume that same
 semantic contract independently; unsupported backend paths fail closed rather
