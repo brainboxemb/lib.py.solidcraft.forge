@@ -407,7 +407,8 @@ class Expression:
 
 def _scaled_direction(direction, distance):
     """Return one cardinal direction scaled by a CAD dimension."""
-    from .selectors import _direction_selector\n    vector = _direction_selector(direction).vector
+    from .selectors import _direction_selector
+    vector = _direction_selector(direction).vector
     return tuple(
         0
         if component == 0
@@ -630,6 +631,7 @@ def command_value(dim):
     return dim
 
 def parameters_in(*values) -> tuple[Parameter, ...]:
+    from .selectors import _BoundOffset
     found = {}
     for value in values:
         if isinstance(value, Parameter):
