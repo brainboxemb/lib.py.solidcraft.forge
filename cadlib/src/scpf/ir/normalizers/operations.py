@@ -42,7 +42,7 @@ from ..sketch import (
     _region_interior_point,
 )
 from .body import _normalize_node
-from .sketch import _PLANE_AXES, _same_semantic_dimension, _sketch_ir_from_payload
+from .sketch import _PLANE_AXES, _PLANE_NORMAL_INDEX, _same_semantic_dimension, _sketch_ir_from_payload
 
 def _axis_line_ir(axis) -> AxisLineIR | None:
     """Normalize public principal/custom axis intent without native ids."""
