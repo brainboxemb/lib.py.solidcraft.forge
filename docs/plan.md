@@ -208,12 +208,27 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-No new structural implementation is selected after #674. The normal `dev`
-frontend now has typed reusable primitive Shape objects for Box, Sphere,
-Cylinder and Cone; `Shape.kind/data` is compatibility-only for remaining
-legacy paths rather than the source of new primitive/IR semantics.
+#682 is selected as the next structural change. Establish a canonical,
+versioned semantic-IR serialization boundary and a small set of layered
+contract fixtures before reorganizing the wider unit-test tree.
+
+The selected test slices are independent:
+- normal Python authoring fixture -> canonical semantic IR;
+- semantic IR serialize/deserialize round trip;
+- persisted semantic IR -> SolidCraft backend document;
+- the same persisted semantic IR -> Mitcad where that semantic slice is
+  supported;
+- backend document -> scripted replay;
+- selected real-runtime qualification remains the final geometry/topology gate.
+
+Python test modules stay readable orchestration/assertion code. Substantial
+source inputs and expected IR/backend documents live in adjacent fixture files.
+Shared OO contracts should use type/subTest matrices where the semantics are
+genuinely common, with type-specific tests kept separate.
 
 ## Next
+
+#681 follows #682 and will align the physical unit/contract-test ownership tree with the source-domain structure once the horizontal contract boundaries are explicit.
 
 #610 remains blocked on `brainboxemb/template.cad.library#119`; do not invent
 a Forge-local plan/log contract before the template contract is accepted.
