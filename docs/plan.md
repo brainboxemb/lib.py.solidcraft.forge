@@ -208,20 +208,22 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-#671 — modularize legacy feature lowering under compiler ownership.
+#674 — replace tagged primitive frontend nodes with typed reusable Shape objects.
 
-The root `scpf.features` module is legacy Shape -> SolidCraft ordered-feature
-lowering, not public feature authoring. Move that implementation under compiler
-ownership, split it by real lowering responsibility and keep `scpf.features`
-as a thin compatibility facade. Do not change public authoring, semantic IR,
-backend support, native output or fail-closed behavior.
+The current Box/Sphere/Cylinder/Cone constructors return generic
+`Shape(kind, data)` nodes and primitive semantics are rediscovered through
+string-kind switches in frontend behavior, semantic-IR placement normalization
+and legacy CSG lowering. Introduce a typed `Primitive` Shape abstraction with
+named primitive state while preserving the existing public constructor spelling
+and keeping `kind/data` only as a temporary compatibility view for untouched
+legacy paths. Frontend objects must remain backend-neutral.
 
 ## Next
 
 #610 remains blocked on `brainboxemb/template.cad.library#119`; do not invent
 a Forge-local plan/log contract before the template contract is accepted.
 
-After #671, reassess `assembly.py`, `model_objects.py` and `runner.py`
+After #674, reassess `assembly.py`, `model_objects.py` and `runner.py`
 independently. Select further structural work only where a concrete ownership or
 testability boundary exists.
 
