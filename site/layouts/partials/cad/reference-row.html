@@ -1,14 +1,18 @@
 <section class="cad-panel cad-reference-comparison" data-implementation="{{ .id }}">
-  <h3 class="cad-section-subtitle">{{ .id }} source · {{ .status | default "unavailable" }}</h3>
+  <h3 class="cad-section-subtitle">{{ .id }} {{ if .sharedsource }}result{{ else }}source{{ end }} · {{ .status | default "unavailable" }}</h3>
   <div class="cad-reference-grid">
     <div class="cad-reference-source">
+      {{ if .sharedsource }}
+      <p class="cad-section-help">Reuses the primary <code>{{ .path }}</code> source through the {{ .builder }} backend. The source is shown once above.</p>
+      {{ else }}
       {{ partial "cad/codeblock.html" (dict "lang" .lang "content" .content "label" .path) }}
+      {{ end }}
     </div>
     <div class="cad-reference-output">
       <div class="cad-preview">
-        {{ with .previewurl }}<a href="{{ . }}" class="cad-preview-link"><img src="{{ . }}" alt="Published reference result"></a>{{ else }}<div class="cad-preview-empty">No published reference preview.</div>{{ end }}
+        {{ with .previewurl }}<a href="{{ . }}" class="cad-preview-link"><img src="{{ . }}" alt="Published {{ if eq $.builder "builder-scpf-mitcad" }}Mitcad STL{{ else }}reference{{ end }} result"></a>{{ else }}<div class="cad-preview-empty">No published result preview.</div>{{ end }}
       </div>
-      <p class="cad-section-help">Independent implementation result.</p>
+      <p class="cad-section-help">{{ if eq .builder "builder-scpf-mitcad" }}Preview rendered from the STL exported by the native Mitcad run.{{ else if .sharedsource }}Same source, alternate backend result.{{ else }}Independent implementation result.{{ end }}</p>
       <div class="cad-links">{{ range .files }}<a href="{{ .url }}">{{ .label }}</a>{{ end }}</div>
     </div>
   </div>
