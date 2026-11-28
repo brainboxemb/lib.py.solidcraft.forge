@@ -208,20 +208,25 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-#659 — modularize compiler and backend lowering ownership by semantic domain.
+#662 — add a scripted SolidCraft replay transport test boundary.
 
-The completed #656 IR package is the ownership map. Keep public SCPF authoring
-and the stable `scpf.ir` facade unchanged while splitting compiler orchestration
-and SolidCraft/Mitcad lowering into domain-owned modules. Backend contract tests
-must prove semantic IR -> backend lowering -> native command/document shape
-without requiring a CAD runtime.
+Keep the production `solidcraft-cli` transport unchanged by default, but make
+`scpf.headless` replay execution injectable for tests. The scripted transport
+must record submitted native command batches, return only explicitly configured
+results, fail closed on unexpected commands, and never calculate geometry,
+topology or model correctness.
 
 ## Next
 
-After #659, add a separate scripted SolidCraft replay transport test boundary so
-`scpf.headless` replay/binding behavior can be exercised without launching
-SolidCraft. That fake must return only explicitly scripted command responses and
-must not emulate geometry, topology or final CAD inspection.
+After #662, reassess the remaining large frontend authoring modules separately.
+Do not split `core.py`, `features.py` or `assembly.py` by file size alone;
+only select a follow-up when ownership or testability has a concrete boundary.
+
+#659 is complete on permanent `dev` through PR #663, merge
+`be7d0a92ba074486aea3be10752ab95523a0bad5`. Exact-head full qualification
+run 46163311233 and permanent dev build/publication run 46163682356 are green.
+Compiler orchestration and SolidCraft/Mitcad lowering now have semantic-domain
+ownership with stable facades.
 
 #656 is complete on permanent `dev` through PR #658. Full exact-head
 qualification run 46148453889 and permanent dev qualification/build/publication
