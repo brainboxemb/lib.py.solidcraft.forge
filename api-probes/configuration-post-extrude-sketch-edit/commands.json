@@ -1,0 +1,88 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "FreeProfile"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          -10,
+          -10
+        ],
+        "p1": [
+          10,
+          10
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": 8,
+        "name": "ClampExtrude",
+        "body_name": "Clamp"
+      }
+    },
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": "FreeProfile"
+      }
+    },
+    {
+      "command": "sketch.move_points",
+      "params": {
+        "moves": [
+          {
+            "near": [
+              10,
+              -10
+            ],
+            "to": [
+              12,
+              -10
+            ]
+          },
+          {
+            "near": [
+              10,
+              10
+            ],
+            "to": [
+              12,
+              10
+            ]
+          }
+        ],
+        "tolerance": 0.5
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "timeline.inspect",
+      "params": {
+        "feature": "FreeProfile"
+      }
+    },
+    {
+      "command": "timeline.inspect",
+      "params": {
+        "feature": "ClampExtrude"
+      }
+    }
+  ]
+}

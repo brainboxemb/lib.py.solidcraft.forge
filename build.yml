@@ -1,8 +1,10 @@
 schema: 1
-branch: issue/656-ir-modularization
+branch: issue/669-post-extrude-geometry-suppression
 
-modules: all
-models: all
-library: true
-api_probes: []
+modules: []
+models: []
+library: false
+api_probes:
+  - configuration-post-extrude-sketch-edit
+  - configuration-post-extrude-offset-face
 tasks: [test]
