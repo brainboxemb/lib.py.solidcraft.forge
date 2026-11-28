@@ -51,7 +51,7 @@ def _compile_model_commands(shape: Shape, name: str) -> list[dict]:
         raise TypeError("the final script expression must produce a Shape")
     if not name or not name.isidentifier():
         raise ModelError("the model name must be a valid identifier")
-    from ..features import _is_feature_tree, compile_features
+    from .legacy_features import _is_feature_tree, compile_features
     from ..csg import _csg_new
     return (
         compile_features(shape, name)
