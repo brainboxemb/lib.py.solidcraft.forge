@@ -1,89 +1,92 @@
 # Free / Installed configuration
 
-Status: consumer contract correction under #506  
-Tracking: #444, #506
+Status: correction under #669  
+Tracking: #444, #506, #669
 
-`Free` and `Installed` are useful physical-state row names, but they do not
-imply one particular implementation mechanism.
+Free/Installed is a physical state switch. It is **not** a configuration-row
+axis.
 
-Choose the configuration target from the model's real CAD intent.
-
-## Parameter state
-
-The retained HUB75 tube clamp is parameter-driven:
+The configuration table keeps its ordinary row axis, for example:
 
 ~~~text
-Free       clamp_bore = tube_d - clamp_interference
-Installed  clamp_bore = tube_d
+Normal
 ~~~
 
-The public authoring remains an ordinary Parameter column:
+or, when the consumer already has dimensional variants:
 
-~~~python
-clamp.configure(
-    active="Free",
-    columns=(self.clamp_bore,),
-    rows={
-        "Free": ("tube_d-clamp_interference",),
-        "Installed": ("tube_d",),
-    },
-)
+~~~text
+Small
+Medium
+Large
 ~~~
 
-This is not a reason to add a Forge flex/deformation API. The consumer owns its
-parametric geometry.
+Installed remains independent from those rows.
 
-## Feature state
+## Authored geometry
 
-Use feature suppression only when the model genuinely has one history operation
-whose presence changes by configuration.
+The base model is the physical Free geometry.
 
-Author that operation with stable semantic identity:
+One later real CAD history feature represents the Installed adjustment:
 
 ~~~python
 with feature("installed", suppressed=True):
-    body = body - installed_cut
+    body = body.<generic_post_extrude_edit>(...)
 ~~~
 
-A reusable occurrence then exposes the same definition-level identity:
+That history feature is suppressed in the normal/base row.
 
-~~~python
-clamp.feature("installed")
-~~~
+## Installed control
 
-and the final model may use it directly:
+The native SolidCraft presentation is one independent Configuration Rule
+checkbox named `Installed`.
 
-~~~python
-model.configure(
-    active="Free",
-    columns=(clamp.feature("installed"),),
-    rows={
-        "Free": (True,),
-        "Installed": (False,),
-    },
-)
-~~~
-
-The boolean is native suppression data:
+Conceptually:
 
 ~~~text
-True   -> feature suppressed
-False  -> feature active
+row: Normal
+    Installed feature suppressed = true
+
+rule: Installed
+    enabled = false
+    always
+    drive suppression(Installed) = false
 ~~~
 
-No public Configuration Rule or synthetic boolean State object is required.
+Therefore:
 
-## Consumer proof versus backend proof
+~~~text
+Installed [ ]  -> base row wins -> feature suppressed -> Free
+Installed [x]  -> rule wins     -> feature active     -> Installed
+~~~
 
-The synthetic `configuration-installed-feature` probe deliberately uses a
-simple extra cut. It proves native identity, initial suppression and saved-row
-switching only.
+The checkbox remains orthogonal to row selection. If the table has
+Small/Medium/Large rows, Installed does not create six Cartesian rows.
 
-It is not a mechanical model of a flexible clamp and must not be cited as one.
+## Forge contract
 
-The consumer-level named-feature proof is the real stepped shifted-axis
-panel-pin pass-through used by the HUB75 frame-coupler family: one revolve
-history feature, Small/Medium suppressed, Large enabled.
+The earlier two-row form is incorrect:
 
-The standalone HUB75 tube clamp remains the separate parameter-driven consumer
-described above.
+~~~text
+Free
+Installed
+~~~
+
+Do not represent this state by switching rows.
+
+Forge needs a semantic independent feature-state control that targets the
+authored feature handle and lowers to SolidCraft's native rule checkbox without
+exposing native feature ids.
+
+The exact public spelling is being resolved in #669.
+
+## Backend evidence
+
+The earlier parameter-driven Installed rule proved the native checkbox behavior,
+but changed `clamp_bore` and was not a correct flexible-clamp model.
+
+The #669 feature-rule probe instead targets a real authored post-Extrude feature
+with native `drive_suppression`. That is the required configuration mechanism.
+
+The geometry operation itself remains a separate #669 question: the positive
+`offset_face` probe proves history/suppression mechanics only and is not the
+final HUB75 clamp operation.
