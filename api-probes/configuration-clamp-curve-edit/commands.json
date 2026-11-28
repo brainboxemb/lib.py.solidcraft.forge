@@ -1,0 +1,294 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "ClampProfile96"
+      }
+    },
+    {
+      "command": "sketch.arc.center_point",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "start": [
+          4.8083261121,
+          4.8083261121
+        ],
+        "end": [
+          4.8083261121,
+          -4.8083261121
+        ],
+        "clockwise": false,
+        "id": "a1"
+      }
+    },
+    {
+      "command": "sketch.arc.center_point",
+      "params": {
+        "center": [
+          4.1012193309,
+          -4.1012193309
+        ],
+        "start": [
+          4.8083261121,
+          -4.8083261121
+        ],
+        "end": [
+          3.3941125497,
+          -3.3941125497
+        ],
+        "clockwise": false,
+        "id": "a2"
+      }
+    },
+    {
+      "command": "sketch.arc.center_point",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "start": [
+          3.3941125497,
+          -3.3941125497
+        ],
+        "end": [
+          3.3941125497,
+          3.3941125497
+        ],
+        "clockwise": true,
+        "id": "a3"
+      }
+    },
+    {
+      "command": "sketch.arc.center_point",
+      "params": {
+        "center": [
+          4.1012193309,
+          4.1012193309
+        ],
+        "start": [
+          3.3941125497,
+          3.3941125497
+        ],
+        "end": [
+          4.8083261121,
+          4.8083261121
+        ],
+        "clockwise": false,
+        "id": "a4"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "ClampProfile96",
+        "distance": 12,
+        "operation": "new",
+        "name": "ClampExtrude",
+        "body_name": "Clamp"
+      }
+    },
+    {
+      "command": "sketch.edit",
+      "params": {
+        "sketch": "ClampProfile96"
+      }
+    },
+    {
+      "command": "sketch.move_points",
+      "params": {
+        "moves": [
+          {
+            "point": "a1.start",
+            "to": [
+              4.5461363383,
+              5.3228417592
+            ]
+          },
+          {
+            "point": "a1.end",
+            "to": [
+              4.5461363383,
+              -5.3228417592
+            ]
+          },
+          {
+            "point": "a2.end",
+            "to": [
+              3.2472402417,
+              -3.802029828
+            ]
+          },
+          {
+            "point": "a3.end",
+            "to": [
+              3.2472402417,
+              3.802029828
+            ]
+          },
+          {
+            "point": "a2.center",
+            "to": [
+              3.89668829,
+              -4.5624357936
+            ]
+          },
+          {
+            "point": "a4.center",
+            "to": [
+              3.89668829,
+              4.5624357936
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "sketch.inspect",
+      "params": {
+        "sketch": "ClampProfile96"
+      }
+    },
+    {
+      "command": "inspect.measure",
+      "params": {
+        "bodies": [
+          "Clamp"
+        ]
+      }
+    },
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "InstalledReference10"
+      }
+    },
+    {
+      "command": "sketch.arc.center_point",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "start": [
+          4.5461363383,
+          5.3228417592
+        ],
+        "end": [
+          4.5461363383,
+          -5.3228417592
+        ],
+        "clockwise": false,
+        "id": "a1"
+      }
+    },
+    {
+      "command": "sketch.arc.center_point",
+      "params": {
+        "center": [
+          3.89668829,
+          -4.5624357936
+        ],
+        "start": [
+          4.5461363383,
+          -5.3228417592
+        ],
+        "end": [
+          3.2472402417,
+          -3.802029828
+        ],
+        "clockwise": false,
+        "id": "a2"
+      }
+    },
+    {
+      "command": "sketch.arc.center_point",
+      "params": {
+        "center": [
+          0,
+          0
+        ],
+        "start": [
+          3.2472402417,
+          -3.802029828
+        ],
+        "end": [
+          3.2472402417,
+          3.802029828
+        ],
+        "clockwise": true,
+        "id": "a3"
+      }
+    },
+    {
+      "command": "sketch.arc.center_point",
+      "params": {
+        "center": [
+          3.89668829,
+          4.5624357936
+        ],
+        "start": [
+          3.2472402417,
+          3.802029828
+        ],
+        "end": [
+          4.5461363383,
+          5.3228417592
+        ],
+        "clockwise": false,
+        "id": "a4"
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "sketch": "InstalledReference10",
+        "distance": 12,
+        "operation": "new",
+        "name": "ReferenceExtrude",
+        "body_name": "Target10"
+      }
+    },
+    {
+      "command": "inspect.compare",
+      "params": {
+        "a": "Clamp",
+        "b": "Target10",
+        "tolerance": 0.001,
+        "spacing": 0.25
+      }
+    },
+    {
+      "command": "model.body_features",
+      "params": {
+        "body": "Clamp"
+      }
+    },
+    {
+      "command": "model.body_features",
+      "params": {
+        "body": "Target10"
+      }
+    }
+  ]
+}
