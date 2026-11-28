@@ -50,6 +50,15 @@
       }
     },
     {
+      "command": "timeline.suppress",
+      "params": {
+        "features": [
+          "Installed"
+        ],
+        "suppressed": true
+      }
+    },
+    {
       "command": "config.configure",
       "params": {
         "features": [
@@ -70,24 +79,6 @@
         "name": "Normal",
         "values": {
           "suppress:Installed": "true"
-        }
-      }
-    },
-    {
-      "command": "config.rule",
-      "params": {
-        "rule": {
-          "id": "installed",
-          "name": "Installed",
-          "enabled": false,
-          "condition": {
-            "type": "always"
-          },
-          "effect": {
-            "type": "drive_suppression",
-            "feature": 3,
-            "value": false
-          }
         }
       }
     },
