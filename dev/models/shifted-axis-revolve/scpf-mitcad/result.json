@@ -1,0 +1,19 @@
+{
+  "build_status": "pass",
+  "builder": "builder-scpf-mitcad",
+  "id": "shifted-axis-revolve--scpf-mitcad",
+  "implementation": "scpf-mitcad",
+  "owner": "shifted-axis-revolve",
+  "preview_status": null,
+  "runtime": "ghcr.io/brainboxemb/cad-mitcad:v0.3.7",
+  "schema": 2,
+  "status": "pass",
+  "verification_stages": {
+    "geometry": {
+      "adapter": "mesh-geometry",
+      "runtime": "ghcr.io/brainboxemb/cad-reference:v0.3.8",
+      "status": "pass"
+    }
+  },
+  "verification_status": "pass"
+}

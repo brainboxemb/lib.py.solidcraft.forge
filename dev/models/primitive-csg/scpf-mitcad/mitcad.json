@@ -1,0 +1,118 @@
+{
+  "backend": "mitcad",
+  "commands": [
+    {
+      "cmd": "add_feature",
+      "def": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 40,
+        "operation": "new_body",
+        "participants": [],
+        "plane": "xy",
+        "type": "sphere"
+      },
+      "name": "PrimitiveCsgBase"
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "corner": [
+          3.0,
+          -15.0
+        ],
+        "height": 20,
+        "length": 30,
+        "operation": "join",
+        "participants": [],
+        "plane": "xy",
+        "symmetric": false,
+        "type": "box",
+        "width": 30
+      },
+      "name": "PrimitiveCsgJoin1"
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "center": [
+          0,
+          0
+        ],
+        "diameter": 8,
+        "height": 60,
+        "operation": "cut",
+        "participants": [],
+        "plane": "yz",
+        "symmetric": true,
+        "type": "cylinder"
+      },
+      "name": "PrimitiveCsgCut2"
+    },
+    {
+      "as": "configured_feature",
+      "cmd": "add_feature",
+      "def": {
+        "corner": [
+          -25.0,
+          -25.0
+        ],
+        "height": 30,
+        "length": 50,
+        "operation": "intersect",
+        "participants": [],
+        "plane": "xy",
+        "symmetric": false,
+        "type": "box",
+        "width": 50
+      },
+      "name": "PrimitiveCsgIntersect3"
+    },
+    {
+      "cmd": "add_parameter",
+      "expression": "0",
+      "name": "__forge_suppress_root",
+      "unit": ""
+    },
+    {
+      "cmd": "set_configurations",
+      "configurations": {
+        "closed": true,
+        "default": "Clipped",
+        "options": [],
+        "parameters": [
+          "__forge_suppress_root"
+        ],
+        "rows": [
+          {
+            "name": "Clipped",
+            "values": {
+              "__forge_suppress_root": "0"
+            }
+          },
+          {
+            "name": "Unclipped",
+            "values": {
+              "__forge_suppress_root": "1"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "cmd": "suppress_feature",
+      "expression": "__forge_suppress_root > 0",
+      "uid": {
+        "ref": "configured_feature.uid"
+      }
+    },
+    {
+      "cmd": "apply_configuration",
+      "name": "Clipped"
+    }
+  ],
+  "format": "scpf-mitcad",
+  "version": 1
+}

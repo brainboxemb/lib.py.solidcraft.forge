@@ -17,6 +17,8 @@
     {
       "command": "solid.chamfer",
       "params": {
+        "body": "TopSketchAfterChamfer",
+        "distance": 8,
         "edges": [
           [
             -50.0,
@@ -38,9 +40,7 @@
             35.0,
             5.0
           ]
-        ],
-        "distance": 8,
-        "body": "TopSketchAfterChamfer"
+        ]
       }
     },
     {

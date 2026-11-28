@@ -1,0 +1,157 @@
+{
+  "format": "mitcad",
+  "version": 2,
+  "units": {
+    "length": "mm",
+    "angle": "deg"
+  },
+  "parameters": [
+    {
+      "name": "d1",
+      "expression": "15 mm",
+      "unit": "mm",
+      "value": 15.0,
+      "comment": "TopologyFaceBoundaryXzBase distance",
+      "owner": "F2"
+    },
+    {
+      "name": "d2",
+      "expression": "1.5 mm",
+      "unit": "mm",
+      "value": 1.5,
+      "comment": "TopologyFaceBoundaryXz distance",
+      "owner": "F3"
+    }
+  ],
+  "components": [
+    {
+      "uid": "C1",
+      "name": "Component1"
+    }
+  ],
+  "occurrences": [
+    {
+      "uid": "O1",
+      "component": "C1",
+      "parent": "C0",
+      "number": 1
+    }
+  ],
+  "active_component": "C1",
+  "features": [
+    {
+      "uid": "F1",
+      "name": "Hook profile",
+      "component": "C1",
+      "type": "sketch",
+      "plane": "xz",
+      "entities": [
+        {
+          "id": "p1",
+          "type": "point",
+          "at": [
+            -20.0,
+            0.0
+          ],
+          "fixed": true
+        },
+        {
+          "id": "p2",
+          "type": "point",
+          "at": [
+            20.0,
+            0.0
+          ],
+          "fixed": true
+        },
+        {
+          "id": "p3",
+          "type": "point",
+          "at": [
+            20.0,
+            -30.0
+          ],
+          "fixed": true
+        },
+        {
+          "id": "p4",
+          "type": "point",
+          "at": [
+            -20.0,
+            -30.0
+          ],
+          "fixed": true
+        },
+        {
+          "id": "c5",
+          "type": "line",
+          "start": "p1",
+          "end": "p2"
+        },
+        {
+          "id": "c6",
+          "type": "line",
+          "start": "p2",
+          "end": "p3"
+        },
+        {
+          "id": "c7",
+          "type": "line",
+          "start": "p3",
+          "end": "p4"
+        },
+        {
+          "id": "c8",
+          "type": "line",
+          "start": "p4",
+          "end": "p1"
+        }
+      ]
+    },
+    {
+      "uid": "F2",
+      "name": "TopologyFaceBoundaryXzBase",
+      "component": "C1",
+      "type": "extrude",
+      "profiles": [
+        {
+          "sketch": "F1",
+          "region": "r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]}"
+        }
+      ],
+      "extent": {
+        "type": "symmetric",
+        "distance": "d1",
+        "full_length": true
+      },
+      "operation": "new_body"
+    },
+    {
+      "uid": "F3",
+      "name": "TopologyFaceBoundaryXz",
+      "component": "C1",
+      "type": "chamfer",
+      "body": "F2.b0",
+      "edges": [
+        "E{F2:end(r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]})|F2:side(c5[c8,c6])}",
+        "E{F2:end(r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]})|F2:side(c8[c7,c5])}",
+        "E{F2:end(r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]})|F2:side(c7[c6,c8])}",
+        "E{F2:end(r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]})|F2:side(c6[c5,c7])}",
+        "E{F2:side(c5[c8,c6])|F2:start(r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]})}",
+        "E{F2:side(c8[c7,c5])|F2:start(r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]})}",
+        "E{F2:side(c7[c6,c8])|F2:start(r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]})}",
+        "E{F2:side(c6[c5,c7])|F2:start(r{c5[c8,c6],c6[c5,c7],c7[c6,c8],c8[c7,c5]})}"
+      ],
+      "size": {
+        "type": "equal_distance",
+        "distance": "d2"
+      }
+    }
+  ],
+  "bodies": [
+    {
+      "uid": "F2.b0",
+      "name": "Body1"
+    }
+  ]
+}

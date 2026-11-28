@@ -1,0 +1,152 @@
+{
+  "format": "mitcad",
+  "version": 2,
+  "units": {
+    "length": "mm",
+    "angle": "deg"
+  },
+  "parameters": [
+    {
+      "name": "d1",
+      "expression": "50 mm",
+      "unit": "mm",
+      "value": 50.0,
+      "comment": "ConeBooleanBase length",
+      "owner": "F1"
+    },
+    {
+      "name": "d2",
+      "expression": "40 mm",
+      "unit": "mm",
+      "value": 40.0,
+      "comment": "ConeBooleanBase width",
+      "owner": "F1"
+    },
+    {
+      "name": "d3",
+      "expression": "20 mm",
+      "unit": "mm",
+      "value": 20.0,
+      "comment": "ConeBooleanBase height",
+      "owner": "F1"
+    },
+    {
+      "name": "d4",
+      "expression": "2 mm",
+      "unit": "mm",
+      "value": 2.0,
+      "comment": "ConeBooleanFillet radius",
+      "owner": "F2"
+    },
+    {
+      "name": "d5",
+      "expression": "18 mm",
+      "unit": "mm",
+      "value": 18.0,
+      "comment": "Plane1 distance",
+      "owner": "F3"
+    },
+    {
+      "name": "d6",
+      "expression": "9 mm",
+      "unit": "mm",
+      "value": 9.0,
+      "comment": "ConeBooleanJoin radius",
+      "owner": "F4"
+    },
+    {
+      "name": "d7",
+      "expression": "5 mm",
+      "unit": "mm",
+      "value": 5.0,
+      "comment": "ConeBooleanJoin top_radius",
+      "owner": "F4"
+    },
+    {
+      "name": "d8",
+      "expression": "8 mm",
+      "unit": "mm",
+      "value": 8.0,
+      "comment": "ConeBooleanJoin height",
+      "owner": "F4"
+    }
+  ],
+  "components": [
+    {
+      "uid": "C1",
+      "name": "Component1"
+    }
+  ],
+  "occurrences": [
+    {
+      "uid": "O1",
+      "component": "C1",
+      "parent": "C0",
+      "number": 1
+    }
+  ],
+  "active_component": "C1",
+  "features": [
+    {
+      "uid": "F1",
+      "name": "ConeBooleanBase",
+      "component": "C1",
+      "type": "box",
+      "plane": "xy",
+      "corner": [
+        -25.0,
+        -20.0
+      ],
+      "length": "d1",
+      "width": "d2",
+      "height": "d3",
+      "operation": "new_body"
+    },
+    {
+      "uid": "F2",
+      "name": "ConeBooleanFillet",
+      "component": "C1",
+      "type": "fillet",
+      "body": "F1.b0",
+      "edges": [
+        "E{F1:side0|F1:side1}",
+        "E{F1:side0|F1:side3}",
+        "E{F1:side1|F1:side2}",
+        "E{F1:side2|F1:side3}"
+      ],
+      "radius": "d4"
+    },
+    {
+      "uid": "F3",
+      "name": "Plane1",
+      "component": "C1",
+      "type": "construction_plane",
+      "definition": {
+        "type": "offset",
+        "plane": "xy",
+        "distance": "d5"
+      }
+    },
+    {
+      "uid": "F4",
+      "name": "ConeBooleanJoin",
+      "component": "C1",
+      "type": "cone",
+      "plane": "F3",
+      "center": [
+        0.0,
+        0.0
+      ],
+      "radius": "d6",
+      "top_radius": "d7",
+      "height": "d8",
+      "operation": "join"
+    }
+  ],
+  "bodies": [
+    {
+      "uid": "F1.b0",
+      "name": "Body1"
+    }
+  ]
+}

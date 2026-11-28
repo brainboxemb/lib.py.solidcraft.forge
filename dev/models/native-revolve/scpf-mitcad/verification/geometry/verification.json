@@ -1,0 +1,56 @@
+{
+  "checks": [
+    {
+      "artifacts": [],
+      "error": null,
+      "evidence": {
+        "bounds": {
+          "actual_max": [
+            10.0,
+            4.0,
+            4.0
+          ],
+          "actual_min": [
+            0.0,
+            -4.0,
+            -4.0
+          ],
+          "expected_max": [
+            10.0,
+            4.0,
+            4.0
+          ],
+          "expected_min": [
+            0.0,
+            -4.0,
+            -4.0
+          ],
+          "max_delta_mm": 0.0,
+          "pass": true,
+          "tolerance_mm": 0.3
+        },
+        "volume": {
+          "actual_mm3": 501.22056858321343,
+          "delta_mm3": 1.4342559911535773,
+          "expected_mm3": 502.654824574367,
+          "pass": true,
+          "tolerance_mm3": 5.0
+        },
+        "watertight": {
+          "actual": true,
+          "expected": true,
+          "pass": true
+        }
+      },
+      "id": "geometry",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/native-revolve/scpf-mitcad/model.stl",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "native-revolve-scpf-mitcad-geometry"
+}

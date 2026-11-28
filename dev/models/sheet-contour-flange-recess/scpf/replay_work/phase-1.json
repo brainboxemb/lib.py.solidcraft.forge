@@ -21,8 +21,8 @@
     {
       "command": "sketch.create",
       "params": {
-        "plane": "XZ",
-        "name": "C profile"
+        "name": "C profile",
+        "plane": "XZ"
       }
     },
     {
@@ -38,10 +38,10 @@
             0.625
           ]
         ],
+        "connect": true,
         "ids": [
           "l1"
-        ],
-        "connect": true
+        ]
       }
     }
   ]

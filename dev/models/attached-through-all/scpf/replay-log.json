@@ -125,13 +125,13 @@
       "index": 8,
       "command": "solid.extrude",
       "resolved_params": {
+        "direction": "negative",
         "operation": "cut",
         "targets": [
           "AttachedThroughAll"
         ],
         "name": "Through cut",
-        "through_all": true,
-        "direction": "negative"
+        "through_all": true
       }
     }
   ],

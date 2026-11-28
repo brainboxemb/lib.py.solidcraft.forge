@@ -1,0 +1,78 @@
+{
+  "backend": "mitcad",
+  "commands": [
+    {
+      "cmd": "add_parameter",
+      "name": "length",
+      "unit": "mm",
+      "value": 60.0
+    },
+    {
+      "cmd": "add_parameter",
+      "name": "width",
+      "unit": "mm",
+      "value": 40.0
+    },
+    {
+      "cmd": "add_parameter",
+      "name": "thickness",
+      "unit": "mm",
+      "value": 12.0
+    },
+    {
+      "cmd": "add_parameter",
+      "name": "bore_d",
+      "unit": "mm",
+      "value": 10.0
+    },
+    {
+      "cmd": "add_parameter",
+      "name": "bore_x",
+      "unit": "mm",
+      "value": 8.0
+    },
+    {
+      "cmd": "add_parameter",
+      "name": "bore_y",
+      "unit": "mm",
+      "value": -5.0
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "corner": [
+          "-(length / 2)",
+          "-(width / 2)"
+        ],
+        "height": "thickness",
+        "length": "length",
+        "operation": "new_body",
+        "participants": [],
+        "plane": "xy",
+        "symmetric": false,
+        "type": "box",
+        "width": "width"
+      },
+      "name": "CylinderSubtractBase"
+    },
+    {
+      "cmd": "add_feature",
+      "def": {
+        "center": [
+          "bore_x",
+          "bore_y"
+        ],
+        "diameter": "bore_d",
+        "height": "thickness + 20 mm",
+        "operation": "cut",
+        "participants": [],
+        "plane": "xy",
+        "symmetric": true,
+        "type": "cylinder"
+      },
+      "name": "CylinderSubtractCut1"
+    }
+  ],
+  "format": "scpf-mitcad",
+  "version": 1
+}

@@ -1,0 +1,93 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "3f7ff2d8c7f677850cd1878df31ed3566f4837f509be8298998117422f5beb18",
+          "size": 2534
+        }
+      ],
+      "error": null,
+      "evidence": {
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "CylinderSubtract",
+                "max": [
+                  30.0,
+                  20.0,
+                  12.000000000000002
+                ],
+                "min": [
+                  -30.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  30.0,
+                  20.0,
+                  12.0
+                ],
+                "min": [
+                  -30.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "max_delta": 1.7763568394002505e-15
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
+        },
+        "named_bodies": [
+          {
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "face_type_counts": {
+              "actual": {
+                "cylinder": 1
+              },
+              "expected": {
+                "cylinder": 1
+              },
+              "label": "sole body face type counts",
+              "pass": true
+            },
+            "selector": "sole"
+          }
+        ]
+      },
+      "id": "baseline",
+      "reason": null,
+      "status": "pass"
+    }
+  ],
+  "input": "/output/models/cylinder-subtract/scpf/model.sc",
+  "metadata": {},
+  "schema": "cad-verification",
+  "schema_version": 1,
+  "status": "pass",
+  "verification_id": "cylinder-subtract"
+}

@@ -19,6 +19,7 @@
     "configuration-symbolic-math",
     "configuration-table",
     "corner-anchor",
+    "cylinder-subtract",
     "eight-corner-brackets",
     "eight-flightcase-corners",
     "exploded-views",
@@ -73,7 +74,7 @@
     ],
     "selected": []
   },
-  "full": false,
+  "full": true,
   "library": true,
   "models": [
     {
@@ -209,6 +210,7 @@
       "id": "circle-negative-extrude",
       "implementations": [
         "scpf",
+        "scpf-mitcad",
         "cadquery",
         "build123d",
         "pythonscad",
@@ -251,7 +253,8 @@
     {
       "id": "cone-boolean",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -314,6 +317,17 @@
       "primary": "scpf",
       "purpose": [
         "example",
+        "verification"
+      ]
+    },
+    {
+      "id": "cylinder-subtract",
+      "implementations": [
+        "scpf",
+        "scpf-mitcad"
+      ],
+      "primary": "scpf",
+      "purpose": [
         "verification"
       ]
     },
@@ -400,7 +414,8 @@
     {
       "id": "multi-profile-extrude",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -410,7 +425,8 @@
     {
       "id": "native-revolve",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -519,6 +535,7 @@
       "id": "primitive-csg",
       "implementations": [
         "scpf",
+        "scpf-mitcad",
         "cadquery",
         "build123d",
         "pythonscad",
@@ -721,7 +738,8 @@
     {
       "id": "shifted-axis-revolve",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -733,6 +751,7 @@
       "id": "simple-box",
       "implementations": [
         "scpf",
+        "scpf-mitcad",
         "cadquery",
         "build123d",
         "pythonscad",
@@ -789,7 +808,8 @@
     {
       "id": "topology-face-boundary-box",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -799,7 +819,8 @@
     {
       "id": "topology-face-boundary-xz",
       "implementations": [
-        "scpf"
+        "scpf",
+        "scpf-mitcad"
       ],
       "primary": "scpf",
       "purpose": [
@@ -843,6 +864,7 @@
     "configuration-symbolic-math",
     "configuration-table",
     "corner-anchor",
+    "cylinder-subtract",
     "eight-corner-brackets",
     "eight-flightcase-corners",
     "exploded-views",
@@ -884,5 +906,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "5d04bd44a40b1e5724ca28578484535439ce3826"
+  "source_sha": "7fbb8c6f23ad01742c64071570c4dab7aa620a82"
 }

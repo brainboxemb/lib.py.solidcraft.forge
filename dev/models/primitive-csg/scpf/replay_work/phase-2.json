@@ -1,0 +1,37 @@
+{
+  "commands": [
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "Box2"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Clipped"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Clipped",
+        "values": {
+          "suppress:Box2": "false"
+        }
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Unclipped",
+        "values": {
+          "suppress:Box2": "true"
+        }
+      }
+    }
+  ]
+}

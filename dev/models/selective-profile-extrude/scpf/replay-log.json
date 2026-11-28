@@ -1,7 +1,7 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "4a2573512184806855bf448a8dcf3d15a224fa8e84bd2ca24100553857cfa4bb",
+  "replay_sha256": "f328fa870ef6cb817f3601247584ceafec8f5379d2335815f741e14a362dfa0b",
   "variables": {
     "$face_point_1": [
       -37.082039324993694,
@@ -90,8 +90,8 @@
       "command": "sketch.circle.center",
       "resolved_params": {
         "center": [
-          -30.0,
-          0.0
+          -30,
+          0
         ],
         "diameter": "hole_diameter"
       },
@@ -133,13 +133,13 @@
       "index": 8,
       "command": "solid.extrude",
       "resolved_params": {
+        "direction": "negative",
         "operation": "cut",
         "targets": [
           "SelectiveProfileExtrude"
         ],
         "name": "Selected holes",
         "through_all": true,
-        "direction": "negative",
         "profiles": [
           {
             "point": [
