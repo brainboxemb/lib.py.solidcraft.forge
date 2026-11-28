@@ -232,7 +232,7 @@ def compile_ir_commands_with_dependencies(model: ModelIR, name: str):
         raise ModelError("the model name must be a valid identifier")
 
     if isinstance(model.root, LegacyShapeIR):
-        from ..compiler import _compile_model_commands
+        from ...compiler import _compile_model_commands
         commands = _compile_model_commands(model.root.shape, name)
         return commands, _native_dependencies(commands)
 
