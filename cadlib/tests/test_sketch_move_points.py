@@ -37,6 +37,16 @@ class SketchMovePointsTests(unittest.TestCase):
             ])
 
         commands = compile_model(sketch.extrude(12), "Clamp")["commands"]
+        kinds = [command["command"] for command in commands]
+        first_finish = kinds.index("sketch.finish")
+        extrude = kinds.index("solid.extrude")
+        edit = kinds.index("sketch.edit")
+        move_index = kinds.index("sketch.move_points")
+        second_finish = kinds.index("sketch.finish", first_finish + 1)
+        self.assertLess(first_finish, extrude)
+        self.assertLess(extrude, edit)
+        self.assertLess(edit, move_index)
+        self.assertLess(move_index, second_finish)
         arcs = [
             c for c in commands if c["command"] == "sketch.arc.center_point"
         ]
