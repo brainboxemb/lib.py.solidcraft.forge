@@ -117,6 +117,8 @@ _FACE_NORMALS = {
     "back": [0, 1, 0],
 }
 
+_PLANE_NORMAL_INDEX = {"XY": 2, "XZ": 1, "YZ": 0}
+
 
 def _principal_plane_offset(plane: PlaneIR, *, label: str):
     """Return one bounded principal-plane offset without baking symbols."""
