@@ -27,6 +27,7 @@ _FEATURE_HISTORY_CHAIN_KINDS = frozenset({
     "union", "difference", "intersection", "fillet", "chamfer", "shell",
     "rectangular_pattern", "circular_pattern", "sheet_fold",
     "sheet_edge_flange", "sheet_hem", "sheet_path_flange", "sheet_perforate",
+    "solid_transform",
 })
 
 
@@ -411,6 +412,54 @@ class Shape:
         if self.kind in ("fillet", "shell", "rectangular_pattern", "circular_pattern"):
             raise ValueError("move() currently supports only primitive and CSG shapes")
         return Shape("translated", (self, offsets))
+
+    def transform(
+        self,
+        *,
+        translate=(0, 0, 0),
+        axis=Axis.Z,
+        angle=0,
+        origin=(0, 0, 0),
+    ):
+        """Author one native rigid-body transform history feature.
+
+        Translation and rotation are stored in the same SolidCraft Move/Copy
+        feature so one feature scope suppresses the complete positional state.
+        """
+        def point3(value, label):
+            if not isinstance(value, (tuple, list)) or len(value) != 3:
+                raise ValueError(f"{label} must be an XYZ tuple")
+            result = tuple(value)
+            if any(
+                isinstance(item, bool) or not isfinite(_pv(item))
+                for item in result
+            ):
+                raise ValueError(f"{label} must contain finite CAD dimensions")
+            return result
+
+        translation = point3(translate, "transform translate")
+        rotation_origin = point3(origin, "transform origin")
+        try:
+            principal = axis if isinstance(axis, Axis) else Axis(axis)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "transform axis must be Axis.X, Axis.Y or Axis.Z"
+            ) from exc
+        if isinstance(angle, bool) or not isfinite(_pv(angle)):
+            raise ValueError("transform angle must be finite")
+        if all(_pv(value) == 0 for value in translation) and _pv(angle) == 0:
+            raise ValueError(
+                "transform requires a non-zero translation or rotation"
+            )
+        axis_vector = {
+            Axis.X: (1.0, 0.0, 0.0),
+            Axis.Y: (0.0, 1.0, 0.0),
+            Axis.Z: (0.0, 0.0, 1.0),
+        }[principal]
+        return Shape(
+            "solid_transform",
+            (self, translation, axis_vector, angle, rotation_origin),
+        )
 
     def taper(self, *, from_z, inset):
         """Make a box with a flat front and continuously tapered rear walls.

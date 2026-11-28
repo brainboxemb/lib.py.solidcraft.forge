@@ -88,7 +88,7 @@ def _polygon_profile_command(profile, *, plane, offset=(0, 0)):
     )
 
 
-def compile_connected_profile(profile, *, offset=(0, 0)):
+def compile_connected_profile(profile, *, offset=(0, 0), assign_ids=False):
     """Lower one declarative mixed line/arc profile into native sketch commands."""
 
     if profile.kind != "connected_profile":
@@ -103,42 +103,47 @@ def compile_connected_profile(profile, *, offset=(0, 0)):
         ]
 
     commands = []
+    line_index = 0
+    arc_index = 0
     for segment in segments:
         kind = segment[0]
         if kind == "line":
             _kind, segment_start, end = segment
-            commands.append(
-                _command(
-                    "sketch.line",
-                    points=[point(segment_start), point(end)],
-                    connect=True,
-                )
-            )
+            line_index += 1
+            params = {
+                "points": [point(segment_start), point(end)],
+                "connect": True,
+            }
+            if assign_ids:
+                params["ids"] = [f"l{line_index}"]
+            commands.append(_command("sketch.line", **params))
             continue
         if kind == "arc_three_point":
             _kind, segment_start, end, through = segment
-            commands.append(
-                _command(
-                    "sketch.arc.three_point",
-                    start=point(segment_start),
-                    end=point(end),
-                    through=point(through),
-                    connect=True,
-                )
-            )
+            arc_index += 1
+            params = {
+                "start": point(segment_start),
+                "end": point(end),
+                "through": point(through),
+                "connect": True,
+            }
+            if assign_ids:
+                params["id"] = f"a{arc_index}"
+            commands.append(_command("sketch.arc.three_point", **params))
             continue
         if kind == "arc_center_point":
             _kind, segment_start, end, center, clockwise = segment
-            commands.append(
-                _command(
-                    "sketch.arc.center_point",
-                    center=point(center),
-                    start=point(segment_start),
-                    end=point(end),
-                    clockwise=clockwise,
-                    connect=True,
-                )
-            )
+            arc_index += 1
+            params = {
+                "center": point(center),
+                "start": point(segment_start),
+                "end": point(end),
+                "clockwise": clockwise,
+                "connect": True,
+            }
+            if assign_ids:
+                params["id"] = f"a{arc_index}"
+            commands.append(_command("sketch.arc.center_point", **params))
             continue
         raise ModelError(f"unsupported connected profile segment: {kind}")
 
@@ -302,9 +307,21 @@ def compile_standalone_sketch(
     rotation=None,
 ):
     """Compile one standalone Sketch without choosing its 3D operation."""
-    if operations:
+    move_operations = [
+        operation
+        for operation in operations
+        if operation.kind == "sketch_move_points"
+    ]
+    if len(move_operations) != len(operations):
         raise ModelError(
-            "sketch pattern/mirror currently requires an attached Sketch"
+            "standalone Sketch currently supports only move_points operations"
+        )
+    if move_operations and (
+        len(profiles) != 1
+        or profiles[0][0].kind != "connected_profile"
+    ):
+        raise ModelError(
+            "sketch move_points currently requires one connected profile"
         )
     if plane not in ("XY", "XZ", "YZ"):
         raise ModelError("standalone Sketch requires an XY, XZ or YZ plane")
@@ -384,6 +401,7 @@ def compile_standalone_sketch(
             connected, current_meta = compile_connected_profile(
                 profile,
                 offset=(ox, oy),
+                assign_ids=bool(move_operations),
             )
             sketch.extend(connected)
             current_meta.update(
@@ -425,6 +443,71 @@ def compile_standalone_sketch(
                 "Circle2D, Polygon2D and connected profiles"
             )
         profile_meta.append(current_meta)
+
+    if move_operations:
+        profile = profiles[0][0]
+        _start, segments = profile.data
+
+        def same_point(left, right):
+            return all(
+                abs(float(pv(a)) - float(pv(b))) <= 1e-9
+                for a, b in zip(left, right)
+            )
+
+        def point_ref(source):
+            endpoints = []
+            centres = []
+            line_index = 0
+            arc_index = 0
+            for segment in segments:
+                kind = segment[0]
+                if kind == "line":
+                    _kind, start, end = segment
+                    line_index += 1
+                    for suffix, candidate in (("start", start), ("end", end)):
+                        if same_point(candidate, source):
+                            endpoints.append(f"l{line_index}.{suffix}")
+                    continue
+                if kind == "arc_three_point":
+                    _kind, start, end, _through = segment
+                    arc_index += 1
+                    for suffix, candidate in (("start", start), ("end", end)):
+                        if same_point(candidate, source):
+                            endpoints.append(f"a{arc_index}.{suffix}")
+                    continue
+                if kind == "arc_center_point":
+                    _kind, start, end, center, _clockwise = segment
+                    arc_index += 1
+                    for suffix, candidate in (("start", start), ("end", end)):
+                        if same_point(candidate, source):
+                            endpoints.append(f"a{arc_index}.{suffix}")
+                    if same_point(center, source):
+                        centres.append(f"a{arc_index}.center")
+                    continue
+            if endpoints:
+                return endpoints[0]
+            if len(centres) == 1:
+                return centres[0]
+            if len(centres) > 1:
+                raise ModelError(
+                    "sketch move source matches multiple arc centres"
+                )
+            raise ModelError(
+                f"sketch move source {tuple(source)!r} is not a connected-profile point"
+            )
+
+        for operation in move_operations:
+            (moves,) = operation.data
+            sketch.append(_command(
+                "sketch.move_points",
+                moves=[
+                    {
+                        "point": point_ref(source),
+                        "to": [float(target[0]), float(target[1])],
+                    }
+                    for source, target in moves
+                ],
+            ))
 
     sketch.append(_command("sketch.finish"))
     if len(profile_meta) == 1:

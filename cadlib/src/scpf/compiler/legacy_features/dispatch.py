@@ -410,6 +410,26 @@ def _to_commands(shape, name):
         return steps + topology + [
             _shell_command(thickness, resolved, name)
         ], base
+
+    if shape.kind == "solid_transform":
+        original, translate, axis, angle, origin = shape.data
+        steps, base = _to_commands(original, name)
+        params = {"bodies": [name]}
+        if any(pv(value) != 0 for value in translate):
+            params["translate"] = [
+                command_value(value) for value in translate
+            ]
+        if pv(angle) != 0:
+            params["axis"] = list(axis)
+            params["angle"] = (
+                command_value(angle)
+                if parameters_in(angle)
+                else f"{number_text(angle)} deg"
+            )
+            params["origin"] = [
+                command_value(value) for value in origin
+            ]
+        return steps + [_command("solid.move", **params)], base
     if shape.kind == "fillet":
         original, radius, edges = shape.data
         steps, base = _to_commands(original, name)

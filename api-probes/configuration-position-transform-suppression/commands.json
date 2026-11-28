@@ -1,0 +1,129 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "solid.box",
+      "params": {
+        "center": [
+          10,
+          0,
+          5
+        ],
+        "length": 40,
+        "width": 12,
+        "height": 10,
+        "operation": "new",
+        "body_name": "Panel"
+      }
+    },
+    {
+      "command": "solid.move",
+      "params": {
+        "bodies": [
+          "Panel"
+        ],
+        "translate": [
+          30,
+          20,
+          5
+        ],
+        "axis": [
+          0,
+          0,
+          1
+        ],
+        "angle": "30 deg",
+        "origin": [
+          0,
+          0,
+          0
+        ],
+        "name": "InstalledPosition"
+      }
+    },
+    {
+      "command": "timeline.inspect",
+      "params": {
+        "feature": "InstalledPosition"
+      }
+    },
+    {
+      "command": "model.body_features",
+      "params": {
+        "body": "Panel"
+      }
+    },
+    {
+      "command": "timeline.suppress",
+      "params": {
+        "features": [
+          "InstalledPosition"
+        ],
+        "suppressed": true
+      }
+    },
+    {
+      "command": "inspect.measure",
+      "params": {
+        "bodies": [
+          "Panel"
+        ]
+      }
+    },
+    {
+      "command": "timeline.suppress",
+      "params": {
+        "features": [
+          "InstalledPosition"
+        ],
+        "suppressed": false
+      }
+    },
+    {
+      "command": "inspect.measure",
+      "params": {
+        "bodies": [
+          "Panel"
+        ]
+      }
+    },
+    {
+      "command": "timeline.suppress",
+      "params": {
+        "features": [
+          "InstalledPosition"
+        ],
+        "suppressed": true
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "InstalledPosition"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Normal"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Normal",
+        "values": {
+          "suppress:InstalledPosition": "true"
+        }
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ]
+}

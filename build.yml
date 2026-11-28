@@ -1,8 +1,10 @@
 schema: 1
-branch: issue/656-ir-modularization
+branch: issue/669-state-edit-verification
 
 modules: all
 models: all
 library: true
-api_probes: []
+api_probes:
+  - configuration-clamp-curve-edit
+  - configuration-position-transform-suppression
 tasks: [test]

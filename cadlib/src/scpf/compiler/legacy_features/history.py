@@ -73,7 +73,9 @@ def _applied_feature_prefix(root, source):
     if root.kind in ("rectangular_pattern", "circular_pattern"):
         return _applied_feature_prefix(root.data[0], source)
 
-    if root.kind in ("fillet", "chamfer", "shell", "material_assignment"):
+    if root.kind in (
+        "fillet", "chamfer", "shell", "material_assignment", "solid_transform"
+    ):
         return _applied_feature_prefix(root.data[0], source)
 
     if root.kind in ("union", "difference", "intersection"):
@@ -151,6 +153,7 @@ def _named_feature_parent(shape):
         "sheet_hem",
         "sheet_path_flange",
         "sheet_perforate",
+        "solid_transform",
     ):
         return shape.data[0]
     return None

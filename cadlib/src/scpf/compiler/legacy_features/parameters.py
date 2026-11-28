@@ -242,6 +242,11 @@ def _non_count_parameter_names(node, found=None):
             _non_count_parameter_names(original, found)
             _non_count_parameter_names((line, fixed, position, flip), found)
             return found
+        if node.kind == "solid_transform":
+            original, translate, _axis, _angle, origin = node.data
+            _non_count_parameter_names(original, found)
+            _non_count_parameter_names((translate, origin), found)
+            return found
         if node.kind == "sketch_pattern_rectangular":
             (
                 source, _count1, spacing1, dir1,
@@ -305,6 +310,11 @@ def _pattern_angle_parameter_names(node, found=None):
                 original, _sources, _axis, _count, angle,
                 _alignment, _reversed,
             ) = node.data
+            found.update(param.name for param in parameters_in(angle))
+            _pattern_angle_parameter_names(original, found)
+            return found
+        if node.kind == "solid_transform":
+            original, _translate, _axis, angle, _origin = node.data
             found.update(param.name for param in parameters_in(angle))
             _pattern_angle_parameter_names(original, found)
             return found

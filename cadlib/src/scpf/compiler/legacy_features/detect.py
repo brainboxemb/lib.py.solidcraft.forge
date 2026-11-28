@@ -99,7 +99,7 @@ def _is_feature_tree(shape):
     if shape.kind in (
         "fillet", "chamfer", "shell", "union", "difference", "intersection",
         "material_assignment", "appearance_assignment",
-        "rectangular_pattern", "circular_pattern",
+        "rectangular_pattern", "circular_pattern", "solid_transform",
     ):
         return True
     return False
