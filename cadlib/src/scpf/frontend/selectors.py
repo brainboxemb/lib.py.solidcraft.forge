@@ -123,9 +123,6 @@ def _selector_anchor(value):
         f"direction selector {selector.vector!r} is not a standard assembly anchor"
     )
 
-
-@dataclass(frozen=True)
-
 @dataclass(frozen=True)
 class AnchorFrame:
     """Describe one local attachment point and orientation.
@@ -191,9 +188,6 @@ class AnchorFrame:
         object.__setattr__(self, "origin", vectors["origin"])
         object.__setattr__(self, "z", z)
         object.__setattr__(self, "x", x)
-
-
-@dataclass(frozen=True)
 
 @dataclass(frozen=True)
 class AnchorTopology:
@@ -340,9 +334,6 @@ class Edges(Enum):
             raise ValueError("provide named profile vertices")
         return _ProfileEdgeSelection(tuple(vertex_ids), "axis", "vertices")
 
-
-@dataclass(frozen=True)
-
 @dataclass(frozen=True)
 class _ProfileEdgeSelection:
     patterns: tuple[str, ...]
@@ -413,17 +404,11 @@ class Faces(Enum):
     FRONT = "front"
     BACK = "back"
 
-
-@dataclass(frozen=True)
-
 @dataclass(frozen=True)
 class _FaceBoundarySelection:
     """Internal request for native boundary edges of cardinal Faces."""
 
     faces: tuple[Faces, ...]
-
-
-@dataclass(frozen=True)
 
 @dataclass(frozen=True)
 class _BoundOffset:
@@ -497,9 +482,6 @@ def _pattern_direction(value, label):
         raise ValueError(f"{label} must be non-zero")
     return vector
 
-
-@dataclass(frozen=True)
-
 @dataclass(frozen=True)
 class AxisLine:
     """Describe one fixed-direction native axis through an explicit XYZ origin.
@@ -539,7 +521,6 @@ class AxisLine:
         object.__setattr__(self, "origin", origin)
 
 X, Y, Z = _AxisRef("X"), _AxisRef("Y"), _AxisRef("Z")
-
 CENTER = Anchor.CENTER
 TOP = Anchor.TOP
 BOTTOM = Anchor.BOTTOM
