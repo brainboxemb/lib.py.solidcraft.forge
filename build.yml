@@ -1,7 +1,8 @@
 schema: 1
 branch: issue/656-ir-modularization
-modules: []
-models: []
+
+modules: all
+models: all
 library: true
 api_probes: []
 tasks: [test]
