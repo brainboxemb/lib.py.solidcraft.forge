@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "ap0dx86xkwjpb",
+  "id": "dbgd8svx06e83",
   "language": "en",
   "line_group": "0.5",
   "name": "Block drawing",
@@ -22,14 +22,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "3mypet7xefe96"
+        "source": "4g3q9r7nk8625"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "4d187rqmxvhfg",
+      "id": "dpq69qjj6dsb6",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -726,15 +726,7 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "1kh5nsqxnmw0z",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "7dhetk2et3hp7",
+          "id": "25zgzegthabbh",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -742,29 +734,37 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "0fyh30fcgbf5g",
+          "id": "b8hbm6vw67z3y",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "7dhetk2et3hp7",
+          "parent": "25zgzegthabbh",
           "side": "above"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "9rjyvrwqmk4bs",
+          "id": "bra9d61njy2aw",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "7dhetk2et3hp7",
+          "parent": "25zgzegthabbh",
           "side": "right"
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "5drr1c8wrd29e",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "3mypet7xefe96"
+      "id": "4g3q9r7nk8625"
     }
   ],
   "symbols": [],

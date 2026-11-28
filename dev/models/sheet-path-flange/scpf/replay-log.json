@@ -86,8 +86,8 @@
       "index": 8,
       "command": "sketch.create",
       "resolved_params": {
-        "name": "Blank",
-        "plane": "XY"
+        "plane": "XY",
+        "name": "Blank"
       }
     },
     {
@@ -123,8 +123,8 @@
       "index": 12,
       "command": "sketch.create",
       "resolved_params": {
-        "name": "Path",
-        "plane": "XZ"
+        "plane": "XZ",
+        "name": "Path"
       }
     },
     {
@@ -141,10 +141,10 @@
             "path_height"
           ]
         ],
-        "connect": true,
         "ids": [
           "l1"
-        ]
+        ],
+        "connect": true
       },
       "bindings": {
         "$contour_curves_1": [

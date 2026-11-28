@@ -1,7 +1,7 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "193ccd420711abb2e92f5316bef83b130adffbec7a0185d26fbeb00a6d863c26",
+  "replay_sha256": "0ce619eaee8d381669efa9b12de18c1aa0271546b407110e3923f75401bd3ebf",
   "variables": {
     "$face_point_1": [
       -7.606039830534535,
@@ -15,8 +15,8 @@
       "index": 0,
       "command": "sketch.create",
       "resolved_params": {
-        "name": "Disc",
-        "plane": "XY"
+        "plane": "XY",
+        "name": "Disc"
       }
     },
     {
@@ -39,9 +39,9 @@
       "index": 3,
       "command": "solid.extrude",
       "resolved_params": {
+        "distance": 10,
         "direction": "positive",
-        "body_name": "RoundTopSketch",
-        "distance": 10
+        "body_name": "RoundTopSketch"
       }
     },
     {
@@ -81,8 +81,8 @@
       "command": "sketch.circle.center",
       "resolved_params": {
         "center": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "diameter": 44
       }
@@ -96,13 +96,13 @@
       "index": 8,
       "command": "solid.extrude",
       "resolved_params": {
-        "direction": "positive",
         "operation": "join",
         "targets": [
           "RoundTopSketch"
         ],
         "name": "Hub",
-        "distance": 16
+        "distance": 16,
+        "direction": "positive"
       }
     }
   ],

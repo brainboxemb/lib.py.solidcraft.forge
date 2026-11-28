@@ -69,8 +69,8 @@
     {
       "command": "sketch.create",
       "params": {
-        "name": "Blank",
-        "plane": "XY"
+        "plane": "XY",
+        "name": "Blank"
       }
     },
     {
@@ -102,8 +102,8 @@
     {
       "command": "sketch.create",
       "params": {
-        "name": "Path",
-        "plane": "XZ"
+        "plane": "XZ",
+        "name": "Path"
       }
     },
     {
@@ -119,10 +119,10 @@
             "path_height"
           ]
         ],
-        "connect": true,
         "ids": [
           "l1"
-        ]
+        ],
+        "connect": true
       }
     },
     {

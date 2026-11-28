@@ -31,8 +31,8 @@
         },
         "surface_distance_probes": [
           {
-            "actual_mm": 5.8537526187494455,
-            "delta_mm": 0.004111757519603465,
+            "actual_mm": 5.856825925431234,
+            "delta_mm": 0.0010384508378153967,
             "expected_mm": 5.857864376269049,
             "label": "surviving sphere interior",
             "pass": true,
@@ -44,8 +44,8 @@
             "tolerance_mm": 0.3
           },
           {
-            "actual_mm": 2.991293447526692,
-            "delta_mm": 0.008706552473308093,
+            "actual_mm": 2.99871136046117,
+            "delta_mm": 0.001288639538830072,
             "expected_mm": 3.0,
             "label": "cylindrical bore",
             "pass": true,

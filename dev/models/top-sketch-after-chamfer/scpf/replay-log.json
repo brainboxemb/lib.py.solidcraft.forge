@@ -1,7 +1,7 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "8e13e63ce1fc1343216eb585995f9858edea83dc6d07236eb1c2ec186179d7c1",
+  "replay_sha256": "88da7d508497785797d006b6eecaf33573faad5b0a6965dd69e33fa3f132c06a",
   "variables": {
     "$face_point_1": [
       -19.67174773134658,
@@ -30,8 +30,6 @@
       "index": 1,
       "command": "solid.chamfer",
       "resolved_params": {
-        "body": "TopSketchAfterChamfer",
-        "distance": 8,
         "edges": [
           [
             -50.0,
@@ -53,7 +51,9 @@
             35.0,
             5.0
           ]
-        ]
+        ],
+        "distance": 8,
+        "body": "TopSketchAfterChamfer"
       }
     },
     {
@@ -93,8 +93,8 @@
       "command": "sketch.circle.center",
       "resolved_params": {
         "center": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "diameter": 12
       }
@@ -108,13 +108,13 @@
       "index": 6,
       "command": "solid.extrude",
       "resolved_params": {
-        "direction": "negative",
         "operation": "cut",
         "targets": [
           "TopSketchAfterChamfer"
         ],
         "name": "Top hole",
-        "through_all": true
+        "through_all": true,
+        "direction": "negative"
       }
     }
   ],

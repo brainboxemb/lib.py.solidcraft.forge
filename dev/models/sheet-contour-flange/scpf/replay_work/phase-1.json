@@ -53,8 +53,8 @@
     {
       "command": "sketch.create",
       "params": {
-        "name": "Contour",
-        "plane": "XZ"
+        "plane": "XZ",
+        "name": "Contour"
       }
     },
     {
@@ -70,10 +70,10 @@
             0
           ]
         ],
-        "connect": true,
         "ids": [
           "l1"
-        ]
+        ],
+        "connect": true
       }
     }
   ]

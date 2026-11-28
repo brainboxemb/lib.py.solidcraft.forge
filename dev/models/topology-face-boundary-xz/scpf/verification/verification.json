@@ -1,77 +1,91 @@
 {
   "checks": [
     {
-      "artifacts": [],
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "9039a92ee3fc8c031cbc7ae6437cd9fbe2d36ff8df3cba368609fc2c75b12211",
+          "size": 1946
+        }
+      ],
       "error": null,
       "evidence": {
-        "bounds": {
-          "actual_max": [
-            20.0,
-            7.5,
-            30.0
-          ],
-          "actual_min": [
-            -20.0,
-            -7.5,
-            0.0
-          ],
-          "expected_max": [
-            20.0,
-            7.5,
-            30.0
-          ],
-          "expected_min": [
-            -20.0,
-            -7.5,
-            0.0
-          ],
-          "max_delta_mm": 0.0,
-          "pass": true,
-          "tolerance_mm": 0.25
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
         },
-        "surface_distance_probes": [
+        "named_bodies": [
           {
-            "actual_mm": 1.0606601717798212,
-            "delta_mm": 0.0,
-            "expected_mm": 1.0606601717798212,
-            "label": "front top edge removed by 1.5 mm chamfer",
-            "pass": true,
-            "point": [
-              0.0,
-              -7.5,
-              30.0
-            ],
-            "tolerance_mm": 0.3
-          },
-          {
-            "actual_mm": 1.0606601717798212,
-            "delta_mm": 0.0,
-            "expected_mm": 1.0606601717798212,
-            "label": "back right edge removed by 1.5 mm chamfer",
-            "pass": true,
-            "point": [
-              20.0,
-              7.5,
-              15.0
-            ],
-            "tolerance_mm": 0.3
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole"
           }
         ],
-        "watertight": {
-          "actual": true,
-          "expected": true,
+        "sketch_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft sketch count",
+          "pass": true
+        },
+        "sketches": [
+          {
+            "actual": {
+              "name": "Hook profile",
+              "status": "solved"
+            },
+            "expected": {
+              "name": "Hook profile",
+              "status": "solved"
+            },
+            "label": "Hook profile sketch",
+            "pass": true
+          }
+        ],
+        "timeline": {
+          "actual": [
+            {
+              "name": "Hook profile",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "expected": [
+            {
+              "name": "Hook profile",
+              "type": "Sketch"
+            },
+            {
+              "type": "ExtrudeFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
           "pass": true
         }
       },
-      "id": "geometry",
+      "id": "baseline",
       "reason": null,
       "status": "pass"
     }
   ],
-  "input": "/output/models/topology-face-boundary-xz/scpf/model.stl",
+  "input": "/output/models/topology-face-boundary-xz/scpf/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,
   "status": "pass",
-  "verification_id": "topology-face-boundary-xz-scpf-geometry"
+  "verification_id": "topology-face-boundary-xz"
 }

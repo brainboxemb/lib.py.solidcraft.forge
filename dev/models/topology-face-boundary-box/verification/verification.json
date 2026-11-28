@@ -1,77 +1,63 @@
 {
   "checks": [
     {
-      "artifacts": [],
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "833c99de59876dd57bca2958e68922518e0c27e3162a3706f0d94d4f48b69c84",
+          "size": 1553
+        }
+      ],
       "error": null,
       "evidence": {
-        "bounds": {
-          "actual_max": [
-            30.0,
-            20.0,
-            12.0
-          ],
-          "actual_min": [
-            -30.0,
-            -20.0,
-            0.0
-          ],
-          "expected_max": [
-            30.0,
-            20.0,
-            12.0
-          ],
-          "expected_min": [
-            -30.0,
-            -20.0,
-            0.0
-          ],
-          "max_delta_mm": 0.0,
-          "pass": true,
-          "tolerance_mm": 0.25
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
+          "pass": true
         },
-        "surface_distance_probes": [
+        "named_bodies": [
           {
-            "actual_mm": 1.4142135623730951,
-            "delta_mm": 0.0,
-            "expected_mm": 1.4142135623730951,
-            "label": "front top edge removed by 2 mm chamfer",
-            "pass": true,
-            "point": [
-              0.0,
-              -20.0,
-              12.0
-            ],
-            "tolerance_mm": 0.35
-          },
-          {
-            "actual_mm": 1.4142135623730951,
-            "delta_mm": 0.0,
-            "expected_mm": 1.4142135623730951,
-            "label": "right top edge removed by 2 mm chamfer",
-            "pass": true,
-            "point": [
-              30.0,
-              0.0,
-              12.0
-            ],
-            "tolerance_mm": 0.35
+            "closed": {
+              "actual": true,
+              "expected": true,
+              "label": "sole body closed",
+              "pass": true
+            },
+            "selector": "sole"
           }
         ],
-        "watertight": {
-          "actual": true,
-          "expected": true,
+        "timeline": {
+          "actual": [
+            {
+              "type": "BoxFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "expected": [
+            {
+              "type": "BoxFeature"
+            },
+            {
+              "type": "ChamferFeature"
+            }
+          ],
+          "label": "SolidCraft timeline",
           "pass": true
         }
       },
-      "id": "geometry",
+      "id": "baseline",
       "reason": null,
       "status": "pass"
     }
   ],
-  "input": "/output/models/topology-face-boundary-box/scpf/model.stl",
+  "input": "/output/models/topology-face-boundary-box/scpf/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,
   "status": "pass",
-  "verification_id": "topology-face-boundary-box-scpf-geometry"
+  "verification_id": "topology-face-boundary-box"
 }

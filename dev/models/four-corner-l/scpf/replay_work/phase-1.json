@@ -90,8 +90,8 @@
     {
       "command": "sketch.create",
       "params": {
-        "name": "d2_LProfile__Profile",
-        "plane": "XY"
+        "plane": "XY",
+        "name": "d2_LProfile__Profile"
       }
     },
     {
@@ -141,9 +141,9 @@
     {
       "command": "solid.extrude",
       "params": {
+        "distance": 16.0,
         "direction": "positive",
-        "body_name": "LProfile",
-        "distance": 16.0
+        "body_name": "LProfile"
       }
     },
     {

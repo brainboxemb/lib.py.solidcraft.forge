@@ -3,8 +3,6 @@
     {
       "command": "solid.chamfer",
       "params": {
-        "body": "TopologyFaceBoundaryBox",
-        "distance": 2,
         "edges": [
           {
             "body": "TopologyFaceBoundaryBox",
@@ -22,7 +20,9 @@
             "body": "TopologyFaceBoundaryBox",
             "index": 3
           }
-        ]
+        ],
+        "distance": 2,
+        "body": "TopologyFaceBoundaryBox"
       }
     }
   ]

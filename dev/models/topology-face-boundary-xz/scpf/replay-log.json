@@ -103,8 +103,8 @@
       "index": 0,
       "command": "sketch.create",
       "resolved_params": {
-        "name": "Hook profile",
-        "plane": "XZ"
+        "plane": "XZ",
+        "name": "Hook profile"
       }
     },
     {
@@ -147,9 +147,9 @@
       "index": 3,
       "command": "solid.extrude",
       "resolved_params": {
+        "distance": 15,
         "direction": "symmetric",
-        "body_name": "TopologyFaceBoundaryXz",
-        "distance": 15
+        "body_name": "TopologyFaceBoundaryXz"
       }
     },
     {
@@ -286,8 +286,6 @@
       "index": 8,
       "command": "solid.chamfer",
       "resolved_params": {
-        "body": "TopologyFaceBoundaryXz",
-        "distance": 1.5,
         "edges": [
           {
             "body": "TopologyFaceBoundaryXz",
@@ -321,7 +319,9 @@
             "body": "TopologyFaceBoundaryXz",
             "index": 3
           }
-        ]
+        ],
+        "distance": 1.5,
+        "body": "TopologyFaceBoundaryXz"
       }
     }
   ],

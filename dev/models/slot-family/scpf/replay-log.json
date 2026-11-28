@@ -1,7 +1,7 @@
 {
   "format": "scpf-replay-log",
   "version": 1,
-  "replay_sha256": "f169ebbdedfdd3c07dc9e42eae4b3dda917038c8d548a3a649ace7cbd8825914",
+  "replay_sha256": "2ba13368691a35115abe3b71f6d664e69b3e13fe7b934470c950bbb7f3eaaead",
   "variables": {
     "$face_point_1": [
       -40.0,
@@ -366,7 +366,7 @@
           25.0
         ],
         "width": "slot_width",
-        "sweep": 120.0
+        "sweep": 120
       }
     },
     {
@@ -378,13 +378,13 @@
       "index": 29,
       "command": "solid.extrude",
       "resolved_params": {
-        "direction": "negative",
         "operation": "cut",
         "targets": [
           "SlotFamily"
         ],
         "name": "Slot family",
-        "through_all": true
+        "through_all": true,
+        "direction": "negative"
       }
     }
   ],

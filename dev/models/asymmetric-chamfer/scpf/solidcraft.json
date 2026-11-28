@@ -3,6 +3,14 @@
     {
       "command": "parameters.add",
       "params": {
+        "expression": "20",
+        "name": "depth",
+        "unit": "mm"
+      }
+    },
+    {
+      "command": "parameters.add",
+      "params": {
         "expression": "40",
         "name": "width",
         "unit": "mm"
@@ -13,14 +21,6 @@
       "params": {
         "expression": "10",
         "name": "height",
-        "unit": "mm"
-      }
-    },
-    {
-      "command": "parameters.add",
-      "params": {
-        "expression": "20",
-        "name": "depth",
         "unit": "mm"
       }
     },

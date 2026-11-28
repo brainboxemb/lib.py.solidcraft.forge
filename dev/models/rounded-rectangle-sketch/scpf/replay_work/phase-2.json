@@ -20,12 +20,12 @@
       "command": "sketch.rectangle.rounded",
       "params": {
         "p0": [
-          "-(pad_width / 2)",
-          "-(pad_depth / 2)"
+          "(-(pad_width / 2))",
+          "(-(pad_depth / 2))"
         ],
         "p1": [
-          "pad_width / 2",
-          "pad_depth / 2"
+          "(pad_width / 2)",
+          "(pad_depth / 2)"
         ],
         "radius": "radius"
       }
@@ -37,20 +37,20 @@
     {
       "command": "solid.extrude",
       "params": {
-        "direction": "positive",
         "operation": "join",
         "targets": [
           "RoundedRectangleSketch"
         ],
         "name": "Rounded pad",
-        "distance": "pad_height"
+        "distance": "pad_height",
+        "direction": "positive"
       }
     },
     {
       "command": "sketch.create",
       "params": {
-        "name": "World cut",
-        "plane": "YZ"
+        "plane": "YZ",
+        "name": "World cut"
       }
     },
     {
@@ -73,12 +73,12 @@
     {
       "command": "solid.extrude",
       "params": {
+        "distance": "cut_length",
         "direction": "symmetric",
         "operation": "cut",
         "targets": [
           "RoundedRectangleSketch"
-        ],
-        "distance": "cut_length"
+        ]
       }
     }
   ]

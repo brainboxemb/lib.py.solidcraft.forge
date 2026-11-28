@@ -1,56 +1,72 @@
 {
   "checks": [
     {
-      "artifacts": [],
+      "artifacts": [
+        {
+          "kind": "file",
+          "path": "baseline/measurements.json",
+          "sha256": "b1c089eabaae12fb6c3dc2caff01d3817178eaab2d6b3dba232656851d6c73eb",
+          "size": 1760
+        }
+      ],
       "error": null,
       "evidence": {
-        "bounds": {
-          "actual_max": [
-            25.0,
-            20.0,
-            26.0
-          ],
-          "actual_min": [
-            -25.0,
-            -20.0,
-            0.0
-          ],
-          "expected_max": [
-            25.0,
-            20.0,
-            26.0
-          ],
-          "expected_min": [
-            -25.0,
-            -20.0,
-            0.0
-          ],
-          "max_delta_mm": 0.0,
-          "pass": true,
-          "tolerance_mm": 0.3
-        },
-        "volume": {
-          "actual_mm3": 40741.40040224761,
-          "delta_mm3": 0.4579146657415549,
-          "expected_mm3": 40741.85831691335,
-          "pass": true,
-          "tolerance_mm3": 20.0
-        },
-        "watertight": {
-          "actual": true,
-          "expected": true,
+        "body_count": {
+          "actual": 1,
+          "expected": 1,
+          "label": "SolidCraft body count",
           "pass": true
+        },
+        "body_envelopes": {
+          "actual_count": 1,
+          "expected_count": 1,
+          "kind": "body_envelopes",
+          "matched_pairs": [
+            {
+              "actual": {
+                "label": "ConeBoolean",
+                "max": [
+                  25.0,
+                  20.0,
+                  26.0
+                ],
+                "min": [
+                  -25.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "expected": {
+                "label": null,
+                "max": [
+                  25.0,
+                  20.0,
+                  26.0
+                ],
+                "min": [
+                  -25.0,
+                  -20.0,
+                  0.0
+                ]
+              },
+              "max_delta": 0.0
+            }
+          ],
+          "pass": true,
+          "tolerance": 0.01,
+          "unmatched_actual": [],
+          "unmatched_expected": []
         }
       },
-      "id": "geometry",
+      "id": "baseline",
       "reason": null,
       "status": "pass"
     }
   ],
-  "input": "/output/models/cone-boolean/scpf/model.stl",
+  "input": "/output/models/cone-boolean/scpf/model.sc",
   "metadata": {},
   "schema": "cad-verification",
   "schema_version": 1,
   "status": "pass",
-  "verification_id": "cone-boolean-scpf-geometry"
+  "verification_id": "cone-boolean"
 }

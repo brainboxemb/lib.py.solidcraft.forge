@@ -20,8 +20,8 @@
       "command": "sketch.circle.center",
       "params": {
         "center": [
-          0,
-          0
+          0.0,
+          0.0
         ],
         "diameter": 44
       }
@@ -33,13 +33,13 @@
     {
       "command": "solid.extrude",
       "params": {
-        "direction": "positive",
         "operation": "join",
         "targets": [
           "RoundTopSketch"
         ],
         "name": "Hub",
-        "distance": 16
+        "distance": 16,
+        "direction": "positive"
       }
     }
   ]
