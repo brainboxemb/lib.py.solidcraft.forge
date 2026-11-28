@@ -641,7 +641,7 @@ def _sketch_graph_profile_ir(
 
 def normalize_sketch_entities(sketch) -> SketchEntityGraphIR:
     """Normalize public Sketch contents independently from support/consumers."""
-    from .explicit_sketch import Sketch
+    from ...explicit_sketch import Sketch
 
     if not isinstance(sketch, Sketch):
         raise TypeError("Sketch entity normalization requires a Sketch")
