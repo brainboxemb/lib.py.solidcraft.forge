@@ -46,6 +46,11 @@ Frontend ownership follows the public authoring boundary physically:
 - profile, primitive and hole/plastic constructors are owned by
   `scpf.frontend.profiles`, `scpf.frontend.primitives` and
   `scpf.frontend.features`;
+- Box, Sphere, Cylinder and Cone construction returns typed `Primitive`
+  subclasses with named semantic state and polymorphic anchor/placement
+  behavior; legacy `Shape.kind/data` remains only a compatibility view for
+  compiler paths not yet migrated and must not be the source of new frontend
+  or semantic-IR logic;
 - `scpf.core` remains a compatibility facade for existing public and internal
   imports and must not regain unrelated implementation ownership.
 

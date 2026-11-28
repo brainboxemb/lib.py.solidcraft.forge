@@ -4,9 +4,19 @@ Private normalization module behind :mod:`scpf.ir`.
 """
 from __future__ import annotations
 
+from functools import singledispatch
+
 from ...core import Shape, _dim_add
+from ...frontend.primitives import (
+    Primitive,
+    BoxPrimitive,
+    SpherePrimitive,
+    CylinderPrimitive,
+    ConePrimitive,
+)
 from ..base import BoxIR, ConeIR, CylinderIR, PlacementIR, SphereIR
 from ..body import IRNode
+
 
 def _anchor_vector(anchor) -> tuple[int, int, int]:
     return tuple(int(value) for value in anchor.vector)
@@ -19,51 +29,103 @@ def _shift_point(point, delta):
     )
 
 
-def _portable_placement(shape: Shape) -> PlacementIR | None:
-    """Normalize supported primitive/placement authoring into one IR form."""
+@singledispatch
+def _primitive_ir(primitive):
+    return None
+
+
+@_primitive_ir.register(BoxPrimitive)
+def _box_ir(primitive):
+    return BoxIR(
+        length=primitive.length,
+        width=primitive.width,
+        height=primitive.thickness,
+    )
+
+
+@_primitive_ir.register(SpherePrimitive)
+def _sphere_ir(primitive):
+    return SphereIR(radius=primitive.radius)
+
+
+@_primitive_ir.register(CylinderPrimitive)
+def _cylinder_ir(primitive):
+    return CylinderIR(
+        height=primitive.height,
+        diameter=primitive.diameter,
+        axis=primitive.axis.value,
+    )
+
+
+@_primitive_ir.register(ConePrimitive)
+def _cone_ir(primitive):
+    return ConeIR(
+        height=primitive.height,
+        diameter=primitive.diameter,
+        top_diameter=primitive.top_diameter,
+        axis=primitive.axis.value,
+    )
+
+
+def _typed_placement(primitive, point, anchor, *, explicit=False, source_kind="placement"):
+    geometry = _primitive_ir(primitive)
+    if geometry is None:
+        return None
+    return PlacementIR(
+        primitive=geometry,
+        point=point,
+        anchor=_anchor_vector(anchor),
+        explicit=explicit,
+        source_kind=source_kind,
+    )
+
+
+def _legacy_direct_placement(shape):
+    """Compatibility for callers that still construct raw Shape(kind, data)."""
     if shape.kind == "box":
         length, width, height, anchor = shape.data
-        return PlacementIR(
-            primitive=BoxIR(length=length, width=width, height=height),
-            point=(0, 0, 0),
-            anchor=_anchor_vector(anchor),
-        )
-
-    if shape.kind == "cylinder":
+        primitive = BoxIR(length=length, width=width, height=height)
+    elif shape.kind == "cylinder":
         height, diameter, axis, anchor = shape.data
-        return PlacementIR(
-            primitive=CylinderIR(
-                height=height,
-                diameter=diameter,
-                axis=axis,
-            ),
-            point=(0, 0, 0),
-            anchor=_anchor_vector(anchor),
-        )
-
-    if shape.kind == "cone":
+        primitive = CylinderIR(height=height, diameter=diameter, axis=axis)
+    elif shape.kind == "cone":
         height, diameter, top_diameter, axis, anchor = shape.data
-        return PlacementIR(
-            primitive=ConeIR(
-                height=height,
-                diameter=diameter,
-                top_diameter=top_diameter,
-                axis=axis,
-            ),
-            point=(0, 0, 0),
-            anchor=_anchor_vector(anchor),
+        primitive = ConeIR(
+            height=height,
+            diameter=diameter,
+            top_diameter=top_diameter,
+            axis=axis,
         )
-
-    if shape.kind == "sphere":
+    elif shape.kind == "sphere":
         radius, anchor = shape.data
-        return PlacementIR(
-            primitive=SphereIR(radius=radius),
-            point=(0, 0, 0),
-            anchor=_anchor_vector(anchor),
+        primitive = SphereIR(radius=radius)
+    else:
+        return None
+    return PlacementIR(
+        primitive=primitive,
+        point=(0, 0, 0),
+        anchor=_anchor_vector(anchor),
+    )
+
+
+def _portable_placement(shape: Shape) -> PlacementIR | None:
+    """Normalize typed primitive/placement authoring into semantic IR."""
+    if isinstance(shape, Primitive):
+        return _typed_placement(
+            shape,
+            (0, 0, 0),
+            shape.anchor,
         )
 
     if shape.kind == "placed_box":
         box, x, y, z, anchor = shape.data
+        if isinstance(box, BoxPrimitive):
+            return _typed_placement(
+                box,
+                (x, y, z),
+                anchor,
+                explicit=True,
+            )
         if box.kind != "box":
             return None
         length, width, height, _constructor_anchor = box.data
@@ -76,6 +138,14 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
 
     if shape.kind == "placed3d":
         child, x, y, z = shape.data
+        if isinstance(child, (CylinderPrimitive, ConePrimitive)):
+            return _typed_placement(
+                child,
+                (x, y, z),
+                child.anchor,
+                explicit=True,
+            )
+
         if child.kind == "cylinder":
             height, diameter, axis, anchor = child.data
             primitive = CylinderIR(
@@ -113,7 +183,7 @@ def _portable_placement(shape: Shape) -> PlacementIR | None:
             source_kind="translated",
         )
 
-    return None
+    return _legacy_direct_placement(shape)
 
 
 def _portable_csg_placement(node: IRNode) -> bool:

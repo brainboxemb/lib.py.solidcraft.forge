@@ -30,60 +30,18 @@ _FEATURE_HISTORY_CHAIN_KINDS = frozenset({
 })
 
 
-def _primitive_center_from_anchor(*args, **kwargs):
-    from .primitives import _primitive_center_from_anchor as implementation
-    return implementation(*args, **kwargs)
-
-
-def _cone_base_from_anchor(*args, **kwargs):
-    from .primitives import _cone_base_from_anchor as implementation
-    return implementation(*args, **kwargs)
-
-
-def _sphere_center_from_anchor(*args, **kwargs):
-    from .primitives import _sphere_center_from_anchor as implementation
-    return implementation(*args, **kwargs)
-
 def _shape_center(shape):
-    """Return the nominal CENTER anchor of a direct CSG shape.
+    """Return the nominal CENTER anchor of a supported frontend Shape.
 
-    Boolean composites are accepted only when both operands have the same
-    center. This keeps CENTER alignment deterministic without inventing a
-    general bounding-box/geometry solver in Forge.
+    Primitive geometry owns its own center/anchor semantics. Composite wrappers
+    remain coordinated here because they describe relationships between Shapes.
     """
     if not isinstance(shape, Shape):
         raise TypeError("align() target must be a Shape")
 
-    if shape.kind == "box":
-        length, width, height, anchor = shape.data
-        dimensions = (length, width, height)
-        return tuple(
-            half(dimension) if side < 0
-            else -half(dimension) if side > 0
-            else 0
-            for dimension, side in zip(dimensions, anchor.vector)
-        )
-
-    if shape.kind == "sphere":
-        radius, anchor = shape.data
-        return _sphere_center_from_anchor(radius, (0, 0, 0), anchor)
-
-    if shape.kind == "cylinder":
-        height, diameter, axis, anchor = shape.data
-        extents = {
-            "X": (height, diameter, diameter),
-            "Y": (diameter, height, diameter),
-            "Z": (diameter, diameter, height),
-        }[axis]
-        return _primitive_center_from_anchor(extents, (0, 0, 0), anchor)
-
-    if shape.kind == "cone":
-        height, _diameter, _top_diameter, axis, anchor = shape.data
-        base = _cone_base_from_anchor(height, axis, (0, 0, 0), anchor)
-        index = {"X": 0, "Y": 1, "Z": 2}[axis]
-        center = list(base)
-        center[index] = _dim_add(center[index], half(height))
-        return tuple(center)
+    primitive_center = shape._alignment_center()
+    if primitive_center is not None:
+        return primitive_center
 
     if shape.kind == "translated":
         child, delta = shape.data
@@ -93,7 +51,9 @@ def _shape_center(shape):
     if shape.kind == "placed3d":
         child, x, y, z = shape.data
         if child.kind != "cylinder":
-            raise ValueError("CENTER alignment only supports placed Cylinder CSG shapes")
+            raise ValueError(
+                "CENTER alignment only supports placed Cylinder CSG shapes"
+            )
         center = _shape_center(child)
         base = (x, y, z)
         return tuple(_dim_add(base[i], center[i]) for i in range(3))
@@ -364,6 +324,14 @@ class Shape:
         scope = _ACTIVE_FEATURE_SCOPE.get()
         if scope is not None:
             scope._register(self)
+
+    def _alignment_center(self):
+        """Return a typed center when this Shape owns primitive semantics."""
+        return None
+
+    def _place_at_coordinates(self, x, y, z, anchor):
+        """Allow typed primitive subclasses to own absolute placement."""
+        return None
 
     def __getattr__(self, name):
         if name == "group":
@@ -1117,39 +1085,11 @@ class Shape:
             )
             return Shape("translated", (self, delta))
 
-        if self.kind == "box":
-            if child is not Anchor.CENTER:
-                raise ValueError("child= is only valid for shape-to-shape at()")
-            selector = _direction_selector(anchor)
-            return Shape("placed_box", (self, x, y, z, selector))
-
-        if self.kind == "cylinder":
-            if child is not Anchor.CENTER:
-                raise ValueError("child= is only valid for shape-to-shape at()")
-            height, diameter, axis, _origin_anchor = self.data
-            selected = _direction_selector(anchor)
-            placed = Shape("cylinder", (height, diameter, axis, selected))
-            return Shape("placed3d", (placed, x, y, z))
-
-        if self.kind == "cone":
-            if child is not Anchor.CENTER:
-                raise ValueError("child= is only valid for shape-to-shape at()")
-            height, diameter, top_diameter, axis, _origin_anchor = self.data
-            selected = _direction_selector(anchor)
-            _cone_base_from_anchor(height, axis, (0, 0, 0), selected)
-            placed = Shape(
-                "cone",
-                (height, diameter, top_diameter, axis, selected),
-            )
-            return Shape("placed3d", (placed, x, y, z))
-
-        if self.kind == "sphere":
-            if child is not Anchor.CENTER:
-                raise ValueError("child= is only valid for shape-to-shape at()")
-            radius, _origin_anchor = self.data
-            selected = _direction_selector(anchor)
-            placed = Shape("sphere", (radius, selected))
-            return Shape("translated", (placed, (x, y, z)))
+        if child is not Anchor.CENTER:
+            raise ValueError("child= is only valid for shape-to-shape at()")
+        placed = self._place_at_coordinates(x, y, z, anchor)
+        if placed is not None:
+            return placed
 
         if anchor is not Anchor.CENTER or child is not Anchor.CENTER:
             raise ValueError(
