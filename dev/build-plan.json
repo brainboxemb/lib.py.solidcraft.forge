@@ -63,6 +63,7 @@
   ],
   "api_probes": {
     "available": [
+      "configuration-clamp-curve-edit",
       "configuration-installed-clamp",
       "configuration-installed-current",
       "configuration-installed-fanout",
@@ -70,7 +71,8 @@
       "configuration-installed-feature-native-name",
       "configuration-installed-group",
       "configuration-installed-single-feature",
-      "configuration-position-suppression"
+      "configuration-position-suppression",
+      "configuration-position-transform-suppression"
     ],
     "selected": []
   },
@@ -906,5 +908,5 @@
     "topology-face-boundary-xz",
     "xz-anchor"
   ],
-  "source_sha": "5684a0b0e3265e519b682dd49ada62736be8bac1"
+  "source_sha": "b723e515ce79b7179d4bc84901bce8c38ed59b48"
 }
