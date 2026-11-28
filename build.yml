@@ -7,4 +7,5 @@ library: false
 api_probes:
   - configuration-post-extrude-sketch-edit
   - configuration-post-extrude-offset-face
+  - configuration-installed-feature-rule
 tasks: [test]

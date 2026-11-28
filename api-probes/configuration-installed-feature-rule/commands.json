@@ -1,0 +1,99 @@
+{
+  "format": "scpf-replay",
+  "version": 2,
+  "commands": [
+    {
+      "command": "sketch.create",
+      "params": {
+        "plane": "XY",
+        "name": "FreeProfile"
+      }
+    },
+    {
+      "command": "sketch.rectangle.two_point",
+      "params": {
+        "p0": [
+          -10,
+          -10
+        ],
+        "p1": [
+          10,
+          10
+        ]
+      }
+    },
+    {
+      "command": "sketch.finish",
+      "params": {}
+    },
+    {
+      "command": "solid.extrude",
+      "params": {
+        "distance": 8,
+        "name": "ClampExtrude",
+        "body_name": "Clamp"
+      }
+    },
+    {
+      "command": "solid.offset_face",
+      "params": {
+        "body": "Clamp",
+        "faces": [
+          [
+            10,
+            0,
+            4
+          ]
+        ],
+        "distance": 4,
+        "name": "Installed"
+      }
+    },
+    {
+      "command": "config.configure",
+      "params": {
+        "features": [
+          "Installed"
+        ]
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Default",
+        "rename": "Normal"
+      }
+    },
+    {
+      "command": "config.row",
+      "params": {
+        "name": "Normal",
+        "values": {
+          "suppress:Installed": "true"
+        }
+      }
+    },
+    {
+      "command": "config.rule",
+      "params": {
+        "rule": {
+          "id": "installed",
+          "name": "Installed",
+          "enabled": false,
+          "condition": {
+            "type": "always"
+          },
+          "effect": {
+            "type": "drive_suppression",
+            "feature": 3,
+            "value": false
+          }
+        }
+      }
+    },
+    {
+      "command": "config.table",
+      "params": {}
+    }
+  ]
+}

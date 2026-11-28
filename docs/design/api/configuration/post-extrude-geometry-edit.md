@@ -319,3 +319,95 @@ The next implementation/design slice is now precise:
 
 The CAD consumer must not proceed with `offset_face` merely because Probe B is
 green.
+
+
+## Correction — Installed is not a row axis
+
+The first #669 proposal incorrectly showed:
+
+~~~python
+model.configure(
+    active="Free",
+    columns=(installed,),
+    rows={
+        "Free": (True,),
+        "Installed": (False,),
+    },
+)
+~~~
+
+That is the wrong user model.
+
+It conflates two independent axes:
+
+1. the ordinary configuration row axis;
+2. the physical Free/Installed state switch.
+
+The required presentation is one ordinary row (for example `Normal`) plus an
+independent native checkbox named `Installed`.
+
+Conceptually:
+
+~~~text
+Configuration row: Normal
+
+Installed [ ]
+    off -> Installed feature suppressed -> Free geometry
+
+Installed [x]
+    on  -> Installed feature active     -> Installed geometry
+~~~
+
+If a consumer already has `Small / Medium / Large` rows, those rows remain
+unchanged and the Installed checkbox remains orthogonal to them. Do not create
+`Small-Free`, `Small-Installed`, `Medium-Free`, etc.
+
+### Native SolidCraft 0.50 mechanism
+
+SolidCraft 0.50 `config.rule` supports:
+
+- an independent `enabled` checkbox;
+- `condition: always`;
+- `effect: drive_suppression`;
+- a concrete feature id as the suppression target.
+
+Therefore the native lowering for the authored Installed feature is:
+
+~~~text
+Normal row
+    suppress Installed = true
+
+Configuration Rule "Installed"
+    enabled = false
+    condition = always
+    drive suppression(Installed) = false
+~~~
+
+When the rule is disabled, the row's Free/base suppression is restored.
+When the rule is enabled, the same real history feature becomes active.
+
+This is the same orthogonal rule behavior that the older Installed baseline
+proved for parameter driving, but now applied to the correct authored feature
+instead of changing `clamp_bore`.
+
+### Forge API consequence
+
+The earlier audit conclusion that Configuration Rules were unnecessary is no
+longer valid for this consumer requirement.
+
+Forge needs a semantic way to author an independent configuration switch over a
+real feature. It must lower to the native rule checkbox without exposing
+SolidCraft feature ids.
+
+The exact public spelling is still a design question. The required semantics
+are now fixed:
+
+~~~text
+row axis                 stays row-owned
+Installed state switch   independent enabled checkbox
+target                    semantic authored feature
+enabled effect            unsuppress that feature
+disabled effect           restore row/base suppression
+~~~
+
+Do not represent Installed as a second row.
