@@ -2,7 +2,7 @@
   "font": "",
   "font_fallbacks": [],
   "font_note": null,
-  "id": "cqhnd7jpgnxnx",
+  "id": "3d914rjhncx8t",
   "language": "en",
   "line_group": "0.5",
   "name": "Compact Sample Plate Drawing",
@@ -25,14 +25,14 @@
     {
       "documents": {
         "component": 1,
-        "source": "4k1r71smywjr8"
+        "source": "ea1mvdkpeg221"
       },
       "dpi": 300.0,
       "excluded": {
         "count": false,
         "print": false
       },
-      "id": "0d3kmak9sxk5y",
+      "id": "51ybjmxyy309t",
       "images": [],
       "line_group": null,
       "name": "Sheet 1",
@@ -524,7 +524,15 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "54skjh81ep2q4",
+          "id": "05t7fxg147sj8",
+          "kind": "base",
+          "label": "Iso front right",
+          "notes": []
+        },
+        {
+          "balloons": [],
+          "dimensions": [],
+          "id": "7r42p7t4vtt13",
           "kind": "base",
           "label": "Front",
           "notes": []
@@ -532,37 +540,29 @@
         {
           "balloons": [],
           "dimensions": [],
-          "id": "5xg272dr54fz6",
+          "id": "abjywrc7rn4gc",
           "kind": "projected",
           "label": "Right of Front",
           "notes": [],
-          "parent": "54skjh81ep2q4",
+          "parent": "7r42p7t4vtt13",
           "side": "right"
         },
         {
           "balloons": [],
           "dimensions": [],
-          "id": "bmn3pvdhttqyw",
+          "id": "bzggm65xanhnh",
           "kind": "projected",
           "label": "Above Front",
           "notes": [],
-          "parent": "54skjh81ep2q4",
+          "parent": "7r42p7t4vtt13",
           "side": "above"
-        },
-        {
-          "balloons": [],
-          "dimensions": [],
-          "id": "98abtsxpswrae",
-          "kind": "base",
-          "label": "Iso front right",
-          "notes": []
         }
       ]
     }
   ],
   "sources": [
     {
-      "id": "4k1r71smywjr8"
+      "id": "ea1mvdkpeg221"
     }
   ],
   "symbols": [],
