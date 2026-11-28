@@ -12,7 +12,7 @@ maintain competing branch-local plans.
 ## Accepted baseline
 
 The Forge migration is complete and the current public product baseline is
-released as **v0.24.0**.
+released as **v0.27.0**.
 
 The accepted baseline now includes:
 - 59 physical model owners, with SCPF primary per owner and historically real
@@ -208,27 +208,7 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-### #650 — release Forge v0.27.0 integrated semantic compiler
-
-Stable product promotion is complete:
-
-- #647 / PR #649 integrated exact qualified `dev -> main` through repository `/merge`;
-- stable product head `19a96ed8811c59bada2a9bad83e224f2fa283808`;
-- full permanent stable qualification/build/publication run `46144487961` is green;
-- latest published release remains v0.26.0;
-- there are no active foundational release blockers.
-
-Release v0.27.0 as metadata only:
-
-- create `release/v0.27.0` from the exact qualified current stable main head after this governance reconciliation itself is green on main;
-- change only `CHANGELOG.md` and `cadlib/pyproject.toml:project.version`;
-- retain a fresh empty `## [Unreleased]` section;
-- release notes cover only the accepted integrated semantic compiler: 20/20 typed IR families, independent SolidCraft/Mitcad backend boundaries, Mitcad qualification tooling, fail-closed unsupported backend paths and the full real-CAD consumer qualification;
-- do not resurrect the reverted configuration or body-Move/Copy v0.27 notes;
-- release PR -> main only through `/merge`;
-- require release-only stable CI green and retained full stable product evidence;
-- publish only with `/release v0.27.0 <exact-current-main-sha>` on #650;
-- after publication synchronize stable-only metadata `main -> dev`, then `dev -> exp` if required.
+No active release or integration checkpoint is selected after the completed v0.27.0 publication.
 
 ### Independent normal and experimental lanes
 
