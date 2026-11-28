@@ -208,19 +208,27 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-#662 — add a scripted SolidCraft replay transport test boundary.
+#666 — modularize frontend authoring ownership currently concentrated in
+`core.py`.
 
-Keep the production `solidcraft-cli` transport unchanged by default, but make
-`scpf.headless` replay execution injectable for tests. The scripted transport
-must record submitted native command batches, return only explicitly configured
-results, fail closed on unexpected commands, and never calculate geometry,
-topology or model correctness.
+This is an ownership change, not a file-size cleanup. Preserve `scpf` and
+`scpf.core` as stable authoring/import facades while separating selectors and
+anchors, scalar authoring, Shape/feature scope, 2D profiles, primitives and
+hole/plastic feature constructors into explicit implementation domains. Do not
+change public behavior, semantic IR or backend output.
 
 ## Next
 
-After #662, reassess the remaining large frontend authoring modules separately.
-Do not split `core.py`, `features.py` or `assembly.py` by file size alone;
-only select a follow-up when ownership or testability has a concrete boundary.
+After #666, reassess `features.py`, `assembly.py`, `model_objects.py` and
+`runner.py` independently. Select further structural work only where a concrete
+ownership or testability boundary exists.
+
+#662 is complete on permanent `dev` through PR #665, merge
+`1193b8fd539a44a672c0aace95e2700efd40a1fd`. Exact-head full qualification
+run 46164373419 and permanent dev build/publication run 46164855012 are green.
+`scpf.headless` now has a private injectable replay transport for tests while
+the production default remains `solidcraft-cli`; scripted fixtures never
+calculate geometry or topology.
 
 #659 is complete on permanent `dev` through PR #663, merge
 `be7d0a92ba074486aea3be10752ab95523a0bad5`. Exact-head full qualification
