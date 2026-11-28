@@ -204,3 +204,118 @@ This design may move from Proposed only when:
 4. The configuration contract remains the existing named-feature contract.
 5. The selected operation is generic enough to belong in Forge independent of
    the HUB75 consumer.
+
+
+## Probe results — SolidCraft 0.50.0
+
+PR #670 qualification run 46166188263 is green for both focused probes.
+
+### Probe A — source Sketch edit
+
+Result: **the edit is not a later history feature**.
+
+The saved design contains exactly two timeline features after
+`sketch.edit` + `sketch.move_points`:
+
+~~~text
+1  FreeProfile   sketch
+2  ClampExtrude  extrude
+~~~
+
+The right-hand Sketch points are stored at their edited coordinates (X=12
+instead of X=10), so the operation has rewritten the existing `FreeProfile`
+feature and rebuilt `ClampExtrude`.
+
+There is no third timeline feature for the edit.
+
+Decision:
+
+- do not expose `sketch.move_points` as though it were a later suppressible
+  `feature(...)`;
+- a chronological Installed state cannot be implemented by editing the
+  upstream source Sketch after its Extrude and expecting that edit to be
+  independently suppressible.
+
+This is a timeline/history fact, not a Forge configuration limitation.
+
+### Probe B — post-Extrude direct geometry
+
+Result: **a real later solid edit is exactly the required history form**.
+
+The saved design contains:
+
+~~~text
+1  FreeProfile   sketch
+2  ClampExtrude  extrude
+3  Installed     offset_face
+~~~
+
+The native configuration stores feature 3 as its suppression column:
+
+~~~text
+Free       Installed = suppressed
+Installed  Installed = active
+~~~
+
+The run switches Installed and back to Free successfully without rerunning
+Forge authoring.
+
+Decision:
+
+- the existing `feature(...)` / `model.configure(...)` contract is correct;
+- the missing consumer capability is a suitable generic post-Extrude
+  solid-edit operation;
+- configuration must not be redesigned.
+
+### Why Offset Face is evidence, not the clamp solution
+
+`solid.offset_face` is intentionally only the positive history probe.
+
+For the clamp, one common offset distance cannot simultaneously move the inner
+and outer cylindrical faces to the required new radii while preserving the
+2.0 mm wall. Using it only on the bore would simply replace the old oversized
+cutter with another wall-thinning approximation.
+
+Therefore the green Offset Face probe proves the feature-history architecture,
+not the final HUB75 geometry operation.
+
+## Newer SolidCraft candidate: Transform Face
+
+Current SolidCraft `main` contains a direct-modeling command
+`solid.transform_face`.
+
+Its generic contract is:
+
+- select one face;
+- rotate it, translate it, or do both;
+- neighbouring faces extend or trim to meet the moved face;
+- the operation is retained as a normal named modelling feature.
+
+The current command schema accepts `name`, so it matches the same native
+feature identity/suppression architecture as the successful Offset Face probe.
+
+This operation is **not present in the SolidCraft 0.50.0 command reference
+used by Forge v0.27.0**. It therefore cannot be adopted or claimed by this
+change until it exists in the versioned Forge runtime/reference and has its own
+probe there.
+
+It is also singular-face today. The HUB75 consumer must still prove whether one
+face transform can express the intended clamp state, or whether the required
+generic operation must move a related face/section set atomically.
+
+Do not widen Forge's API merely because a newer backend command exists.
+
+## Revised next step
+
+The next implementation/design slice is now precise:
+
+1. keep the existing configuration and named-feature API unchanged;
+2. treat post-Extrude solid editing as the required capability family;
+3. qualify the smallest native operation that can reproduce the HUB75
+   Installed geometry while preserving its wall and physical intent;
+4. only then add the matching generic Shape modifier to Forge;
+5. require the Forge operation itself to produce exactly one history feature so
+   it remains valid inside `feature("installed", suppressed=True)`.
+
+The CAD consumer must not proceed with `offset_face` merely because Probe B is
+green.
