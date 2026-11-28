@@ -208,20 +208,28 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
-#666 — modularize frontend authoring ownership currently concentrated in
-`core.py`.
+#671 — modularize legacy feature lowering under compiler ownership.
 
-This is an ownership change, not a file-size cleanup. Preserve `scpf` and
-`scpf.core` as stable authoring/import facades while separating selectors and
-anchors, scalar authoring, Shape/feature scope, 2D profiles, primitives and
-hole/plastic feature constructors into explicit implementation domains. Do not
-change public behavior, semantic IR or backend output.
+The root `scpf.features` module is legacy Shape -> SolidCraft ordered-feature
+lowering, not public feature authoring. Move that implementation under compiler
+ownership, split it by real lowering responsibility and keep `scpf.features`
+as a thin compatibility facade. Do not change public authoring, semantic IR,
+backend support, native output or fail-closed behavior.
 
 ## Next
 
-After #666, reassess `features.py`, `assembly.py`, `model_objects.py` and
-`runner.py` independently. Select further structural work only where a concrete
-ownership or testability boundary exists.
+#610 remains blocked on `brainboxemb/template.cad.library#119`; do not invent
+a Forge-local plan/log contract before the template contract is accepted.
+
+After #671, reassess `assembly.py`, `model_objects.py` and `runner.py`
+independently. Select further structural work only where a concrete ownership or
+testability boundary exists.
+
+#666 is complete on permanent `dev` through PR #668, merge
+`ee9816d1f6c8c13ecaf603ae76e17c9161678ae5`. Exact-head full qualification
+run 46166895520 and permanent dev build/publication run 46167361514 are green.
+`scpf.core` is now a compatibility facade over explicit frontend ownership
+domains for scalars, selectors, Shape, profiles, primitives and features.
 
 #662 is complete on permanent `dev` through PR #665, merge
 `1193b8fd539a44a672c0aace95e2700efd40a1fd`. Exact-head full qualification
