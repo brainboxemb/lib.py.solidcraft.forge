@@ -179,4 +179,3 @@ def Cone(*, d, top_d=0, h, axis=Axis.Z, anchor=Anchor.CENTER):
     selector = _direction_selector(anchor)
     _cone_base_from_anchor(h, axis.value, (0, 0, 0), selector)
     return Shape("cone", (h, d, top_d, axis.value, selector))
-
