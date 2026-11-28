@@ -208,6 +208,28 @@ The historical repository remains an archived A/B/provenance reference at
 
 ## Now
 
+### #650 — release Forge v0.27.0 integrated semantic compiler
+
+Stable product promotion is complete:
+
+- #647 / PR #649 integrated exact qualified `dev -> main` through repository `/merge`;
+- stable product head `19a96ed8811c59bada2a9bad83e224f2fa283808`;
+- full permanent stable qualification/build/publication run `46144487961` is green;
+- latest published release remains v0.26.0;
+- there are no active foundational release blockers.
+
+Release v0.27.0 as metadata only:
+
+- create `release/v0.27.0` from the exact qualified current stable main head after this governance reconciliation itself is green on main;
+- change only `CHANGELOG.md` and `cadlib/pyproject.toml:project.version`;
+- retain a fresh empty `## [Unreleased]` section;
+- release notes cover only the accepted integrated semantic compiler: 20/20 typed IR families, independent SolidCraft/Mitcad backend boundaries, Mitcad qualification tooling, fail-closed unsupported backend paths and the full real-CAD consumer qualification;
+- do not resurrect the reverted configuration or body-Move/Copy v0.27 notes;
+- release PR -> main only through `/merge`;
+- require release-only stable CI green and retained full stable product evidence;
+- publish only with `/release v0.27.0 <exact-current-main-sha>` on #650;
+- after publication synchronize stable-only metadata `main -> dev`, then `dev -> exp` if required.
+
 ### Independent normal and experimental lanes
 
 Normal consumer work and isolated compiler research may proceed independently; neither lane may use the other as an unqualified staging area.
@@ -270,7 +292,18 @@ Experimental `exp` lane:
 - final #534 PR CI 46046742176 is green (58 focused + 310 library tests), while permanent exp CI 46046851212 reused that tree-identical qualification and skipped duplicate selected execution; the experimental ledger now reports 4/20 semantic families complete and 17/20 with at least some typed IR;
 - #544 / PR #547 completed semantic within-component placement on permanent `exp`: `FeaturePlacementIR` now owns absolute/anchored placement, `BoundOffsetIR` owns X/Y bound-relative offsets, `PlasticFeatureIR` completes Lip/SnapFit/Boss/Rest semantics, and the stable simple TOP anchored Hole route is typed without native topology ids in IR;
 - final #544 PR CI 46048555351 is green (58 focused + 314 library tests), while permanent exp CI 46048695905 reused that tree-identical qualification and skipped duplicate selected execution; the ledger now reports 5/20 semantic families complete, 18/20 with typed IR and 2/20 fully legacy;
-- #550 is the next IR-first family-completion batch: finish current public Hole semantics over the shared placement contract, add the documented simple BOTTOM SolidCraft path, retain countersink-angle Parameters as semantic angle values, and keep backend-unsupported side/broader anchored forms typed but fail-closed;
+- #550 / PR #556 completed the current public Hole semantic family on permanent `exp`: absolute and anchored Hole intent remains typed independent from backend support, simple BOTTOM joins TOP as a typed SolidCraft lowering, countersink-angle Parameters are semantic degree-valued uses, and unsupported anchored variants remain typed/fail-closed; the ledger now reports 6/20 complete, 12 partial and 2 legacy families;
+- #554 / PR #565 completed the current public Sheet metal semantic family on permanent `exp`, including shared `SketchChainIR`, typed sheet rules/history and manufacturing perforation semantics; #555 / PR #567 then completed reusable definitions, occurrences, symbolic pose/grouping, assembly anchors and rigid/planar/revolute/as-built relationships through `AssemblyIR`;
+- #560 / PR #566 completed the current public support-independent Sketch entity/operation graph; #561 / PR #570 completed semantic Sketch support/frame intent, Regions/profile membership and current public Extrude semantics; #562 / PR #572 completed the shared public topology/reference-selector vocabulary;
+- #574 / PR #575 reconciled the #562 semantic boundary against the actual public modifier API: current public Chamfer and Fillet are complete over typed `BodyIR` plus the shared typed edge-selection vocabulary; backend/body lowering limits remain backend coverage rather than missing modifier IR;
+- #577 / PR #579 completes the current public Values/parameters/scalar-expressions family: literals, named parameters, unary/arithmetic, fixed numeric power and the existing `cadmath.min/max/sqrt/abs/round/floor/atan` grammar now retain typed backend-neutral scalar IR; physical roles remain use-site semantics and unsupported non-affine backend forms remain fail-closed;
+- #581 / PR #583 completes the current public Boolean body-operation family: join/cut/intersect now compose recursive typed `BodyIR × BodyIR` histories in authored order, including semantic target/tool FeatureRefIR traversal; SolidCraft preserves qualified native CSG contracts while unsupported backend forms remain explicit backend gaps;
+- #586 / PR #589 completes the current working standalone Revolve family: Circle/Rectangle/RoundedRectangle/Polygon/closed connected-profile Sketch results reuse the completed Sketch graph; symmetric sweep, coplanar principal/AxisLine intent and typed symbolic angles remain semantic IR; Slot/Text/pattern Revolve behavior is deliberately not invented because the current standalone compiler rejects those forms;
+- #593 / PR #596 audits and completes the current public Reference geometry family without inventing future datum APIs: `PlaneIR` covers principal Sketch planes plus semantic origin/offset, while `AxisLineIR` covers principal/fixed-vector axes and shifted fixed/symbolic origins; construction-/edge-/face-/topology-selected axes remain explicitly outside the public surface;
+- #598 / PR #601 completes the current working Placement/transforms family: primitive placement, anchored feature placement and assembly occurrence pose retain their existing semantic layers, while translated primitive/primitive-CSG bodies now use `TranslationIR(body, offset)`; direct `Shape.move()` remains finite numeric and CENTER alignment may retain semantic length deltas; no general body-rotation/matrix API is invented;
+- #605 / PR #608 completes the current public Feature identity / suppression / configuration family: one heterogeneous `ConfigurationIR` retains ordered parameter/suppression columns, rows, active state and the current rule grammar; Shape-design suppression uses semantic `FeatureRefIR`, while reusable-component suppression stays on the existing public exported-feature contract and `ComponentFeatureRefIR`; configured ModelInstance/Assembly targets reuse `AssemblyIR` through `ConfiguredDesignIR` without native configuration or browser identity in semantic IR;
+- permanent `exp` therefore reports **20/20 complete, 0 partial, 0 legacy** and 20/20 families with typed IR. Final #608 PR CI 46064400747 and permanent exp CI 46064505896 are green on the integrated semantic boundary;
+- #605 is the tracked IR-completion boundary, not a backend-parity claim. SolidCraft/Mitcad lowering coverage may remain narrower and must fail closed where unsupported; select backend catch-up from demonstrated compiler/consumer value rather than reopening completed semantic families;
 - keep one issue/branch/PR per batch, but do not require Mitcad lowering/native qualification to advance to the next IR batch; unsupported backend paths remain fail-closed and Mitcad catches up separately;
 - permanent `exp` must continue to reuse heavy green PR qualification when the reviewed PR-merge tree equals the permanent tree; Pages remains asynchronous publication evidence and is not an IR/compiler closure gate;
 - `LegacyShapeIR` remains a visible migration boundary for stable SolidCraft compatibility, never a second interpreter; experimental backends continue to fail closed on unmigrated semantics;
